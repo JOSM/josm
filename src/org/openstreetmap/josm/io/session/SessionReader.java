@@ -412,14 +412,16 @@ public class SessionReader {
             Element e = elems.get(idx);
             if (e == null) {
                 error(tr("missing layer with index {0}", idx));
-            }
-            if (!e.hasAttribute("name")) {
+                return;
+            } else if (!e.hasAttribute("name")) {
                 error(tr("missing mandatory attribute ''name'' for element ''layer''"));
+                return;
             }
             String name = e.getAttribute("name");
             names.put(idx, name);
             if (!e.hasAttribute("type")) {
                 error(tr("missing mandatory attribute ''type'' for element ''layer''"));
+                return;
             }
             String type = e.getAttribute("type");
             SessionLayerImporter imp = getSessionLayerImporter(type);

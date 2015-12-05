@@ -72,7 +72,7 @@ public class WayConnectionTypeCalculator {
                     }
                 }
 
-                if (!RelationSortUtils.isOneway(m)) {
+                if (!RelationSortUtils.isOneway(m) && lastWct != null) {
                     wct.direction = determineDirection(i-1, lastWct.direction, i);
                     wct.linkPrev = (wct.direction != NONE);
                 }

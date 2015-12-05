@@ -266,7 +266,7 @@ public class MultipolygonTest extends Test {
                     if (outside) {
                         addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"),
                                 INNER_WAY_OUTSIDE, Collections.singletonList(r), highlights));
-                    } else {
+                    } else if (outerWay != null) {
                         highlights.add(outerWay.getNodes());
                         addError(r, new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"),
                                 CROSSING_WAYS, Collections.singletonList(r), highlights));
