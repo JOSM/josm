@@ -192,8 +192,8 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
      */
     public final void setEnabled(boolean enabled) {
         this.enabled = enabled;
-        if (Main.isDebugEnabled()) {
-            Main.debug("AdvancedKeyPressDetector enabled="+enabled+" from "+new Exception().getStackTrace()[1]);
+        if (Main.isTraceEnabled()) {
+            Main.trace("AdvancedKeyPressDetector enabled="+enabled+" from "+new Exception().getStackTrace()[1]);
         }
     }
 
