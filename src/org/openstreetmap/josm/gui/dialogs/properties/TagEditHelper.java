@@ -52,6 +52,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -85,6 +86,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * @since 5633
  */
 class TagEditHelper {
+    private final JTable tagTable;
     private final DefaultTableModel tagData;
     private final Map<String, Map<String, Integer>> valueCount;
 
@@ -115,9 +117,19 @@ class TagEditHelper {
         }
     };
 
-    TagEditHelper(DefaultTableModel propertyData, Map<String, Map<String, Integer>> valueCount) {
+    TagEditHelper(JTable tagTable, DefaultTableModel propertyData, Map<String, Map<String, Integer>> valueCount) {
+        this.tagTable = tagTable;
         this.tagData = propertyData;
         this.valueCount = valueCount;
+    }
+
+    public final String getDataKey(int viewRow) {
+        return tagData.getValueAt(tagTable.convertRowIndexToModel(viewRow), 0).toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    public final Map<String, Integer> getDataValues(int viewRow) {
+        return (Map<String, Integer>) tagData.getValueAt(tagTable.convertRowIndexToModel(viewRow), 1);
     }
 
     /**
@@ -151,12 +163,10 @@ class TagEditHelper {
         sel = Main.main.getInProgressSelection();
         if (sel == null || sel.isEmpty()) return;
 
-        String key = tagData.getValueAt(row, 0).toString();
+        String key = getDataKey(row);
         objKey = key;
 
-        @SuppressWarnings("unchecked")
-        final EditTagDialog editDialog = new EditTagDialog(key,
-                (Map<String, Integer>) tagData.getValueAt(row, 1), focusOnKey);
+        final EditTagDialog editDialog = new EditTagDialog(key, getDataValues(row), focusOnKey);
         editDialog.showDialog();
         if (editDialog.getValue() != 1) return;
         editDialog.performTagEdit();
@@ -566,7 +576,7 @@ class TagEditHelper {
                     itemToSelect = item;
                 }
                 for (int i = 0; i < tagData.getRowCount(); ++i) {
-                    if (item.getValue().equals(tagData.getValueAt(i, 0))) {
+                    if (item.getValue().equals(getDataKey(i))) {
                         if (itemToSelect == item) {
                             itemToSelect = null;
                         }
@@ -830,7 +840,7 @@ class TagEditHelper {
             // Disable action if its key is already set on the object (the key being absent from the keys list for this reason
             // performing this action leads to autocomplete to the next key (see #7671 comments)
             for (int j = 0; j < tagData.getRowCount(); ++j) {
-                if (t.getKey().equals(tagData.getValueAt(j, 0))) {
+                if (t.getKey().equals(getDataKey(j))) {
                     action.setEnabled(false);
                     break;
                 }

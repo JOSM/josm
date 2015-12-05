@@ -171,7 +171,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     /**
      * This sub-object is responsible for all adding and editing of tags
      */
-    private final transient TagEditHelper editHelper = new TagEditHelper(tagData, valueCount);
+    private final transient TagEditHelper editHelper = new TagEditHelper(tagTable, tagData, valueCount);
 
     private final transient DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
     private final HelpAction helpAction = new HelpAction();
@@ -560,10 +560,10 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         ).setVisible(true);
     }
 
-    private int findRow(TableModel model, Object value) {
+    private int findViewRow(JTable table, TableModel model, Object value) {
         for (int i = 0; i < model.getRowCount(); i++) {
             if (model.getValueAt(i, 0).equals(value))
-                return i;
+                return table.convertRowIndexToView(i);
         }
         return -1;
     }
@@ -638,7 +638,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         Relation selectedRelation = null;
         selectedTag = editHelper.getChangedKey(); // select last added or last edited key by default
         if (selectedTag == null && tagTable.getSelectedRowCount() == 1) {
-            selectedTag = (String) tagData.getValueAt(tagTable.getSelectedRow(), 0);
+            selectedTag = editHelper.getDataKey(tagTable.getSelectedRow());
         }
         if (membershipTable.getSelectedRowCount() == 1) {
             selectedRelation = (Relation) membershipData.getValueAt(membershipTable.getSelectedRow(), 0);
@@ -736,9 +736,9 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         pluginHook.setVisible(hasSelection);
 
         int selectedIndex;
-        if (selectedTag != null && (selectedIndex = findRow(tagData, selectedTag)) != -1) {
+        if (selectedTag != null && (selectedIndex = findViewRow(tagTable, tagData, selectedTag)) != -1) {
             tagTable.changeSelection(selectedIndex, 0, false, false);
-        } else if (selectedRelation != null && (selectedIndex = findRow(membershipData, selectedRelation)) != -1) {
+        } else if (selectedRelation != null && (selectedIndex = findViewRow(membershipTable, membershipData, selectedRelation)) != -1) {
             membershipTable.changeSelection(selectedIndex, 0, false, false);
         } else if (hasTags) {
             tagTable.changeSelection(0, 0, false, false);
@@ -790,13 +790,12 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
      * Returns the selected tag.
      * @return The current selected tag
      */
-    @SuppressWarnings("unchecked")
     public Tag getSelectedProperty() {
         int row = tagTable.getSelectedRow();
         if (row == -1) return null;
-        Map<String, Integer> map = (TreeMap<String, Integer>) tagData.getValueAt(row, 1);
+        Map<String, Integer> map = editHelper.getDataValues(row);
         return new Tag(
-                tagData.getValueAt(row, 0).toString(),
+                editHelper.getDataKey(row),
                 map.size() > 1 ? "" : map.keySet().iterator().next());
     }
 
@@ -951,7 +950,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
             Map<String, String> tags = new HashMap<>(rows.length);
             int nextKeyIndex = rows[0];
             for (int row : rows) {
-                String key = tagData.getValueAt(row, 0).toString();
+                String key = editHelper.getDataKey(row);
                 if (row == nextKeyIndex + 1) {
                     nextKeyIndex = row; // no gap yet
                 }
@@ -969,7 +968,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                     // gap found
                     nextKeyIndex++;
                 }
-                nextKey = (String) tagData.getValueAt(nextKeyIndex, 0);
+                nextKey = editHelper.getDataKey(nextKeyIndex);
             }
 
             Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
@@ -977,7 +976,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
             membershipTable.clearSelection();
             if (nextKey != null) {
-                tagTable.changeSelection(findRow(tagData, nextKey), 0, false, false);
+                tagTable.changeSelection(findViewRow(tagTable, tagData, nextKey), 0, false, false);
             }
         }
 
@@ -1009,7 +1008,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
             tagTable.clearSelection();
             if (nextRelation != null) {
-                membershipTable.changeSelection(findRow(membershipData, nextRelation), 0, false, false);
+                membershipTable.changeSelection(findViewRow(membershipTable, membershipData, nextRelation), 0, false, false);
             }
         }
 
@@ -1114,9 +1113,8 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                 int row;
                 if (tagTable.getSelectedRowCount() == 1) {
                     row = tagTable.getSelectedRow();
-                    String key = Utils.encodeUrl(tagData.getValueAt(row, 0).toString());
-                    @SuppressWarnings("unchecked")
-                    Map<String, Integer> m = (Map<String, Integer>) tagData.getValueAt(row, 1);
+                    String key = Utils.encodeUrl(editHelper.getDataKey(row));
+                    Map<String, Integer> m = editHelper.getDataValues(row);
                     String val = Utils.encodeUrl(m.entrySet().iterator().next().getKey());
 
                     uris.add(new URI(String.format("%s%sTag:%s=%s", base, lang, key, val)));
@@ -1205,13 +1203,12 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void actionPerformed(ActionEvent e) {
             final String url;
             if (tagTable.getSelectedRowCount() == 1) {
                 final int row = tagTable.getSelectedRow();
-                final String key = Utils.encodeUrl(tagData.getValueAt(row, 0).toString());
-                Map<String, Integer> values = (Map<String, Integer>) tagData.getValueAt(row, 1);
+                final String key = Utils.encodeUrl(editHelper.getDataKey(row));
+                Map<String, Integer> values = editHelper.getDataValues(row);
                 if (values.size() == 1) {
                     url = TAGINFO_URL_PROP.get() + "tags/" + key /* do not URL encode key, otherwise addr:street does not work */
                             + '=' + Utils.encodeUrl(values.keySet().iterator().next());
@@ -1238,7 +1235,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         public void actionPerformed(ActionEvent ae) {
             if (tagTable.getSelectedRowCount() != 1)
                 return;
-            String key = tagData.getValueAt(tagTable.getSelectedRow(), 0).toString();
+            String key = editHelper.getDataKey(tagTable.getSelectedRow());
             Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
             String clipboard = Utils.getClipboardContent();
             if (sel.isEmpty() || clipboard == null)
@@ -1259,7 +1256,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
             if (rows.length == 0 || sel.isEmpty()) return;
 
             for (int row: rows) {
-                String key = tagData.getValueAt(row, 0).toString();
+                String key = editHelper.getDataKey(row);
                 if (sel.isEmpty())
                     return;
                 for (OsmPrimitive p : sel) {
@@ -1341,7 +1338,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         public void actionPerformed(ActionEvent e) {
             if (tagTable.getSelectedRowCount() != 1)
                 return;
-            String key = tagData.getValueAt(tagTable.getSelectedRow(), 0).toString();
+            String key = editHelper.getDataKey(tagTable.getSelectedRow());
             Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
             if (sel.isEmpty())
                 return;
