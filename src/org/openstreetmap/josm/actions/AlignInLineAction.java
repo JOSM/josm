@@ -80,6 +80,7 @@ public final class AlignInLineAction extends JosmAction {
      *
      * @param nodes Nodes to be aligned.
      * @return A array of two nodes.
+     * @throws IllegalArgumentException if nodes is empty
      */
     private static Node[] nodePairFurthestApart(List<Node> nodes) {
         // Detect if selected nodes are on the same way.
@@ -92,6 +93,10 @@ public final class AlignInLineAction extends JosmAction {
                 waysRef = new HashSet<>(ref);
             else
                 waysRef.retainAll(ref);
+        }
+
+        if (waysRef == null) {
+            throw new IllegalArgumentException();
         }
 
         // Nodes belongs to multiple ways, return most distant nodes.

@@ -418,6 +418,9 @@ public class UnGlueAction extends JosmAction {
                 way = w;
             }
         }
+        if (way == null) {
+            return false;
+        }
         List<Node> oldNodes = way.getNodes();
         List<Node> newNodes = new ArrayList<>(oldNodes.size());
         List<Node> addNodes = new ArrayList<>();

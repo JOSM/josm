@@ -699,7 +699,7 @@ public abstract class Main {
         }.call();
     }
 
-    private abstract class InitializationTask implements Callable<Void> {
+    private abstract static class InitializationTask implements Callable<Void> {
 
         private final String name;
 

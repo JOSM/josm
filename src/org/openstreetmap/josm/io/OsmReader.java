@@ -369,8 +369,9 @@ public class OsmReader extends AbstractReader {
         String value = parser.getAttributeValue(null, "v");
         if (key == null || value == null) {
             throwException(tr("Missing key or value attribute in tag."));
+        } else {
+            t.put(key.intern(), value.intern());
         }
-        t.put(key.intern(), value.intern());
         jumpToEnd();
     }
 

@@ -211,6 +211,7 @@ public final class DistributeAction extends JosmAction {
      * nodes along the straight line between these nodes.
      * @param nodes nodes to distribute
      * @return Commands to execute to perform action
+     * @throws IllegalArgumentException if nodes is empty
      */
     private static Collection<Command> distributeNodes(Collection<Node> nodes) {
         // Find from the selected nodes two that are the furthest apart.
@@ -231,6 +232,10 @@ public final class DistributeAction extends JosmAction {
                     distance = dist;
                 }
             }
+        }
+
+        if (nodea == null || nodeb == null) {
+            throw new IllegalArgumentException();
         }
 
         // Remove the nodes A and B from the list of nodes to move
@@ -265,14 +270,16 @@ public final class DistributeAction extends JosmAction {
                 }
             }
 
-            // First move the node to A's position, then move it towards B
-            double dx = ax - s.getEastNorth().east() + (bx-ax)*pos/num;
-            double dy = ay - s.getEastNorth().north() + (by-ay)*pos/num;
+            if (s != null) {
+                // First move the node to A's position, then move it towards B
+                double dx = ax - s.getEastNorth().east() + (bx-ax)*pos/num;
+                double dy = ay - s.getEastNorth().north() + (by-ay)*pos/num;
 
-            cmds.add(new MoveCommand(s, dx, dy));
+                cmds.add(new MoveCommand(s, dx, dy));
 
-            //remove moved node from the list
-            nodes.remove(s);
+                //remove moved node from the list
+                nodes.remove(s);
+            }
         }
 
         return cmds;

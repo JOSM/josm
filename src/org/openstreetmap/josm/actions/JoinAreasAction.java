@@ -764,6 +764,7 @@ public class JoinAreasAction extends JosmAction {
      * @param parts the split parts of the way
      * @param isInner - if true, reverts the direction (for multipolygon islands)
      * @return list of parts, marked with the inside orientation.
+     * @throws IllegalArgumentException if parts is empty
      */
     private List<WayInPolygon> markWayInsideSide(List<Way> parts, boolean isInner) {
 
@@ -795,6 +796,10 @@ public class JoinAreasAction extends JosmAction {
                     topIndex = pos;
                 }
             }
+        }
+
+        if (topWay == null || topNode == null) {
+            throw new IllegalArgumentException();
         }
 
         //get the upper way and it's orientation.
@@ -854,7 +859,7 @@ public class JoinAreasAction extends JosmAction {
         List<WayInPolygon> result = new ArrayList<>();
 
         //iterate till full circle is reached
-        while (true) {
+        while (curWay != null) {
 
             //add cur way
             WayInPolygon resultWay = new WayInPolygon(curWay, curWayInsideToTheRight);

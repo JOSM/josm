@@ -202,7 +202,7 @@ public class MultipolygonBuilder {
             //find polygon ways
             while (true) {
                 boolean curWayReverse = prevNode == curWay.lastNode();
-                Node nextNode = (curWayReverse) ? curWay.firstNode() : curWay.lastNode();
+                Node nextNode = curWayReverse ? curWay.firstNode() : curWay.lastNode();
 
                 //add cur way to the list
                 collectedWays.add(curWay);
