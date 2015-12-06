@@ -2484,7 +2484,14 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=switch" />
             <key key="railway" value="switch" />
             <text key="ref" text="Reference" />
+            <text key="operator" text="Operator" />
         </item> <!-- Railway Switch -->
+        <item name="Railway Signal" icon="styles/standard/vehicle/railway_signal.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=signal" />
+            <key key="railway" value="signal" />
+            <text key="ref" text="Reference" />
+            <text key="operator" text="Operator" />
+        </item> <!-- Railway Signal -->
         <item name="Railway milestone" icon="styles/standard/vehicle/milestone.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=milestone" />
             <key key="railway" value="milestone" />
