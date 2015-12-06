@@ -3032,6 +3032,7 @@
             <text key="name" text="Name" />
             <check key="bench" text="Bench" />
             <check key="shelter" text="Shelter" />
+            <check key="bin" text="Waste Basket/Trash Can" />
             <check key="covered" text="Covered" />
             <reference ref="wheelchair" />
             <optional>
@@ -3199,8 +3200,9 @@
             <key key="highway" value="bus_stop" />
             <optional>
                 <text key="name" text="Name" />
-                <check key="shelter" text="Shelter" />
                 <check key="bench" text="Bench" />
+                <check key="shelter" text="Shelter" />
+                <check key="bin" text="Waste Basket/Trash Can" />
                 <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             </optional>
         </item> <!-- Bus Stop -->
