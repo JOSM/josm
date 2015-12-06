@@ -4222,6 +4222,11 @@ node[waterway=turning_point] {
     set icon_z17;
     text: auto;
 }
+node[seamark=buoy] {
+    icon-image: "nautical/buoy.svg";
+    set icon_z17;
+    text: auto;
+}
 area[waterway=boatyard] {
     fill-color: manmade#d8d8d8;
 }
@@ -4857,25 +4862,3 @@ way|z20-[highway][setting("highway_labels")] {
 area[setting("partial_fill")] {
     fill-extent: 25;
 }
-
-/* "deprecated" tags 
-     historic=museum -> tourism=museum 
-     man_made=power_wind -> power=generator and power_source=wind 
-     man_made=power_hydro -> power=generator and power_source=hydro 
-     man_made=power_fossil -> power=generator and power_source=fossil 
-     man_made=power_nuclear -> power=generator and power_source=nuclear 
-     amenity=park_bench -> amenity=bench 
-     amenity=signpost -> information=guidepost 
-     amenity=emergency_phone -> emergency=phone 
-     highway minor - classification now more detailed 
-     highway=stile -> barrier=stile 
-     highway=gate -> barrier=gate 
-     highway=cattle_grid -> barrier=cattle_grid 
-     highway=toll_booth -> barrier=toll_booth 
-     highway=viaduct -> bridge=viaduct 
-     railway=viaduct -> bridge=viaduct 
-     waterway=aqueduct -> bridge=aqueduct 
-     natural=marsh -> natural=wetland 
-     leisure=zoo -> tourism=zoo 
-     power=station -> power=plant or power=sub_station 
-*/

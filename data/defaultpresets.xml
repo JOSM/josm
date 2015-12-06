@@ -2260,6 +2260,10 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:waterway=turning_point" />
             <key key="waterway" value="turning_point" />
         </item> <!-- Turning Point -->
+        <item name="Buoy" icon="styles/standard/nautical/buoy.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:seamark=buoy" />
+            <key key="seamark" value="buoy" />
+        </item> <!-- Buoy -->
         <separator/>
         <item name="Slipway" icon="styles/standard/nautical/slipway.png" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=slipway"
