@@ -1108,6 +1108,7 @@
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:highway=footway" />
             <key key="highway" value="footway" />
             <optional>
+                <combo key="footway" text="Type" values="sidewalk,crossing" values_context="footway" />
                 <reference ref="name_layer" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline" />
