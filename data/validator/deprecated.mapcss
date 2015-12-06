@@ -241,6 +241,15 @@
   assertMatch: "way fixme=yes";
 }
 
+*[name][name=~/^(?i)fixme$/] {
+  throwWarning: tr("Wrong usage of {0} tag. Remove {1}, because it is clear that the name is missing even without an additional tag.", "{0.key}", "{0.tag}");
+  fixRemove: "name";
+  assertMatch: "node name=fixme";
+  assertMatch: "node name=Fixme";
+  assertMatch: "node name=FIXME";
+  assertNoMatch: "node name=valid name";
+}
+
 /* see #10107, #10108, #10929 - http://wiki.openstreetmap.org/wiki/Proposed_features/leaftype#Features.2FPages_affected */
 *[wood=deciduous],
 *[type=broad_leaved],
