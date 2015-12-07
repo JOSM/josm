@@ -563,3 +563,14 @@ relation[/^..$/][!to] {
   suggestAlternative: "landuse=farmland";
   suggestAlternative: "landuse=farmyard";
 }
+
+/* #12135 comment:11 */
+*[seamark=buoy]["seamark:type"=~/^(buoy_cardinal|buoy_installation|buoy_isolated_danger|buoy_lateral|buoy_safe_water|buoy_special_purpose|mooring)$/] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "{1.tag}";
+  fixRemove: "seamark";
+}
+*[seamark=buoy]["seamark:type"!~/^(buoy_cardinal|buoy_installation|buoy_isolated_danger|buoy_lateral|buoy_safe_water|buoy_special_purpose|mooring)$/] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "{1.tag}";
+}
