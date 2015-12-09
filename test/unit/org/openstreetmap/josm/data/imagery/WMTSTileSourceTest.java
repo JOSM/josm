@@ -29,6 +29,7 @@ public class WMTSTileSourceTest {
     private ImageryInfo testImageryWIEN = getImagery("test/data/wmts/getCapabilities-wien.xml");
     private ImageryInfo testImageryWALLONIE = getImagery("test/data/wmts/WMTSCapabilities-Wallonie.xml");
     private ImageryInfo testImageryOntario = getImagery("test/data/wmts/WMTSCapabilities-Ontario.xml");
+    private ImageryInfo testImagery12168 = getImagery("test/data/wmts/bug12168-WMTSCapabilities.xml");
     private ImageryInfo testLotsOfLayers = getImagery("test/data/wmts/getCapabilities-lots-of-layers.xml");
 
     /**
@@ -208,6 +209,17 @@ public class WMTSTileSourceTest {
         verifyTile(new LatLon(53.59940948387726, 19.560544913270064), testSource, 6453, 3140, 14);
         verifyTile(new LatLon(49.782984840526055, 22.790064966993445), testSource, 9932, 9305, 14);
     }
+
+    @Test
+    public void test12168() throws IOException {
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        WMTSTileSource testSource = new WMTSTileSource(testImagery12168);
+        testSource.initProjection(Main.getProjection());
+        assertEquals(
+                "http://www.ngi.be/cartoweb/1.0.0/topo/default/3857/7/1/1.png",
+                testSource.getTileUrl(1,  1,  1));
+    }
+
 
     // XXX: disabled as this needs user action
     //@Test
