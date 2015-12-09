@@ -2299,9 +2299,9 @@
         </item> <!-- Dock -->
     </group> <!-- Shipping -->
   </group> <!-- Water -->
-  <group name="Transport" icon="presets/railway.png">
-    <group name="Railway" icon="presets/railway.png">
-        <item name="Rail" icon="presets/railway.png" type="way" preset_name_label="true">
+  <group name="Transport" icon="presets/railway.svg">
+    <group name="Railway" icon="presets/railway.svg">
+        <item name="Rail" icon="presets/railway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=rail"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=rail"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=rail"
@@ -2317,7 +2317,7 @@
                 <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item> <!-- Rail -->
-        <item name="Narrow Gauge Rail" icon="presets/railway.png" type="way" preset_name_label="true">
+        <item name="Narrow Gauge Rail" icon="presets/railway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=light_rail"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=light_rail"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=light_rail" />
@@ -2327,7 +2327,7 @@
                 <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item> <!-- Narrow Gauge Rail -->
-        <item name="Monorail" icon="presets/railway.png" type="way" preset_name_label="true">
+        <item name="Monorail" icon="presets/railway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=monorail"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=monorail"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=monorail"
@@ -2398,7 +2398,7 @@
             </optional>
         </item> <!-- Bus Guideway -->
         <separator/>
-        <item name="Disused Rail" icon="presets/railway.png" type="way" preset_name_label="true">
+        <item name="Disused Rail" icon="presets/railway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=disused"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=disused"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=disused" />
@@ -2407,7 +2407,7 @@
                 <reference ref="railway_service" />
             </optional>
         </item> <!-- Disused Rail -->
-        <item name="Abandoned Rail" icon="presets/railway.png" type="way" preset_name_label="true">
+        <item name="Abandoned Rail" icon="presets/railway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=abandoned"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=abandoned"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=abandoned"
@@ -2474,7 +2474,7 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=buffer_stop" />
             <key key="railway" value="buffer_stop" />
         </item> <!-- Buffer Stop -->
-        <item name="Railway Switch" icon="presets/railway_switch.png" type="node" preset_name_label="true">
+        <item name="Railway Switch" icon="presets/railway_switch.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=switch"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=switch"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=switch" />

@@ -3466,7 +3466,7 @@ way[railway=funicular] {
     dashes: 9,9;
 }
 node[railway=switch] {
-    icon-image: "presets/railway_switch.png";
+    icon-image: "presets/railway_switch.svg";
     icon-width: 16;
     set icon_z17;
     text: auto;
