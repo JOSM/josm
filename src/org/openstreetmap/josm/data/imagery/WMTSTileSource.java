@@ -58,7 +58,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource {
     private static final String PATTERN_HEADER  = "\\{header\\(([^,]+),([^}]+)\\)\\}";
 
-    private static final String URL_GET_ENCODING_PARAMS = "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER={layer}&STYLE={Style}&"
+    private static final String URL_GET_ENCODING_PARAMS = "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER={layer}&STYLE={style}&"
             + "FORMAT={format}&tileMatrixSet={TileMatrixSet}&tileMatrix={TileMatrix}&tileRow={TileRow}&tileCol={TileCol}";
 
     private static final String[] ALL_PATTERNS = {
@@ -647,16 +647,20 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
             return "";
         }
 
-        switch (transferMode) {
-        case KVP:
-            url = baseUrl + URL_GET_ENCODING_PARAMS;
-            break;
-        case REST:
+        if (currentLayer.baseUrl != null && transferMode == null) {
             url = currentLayer.baseUrl;
-            break;
-        default:
-            url = "";
-            break;
+        } else {
+            switch (transferMode) {
+            case KVP:
+                url = baseUrl + URL_GET_ENCODING_PARAMS;
+                break;
+            case REST:
+                url = currentLayer.baseUrl;
+                break;
+            default:
+                url = "";
+                break;
+            }
         }
 
         TileMatrix tileMatrix = getTileMatrix(zoom);
@@ -671,7 +675,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
                 .replaceAll("\\{TileMatrix\\}", tileMatrix.identifier)
                 .replaceAll("\\{TileRow\\}", Integer.toString(tiley))
                 .replaceAll("\\{TileCol\\}", Integer.toString(tilex))
-                .replaceAll("\\{Style\\}", this.currentLayer.style);
+                .replaceAll("(?i)\\{style\\}", this.currentLayer.style);
     }
 
     /**
