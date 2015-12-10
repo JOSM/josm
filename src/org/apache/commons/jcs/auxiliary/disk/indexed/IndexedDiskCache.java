@@ -20,7 +20,6 @@ package org.apache.commons.jcs.auxiliary.disk.indexed;
  */
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -185,7 +184,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
             initializeRecycleBin();
 
             // Initialization finished successfully, so set alive to true.
-            alive = true;
+            setAlive(true);
             if (log.isInfoEnabled())
             {
                 log.info(logCacheName + "Indexed Disk Cache is alive.");
@@ -228,12 +227,10 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
      * <p>
      *
      * @param cattr
-     * @throws FileNotFoundException
      * @throws IOException
      * @throws InterruptedException
      */
-    private void initializeKeysAndData(IndexedDiskCacheAttributes cattr) throws FileNotFoundException, IOException,
-        InterruptedException
+    private void initializeKeysAndData(IndexedDiskCacheAttributes cattr) throws IOException, InterruptedException
     {
         this.dataFile = new IndexedDisk(new File(rafDir, fileName + ".data"), getElementSerializer());
         this.keyFile = new IndexedDisk(new File(rafDir, fileName + ".key"), getElementSerializer());
@@ -288,7 +285,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
     {
         loadKeys();
 
-        if (keyHash.size() == 0)
+        if (keyHash.isEmpty())
         {
             dataFile.reset();
         }
@@ -503,7 +500,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
     @Override
     protected void processUpdate(ICacheElement<K, V> ce)
     {
-        if (!alive)
+        if (!isAlive())
         {
             log.error(logCacheName + "No longer alive; aborting put of key = " + ce.getKey());
             return;
@@ -619,7 +616,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
     @Override
     protected ICacheElement<K, V> processGet(K key)
     {
-        if (!alive)
+        if (!isAlive())
         {
             log.error(logCacheName + "No longer alive so returning null for key = " + key);
             return null;
@@ -780,7 +777,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
     @Override
     protected boolean processRemove(K key)
     {
-        if (!alive)
+        if (!isAlive())
         {
             log.error(logCacheName + "No longer alive so returning false for key = " + key);
             return false;
@@ -854,7 +851,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
 
         for (K k : keyHash.keySet())
         {
-            if (k instanceof String && k.toString().startsWith(key.toString()))
+            if (k instanceof String && k.toString().startsWith(key))
             {
                 itemsToRemove.add(k);
             }
@@ -942,7 +939,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
     @Override
     public void processRemoveAll()
     {
-        ICacheEvent<String> cacheEvent = createICacheEvent(cacheName, "all", ICacheEventLogger.REMOVEALL_EVENT);
+        ICacheEvent<String> cacheEvent = createICacheEvent(getCacheName(), "all", ICacheEventLogger.REMOVEALL_EVENT);
         try
         {
             reset();
@@ -1035,7 +1032,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
         keyHash = null;
         if (maxKeySize >= 0)
         {
-            if (this.diskLimitType.equals(DiskLimitType.COUNT))
+            if (this.diskLimitType == DiskLimitType.COUNT)
             {
                 keyHash = new LRUMapCountLimited(maxKeySize);
             }
@@ -1070,7 +1067,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
     @Override
     public void processDispose()
     {
-        ICacheEvent<String> cacheEvent = createICacheEvent(cacheName, "none", ICacheEventLogger.DISPOSE_EVENT);
+        ICacheEvent<String> cacheEvent = createICacheEvent(getCacheName(), "none", ICacheEventLogger.DISPOSE_EVENT);
         try
         {
             Runnable disR = new Runnable()
@@ -1104,14 +1101,14 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
      */
     protected void disposeInternal()
     {
-        if (!alive)
+        if (!isAlive())
         {
             log.error(logCacheName + "Not alive and dispose was called, filename: " + fileName);
             return;
         }
 
         // Prevents any interaction with the cache while we're shutting down.
-        alive = false;
+        setAlive(false);
 
         Thread optimizationThread = currentOptimizationThread;
         if (isRealTimeOptimizationEnabled && optimizationThread != null)
@@ -1595,7 +1592,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
 
         ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
 
-        elems.add(new StatElement<Boolean>("Is Alive", Boolean.valueOf(alive)));
+        elems.add(new StatElement<Boolean>("Is Alive", Boolean.valueOf(isAlive())));
         elems.add(new StatElement<Integer>("Key Map Size", Integer.valueOf(this.keyHash != null ? this.keyHash.size() : -1)));
         try
         {
@@ -1663,11 +1660,8 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
         @Override
-        public int compare(IndexedDiskElementDescriptor o1, IndexedDiskElementDescriptor o2)
+        public int compare(IndexedDiskElementDescriptor ded1, IndexedDiskElementDescriptor ded2)
         {
-            IndexedDiskElementDescriptor ded1 = o1;
-            IndexedDiskElementDescriptor ded2 = o2;
-
             if (ded1.pos < ded2.pos)
             {
                 return -1;

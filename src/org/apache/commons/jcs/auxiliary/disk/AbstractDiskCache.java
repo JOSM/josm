@@ -19,6 +19,14 @@ package org.apache.commons.jcs.auxiliary.disk;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheEventLogging;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
 import org.apache.commons.jcs.auxiliary.disk.behavior.IDiskCacheAttributes;
@@ -36,14 +44,6 @@ import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 /**
  * Abstract class providing a base implementation of a disk cache, which can be easily extended to
  * implement a disk cache for a specific persistence mechanism.
@@ -58,16 +58,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public abstract class AbstractDiskCache<K, V>
     extends AbstractAuxiliaryCacheEventLogging<K, V>
-    implements AuxiliaryCache<K, V>
 {
     /** The logger */
     private static final Log log = LogFactory.getLog( AbstractDiskCache.class );
 
     /** Generic disk cache attributes */
     private IDiskCacheAttributes diskCacheAttributes = null;
-
-    // TODO most of these fields should be made private with getters/setters as necessary
-    // Though hopefully many of them can be set at construction and made final
 
     /**
      * Map where elements are stored between being added to this cache and actually spooled to disk.
@@ -77,31 +73,31 @@ public abstract class AbstractDiskCache<K, V>
      * If the elements are pulled into the memory cache while the are still in purgatory, writing to
      * disk can be canceled.
      */
-    protected Map<K, PurgatoryElement<K, V>> purgatory = new HashMap<K, PurgatoryElement<K, V>>();
+    private Map<K, PurgatoryElement<K, V>> purgatory;
 
     /**
      * The CacheEventQueue where changes will be queued for asynchronous updating of the persistent
      * storage.
      */
-    protected ICacheEventQueue<K, V> cacheEventQueue;
+    private ICacheEventQueue<K, V> cacheEventQueue;
 
     /**
      * Indicates whether the cache is 'alive': initialized, but not yet disposed. Child classes must
      * set this to true.
      */
-    protected boolean alive = false;
+    private boolean alive = false;
 
     /** Every cache will have a name, subclasses must set this when they are initialized. */
-    protected String cacheName;
+    private String cacheName;
 
     /** DEBUG: Keeps a count of the number of purgatory hits for debug messages */
-    protected int purgHits = 0;
+    private int purgHits = 0;
 
     /**
      * We lock here, so that we cannot get an update after a remove all. an individual removal locks
      * the item.
      */
-    protected final ReentrantReadWriteLock removeAllLock = new ReentrantReadWriteLock();
+    private final ReentrantReadWriteLock removeAllLock = new ReentrantReadWriteLock();
 
     // ----------------------------------------------------------- constructors
 
@@ -111,10 +107,9 @@ public abstract class AbstractDiskCache<K, V>
      * <p>
      * @param attr
      */
-    public AbstractDiskCache( IDiskCacheAttributes attr )
+    protected AbstractDiskCache( IDiskCacheAttributes attr )
     {
         this.diskCacheAttributes = attr;
-
         this.cacheName = attr.getCacheName();
 
         // create queue
@@ -125,6 +120,22 @@ public abstract class AbstractDiskCache<K, V>
 
         // create purgatory
         initPurgatory();
+    }
+
+    /**
+     * @return true if the cache is alive
+     */
+    public boolean isAlive()
+    {
+        return alive;
+    }
+
+    /**
+     * @param alive set the alive status
+     */
+    public void setAlive(boolean alive)
+    {
+        this.alive = alive;
     }
 
     /**
@@ -459,7 +470,7 @@ public abstract class AbstractDiskCache<K, V>
             public void run()
             {
                 boolean keepGoing = true;
-                long total = 0;
+                // long total = 0;
                 long interval = 100;
                 while ( keepGoing )
                 {
@@ -467,7 +478,7 @@ public abstract class AbstractDiskCache<K, V>
                     try
                     {
                         Thread.sleep( interval );
-                        total += interval;
+                        // total += interval;
                         // log.info( "total = " + total );
                     }
                     catch ( InterruptedException e )
@@ -483,7 +494,7 @@ public abstract class AbstractDiskCache<K, V>
         // wait up to 60 seconds for dispose and then quit if not done.
         try
         {
-            t.join( this.diskCacheAttributes.getShutdownSpoolTimeLimit() * 1000 );
+            t.join( this.diskCacheAttributes.getShutdownSpoolTimeLimit() * 1000L );
         }
         catch ( InterruptedException ex )
         {

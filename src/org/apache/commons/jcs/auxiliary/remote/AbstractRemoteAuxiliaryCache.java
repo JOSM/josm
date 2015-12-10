@@ -19,6 +19,18 @@ package org.apache.commons.jcs.auxiliary.remote;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheEventLogging;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
@@ -40,18 +52,6 @@ import org.apache.commons.jcs.utils.serialization.SerializationConversionUtil;
 import org.apache.commons.jcs.utils.threadpool.ThreadPoolManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /** Abstract base for remote caches. I'm trying to break out and reuse common functionality. */
 public abstract class AbstractRemoteAuxiliaryCache<K, V>
@@ -182,7 +182,7 @@ public abstract class AbstractRemoteAuxiliaryCache<K, V>
             }
 
             // Eventually the instance of will not be necessary.
-            if ( retVal != null && retVal instanceof ICacheElementSerialized )
+            if ( retVal instanceof ICacheElementSerialized )
             {
                 // Never try to deserialize if you are a cluster client. Cluster
                 // clients are merely intra-remote cache communicators. Remote caches are assumed
@@ -449,7 +449,7 @@ public abstract class AbstractRemoteAuxiliaryCache<K, V>
      */
     @Override
     public Set<K> getKeySet()
-        throws java.rmi.RemoteException, IOException
+        throws IOException
     {
         return getRemoteCacheService().getKeySet(cacheName);
     }
@@ -610,9 +610,10 @@ public abstract class AbstractRemoteAuxiliaryCache<K, V>
     {
         @SuppressWarnings("unchecked") // Don't know how to do this properly
         ICacheServiceNonLocal<K, V> remote = (ICacheServiceNonLocal<K, V>)restoredRemote;
-        if ( getRemoteCacheService() != null && getRemoteCacheService() instanceof ZombieCacheServiceNonLocal )
+        ICacheServiceNonLocal<K, V> prevRemote = getRemoteCacheService();
+        if ( prevRemote instanceof ZombieCacheServiceNonLocal )
         {
-            ZombieCacheServiceNonLocal<K, V> zombie = (ZombieCacheServiceNonLocal<K, V>) getRemoteCacheService();
+            ZombieCacheServiceNonLocal<K, V> zombie = (ZombieCacheServiceNonLocal<K, V>) prevRemote;
             setRemoteCacheService( remote );
             try
             {

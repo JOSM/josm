@@ -232,7 +232,7 @@ public class CompositeCacheConfigurator
      *<p>
      * @param props
      */
-    protected <K, V> void parseSystemRegions( Properties props )
+    protected void parseSystemRegions( Properties props )
     {
         Enumeration<?> en = props.propertyNames();
         while ( en.hasMoreElements() )
@@ -242,7 +242,7 @@ public class CompositeCacheConfigurator
             {
                 String regionName = key.substring( SYSTEM_REGION_PREFIX.length() );
                 String value = OptionConverter.findAndSubst( key, props );
-                ICache<K, V> cache;
+                ICache<?, ?> cache;
                 synchronized ( regionName )
                 {
                     cache = parseRegion( props, regionName, value, null, SYSTEM_REGION_PREFIX );
@@ -258,7 +258,7 @@ public class CompositeCacheConfigurator
      *<p>
      * @param props
      */
-    protected <K, V> void parseRegions( Properties props )
+    protected void parseRegions( Properties props )
     {
         List<String> regionNames = new ArrayList<String>();
 
@@ -273,7 +273,7 @@ public class CompositeCacheConfigurator
                 regionNames.add( regionName );
 
                 String auxiliaryList = OptionConverter.findAndSubst( key, props );
-                ICache<K, V> cache;
+                ICache<?, ?> cache;
                 synchronized ( regionName )
                 {
                     cache = parseRegion( props, regionName, auxiliaryList );

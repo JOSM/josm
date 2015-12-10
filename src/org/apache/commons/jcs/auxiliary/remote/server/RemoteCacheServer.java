@@ -489,9 +489,7 @@ public class RemoteCacheServer<K, V>
             }
         }
 
-        ICacheElement<K, V> element = null;
-
-        element = getFromCacheListeners( key, fromCluster, cacheDesc, element );
+        ICacheElement<K, V> element = getFromCacheListeners( key, fromCluster, cacheDesc, null );
         return element;
     }
 
@@ -731,8 +729,6 @@ public class RemoteCacheServer<K, V>
      */
     private Map<K, ICacheElement<K, V>> processGetMultiple( String cacheName, Set<K> keys, long requesterId )
     {
-        Map<K, ICacheElement<K, V>> elements = null;
-
         boolean fromCluster = isRequestFromCluster( requesterId );
 
         if ( log.isDebugEnabled() )
@@ -741,17 +737,8 @@ public class RemoteCacheServer<K, V>
                 + "] fromCluster = " + fromCluster );
         }
 
-        CacheListeners<K, V> cacheDesc = null;
-        try
-        {
-            cacheDesc = getCacheListeners( cacheName );
-        }
-        catch ( Exception e )
-        {
-            log.error( "Problem getting listeners.", e );
-        }
-
-        elements = getMultipleFromCacheListeners( keys, elements, fromCluster, cacheDesc );
+        CacheListeners<K, V> cacheDesc = getCacheListeners( cacheName );
+        Map<K, ICacheElement<K, V>> elements = getMultipleFromCacheListeners( keys, null, fromCluster, cacheDesc );
         return elements;
     }
 

@@ -20,6 +20,7 @@ package org.apache.commons.jcs.auxiliary.remote.behavior;
  */
 
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
+import org.apache.commons.jcs.auxiliary.remote.RemoteLocation;
 import org.apache.commons.jcs.auxiliary.remote.server.behavior.RemoteType;
 
 /**
@@ -74,32 +75,26 @@ public interface ICommonRemoteCacheAttributes
     void setRemoteServiceName( String s );
 
     /**
-     * Gets the remoteHost attribute of the IRemoteCacheAttributes object
+     * Sets the location attribute of the RemoteCacheAttributes object.
      * <p>
-     * @return The remoteHost value
+     * @param location The new location value
      */
-    String getRemoteHost();
+    void setRemoteLocation( RemoteLocation location );
 
     /**
-     * Sets the remoteHost attribute of the IRemoteCacheAttributes object
+     * Sets the location attribute of the RemoteCacheAttributes object.
      * <p>
-     * @param s The new remoteHost value
+     * @param host The new remoteHost value
+     * @param port The new remotePort value
      */
-    void setRemoteHost( String s );
+    void setRemoteLocation( String host, int port );
 
     /**
-     * Gets the remotePort attribute of the IRemoteCacheAttributes object
+     * Gets the location attribute of the RemoteCacheAttributes object.
      * <p>
-     * @return The remotePort value
+     * @return The remote location value
      */
-    int getRemotePort();
-
-    /**
-     * Sets the remotePort attribute of the IRemoteCacheAttributes object
-     * <p>
-     * @param p The new remotePort value
-     */
-    void setRemotePort( int p );
+    public RemoteLocation getRemoteLocation();
 
     /**
      * Gets the clusterServers attribute of the IRemoteCacheAttributes object

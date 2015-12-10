@@ -19,17 +19,6 @@ package org.apache.commons.jcs.auxiliary.remote.server;
  * under the License.
  */
 
-import org.apache.commons.jcs.auxiliary.AuxiliaryCacheConfigurator;
-import org.apache.commons.jcs.auxiliary.remote.RemoteUtils;
-import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheConstants;
-import org.apache.commons.jcs.engine.behavior.ICacheServiceAdmin;
-import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
-import org.apache.commons.jcs.utils.config.OptionConverter;
-import org.apache.commons.jcs.utils.config.PropertySetter;
-import org.apache.commons.jcs.utils.threadpool.DaemonThreadFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -44,6 +33,17 @@ import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.jcs.auxiliary.AuxiliaryCacheConfigurator;
+import org.apache.commons.jcs.auxiliary.remote.RemoteUtils;
+import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheConstants;
+import org.apache.commons.jcs.engine.behavior.ICacheServiceAdmin;
+import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
+import org.apache.commons.jcs.utils.config.OptionConverter;
+import org.apache.commons.jcs.utils.config.PropertySetter;
+import org.apache.commons.jcs.utils.threadpool.DaemonThreadFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Provides remote cache services. This creates remote cache servers and can proxy command line
@@ -156,8 +156,7 @@ public class RemoteCacheServerFactory
             rcsa.setConfigFileName( propFile );
 
             // These should come from the file!
-            rcsa.setRemotePort( port );
-            rcsa.setRemoteHost( host );
+            rcsa.setRemoteLocation( host, port );
             if ( log.isInfoEnabled() )
             {
                 log.info( "Creating server with these attributes: " + rcsa );
@@ -355,14 +354,14 @@ public class RemoteCacheServerFactory
         String lccStr = prop.getProperty( REMOTE_LOCAL_CLUSTER_CONSISTENCY );
         if ( lccStr != null )
         {
-            boolean lcc = Boolean.valueOf( lccStr ).booleanValue();
+            boolean lcc = Boolean.parseBoolean( lccStr );
             rcsa.setLocalClusterConsistency( lcc );
         }
 
         String acgStr = prop.getProperty( REMOTE_ALLOW_CLUSTER_GET );
         if ( acgStr != null )
         {
-            boolean acg = Boolean.valueOf( acgStr ).booleanValue();
+            boolean acg = Boolean.parseBoolean( lccStr );
             rcsa.setAllowClusterGet( acg );
         }
 

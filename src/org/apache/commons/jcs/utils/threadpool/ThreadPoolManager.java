@@ -331,89 +331,68 @@ public class ThreadPoolManager
      */
     private static PoolConfiguration loadConfig( String root )
     {
-        PoolConfiguration config = (PoolConfiguration) defaultConfig.clone();
+        PoolConfiguration config = defaultConfig.clone();
 
-        if ( props.containsKey( root + ".useBoundary" ) )
+        try
         {
-            try
-            {
-                config.setUseBoundary( Boolean.valueOf( (String) props.get( root + ".useBoundary" ) ).booleanValue() );
-            }
-            catch ( NumberFormatException nfe )
-            {
-                log.error( "useBoundary not a boolean.", nfe );
-            }
+            config.setUseBoundary( Boolean.parseBoolean( props.getProperty( root + ".useBoundary", "false" ) ) );
+        }
+        catch ( NumberFormatException nfe )
+        {
+            log.error( "useBoundary not a boolean.", nfe );
         }
 
         // load default if they exist
-        if ( props.containsKey( root + ".boundarySize" ) )
+        try
         {
-            try
-            {
-                config.setBoundarySize( Integer.parseInt( (String) props.get( root + ".boundarySize" ) ) );
-            }
-            catch ( NumberFormatException nfe )
-            {
-                log.error( "boundarySize not a number.", nfe );
-            }
+            config.setBoundarySize( Integer.parseInt( props.getProperty( root + ".boundarySize", "2000" ) ) );
+        }
+        catch ( NumberFormatException nfe )
+        {
+            log.error( "boundarySize not a number.", nfe );
         }
 
         // maximum pool size
-        if ( props.containsKey( root + ".maximumPoolSize" ) )
+        try
         {
-            try
-            {
-                config.setMaximumPoolSize( Integer.parseInt( (String) props.get( root + ".maximumPoolSize" ) ) );
-            }
-            catch ( NumberFormatException nfe )
-            {
-                log.error( "maximumPoolSize not a number.", nfe );
-            }
+            config.setMaximumPoolSize( Integer.parseInt( props.getProperty( root + ".maximumPoolSize", "150" ) ) );
+        }
+        catch ( NumberFormatException nfe )
+        {
+            log.error( "maximumPoolSize not a number.", nfe );
         }
 
         // minimum pool size
-        if ( props.containsKey( root + ".minimumPoolSize" ) )
+        try
         {
-            try
-            {
-                config.setMinimumPoolSize( Integer.parseInt( (String) props.get( root + ".minimumPoolSize" ) ) );
-            }
-            catch ( NumberFormatException nfe )
-            {
-                log.error( "minimumPoolSize not a number.", nfe );
-            }
+            config.setMinimumPoolSize( Integer.parseInt( props.getProperty( root + ".minimumPoolSize", "4" ) ) );
+        }
+        catch ( NumberFormatException nfe )
+        {
+            log.error( "minimumPoolSize not a number.", nfe );
         }
 
         // keep alive
-        if ( props.containsKey( root + ".keepAliveTime" ) )
+        try
         {
-            try
-            {
-                config.setKeepAliveTime( Integer.parseInt( (String) props.get( root + ".keepAliveTime" ) ) );
-            }
-            catch ( NumberFormatException nfe )
-            {
-                log.error( "keepAliveTime not a number.", nfe );
-            }
+            config.setKeepAliveTime( Integer.parseInt( props.getProperty( root + ".keepAliveTime", "300000" ) ) );
+        }
+        catch ( NumberFormatException nfe )
+        {
+            log.error( "keepAliveTime not a number.", nfe );
         }
 
         // when blocked
-        if ( props.containsKey( root + ".whenBlockedPolicy" ) )
-        {
-            config.setWhenBlockedPolicy( (String) props.get( root + ".whenBlockedPolicy" ) );
-        }
+        config.setWhenBlockedPolicy( props.getProperty( root + ".whenBlockedPolicy", "RUN" ) );
 
         // startupsize
-        if ( props.containsKey( root + ".startUpSize" ) )
+        try
         {
-            try
-            {
-                config.setStartUpSize( Integer.parseInt( (String) props.get( root + ".startUpSize" ) ) );
-            }
-            catch ( NumberFormatException nfe )
-            {
-                log.error( "startUpSize not a number.", nfe );
-            }
+            config.setStartUpSize( Integer.parseInt( props.getProperty( root + ".startUpSize", "4" ) ) );
+        }
+        catch ( NumberFormatException nfe )
+        {
+            log.error( "startUpSize not a number.", nfe );
         }
 
         if ( log.isInfoEnabled() )

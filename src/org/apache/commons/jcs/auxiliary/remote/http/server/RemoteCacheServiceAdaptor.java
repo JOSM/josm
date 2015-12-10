@@ -19,6 +19,12 @@ package org.apache.commons.jcs.auxiliary.remote.http.server;
  * under the License.
  */
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.jcs.auxiliary.remote.value.RemoteCacheRequest;
 import org.apache.commons.jcs.auxiliary.remote.value.RemoteCacheResponse;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
@@ -26,12 +32,6 @@ import org.apache.commons.jcs.engine.behavior.ICacheServiceNonLocal;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * The Servlet deserializes the request object. The request object is passed to the processor. The
@@ -126,8 +126,6 @@ public class RemoteCacheServiceAdaptor<K extends Serializable, V extends Seriali
                         getRemoteCacheService().update( request.getCacheElement(), request.getRequesterId() );
                         break;
                     case ALIVE_CHECK:
-                        response.setSuccess( true );
-                        break;
                     case DISPOSE:
                         response.setSuccess( true );
                         // DO NOTHING

@@ -135,7 +135,7 @@ public class JDBCDiskCache<K, V>
         this.dsFactory = dsFactory;
 
         // Initialization finished successfully, so set alive to true.
-        alive = true;
+        setAlive(true);
     }
 
     /**
@@ -463,7 +463,7 @@ public class JDBCDiskCache<K, V>
             log.debug( "Getting [" + key + "] from disk" );
         }
 
-        if ( !alive )
+        if ( !isAlive() )
         {
             return null;
         }
@@ -570,7 +570,7 @@ public class JDBCDiskCache<K, V>
             log.debug( "Getting [" + pattern + "] from disk" );
         }
 
-        if ( !alive )
+        if ( !isAlive() )
         {
             return null;
         }
@@ -717,12 +717,12 @@ public class JDBCDiskCache<K, V>
 
                 psSelect.executeUpdate();
 
-                alive = true;
+                setAlive(true);
             }
             catch ( SQLException e )
             {
                 log.error( "Problem creating statement. sql [" + sql + "]", e );
-                alive = false;
+                setAlive(false);
             }
             finally
             {
@@ -767,13 +767,13 @@ public class JDBCDiskCache<K, V>
                 {
                     psDelete = con.prepareStatement( sql );
                     psDelete.setString( 1, this.getCacheName() );
-                    alive = true;
+                    setAlive(true);
                     psDelete.executeUpdate();
                 }
                 catch ( SQLException e )
                 {
                     log.error( "Problem creating statement.", e );
-                    alive = false;
+                    setAlive(false);
                 }
                 finally
                 {
@@ -839,14 +839,14 @@ public class JDBCDiskCache<K, V>
                 psDelete.setString( 2, this.getCacheName() );
                 psDelete.setLong( 3, now );
 
-                alive = true;
+                setAlive(true);
 
                 deleted = psDelete.executeUpdate();
             }
             catch ( SQLException e )
             {
                 log.error( "Problem creating statement.", e );
-                alive = false;
+                setAlive(false);
             }
             finally
             {
@@ -893,7 +893,7 @@ public class JDBCDiskCache<K, V>
     @Override
     public void processDispose()
     {
-        ICacheEvent<K> cacheEvent = createICacheEvent( cacheName, (K)"none", ICacheEventLogger.DISPOSE_EVENT );
+        ICacheEvent<K> cacheEvent = createICacheEvent( getCacheName(), (K)"none", ICacheEventLogger.DISPOSE_EVENT );
         try
         {
             try

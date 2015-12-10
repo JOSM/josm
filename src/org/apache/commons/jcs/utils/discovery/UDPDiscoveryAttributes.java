@@ -197,7 +197,7 @@ public final class UDPDiscoveryAttributes
 
     /** @return a clone of this object */
     @Override
-    public Object clone()
+    public UDPDiscoveryAttributes clone()
     {
         UDPDiscoveryAttributes attributes = new UDPDiscoveryAttributes();
         attributes.setSendDelaySec( this.getSendDelaySec() );

@@ -19,6 +19,8 @@ package org.apache.commons.jcs.engine.memory.shrinking;
  * under the License.
  */
 
+import java.util.Set;
+
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.IElementAttributes;
 import org.apache.commons.jcs.engine.control.CompositeCache;
@@ -27,12 +29,10 @@ import org.apache.commons.jcs.engine.memory.behavior.IMemoryCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.Set;
-
 /**
  * A background memory shrinker. Memory problems and concurrent modification exception caused by
  * acting directly on an iterator of the underlying memory cache should have been solved.
- * @version $Id: ShrinkerThread.java 1593843 2014-05-11 19:43:30Z rmannibucau $
+ * @version $Id: ShrinkerThread.java 1719092 2015-12-10 15:07:30Z tv $
  */
 public class ShrinkerThread<K, V>
     implements Runnable
@@ -201,7 +201,6 @@ public class ShrinkerThread<K, V>
                         // stop processing if limit has been reached.
                         if ( spoolLimit && spoolCount >= this.maxSpoolPerRun )
                         {
-                            keys = null;
                             return;
                         }
                     }

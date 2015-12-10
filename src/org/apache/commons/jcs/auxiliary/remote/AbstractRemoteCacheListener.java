@@ -19,6 +19,10 @@ package org.apache.commons.jcs.auxiliary.remote;
  * under the License.
  */
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.UnknownHostException;
+
 import org.apache.commons.jcs.access.exception.CacheException;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheListener;
@@ -34,10 +38,6 @@ import org.apache.commons.jcs.utils.serialization.SerializationConversionUtil;
 import org.apache.commons.jcs.utils.serialization.StandardSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.UnknownHostException;
 
 /** Shared listener base. */
 public abstract class AbstractRemoteCacheListener<K, V>
@@ -342,8 +342,7 @@ public abstract class AbstractRemoteCacheListener<K, V>
     {
         StringBuilder buf = new StringBuilder();
         buf.append( "\n AbstractRemoteCacheListener: " );
-        buf.append( "\n RemoteHost = " + irca.getRemoteHost() );
-        buf.append( "\n RemotePort = " + irca.getRemotePort() );
+        buf.append( "\n RemoteHost = " + irca.getRemoteLocation().toString() );
         buf.append( "\n ListenerId = " + listenerId );
         return buf.toString();
     }
