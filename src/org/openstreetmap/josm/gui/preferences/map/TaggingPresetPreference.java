@@ -166,7 +166,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        sortMenu = new JCheckBox(tr("Sort presets menu"),
+        sortMenu = new JCheckBox(tr("Sort presets menu alphabetically"),
                 Main.pref.getBoolean("taggingpreset.sortmenu", false));
 
         final JPanel panel = new JPanel(new GridBagLayout());
