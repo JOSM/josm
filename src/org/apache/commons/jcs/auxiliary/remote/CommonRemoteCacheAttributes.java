@@ -20,7 +20,6 @@ package org.apache.commons.jcs.auxiliary.remote;
  */
 
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheAttributes;
-import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.behavior.ICommonRemoteCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheConstants;
 import org.apache.commons.jcs.auxiliary.remote.server.behavior.RemoteType;
@@ -111,23 +110,6 @@ public class CommonRemoteCacheAttributes
     public void setRemoteType( RemoteType p )
     {
         this.remoteType = p;
-    }
-
-    /**
-     * @return AuxiliaryCacheAttributes
-     */
-    @Override
-    public AuxiliaryCacheAttributes copy()
-    {
-        try
-        {
-            return (AuxiliaryCacheAttributes) this.clone();
-        }
-        catch ( Exception e )
-        {
-            // swallow
-        }
-        return this;
     }
 
     /**

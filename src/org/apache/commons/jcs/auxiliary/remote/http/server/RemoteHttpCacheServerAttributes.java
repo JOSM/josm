@@ -20,7 +20,6 @@ package org.apache.commons.jcs.auxiliary.remote.http.server;
  */
 
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheAttributes;
-import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 
 /**
  * Configuration for the RemoteHttpCacheServer. Most of these properties are used only by the
@@ -37,25 +36,6 @@ public class RemoteHttpCacheServerAttributes
 
     /** Can a cluster remote get from other remotes */
     private boolean allowClusterGet = true;
-
-    /**
-     * clones
-     * <p>
-     * @return AuxiliaryCacheAttributes clone
-     */
-    @Override
-    public AuxiliaryCacheAttributes copy()
-    {
-        try
-        {
-            return (AuxiliaryCacheAttributes) this.clone();
-        }
-        catch ( Exception e )
-        {
-            // swallow
-        }
-        return this;
-    }
 
     /**
      * Should cluster updates be propagated to the locals

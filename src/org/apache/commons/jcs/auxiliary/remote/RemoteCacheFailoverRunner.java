@@ -182,7 +182,7 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
                     RemoteCacheAttributes rca = null;
                     try
                     {
-                        rca = (RemoteCacheAttributes) facade.getRemoteCacheAttributes().copy();
+                        rca = (RemoteCacheAttributes) facade.getRemoteCacheAttributes().clone();
                         rca.setRemoteLocation(server);
                         RemoteCacheManager rcm = RemoteCacheFactory.getManager( rca, cacheMgr,
                             facade.getCacheEventLogger(), facade.getElementSerializer() );
@@ -313,7 +313,7 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
             log.info( "Trying to restore connection to primary remote server [" + server + "]" );
         }
 
-        RemoteCacheAttributes rca = (RemoteCacheAttributes) facade.getRemoteCacheAttributes().copy();
+        RemoteCacheAttributes rca = (RemoteCacheAttributes) facade.getRemoteCacheAttributes().clone();
         rca.setRemoteLocation(server);
         RemoteCacheManager rcm = RemoteCacheFactory.getManager( rca, cacheMgr,
             facade.getCacheEventLogger(), facade.getElementSerializer() );
@@ -354,7 +354,7 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
                         {
                             // create attributes that reflect the
                             // previous failed over configuration.
-                            RemoteCacheAttributes rcaOld = (RemoteCacheAttributes) facade.getRemoteCacheAttributes().copy();
+                            RemoteCacheAttributes rcaOld = (RemoteCacheAttributes) facade.getRemoteCacheAttributes().clone();
                             rcaOld.setRemoteLocation(serverOld);
                             RemoteCacheManager rcmOld = RemoteCacheFactory.getManager( rcaOld, cacheMgr,
                                 facade.getCacheEventLogger(), facade.getElementSerializer() );

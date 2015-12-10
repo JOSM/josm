@@ -29,7 +29,7 @@ import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes;
  * the hard coded defaults will be used.
  */
 public class CompositeCacheAttributes
-    implements ICompositeCacheAttributes, Cloneable
+    implements ICompositeCacheAttributes
 {
     /** Don't change */
     private static final long serialVersionUID = 6754049978134196787L;
@@ -403,26 +403,6 @@ public class CompositeCacheAttributes
     }
 
     /**
-     * Description of the Method
-     * <p>
-     * @return ICompositeCacheAttributes a copy
-     */
-    @Override
-    public ICompositeCacheAttributes copy()
-    {
-        try
-        {
-            ICompositeCacheAttributes cattr = (ICompositeCacheAttributes) this.clone();
-            return cattr;
-        }
-        catch ( Exception e )
-        {
-            System.err.println( e.toString() );
-            return new CompositeCacheAttributes();
-        }
-    }
-
-    /**
      * Dumps the core attributes.
      * <p>
      * @return For debugging.
@@ -443,5 +423,21 @@ public class CompositeCacheAttributes
         dump.append( " ]" );
 
         return dump.toString();
+    }
+
+    /**
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    public ICompositeCacheAttributes clone()
+    {
+        try
+        {
+            return (ICompositeCacheAttributes)super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            throw new RuntimeException("Clone not supported. This should never happen.", e);
+        }
     }
 }

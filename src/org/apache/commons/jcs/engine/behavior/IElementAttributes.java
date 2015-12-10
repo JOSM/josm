@@ -19,17 +19,18 @@ package org.apache.commons.jcs.engine.behavior;
  * under the License.
  */
 
-import org.apache.commons.jcs.engine.control.event.behavior.IElementEventHandler;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.jcs.engine.control.event.behavior.IElementEventHandler;
 
 /**
  * Interface for cache element attributes classes. Every item is the cache is associated with an
  * element attributes object. It is used to track the life of the object as well as to restrict its
  * behavior. By default, elements get a clone of the region's attributes.
  */
-public interface IElementAttributes
+public interface IElementAttributes extends Serializable, Cloneable
 {
     /**
      * Sets the maxLife attribute of the IAttributes object.
@@ -108,12 +109,6 @@ public interface IElementAttributes
      * @return The TimeToLiveSeconds value
      */
     long getTimeToLiveSeconds();
-
-    /**
-     * Returns a copy of the object.
-     * @return IElementAttributes
-     */
-    IElementAttributes copy();
 
     /**
      * Can this item be spooled to disk
@@ -200,4 +195,9 @@ public interface IElementAttributes
     long getTimeFactorForMilliseconds();
 
     void setTimeFactorForMilliseconds(long factor);
+
+    /**
+     * Clone object
+     */
+    IElementAttributes clone();
 }

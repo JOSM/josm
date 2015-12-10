@@ -19,26 +19,23 @@ package org.apache.commons.jcs.auxiliary.disk;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheAttributes;
-import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.disk.behavior.IDiskCacheAttributes;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
-
 /**
  * This has common attributes that any conceivable disk cache would need.
  */
-public abstract class AbstractDiskCacheAttributes
-    extends AbstractAuxiliaryCacheAttributes
-    implements IDiskCacheAttributes
+public abstract class AbstractDiskCacheAttributes extends AbstractAuxiliaryCacheAttributes implements IDiskCacheAttributes
 {
     /** Don't change. */
     private static final long serialVersionUID = 8306631920391711229L;
 
     /** The logger */
-    private static final Log log = LogFactory.getLog( AbstractDiskCacheAttributes.class );
+    private static final Log log = LogFactory.getLog(AbstractDiskCacheAttributes.class);
 
     /** path to disk */
     private File diskPath;
@@ -58,34 +55,37 @@ public abstract class AbstractDiskCacheAttributes
      */
     private int shutdownSpoolTimeLimit = DEFAULT_shutdownSpoolTimeLimit;
 
+    /** Type of disk limit: SIZE or COUNT */
     private DiskLimitType diskLimitType = DiskLimitType.COUNT;
-
-    private int chunkSize;
 
     /**
      * Sets the diskPath attribute of the DiskCacheAttributes object
      * <p>
-     * @param path The new diskPath value
+     *
+     * @param path
+     *            The new diskPath value
      */
     @Override
-    public void setDiskPath( String path )
+    public void setDiskPath(String path)
     {
-        setDiskPath( new File( path ) );
+        setDiskPath(new File(path));
     }
 
     /**
      * Sets the diskPath attribute of the DiskCacheAttributes object
      * <p>
-     * @param diskPath The new diskPath value
+     *
+     * @param diskPath
+     *            The new diskPath value
      */
-    public void setDiskPath( File diskPath )
+    public void setDiskPath(File diskPath)
     {
         this.diskPath = diskPath;
-        boolean result = this.diskPath.isDirectory(); 
-        
+        boolean result = this.diskPath.isDirectory();
+
         if (!result)
         {
-        		result = this.diskPath.mkdirs();
+            result = this.diskPath.mkdirs();
         }
         if (!result)
         {
@@ -96,6 +96,7 @@ public abstract class AbstractDiskCacheAttributes
     /**
      * Gets the diskPath attribute of the attributes object
      * <p>
+     *
      * @return The diskPath value
      */
     @Override
@@ -107,6 +108,7 @@ public abstract class AbstractDiskCacheAttributes
     /**
      * Gets the maxKeySize attribute of the DiskCacheAttributes object
      * <p>
+     *
      * @return The maxPurgatorySize value
      */
     @Override
@@ -118,10 +120,12 @@ public abstract class AbstractDiskCacheAttributes
     /**
      * Sets the maxPurgatorySize attribute of the DiskCacheAttributes object
      * <p>
-     * @param maxPurgatorySize The new maxPurgatorySize value
+     *
+     * @param maxPurgatorySize
+     *            The new maxPurgatorySize value
      */
     @Override
-    public void setMaxPurgatorySize( int maxPurgatorySize )
+    public void setMaxPurgatorySize(int maxPurgatorySize)
     {
         this.maxPurgatorySize = maxPurgatorySize;
     }
@@ -130,6 +134,7 @@ public abstract class AbstractDiskCacheAttributes
      * Get the amount of time in seconds we will wait for elements to move to disk during shutdown
      * for a particular region.
      * <p>
+     *
      * @return the time in seconds.
      */
     @Override
@@ -146,38 +151,22 @@ public abstract class AbstractDiskCacheAttributes
      * <p>
      * The default is 60 seconds.
      * <p>
-     * @param shutdownSpoolTimeLimit the time in seconds
+     *
+     * @param shutdownSpoolTimeLimit
+     *            the time in seconds
      */
     @Override
-    public void setShutdownSpoolTimeLimit( int shutdownSpoolTimeLimit )
+    public void setShutdownSpoolTimeLimit(int shutdownSpoolTimeLimit)
     {
         this.shutdownSpoolTimeLimit = shutdownSpoolTimeLimit;
     }
 
     /**
-     * Simple clone.
-     * <p>
-     * @return AuxiliaryCacheAttributes
+     * @param allowRemoveAll
+     *            The allowRemoveAll to set.
      */
     @Override
-    public AuxiliaryCacheAttributes copy()
-    {
-        try
-        {
-            return (AuxiliaryCacheAttributes) this.clone();
-        }
-        catch ( Exception e )
-        {
-            // swallow
-        }
-        return this;
-    }
-
-    /**
-     * @param allowRemoveAll The allowRemoveAll to set.
-     */
-    @Override
-    public void setAllowRemoveAll( boolean allowRemoveAll )
+    public void setAllowRemoveAll(boolean allowRemoveAll)
     {
         this.allowRemoveAll = allowRemoveAll;
     }
@@ -194,40 +183,39 @@ public abstract class AbstractDiskCacheAttributes
     /**
      * Includes the common attributes for a debug message.
      * <p>
+     *
      * @return String
      */
     @Override
     public String toString()
     {
         StringBuilder str = new StringBuilder();
-        str.append( "AbstractDiskCacheAttributes " );
-        str.append( "\n diskPath = " + getDiskPath() );
-        str.append( "\n maxPurgatorySize   = " + getMaxPurgatorySize() );
-        str.append( "\n allowRemoveAll   = " + isAllowRemoveAll() );
-        str.append( "\n ShutdownSpoolTimeLimit   = " + getShutdownSpoolTimeLimit() );
+        str.append("AbstractDiskCacheAttributes ");
+        str.append("\n diskPath = " + getDiskPath());
+        str.append("\n maxPurgatorySize   = " + getMaxPurgatorySize());
+        str.append("\n allowRemoveAll   = " + isAllowRemoveAll());
+        str.append("\n ShutdownSpoolTimeLimit   = " + getShutdownSpoolTimeLimit());
         return str.toString();
     }
+
     @Override
-    public void setDiskLimitType(DiskLimitType diskLimitType) {
+    public void setDiskLimitType(DiskLimitType diskLimitType)
+    {
         this.diskLimitType = diskLimitType;
-
     }
 
     @Override
-    public void setDiskLimitTypeName(String diskLimitTypeName) {
-        if (diskLimitTypeName != null) {
-            String name = diskLimitTypeName.trim();
-            if ("COUNT".equals(name)) {
-                diskLimitType = DiskLimitType.COUNT;
-            } else if ("SIZE".equals(name)) {
-                diskLimitType = DiskLimitType.SIZE;
-            }
+    public void setDiskLimitTypeName(String diskLimitTypeName)
+    {
+        if (diskLimitTypeName != null)
+        {
+            diskLimitType = DiskLimitType.valueOf(diskLimitTypeName.trim());
         }
-
     }
 
     @Override
-    public DiskLimitType getDiskLimitType() {
+    public DiskLimitType getDiskLimitType()
+    {
         return diskLimitType;
     }
 }

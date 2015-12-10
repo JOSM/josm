@@ -181,14 +181,14 @@ public class OptionConverter
      * <p>
      * Case of value is unimportant.
      * @param value
-     * @param dEfault
+     * @param defaultValue
      * @return Object
      */
-    public static boolean toBoolean( String value, boolean dEfault )
+    public static boolean toBoolean( String value, boolean defaultValue )
     {
         if ( value == null )
         {
-            return dEfault;
+            return defaultValue;
         }
         String trimmedVal = value.trim();
         if ( "true".equalsIgnoreCase( trimmedVal ) )
@@ -199,17 +199,17 @@ public class OptionConverter
         {
             return false;
         }
-        return dEfault;
+        return defaultValue;
     }
 
     /**
      * Converts to int.
      * <p>
      * @param value
-     * @param dEfault
+     * @param defaultValue
      * @return int
      */
-    public static int toInt( String value, int dEfault )
+    public static int toInt( String value, int defaultValue )
     {
         if ( value != null )
         {
@@ -224,19 +224,19 @@ public class OptionConverter
                 e.printStackTrace();
             }
         }
-        return dEfault;
+        return defaultValue;
     }
 
     /**
      * @param value
-     * @param dEfault
+     * @param defaultValue
      * @return long
      */
-    public static long toFileSize( String value, long dEfault )
+    public static long toFileSize( String value, long defaultValue )
     {
         if ( value == null )
         {
-            return dEfault;
+            return defaultValue;
         }
 
         String s = value.trim().toUpperCase();
@@ -270,7 +270,7 @@ public class OptionConverter
                 log.error( "[" + value + "] not in expected format", e );
             }
         }
-        return dEfault;
+        return defaultValue;
     }
 
     /**
@@ -344,7 +344,7 @@ public class OptionConverter
      * Perform variable substitution in string <code>val</code> from the values of keys found in the
      * system properties.
      * <p>
-     * The variable substitution delimeters are <b>${ </b> and <b>} </b>.
+     * The variable substitution delimiters are <b>${ </b> and <b>} </b>.
      * <p>
      * For example, if the System properties contains "key=value", then the call
      *
@@ -358,7 +358,7 @@ public class OptionConverter
      * searched, if the value could not be found there, then substitution defaults to the empty
      * string.
      * <p>
-     * For example, if system propeties contains no value for the key "inexistentKey", then the call
+     * For example, if system properties contains no value for the key "inexistentKey", then the call
      *
      * <pre>
      * String s = OptionConverter.subsVars( &quot;Value of inexistentKey is [${inexistentKey}]&quot; );
@@ -367,7 +367,7 @@ public class OptionConverter
      * will set <code>s</code> to "Value of inexistentKey is []"
      * <p>
      * An {@link java.lang.IllegalArgumentException}is thrown if <code>val</code> contains a start
-     * delimeter "${" which is not balanced by a stop delimeter "}".
+     * delimiter "${" which is not balanced by a stop delimiter "}".
      * </p>
      * <p>
      * <b>Author </b> Avy Sharell </a>

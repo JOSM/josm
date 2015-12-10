@@ -1514,7 +1514,7 @@ public class CompositeCache<K, V>
     {
         if ( attr != null )
         {
-            return attr.copy();
+            return attr.clone();
         }
         return null;
     }

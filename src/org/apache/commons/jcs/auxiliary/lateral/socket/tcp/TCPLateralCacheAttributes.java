@@ -19,7 +19,6 @@ package org.apache.commons.jcs.auxiliary.lateral.socket.tcp;
  * under the License.
  */
 
-import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.lateral.LateralCacheAttributes;
 import org.apache.commons.jcs.auxiliary.lateral.socket.tcp.behavior.ITCPLateralCacheAttributes;
 
@@ -303,25 +302,8 @@ public class TCPLateralCacheAttributes
     }
 
     /**
-     * @return AuxiliaryCacheAttributes
-     */
-    @Override
-    public AuxiliaryCacheAttributes copy()
-    {
-        try
-        {
-            return (AuxiliaryCacheAttributes) this.clone();
-        }
-        catch ( Exception e )
-        {
-            //noop
-        }
-        return this;
-    }
-
-    /**
      * Should the receiver try to match hashcodes. If true, the receiver will see if the client
-     * supplied a hshcode. If it did, then it will try to get the item locally. If the item exists,
+     * supplied a hashcode. If it did, then it will try to get the item locally. If the item exists,
      * then it will compare the hashcode. if they are the same, it will not remove. This isn't
      * perfect since different objects can have the same hashcode, but it is unlikely of objects of
      * the same type.
@@ -336,7 +318,7 @@ public class TCPLateralCacheAttributes
 
     /**
      * Should the receiver try to match hashcodes. If true, the receiver will see if the client
-     * supplied a hshcode. If it did, then it will try to get the item locally. If the item exists,
+     * supplied a hashcode. If it did, then it will try to get the item locally. If the item exists,
      * then it will compare the hashcode. if they are the same, it will not remove. This isn't
      * perfect since different objects can have the same hashcode, but it is unlikely of objects of
      * the same type.

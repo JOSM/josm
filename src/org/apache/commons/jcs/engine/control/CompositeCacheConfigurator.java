@@ -453,7 +453,7 @@ public class CompositeCacheConfigurator
             }
 
             ICompositeCacheAttributes ccAttr2 = compositeCacheManager.getDefaultCacheAttributes();
-            ccAttr = ccAttr2.copy();
+            ccAttr = ccAttr2.clone();
         }
 
         if ( log.isDebugEnabled() )
@@ -499,7 +499,7 @@ public class CompositeCacheConfigurator
             }
 
             IElementAttributes eAttr2 = compositeCacheManager.getDefaultElementAttributes();
-            eAttr = eAttr2.copy();
+            eAttr = eAttr2.clone();
         }
 
         if ( log.isDebugEnabled() )
@@ -583,7 +583,7 @@ public class CompositeCacheConfigurator
                 compositeCacheManager.registryAttrPut( auxAttr );
             }
 
-            auxAttr = auxAttr.copy();
+            auxAttr = auxAttr.clone();
 
             if ( log.isDebugEnabled() )
             {
