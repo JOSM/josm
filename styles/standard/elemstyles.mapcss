@@ -4661,17 +4661,23 @@ node[place=islet] {
 /* "work in progress" tags */
 /***************************/
 
-node|z16-[fixme]::core_fixme,
-node|z-15[fixme][!setting("hide_icons")]::core_fixme,
-node|z16-[FIXME]::core_fixme,
-node|z-15[FIXME][!setting("hide_icons")]::core_fixme {
-    object-z-index: 20;
+node|z16-[fixme]::core_note_fixme,
+node|z-15[fixme][!setting("hide_icons")]::core_note_fixme,
+node|z16-[FIXME]::core_note_fixme,
+node|z-15[FIXME][!setting("hide_icons")]::core_note_fixme {
+    object-z-index: 10;
     icon-image: "misc/fixme-annotation.png";
 }
-node|z16-[note]::core_note,
-node|z-15[note][!setting("hide_icons")]::core_note {
+node|z16-[note]::core_note_fixme,
+node|z-15[note][!setting("hide_icons")]::core_note_fixme {
     object-z-index: 10;
     icon-image: "misc/note-annotation.png";
+}
+node|z16-[note][fixme]::core_note_fixme,
+node|z-15[note][fixme][!setting("hide_icons")]::core_note_fixme,
+node|z16-[note][FIXME]::core_note_fixme,
+node|z-15[note][FIXME][!setting("hide_icons")]::core_note_fixme {
+    icon-image: "misc/note-fixme-annotation.png";
 }
 
 /* special display of unreviewed tiger data (USA) */
