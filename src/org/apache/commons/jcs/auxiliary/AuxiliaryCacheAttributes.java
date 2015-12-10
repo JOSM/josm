@@ -19,9 +19,9 @@ package org.apache.commons.jcs.auxiliary;
  * under the License.
  */
 
-import org.apache.commons.jcs.engine.behavior.ICacheEventQueue;
-
 import java.io.Serializable;
+
+import org.apache.commons.jcs.engine.behavior.ICacheEventQueue;
 
 /**
  * This is a nominal interface that auxiliary cache attributes should implement. This allows the
@@ -87,9 +87,7 @@ public interface AuxiliaryCacheAttributes
     String getEventQueuePoolName();
 
     /**
-     * Clones
-     * <p>
-     * @return a copy
+     * Clone object
      */
-    AuxiliaryCacheAttributes copy();
+    AuxiliaryCacheAttributes clone();
 }

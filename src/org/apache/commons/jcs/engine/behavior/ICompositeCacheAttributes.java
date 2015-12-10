@@ -25,7 +25,7 @@ import java.io.Serializable;
  * This defines the minimal behavior for the Cache Configuration settings.
  */
 public interface ICompositeCacheAttributes
-    extends Serializable
+    extends Serializable, Cloneable
 {
     enum DiskUsagePattern
     {
@@ -203,13 +203,6 @@ public interface ICompositeCacheAttributes
     int getMaxSpoolPerRun();
 
     /**
-     * Clones the attributes.
-     * <p>
-     * @return a new object with the same settings.
-     */
-    ICompositeCacheAttributes copy();
-
-    /**
      * By default this is SWAP_ONLY.
      * <p>
      * @param diskUsagePattern The diskUsagePattern to set.
@@ -243,4 +236,9 @@ public interface ICompositeCacheAttributes
      * @param spoolChunkSize
      */
     void setSpoolChunkSize( int spoolChunkSize );
+
+    /**
+     * Clone object
+     */
+    ICompositeCacheAttributes clone();
 }

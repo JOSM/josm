@@ -19,7 +19,6 @@ package org.apache.commons.jcs.auxiliary.disk.indexed;
  * under the License.
  */
 
-import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.disk.AbstractDiskCacheAttributes;
 
 /**
@@ -59,8 +58,6 @@ public class IndexedDiskCacheAttributes
 
     /** Should we clear the disk on startup. If true the congtents of disk are cleared. */
     private boolean clearDiskOnStartup = DEFAULT_CLEAR_DISK_ON_STARTUP;
-
-    private DiskLimitType diskLimitType = DiskLimitType.COUNT;
 
     /**
      * Constructor for the DiskCacheAttributes object
@@ -165,25 +162,6 @@ public class IndexedDiskCacheAttributes
     public boolean isClearDiskOnStartup()
     {
         return clearDiskOnStartup;
-    }
-
-    /**
-     * Returns a copy of the attributes.
-     * <p>
-     * @return AuxiliaryCacheAttributes
-     */
-    @Override
-    public AuxiliaryCacheAttributes copy()
-    {
-        try
-        {
-            return (AuxiliaryCacheAttributes) this.clone();
-        }
-        catch ( Exception e )
-        {
-            // swallow
-        }
-        return this;
     }
 
     /**

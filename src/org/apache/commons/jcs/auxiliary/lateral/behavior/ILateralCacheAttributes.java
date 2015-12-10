@@ -21,8 +21,6 @@ package org.apache.commons.jcs.auxiliary.lateral.behavior;
 
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 
-import java.io.Serializable;
-
 /**
  * This interface defines configuration options common to lateral cache plugins.
  * <p>
@@ -30,7 +28,7 @@ import java.io.Serializable;
  * individual laterals have their own specific attributes interfaces.
  */
 public interface ILateralCacheAttributes
-    extends Serializable, AuxiliaryCacheAttributes
+    extends AuxiliaryCacheAttributes
 {
     enum Type
     {

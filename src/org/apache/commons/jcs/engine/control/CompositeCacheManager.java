@@ -501,7 +501,7 @@ public class CompositeCacheManager
      */
     public ICompositeCacheAttributes getDefaultCacheAttributes()
     {
-        return this.defaultCacheAttr.copy();
+        return this.defaultCacheAttr.clone();
     }
 
     /**
@@ -531,7 +531,7 @@ public class CompositeCacheManager
      */
     public IElementAttributes getDefaultElementAttributes()
     {
-        return this.defaultElementAttr.copy();
+        return this.defaultElementAttr.clone();
     }
 
     /**
@@ -543,7 +543,7 @@ public class CompositeCacheManager
     @Override
     public <K, V> CompositeCache<K, V>  getCache( String cacheName )
     {
-        return getCache( cacheName, this.defaultCacheAttr.copy() );
+        return getCache( cacheName, this.defaultCacheAttr.clone() );
     }
 
     /**

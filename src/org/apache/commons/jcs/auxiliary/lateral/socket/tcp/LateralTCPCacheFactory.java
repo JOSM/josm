@@ -112,7 +112,7 @@ public class LateralTCPCacheFactory
                 {
                     log.debug( "tcp server = " + server );
                 }
-                ITCPLateralCacheAttributes lacC = (ITCPLateralCacheAttributes) lac.copy();
+                ITCPLateralCacheAttributes lacC = (ITCPLateralCacheAttributes) lac.clone();
                 lacC.setTcpServer( server );
 
                 LateralCacheNoWait<K, V> lateralNoWait = createCacheNoWait(lacC, cacheEventLogger, elementSerializer);

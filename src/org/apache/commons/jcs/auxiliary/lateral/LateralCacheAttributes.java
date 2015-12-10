@@ -20,7 +20,6 @@ package org.apache.commons.jcs.auxiliary.lateral;
  */
 
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheAttributes;
-import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.lateral.behavior.ILateralCacheAttributes;
 
 /**
@@ -231,24 +230,6 @@ public class LateralCacheAttributes
     public boolean getPutOnlyMode()
     {
         return putOnlyMode;
-    }
-
-    /**
-     * Returns a clone of the attributes.
-     * @return Self
-     */
-    @Override
-    public AuxiliaryCacheAttributes copy()
-    {
-        try
-        {
-            return (AuxiliaryCacheAttributes) this.clone();
-        }
-        catch ( Exception e )
-        {
-            //noop
-        }
-        return this;
     }
 
     /**

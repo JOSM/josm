@@ -19,12 +19,11 @@ package org.apache.commons.jcs.engine;
  * under the License.
  */
 
-import org.apache.commons.jcs.engine.behavior.IElementAttributes;
-import org.apache.commons.jcs.engine.control.event.behavior.IElementEventHandler;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.jcs.engine.behavior.IElementAttributes;
+import org.apache.commons.jcs.engine.control.event.behavior.IElementEventHandler;
 
 /**
  * This it the element attribute descriptor class. Each element in the cache has an ElementAttribute
@@ -39,7 +38,7 @@ import java.util.List;
  * </ol>
  */
 public class ElementAttributes
-    implements IElementAttributes, Serializable
+    implements IElementAttributes
 {
     /** Don't change. */
     private static final long serialVersionUID = 7814990748035017441L;
@@ -119,34 +118,6 @@ public class ElementAttributes
         // time-to-live
         maxIdleTime = attr.maxIdleTime;
         size = attr.size;
-    }
-
-    /**
-     * Copies the attributes, including references to event handlers.
-     * <p>
-     * @return a copy of the Attributes
-     */
-    @Override
-    public IElementAttributes copy()
-    {
-        try
-        {
-            // need to make this more efficient. Just want to insure
-            // a proper copy
-            ElementAttributes attr = new ElementAttributes();
-            attr.setIdleTime( this.getIdleTime() );
-            attr.setIsEternal( this.getIsEternal() );
-            attr.setIsLateral( this.getIsLateral() );
-            attr.setIsRemote( this.getIsRemote() );
-            attr.setIsSpool( this.getIsSpool() );
-            attr.setMaxLife(this.getMaxLife());
-            attr.addElementEventHandlers( this.eventHandlers );
-            return attr;
-        }
-        catch ( Exception e )
-        {
-            return new ElementAttributes();
-        }
     }
 
     /**
@@ -465,5 +436,21 @@ public class ElementAttributes
         dump.append( ", createTime = " ).append( String.valueOf( createTime ) ).append( " ]" );
 
         return dump.toString();
+    }
+
+    /**
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    public IElementAttributes clone()
+    {
+        try
+        {
+            return (IElementAttributes)super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            throw new RuntimeException("Clone not supported. This should never happen.", e);
+        }
     }
 }

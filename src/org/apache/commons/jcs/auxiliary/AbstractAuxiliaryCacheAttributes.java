@@ -127,4 +127,20 @@ public abstract class AbstractAuxiliaryCacheAttributes
     {
         return eventQueuePoolName;
     }
+
+    /**
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    public AbstractAuxiliaryCacheAttributes clone()
+    {
+        try
+        {
+            return (AbstractAuxiliaryCacheAttributes)super.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+            throw new RuntimeException("Clone not supported. This should never happen.", e);
+        }
+    }
 }

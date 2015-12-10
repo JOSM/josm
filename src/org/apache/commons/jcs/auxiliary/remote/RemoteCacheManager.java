@@ -274,7 +274,7 @@ public class RemoteCacheManager
      */
     public <K, V> RemoteCacheNoWait<K, V> getCache( String cacheName )
     {
-        IRemoteCacheAttributes ca = (IRemoteCacheAttributes) remoteCacheAttributes.copy();
+        IRemoteCacheAttributes ca = (IRemoteCacheAttributes) remoteCacheAttributes.clone();
         ca.setCacheName( cacheName );
         return getCache( ca );
     }
