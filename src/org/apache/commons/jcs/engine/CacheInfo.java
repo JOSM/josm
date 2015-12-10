@@ -40,7 +40,7 @@ public final class CacheInfo
      * TODO: may have some trouble in failover mode if the cache keeps its old
      * id. We may need to reset this when moving into failover.
      */
-    protected static final VMID vmid = new VMID();
+    private static final VMID vmid = new VMID();
 
     /** By default this is the hashcode of the VMID */
     public static final long listenerId = vmid.hashCode();

@@ -156,9 +156,8 @@ public class RemoteHttpCacheDispatcher
                 switch ( remoteCacheRequest.getRequestType() )
                 {
                     case GET:
-                        keyValue = remoteCacheRequest.getKey() + "";
-                        break;
                     case REMOVE:
+                    case GET_KEYSET:
                         keyValue = remoteCacheRequest.getKey() + "";
                         break;
                     case GET_MATCHING:
@@ -166,9 +165,6 @@ public class RemoteHttpCacheDispatcher
                         break;
                     case GET_MULTIPLE:
                         keyValue = remoteCacheRequest.getKeySet() + "";
-                        break;
-                    case GET_KEYSET:
-                        keyValue = remoteCacheRequest.getKey() + "";
                         break;
                     case UPDATE:
                         keyValue = remoteCacheRequest.getCacheElement().getKey() + "";

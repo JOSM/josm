@@ -50,8 +50,10 @@ public class RemoteCacheNoWaitFacade<K, V>
      * @param cacheEventLogger
      * @param elementSerializer
      */
-    public RemoteCacheNoWaitFacade( RemoteCacheNoWait<K, V>[] noWaits, RemoteCacheAttributes rca,
-                                    ICompositeCacheManager cacheMgr, ICacheEventLogger cacheEventLogger,
+    public RemoteCacheNoWaitFacade( RemoteCacheNoWait<K, V>[] noWaits,
+                                    RemoteCacheAttributes rca,
+                                    ICompositeCacheManager cacheMgr,
+                                    ICacheEventLogger cacheEventLogger,
                                     IElementSerializer elementSerializer )
     {
         super( noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer );
@@ -67,7 +69,7 @@ public class RemoteCacheNoWaitFacade<K, V>
     {
         if ( log.isDebugEnabled() )
         {
-            log.info( "in failover for " + i );
+            log.debug( "in failover for " + i );
         }
 
         if ( getRemoteCacheAttributes().getRemoteType() == RemoteType.LOCAL )
@@ -76,12 +78,10 @@ public class RemoteCacheNoWaitFacade<K, V>
             {
                 // start failover, primary recovery process
                 RemoteCacheFailoverRunner<K, V> runner =
-                    new RemoteCacheFailoverRunner<K, V>( this, getCompositeCacheManager(),
-                      super.getCacheEventLogger(), super.getElementSerializer() );
+                    new RemoteCacheFailoverRunner<K, V>( this, getCompositeCacheManager() );
+                runner.setDaemon( true );
+                runner.start();
                 runner.notifyError();
-                Thread t = new Thread( runner );
-                t.setDaemon( true );
-                t.start();
 
                 if ( getCacheEventLogger() != null )
                 {

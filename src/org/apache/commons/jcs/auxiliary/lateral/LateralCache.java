@@ -19,6 +19,12 @@ package org.apache.commons.jcs.auxiliary.lateral;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheEventLogging;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.lateral.behavior.ILateralCacheAttributes;
@@ -32,12 +38,6 @@ import org.apache.commons.jcs.engine.stats.Stats;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Lateral distributor. Returns null on get by default. Net search not implemented.
@@ -98,20 +98,17 @@ public class LateralCache<K, V>
     {
         try
         {
-            if ( log.isDebugEnabled() )
+            if (ce != null)
             {
-                log.debug( "update: lateral = [" + lateralCacheService + "], " + "CacheInfo.listenerId = "
-                    + CacheInfo.listenerId );
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( "update: lateral = [" + lateralCacheService + "], " + "CacheInfo.listenerId = "
+                        + CacheInfo.listenerId );
+                }
+                lateralCacheService.update( ce, CacheInfo.listenerId );
             }
-            lateralCacheService.update( ce, CacheInfo.listenerId );
         }
-        catch ( NullPointerException npe )
-        {
-            log.error( "Failure updating lateral. lateral = " + lateralCacheService, npe );
-            handleException( npe, "Failed to put [" + ce.getKey() + "] to " + ce.getCacheName() + "@" + lateralCacheAttributes );
-            return;
-        }
-        catch ( Exception ex )
+        catch ( IOException ex )
         {
             handleException( ex, "Failed to put [" + ce.getKey() + "] to " + ce.getCacheName() + "@" + lateralCacheAttributes );
         }
@@ -214,7 +211,7 @@ public class LateralCache<K, V>
         {
             return lateralCacheService.getKeySet( cacheName );
         }
-        catch ( Exception ex )
+        catch ( IOException ex )
         {
             handleException( ex, "Failed to get key set from " + lateralCacheAttributes.getCacheName() + "@"
                 + lateralCacheAttributes );
@@ -243,7 +240,7 @@ public class LateralCache<K, V>
         {
             lateralCacheService.remove( cacheName, key, CacheInfo.listenerId );
         }
-        catch ( Exception ex )
+        catch ( IOException ex )
         {
             handleException( ex, "Failed to remove " + key + " from " + lateralCacheAttributes.getCacheName() + "@" + lateralCacheAttributes );
         }
@@ -264,7 +261,7 @@ public class LateralCache<K, V>
         {
             lateralCacheService.removeAll( cacheName, CacheInfo.listenerId );
         }
-        catch ( Exception ex )
+        catch ( IOException ex )
         {
             handleException( ex, "Failed to remove all from " + lateralCacheAttributes.getCacheName() + "@" + lateralCacheAttributes );
         }
@@ -290,7 +287,7 @@ public class LateralCache<K, V>
             lateralCacheService.dispose( this.lateralCacheAttributes.getCacheName() );
             // Should remove connection
         }
-        catch ( Exception ex )
+        catch ( IOException ex )
         {
             log.error( "Couldn't dispose", ex );
             handleException( ex, "Failed to dispose " + lateralCacheAttributes.getCacheName() );

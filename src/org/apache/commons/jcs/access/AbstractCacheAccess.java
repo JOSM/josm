@@ -19,14 +19,14 @@ package org.apache.commons.jcs.access;
  * under the License.
  */
 
+import java.io.IOException;
+
 import org.apache.commons.jcs.access.behavior.ICacheAccessManagement;
 import org.apache.commons.jcs.access.exception.CacheException;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes;
 import org.apache.commons.jcs.engine.behavior.IElementAttributes;
 import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.stats.behavior.ICacheStats;
-
-import java.io.IOException;
 
 /**
  * This class provides the common methods for all types of access to the cache.
@@ -54,7 +54,7 @@ public abstract class AbstractCacheAccess<K, V>
      * <p>
      * @param cacheControl The cache which the created instance accesses
      */
-    public AbstractCacheAccess( CompositeCache<K, V> cacheControl )
+    protected AbstractCacheAccess( CompositeCache<K, V> cacheControl )
     {
         this.cacheControl = cacheControl;
     }

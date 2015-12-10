@@ -19,10 +19,10 @@ package org.apache.commons.jcs.utils.config;
  * under the License.
  */
 
+import java.util.Properties;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Properties;
 
 /**
  * This class is based on the log4j class org.apache.log4j.helpers.OptionConverter that was made by
@@ -184,7 +184,6 @@ public class OptionConverter
      * @param dEfault
      * @return Object
      */
-
     public static boolean toBoolean( String value, boolean dEfault )
     {
         if ( value == null )
@@ -217,7 +216,7 @@ public class OptionConverter
             String s = value.trim();
             try
             {
-                return Integer.valueOf( s ).intValue();
+                return Integer.parseInt(s);
             }
             catch ( NumberFormatException e )
             {
@@ -263,7 +262,7 @@ public class OptionConverter
         {
             try
             {
-                return Long.valueOf( s ).longValue() * multiplier;
+                return Long.parseLong(s) * multiplier;
             }
             catch ( NumberFormatException e )
             {

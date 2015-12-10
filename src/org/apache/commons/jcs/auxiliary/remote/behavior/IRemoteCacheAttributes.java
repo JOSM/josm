@@ -1,5 +1,7 @@
 package org.apache.commons.jcs.auxiliary.remote.behavior;
 
+import org.apache.commons.jcs.auxiliary.remote.RemoteLocation;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -63,14 +65,14 @@ public interface IRemoteCacheAttributes
      * <p>
      * @return The failovers value
      */
-    String[] getFailovers();
+    RemoteLocation[] getFailovers();
 
     /**
      * Sets the failovers attribute of the IRemoteCacheAttributes object
      * <p>
      * @param f The new failovers value
      */
-    void setFailovers( String[] f );
+    void setFailovers( RemoteLocation[] f );
 
     /**
      * Gets the localPort attribute of the IRemoteCacheAttributes object

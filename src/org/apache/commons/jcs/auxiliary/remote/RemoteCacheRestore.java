@@ -19,15 +19,15 @@ package org.apache.commons.jcs.auxiliary.remote;
  * under the License.
  */
 
+import java.io.IOException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+
 import org.apache.commons.jcs.engine.behavior.ICacheObserver;
 import org.apache.commons.jcs.engine.behavior.ICacheRestore;
 import org.apache.commons.jcs.engine.behavior.ICacheServiceNonLocal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
 
 /**
  * Used to repair the remote caches managed by the associated instance of RemoteCacheManager.
@@ -78,7 +78,9 @@ public class RemoteCacheRestore
         {
             return canFix;
         }
-        String registry = RemoteUtils.getNamingURL(remoteCacheManager.host, remoteCacheManager.port, remoteCacheManager.service);
+
+        String registry = remoteCacheManager.getRegistryURL();
+
         if ( log.isInfoEnabled() )
         {
             log.info( "looking up server [" + registry + "]" );
@@ -93,12 +95,12 @@ public class RemoteCacheRestore
         }
         catch (IOException e)
         {
-            log.error( "host=" + remoteCacheManager.host + "; port" + remoteCacheManager.port + "; service=" + remoteCacheManager.service );
+            log.error( "Registry=" + registry, e );
             canFix = false;
         }
         catch (NotBoundException e)
         {
-            log.error( "host=" + remoteCacheManager.host + "; port" + remoteCacheManager.port + "; service=" + remoteCacheManager.service );
+            log.error( "Registry=" + registry, e );
             canFix = false;
         }
 
@@ -119,9 +121,7 @@ public class RemoteCacheRestore
 
         if ( log.isInfoEnabled() )
         {
-            String msg = "Remote connection to "
-                    + RemoteUtils.getNamingURL(remoteCacheManager.host, remoteCacheManager.port, remoteCacheManager.service)
-                    + " resumed.";
+            String msg = "Remote connection to " + remoteCacheManager.getRegistryURL() + " resumed.";
             remoteCacheManager.logApplicationEvent( "RemoteCacheRestore", "fix", msg );
             log.info( msg );
         }

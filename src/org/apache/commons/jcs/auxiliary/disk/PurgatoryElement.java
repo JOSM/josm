@@ -31,7 +31,6 @@ import org.apache.commons.jcs.engine.behavior.IElementAttributes;
  */
 public class PurgatoryElement<K, V>
     extends CacheElement<K, V>
-    implements ICacheElement<K, V>
 {
     /** Don't change */
     private static final long serialVersionUID = -8152034342684135628L;

@@ -412,7 +412,7 @@ public class CompositeCacheAttributes
     {
         try
         {
-            ICompositeCacheAttributes cattr = (CompositeCacheAttributes) this.clone();
+            ICompositeCacheAttributes cattr = (ICompositeCacheAttributes) this.clone();
             return cattr;
         }
         catch ( Exception e )

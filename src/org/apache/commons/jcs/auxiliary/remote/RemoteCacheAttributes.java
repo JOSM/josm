@@ -45,7 +45,7 @@ public class RemoteCacheAttributes
     private int failoverIndex = 0;
 
     /** Array of failover server addresses */
-    private String[] failovers;
+    private RemoteLocation[] failovers;
 
     /** default name is remote_cache_client */
     private String threadPoolName = "remote_cache_client";
@@ -96,7 +96,7 @@ public class RemoteCacheAttributes
      * @return The failovers value
      */
     @Override
-    public String[] getFailovers()
+    public RemoteLocation[] getFailovers()
     {
         return this.failovers;
     }
@@ -107,7 +107,7 @@ public class RemoteCacheAttributes
      * @param f The new failovers value
      */
     @Override
-    public void setFailovers( String[] f )
+    public void setFailovers( RemoteLocation[] f )
     {
         this.failovers = f;
     }

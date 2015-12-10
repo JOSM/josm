@@ -38,11 +38,8 @@ public class CommonRemoteCacheAttributes
     /** The service name */
     private String remoteServiceName = IRemoteCacheConstants.REMOTE_CACHE_SERVICE_VAL;
 
-    /** server host */
-    private String remoteHost;
-
-    /** server port */
-    private int remotePort;
+    /** server host and port */
+    private RemoteLocation location;
 
     /** Cluster chain */
     private String clusterServers = "";
@@ -156,47 +153,37 @@ public class CommonRemoteCacheAttributes
     }
 
     /**
-     * Gets the remoteHost attribute of the RemoteCacheAttributes object.
+     * Sets the location attribute of the RemoteCacheAttributes object.
      * <p>
-     * @return The remoteHost value
+     * @param location The new location value
      */
     @Override
-    public String getRemoteHost()
+    public void setRemoteLocation( RemoteLocation location )
     {
-        return this.remoteHost;
+        this.location = location;
     }
 
     /**
-     * Sets the remoteHost attribute of the RemoteCacheAttributes object.
+     * Sets the location attribute of the RemoteCacheAttributes object.
      * <p>
-     * @param s The new remoteHost value
+     * @param host The new remoteHost value
+     * @param port The new remotePort value
      */
     @Override
-    public void setRemoteHost( String s )
+    public void setRemoteLocation( String host, int port )
     {
-        this.remoteHost = s;
+        this.location = new RemoteLocation(host, port);
     }
 
     /**
-     * Gets the remotePort attribute of the RemoteCacheAttributes object.
+     * Gets the location attribute of the RemoteCacheAttributes object.
      * <p>
-     * @return The remotePort value
+     * @return The remote location value
      */
     @Override
-    public int getRemotePort()
+    public RemoteLocation getRemoteLocation()
     {
-        return this.remotePort;
-    }
-
-    /**
-     * Sets the remotePort attribute of the RemoteCacheAttributes object.
-     * <p>
-     * @param p The new remotePort value
-     */
-    @Override
-    public void setRemotePort( int p )
-    {
-        this.remotePort = p;
+        return this.location;
     }
 
     /**
@@ -312,9 +299,12 @@ public class CommonRemoteCacheAttributes
     {
         StringBuilder buf = new StringBuilder();
         buf.append( "\n RemoteCacheAttributes " );
-        buf.append( "\n remoteHost = [" + this.remoteHost + "]" );
-        buf.append( "\n remotePort = [" + this.remotePort + "]" );
-        buf.append( "\n cacheName = [" + super.getCacheName() + "]" );
+        if (this.location != null)
+        {
+            buf.append( "\n remoteHost = [" + this.location.getHost() + "]" );
+            buf.append( "\n remotePort = [" + this.location.getPort() + "]" );
+        }
+        buf.append( "\n cacheName = [" + getCacheName() + "]" );
         buf.append( "\n remoteType = [" + remoteType + "]" );
         buf.append( "\n removeUponRemotePut = [" + this.removeUponRemotePut + "]" );
         buf.append( "\n getOnly = [" + getOnly + "]" );

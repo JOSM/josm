@@ -19,14 +19,14 @@ package org.apache.commons.jcs.auxiliary.remote.server;
  * under the License.
  */
 
+import java.rmi.Naming;
+import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
+
 import org.apache.commons.jcs.auxiliary.remote.RemoteUtils;
 import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.rmi.Naming;
-import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
 
 /**
  * This class tries to keep the registry alive. If if is able to create a registry, it will also
@@ -93,7 +93,6 @@ public class RegistryKeepAliveRunner
             {
                 log.debug( message );
             }
-            obj = null;
         }
         catch ( Exception ex )
         {

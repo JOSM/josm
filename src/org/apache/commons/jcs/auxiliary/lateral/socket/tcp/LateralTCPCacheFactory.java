@@ -31,7 +31,6 @@ import org.apache.commons.jcs.auxiliary.lateral.LateralCache;
 import org.apache.commons.jcs.auxiliary.lateral.LateralCacheMonitor;
 import org.apache.commons.jcs.auxiliary.lateral.LateralCacheNoWait;
 import org.apache.commons.jcs.auxiliary.lateral.LateralCacheNoWaitFacade;
-import org.apache.commons.jcs.auxiliary.lateral.behavior.ILateralCacheAttributes;
 import org.apache.commons.jcs.auxiliary.lateral.behavior.ILateralCacheListener;
 import org.apache.commons.jcs.auxiliary.lateral.socket.tcp.behavior.ITCPLateralCacheAttributes;
 import org.apache.commons.jcs.engine.CacheWatchRepairable;
@@ -178,6 +177,7 @@ public class LateralTCPCacheFactory
         // Create the monitoring daemon thread
         this.monitor = new LateralCacheMonitor(this);
         this.monitor.setDaemon( true );
+        this.monitor.start();
 
         this.lateralWatch = new CacheWatchRepairable();
         this.lateralWatch.setCacheWatch( new ZombieCacheWatch() );
@@ -209,7 +209,14 @@ public class LateralTCPCacheFactory
         if (this.monitor != null)
         {
             this.monitor.notifyShutdown();
-            // this.monitor.join(5000);
+            try
+            {
+                this.monitor.join(5000);
+            }
+            catch (InterruptedException e)
+            {
+                // swallow
+            }
             this.monitor = null;
         }
     }
@@ -365,15 +372,14 @@ public class LateralTCPCacheFactory
      * <p>
      * This should be called by create cache.
      * <p>
-     * @param lac  ILateralCacheAttributes
+     * @param attr  ITCPLateralCacheAttributes
      * @param cacheMgr
      *
      * @return the listener if created, else null
      */
-    private <K, V> ILateralCacheListener<K, V> createListener( ILateralCacheAttributes lac,
+    private <K, V> ILateralCacheListener<K, V> createListener( ITCPLateralCacheAttributes attr,
             ICompositeCacheManager cacheMgr )
     {
-        ITCPLateralCacheAttributes attr = (ITCPLateralCacheAttributes) lac;
         ILateralCacheListener<K, V> listener = null;
 
         // don't create a listener if we are not receiving.
@@ -381,21 +387,14 @@ public class LateralTCPCacheFactory
         {
             if ( log.isInfoEnabled() )
             {
-                log.info( "Getting listener for " + lac );
+                log.info( "Getting listener for " + attr );
             }
 
-            try
-            {
-                // make a listener. if one doesn't exist
-                listener = LateralTCPListener.getInstance( attr, cacheMgr );
+            // make a listener. if one doesn't exist
+            listener = LateralTCPListener.getInstance( attr, cacheMgr );
 
-                // register for shutdown notification
-                cacheMgr.registerShutdownObserver( (IShutdownObserver) listener );
-            }
-            catch ( Exception e )
-            {
-                log.error( "Problem creating lateral listener", e );
-            }
+            // register for shutdown notification
+            cacheMgr.registerShutdownObserver( (IShutdownObserver) listener );
         }
         else
         {

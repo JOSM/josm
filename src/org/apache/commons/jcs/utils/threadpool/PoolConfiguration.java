@@ -260,7 +260,7 @@ public final class PoolConfiguration
      * @return PoolConfiguration
      */
     @Override
-    public Object clone()
+    public PoolConfiguration clone()
     {
         return new PoolConfiguration( isUseBoundary(), boundarySize, maximumPoolSize, minimumPoolSize, keepAliveTime,
                                       getWhenBlockedPolicy(), startUpSize );

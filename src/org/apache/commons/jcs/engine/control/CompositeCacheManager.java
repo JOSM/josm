@@ -26,12 +26,13 @@ import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -79,8 +80,11 @@ public class CompositeCacheManager
     public static final String JMX_OBJECT_NAME = "org.apache.commons.jcs:type=JCSAdminBean";
 
     /** Caches managed by this cache manager */
-    private final Map<String, ICache<?, ?>> caches =
+    private final ConcurrentMap<String, ICache<?, ?>> caches =
         new ConcurrentHashMap<String, ICache<?, ?>>();
+
+    /** Lock for initialization of caches */
+    private ReentrantLock cacheLock = new ReentrantLock();
 
     /** Number of clients accessing this cache manager */
     private int clients;
@@ -92,15 +96,15 @@ public class CompositeCacheManager
     private IElementAttributes defaultElementAttr = new ElementAttributes();
 
     /** Used to keep track of configured auxiliaries */
-    private final Map<String, AuxiliaryCacheFactory> auxiliaryFactoryRegistry =
+    private final ConcurrentMap<String, AuxiliaryCacheFactory> auxiliaryFactoryRegistry =
         new ConcurrentHashMap<String, AuxiliaryCacheFactory>( 11 );
 
     /** Used to keep track of attributes for auxiliaries. */
-    private final Map<String, AuxiliaryCacheAttributes> auxiliaryAttributeRegistry =
+    private final ConcurrentMap<String, AuxiliaryCacheAttributes> auxiliaryAttributeRegistry =
         new ConcurrentHashMap<String, AuxiliaryCacheAttributes>( 11 );
 
     /** Used to keep track of configured auxiliaries */
-    private final Map<String, AuxiliaryCache<?, ?>> auxiliaryCaches =
+    private final ConcurrentMap<String, AuxiliaryCache<?, ?>> auxiliaryCaches =
         new ConcurrentHashMap<String, AuxiliaryCache<?, ?>>( 11 );
 
     /** Properties with which this manager was configured. This is exposed for other managers. */
@@ -459,7 +463,7 @@ public class CompositeCacheManager
                 {
                     log.info( "Using system property [[" + key + "] [" + sysProps.getProperty( key ) + "]]" );
                 }
-                props.put( key, sysProps.getProperty( key ) );
+                props.setProperty( key, sysProps.getProperty( key ) );
             }
         }
     }
@@ -603,19 +607,32 @@ public class CompositeCacheManager
             log.debug( "attr = " + attr );
         }
 
-        synchronized ( caches )
+        cache = (CompositeCache<K, V>) caches.get( cattr.getCacheName() );
+
+        if (cache == null)
         {
-            cache = (CompositeCache<K, V>) caches.get( cattr.getCacheName() );
-            if ( cache == null )
+            cacheLock.lock();
+
+            try
             {
-                cattr.setCacheName( cattr.getCacheName() );
+                // double check
+                cache = (CompositeCache<K, V>) caches.get( cattr.getCacheName() );
 
-                CompositeCacheConfigurator configurator = new CompositeCacheConfigurator( this );
+                if ( cache == null )
+                {
+                    cattr.setCacheName( cattr.getCacheName() );
 
-                cache = configurator.parseRegion( this.getConfigurationProperties(), cattr.getCacheName(),
-                                                  this.defaultAuxValues, cattr );
+                    CompositeCacheConfigurator configurator = new CompositeCacheConfigurator( this );
 
-                caches.put( cattr.getCacheName(), cache );
+                    cache = configurator.parseRegion( this.getConfigurationProperties(), cattr.getCacheName(),
+                                                      this.defaultAuxValues, cattr );
+
+                    caches.put( cattr.getCacheName(), cache );
+                }
+            }
+            finally
+            {
+                cacheLock.unlock();
             }
         }
 

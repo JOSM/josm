@@ -19,6 +19,9 @@ package org.apache.commons.jcs.auxiliary.remote;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheListener;
 import org.apache.commons.jcs.auxiliary.remote.server.behavior.RemoteType;
@@ -30,9 +33,6 @@ import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Client proxy for an RMI remote cache.
@@ -46,19 +46,27 @@ public class RemoteCache<K, V>
     /** The logger. */
     private static final Log log = LogFactory.getLog( RemoteCache.class );
 
+    /** for error notifications */
+    private RemoteCacheMonitor monitor;
+
     /**
      * Constructor for the RemoteCache object. This object communicates with a remote cache server.
      * One of these exists for each region. This also holds a reference to a listener. The same
      * listener is used for all regions for one remote server. Holding a reference to the listener
      * allows this object to know the listener id assigned by the remote cache.
      * <p>
-     * @param cattr
-     * @param remote
-     * @param listener
+     * @param cattr the cache configuration
+     * @param remote the remote cache server handle
+     * @param listener a listener
+     * @param monitor the cache monitor
      */
-    public RemoteCache( IRemoteCacheAttributes cattr, ICacheServiceNonLocal<K, V> remote, IRemoteCacheListener<K, V> listener )
+    public RemoteCache( IRemoteCacheAttributes cattr,
+        ICacheServiceNonLocal<K, V> remote,
+        IRemoteCacheListener<K, V> listener,
+        RemoteCacheMonitor monitor )
     {
         super( cattr, remote, listener );
+        this.monitor = monitor;
 
         RemoteUtils.configureGlobalCustomSocketFactory( getRemoteCacheAttributes().getRmiSocketFactoryTimeoutMillis() );
     }
@@ -118,16 +126,14 @@ public class RemoteCache<K, V>
         // may want to flush if region specifies
         // Notify the cache monitor about the error, and kick off the recovery
         // process.
-        RemoteCacheMonitor.getInstance().notifyError();
+        monitor.notifyError();
 
         // initiate failover if local
-        @SuppressWarnings("unchecked") // Need to cast because of common map for all facades
-        RemoteCacheNoWaitFacade<K, V> rcnwf = (RemoteCacheNoWaitFacade<K, V>)RemoteCacheFactory.getFacades()
-            .get( getRemoteCacheAttributes().getCacheName() );
+        RemoteCacheNoWaitFacade<K, V> rcnwf = RemoteCacheFactory.getFacade( getRemoteCacheAttributes().getCacheName() );
 
         if ( log.isDebugEnabled() )
         {
-            log.debug( "Initiating failover, rcnf = " + rcnwf );
+            log.debug( "Initiating failover, rcnwf = " + rcnwf );
         }
 
         if ( rcnwf != null && rcnwf.getRemoteCacheAttributes().getRemoteType() == RemoteType.LOCAL )
@@ -145,7 +151,7 @@ public class RemoteCache<K, V>
         {
             throw (IOException) ex;
         }
-        throw new IOException( ex.getMessage() );
+        throw new IOException( ex );
     }
 
     /**
@@ -179,8 +185,11 @@ public class RemoteCache<K, V>
      */
     protected String getIPAddressForService()
     {
-        String ipAddress = this.getRemoteCacheAttributes().getRemoteHost() + ":"
-            + this.getRemoteCacheAttributes().getRemotePort();
+        String ipAddress = "(null)";
+        if (this.getRemoteCacheAttributes().getRemoteLocation() != null)
+        {
+            ipAddress = this.getRemoteCacheAttributes().getRemoteLocation().toString();
+        }
         return ipAddress;
     }
 }

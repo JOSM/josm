@@ -19,6 +19,14 @@ package org.apache.commons.jcs.auxiliary.remote;
  * under the License.
  */
 
+import java.io.IOException;
+import java.rmi.UnmarshalException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCache;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheClient;
@@ -34,14 +42,6 @@ import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.rmi.UnmarshalException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * The RemoteCacheNoWait wraps the RemoteCacheClient. The client holds a handle on the
@@ -101,9 +101,12 @@ public class RemoteCacheNoWait<K, V>
         remoteCacheClient = cache;
 
         CacheEventQueueFactory<K, V> factory = new CacheEventQueueFactory<K, V>();
-        this.cacheEventQueue = factory.createCacheEventQueue( new CacheAdaptor<K, V>( remoteCacheClient ), remoteCacheClient
-            .getListenerId(), remoteCacheClient.getCacheName(), remoteCacheClient.getAuxiliaryCacheAttributes()
-            .getEventQueuePoolName(), remoteCacheClient.getAuxiliaryCacheAttributes().getEventQueueType() );
+        this.cacheEventQueue = factory.createCacheEventQueue(
+            new CacheAdaptor<K, V>( remoteCacheClient ),
+            remoteCacheClient.getListenerId(),
+            remoteCacheClient.getCacheName(),
+            remoteCacheClient.getAuxiliaryCacheAttributes().getEventQueuePoolName(),
+            remoteCacheClient.getAuxiliaryCacheAttributes().getEventQueueType() );
 
         if ( remoteCacheClient.getStatus() == CacheStatus.ERROR )
         {
