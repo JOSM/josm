@@ -79,7 +79,7 @@ public class JndiDataSourceFactory implements DataSourceFactory
     }
 
     /**
-     * @see org.apache.commons.jcs.auxiliary.disk.jdbc.dsfactory.DataSourceFactory#getDataSource
+     * @see org.apache.commons.jcs.auxiliary.disk.jdbc.dsfactory.DataSourceFactory#getDataSource()
      */
     @Override
 	public DataSource getDataSource() throws SQLException
@@ -106,7 +106,7 @@ public class JndiDataSourceFactory implements DataSourceFactory
     }
 
     /**
-     * @see org.apache.commons.jcs.auxiliary.disk.jdbc.DataSourceFactory#initialize
+     * @see org.apache.commons.jcs.auxiliary.disk.jdbc.dsfactory.DataSourceFactory#initialize(JDBCDiskCacheAttributes)
      */
     @Override
 	public void initialize(JDBCDiskCacheAttributes config) throws SQLException
