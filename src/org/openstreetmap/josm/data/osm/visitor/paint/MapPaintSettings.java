@@ -48,11 +48,6 @@ public final class MapPaintSettings implements PreferenceChangedListener {
     private boolean fillConnectionNode;
     /** Preference: should only the data area outline be drawn */
     private boolean outlineOnly;
-    /** Preference: parameter to avoid partial fill on small area objects:
-     * If more than a certain percentage of the total area would be filled by 
-     * partial fill, then fill this area completely (avoiding narrow gap in the
-     * center) */
-    private double partialFillThreshold;
     /** Color Preference for selected objects */
     private Color selectedColor;
     private Color relationSelectedColor;
@@ -110,7 +105,6 @@ public final class MapPaintSettings implements PreferenceChangedListener {
         fillConnectionNode = Main.pref.getBoolean("mappaint.node.fill-connection", false);
 
         outlineOnly = Main.pref.getBoolean("draw.data.area_outline_only", false);
-        partialFillThreshold = Main.pref.getDouble("draw.area.partial_fill_threshold", 70);
     }
 
     @Override
@@ -350,17 +344,5 @@ public final class MapPaintSettings implements PreferenceChangedListener {
      */
     public boolean isOutlineOnly() {
         return outlineOnly;
-    }
-
-    /**
-     * Returns the partial fill threshold.
-     * This parameter is used to avoid partial fill on small area objects:
-     * If more than a certain percentage of the total area would be filled by 
-     * partial fill, then fill this area completely (avoiding narrow gap in the
-     * center)
-     * @return the partial fill threshold
-     */
-    public double getPartialFillThreshold() {
-        return partialFillThreshold;
     }
 }

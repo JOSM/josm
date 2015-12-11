@@ -10,6 +10,7 @@ public interface StyleKeys {
     String DASHES_OFFSET = "dashes-offset";
     String FILL_COLOR = "fill-color";
     String FILL_EXTENT = "fill-extent";
+    String FILL_EXTENT_THRESHOLD = "fill-extent-threshold";
     String FILL_IMAGE = "fill-image";
     String FILL_OPACITY = "fill-opacity";
     String FONT_FAMILY = "font-family";

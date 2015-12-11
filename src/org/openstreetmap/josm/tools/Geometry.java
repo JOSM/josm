@@ -977,25 +977,22 @@ public final class Geometry {
      * 
      * Uses current projection; units are that of the projected coordinates.
      * 
-     * @param nodes the list of nodes representing the polygon (must be
-     * closed, i.e. first node equals last node)
+     * @param nodes the list of nodes representing the polygon
      * @return area and perimeter
      */
     public static AreaAndPerimeter getAreaAndPerimeter(List<Node> nodes) {
-        if (nodes.get(0) != nodes.get(nodes.size() - 1)) {
-            throw new IllegalArgumentException();
-        }
         double area = 0;
         double perimeter = 0;
-        Node lastN = null;
-        for (Node n : nodes) {
-            if (lastN != null) {
-                EastNorth p1 = lastN.getEastNorth();
-                EastNorth p2 = n.getEastNorth();
+        if (!nodes.isEmpty()) {
+            boolean closed = nodes.get(0) == nodes.get(nodes.size() - 1);
+            int numSegments = closed ? nodes.size() - 1 : nodes.size();
+            EastNorth p1 = nodes.get(0).getEastNorth();
+            for (int i=1; i<=numSegments; i++) {
+                EastNorth p2 = nodes.get(i == numSegments ? 0 : i).getEastNorth();
                 area += p1.east() * p2.north() - p2.east() * p1.north();
                 perimeter += p1.distance(p2);
+                p1 = p2;
             }
-            lastN = n;
         }
         return new AreaAndPerimeter(Math.abs(area) / 2, perimeter);
     }

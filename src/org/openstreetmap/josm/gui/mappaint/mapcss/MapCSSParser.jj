@@ -203,6 +203,7 @@ TOKEN:
 |   < DEG: "°" >
 |   < ELEMENT_OF: "∈" >
 |   < CROSSING: "⧉" >
+|   < PERCENT: "%" >
 |   < COMMENT_START: "/*" > : COMMENT
 |   < UNEXPECTED_CHAR : ~[] > // avoid TokenMgrErrors because they are hard to recover from
 }
@@ -1125,7 +1126,7 @@ Float ufloat_unit() :
     String u;
 }
 {
-    f=ufloat() ( u=ident() | <DEG> { u = "°"; } )
+    f=ufloat() ( u=ident() | <DEG> { u = "°"; } | <PERCENT> { u = "%"; } )
     {
         Double m = unit_factor(u);
         if (m == null)
@@ -1142,6 +1143,7 @@ private Double unit_factor(String unit) {
         case "rad": return 1.;
         case "grad": return Math.PI / 200;
         case "turn": return 2 * Math.PI;
+        case "%": return 0.01;
         case "px": return 1.;
         case "cm": return 96/2.54;
         case "mm": return 9.6/2.54;

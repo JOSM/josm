@@ -632,6 +632,22 @@ public abstract class Condition {
         static boolean inDownloadedArea(Environment e) {
             return IN_DOWNLOADED_AREA.evaluate(e.osm);
         }
+
+        static boolean completely_downloaded(Environment e) {
+            if (e.osm instanceof Relation) {
+                return !((Relation) e.osm).hasIncompleteMembers();
+            } else {
+                return true;
+            }
+        }
+
+        static boolean closed2(Environment e) {
+            if (e.osm instanceof Way && ((Way) e.osm).isClosed())
+                return true;
+            if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
+                return MultipolygonCache.getInstance().get(Main.map.mapView, (Relation) e.osm).getOpenEnds().isEmpty();
+            return false;
+        }
     }
 
     public static class PseudoClassCondition extends Condition {
