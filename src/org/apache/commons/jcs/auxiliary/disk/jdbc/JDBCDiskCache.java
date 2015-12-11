@@ -451,7 +451,7 @@ public class JDBCDiskCache<K, V>
      * <p>
      * @param key
      * @return ICacheElement
-     * @see org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache#doGet(java.io.Serializable)
+     * @see org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache#get(Object)
      */
     @Override
     protected ICacheElement<K, V> processGet( K key )

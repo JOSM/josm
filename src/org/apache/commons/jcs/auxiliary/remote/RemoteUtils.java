@@ -209,8 +209,8 @@ public class RemoteUtils
      * Get the naming url used for RMI registration
      *
      * @param location the remote location
-     * @param serviceName
-     * @return
+     * @param serviceName the remote service name
+     * @return the URL for RMI lookup
      */
     public static String getNamingURL(final RemoteLocation location, final String serviceName)
     {
@@ -220,10 +220,10 @@ public class RemoteUtils
     /**
      * Get the naming url used for RMI registration
      *
-     * @param registryHost
-     * @param registryPort
-     * @param serviceName
-     * @return
+     * @param registryHost the remote host
+     * @param registryPort the remote port
+     * @param serviceName the remote service name
+     * @return the URL for RMI lookup
      */
     public static String getNamingURL(final String registryHost, final int registryPort, final String serviceName)
     {

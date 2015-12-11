@@ -123,7 +123,7 @@ public final class RemoteLocation
      * a RemoteLocation object
      *
      * @param server the input string
-     * @returns the remote location object
+     * @return the remote location object
      */
     public static RemoteLocation parseServerAndPort(final String server)
     {

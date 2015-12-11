@@ -60,7 +60,7 @@ public class SharedPoolDataSourceFactory implements DataSourceFactory
     }
 
     /**
-     * @see org.apache.torque.dsfactory.DataSourceFactory#getDataSource
+     * @see org.apache.commons.jcs.auxiliary.disk.jdbc.DataSourceFactory#getDataSource
      */
     @Override
     public DataSource getDataSource()
@@ -69,7 +69,7 @@ public class SharedPoolDataSourceFactory implements DataSourceFactory
     }
 
     /**
-     * @see org.apache.torque.dsfactory.DataSourceFactory#initialize
+     * @see org.apache.commons.jcs.auxiliary.disk.jdbc.DataSourceFactory#initialize
      */
     @Override
 	public void initialize(JDBCDiskCacheAttributes config) throws SQLException
