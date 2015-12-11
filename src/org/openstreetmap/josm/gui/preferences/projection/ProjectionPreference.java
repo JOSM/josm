@@ -193,6 +193,13 @@ public class ProjectionPreference implements SubPreferenceSetting {
         registerProjectionChoice(tr("LKS-92 (Latvia TM)"), "core:tmerclv", 3059);                   // LV
 
         /**
+         * Netherlands RD projection
+         *
+         * @author vholten
+         */
+        registerProjectionChoice(tr("Rijksdriehoekscoördinaten (Netherlands)"), "core:dutchrd", 28992); // NL
+
+        /**
          * PUWG 1992 and 2000 are the official cordinate systems in Poland.
          *
          * They use the same math as UTM only with different constants.

@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
 import org.openstreetmap.josm.data.projection.proj.ClassProjFactory;
+import org.openstreetmap.josm.data.projection.proj.DoubleStereographic;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
 import org.openstreetmap.josm.data.projection.proj.LonLat;
 import org.openstreetmap.josm.data.projection.proj.Mercator;
@@ -76,6 +77,7 @@ public final class Projections {
         registerBaseProjection("lcc", LambertConformalConic.class, "core");
         registerBaseProjection("somerc", SwissObliqueMercator.class, "core");
         registerBaseProjection("tmerc", TransverseMercator.class, "core");
+        registerBaseProjection("sterea", DoubleStereographic.class, "core");
 
         ellipsoids.put("airy", Ellipsoid.Airy);
         ellipsoids.put("mod_airy", Ellipsoid.AiryMod);
