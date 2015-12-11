@@ -418,6 +418,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param text text style to use
      */
     private void displayText(GlyphVector gv, String s, int x, int y, boolean disabled, TextElement text) {
+        if (gv == null && s.isEmpty()) return;
         if (isInactiveMode || disabled) {
             g.setColor(inactiveColor);
             if (gv != null) {
@@ -431,7 +432,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             g.setColor(text.haloColor);
             Shape textOutline;
             if (gv == null) {
-                if (s.isEmpty()) return;
                 FontRenderContext frc = g.getFontRenderContext();
                 TextLayout tl = new TextLayout(s, text.font, frc);
                 textOutline = tl.getOutline(AffineTransform.getTranslateInstance(x, y));
