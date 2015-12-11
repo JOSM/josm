@@ -335,7 +335,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private boolean showNames;
     private boolean showIcons;
     private boolean isOutlineOnly;
-    private double partialFillThreshold;
 
     private Font orderFont;
 
@@ -466,7 +465,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extent if not null, area will be filled partially; specifies, how
      * far to fill from the boundary towards the center of the area;
      * if null, area will be filled completely
-     * @param pfClip clipping area for partial fill
+     * @param pfClip clipping area for partial fill (only needed for unclosed
+     * polygons)
      * @param disabled If this should be drawn with a special disabled style.
      * @param text The text to write on the area.
      */
@@ -491,7 +491,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         clip = pfClip.createTransformedShape(nc.getAffineTransform());
                     }
                     g.clip(clip);
-                    g.setStroke(new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                    g.setStroke(new BasicStroke(2 * extent, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 4));
                     g.draw(area);
                     g.setClip(oldClip);
                 }
@@ -606,10 +606,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extent if not null, area will be filled partially; specifies, how
      * far to fill from the boundary towards the center of the area;
      * if null, area will be filled completely
+     * @param extentThreshold if not null, determines if the partial filled should
+     * be replaced by plain fill, when it covers a certain fraction of the total area
      * @param disabled If this should be drawn with a special disabled style.
      * @param text The text to write on the area.
      */
-    public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, boolean disabled, TextElement text) {
+    public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextElement text) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
@@ -619,14 +621,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     continue;
                 }
                 if (extent != null) {
-                    if (pd.isClosed()) {
-                        AreaAndPerimeter ap = pd.getAreaAndPerimeter();
-                        // if partial fill would only leave a small gap in the center ...
-                        if (ap.getPerimeter() * extent * scale > partialFillThreshold / 100 * ap.getArea()) {
-                            // ... turn it off and fill completely
-                            extent = null;
-                        }
-                    } else {
+                    if (!usePartialFill(pd.getAreaAndPerimeter(), extent, extentThreshold)) {
+                        extent = null;
+                    } else if (!pd.isClosed()) {
                         pfClip = getPFClip(pd, extent * scale);
                     }
                 }
@@ -645,24 +642,39 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extent if not null, area will be filled partially; specifies, how
      * far to fill from the boundary towards the center of the area;
      * if null, area will be filled completely
+     * @param extentThreshold if not null, determines if the partial filled should
+     * be replaced by plain fill, when it covers a certain fraction of the total area
      * @param disabled If this should be drawn with a special disabled style.
      * @param text The text to write on the area.
      */
-    public void drawArea(Way w, Color color, MapImage fillImage, Float extent, boolean disabled, TextElement text) {
+    public void drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextElement text) {
         Path2D.Double pfClip = null;
         if (extent != null) {
-            if (w.isClosed()) {
-                AreaAndPerimeter ap = Geometry.getAreaAndPerimeter(w.getNodes());
-                // if partial fill would only leave a small gap in the center ...
-                if (ap.getPerimeter() * extent * scale > partialFillThreshold / 100 * ap.getArea()) {
-                    // ... turn it off and fill completely
-                    extent = null;
-                }
-            } else {
+            if (!usePartialFill(Geometry.getAreaAndPerimeter(w.getNodes()), extent, extentThreshold)) {
+                extent = null;
+            } else if (!w.isClosed()) {
                 pfClip = getPFClip(w, extent * scale);
             }
         }
         drawArea(w, getPath(w), color, fillImage, extent, pfClip, disabled, text);
+    }
+
+    /**
+     * Determine, if partial fill should be turned off for this object, because
+     * only a small unfilled gap in the center of the area would be left.
+     *
+     * This is used to get a cleaner look for urban regions with many small
+     * areas like buildings, etc.
+     * @param ap the area and the perimeter of the object
+     * @param extent the "width" of partial fill
+     * @param threshold when the partial fill covers that much of the total
+     * area, the partial fill is turned off; can be greater than 100% as the
+     * covered area is estimated as <code>perimeter * extent</code>
+     * @return true, if the partial fill should be used, false otherwise
+     */
+    private boolean usePartialFill(AreaAndPerimeter ap, float extent, Float threshold) {
+        if (threshold == null) return true;
+        return ap.getPerimeter() * extent * scale < threshold * ap.getArea();
     }
 
     public void drawBoxText(Node n, BoxTextElemStyle bs) {
@@ -1518,7 +1530,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         showNames = paintSettings.getShowNamesDistance() > circum;
         showIcons = paintSettings.getShowIconsDistance() > circum;
         isOutlineOnly = paintSettings.isOutlineOnly();
-        partialFillThreshold = paintSettings.getPartialFillThreshold();
         orderFont = new Font(Main.pref.get("mappaint.font", "Droid Sans"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
 
         antialiasing = Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
@@ -1595,6 +1606,21 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         return clip;
     }
 
+    /**
+     * Fix the clipping area of unclosed polygons for partial fill.
+     *
+     * The current algorithm for partial fill simply strokes the polygon with a
+     * large stroke width after masking the outside with a clipping area.
+     * This works, but for unclosed polygons, the mask can crop the corners at
+     * both ends (see #12104).
+     *
+     * This method fixes the clipping area by sort of adding the corners to the
+     * clip outline.
+     *
+     * @param clip the clipping area to modify (initially empty)
+     * @param nodes nodes of the polygon
+     * @param extent the extent
+     */
     private static void buildPFClip(Path2D.Double clip, List<Node> nodes, double extent) {
         boolean initial = true;
         for (Node n : nodes) {
@@ -1628,6 +1654,23 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
+    /**
+     * Get the point to add to the clipping area for partial fill of unclosed polygons.
+     *
+     * <code>(p1,p2)</code> is the first or last way segment and <code>p3</code> the
+     * opposite endpoint.
+     *
+     * @param p1 1st point
+     * @param p2 2nd point
+     * @param p3 3rd point
+     * @param extent the extent
+     * @return a point q, such that p1,p2,q form a right angle
+     * and the distance of q to p2 is <code>extent</code>. The point q lies on
+     * the same side of the line p1,p2 as the point p3.
+     * Returns null if p1,p2,p3 forms an angle greater 90 degrees. (In this case
+     * the corner of the partial fill would not be cut off by the mask, so an
+     * additional point is not necessary.)
+     */
     private static EastNorth getPFDisplacedEndPoint(EastNorth p1, EastNorth p2, EastNorth p3, double extent) {
         double dx1 = p2.getX() - p1.getX();
         double dy1 = p2.getY() - p1.getY();
@@ -1635,6 +1678,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         double dy2 = p3.getY() - p2.getY();
         if (dx1 * dx2 + dy1 * dy2 < 0) {
             double len = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+            if (len == 0) return null;
             double dxm = -dy1 * extent / len;
             double dym = dx1 * extent / len;
             if (dx1 * dy2 - dx2 * dy1 < 0) {

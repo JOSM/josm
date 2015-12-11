@@ -4865,6 +4865,24 @@ way|z20-[highway][setting("highway_labels")] {
 /* Area fill */
 /*************/
 
+/* small extent for unclosed area (see below for closed) */
 area[setting("partial_fill")] {
-    fill-extent: 25;
+    fill-extent: 15;
 }
+
+/* Turn partial fill off and us plain fill, when the partial fill covers about
+   100% of the area. This reduces artifacts (typically for incomplete multipolygons).
+   Switching between full and partial fill while drawing an area might be irritating,
+   so only do this at low zoom. */
+area|z-13[setting("partial_fill")] {
+    fill-extent-threshold: 100%;
+}
+
+/* Larger extent for closed areas.
+   Turn partial fill off, when it covers more than about 70% of the area. This is avoids
+   areas with small unfilled patches in the center. */
+area[setting("partial_fill")]:closed2 {
+    fill-extent: 25;
+    fill-extent-threshold: 70%;
+}
+
