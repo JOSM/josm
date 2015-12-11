@@ -306,10 +306,9 @@ public class BlockDiskCache<K, V>
      * in the key store.</li> <li>If we found a key, ask the BlockDisk for the object at the
      * blocks..</li> <li>Release the lock.</li>
      * </ol>
-     * (non-Javadoc)
      * @param key
      * @return ICacheElement
-     * @see org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache#doGet(java.io.Serializable)
+     * @see org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache#get(Object)
      */
     @Override
     protected ICacheElement<K, V> processGet( K key )
@@ -366,7 +365,7 @@ public class BlockDiskCache<K, V>
      * lock.</li>
      * </ol>
      * @param element
-     * @see org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache#doUpdate(org.apache.commons.jcs.engine.behavior.ICacheElement)
+     * @see org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache#update(ICacheElement)
      */
     @Override
     protected void processUpdate( ICacheElement<K, V> element )
@@ -422,10 +421,9 @@ public class BlockDiskCache<K, V>
      * Returns true if the removal was successful; or false if there is nothing to remove. Current
      * implementation always result in a disk orphan.
      * <p>
-     * (non-Javadoc)
      * @param key
      * @return true if removed anything
-     * @see org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache#doRemove(java.io.Serializable)
+     * @see org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache#remove(Object)
      */
     @Override
     protected boolean processRemove( K key )
@@ -523,7 +521,7 @@ public class BlockDiskCache<K, V>
     /**
      * Resets the keyfile, the disk file, and the memory key map.
      * <p>
-     * @see org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache#doRemoveAll()
+     * @see org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache#removeAll()
      */
     @Override
     protected void processRemoveAll()
@@ -684,7 +682,6 @@ public class BlockDiskCache<K, V>
     /**
      * Returns info about the disk cache.
      * <p>
-     * (non-Javadoc)
      * @see org.apache.commons.jcs.auxiliary.AuxiliaryCache#getStatistics()
      */
     @Override
