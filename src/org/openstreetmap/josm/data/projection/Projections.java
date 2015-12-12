@@ -24,6 +24,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
+import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
+import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
 import org.openstreetmap.josm.data.projection.proj.ClassProjFactory;
 import org.openstreetmap.josm.data.projection.proj.DoubleStereographic;
@@ -83,18 +85,44 @@ public final class Projections {
         ellipsoids.put("mod_airy", Ellipsoid.AiryMod);
         ellipsoids.put("aust_SA", Ellipsoid.AustSA);
         ellipsoids.put("bessel", Ellipsoid.Bessel1841);
+        ellipsoids.put("bess_nam", Ellipsoid.BesselNamibia);
         ellipsoids.put("clrk66", Ellipsoid.Clarke1866);
+        ellipsoids.put("clrk80", Ellipsoid.Clarke1880);
         ellipsoids.put("clarkeIGN", Ellipsoid.ClarkeIGN);
+        ellipsoids.put("evrstSS", Ellipsoid.EverestSabahSarawak);
         ellipsoids.put("intl", Ellipsoid.Hayford);
         ellipsoids.put("helmert", Ellipsoid.Helmert);
         ellipsoids.put("krass", Ellipsoid.Krassowsky);
         ellipsoids.put("GRS67", Ellipsoid.GRS67);
         ellipsoids.put("GRS80", Ellipsoid.GRS80);
+        ellipsoids.put("WGS66", Ellipsoid.WGS66);
         ellipsoids.put("WGS72", Ellipsoid.WGS72);
         ellipsoids.put("WGS84", Ellipsoid.WGS84);
 
         datums.put("WGS84", WGS84Datum.INSTANCE);
         datums.put("GRS80", GRS80Datum.INSTANCE);
+        datums.put("NAD83", GRS80Datum.INSTANCE);
+        datums.put("carthage", new ThreeParameterDatum(
+                "Carthage 1934 Tunisia", "carthage",
+                Ellipsoid.Clarke1880, -263.0, 6.0, 431.0));
+        datums.put("GGRS87", new ThreeParameterDatum(
+                "Greek Geodetic Reference System 1987", "GGRS87", 
+                Ellipsoid.GRS80, -199.87, 74.79, 246.62));
+        datums.put("hermannskogel",new ThreeParameterDatum(
+                "Hermannskogel", "hermannskogel",
+                Ellipsoid.Bessel1841, 653.0, -212.0, 449.0));
+        datums.put("ire65", new SevenParameterDatum(
+                "Ireland 1965", "ire65",
+                Ellipsoid.AiryMod, 482.530, -130.596, 564.557, -1.042, -0.214, -0.631, 8.15));
+        datums.put("nzgd49", new SevenParameterDatum(
+                "New Zealand Geodetic Datum 1949", "nzgd49",
+                Ellipsoid.Hayford, 59.47, -5.04, 187.44, 0.47, -0.1, 1.024, -4.5993));
+        datums.put("OSGB36", new SevenParameterDatum(
+                "Airy 1830", "OSGB36", 
+                Ellipsoid.Airy, 446.448, -125.157, 542.060, 0.1502, 0.2470, 0.8421, -20.4894));
+        datums.put("potsdam", new SevenParameterDatum(
+                "Potsdam Rauenberg 1950 DHDN", "potsdam",
+                Ellipsoid.Bessel1841, 598.1, 73.7, 418.2, 0.202, 0.045, -2.455, 6.7));
 
         nadgrids.put("BETA2007.gsb", NTV2GridShiftFileWrapper.BETA2007);
         nadgrids.put("ntf_r93_b.gsb", NTV2GridShiftFileWrapper.ntf_rgf93);
