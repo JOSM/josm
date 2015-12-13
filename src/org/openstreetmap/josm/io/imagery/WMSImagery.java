@@ -25,6 +25,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
@@ -303,10 +304,7 @@ public class WMSImagery {
     }
 
     private static boolean isProjSupported(String crs) {
-        for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
-            if (pc.getPreferencesFromCode(crs) != null) return true;
-        }
-        return false;
+        return Projections.getProjectionByCode(crs) != null;
     }
 
     private static String getChildContent(Element parent, String name, String missing, String empty) {
