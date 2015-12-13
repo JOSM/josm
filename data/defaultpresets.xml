@@ -1153,6 +1153,8 @@
                     <check key="handrail:right" text="Right handrail" />
                 </checkgroup>
                 <space />
+                <combo key="conveying" text="Escalator" values="yes,forward,backward,reversible" />
+                <space />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Steps -->
