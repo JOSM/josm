@@ -24,7 +24,7 @@ public abstract class AbstractProj implements Proj {
     private static final int MAXIMUM_ITERATIONS = 15;
 
     /**
-     * Relative iteration precision used in the <code>mlfn<code> method
+     * Relative iteration precision used in the <code>mlfn</code> method
      */
     private static final double MLFN_TOL = 1E-11;
 
@@ -32,30 +32,30 @@ public abstract class AbstractProj implements Proj {
      * Constants used to calculate {@link #en0}, {@link #en1},
      * {@link #en2}, {@link #en3}, {@link #en4}.
      */
-    private static final double C00= 1.0,
-                                C02= 0.25,
-                                C04= 0.046875,
-                                C06= 0.01953125,
-                                C08= 0.01068115234375,
-                                C22= 0.75,
-                                C44= 0.46875,
-                                C46= 0.01302083333333333333,
-                                C48= 0.00712076822916666666,
-                                C66= 0.36458333333333333333,
-                                C68= 0.00569661458333333333,
-                                C88= 0.3076171875;
+    private static final double C00 = 1.0,
+                                C02 = 0.25,
+                                C04 = 0.046875,
+                                C06 = 0.01953125,
+                                C08 = 0.01068115234375,
+                                C22 = 0.75,
+                                C44 = 0.46875,
+                                C46 = 0.01302083333333333333,
+                                C48 = 0.00712076822916666666,
+                                C66 = 0.36458333333333333333,
+                                C68 = 0.00569661458333333333,
+                                C88 = 0.3076171875;
 
     /**
-     * Constant needed for the <code>mlfn<code> method.
+     * Constant needed for the <code>mlfn</code> method.
      * Setup at construction time.
      */
-    protected double en0,en1,en2,en3,en4;
+    protected double en0, en1, en2, en3, en4;
 
     /**
      * The square of excentricity: e² = (a²-b²)/a² where
-     * <var>e</var> is the {@linkplain #excentricity excentricity},
-     * <var>a</var> is the {@linkplain #semiMajor semi major} axis length and
-     * <var>b</var> is the {@linkplain #semiMinor semi minor} axis length.
+     * <var>e</var> is the excentricity,
+     * <var>a</var> is the semi major axis length and
+     * <var>b</var> is the semi minor axis length.
      */
     protected double e2;
 
@@ -106,7 +106,7 @@ public abstract class AbstractProj implements Proj {
         double s, t, phi, k = 1.0/(1.0 - e2);
         int i;
         phi = arg;
-        for (i=MAXIMUM_ITERATIONS; true;) { // rarely goes over 5 iterations
+        for (i = MAXIMUM_ITERATIONS; true;) { // rarely goes over 5 iterations
             if (--i < 0) {
                 throw new RuntimeException("Too many iterations");
             }
@@ -121,7 +121,7 @@ public abstract class AbstractProj implements Proj {
     }
 
     public static double normalizeLon(double lon) {
-        if (lon >= - Math.PI && lon <= Math.PI)
+        if (lon >= -Math.PI && lon <= Math.PI)
             return lon;
         else {
             lon = lon % (2 * Math.PI);
