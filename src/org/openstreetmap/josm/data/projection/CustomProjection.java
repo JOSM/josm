@@ -37,6 +37,7 @@ public class CustomProjection extends AbstractProjection {
 
     private static final double METER_PER_UNIT_DEGREE = 2 * Math.PI * 6370997 / 360;
     private static final Map<String, Double> UNITS_TO_METERS = getUnitsToMeters();
+    private static final Map<String, Double> PRIME_MERIDANS = getPrimeMeridians();
 
     /**
      * pref String that defines the projection
@@ -63,6 +64,8 @@ public class CustomProjection extends AbstractProjection {
         y_0("y_0", true),
         /** Central meridian */
         lon_0("lon_0", true),
+        /** Prime meridian */
+        pm("pm", true),
         /** Scaling factor */
         k_0("k_0", true),
         /** Ellipsoid name (see {@code proj -le}) */
@@ -220,6 +223,14 @@ public class CustomProjection extends AbstractProjection {
             s = parameters.get(Param.lon_0.key);
             if (s != null) {
                 this.lon0 = parseAngle(s, Param.lon_0.key);
+            }
+            s = parameters.get(Param.pm.key);
+            if (s != null) {
+                if (PRIME_MERIDANS.containsKey(s)) {
+                    this.pm = PRIME_MERIDANS.get(s);
+                } else {
+                    this.pm = parseAngle(s, Param.pm.key);
+                }
             }
             s = parameters.get(Param.k_0.key);
             if (s != null) {
@@ -623,6 +634,28 @@ public class CustomProjection extends AbstractProjection {
         ret.put("ind-ft", 0.30479841);
         ret.put("ind-ch", 20.11669506);
         ret.put("degree", METER_PER_UNIT_DEGREE);
+        return ret;
+    }
+
+    private static Map<String, Double> getPrimeMeridians() {
+        Map<String, Double> ret = new ConcurrentHashMap<>();
+        try {
+            ret.put("greenwich", 0.0);
+            ret.put("lisbon", parseAngle("9d07'54.862\"W", null));
+            ret.put("paris", parseAngle("2d20'14.025\"E", null));
+            ret.put("bogota", parseAngle("74d04'51.3\"W", null));
+            ret.put("madrid", parseAngle("3d41'16.58\"W", null));
+            ret.put("rome", parseAngle("12d27'8.4\"E", null));
+            ret.put("bern", parseAngle("7d26'22.5\"E", null));
+            ret.put("jakarta", parseAngle("106d48'27.79\"E", null));
+            ret.put("ferro", parseAngle("17d40'W", null));
+            ret.put("brussels", parseAngle("4d22'4.71\"E", null));
+            ret.put("stockholm", parseAngle("18d3'29.8\"E", null));
+            ret.put("athens", parseAngle("23d42'58.815\"E", null));
+            ret.put("oslo", parseAngle("10d43'22.5\"E", null));
+        } catch (ProjectionConfigurationException ex) {
+            throw new RuntimeException();
+        }
         return ret;
     }
 }
