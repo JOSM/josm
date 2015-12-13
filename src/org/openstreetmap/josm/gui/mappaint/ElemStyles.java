@@ -5,10 +5,14 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -22,7 +26,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
-public class ElemStyles {
+public class ElemStyles implements PreferenceChangedListener {
     private final List<StyleSource> styleSources;
     private boolean drawMultipolygon;
 
@@ -31,11 +35,14 @@ public class ElemStyles {
     private boolean defaultNodes, defaultLines;
     private int defaultNodesIdx, defaultLinesIdx;
 
+    private final Map<String, String> preferenceCache = new HashMap<>();
+
     /**
      * Constructs a new {@code ElemStyles}.
      */
     public ElemStyles() {
         styleSources = new ArrayList<>();
+        Main.pref.addPreferenceChangeListener(this);
     }
 
     /**
@@ -47,6 +54,7 @@ public class ElemStyles {
             @Override
             public void run() {
                 cacheIdx++;
+                preferenceCache.clear();
             }
         });
     }
@@ -484,6 +492,37 @@ public class ElemStyles {
             return true;
         } finally {
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
+        }
+    }
+
+    /**
+     * Looks up a preference value and ensures the style cache is invalidated
+     * as soon as this preference value is changed by the user.
+     *
+     * In addition, it adds an intermediate cache for the preference values,
+     * as frequent preference lookup (using <code>Main.pref.get()</code>) for
+     * each primitive can be slow during rendering.
+     *
+     * @param key preference key
+     * @param def default value
+     * @return the corresponding preference value
+     * @see org.openstreetmap.josm.data.Preferences#get(String, String)
+     */
+    public String getPreferenceCached(String key, String def) {
+        String res;
+        if (preferenceCache.containsKey(key)) {
+            res = preferenceCache.get(key);
+        } else {
+            res = Main.pref.get(key, null);
+            preferenceCache.put(key, res);
+        }
+        return res != null ? res : def;
+    }
+
+    @Override
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        if (preferenceCache.containsKey(e.getKey())) {
+            clearCached();
         }
     }
 }

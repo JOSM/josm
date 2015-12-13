@@ -4875,14 +4875,14 @@ area[setting("partial_fill")] {
    Switching between full and partial fill while drawing an area might be irritating,
    so only do this at low zoom. */
 area|z-13[setting("partial_fill")] {
-    fill-extent-threshold: 100%;
+    fill-extent-threshold: 1.0;
 }
 
 /* Larger extent for closed areas.
-   Turn partial fill off, when it covers more than about 70% of the area. This is avoids
+   Turn partial fill off, when it covers more than about 50% of the area. This is avoids
    areas with small unfilled patches in the center. */
 area[setting("partial_fill")]:closed2 {
     fill-extent: 25;
-    fill-extent-threshold: 50%;
+    fill-extent-threshold: JOSM_pref("draw.area.extent_threshold", 0.5);
 }
 
