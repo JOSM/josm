@@ -8,7 +8,10 @@ import org.openstreetmap.josm.data.osm.FilterMatcher.FilterType;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- *
+ * Class for applying {@link Filter}s to {@link OsmPrimitive}s.
+ * 
+ * Provides a bridge between Filter GUI and the data.
+ * 
  * @author Petr_Dlouhý
  */
 public final class FilterWorker {
@@ -57,10 +60,22 @@ public final class FilterWorker {
         return changed;
     }
 
+    /**
+     * Apply the filters to a single primitive.
+     * 
+     * @param primitive the primitive 
+     * @param filterMatcher the FilterMatcher
+     * @return true, if the filter state (normal / disabled / hidden)
+     * of the primitive has changed in the process
+     */
     public static boolean executeFilters(OsmPrimitive primitive, FilterMatcher filterMatcher) {
         return doExecuteFilters(Collections.singleton(primitive), filterMatcher);
     }
 
+    /**
+     * Clear all filter flags, i.e.&nbsp;turn off filters.
+     * @param prims the primitives
+     */
     public static void clearFilterFlags(Collection<OsmPrimitive> prims) {
         for (OsmPrimitive osm : prims) {
             osm.unsetDisabledState();
