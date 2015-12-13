@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.util.RotationAngle;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.AlphanumComparator;
@@ -677,11 +678,9 @@ public final class ExpressionFactory {
          * @param key Key in JOSM preference
          * @param def Default value
          * @return value for key, or default value if not found
-         * @see org.openstreetmap.josm.data.Preferences#get(String, String)
          */
-        public static String JOSM_pref(String key, String def) {
-            String res = Main.pref.get(key, null);
-            return res != null ? res : def;
+        public static String JOSM_pref(Environment env, String key, String def) {
+            return MapPaintStyles.getStyles().getPreferenceCached(key, def);
         }
 
         /**
