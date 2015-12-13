@@ -33,6 +33,11 @@ public final class Ellipsoid {
      * Bessel 1841 ellipsoid
      */
     public static final Ellipsoid Bessel1841 = Ellipsoid.create_a_rf(6377397.155, 299.1528128);
+    
+    /**
+     * Bessel 1841 (Namibia)
+     */
+    public static final Ellipsoid BesselNamibia = Ellipsoid.create_a_rf(6377483.865, 299.1528128);
 
     /**
      * Clarke 1866 ellipsoid
@@ -40,10 +45,20 @@ public final class Ellipsoid {
     public static final Ellipsoid Clarke1866 = Ellipsoid.create_a_b(6378206.4, 6356583.8);
 
     /**
+     * Clarke 1880 (modified)
+     */
+    public static final Ellipsoid Clarke1880 = Ellipsoid.create_a_rf(6378249.145, 293.4663);
+
+    /**
      * Clarke 1880 IGN (French national geographic institute)
      */
     public static final Ellipsoid ClarkeIGN = Ellipsoid.create_a_b(6378249.2, 6356515.0);
 
+    /**
+     * Everest (Sabah & Sarawak)
+     */
+    public static final Ellipsoid EverestSabahSarawak = Ellipsoid.create_a_rf(6377298.556, 300.8017);
+    
     /**
      * GRS67 ellipsoid
      */
@@ -70,6 +85,11 @@ public final class Ellipsoid {
      * Krassowsky 1940 ellipsoid
      */
     public static final Ellipsoid Krassowsky = Ellipsoid.create_a_rf(6378245.0, 298.3);
+
+    /**
+     * WGS66 ellipsoid
+     */
+    public static final Ellipsoid WGS66 = Ellipsoid.create_a_rf(6378145.0, 298.25);
 
     /**
      * WGS72 ellipsoid

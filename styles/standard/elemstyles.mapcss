@@ -4883,6 +4883,6 @@ area|z-13[setting("partial_fill")] {
    areas with small unfilled patches in the center. */
 area[setting("partial_fill")]:closed2 {
     fill-extent: 25;
-    fill-extent-threshold: 70%;
+    fill-extent-threshold: 50%;
 }
 
