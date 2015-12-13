@@ -974,9 +974,9 @@ public final class Geometry {
 
     /**
      * Calculate area and perimeter length of a polygon.
-     * 
+     *
      * Uses current projection; units are that of the projected coordinates.
-     * 
+     *
      * @param nodes the list of nodes representing the polygon
      * @return area and perimeter
      */
@@ -987,7 +987,7 @@ public final class Geometry {
             boolean closed = nodes.get(0) == nodes.get(nodes.size() - 1);
             int numSegments = closed ? nodes.size() - 1 : nodes.size();
             EastNorth p1 = nodes.get(0).getEastNorth();
-            for (int i=1; i<=numSegments; i++) {
+            for (int i = 1; i <= numSegments; i++) {
                 EastNorth p2 = nodes.get(i == numSegments ? 0 : i).getEastNorth();
                 area += p1.east() * p2.north() - p2.east() * p1.north();
                 perimeter += p1.distance(p2);

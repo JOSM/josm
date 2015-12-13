@@ -106,9 +106,9 @@ public final class Projections {
                 "Carthage 1934 Tunisia", "carthage",
                 Ellipsoid.Clarke1880, -263.0, 6.0, 431.0));
         datums.put("GGRS87", new ThreeParameterDatum(
-                "Greek Geodetic Reference System 1987", "GGRS87", 
+                "Greek Geodetic Reference System 1987", "GGRS87",
                 Ellipsoid.GRS80, -199.87, 74.79, 246.62));
-        datums.put("hermannskogel",new ThreeParameterDatum(
+        datums.put("hermannskogel", new ThreeParameterDatum(
                 "Hermannskogel", "hermannskogel",
                 Ellipsoid.Bessel1841, 653.0, -212.0, 449.0));
         datums.put("ire65", new SevenParameterDatum(
@@ -118,7 +118,7 @@ public final class Projections {
                 "New Zealand Geodetic Datum 1949", "nzgd49",
                 Ellipsoid.Hayford, 59.47, -5.04, 187.44, 0.47, -0.1, 1.024, -4.5993));
         datums.put("OSGB36", new SevenParameterDatum(
-                "Airy 1830", "OSGB36", 
+                "Airy 1830", "OSGB36",
                 Ellipsoid.Airy, 446.448, -125.157, 542.060, 0.1502, 0.2470, 0.8421, -20.4894));
         datums.put("potsdam", new SevenParameterDatum(
                 "Potsdam Rauenberg 1950 DHDN", "potsdam",
