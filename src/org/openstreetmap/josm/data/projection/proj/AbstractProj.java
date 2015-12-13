@@ -120,4 +120,17 @@ public abstract class AbstractProj implements Proj {
         }
     }
 
+    public static double normalizeLon(double lon) {
+        if (lon >= - Math.PI && lon <= Math.PI)
+            return lon;
+        else {
+            lon = lon % (2 * Math.PI);
+            if (lon > Math.PI) {
+                return lon - 2 * Math.PI;
+            } else if (lon < -Math.PI) {
+                return lon + 2 * Math.PI;
+            }
+            return lon;
+        }
+    }
 }
