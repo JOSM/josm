@@ -390,9 +390,7 @@ public class CustomProjection extends AbstractProjection {
         if (towgs84 != null)
             return parseToWGS84(towgs84, ellps);
 
-        if (parameters.containsKey(Param.no_defs.key))
-            throw new ProjectionConfigurationException(tr("Datum required (+datum=*, +towgs84=* or +nadgrids=*)"));
-        return new CentricDatum(null, null, ellps);
+        return new NullDatum(null, ellps);
     }
 
     public Datum parseToWGS84(String paramList, Ellipsoid ellps) throws ProjectionConfigurationException {
