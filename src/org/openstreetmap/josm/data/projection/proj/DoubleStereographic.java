@@ -62,7 +62,7 @@ public class DoubleStereographic implements Proj {
         double phi0 = toRadians(lat_0);
         double e2 = ellps.e2;
         R = sqrt(1-e2) / (1 - e2*pow(sin(phi0), 2));
-        n = sqrt(1 + ellps.eb2 * pow(cos(phi0),4));
+        n = sqrt(1 + ellps.eb2 * pow(cos(phi0), 4));
         double S1 = (1 + sin(phi0)) / (1 - sin(phi0));
         double S2 = (1 - e * sin(phi0)) / (1 + e * sin(phi0));
         double w1 = pow(S1 * pow(S2, e), n);
