@@ -131,7 +131,7 @@ public abstract class AbstractProjection implements Projection {
                     }
                     for (double lat=b.getMinLat(); lat<b.getMaxLat(); lat += dLat) {
                         result.extend(latlon2eastNorth(new LatLon(lat, b.getMinLon())));
-                        result.extend(latlon2eastNorth(new LatLon(lat, b.getMaxLat())));
+                        result.extend(latlon2eastNorth(new LatLon(lat, b.getMaxLon())));
                     }
                     projectionBoundsBox = result;
                 }
