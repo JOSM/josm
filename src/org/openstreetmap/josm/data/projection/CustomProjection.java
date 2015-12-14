@@ -587,9 +587,16 @@ public class CustomProjection extends AbstractProjection {
     @Override
     public Bounds getWorldBoundsLatLon() {
         if (bounds != null) return bounds;
-        return new Bounds(
-            new LatLon(-90.0, -180.0),
-            new LatLon(90.0, 180.0));
+        Bounds ab = proj.getAlgorithmBounds();
+        if (ab != null) {
+            double minlon = Math.max(ab.getMinLon() + lon0 + pm, -180);
+            double maxlon = Math.min(ab.getMaxLon() + lon0 + pm, 180);
+            return new Bounds(ab.getMinLat(), minlon, ab.getMaxLat(), maxlon, false);
+        } else {
+            return new Bounds(
+                new LatLon(-90.0, -180.0),
+                new LatLon(90.0, 180.0));
+        }
     }
 
     @Override

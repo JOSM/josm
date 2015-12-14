@@ -8,6 +8,7 @@ import static java.lang.Math.sinh;
 import static java.lang.Math.tan;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
@@ -37,5 +38,10 @@ public class Mercator implements Proj {
     @Override
     public double[] invproject(double east, double north) {
         return new double[] {atan(sinh(north)), east};
+    }
+
+    @Override
+    public Bounds getAlgorithmBounds() {
+        return new Bounds(-89, -180, 89, 180, false);
     }
 }
