@@ -422,7 +422,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             double d_m = ll1.greatCircleDistance(ll2);
             double d_en = 100 * scale;
             double scaleMin = 0.01 * d_en / d_m / 100;
-            if (newScale < scaleMin) {
+            if (!Double.isInfinite(scaleMin) && newScale < scaleMin) {
                 newScale = scaleMin;
             }
         }
