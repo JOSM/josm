@@ -1819,7 +1819,7 @@ public class Preferences {
         // drop this block march 2016
         // update old style JOSM server links to use zip now, see #10581, #12189
         // actually also cache and mirror entries should be cleared
-        if (getInteger("josm.version", Version.getInstance().getVersion()) < 9119) {
+        if (getInteger("josm.version", Version.getInstance().getVersion()) < 9120) {
             for (String key: new String[]{"mappaint.style.entries", "taggingpreset.entries"}) {
                 Collection<Map<String, String>> data = getListOfStructs(key, (Collection<Map<String, String>>) null);
                 if (data != null) {
@@ -1833,7 +1833,10 @@ public class Preferences {
                              if ("url".equals(mkey) && val.contains("josm.openstreetmap.de/josmfile") && !val.contains("zip=1")) {
                                  val += "&zip=1";
                                  modified = true;
-
+                             }
+                             if ("url".equals(mkey) && val.contains("http://josm.openstreetmap.de/josmfile")) {
+                                 val = val.replace("http://", "https://");
+                                 modified = true;
                              }
                              newmap.put(mkey, val);
                          }
