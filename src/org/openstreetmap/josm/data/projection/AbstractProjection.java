@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.Datum;
@@ -30,6 +32,8 @@ public abstract class AbstractProjection implements Projection {
     protected double lon0;     /* central meridian */
     protected double pm;       /* prime meridian */
     protected double k0 = 1.0; /* general scale factor */
+
+    private volatile ProjectionBounds projectionBoundsBox;
 
     public final Ellipsoid getEllipsoid() {
         return ellps;
@@ -103,5 +107,36 @@ public abstract class AbstractProjection implements Projection {
 
     protected static final double convertDegreeMinuteSecond(double degree, double minute, double second) {
         return degree + (minute/60.0) + (second/3600.0);
+    }
+
+    @Override
+    public final ProjectionBounds getWorldBoundsBoxEastNorth() {
+        ProjectionBounds result = projectionBoundsBox;
+        if (result == null) {
+            synchronized (this) {
+                result = projectionBoundsBox;
+                if (result == null) {
+                    Bounds b = getWorldBoundsLatLon();
+                    // add 4 corners
+                    result = new ProjectionBounds(latlon2eastNorth(b.getMin()));
+                    result.extend(latlon2eastNorth(b.getMax()));
+                    result.extend(latlon2eastNorth(new LatLon(b.getMinLat(), b.getMaxLon())));
+                    result.extend(latlon2eastNorth(new LatLon(b.getMaxLat(), b.getMinLon())));
+                    // and trace along the outline
+                    double dLon = (b.getMaxLon() - b.getMinLon()) / 1000;
+                    double dLat = (b.getMaxLat() - b.getMinLat()) / 1000;
+                    for (double lon=b.getMinLon(); lon<b.getMaxLon(); lon += dLon) {
+                        result.extend(latlon2eastNorth(new LatLon(b.getMinLat(), lon)));
+                        result.extend(latlon2eastNorth(new LatLon(b.getMaxLat(), lon)));
+                    }
+                    for (double lat=b.getMinLat(); lat<b.getMaxLat(); lat += dLat) {
+                        result.extend(latlon2eastNorth(new LatLon(lat, b.getMinLon())));
+                        result.extend(latlon2eastNorth(new LatLon(lat, b.getMaxLat())));
+                    }
+                    projectionBoundsBox = result;
+                }
+            }
+        }
+        return projectionBoundsBox;
     }
 }

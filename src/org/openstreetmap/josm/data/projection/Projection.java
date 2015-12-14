@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.projection;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 
@@ -67,6 +68,18 @@ public interface Projection {
      * @return the supported lat/lon rectangle for this projection
      */
     Bounds getWorldBoundsLatLon();
+
+    /**
+     * Get an approximate EastNorth box around the lat/lon world bounds.
+     *
+     * Note: The projection is only valid within the bounds returned by
+     * {@link #getWorldBoundsLatLon()}. The lat/lon bounds need not be a
+     * rectangular shape in east/north space. This method returns a box that
+     * contains this shape.
+     *
+     * @return EastNorth box around the lat/lon world bounds
+     */
+    ProjectionBounds getWorldBoundsBoxEastNorth();
 
     /**
      * Get the number of meters per unit of this projection. This more
