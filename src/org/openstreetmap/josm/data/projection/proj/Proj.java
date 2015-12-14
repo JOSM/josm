@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection.proj;
 
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
@@ -63,4 +64,21 @@ public interface Proj {
      * @return array of length 2, containing lat and lon in radians.
      */
     double[] invproject(double east, double north);
+
+    /**
+     * Return the bounds where this projection is applicable.
+     * 
+     * This is a fallback for when the projection bounds are not specified
+     * explicitly.
+     * 
+     * In this area, the round trip lat/lon -> east/north -> lat/lon should
+     * return the starting value with small error. In addition, regions with
+     * extreme distortions should be excluded, if possible.
+     * 
+     * It need not be the absolute maximum, but rather an area that is safe to
+     * display in JOSM and contain everything that one would expect to use.
+     * 
+     * @return the bounds where this projection is applicable, null if unknown
+     */
+    Bounds getAlgorithmBounds();
 }

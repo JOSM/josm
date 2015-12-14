@@ -16,6 +16,7 @@ import static java.lang.Math.tan;
 import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
@@ -74,7 +75,6 @@ public class SwissObliqueMercator implements Proj {
 
     @Override
     public double[] project(double phi, double lambda) {
-
         double S = alpha * log(tan(PI / 4 + phi / 2)) - alpha * ellps.e / 2
             * log((1 + ellps.e * sin(phi)) / (1 - ellps.e * sin(phi))) + k;
         double b = 2 * (atan(exp(S)) - PI / 4);
@@ -113,5 +113,10 @@ public class SwissObliqueMercator implements Proj {
             phi = 2 * atan(exp(s)) - PI / 2;
         }
         return new double[] {phi, lambda};
+    }
+
+    @Override
+    public Bounds getAlgorithmBounds() {
+        return new Bounds(-85, -179, 85, 179, false);
     }
 }

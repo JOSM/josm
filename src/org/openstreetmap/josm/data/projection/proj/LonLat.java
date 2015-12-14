@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.projection.proj;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
@@ -35,5 +36,10 @@ public class LonLat implements Proj {
     @Override
     public double[] invproject(double east, double north) {
         return new double[] {Math.toRadians(north * a), Math.toRadians(east * a)};
+    }
+
+    @Override
+    public Bounds getAlgorithmBounds() {
+        return new Bounds(-90, -180, 90, 180, false);
     }
 }

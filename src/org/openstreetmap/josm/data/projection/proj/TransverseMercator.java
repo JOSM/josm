@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.projection.proj;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
@@ -179,5 +180,10 @@ public class TransverseMercator extends AbstractProj {
                 ds*FC7*(61.0 + t*(662.0 + t*(1320.0 + 720.0*t))))))/cosphi;
         }
         return new double[] {y, x};
+    }
+
+    @Override
+    public Bounds getAlgorithmBounds() {
+        return new Bounds(-90, -10, 90, 10, false);
     }
 }

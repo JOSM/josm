@@ -15,6 +15,7 @@ import static java.lang.Math.tan;
 import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
@@ -27,7 +28,6 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * Source: IOGP Publication 373-7-2 – Geomatics Guidance Note number 7, part 2,
  * Sec. 1.3.7.1 Oblique and Equatorial Stereographic, http://www.epsg.org/GuidanceNotes
  */
-
 public class DoubleStereographic implements Proj {
 
     private Ellipsoid ellps;
@@ -107,5 +107,10 @@ public class DoubleStereographic implements Proj {
             phi = phi - (psii - psi) * cos(phi) * (1 - e2 * pow(sin(phi), 2)) / (1 - e2);
         }
         return new double[] {phi, lambda};
+    }
+
+    @Override
+    public Bounds getAlgorithmBounds() {
+        return new Bounds(-89, -87, 89, 87, false);
     }
 }
