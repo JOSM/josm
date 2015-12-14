@@ -390,46 +390,40 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public void zoomTo(EastNorth newCenter, double newScale, boolean initial) {
         Bounds b = getProjection().getWorldBoundsLatLon();
-        LatLon cl = Projections.inverseProject(newCenter);
-        boolean changed = false;
-        double lat = cl.lat();
-        double lon = cl.lon();
-        if (lat < b.getMinLat()) {
-            changed = true;
-            lat = b.getMinLat();
-        } else if (lat > b.getMaxLat()) {
-            changed = true;
-            lat = b.getMaxLat();
-        }
-        if (lon < b.getMinLon()) {
-            changed = true;
-            lon = b.getMinLon();
-        } else if (lon > b.getMaxLon()) {
-            changed = true;
-            lon = b.getMaxLon();
-        }
-        if (changed) {
-            newCenter = Projections.project(new LatLon(lat, lon));
-        }
-        int width = getWidth()/2;
-        int height = getHeight()/2;
-        LatLon l1 = new LatLon(b.getMinLat(), lon);
-        LatLon l2 = new LatLon(b.getMaxLat(), lon);
-        EastNorth e1 = getProjection().latlon2eastNorth(l1);
-        EastNorth e2 = getProjection().latlon2eastNorth(l2);
-        double d = e2.north() - e1.north();
-        if (height > 0 && d < height*newScale) {
-            double newScaleH = d/height;
-            e1 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMinLon()));
-            e2 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMaxLon()));
-            d = e2.east() - e1.east();
-            if (width > 0 && d < width*newScale) {
-                newScale = Math.max(newScaleH, d/width);
+        ProjectionBounds pb = getProjection().getWorldBoundsBoxEastNorth();
+        int width = getWidth();
+        int height = getHeight();
+
+        // make sure, the center of the screen is within projection bounds
+        double east = newCenter.east();
+        double north = newCenter.north();
+        east = Math.max(east, pb.minEast);
+        east = Math.min(east, pb.maxEast);
+        north = Math.max(north, pb.minNorth);
+        north = Math.min(north, pb.maxNorth);
+        newCenter = new EastNorth(east, north);
+
+        // don't zoom out too much, the world bounds should be at least
+        // half the size of the screen
+        double pbHeight = pb.maxNorth - pb.minNorth;
+        if (height > 0 && 2 * pbHeight < height * newScale) {
+            double newScaleH = 2 * pbHeight / height;
+            double pbWidth = pb.maxEast - pb.minEast;
+            if (width > 0 && 2 * pbWidth < width * newScale) {
+                double newScaleW = 2 * pbWidth / width;
+                newScale = Math.max(newScaleH, newScaleW);
             }
-        } else if (height > 0) {
-            d = d/(l1.greatCircleDistance(l2)*height*10);
-            if (newScale < d) {
-                newScale = d;
+        }
+
+        // don't zoom in too much, minimum: 100 px = 1 cm
+        LatLon ll1 = getLatLon(width / 2 - 50, height / 2);
+        LatLon ll2 = getLatLon(width / 2 + 50, height / 2);
+        if (ll1.isValid() && ll1.isValid() && b.contains(ll1) && b.contains(ll2)) {
+            double d_m = ll1.greatCircleDistance(ll2);
+            double d_en = 100 * scale;
+            double scaleMin = 0.01 * d_en / d_m / 100;
+            if (newScale < scaleMin) {
+                newScale = scaleMin;
             }
         }
 
