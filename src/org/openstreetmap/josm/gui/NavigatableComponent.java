@@ -205,12 +205,32 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return getDistText(getDist100Pixel());
     }
 
+    /**
+     * Get the distance in meter that correspond to 100 px on screen.
+     * 
+     * @return the distance in meter that correspond to 100 px on screen
+     */
     public double getDist100Pixel() {
+        return getDist100Pixel(true);
+    }
+
+    /**
+     * Get the distance in meter that correspond to 100 px on screen.
+     * 
+     * @param alwaysPositive if true, makes sure the return value is always
+     * &gt; 0. (Two points 100 px apart can appear to be identical if the user
+     * has zoomed out a lot and the projection code does something funny.)
+     * @return the distance in meter that correspond to 100 px on screen
+     */
+    public double getDist100Pixel(boolean alwaysPositive) {
         int w = getWidth()/2;
         int h = getHeight()/2;
         LatLon ll1 = getLatLon(w-50, h);
         LatLon ll2 = getLatLon(w+50, h);
-        return ll1.greatCircleDistance(ll2);
+        double gcd = ll1.greatCircleDistance(ll2);
+        if (alwaysPositive && gcd <= 0)
+            return 0.1;
+        return gcd;
     }
 
     /**
