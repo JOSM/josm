@@ -11,13 +11,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -39,7 +39,6 @@ import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.CachedFile;
-import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -47,6 +46,21 @@ import org.openstreetmap.josm.tools.Utils;
  *
  */
 public final class Projections {
+
+    /**
+     * Class to hold information about one projection.
+     */
+    public static class ProjectionDefinition {
+        public String code;
+        public String name;
+        public String definition;
+
+        public ProjectionDefinition(String code, String name, String definition) {
+            this.code = code;
+            this.name = name;
+            this.definition = definition;
+        }
+    }
 
     private Projections() {
         // Hide default constructor for utils classes
@@ -71,7 +85,7 @@ public final class Projections {
     static final Map<String, Ellipsoid> ellipsoids = new HashMap<>();
     static final Map<String, Datum> datums = new HashMap<>();
     static final Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<>();
-    static final Map<String, Pair<String, String>> inits = new HashMap<>();
+    static final Map<String, ProjectionDefinition> inits;
 
     static {
         registerBaseProjection("lonlat", LonLat.class, "core");
@@ -127,7 +141,11 @@ public final class Projections {
         nadgrids.put("BETA2007.gsb", NTV2GridShiftFileWrapper.BETA2007);
         nadgrids.put("ntf_r93_b.gsb", NTV2GridShiftFileWrapper.ntf_rgf93);
 
-        loadInits();
+        try {
+            inits = loadProjectionDefinitions("resource://data/projection/epsg");
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     /**
@@ -172,38 +190,57 @@ public final class Projections {
      * Null, if the id isn't supported.
      */
     public static String getInit(String id) {
-        Pair<String, String> r = inits.get(id.toUpperCase(Locale.ENGLISH));
-        if (r == null) return null;
-        return r.b;
+        ProjectionDefinition pd = inits.get(id.toUpperCase(Locale.ENGLISH));
+        if (pd == null) return null;
+        return pd.definition;
     }
 
     /**
-     * Load +init "presets" from file
+     * Load projection definitions from file.
+     * 
+     * @param path the path
+     * @return projection definitions
+     * @throws java.io.IOException
      */
-    private static void loadInits() {
-        Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
+    public static Map<String, ProjectionDefinition> loadProjectionDefinitions(String path) throws IOException {
         try (
-            InputStream in = new CachedFile("resource://data/projection/epsg").getInputStream();
+            InputStream in = new CachedFile(path).getInputStream();
             BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         ) {
-            String line, lastline = "";
-            while ((line = r.readLine()) != null) {
-                line = line.trim();
-                if (!line.startsWith("#") && !line.isEmpty()) {
-                    if (!lastline.startsWith("#")) throw new AssertionError("EPSG file seems corrupted");
-                    String name = lastline.substring(1).trim();
-                    Matcher m = epsgPattern.matcher(line);
-                    if (m.matches()) {
-                        inits.put("EPSG:" + m.group(1), Pair.create(name, m.group(2).trim()));
-                    } else {
-                        Main.warn("Failed to parse line from the EPSG projection definition: "+line);
-                    }
-                }
-                lastline = line;
-            }
+            return loadProjectionDefinitions(r);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    /**
+     * Load projection definitions from file.
+     * 
+     * @param r the reader
+     * @return projection definitions
+     * @throws java.io.IOException
+     */
+    public static Map<String, ProjectionDefinition> loadProjectionDefinitions(BufferedReader r) throws IOException {
+        Map<String, ProjectionDefinition> result = new LinkedHashMap<>();
+        Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
+        String line, lastline = "";
+        while ((line = r.readLine()) != null) {
+            line = line.trim();
+            if (!line.startsWith("#") && !line.isEmpty()) {
+                if (!lastline.startsWith("#")) throw new AssertionError("EPSG file seems corrupted");
+                String name = lastline.substring(1).trim();
+                Matcher m = epsgPattern.matcher(line);
+                if (m.matches()) {
+                    String code = "EPSG:" + m.group(1);
+                    String definition = m.group(2).trim();
+                    result.put(code, new ProjectionDefinition(code, name, definition));
+                } else {
+                    Main.warn("Failed to parse line from the EPSG projection definition: "+line);
+                }
+            }
+            lastline = line;
+        }
+        return result;
     }
 
     private static final Set<String> allCodes = new HashSet<>();
@@ -235,11 +272,9 @@ public final class Projections {
             }
         }
         if (proj == null) {
-            Pair<String, String> pair = inits.get(code);
-            if (pair == null) return null;
-            String name = pair.a;
-            String init = pair.b;
-            proj = new CustomProjection(name, code, init, null);
+            ProjectionDefinition pd = inits.get(code);
+            if (pd == null) return null;
+            proj = new CustomProjection(pd.name, code, pd.definition, null);
         }
         projectionsByCode_cache.put(code, proj);
         return proj;
