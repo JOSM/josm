@@ -14,6 +14,7 @@
     <property name="build.dir" location="build"/>
     <property name="javacc.home" location="tools"/>
     <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
+    <property name="epsg.output" location="data/projection/custom-epsg"/>
     <property name="groovy.jar" location="tools/groovy-all-2.4.5.jar"/>
     <!-- build parameter: compression level (ant -Dclevel=N)
              N ranges from 0 (no compression) to 9 (maximum compression)
@@ -100,7 +101,7 @@ Build-Date: ${build.tstamp}
     <!--
       ** Main target that builds JOSM and checks XML against schemas
     -->
-    <target name="dist" depends="compile,create-revision,check-schemas">
+    <target name="dist" depends="compile,create-revision,check-schemas,epsg">
         <echo>Revision ${version.entry.commit.revision}</echo>
         <copy file="CONTRIBUTION" todir="build"/>
         <copy file="README" todir="build"/>
@@ -286,10 +287,12 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="clean">
         <delete dir="build"/>
+        <delete dir="build2"/>
         <delete dir="dist"/>
         <delete dir="${mapcss.dir}/parsergen"/>
         <delete file="${src.dir}/org/w3/_2001/xmlschema/Adapter1.java"/>
         <delete dir="${src.dir}/org/openstreetmap/josm/data/imagery/types"/>
+        <delete file="${epsg.output}"/>
     </target>
     <path id="test.classpath">
         <fileset dir="${test.dir}/lib">
@@ -637,6 +640,24 @@ Build-Date: ${build.tstamp}
             <arg value="--set=remotecontrol.enabled=true"/>
             <arg value="--set=debug.edt-checker.enable=false"/>
             <jvmarg value="-Djosm.home=/tmp/.josm/"/>
+        </java>
+    </target>
+    <!-- compile build script for generating projection list -->
+    <target name="epsg-compile" depends="compile">
+        <mkdir dir="build2"/>
+        <javac sourcepath="" srcdir="scripts"
+            destdir="build2" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8" classpath="build">
+        </javac>
+    </target>
+    <!-- generate projection list -->
+    <target name="epsg" depends="epsg-compile">
+        <touch file="${epsg.output}"/>
+        <java classname="BuildProjectionDefinitions">
+            <classpath>
+                <pathelement path="."/>
+                <pathelement path="build"/>
+                <pathelement path="build2"/>
+            </classpath>
         </java>
     </target>
 </project>
