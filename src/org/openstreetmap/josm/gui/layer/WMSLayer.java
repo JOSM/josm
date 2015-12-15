@@ -115,7 +115,8 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
     @Override
     public boolean isProjectionSupported(Projection proj) {
         return supportedProjections == null || supportedProjections.isEmpty() || supportedProjections.contains(proj.toCode()) ||
-                (info.isEpsg4326To3857Supported() && supportedProjections.contains("EPSG:4326") &&  "EPSG:3857".equals(Main.getProjection().toCode()));
+                (info.isEpsg4326To3857Supported() && supportedProjections.contains("EPSG:4326")
+                        &&  "EPSG:3857".equals(Main.getProjection().toCode()));
     }
 
     @Override

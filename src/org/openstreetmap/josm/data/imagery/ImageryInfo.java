@@ -201,7 +201,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private String icon;
     private boolean isGeoreferenceValid = false;
     private boolean isEpsg4326To3857Supported = false;
-    // when adding a field, also adapt the ImageryInfo(ImageryInfo) and ImageryInfo(ImageryPreferenceEntry) constructor, equals method, and ImageryPreferenceEntry
+    // when adding a field, also adapt the ImageryInfo(ImageryInfo)
+    // and ImageryInfo(ImageryPreferenceEntry) constructor, equals method, and ImageryPreferenceEntry
 
     /**
      * Auxiliary class to save an {@link ImageryInfo} object in the preferences.

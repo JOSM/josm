@@ -125,11 +125,11 @@ public abstract class AbstractProjection implements Projection {
                     // and trace along the outline
                     double dLon = (b.getMaxLon() - b.getMinLon()) / 1000;
                     double dLat = (b.getMaxLat() - b.getMinLat()) / 1000;
-                    for (double lon=b.getMinLon(); lon<b.getMaxLon(); lon += dLon) {
+                    for (double lon = b.getMinLon(); lon < b.getMaxLon(); lon += dLon) {
                         result.extend(latlon2eastNorth(new LatLon(b.getMinLat(), lon)));
                         result.extend(latlon2eastNorth(new LatLon(b.getMaxLat(), lon)));
                     }
-                    for (double lat=b.getMinLat(); lat<b.getMaxLat(); lat += dLat) {
+                    for (double lat = b.getMinLat(); lat < b.getMaxLat(); lat += dLat) {
                         result.extend(latlon2eastNorth(new LatLon(lat, b.getMinLon())));
                         result.extend(latlon2eastNorth(new LatLon(lat, b.getMaxLon())));
                     }

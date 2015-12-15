@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -217,7 +218,7 @@ public final class Projections {
      *
      * @param path the path
      * @return projection definitions
-     * @throws java.io.IOException
+     * @throws IOException in case of I/O error
      */
     public static List<ProjectionDefinition> loadProjectionDefinitions(String path) throws IOException {
         try (
@@ -233,7 +234,7 @@ public final class Projections {
      *
      * @param r the reader
      * @return projection definitions
-     * @throws java.io.IOException
+     * @throws IOException in case of I/O error
      */
     public static List<ProjectionDefinition> loadProjectionDefinitions(BufferedReader r) throws IOException {
         List<ProjectionDefinition> result = new ArrayList<>();
