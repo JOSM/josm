@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 /**
  * Test projections using reference data. (Currently provided by proj.4)
  *
- * The data file data_nodist/projection-reference-data.csv can be created like this:
+ * The data file data_nodist/projection/projection-reference-data.csv can be created like this:
  *      Fist run this file's main method to collect epsg codes and bounds data.
  *      Then pipe the result into test/generate-proj-data.pl.
  */
@@ -49,7 +49,7 @@ public class ProjectionRefTest {
     @Test
     public void test() throws IOException, FileNotFoundException {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream("data_nodist/projection-reference-data.csv"), StandardCharsets.UTF_8))) {
+                new FileInputStream("data_nodist/projection/projection-reference-data.csv"), StandardCharsets.UTF_8))) {
             StringBuilder fail = new StringBuilder();
             String line;
             while ((line = in.readLine()) != null) {

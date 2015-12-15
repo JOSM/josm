@@ -34,7 +34,7 @@ import org.openstreetmap.josm.tools.Pair;
 /**
  * This test is used to monitor changes in projection code.
  *
- * It keeps a record of test data in the file data_nodist/projection-regression-test-data.csv.
+ * It keeps a record of test data in the file data_nodist/projection/projection-regression-test-data.
  * This record is generated from the current Projection classes available in JOSM. It needs to
  * be updated, whenever a projection is added / removed or an algorithm is changed, such that
  * the computed values are numerically different. There is no error threshold, every change is reported.
@@ -44,8 +44,8 @@ import org.openstreetmap.josm.tools.Pair;
  */
 public class ProjectionRegressionTest {
 
-    private static final String PROJECTION_DATA_FILE = "data_nodist/projection-regression-test-data.csv";
-    private static final String PROJECTION_DATA_FILE_JAVA_9 = "data_nodist/projection-regression-test-data-java9.csv";
+    private static final String PROJECTION_DATA_FILE = "data_nodist/projection/projection-regression-test-data";
+    private static final String PROJECTION_DATA_FILE_JAVA_9 = "data_nodist/projection/projection-regression-test-data-java9";
 
     private static class TestData {
         public String code;
