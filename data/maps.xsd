@@ -688,6 +688,10 @@
 									<xs:attribute name="metadata-key" type="xs:string" />
 								</xs:complexType>
 							</xs:element>
+							<!--  is imagery properly georeferenced (i.e. no need to check offsets). Defaults to false. Affects showing warnings. -->
+							<xs:element name="valid-georeference" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+							<!-- does imagery server supports JOSM 4326 to 3857 reprojection and non-square queries. Affects showing warnings. -->
+							<xs:element name="epsg4326to3857Supported" minOccurs="0" maxOccurs="1" type="xs:boolean" />
 						</xs:choice>
 					</xs:sequence>
 					<xs:attribute name="last-check" type="xs:date" use="optional" />

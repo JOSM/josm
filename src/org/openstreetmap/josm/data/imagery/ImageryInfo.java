@@ -199,7 +199,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private String countryCode = "";
     /** icon used in menu */
     private String icon;
-    // when adding a field, also adapt the ImageryInfo(ImageryInfo) constructor, equals method, and ImageryPreferenceEntry
+    private boolean isGeoreferenceValid = false;
+    private boolean isEpsg4326To3857Supported = false;
+    // when adding a field, also adapt the ImageryInfo(ImageryInfo) and ImageryInfo(ImageryPreferenceEntry) constructor, equals method, and ImageryPreferenceEntry
 
     /**
      * Auxiliary class to save an {@link ImageryInfo} object in the preferences.
@@ -229,6 +231,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref Map<String, String> noTileHeaders;
         @pref int tileSize = OsmMercator.DEFAUL_TILE_SIZE;
         @pref Map<String, String> metadataHeaders;
+        @pref boolean valid_georeference;
+        @pref boolean supports_epsg_4326_to_3857_conversion;
 
         /**
          * Constructs a new empty WMS {@code ImageryPreferenceEntry}.
@@ -291,6 +295,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             }
 
             tileSize = i.getTileSize();
+
+            valid_georeference = i.isGeoreferenceValid();
+            supports_epsg_4326_to_3857_conversion = i.isEpsg4326To3857Supported();
+
         }
 
         @Override
@@ -412,6 +420,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
         setTileSize(e.tileSize);
         metadataHeaders = e.metadataHeaders;
+        isEpsg4326To3857Supported = e.supports_epsg_4326_to_3857_conversion;
+        isGeoreferenceValid = e.valid_georeference;
     }
 
     /**
@@ -440,6 +450,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.description = i.description;
         this.noTileHeaders = i.noTileHeaders;
         this.metadataHeaders = i.metadataHeaders;
+        this.isEpsg4326To3857Supported = i.isEpsg4326To3857Supported;
+        this.isGeoreferenceValid = i.isGeoreferenceValid;
     }
 
     @Override
@@ -992,4 +1004,21 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     public void setMetadataHeaders(Map<String, String> metadataHeaders) {
         this.metadataHeaders = metadataHeaders;
     }
+
+    public boolean isEpsg4326To3857Supported() {
+        return isEpsg4326To3857Supported;
+    }
+
+    public void setEpsg4326To3857Supported(boolean isEpsg4326To3857Supported) {
+        this.isEpsg4326To3857Supported = isEpsg4326To3857Supported;
+    }
+
+    public boolean isGeoreferenceValid() {
+        return isGeoreferenceValid;
+    }
+
+    public void setGeoreferenceValid(boolean isGeoreferenceValid) {
+        this.isGeoreferenceValid = isGeoreferenceValid;
+    }
+
 }
