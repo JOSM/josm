@@ -189,7 +189,8 @@ public class CustomProjection extends AbstractProjection {
                     -85.05112877980659, -180.0,
                     85.05112877980659, 180.0, true);
         } else {
-            Map<String, String> parameters = parseParameterList(pref);
+            Map<String, String> parameters = parseParameterList(pref, false);
+            parameters = resolveInits(parameters, false);
             ellps = parseEllipsoid(parameters);
             datum = parseDatum(parameters, ellps);
             if (ellps == null) {
@@ -266,7 +267,15 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
-    private Map<String, String> parseParameterList(String pref) throws ProjectionConfigurationException {
+    /**
+     * Parse a parameter list to key=value pairs.
+     *
+     * @param pref the parameter list
+     * @param ignoreUnknownParameter true, if unknown parameter should not raise exception
+     * @return parameters map
+     * @throws ProjectionConfigurationException
+     */
+    public static Map<String, String> parseParameterList(String pref, boolean ignoreUnknownParameter) throws ProjectionConfigurationException {
         Map<String, String> parameters = new HashMap<>();
         String[] parts = Utils.WHITE_SPACES_PATTERN.split(pref.trim());
         if (pref.trim().isEmpty()) {
@@ -292,31 +301,45 @@ public class CustomProjection extends AbstractProjection {
                         }
                     }
                 }
-                if (!Param.paramsByKey.containsKey(key))
-                    throw new ProjectionConfigurationException(tr("Unknown parameter: ''{0}''.", key));
-                if (Param.paramsByKey.get(key).hasValue && value == null)
-                    throw new ProjectionConfigurationException(tr("Value expected for parameter ''{0}''.", key));
-                if (!Param.paramsByKey.get(key).hasValue && value != null)
-                    throw new ProjectionConfigurationException(tr("No value expected for parameter ''{0}''.", key));
+                if (!Param.paramsByKey.containsKey(key)) {
+                    if (!ignoreUnknownParameter)
+                        throw new ProjectionConfigurationException(tr("Unknown parameter: ''{0}''.", key));
+                } else {
+                    if (Param.paramsByKey.get(key).hasValue && value == null)
+                        throw new ProjectionConfigurationException(tr("Value expected for parameter ''{0}''.", key));
+                    if (!Param.paramsByKey.get(key).hasValue && value != null)
+                        throw new ProjectionConfigurationException(tr("No value expected for parameter ''{0}''.", key));
+                }
                 parameters.put(key, value);
             } else
                 throw new ProjectionConfigurationException(tr("Unexpected parameter format (''{0}'')", part));
         }
+        return parameters;
+    }
+
+    /**
+     * Recursive resolution of +init includes.
+     *
+     * @param parameters parameters map
+     * @param ignoreUnknownParameter true, if unknown parameter should not raise exception
+     * @return parameters map with +init includes resolved
+     * @throws ProjectionConfigurationException
+     */
+    public static Map<String, String> resolveInits(Map<String, String> parameters , boolean ignoreUnknownParameter) throws ProjectionConfigurationException {
         // recursive resolution of +init includes
         String initKey = parameters.get(Param.init.key);
         if (initKey != null) {
             String init = Projections.getInit(initKey);
             if (init == null)
                 throw new ProjectionConfigurationException(tr("Value ''{0}'' for option +init not supported.", initKey));
-            Map<String, String> initp = null;
+            Map<String, String> initp;
             try {
-                initp = parseParameterList(init);
+                initp = parseParameterList(init, ignoreUnknownParameter);
+                initp = resolveInits(initp, ignoreUnknownParameter);
             } catch (ProjectionConfigurationException ex) {
-                throw new ProjectionConfigurationException(tr(initKey+": "+ex.getMessage()), ex);
+                throw new ProjectionConfigurationException(initKey+": "+ex.getMessage(), ex);
             }
-            for (Map.Entry<String, String> e : parameters.entrySet()) {
-                initp.put(e.getKey(), e.getValue());
-            }
+            initp.putAll(parameters);
             return initp;
         }
         return parameters;
