@@ -1283,8 +1283,26 @@ public class Preferences {
         return putSetting(key, value == null ? null : new MapListSetting(new ArrayList<>(value)));
     }
 
-    @Retention(RetentionPolicy.RUNTIME) public @interface pref { }
-    @Retention(RetentionPolicy.RUNTIME) public @interface writeExplicitly { }
+    /**
+     * Annotation used for converting objects to String Maps and vice versa.
+     * Indicates that a certain field should be considered in the conversion
+     * process. Otherwise it is ignored.
+     * 
+     * @see #serializeStruct(java.lang.Object, java.lang.Class)
+     * @see #deserializeStruct(java.util.Map, java.lang.Class) 
+     */
+    @Retention(RetentionPolicy.RUNTIME) // keep annotation at runtime
+    public @interface pref { }
+
+    /**
+     * Annotation used for converting objects to String Maps.
+     * Indicates that a certain field should be written to the map, even if
+     * the value is the same as the default value.
+     * 
+     * @see #serializeStruct(java.lang.Object, java.lang.Class)
+     */
+    @Retention(RetentionPolicy.RUNTIME) // keep annotation at runtime
+    public @interface writeExplicitly { }
 
     /**
      * Get a list of hashes which are represented by a struct-like class.
@@ -1321,13 +1339,20 @@ public class Preferences {
     }
 
     /**
-     * Save a list of hashes represented by a struct-like class.
+     * Convenience method that saves a MapListSetting which is provided as a
+     * Collection of objects.
+     * 
+     * Each object is converted to a <code>Map&lt;String, String&gt;</code> using
+     * the fields with {@link pref} annotation. The field name is the key and
+     * the value will be converted to a string.
+     * 
      * Considers only fields that have the @pref annotation.
      * In addition it does not write fields with null values. (Thus they are cleared)
      * Default values are given by the field values after default constructor has
      * been called.
      * Fields equal to the default value are not written unless the field has
      * the @writeExplicitly annotation.
+     * @param <T> the class, 
      * @param key main preference key
      * @param val the list that is supposed to be saved
      * @param klass The struct class
@@ -1383,6 +1408,24 @@ public class Preferences {
         return ret;
     }
 
+    /**
+     * Convert an object to a String Map, by using field names and values as map
+     * key and value.
+     * 
+     * The field value is converted to a String.
+     * 
+     * Only fields with annotation {@link pref} are taken into account.
+     * 
+     * Fields will not be written to the map if the value is null or unchanged
+     * (compared to an object created with the no-arg-constructor).
+     * The {@link writeExplicitly} annotation overrides this behavior, i.e. the
+     * default value will also be written.
+     * 
+     * @param <T> the class of the object <code>struct</code>
+     * @param struct the object to be converted
+     * @param klass the class T
+     * @return the resulting map (same data content as <code>struct</code>)
+     */
     public static <T> Map<String, String> serializeStruct(T struct, Class<T> klass) {
         T structPrototype;
         try {
@@ -1417,6 +1460,21 @@ public class Preferences {
         return hash;
     }
 
+    /**
+     * Converts a String-Map to an object of a certain class, by comparing
+     * map keys to field names of the class and assigning map values to the
+     * corresponding fields.
+     * 
+     * The map value (a String) is converted to the field type. Supported
+     * types are: boolean, Boolean, int, Integer, double, Double, String and
+     * Map&lt;String, String&gt;.
+     * 
+     * Only fields with annotation {@link pref} are taken into account.
+     * @param <T> the class
+     * @param hash the string map with initial values
+     * @param klass the class T
+     * @return an object of class T, initialized as described above
+     */
     public static <T> T deserializeStruct(Map<String, String> hash, Class<T> klass) {
         T struct = null;
         try {
