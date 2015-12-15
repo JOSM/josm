@@ -85,7 +85,7 @@ public class TransverseMercator extends AbstractProj {
 
     /**
      * A derived quantity of excentricity, computed by <code>e'² = (a²-b²)/b² = es/(1-es)</code>
-     * where <var>a</var> is the semi-major axis length and <var>b</bar> is the semi-minor axis
+     * where <var>a</var> is the semi-major axis length and <var>b</var> is the semi-minor axis
      * length.
      */
     private double eb2;
