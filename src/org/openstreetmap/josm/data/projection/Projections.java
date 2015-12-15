@@ -141,10 +141,15 @@ public final class Projections {
         nadgrids.put("BETA2007.gsb", NTV2GridShiftFileWrapper.BETA2007);
         nadgrids.put("ntf_r93_b.gsb", NTV2GridShiftFileWrapper.ntf_rgf93);
 
+        List<ProjectionDefinition> pds;
         try {
-            inits = loadProjectionDefinitions("resource://data/projection/epsg");
+            pds = loadProjectionDefinitions("resource://data/projection/epsg");
         } catch (IOException ex) {
             throw new RuntimeException(ex);
+        }
+        inits = new LinkedHashMap<>();
+        for (ProjectionDefinition pd : pds) {
+            inits.put(pd.code, pd);
         }
     }
 
@@ -202,7 +207,7 @@ public final class Projections {
      * @return projection definitions
      * @throws java.io.IOException
      */
-    public static Map<String, ProjectionDefinition> loadProjectionDefinitions(String path) throws IOException {
+    public static List<ProjectionDefinition> loadProjectionDefinitions(String path) throws IOException {
         try (
             InputStream in = new CachedFile(path).getInputStream();
             BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
@@ -220,8 +225,8 @@ public final class Projections {
      * @return projection definitions
      * @throws java.io.IOException
      */
-    public static Map<String, ProjectionDefinition> loadProjectionDefinitions(BufferedReader r) throws IOException {
-        Map<String, ProjectionDefinition> result = new LinkedHashMap<>();
+    public static List<ProjectionDefinition> loadProjectionDefinitions(BufferedReader r) throws IOException {
+        List<ProjectionDefinition> result = new ArrayList<>();
         Pattern epsgPattern = Pattern.compile("<(\\d+)>(.*)<>");
         String line, lastline = "";
         while ((line = r.readLine()) != null) {
@@ -233,7 +238,7 @@ public final class Projections {
                 if (m.matches()) {
                     String code = "EPSG:" + m.group(1);
                     String definition = m.group(2).trim();
-                    result.put(code, new ProjectionDefinition(code, name, definition));
+                    result.add(new ProjectionDefinition(code, name, definition));
                 } else {
                     Main.warn("Failed to parse line from the EPSG projection definition: "+line);
                 }
