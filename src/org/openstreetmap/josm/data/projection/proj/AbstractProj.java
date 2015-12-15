@@ -76,7 +76,7 @@ public abstract class AbstractProj implements Proj {
 
     /**
      * Calculates the meridian distance. This is the distance along the central
-     * meridian from the equator to {@code phi}. Accurate to < 1e-5 meters
+     * meridian from the equator to {@code phi}. Accurate to &lt; 1e-5 meters
      * when used in conjuction with typical major axis values.
      *
      * @param phi latitude to calculate meridian distance for.

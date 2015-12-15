@@ -33,7 +33,7 @@ public final class Ellipsoid {
      * Bessel 1841 ellipsoid
      */
     public static final Ellipsoid Bessel1841 = Ellipsoid.create_a_rf(6377397.155, 299.1528128);
-    
+
     /**
      * Bessel 1841 (Namibia)
      */
@@ -55,10 +55,10 @@ public final class Ellipsoid {
     public static final Ellipsoid ClarkeIGN = Ellipsoid.create_a_b(6378249.2, 6356515.0);
 
     /**
-     * Everest (Sabah & Sarawak)
+     * Everest (Sabah &amp; Sarawak)
      */
     public static final Ellipsoid EverestSabahSarawak = Ellipsoid.create_a_rf(6377298.556, 300.8017);
-    
+
     /**
      * GRS67 ellipsoid
      */

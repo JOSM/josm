@@ -67,17 +67,17 @@ public interface Proj {
 
     /**
      * Return the bounds where this projection is applicable.
-     * 
+     *
      * This is a fallback for when the projection bounds are not specified
      * explicitly.
-     * 
-     * In this area, the round trip lat/lon -> east/north -> lat/lon should
+     *
+     * In this area, the round trip lat/lon -&gt; east/north -&gt; lat/lon should
      * return the starting value with small error. In addition, regions with
      * extreme distortions should be excluded, if possible.
-     * 
+     *
      * It need not be the absolute maximum, but rather an area that is safe to
      * display in JOSM and contain everything that one would expect to use.
-     * 
+     *
      * @return the bounds where this projection is applicable, null if unknown
      */
     Bounds getAlgorithmBounds();
