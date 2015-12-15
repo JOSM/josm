@@ -62,19 +62,9 @@ public final class Projections {
         }
     }
 
-    private Projections() {
-        // Hide default constructor for utils classes
-    }
-
-    public static EastNorth project(LatLon ll) {
-        if (ll == null) return null;
-        return Main.getProjection().latlon2eastNorth(ll);
-    }
-
-    public static LatLon inverseProject(EastNorth en) {
-        if (en == null) return null;
-        return Main.getProjection().eastNorth2latlon(en);
-    }
+    private static final Set<String> allCodes = new HashSet<>();
+    private static final Map<String, ProjectionChoice> allProjectionChoicesByCode = new HashMap<>();
+    private static final Map<String, Projection> projectionsByCode_cache = new HashMap<>();
 
     /*********************************
      * Registry for custom projection
@@ -143,7 +133,7 @@ public final class Projections {
 
         List<ProjectionDefinition> pds;
         try {
-            pds = loadProjectionDefinitions("resource://data/projection/epsg");
+            pds = loadProjectionDefinitions("resource://data/projection/custom-epsg");
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -151,6 +141,28 @@ public final class Projections {
         for (ProjectionDefinition pd : pds) {
             inits.put(pd.code, pd);
         }
+
+        for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
+            for (String code : pc.allCodes()) {
+                allProjectionChoicesByCode.put(code, pc);
+            }
+        }
+        allCodes.addAll(inits.keySet());
+        allCodes.addAll(allProjectionChoicesByCode.keySet());
+    }
+
+    private Projections() {
+        // Hide default constructor for utils classes
+    }
+
+    public static EastNorth project(LatLon ll) {
+        if (ll == null) return null;
+        return Main.getProjection().latlon2eastNorth(ll);
+    }
+
+    public static LatLon inverseProject(EastNorth en) {
+        if (en == null) return null;
+        return Main.getProjection().eastNorth2latlon(en);
     }
 
     /**
@@ -202,7 +214,7 @@ public final class Projections {
 
     /**
      * Load projection definitions from file.
-     * 
+     *
      * @param path the path
      * @return projection definitions
      * @throws java.io.IOException
@@ -213,14 +225,12 @@ public final class Projections {
             BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         ) {
             return loadProjectionDefinitions(r);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
         }
     }
 
     /**
      * Load projection definitions from file.
-     * 
+     *
      * @param r the reader
      * @return projection definitions
      * @throws java.io.IOException
@@ -246,20 +256,6 @@ public final class Projections {
             lastline = line;
         }
         return result;
-    }
-
-    private static final Set<String> allCodes = new HashSet<>();
-    private static final Map<String, ProjectionChoice> allProjectionChoicesByCode = new HashMap<>();
-    private static final Map<String, Projection> projectionsByCode_cache = new HashMap<>();
-
-    static {
-        for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
-            for (String code : pc.allCodes()) {
-                allProjectionChoicesByCode.put(code, pc);
-            }
-        }
-        allCodes.addAll(inits.keySet());
-        allCodes.addAll(allProjectionChoicesByCode.keySet());
     }
 
     public static Projection getProjectionByCode(String code) {

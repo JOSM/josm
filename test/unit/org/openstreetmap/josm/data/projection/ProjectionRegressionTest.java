@@ -27,8 +27,6 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -110,6 +108,7 @@ public class ProjectionRegressionTest {
                         "%s%n  ll  %s %s%n  en  %s %s%n  ll2 %s %s%n", proj.toCode(), lat, lon, en.east(), en.north(), ll2.lat(), ll2.lon()));
             }
         }
+        System.out.println("Update successful.");
     }
 
     private static List<TestData> readData() throws IOException, FileNotFoundException {
@@ -165,12 +164,10 @@ public class ProjectionRegressionTest {
 
         StringBuilder fail = new StringBuilder();
 
-        for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
-            for (String code : pc.allCodes()) {
-               if (!dataCodes.contains(code)) {
-                    fail.append("Did not find projection "+code+" in test data!\n");
-                }
-            }
+        for (String code : Projections.getAllProjectionCodes()) {
+            if (!dataCodes.contains(code)) {
+                 fail.append("Did not find projection "+code+" in test data!\n");
+             }
         }
 
         for (TestData data : allData) {
