@@ -39,7 +39,8 @@ public class AlignImageryPanel extends JPanel {
      */
     public AlignImageryPanel(boolean oneLine, final BooleanProperty showAgain, ImageryInfo infoToAdd) {
         Font font = getFont().deriveFont(Font.PLAIN, 14.0f);
-        JLabel nagLabel = new JLabel(tr("Aerial imagery \"{0}\" might be misaligned. Please check its offset using GPS tracks!", infoToAdd.getName()));
+        JLabel nagLabel = new JLabel(
+                tr("Aerial imagery \"{0}\" might be misaligned. Please check its offset using GPS tracks!", infoToAdd.getName()));
         UrlLabel detailsList = new UrlLabel(tr("http://wiki.openstreetmap.org/wiki/Using_Imagery"), tr("Details..."));
         nagLabel.setLabelFor(detailsList);
         nagLabel.setFont(font);
@@ -85,7 +86,7 @@ public class AlignImageryPanel extends JPanel {
      */
     public static void addNagPanelIfNeeded(ImageryInfo infoToAdd) {
         BooleanProperty showAgain = new BooleanProperty("message.imagery.nagPanel." + infoToAdd.getUrl(), true);
-        if (Main.isDisplayingMapView() && showAgain.get() && !infoToAdd.isGeoreferenceValid() ) {
+        if (Main.isDisplayingMapView() && showAgain.get() && !infoToAdd.isGeoreferenceValid()) {
             if (Main.map.getTopPanel(AlignImageryPanel.class) == null) {
                 double w = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
                 AlignImageryPanel p = new AlignImageryPanel(w > 1300, showAgain, infoToAdd);

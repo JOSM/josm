@@ -273,7 +273,7 @@ public class CustomProjection extends AbstractProjection {
      * @param pref the parameter list
      * @param ignoreUnknownParameter true, if unknown parameter should not raise exception
      * @return parameters map
-     * @throws ProjectionConfigurationException
+     * @throws ProjectionConfigurationException in case of invalid parameter
      */
     public static Map<String, String> parseParameterList(String pref, boolean ignoreUnknownParameter) throws ProjectionConfigurationException {
         Map<String, String> parameters = new HashMap<>();
@@ -323,9 +323,10 @@ public class CustomProjection extends AbstractProjection {
      * @param parameters parameters map
      * @param ignoreUnknownParameter true, if unknown parameter should not raise exception
      * @return parameters map with +init includes resolved
-     * @throws ProjectionConfigurationException
+     * @throws ProjectionConfigurationException in case of invalid parameter
      */
-    public static Map<String, String> resolveInits(Map<String, String> parameters , boolean ignoreUnknownParameter) throws ProjectionConfigurationException {
+    public static Map<String, String> resolveInits(Map<String, String> parameters, boolean ignoreUnknownParameter)
+            throws ProjectionConfigurationException {
         // recursive resolution of +init includes
         String initKey = parameters.get(Param.init.key);
         if (initKey != null) {
