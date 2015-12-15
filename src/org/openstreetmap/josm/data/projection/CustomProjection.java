@@ -109,6 +109,8 @@ public class CustomProjection extends AbstractProjection {
         zone("zone", true),
         /** indicate southern hemisphere for UTM */
         south("south", false),
+        /** vertical units - ignore, as we don't use height information */
+        vunits("vunits", true),
         // JOSM extensions, not present in PROJ.4
         wmssrs("wmssrs", true),
         bounds("bounds", true);
