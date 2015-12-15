@@ -82,7 +82,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                     ? getWMSLayerInfo() : info;
             if (infoToAdd != null) {
                 Main.main.addLayer(ImageryLayer.create(infoToAdd));
-                AlignImageryPanel.addNagPanelIfNeeded();
+                AlignImageryPanel.addNagPanelIfNeeded(infoToAdd);
             }
         } catch (IllegalArgumentException ex) {
             if (ex.getMessage() == null || ex.getMessage().isEmpty()) {

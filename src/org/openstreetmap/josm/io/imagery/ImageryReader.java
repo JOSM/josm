@@ -142,6 +142,8 @@ public class ImageryReader {
                         "country-code",
                         "icon",
                         "tile-size",
+                        "validGeoreference",
+                        "epsg4326to3857Supported",
                 }).contains(qName)) {
                     newState = State.ENTRY_ATTRIBUTE;
                     lang = atts.getValue("lang");
@@ -322,6 +324,12 @@ public class ImageryReader {
                     } else {
                         entry.setTileSize(tileSize.intValue());
                     }
+                    break;
+                case "valid-georeference":
+                    entry.setGeoreferenceValid(new Boolean(accumulator.toString()));
+                    break;
+                case "epsg4326to3857Supported":
+                    entry.setEpsg4326To3857Supported(new Boolean(accumulator.toString()));
                     break;
                 }
                 break;
