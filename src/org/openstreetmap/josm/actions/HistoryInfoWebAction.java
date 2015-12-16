@@ -11,6 +11,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Display history information about OSM ways, nodes, or relations in web browser.
+ * @since 4408
+ */
 public class HistoryInfoWebAction extends AbstractInfoAction {
 
     /**

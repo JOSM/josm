@@ -22,17 +22,44 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Abstract base class for info actions, opening an URL describing a particular object.
+ * @since 1697
+ */
 public abstract class AbstractInfoAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code AbstractInfoAction}.
+     * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
+     */
     public AbstractInfoAction(boolean installAdapters) {
         super(installAdapters);
     }
 
+    /**
+     * Constructs a new {@code AbstractInfoAction}.
+     * @param name the action's text as displayed on the menu (if it is added to a menu)
+     * @param iconName the filename of the icon to use
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip. Please note
+     *           that html is not supported for menu actions on some platforms.
+     * @param shortcut a ready-created shortcut object or null if you don't want a shortcut. But you always
+     *            do want a shortcut, remember you can always register it with group=none, so you
+     *            won't be assigned a shortcut unless the user configures one. If you pass null here,
+     *            the user CANNOT configure a shortcut for your action.
+     * @param register register this action for the toolbar preferences?
+     * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
+     * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
+     */
     public AbstractInfoAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register,
             String toolbarId, boolean installAdapters) {
         super(name, iconName, tooltip, shortcut, register, toolbarId, installAdapters);
     }
 
+    /**
+     * Asks user confirmation before launching a large number of browser windows.
+     * @param numBrowsers the number of browser windows to open
+     * @return {@code true} if the user confirms, {@code false} otherwise
+     */
     public static boolean confirmLaunchMultiple(int numBrowsers) {
         String msg  = /* for correct i18n of plural forms - see #9110 */ trn(
                 "You are about to launch {0} browser window.<br>"
