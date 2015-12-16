@@ -130,6 +130,10 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         // do nothing
     }
 
+    /**
+     * Refreshes user list from given collection of OSM primitives.
+     * @param fromPrimitives OSM primitives to fetch users from
+     */
     public void refresh(Collection<? extends OsmPrimitive> fromPrimitives) {
         model.populate(fromPrimitives);
         GuiHelper.runInEDT(new Runnable() {
@@ -151,7 +155,6 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         if (layer instanceof OsmDataLayer) {
             refresh(((OsmDataLayer) layer).data.getAllSelected());
         }
-
     }
 
     class SelectUsersPrimitivesAction extends AbstractAction implements ListSelectionListener {
@@ -168,7 +171,8 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         public void select() {
             int[] indexes = userTable.getSelectedRows();
-            if (indexes == null || indexes.length == 0) return;
+            if (indexes == null || indexes.length == 0)
+                return;
             model.selectPrimitivesOwnedBy(userTable.getSelectedRows());
         }
 
@@ -187,8 +191,8 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
     }
 
-    /*
-     * Action for launching the info page of a user
+    /**
+     * Action for launching the info page of a user.
      */
     class ShowUserInfoAction extends AbstractInfoAction implements ListSelectionListener {
 
@@ -203,9 +207,11 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         @Override
         public void actionPerformed(ActionEvent e) {
             int[] rows = userTable.getSelectedRows();
-            if (rows == null || rows.length == 0) return;
+            if (rows == null || rows.length == 0)
+                return;
             List<User> users = model.getSelectedUsers(rows);
-            if (users.isEmpty()) return;
+            if (users.isEmpty())
+                return;
             if (users.size() > 10) {
                 Main.warn(tr("Only launching info browsers for the first {0} of {1} selected users", 10, users.size()));
             }
@@ -256,9 +262,9 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
      *
      */
     private static class UserInfo implements Comparable<UserInfo> {
-        public User user;
-        public int count;
-        public double percent;
+        public final User user;
+        public final int count;
+        public final double percent;
 
         UserInfo(User user, int count, double percent) {
             this.user = user;
@@ -268,10 +274,14 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         @Override
         public int compareTo(UserInfo o) {
-            if (count < o.count) return 1;
-            if (count > o.count) return -1;
-            if (user == null || user.getName() == null) return 1;
-            if (o.user == null || o.user.getName() == null) return -1;
+            if (count < o.count)
+                return 1;
+            if (count > o.count)
+                return -1;
+            if (user == null || user.getName() == null)
+                return 1;
+            if (o.user == null || o.user.getName() == null)
+                return -1;
             return user.getName().compareTo(o.user.getName());
         }
 
@@ -296,7 +306,8 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         protected Map<User, Integer> computeStatistics(Collection<? extends OsmPrimitive> primitives) {
             Map<User, Integer> ret = new HashMap<>();
-            if (primitives == null || primitives.isEmpty()) return ret;
+            if (primitives == null || primitives.isEmpty())
+                return ret;
             for (OsmPrimitive primitive: primitives) {
                 if (ret.containsKey(primitive.getUser())) {
                     ret.put(primitive.getUser(), ret.get(primitive.getUser()) + 1);
@@ -326,7 +337,8 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         @Override
         public int getRowCount() {
-            if (data == null) return 0;
+            if (data == null)
+                return 0;
             return data.size();
         }
 
@@ -337,8 +349,8 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             case 0: /* author */ return info.getName() == null ? "" : info.getName();
             case 1: /* count */ return info.count;
             case 2: /* percent */ return NumberFormat.getPercentInstance().format(info.percent);
+            default: return null;
             }
-            return null;
         }
 
         @Override
@@ -363,7 +375,8 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         public List<User> getSelectedUsers(int[] rows) {
             List<User> ret = new LinkedList<>();
-            if (rows == null || rows.length == 0) return ret;
+            if (rows == null || rows.length == 0)
+                return ret;
             for (int row: rows) {
                 if (data.get(row).user == null) {
                     continue;

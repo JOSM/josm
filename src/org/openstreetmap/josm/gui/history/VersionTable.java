@@ -47,6 +47,17 @@ public class VersionTable extends JTable implements Observer {
     private VersionTablePopupMenu popupMenu;
     private final transient HistoryBrowserModel model;
 
+    /**
+     * Constructs a new {@code VersionTable}.
+     * @param model model used by the history browser
+     */
+    public VersionTable(HistoryBrowserModel model) {
+        super(model.getVersionTableModel(), new VersionTableColumnModel());
+        model.addObserver(this);
+        build();
+        this.model = model;
+    }
+
     protected void build() {
         getTableHeader().setFont(getTableHeader().getFont().deriveFont(9f));
         setRowSelectionAllowed(false);
@@ -92,17 +103,6 @@ public class VersionTable extends JTable implements Observer {
         });
     }
 
-    /**
-     * Constructs a new {@code VersionTable}.
-     * @param model model used by the history browser
-     */
-    public VersionTable(HistoryBrowserModel model) {
-        super(model.getVersionTableModel(), new VersionTableColumnModel());
-        model.addObserver(this);
-        build();
-        this.model = model;
-    }
-
     // some kind of hack to prevent the table from scrolling to the
     // right when clicking on the cells
     @Override
@@ -139,10 +139,10 @@ public class VersionTable extends JTable implements Observer {
 
         @Override
         protected int checkTableSelection(JTable table, Point p) {
-            HistoryBrowserModel.VersionTableModel model = getVersionTableModel();
+            HistoryBrowserModel.VersionTableModel tableModel = getVersionTableModel();
             int row = rowAtPoint(p);
-            if (row > -1 && !model.isLatest(row)) {
-                popupMenu.prepare(model.getPrimitive(row));
+            if (row > -1 && !tableModel.isLatest(row)) {
+                popupMenu.prepare(tableModel.getPrimitive(row));
             }
             return row;
         }
@@ -251,6 +251,9 @@ public class VersionTable extends JTable implements Observer {
         }
     }
 
+    /**
+     * Renderer for history radio buttons in columns A and B.
+     */
     public static class RadioButtonRenderer extends JRadioButton implements TableCellRenderer {
 
         @Override
@@ -262,6 +265,9 @@ public class VersionTable extends JTable implements Observer {
         }
     }
 
+    /**
+     * Editor for history radio buttons in columns A and B.
+     */
     public static class RadioButtonEditor extends DefaultCellEditor implements ItemListener {
 
         private final JRadioButton btn;
@@ -277,7 +283,8 @@ public class VersionTable extends JTable implements Observer {
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            if (value == null) return null;
+            if (value == null)
+                return null;
             boolean val = (Boolean) value;
             btn.setSelected(val);
             btn.addItemListener(this);
@@ -296,6 +303,9 @@ public class VersionTable extends JTable implements Observer {
         }
     }
 
+    /**
+     * Renderer for history version labels, allowing to define horizontal alignment.
+     */
     public static class AlignedRenderer extends JLabel implements TableCellRenderer {
 
         /**

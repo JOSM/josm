@@ -58,10 +58,8 @@ public class InfoWebAction extends AbstractInfoAction {
 
     private void updateEnabledStateWithNotes() {
         // Allows enabling if a note is selected, even if no OSM object is selected
-        if (!isEnabled() && Main.isDisplayingMapView()) {
-            if (Main.map.noteDialog.getSelectedNote() != null) {
-                setEnabled(true);
-            }
+        if (!isEnabled() && Main.isDisplayingMapView() && Main.map.noteDialog.getSelectedNote() != null) {
+            setEnabled(true);
         }
     }
 
