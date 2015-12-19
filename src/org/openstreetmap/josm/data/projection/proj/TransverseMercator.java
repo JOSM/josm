@@ -184,6 +184,6 @@ public class TransverseMercator extends AbstractProj {
 
     @Override
     public Bounds getAlgorithmBounds() {
-        return new Bounds(-90, -10, 90, 10, false);
+        return new Bounds(-89, -7, 89, 7, false);
     }
 }
