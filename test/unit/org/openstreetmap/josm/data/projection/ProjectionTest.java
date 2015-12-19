@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.junit.Assert;
@@ -43,8 +44,8 @@ public class ProjectionTest {
         }
 
         if (!"yes".equals(System.getProperty("suppressPermanentFailure"))) {
-            for (int i = 0; i <= 4; ++i) {
-                testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(2969+i))); // UTM France DOM
+            for (String c : Arrays.asList("2969", "2970", "2972", "2973")) {
+                testProj(Projections.getProjectionByCode("EPSG:"+c)); // UTM France DOM
             }
         }
 
