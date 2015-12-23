@@ -16,8 +16,8 @@ import org.apache.commons.jcs.access.CacheAccess;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheFactory;
 import org.apache.commons.jcs.auxiliary.disk.behavior.IDiskCacheAttributes;
-import org.apache.commons.jcs.auxiliary.disk.block.BlockDiskCacheAttributes;
-import org.apache.commons.jcs.auxiliary.disk.block.BlockDiskCacheFactory;
+import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheAttributes;
+import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheFactory;
 import org.apache.commons.jcs.engine.CompositeCacheAttributes;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes.DiskUsagePattern;
 import org.apache.commons.jcs.engine.control.CompositeCache;
@@ -40,7 +40,7 @@ public final class JCSCacheManager {
     private static volatile CompositeCacheManager cacheManager;
     private static long maxObjectTTL        = -1;
     private static final String PREFERENCE_PREFIX = "jcs.cache";
-    private static final AuxiliaryCacheFactory diskCacheFactory = new BlockDiskCacheFactory();
+    private static final AuxiliaryCacheFactory diskCacheFactory = new IndexedDiskCacheFactory();
     private static FileLock cacheDirLock;
 
     /**
@@ -183,7 +183,7 @@ public final class JCSCacheManager {
     }
 
     private static IDiskCacheAttributes getDiskCacheAttributes(int maxDiskObjects, String cachePath) {
-        BlockDiskCacheAttributes ret = new BlockDiskCacheAttributes();
+        IndexedDiskCacheAttributes ret = new IndexedDiskCacheAttributes();
         ret.setDiskLimitType(IDiskCacheAttributes.DiskLimitType.SIZE);
         ret.setMaxKeySize(maxDiskObjects);
         if (cachePath != null) {
