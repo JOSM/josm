@@ -127,6 +127,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("mirrored_download", IN_CORE),
             new DeprecatedPlugin("ImageryCache", IN_CORE),
             new DeprecatedPlugin("commons-imaging", tr("replaced by new {0} plugin", "apache-commons")),
+            new DeprecatedPlugin("missingRoads", tr("replaced by new {0} plugin", "ImproveOsm")),
+            new DeprecatedPlugin("trafficFlowDirection", tr("replaced by new {0} plugin", "ImproveOsm")),
         });
     }
 
