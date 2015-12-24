@@ -119,7 +119,7 @@ public final class AudioPlayer extends Thread {
      * Plays a WAV audio file from the beginning. See also the variant which doesn't
      * start at the beginning of the stream
      * @param url The resource to play, which must be a WAV file or stream
-     * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
+     * @throws Exception audio fault exception, e.g. can't open stream, unhandleable audio format
      */
     public static void play(URL url) throws Exception {
         AudioPlayer.getInstance().command.play(url, 0.0, 1.0);
@@ -129,7 +129,7 @@ public final class AudioPlayer extends Thread {
      * Plays a WAV audio file from a specified position.
      * @param url The resource to play, which must be a WAV file or stream
      * @param seconds The number of seconds into the audio to start playing
-     * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
+     * @throws Exception audio fault exception, e.g. can't open stream, unhandleable audio format
      */
     public static void play(URL url, double seconds) throws Exception {
         AudioPlayer.getInstance().command.play(url, seconds, 1.0);
