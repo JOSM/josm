@@ -34,7 +34,7 @@ public class AudioPlayerTest {
      * @throws Exception audio fault exception, e.g. can't open stream, unhandleable audio format
      * @throws MalformedURLException wrong URL
      */
-    @Test
+    @Test(timeout = 4*MAX_DURATION)
     public void testPlay() throws MalformedURLException, Exception {
         File wav1 = new File(TestUtils.getRegressionDataFile(6851, "20111003_121226.wav"));
         File wav2 = new File(TestUtils.getRegressionDataFile(6851, "20111003_121557.wav"));
