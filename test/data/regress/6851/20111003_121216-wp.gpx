@@ -1,0 +1,13 @@
+<?xml version="1.0" standalone="yes"?>
+<gpx version="1.1" creator="OSMtracker" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<wpt lat="48.0621400" lon="10.9932500"><ele>639</ele><time>2011-10-03T19:12:31Z</time><name>voice</name><link href="20111003_121226.wav" /></wpt>
+<wpt lat="48.0589500" lon="11.0025800"><ele>630</ele><time>2011-10-03T19:16:03Z</time><name>voice</name><link href="20111003_121557.wav" /></wpt>
+<wpt lat="48.0587600" lon="11.0046800"><ele>636</ele><time>2011-10-03T19:19:17Z</time><name>voice</name><link href="20111003_121911.wav" /></wpt>
+<wpt lat="48.0584800" lon="11.0074200"><ele>632</ele><time>2011-10-03T19:21:37Z</time><name>voice</name><link href="20111003_122131.wav" /></wpt>
+<wpt lat="48.0617300" lon="11.0086400"><ele>624</ele><time>2011-10-03T19:26:27Z</time><name>voice</name><link href="20111003_122620.wav" /></wpt>
+<wpt lat="48.0617600" lon="11.0086500"><ele>624</ele><time>2011-10-03T19:26:34Z</time><name>voice</name><link href="20111003_122627.wav" /></wpt>
+<wpt lat="48.0614600" lon="11.0093100"><ele>622</ele><time>2011-10-03T19:28:09Z</time><name>voice</name><link href="20111003_122803.wav" /></wpt>
+<wpt lat="48.0614600" lon="11.0093100"><ele>622</ele><time>2011-10-03T19:34:15Z</time><name>voice</name><link href="20111003_123409.wav" /></wpt>
+<wpt lat="48.0614500" lon="11.0093200"><ele>622</ele><time>2011-10-03T19:35:40Z</time><name>voice</name><link href="20111003_123533.wav" /></wpt>
+<wpt lat="48.0608100" lon="11.0095800"><ele>610</ele><time>2011-10-03T19:36:15Z</time><name>voice</name><link href="20111003_123605.wav" /></wpt>
+</gpx>
