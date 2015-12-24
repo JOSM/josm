@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.gui.conflict.tags;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.EventObject;
 
 import javax.swing.JTable;
@@ -11,7 +13,14 @@ import javax.swing.table.TableCellEditor;
 import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
+/**
+ * Table cell editor for relation member conflict resolver table.
+ * @since 2070
+ */
 public class RelationMemberConflictDecisionEditor extends JosmComboBox<RelationMemberConflictDecisionType> implements TableCellEditor {
+
+    private final transient CellEditorSupport tableCellEditorSupport;
+    private RelationMemberConflictDecisionType originalValue;
 
     /**
      * Constructs a new {@code RelationMemberConflictDecisionEditor}.
@@ -28,13 +37,16 @@ public class RelationMemberConflictDecisionEditor extends JosmComboBox<RelationM
     /* --------------------------------------------------------------------------------- */
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stopCellEditing();
+            }
+        });
         setSelectedItem(value);
         this.originalValue = (RelationMemberConflictDecisionType) value;
         return this;
     }
-
-    private final transient CellEditorSupport tableCellEditorSupport;
-    private RelationMemberConflictDecisionType originalValue;
 
     @Override
     public void addCellEditorListener(CellEditorListener l) {
