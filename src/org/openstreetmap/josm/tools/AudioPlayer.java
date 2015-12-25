@@ -355,7 +355,9 @@ public final class AudioPlayer extends Thread {
                             break;
                     }
                     command.ok(stateChange);
-                } catch (LineUnavailableException | IOException | UnsupportedAudioFileException startPlayingException) {
+                } catch (LineUnavailableException | IOException | UnsupportedAudioFileException |
+                        SecurityException | IllegalArgumentException startPlayingException) {
+                    Main.error(startPlayingException);
                     command.failed(startPlayingException); // sets state
                 }
             } catch (Exception e) {
