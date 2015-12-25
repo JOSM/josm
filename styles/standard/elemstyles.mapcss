@@ -691,7 +691,7 @@ node[highway=mini_roundabout] {
     text: auto;
 }
 node:righthandtraffic[highway=mini_roundabout] {
-    icon-image: "vehicle/restriction/roundabout_right.png";
+    icon-image: "vehicle/restriction/mini_roundabout_right.svg";
     set icon_z17;
 }
 node[highway=stop] {
@@ -918,7 +918,7 @@ node[junction=roundabout] {
     text: auto;
 }
 node:righthandtraffic[junction=roundabout] {
-    icon-image: "vehicle/restriction/roundabout_right.png";
+    icon-image: "vehicle/restriction/roundabout_right.svg";
     set icon_z17;
 }
 

@@ -377,9 +377,9 @@
     <preset_link preset_name="Payment Methods" />
   </chunk>
   <!--  Groups -->
-  <group name="Highways" icon="presets/way_secondary.png">
-    <group name="Streets" icon="presets/way_secondary.png">
-        <item name="Motorway" icon="presets/motorway.png" type="way" preset_name_label="true">
+  <group name="Highways" icon="styles/standard/transport/way/way_secondary.svg">
+    <group name="Streets" icon="styles/standard/transport/way/way_secondary.svg">
+        <item name="Motorway" icon="styles/standard/transport/way/way_motorway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=motorway"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=motorway"
@@ -414,7 +414,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Motorway -->
-        <item name="Motorway Link" icon="presets/motorway.png" type="way" preset_name_label="true">
+        <item name="Motorway Link" icon="styles/standard/transport/way/way_motorway_link.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway_link"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=motorway_link"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=motorway_link"
@@ -441,7 +441,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Motorway Link -->
-        <item name="Trunk" icon="presets/trunk.png" type="way" preset_name_label="true">
+        <item name="Trunk" icon="styles/standard/transport/way/way_trunk.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=trunk"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=trunk"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=trunk"
@@ -476,7 +476,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Trunk -->
-        <item name="Trunk Link" icon="presets/trunk.png" type="way" preset_name_label="true">
+        <item name="Trunk Link" icon="styles/standard/transport/way/way_trunk_link.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Link_(highway)"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Highway_link" />
             <space />
@@ -500,7 +500,7 @@
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Trunk Link -->
         <separator/>
-        <item name="Primary" icon="presets/way_primary.png" type="way,closedway" preset_name_label="true">
+        <item name="Primary" icon="styles/standard/transport/way/way_primary.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=primary"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=primary"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=primary"
@@ -525,7 +525,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Primary -->
-        <item name="Primary Link" icon="presets/way_primary.png" type="way" preset_name_label="true">
+        <item name="Primary Link" icon="styles/standard/transport/way/way_primary_link.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Link_(highway)"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Link_(highway)"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Link_(highway)"
@@ -542,7 +542,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Primary Link -->
-        <item name="Secondary" icon="presets/way_secondary.png" type="way,closedway" preset_name_label="true">
+        <item name="Secondary" icon="styles/standard/transport/way/way_secondary.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=secondary"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=secondary"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=secondary"
@@ -567,7 +567,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Secondary -->
-        <item name="Secondary Link" icon="presets/way_secondary.png" type="way" preset_name_label="true">
+        <item name="Secondary Link" icon="styles/standard/transport/way/way_secondary_link.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Link_(highway)"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Link_(highway)"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Link_(highway)"
@@ -583,7 +583,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Secondary Link -->
-        <item name="Tertiary" icon="presets/way_tertiary.png" type="way,closedway" preset_name_label="true">
+        <item name="Tertiary" icon="styles/standard/transport/way/way_tertiary.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=tertiary"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:highway=tertiary"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=tertiary"
@@ -609,7 +609,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Tertiary -->
-        <item name="Tertiary Link" icon="presets/way_tertiary.png" type="way" preset_name_label="true">
+        <item name="Tertiary Link" icon="styles/standard/transport/way/way_tertiary_link.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Link_(highway)"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Link_(highway)"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Link_(highway)"
@@ -624,7 +624,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Tertiary Link -->
-        <item name="Unclassified" icon="presets/way_unclassified.png" type="way,closedway" preset_name_label="true">
+        <item name="Unclassified" icon="styles/standard/transport/way/way_unclassified.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=unclassified"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=unclassified"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=unclassified"
@@ -648,7 +648,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Unclassified -->
-        <item name="Residential" icon="presets/residential.png" type="way,closedway" preset_name_label="true">
+        <item name="Residential" icon="styles/standard/transport/way/way_residential.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=residential"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=residential"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=residential"
@@ -673,7 +673,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Residential -->
-        <item name="Bicycle Road" icon="presets/bicycle_road.svg" type="way" preset_name_label="true">
+        <item name="Bicycle Road" icon="styles/standard/transport/way/way_bicycle_road.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bicycle_road"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:bicycle_road"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:bicycle_road" />
@@ -697,7 +697,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Bicycle Road -->
-        <item name="Living Street" icon="presets/living_street.png" type="way,closedway" preset_name_label="true">
+        <item name="Living Street" icon="styles/standard/transport/way/way_living_street.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=living_street"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=living_street"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=living_street"
@@ -717,7 +717,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Living Street -->
-        <item name="Pedestrian" icon="presets/pedestrian.png" type="way,closedway,relation" preset_name_label="true">
+        <item name="Pedestrian" icon="styles/standard/transport/way/way_pedestrian.svg" type="way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=pedestrian"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=pedestrian"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=pedestrian"
@@ -741,7 +741,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Pedestrian -->
-        <item name="Service" icon="presets/way_unclassified.png" type="way,closedway" preset_name_label="true">
+        <item name="Service" icon="styles/standard/transport/way/way_service.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=service"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=service"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=service"
@@ -764,7 +764,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Service -->
-        <item name="Parking Aisle" icon="presets/way_unclassified.png" type="way,closedway" preset_name_label="true">
+        <item name="Parking Aisle" icon="styles/standard/transport/way/way_service_parking_aisle.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:service=parking_aisle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:service=parking_aisle"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:service=parking_aisle"
@@ -782,7 +782,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Parking Aisle -->
-        <item name="Escape" icon="presets/way_unclassified.png" type="way" preset_name_label="true">
+        <item name="Escape" icon="styles/standard/transport/way/way_escape.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=escape"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=escape"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=escape"
@@ -808,7 +808,7 @@
             <key key="highway" value="raceway" />
             <text key="name" text="Name" />
         </item> <!-- Raceway -->
-        <item name="Road (Unknown Type)" icon="presets/way_unclassified.png" type="way,closedway" preset_name_label="true">
+        <item name="Road (Unknown Type)" icon="styles/standard/transport/way/way_road.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=road"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:highway=road"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=road"
@@ -826,7 +826,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Road (Unknown Type) -->
-        <item name="Construction" icon="presets/construction.png" type="way,closedway" preset_name_label="true">
+        <item name="Construction" icon="styles/standard/transport/way/way_construction.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:construction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:construction"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:construction"
@@ -846,7 +846,7 @@
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Construction -->
         <separator/>
-        <item name="Road Restrictions" icon="presets/restrictions.png" type="node,way,closedway" preset_name_label="true">
+        <item name="Road Restrictions" icon="styles/standard/vehicle/restriction/restrictions.svg" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:access"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:access"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Key:access"
@@ -899,7 +899,7 @@
             <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" values_context="overtaking" match="key" />
         </item> <!-- Road Restrictions -->
         <separator/>
-        <item name="Roundabout" icon="presets/roundabout.png" type="node,way,closedway" preset_name_label="true">
+        <item name="Roundabout" icon="styles/standard/vehicle/restriction/roundabout_right.svg" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:junction=roundabout"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:junction=roundabout"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:junction=roundabout"
@@ -937,7 +937,7 @@
             </optional>
         </item> <!-- Ford -->
     </group> <!-- Streets -->
-    <group name="Ways" icon="presets/way_unclassified.png">
+    <group name="Ways" icon="styles/standard/transport/way/way_unclassified.svg">
         <item name="Track" icon="presets/track1.png" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=track"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:highway=track"
