@@ -1529,33 +1529,113 @@ node[office=tax_advisor],
 node[office=telecommunication] {
     fill-color: office#de5696;
 }
-node[office=accountant],
-node[office=administrative],
-node[office=advertising_agency],
-node[office=architect],
-node[office=association],
-node[office=company],
-node[office=educational_institution],
-node[office=employment_agency],
-node[office=estate_agent],
-node[office=foundation],
-node[office=insurance],
-node[office=it],
-node[office=lawyer],
-node[office=newspaper],
-node[office=ngo],
-node[office=notary],
-node[office=political_party],
-node[office=religion],
-node[office=research],
-node[office=tax_advisor],
+node[office=accountant] {
+    icon-image: "styles/standard/office/accountant.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=administrative] {
+    icon-image: "styles/standard/office/administrative.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=advertising_agency] {
+    icon-image: "styles/standard/office/advertising_agency.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=architect] {
+    icon-image: "styles/standard/office/architect.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=association] {
+    icon-image: "styles/standard/office/association.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=company] {
+    icon-image: "styles/standard/office/private_company.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=educational_institution] {
+    icon-image: "styles/standard/office/educational_institution.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=employment_agency] {
+    icon-image: "styles/standard/office/employment_agency.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=estate_agent] {
+    icon-image: "styles/standard/office/real_state.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=foundation] {
+    icon-image: "styles/standard/office/foundation.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=insurance] {
+    icon-image: "styles/standard/office/insurance.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=it] {
+    icon-image: "styles/standard/office/it.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=lawyer] {
+    icon-image: "styles/standard/office/lawyer.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=newspaper] {
+    icon-image: "styles/standard/office/newspaper.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=ngo] {
+    icon-image: "styles/standard/office/ong.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=notary] {
+    icon-image: "styles/standard/office/notary.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=political_party] {
+    icon-image: "styles/standard/office/political_party.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=religion] {
+    icon-image: "styles/standard/office/religion.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=research] {
+    icon-image: "styles/standard/office/research.svg";
+    set icon_z17;
+    text: auto;
+}
+node[office=tax_advisor] {
+    icon-image: "styles/standard/office/tax_advisor.svg";
+    set icon_z17;
+    text: auto;
+}
 node[office=telecommunication] {
-    icon-image: "icons/office_blue.png";
+    icon-image: "styles/standard/office/telecommunication.svg";
     set icon_z17;
     text: auto;
 }
 node[office=government] {
-    icon-image: "icons/office_pink.png";
+    icon-image: "styles/standard/office/government.svg";
     set icon_z17;
     text: auto;
 }

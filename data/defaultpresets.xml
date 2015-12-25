@@ -7623,7 +7623,7 @@
     </item> <!-- Payment Methods -->
   </group> <!-- Shops -->
   <group name="Offices" icon="icons/office_blue.png">
-    <item name="Accountant" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Accountant" icon="styles/standard/office/accountant.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=accountant"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=accountant"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=accountant"
@@ -7634,7 +7634,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Administrative" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Administrative" icon="styles/standard/office/administrative.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=administrative"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=administrative"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=administrative"
@@ -7644,14 +7644,14 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Advertising agency" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Advertising agency" icon="styles/standard/office/advertising_agency.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=advertising_agency" />
         <space />
         <key key="office" value="advertising_agency" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Architect" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Architect" icon="styles/standard/office/architect.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=architect"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=architect"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=architect"
@@ -7661,14 +7661,14 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Association" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Association" icon="styles/standard/office/association.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=association" />
         <space />
         <key key="office" value="association" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Private company" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Private company" icon="styles/standard/office/private_company.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=company"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=company"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=company"
@@ -7678,7 +7678,7 @@
         <reference ref="name_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Educational institution" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Educational institution" icon="styles/standard/office/educational_institution.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=educational_institution"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=educational_institution"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=educational_institution" />
@@ -7687,7 +7687,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Employment agency" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Employment agency" icon="styles/standard/office/employment_agency.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=employment_agency"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=employment_agency"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=employment_agency"
@@ -7699,7 +7699,7 @@
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Estate agent" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Estate agent" icon="styles/standard/office/real_state.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=estate_agent"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=estate_agent"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=estate_agent"
@@ -7711,14 +7711,14 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Foundation" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Foundation" icon="styles/standard/office/foundation.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=foundation" />
         <space />
         <key key="office" value="foundation" />
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Government" icon="icons/office_pink.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Government" icon="styles/standard/office/government.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=government"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=government"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=government"
@@ -7728,7 +7728,7 @@
         <reference ref="name_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Insurance" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Insurance" icon="styles/standard/office/insurance.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=insurance"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=insurance"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=insurance"
@@ -7739,7 +7739,7 @@
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="It specialist" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="It specialist" icon="styles/standard/office/it.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=it"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=it"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=it"
@@ -7749,7 +7749,7 @@
         <reference ref="name_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Lawyer" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Lawyer" icon="styles/standard/office/lawyer.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=lawyer"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=lawyer"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=lawyer"
@@ -7761,7 +7761,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Newspaper" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Newspaper" icon="styles/standard/office/newspaper.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=newspaper"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=newspaper"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=newspaper"
@@ -7771,7 +7771,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Non-governmental organisation (NGO)" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Non-governmental organisation (NGO)" icon="styles/standard/office/ong.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=ngo"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=ngo"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=ngo"
@@ -7782,14 +7782,14 @@
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Notary" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Notary" icon="styles/standard/office/notary.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=notary" />
         <space />
         <key key="office" value="notary" />
         <reference ref="name_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Political party" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Political party" icon="styles/standard/office/political_party.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=political_party"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=political_party"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=political_party" />
@@ -7798,7 +7798,7 @@
         <reference ref="name_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Religion" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Religion" icon="styles/standard/office/religion.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=religion"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=religion"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:office=religion" />
@@ -7808,7 +7808,7 @@
         <reference ref="oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Research" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Research" icon="styles/standard/office/research.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=research"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:office=research"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=research"
@@ -7819,7 +7819,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Tax advisor" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Tax advisor" icon="styles/standard/office/tax_advisor.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=tax_advisor"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=tax_advisor" />
         <space />
@@ -7827,7 +7827,7 @@
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
-    <item name="Telecommunication" icon="icons/office_blue.png" name_context="office" type="node,closedway" preset_name_label="true">
+    <item name="Telecommunication" icon="styles/standard/office/telecommunication.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=telecommunication"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=telecommunication"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=telecommunication"
