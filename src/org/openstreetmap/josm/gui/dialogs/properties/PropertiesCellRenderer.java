@@ -8,13 +8,16 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.UIDefaults;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -24,6 +27,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  * @since 6314
  */
 public class PropertiesCellRenderer extends DefaultTableCellRenderer {
+
+    private final Collection<TableCellRenderer> customRenderer = new CopyOnWriteArrayList<>();
 
     private void setColors(Component c, String key, boolean isSelected) {
         UIDefaults defaults = javax.swing.UIManager.getDefaults();
@@ -44,6 +49,12 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        for (TableCellRenderer renderer : customRenderer) {
+            final Component component = renderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (component != null) {
+                return component;
+            }
+        }
         Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
         if (value == null)
             return this;
@@ -104,5 +115,27 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
             }
         }
         return c;
+    }
+
+    /**
+     * Adds a custom table cell renderer to render cells of the tags table.
+     *
+     * If the renderer is not capable performing a {@link TableCellRenderer#getTableCellRendererComponent},
+     * it should return {@code null} to fall back to the
+     * {@link PropertiesCellRenderer#getTableCellRendererComponent default implementation}.
+     * @param renderer the renderer to add
+     * @since 9149
+     */
+    public void addCustomRenderer(TableCellRenderer renderer) {
+        customRenderer.add(renderer);
+    }
+
+    /**
+     * Removes a custom table cell renderer.
+     * @param renderer the renderer to remove
+     * @since 9149
+     */
+    public void removeCustomRenderer(TableCellRenderer renderer) {
+        customRenderer.remove(renderer);
     }
 }
