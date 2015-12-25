@@ -89,7 +89,7 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
     }
 
     protected URL getAttributionUrl() throws MalformedURLException {
-        return new URL("http://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?include=ImageryProviders&output=xml&key="
+        return new URL("https://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?include=ImageryProviders&output=xml&key="
                 + API_KEY);
     }
 
@@ -102,6 +102,9 @@ public class BingAerialTileSource extends AbstractTMSTileSource {
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xpath = xPathFactory.newXPath();
             imageUrlTemplate = xpath.compile("//ImageryMetadata/ImageUrl/text()").evaluate(document);
+            imageUrlTemplate = imageUrlTemplate.replace(
+                    "http://ecn.{subdomain}.tiles.virtualearth.net/",
+                    "https://ecn.{subdomain}.tiles.virtualearth.net/");
             imageUrlTemplate = culturePattern.matcher(imageUrlTemplate).replaceAll(Locale.getDefault().toString());
             imageryZoomMax = Integer.valueOf(xpath.compile("//ImageryMetadata/ZoomMax/text()").evaluate(document));
 
