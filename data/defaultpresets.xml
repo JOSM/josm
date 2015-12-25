@@ -9364,7 +9364,7 @@
                 <role key="spring" text="spring of waterway" requisite="optional" type="node" />
             </roles>
         </item> <!-- Waterway -->
-        <item name="Bridge" icon="presets/bridge.png" type="relation" preset_name_label="true">
+        <item name="Bridge" icon="styles/standard/transport/bridge/bridge.svg" type="relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Relations/Proposed/Bridges_and_Tunnels"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relations/Proposed/Bridges_and_Tunnels"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Relations/Proposed/Bridges_and_Tunnels"
