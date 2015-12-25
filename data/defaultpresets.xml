@@ -1715,8 +1715,8 @@
             <reference ref="optional_maxheight_maxwidth" />
         </item> <!-- Sally Port -->
     </group> <!-- Barriers -->
-    <group name="Passageways" icon="presets/tunnel.png">
-        <item name="Tunnel" icon="presets/tunnel.png" type="way" preset_name_label="true">
+    <group name="Passageways" icon="styles/standard/transport/passage/tunnel.svg">
+        <item name="Tunnel" icon="styles/standard/transport/passage/tunnel.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:tunnel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
@@ -1743,7 +1743,7 @@
                 <check key="toll" text="Toll" />
             </optional>
         </item> <!-- Tunnel -->
-        <item name="Building Passage" icon="presets/tunnel.png" type="way" preset_name_label="true">
+        <item name="Building Passage" icon="styles/standard/transport/passage/tunnel_building_passage.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:tunnel"
@@ -1762,7 +1762,7 @@
                 <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
             </optional>
         </item> <!-- Building Passage -->
-        <item name="Arcade" type="way" preset_name_label="true">
+        <item name="Arcade" icon="styles/standard/transport/passage/arcade.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:covered"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:covered"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:covered"
@@ -1781,7 +1781,7 @@
                 <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Arcade -->
-        <item name="Colonnade" type="way" preset_name_label="true">
+        <item name="Colonnade" icon="styles/standard/transport/passage/colonnade.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:covered"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:covered"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:covered"
@@ -1798,7 +1798,7 @@
                 <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Colonnade -->
-        <item name="Avalanche Protector" type="way" preset_name_label="true">
+        <item name="Avalanche Protector" icon="styles/standard/transport/passage/tunnel_avalanche_protector.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:tunnel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:tunnel"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:tunnel"
@@ -1820,9 +1820,9 @@
         </item> <!-- Avalanche Protector -->
     </group> <!-- Passageways -->
   </group> <!-- Highways -->
-  <group name="Water" name_context="main group" icon="presets/waterway.png">
-    <group name="Water" name_context="sub group" icon="presets/waterway.png">
-        <item name="Drain" icon="presets/waterway.png" type="way" preset_name_label="true">
+  <group name="Water" name_context="main group" icon="styles/standard/nautical/waterway_river.svg">
+    <group name="Water" name_context="sub group" icon="styles/standard/nautical/waterway_river.svg">
+        <item name="Drain" icon="styles/standard/nautical/waterway_drain.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=drain"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:waterway=drain"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=drain"
@@ -1837,7 +1837,7 @@
                 <reference ref="waterway" />
             </optional>
         </item> <!-- Drain -->
-        <item name="Ditch" icon="presets/waterway.png" type="way" preset_name_label="true">
+        <item name="Ditch" icon="styles/standard/nautical/waterway_ditch.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=ditch"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:waterway=ditch"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=ditch"
@@ -1851,7 +1851,7 @@
                 <reference ref="waterway" />
             </optional>
         </item> <!-- Ditch -->
-        <item name="Stream" icon="presets/waterway.png" type="way" preset_name_label="true">
+        <item name="Stream" icon="styles/standard/nautical/waterway_stream.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=stream"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:waterway=stream"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=stream"
@@ -1870,7 +1870,7 @@
             </optional>
             <reference ref="water_access" />
         </item> <!-- Stream -->
-        <item name="River" icon="presets/river.png" type="way" preset_name_label="true">
+        <item name="River" icon="styles/standard/nautical/waterway_river.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=river"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:waterway=river"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=river"
@@ -1888,7 +1888,7 @@
             </optional>
             <reference ref="water_access" />
         </item> <!-- River -->
-        <item name="Canal" icon="presets/waterway.png" type="way" preset_name_label="true">
+        <item name="Canal" icon="styles/standard/nautical/waterway_canal.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=canal"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:waterway=canal"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=canal"
@@ -1958,7 +1958,7 @@
             <key key="waterway" value="dam" />
             <reference ref="name_wikipedia" />
         </item> <!-- Dam -->
-        <item name="Groyne" icon="presets/groyne.png" type="way,closedway" preset_name_label="true">
+        <item name="Groyne" icon="styles/standard/nautical/groyne.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=groyne"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=groyne"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=groyne"
@@ -1966,7 +1966,7 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=groyne" />
             <key key="man_made" value="groyne" />
         </item> <!-- Groyne -->
-        <item name="Breakwater" icon="presets/breakwater.png" type="way,closedway" preset_name_label="true">
+        <item name="Breakwater" icon="styles/standard/nautical/breakwater.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=breakwater"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=breakwater"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=breakwater"
@@ -1979,7 +1979,7 @@
             <text key="name" text="Name" />
         </item> <!-- Breakwater -->
         <separator/>
-        <item name="Culvert" icon="presets/tunnel.png" type="way" preset_name_label="true">
+        <item name="Culvert" icon="styles/standard/transport/passage/tunnel_culvert.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tunnel=culvert"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:tunnel=culvert"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tunnel=culvert"
@@ -2052,7 +2052,7 @@
             <text key="wikipedia" text="Wikipedia" />
             <reference ref="water_access" />
         </item> <!-- Water -->
-        <item name="Coastline" icon="presets/coastline.png" type="way,closedway,relation" preset_name_label="true">
+        <item name="Coastline" icon="styles/standard/nautical/coast_line.svg" type="way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=coastline"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=coastline"
@@ -2066,7 +2066,7 @@
             <key key="natural" value="coastline" />
             <text key="name" text="Name" />
         </item> <!-- Coastline -->
-        <item name="Riverbank" icon="presets/waterway.png" type="closedway,relation" preset_name_label="true">
+        <item name="Riverbank" icon="styles/standard/nautical/waterway_riverbank.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=riverbank"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:waterway=riverbank"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=riverbank"
@@ -2085,7 +2085,7 @@
             <check key="tidal" text="In the tidal range" disable_off="true" />
         </item> <!-- Riverbank -->
         <separator/>
-        <item name="Wetland" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
+        <item name="Wetland" icon="styles/standard/misc/landuse/wetland.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wetland"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=wetland"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wetland"
@@ -2103,7 +2103,7 @@
             <text key="name" text="Name" />
             <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" values_searchable="true" />
         </item> <!-- Wetland -->
-        <item name="Mud" icon="presets/mud.png" type="closedway,relation" preset_name_label="true">
+        <item name="Mud" icon="styles/standard/misc/landuse/mud.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=mud"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=mud"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=mud"
@@ -2114,7 +2114,7 @@
             <key key="natural" value="mud" />
             <text key="name" text="Name" />
         </item> <!-- Mud -->
-        <item name="Beach" icon="presets/beach.png" type="closedway,relation" preset_name_label="true">
+        <item name="Beach" icon="styles/standard/nautical/beach.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=beach"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=beach"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=beach"
@@ -2134,7 +2134,7 @@
                 <combo key="sport" text="Sport" values="swimming,surfing" />
             </optional>
         </item> <!-- Beach -->
-        <item name="Bay" icon="presets/bay.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Bay" icon="styles/standard/nautical/bay.svg" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=bay"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=bay"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=bay"
@@ -2147,7 +2147,7 @@
             <key key="natural" value="bay" />
             <text key="name" text="Name" />
         </item> <!-- Bay -->
-        <item name="Cliff" icon="presets/cliff.png" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Cliff" icon="styles/standard/misc/cliff.svg" type="node,way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cliff"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=cliff"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=cliff"
@@ -2229,7 +2229,7 @@
             </optional>
             <reference ref="link_contact_address_payment" />
         </item> <!-- Marine Fuel -->
-        <item name="Pier" icon="presets/pier.png" type="node,way,closedway" preset_name_label="true">
+        <item name="Pier" icon="styles/standard/nautical/pier.svg" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pier"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=pier"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=pier"
@@ -5743,7 +5743,7 @@
             <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
             <check key="disused" text="Disused" />
         </item> <!-- Adit -->
-        <item name="Embankment" icon="presets/cliff.png" type="way" preset_name_label="true">
+        <item name="Embankment" icon="styles/standard/misc/cliff.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=embankment"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=embankment"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=embankment"
@@ -5979,8 +5979,8 @@
             </optional>
         </item> <!-- Surveillance Camera -->
     </group> <!-- Man Made -->
-    <group name="Bridges" icon="presets/bridge.png">
-        <item name="Bridge" icon="presets/bridge.png" type="way,relation" preset_name_label="true">
+    <group name="Bridges" icon="styles/standard/transport/bridge/bridge.svg">
+        <item name="Bridge" icon="styles/standard/transport/bridge/bridge.svg" type="way,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bridge"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:bridge"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:bridge"
@@ -5998,7 +5998,7 @@
             <combo key="bridge:structure" text="Structure" values="arch,beam,truss,floating,suspension,cable-stayed,simple-suspension,humpback" match="key" />
             <reference ref="optional_bridge" />
         </item> <!-- Bridge -->
-        <item name="Movable Bridge" icon="presets/bridge_movable.png" type="way,relation" preset_name_label="true">
+        <item name="Movable Bridge" icon="styles/standard/transport/bridge/bridge_movable.svg" type="way,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bridge:movable"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:bridge:movable"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:bridge:movable" />
@@ -6007,12 +6007,12 @@
             <combo key="bridge:movable" text="Type" values="bascule,drawbridge,lift,submersible,swing,transporter" match="key" />
             <reference ref="optional_bridge" />
         </item> <!-- Movable Bridge -->
-        <item name="Bridge Support" icon="styles/standard/transport/bridge/support.svg" type="node,closedway" preset_name_label="true">
+        <item name="Bridge Support" icon="styles/standard/transport/bridge/bridge_support.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bridge:support" />
             <space />
             <combo key="bridge:support" text="Type" values="pier,abutment,lift_pier,pivot_pier" match="key" />
         </item> <!-- Bridge Support -->
-        <item name="Bridge outline" icon="presets/bridge.png" type="closedway" preset_name_label="true">
+        <item name="Bridge outline" icon="styles/standard/transport/bridge/bridge_outline.svg" type="closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=bridge"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=bridge"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=bridge"
@@ -7622,7 +7622,7 @@
         </checkgroup>
     </item> <!-- Payment Methods -->
   </group> <!-- Shops -->
-  <group name="Offices" icon="icons/office_blue.png">
+  <group name="Offices" icon="styles/standard/office/private_company.svg">
     <item name="Accountant" icon="styles/standard/office/accountant.svg" name_context="office" type="node,closedway" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=accountant"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=accountant"
@@ -9337,7 +9337,7 @@
             </roles>
         </item> <!-- Destination Sign -->
         <separator/>
-        <item name="Waterway" icon="presets/river.png" type="relation" preset_name_label="true">
+        <item name="Waterway" icon="styles/standard/nautical/waterway_river.svg" type="relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:waterway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:waterway"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Relation:waterway"

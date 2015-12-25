@@ -801,7 +801,7 @@ node[highway=rest_area] {
     text: auto;
 }
 node[highway=ford], node[ford?] {
-    icon-image: "misc/ford.svg";
+    icon-image: "nautical/ford.svg";
     set icon_z17;
     text: auto;
 }
@@ -1299,7 +1299,7 @@ node[man_made=bridge] {
     text: auto;
 }
 node[bridge:support] {
-    icon-image: "transport/bridge/support.svg";
+    icon-image: "transport/bridge/bridge_support.svg";
     set icon_z17;
     text: auto;
 }
@@ -1377,7 +1377,7 @@ way[man_made=pier] {
     color: pier#660000;
 }
 node[man_made=pier] {
-    icon-image: "nautical/pier.png";
+    icon-image: "nautical/pier.svg";
     set icon_z17;
     text: auto;
 }
@@ -4131,7 +4131,7 @@ way[natural=cliff] {
     color: #b2b2b2;
 }
 node[natural=cliff] {
-    icon-image: "misc/cliff.png";
+    icon-image: "misc/cliff.svg";
     set icon_z17;
     text: auto;
 }
@@ -4211,7 +4211,7 @@ area[natural=cave_entrance] {
     fill-color: natural#002f00;
 }
 node[natural=bay] {
-    icon-image: "misc/bay.png";
+    icon-image: "nautical/bay.svg";
     set icon_z17;
     text: auto;
 }
