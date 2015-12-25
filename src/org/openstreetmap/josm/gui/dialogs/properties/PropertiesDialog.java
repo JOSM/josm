@@ -1107,7 +1107,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                String base = Main.pref.get("url.openstreetmap-wiki", "http://wiki.openstreetmap.org/wiki/");
+                String base = Main.pref.get("url.openstreetmap-wiki", "https://wiki.openstreetmap.org/wiki/");
                 String lang = LanguageInfo.getWikiLanguagePrefix();
                 final List<URI> uris = new ArrayList<>();
                 int row;

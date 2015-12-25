@@ -9,13 +9,23 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 
 /**
  * Unit tests of {@link ImageProvider} class.
  */
 public class ImageProviderTest {
+
+    /**
+     * Setup test.
+     */
+    @BeforeClass
+    public static void setUp() {
+        JOSMFixture.createUnitTestFixture().init();
+    }
 
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/9984">#9984</a>
@@ -39,5 +49,11 @@ public class ImageProviderTest {
         File file = new File(TestUtils.getRegressionDataFile(10030, "tile.jpg"));
         BufferedImage img = ImageProvider.read(file, true, true);
         assertNotNull(img);
+    }
+
+    @Test
+    public void testWikiProtocol() throws Exception {
+        // https://commons.wikimedia.org/wiki/File:OpenJDK_logo.svg
+        assertNotNull(ImageProvider.get("wiki://OpenJDK_logo.svg"));
     }
 }

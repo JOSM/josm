@@ -887,9 +887,9 @@ public class ImageProvider {
      */
     private static ImageResource getIfAvailableWiki(String name, ImageType type) {
         final Collection<String> defaultBaseUrls = Arrays.asList(
-                "http://wiki.openstreetmap.org/w/images/",
-                "http://upload.wikimedia.org/wikipedia/commons/",
-                "http://wiki.openstreetmap.org/wiki/File:"
+                "https://wiki.openstreetmap.org/w/images/",
+                "https://upload.wikimedia.org/wikipedia/commons/",
+                "https://wiki.openstreetmap.org/wiki/File:"
                 );
         final Collection<String> baseUrls = Main.pref.getCollection("image-provider.wiki.urls", defaultBaseUrls);
 
