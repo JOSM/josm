@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 16.000001 16.000001"
+   width="8"
+   height="7"
+   viewBox="0 0 8.0000007 7.0000007"
    id="svg4264"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="ford12.svg">
+   sodipodi:docname="waterway_drain3.svg">
   <defs
      id="defs4266" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.627417"
-     inkscape:cx="-3.9697886"
-     inkscape:cy="2.3971322"
+     inkscape:zoom="45.254834"
+     inkscape:cx="0.58070291"
+     inkscape:cy="3.2701754"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -45,7 +45,7 @@
      inkscape:snap-midpoints="false"
      inkscape:snap-object-midpoints="true"
      inkscape:snap-others="true"
-     inkscape:snap-global="false"
+     inkscape:snap-global="true"
      inkscape:snap-center="false"
      inkscape:snap-grids="true"
      inkscape:snap-to-guides="true"
@@ -81,45 +81,18 @@
      inkscape:label="Camada 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1036.3621)">
-    <rect
-       style="fill:#ffffff;fill-opacity:1"
-       id="rect4148"
-       width="16.000004"
-       height="16.000004"
-       x="-4.7683727e-007"
-       y="1036.3621"
-       ry="2.3864501" />
+     transform="translate(0,-1045.3621)">
     <path
-       style="fill:#000000"
-       d="m 8.1107127,1037.3621 -1.0610248,3.8423 -5.048498,0.5092 -0.00119,2.8581 c 0,0 1.9439315,-0.017 6.0511112,-0.017 0.1430592,1.601 1.4544383,2.7956 2.9684849,2.7956 1.597498,0 2.980406,-1.3547 2.980406,-3.0788 0,-1.3793 -0.870279,-2.5123 -2.038598,-2.9187 l 0,-3.9779 -3.8506843,0 z"
-       id="path4153"
+       style="fill:#1d8ece;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 1.142857,1048.3621 5.7142869,0 -1.5238107,3.3308 -2.6666335,0 z"
+       id="path4245"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccsscccc" />
+       sodipodi:nodetypes="ccccc" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#0070ff;stroke-width:1.73526525;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 0.62451997,1051.114 1.84387033,-1.9325 1.8438702,1.9325 1.8438701,-1.9325 1.8438703,1.9325 1.8438707,-1.9325 1.8438704,1.9325 1.843869,-1.9325 1.843871,1.9325"
-       id="path4181"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:#ffffff"
-       d="m 8.718716,1038.1256 2.420089,0 0,3.0666 -3.23076,0.024 0.810671,-3.0787 z"
-       id="path4151" />
-    <path
-       style="fill:#ffffff"
-       d="m 11.007668,1043.0395 c 0.762984,0 1.216005,0.5788 1.216005,1.2315 0,0.6527 -0.453021,1.2315 -1.216005,1.2315 -0.762985,0 -1.2160071,-0.5788 -1.2160071,-1.2315 0,-0.6527 0.4530221,-1.2315 1.2160071,-1.2315 z"
-       id="path4149" />
-    <circle
-       r="1.7789224"
-       cy="1045.5714"
-       cx="4.4972916"
-       id="circle4145"
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.745;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <circle
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.745;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path4143"
-       cx="4.4972916"
-       cy="1045.5714"
-       r="0.91713595" />
+       style="fill:#000000;fill-opacity:1"
+       d="m 6.0047978,1052.1373 1.9952034,-6.3897 -1.1428573,-0.3855 -1.7801991,5.829 -2.1230756,-0.012 L 1.142857,1045.3622 2.8499999e-6,1045.7476 2.0104926,1052.1585 c 0.083454,0.2144 0.2322033,0.2287 0.3836929,0.2349 l 3.3036579,-0.021 c 0.1859607,0 0.2676949,-0.1002 0.3069544,-0.2348 z"
+       id="polygon3436"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccccccc" />
   </g>
 </svg>

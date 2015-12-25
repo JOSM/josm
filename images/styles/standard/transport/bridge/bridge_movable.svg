@@ -11,11 +11,11 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
-   viewBox="0 0 16.000001 16.000001"
+   viewBox="0 0 16.000001 16.000002"
    id="svg4264"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="ford12.svg">
+   sodipodi:docname="bridge_movable4.svg">
   <defs
      id="defs4266" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.627417"
-     inkscape:cx="-3.9697886"
-     inkscape:cy="2.3971322"
+     inkscape:zoom="8"
+     inkscape:cx="7.2832951"
+     inkscape:cy="16.201829"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -38,15 +38,15 @@
      inkscape:snap-bbox-edge-midpoints="true"
      inkscape:snap-bbox-midpoints="true"
      inkscape:snap-nodes="true"
-     inkscape:object-paths="true"
+     inkscape:object-paths="false"
      inkscape:snap-intersection-paths="true"
      inkscape:object-nodes="true"
-     inkscape:snap-smooth-nodes="false"
-     inkscape:snap-midpoints="false"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-midpoints="true"
      inkscape:snap-object-midpoints="true"
      inkscape:snap-others="true"
      inkscape:snap-global="false"
-     inkscape:snap-center="false"
+     inkscape:snap-center="true"
      inkscape:snap-grids="true"
      inkscape:snap-to-guides="true"
      inkscape:snap-page="true">
@@ -83,43 +83,22 @@
      id="layer1"
      transform="translate(0,-1036.3621)">
     <rect
-       style="fill:#ffffff;fill-opacity:1"
-       id="rect4148"
-       width="16.000004"
-       height="16.000004"
-       x="-4.7683727e-007"
-       y="1036.3621"
-       ry="2.3864501" />
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-opacity:1"
+       id="rect4202-1"
+       width="6.1549902"
+       height="2.3634679"
+       x="-733.52594"
+       y="738.26666"
+       transform="matrix(0.70710695,-0.70710662,0.70710695,0.70710662,0,0)" />
     <path
-       style="fill:#000000"
-       d="m 8.1107127,1037.3621 -1.0610248,3.8423 -5.048498,0.5092 -0.00119,2.8581 c 0,0 1.9439315,-0.017 6.0511112,-0.017 0.1430592,1.601 1.4544383,2.7956 2.9684849,2.7956 1.597498,0 2.980406,-1.3547 2.980406,-3.0788 0,-1.3793 -0.870279,-2.5123 -2.038598,-2.9187 l 0,-3.9779 -3.8506843,0 z"
-       id="path4153"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccsscccc" />
+       style="fill:#000000"
+       d="m -4.7683724e-7,1042.3621 0,3 C 2.0000005,1045.3621 3.0000005,1046.0887 3.0253915,1048.3621 l 0,4 0.330078,0 1.09375,0 0.550781,0 0,-4 0,-6 -5.00000097683724,0 z"
+       id="path3444-5-9" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#0070ff;stroke-width:1.73526525;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 0.62451997,1051.114 1.84387033,-1.9325 1.8438702,1.9325 1.8438701,-1.9325 1.8438703,1.9325 1.8438707,-1.9325 1.8438704,1.9325 1.843869,-1.9325 1.843871,1.9325"
-       id="path4181"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:#ffffff"
-       d="m 8.718716,1038.1256 2.420089,0 0,3.0666 -3.23076,0.024 0.810671,-3.0787 z"
-       id="path4151" />
-    <path
-       style="fill:#ffffff"
-       d="m 11.007668,1043.0395 c 0.762984,0 1.216005,0.5788 1.216005,1.2315 0,0.6527 -0.453021,1.2315 -1.216005,1.2315 -0.762985,0 -1.2160071,-0.5788 -1.2160071,-1.2315 0,-0.6527 0.4530221,-1.2315 1.2160071,-1.2315 z"
-       id="path4149" />
-    <circle
-       r="1.7789224"
-       cy="1045.5714"
-       cx="4.4972916"
-       id="circle4145"
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.745;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <circle
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.745;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path4143"
-       cx="4.4972916"
-       cy="1045.5714"
-       r="0.91713595" />
+       inkscape:connector-curvature="0"
+       style="fill:#000000"
+       d="m 11.000003,1042.3621 0,5.5625 c 0.01005,0.1443 0.02734,0.2784 0.02734,0.4375 l 0,4 1.972662,0 0,-4 c 1e-6,-2.2734 1,-3 3,-3 l 0,-3 -5.000002,0 z"
+       id="path3444-5-1-4" />
   </g>
 </svg>
