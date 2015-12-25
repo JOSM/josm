@@ -58,7 +58,16 @@ public class SessionSaveAsAction extends DiskAccessAction {
      * Constructs a new {@code SessionSaveAsAction}.
      */
     public SessionSaveAsAction() {
-        super(tr("Save Session As..."), "session", tr("Save the current session to a new file."), null, true, "save_as-session", true);
+        this(true, true);
+    }
+
+    /**
+     * Constructs a new {@code SessionSaveAsAction}.
+     * @param toolbar Register this action for the toolbar preferences?
+     * @param installAdapters False, if you don't want to install layer changed and selection changed adapters
+     */
+    protected SessionSaveAsAction(boolean toolbar, boolean installAdapters) {
+        super(tr("Save Session As..."), "session", tr("Save the current session to a new file."), null, toolbar, "save_as-session", installAdapters);
         putValue("help", ht("/Action/SessionSaveAs"));
     }
 
