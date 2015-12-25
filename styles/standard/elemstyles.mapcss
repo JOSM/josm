@@ -801,7 +801,7 @@ node[highway=rest_area] {
     text: auto;
 }
 node[highway=ford], node[ford?] {
-    icon-image: "nautical/ford.svg";
+    icon-image: "misc/ford.svg";
     set icon_z17;
     text: auto;
 }
