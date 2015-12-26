@@ -107,7 +107,9 @@ public enum Compression {
      * @return un-compressing input stream
      *
      * @throws IOException if any I/O error occurs
+     * @deprecated Use {@link org.openstreetmap.josm.tools.HttpClient} instead
      */
+    @Deprecated
     public static InputStream getUncompressedURLInputStream(URL url) throws IOException {
         return Utils.openURLAndDecompress(url, true);
     }

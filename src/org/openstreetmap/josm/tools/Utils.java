@@ -764,7 +764,9 @@ public final class Utils {
      * @return An open HTTP connection to the given URL
      * @throws java.io.IOException if an I/O exception occurs.
      * @since 5587
+     * @deprecated Use {@link HttpClient} instead
      */
+    @Deprecated
     public static HttpURLConnection openHttpConnection(URL httpURL) throws IOException {
         if (httpURL == null || !HTTP_PREFFIX_PATTERN.matcher(httpURL.getProtocol()).matches()) {
             throw new IllegalArgumentException("Invalid HTTP url");
@@ -784,9 +786,11 @@ public final class Utils {
      * @return An stream for the given URL
      * @throws java.io.IOException if an I/O exception occurs.
      * @since 5867
+     * @deprecated Use {@link HttpClient} instead
      */
+    @Deprecated
     public static InputStream openURL(URL url) throws IOException {
-        return openURLAndDecompress(url, false);
+        return HttpClient.create(url).connect().getContent();
     }
 
     /**
@@ -797,21 +801,11 @@ public final class Utils {
      * @return An stream for the given URL
      * @throws IOException if an I/O exception occurs.
      * @since 6421
+     * @deprecated Use {@link HttpClient} instead
      */
+    @Deprecated
     public static InputStream openURLAndDecompress(final URL url, final boolean decompress) throws IOException {
-        final URLConnection connection = setupURLConnection(url.openConnection());
-        final InputStream in = connection.getInputStream();
-        if (decompress) {
-            switch (connection.getHeaderField("Content-Type")) {
-            case "application/zip":
-                return getZipInputStream(in);
-            case "application/x-gzip":
-                return getGZipInputStream(in);
-            case "application/x-bzip2":
-                return getBZip2InputStream(in);
-            }
-        }
-        return in;
+        return HttpClient.create(url).connect().uncompress(decompress).getContent();
     }
 
     /**
@@ -867,7 +861,9 @@ public final class Utils {
      * @param connection The connection to setup
      * @return {@code connection}, with updated properties
      * @since 5887
+     * @deprecated Use {@link HttpClient} instead
      */
+    @Deprecated
     public static URLConnection setupURLConnection(URLConnection connection) {
         if (connection != null) {
             connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
@@ -883,9 +879,11 @@ public final class Utils {
      * @return An buffered stream reader for the given URL (using UTF-8)
      * @throws java.io.IOException if an I/O exception occurs.
      * @since 5868
+     * @deprecated Use {@link HttpClient} instead
      */
+    @Deprecated
     public static BufferedReader openURLReader(URL url) throws IOException {
-        return openURLReaderAndDecompress(url, false);
+        return HttpClient.create(url).connect().getContentReader();
     }
 
     /**
@@ -896,9 +894,11 @@ public final class Utils {
      * @return An buffered stream reader for the given URL (using UTF-8)
      * @throws IOException if an I/O exception occurs.
      * @since 6421
+     * @deprecated Use {@link HttpClient} instead
      */
+    @Deprecated
     public static BufferedReader openURLReaderAndDecompress(final URL url, final boolean decompress) throws IOException {
-        return new BufferedReader(new InputStreamReader(openURLAndDecompress(url, decompress), StandardCharsets.UTF_8));
+        return HttpClient.create(url).connect().uncompress(decompress).getContentReader();
     }
 
     /**
@@ -908,7 +908,9 @@ public final class Utils {
      * @return An open HTTP connection to the given URL
      * @throws java.io.IOException if an I/O exception occurs.
      * @since 5587
+     * @deprecated Use {@link HttpClient} instead
      */
+    @Deprecated
     public static HttpURLConnection openHttpConnection(URL httpURL, boolean keepAlive) throws IOException {
         HttpURLConnection connection = openHttpConnection(httpURL);
         if (!keepAlive) {
@@ -934,7 +936,9 @@ public final class Utils {
      * @return An open HTTP connection to the given URL
      * @throws IOException if an I/O exception occurs
      * @since 8650
+     * @deprecated Use {@link HttpClient} instead
      */
+    @Deprecated
     public static HttpURLConnection openHttpConnection(URL httpURL, boolean keepAlive, boolean followRedirects) throws IOException {
         HttpURLConnection connection = openHttpConnection(httpURL, keepAlive);
         if (followRedirects) {
