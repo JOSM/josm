@@ -151,10 +151,8 @@ public abstract class OsmServerReader extends OsmConnection {
                     throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody, url.toString());
                 }
 
+                activeConnection.uncompressAccordingToContentDisposition(uncompressAccordingToContentDisposition);
                 InputStream in = new ProgressInputStream(activeConnection, progressMonitor);
-                if (uncompressAccordingToContentDisposition) {
-                    activeConnection.uncompressAccordingToContentDisposition(true);
-                }
                 return in;
             } catch (OsmTransferException e) {
                 throw e;

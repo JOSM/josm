@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.MessageFormat;
 
 import javax.swing.JEditorPane;
@@ -16,8 +15,8 @@ import javax.swing.UIManager;
 import javax.swing.text.html.StyleSheet;
 
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.LanguageInfo;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Subclass of {@link JEditorPane} that adds a "native" context menu (cut/copy/paste/select all)
@@ -75,13 +74,12 @@ public class JosmEditorPane extends JEditorPane {
 
     @Override
     protected InputStream getStream(URL page) throws IOException {
-        URLConnection conn = Utils.setupURLConnection(page.openConnection());
-        InputStream result = conn.getInputStream();
+        final HttpClient.Response conn = HttpClient.create(page).connect();
         String type = conn.getContentType();
         if (type != null) {
             setContentType(type);
         }
-        return result;
+        return conn.getContent();
     }
 
     /**
