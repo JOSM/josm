@@ -5592,7 +5592,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:entrance"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:entrance" />
             <space />
-            <combo key="entrance" text="Entrance" values="yes,main,service,exit,emergency" values_context="entrance" default="yes" match="key" />
+            <combo key="entrance" text="Entrance" values="yes,main,service,exit,emergency,staircase" values_context="entrance" default="yes" match="key" />
             <combo key="access" text="Access" values="yes,delivery,private,no" />
             <reference ref="wheelchair" />
             <optional>
