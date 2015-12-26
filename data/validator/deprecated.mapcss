@@ -603,7 +603,12 @@ relation[/^..$/][!to] {
 }
 *[shop=betting] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
-  suggestAlternative: "shop=bookmaker, shop=lottery, amenity=casino, leisure=amusement_arcade, leisure=adult_gaming_centre or amenity=gambling";
+  suggestAlternative: "shop=bookmaker";
+  suggestAlternative: "shop=lottery";
+  suggestAlternative: "amenity=casino";
+  suggestAlternative: "leisure=amusement_arcade";
+  suggestAlternative: "leisure=adult_gaming_centre";
+  suggestAlternative: "amenity=gambling";
 }
 *[shop=perfume] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
