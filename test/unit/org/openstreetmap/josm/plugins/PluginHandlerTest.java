@@ -31,7 +31,7 @@ public class PluginHandlerTest {
     /**
      * Test that available plugins rules can be loaded.
      */
-    @Test
+    @Test(timeout = 10*60*1000)
     public void testValidityOfAvailablePlugins() {
         // Download complete list of plugins
         ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(

@@ -34,7 +34,7 @@ public class MapPaintPreferenceTest {
      * @throws IOException if any I/O error occurs
      * @throws ParseException if the config file does not match MapCSS syntax
      */
-    @Test
+    @Test(timeout = 10*60*1000)
     public void testValidityOfAvailableStyles() throws ParseException, IOException {
         Collection<ExtendedSourceEntry> sources = new MapPaintPreference.MapPaintSourceEditor()
                 .loadAndGetAvailableSources();
