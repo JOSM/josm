@@ -2,13 +2,10 @@
 package org.openstreetmap.josm.io.imagery;
 
 import java.awt.HeadlessException;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,7 +23,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
@@ -136,20 +133,7 @@ public class WMSImagery {
         }
 
         Main.info("GET " + getCapabilitiesUrl);
-        URLConnection openConnection = Utils.openHttpConnection(getCapabilitiesUrl, false, true);
-        StringBuilder ba = new StringBuilder();
-
-        try (
-            InputStream inputStream = openConnection.getInputStream();
-            BufferedReader br = new BufferedReader(UTFInputStreamReader.create(inputStream))
-        ) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                ba.append(line);
-                ba.append('\n');
-            }
-        }
-        String incomingData = ba.toString();
+        final String incomingData = HttpClient.create(getCapabilitiesUrl).connect().fetchContent();
         Main.debug("Server response to Capabilities request:");
         Main.debug(incomingData);
 

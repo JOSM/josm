@@ -15,7 +15,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -100,6 +99,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -1170,24 +1170,22 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                     @Override public void run() {
                         try {
                             // find a page that actually exists in the wiki
-                            HttpURLConnection conn;
+                            HttpClient.Response conn;
                             for (URI u : uris) {
-                                conn = Utils.openHttpConnection(u.toURL());
-                                conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);
+                                conn = HttpClient.create(u.toURL(), "HEAD").connect();
 
                                 if (conn.getResponseCode() != 200) {
-                                    Main.info("{0} does not exist", u);
                                     conn.disconnect();
                                 } else {
-                                    int osize = conn.getContentLength();
+                                    long osize = conn.getContentLength();
                                     if (osize > -1) {
                                         conn.disconnect();
 
-                                        conn = Utils.openHttpConnection(new URI(u.toString()
+                                        final URI newURI = new URI(u.toString()
                                                 .replace("=", "%3D") /* do not URLencode whole string! */
                                                 .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
-                                                ).toURL());
-                                        conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);
+                                        );
+                                        conn = HttpClient.create(newURI.toURL(), "HEAD").connect();
                                     }
 
                                     /* redirect pages have different content length, but retrieving a "nonredirect"
@@ -1198,7 +1196,6 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
                                         Main.info("{0} is a mediawiki redirect", u);
                                         conn.disconnect();
                                     } else {
-                                        Main.info("browsing to {0}", u);
                                         conn.disconnect();
 
                                         OpenBrowser.displayUrl(u.toString());

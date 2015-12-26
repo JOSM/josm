@@ -12,12 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,6 +52,7 @@ import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Utils;
@@ -327,7 +324,7 @@ public class PlaceSelection implements DownloadSelection {
     class NameQueryTask extends PleaseWaitRunnable {
 
         private final String searchExpression;
-        private HttpURLConnection connection;
+        private HttpClient.Response connection;
         private List<SearchResult> data;
         private boolean canceled;
         private final Server useserver;
@@ -370,13 +367,9 @@ public class PlaceSelection implements DownloadSelection {
                 getProgressMonitor().indeterminateSubTask(tr("Querying name server ..."));
                 URL url = new URL(urlString);
                 synchronized (this) {
-                    connection = Utils.openHttpConnection(url);
+                    connection = HttpClient.create(url).connect();
                 }
-                connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);
-                try (
-                    InputStream inputStream = connection.getInputStream();
-                    Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-                ) {
+                try (Reader reader = connection.getContentReader()) {
                     InputSource inputSource = new InputSource(reader);
                     NameFinderResultParser parser = new NameFinderResultParser();
                     Utils.parseSafeSAX(inputSource, parser);

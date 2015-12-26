@@ -7,18 +7,18 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.io.Compression;
+import org.openstreetmap.josm.io.UTFInputStreamReader;
 
 /**
  * Provides a uniform access for a HTTP/HTTPS server. This class should be used in favour of {@link HttpURLConnection}.
@@ -37,6 +37,8 @@ public class HttpClient {
     private long ifModifiedSince;
     private final Map<String, String> headers = new ConcurrentHashMap<>();
     private int maxRedirects = Main.pref.getInteger("socket.maxredirects", 5);
+    private boolean useCache;
+    private boolean keepAlive;
 
     private HttpClient(URL url, String requestMethod) {
         this.url = url;
@@ -69,6 +71,13 @@ public class HttpClient {
         if (ifModifiedSince > 0) {
             connection.setIfModifiedSince(ifModifiedSince);
         }
+        connection.setUseCaches(useCache);
+        if (!useCache) {
+            connection.setRequestProperty("Cache-Control", "no-cache");
+        }
+        if (!keepAlive) {
+            connection.setRequestProperty("Connection", "close");
+        }
         for (Map.Entry<String, String> header : headers.entrySet()) {
             connection.setRequestProperty(header.getKey(), header.getValue());
         }
@@ -77,6 +86,7 @@ public class HttpClient {
         try {
             try {
                 connection.connect();
+                Main.info("{0} {1} => {2}", requestMethod, url, connection.getResponseCode());
             } catch (IOException e) {
                 //noinspection ThrowableResultOfMethodCallIgnored
                 Main.addNetworkError(url, Utils.getRootCause(e));
@@ -156,10 +166,25 @@ public class HttpClient {
         }
 
         /**
-         * Returns {@link #getContent()} wrapped in a buffered reader
+         * Returns {@link #getContent()} wrapped in a buffered reader.
+         *
+         * Detects Unicode charset in use utilizing {@link UTFInputStreamReader}.
          */
         public BufferedReader getContentReader() throws IOException {
-            return new BufferedReader(new InputStreamReader(getContent(), StandardCharsets.UTF_8));
+            return new BufferedReader(
+                    UTFInputStreamReader.create(getContent())
+            );
+        }
+
+        /**
+         * Fetches the HTTP response as String.
+         * @return the response
+         * @throws IOException
+         */
+        public String fetchContent() throws IOException {
+            try (Scanner scanner = new Scanner(getContentReader())) {
+                return scanner.useDelimiter("\\A").next();
+            }
         }
 
         /**
@@ -183,6 +208,13 @@ public class HttpClient {
          */
         public String getContentType() {
             return connection.getHeaderField("Content-Type");
+        }
+
+        /**
+         * Returns the {@code Content-Length} header.
+         */
+        public long getContentLength() {
+            return connection.getContentLengthLong();
         }
 
         /**
@@ -212,6 +244,31 @@ public class HttpClient {
      */
     public static HttpClient create(URL url, String requestMethod) {
         return new HttpClient(url, requestMethod);
+    }
+
+    /**
+     * Sets whether not to set header {@code Cache-Control=no-cache}
+     *
+     * @param useCache whether not to set header {@code Cache-Control=no-cache}
+     * @return {@code this}
+     * @see HttpURLConnection#setUseCaches(boolean)
+     */
+    public HttpClient useCache(boolean useCache) {
+        this.useCache = useCache;
+        return this;
+    }
+
+    /**
+     * Sets whether not to set header {@code Connection=close}
+     * <p/>
+     * This might fix #7640, see <a href='https://web.archive.org/web/20140118201501/http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive'>here</a>.
+     *
+     * @param keepAlive whether not to set header {@code Connection=close}
+     * @return {@code this}
+     */
+    public HttpClient keepAlive(boolean keepAlive) {
+        this.keepAlive = keepAlive;
+        return this;
     }
 
     /**

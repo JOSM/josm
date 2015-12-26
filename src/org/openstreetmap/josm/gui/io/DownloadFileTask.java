@@ -10,7 +10,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -21,7 +20,7 @@ import java.util.zip.ZipFile;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.xml.sax.SAXException;
 
 /**
@@ -67,7 +66,7 @@ public class DownloadFileTask extends PleaseWaitRunnable {
     }
 
     private boolean canceled;
-    private HttpURLConnection downloadConnection;
+    private HttpClient.Response downloadConnection;
 
     private synchronized void closeConnectionIfNeeded() {
         if (downloadConnection != null) {
@@ -99,11 +98,9 @@ public class DownloadFileTask extends PleaseWaitRunnable {
             }
 
             URL url = new URL(address);
-            int size;
+            long size;
             synchronized (this) {
-                downloadConnection = Utils.openHttpConnection(url);
-                downloadConnection.setRequestProperty("Cache-Control", "no-cache");
-                downloadConnection.connect();
+                downloadConnection = HttpClient.create(url).useCache(false).connect();
                 size = downloadConnection.getContentLength();
             }
 
@@ -111,19 +108,19 @@ public class DownloadFileTask extends PleaseWaitRunnable {
             progressMonitor.subTask(tr("Downloading File {0}: {1} bytes...", file.getName(), size));
 
             try (
-                InputStream in = downloadConnection.getInputStream();
+                InputStream in = downloadConnection.getContent();
                 OutputStream out = new FileOutputStream(file)
             ) {
                 byte[] buffer = new byte[32768];
                 int count = 0;
-                int p1 = 0, p2 = 0;
+                long p1 = 0, p2 = 0;
                 for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
                     out.write(buffer, 0, read);
                     count += read;
                     if (canceled) break;
                     p2 = 100 * count / size;
                     if (p2 != p1) {
-                        progressMonitor.setTicks(p2);
+                        progressMonitor.setTicks((int) p2);
                         p1 = p2;
                     }
                 }
