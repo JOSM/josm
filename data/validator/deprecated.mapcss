@@ -574,6 +574,13 @@ relation[/^..$/][!to] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "{1.tag}";
 }
+/* #12135 - Tag removed rom rendering https://github.com/gravitystorm/openstreetmap-carto/pull/1830 */
+*[landuse=conservation] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "boundary=protected_area";
+  fixAdd: "boundary=protected_area";
+  fixRemove: "landuse";
+}
 
 /* #12205 */
 *[amenity=kiosk] {
