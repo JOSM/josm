@@ -182,19 +182,21 @@ public final class HttpClient {
                 in = connection.getErrorStream();
             }
             in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
+            Compression compression = Compression.NONE;
             if (uncompress) {
                 final String contentType = getContentType();
                 Main.debug("Uncompressing input stream according to Content-Type header: {0}", contentType);
-                in = Compression.forContentType(contentType).getUncompressedInputStream(in);
+                compression = Compression.forContentType(contentType);
             }
-            if (uncompressAccordingToContentDisposition) {
+            if (uncompressAccordingToContentDisposition && Compression.NONE.equals(compression)) {
                 final String contentDisposition = getHeaderField("Content-Disposition");
                 final Matcher matcher = Pattern.compile("filename=\"([^\"]+)\"").matcher(contentDisposition);
                 if (matcher.find()) {
                     Main.debug("Uncompressing input stream according to Content-Disposition header: {0}", contentDisposition);
-                    in = Compression.byExtension(matcher.group(1)).getUncompressedInputStream(in);
+                    compression = Compression.byExtension(matcher.group(1));
                 }
             }
+            in = compression.getUncompressedInputStream(in);
             return in;
         }
 

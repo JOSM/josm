@@ -85,7 +85,8 @@ public class UtilsTest {
     @Test
     public void testOpenUrlGzip() throws IOException {
         Main.initApplicationPreferences();
-        try (BufferedReader x = Utils.openURLReaderAndDecompress(new URL("https://www.openstreetmap.org/trace/1613906/data"), true)) {
+        final URL url = new URL("https://www.openstreetmap.org/trace/1613906/data");
+        try (BufferedReader x = HttpClient.create(url).connect().uncompress(true).getContentReader()) {
             Assert.assertTrue(x.readLine().startsWith("<?xml version="));
         }
     }
@@ -97,7 +98,22 @@ public class UtilsTest {
     @Test
     public void testOpenUrlBzip() throws IOException {
         Main.initApplicationPreferences();
-        try (BufferedReader x = Utils.openURLReaderAndDecompress(new URL("https://www.openstreetmap.org/trace/785544/data"), true)) {
+        final URL url = new URL("https://www.openstreetmap.org/trace/785544/data");
+        try (BufferedReader x = HttpClient.create(url).connect().uncompress(true).getContentReader()) {
+            Assert.assertTrue(x.readLine().startsWith("<?xml version="));
+        }
+    }
+
+    /**
+     * Test of {@link Utils#openURLReaderAndDecompress} method with Bzip compression.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testTicket9660() throws IOException {
+        Main.initApplicationPreferences();
+        final URL url = new URL("http://www.openstreetmap.org/trace/1350010/data");
+        try (BufferedReader x = HttpClient.create(url).connect()
+                .uncompress(true).uncompressAccordingToContentDisposition(true).getContentReader()) {
             Assert.assertTrue(x.readLine().startsWith("<?xml version="));
         }
     }
