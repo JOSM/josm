@@ -52,6 +52,24 @@ public enum Compression {
     }
 
     /**
+     * Determines the compression type based on the content type (MIME type).
+     * @param contentType the content type
+     * @return the compression type
+     */
+    public static Compression forContentType(String contentType) {
+        switch (contentType) {
+        case "application/zip":
+            return ZIP;
+        case "application/x-gzip":
+            return GZIP;
+        case "application/x-bzip2":
+            return BZIP2;
+        default:
+            return NONE;
+        }
+    }
+
+    /**
      * Returns an un-compressing {@link InputStream} for {@code in}.
      * @param in raw input stream
      * @return un-compressing input stream

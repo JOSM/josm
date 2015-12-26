@@ -18,6 +18,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.io.Compression;
 
 /**
  * Provides a uniform access for a HTTP/HTTPS server. This class should be used in favour of {@link HttpURLConnection}.
@@ -114,10 +115,22 @@ public class HttpClient {
     public static class Response {
         private final HttpURLConnection connection;
         private final int responseCode;
+        private boolean uncompress;
 
         private Response(HttpURLConnection connection) throws IOException {
             this.connection = connection;
             this.responseCode = connection.getResponseCode();
+        }
+
+        /**
+         * Sets whether {@link #getContent()} should uncompress the input stream if necessary.
+         *
+         * @param uncompress whether the input stream should be uncompressed if necessary
+         * @return {@code this}
+         */
+        public Response uncompress(boolean uncompress) {
+            this.uncompress = uncompress;
+            return this;
         }
 
         /**
@@ -134,7 +147,12 @@ public class HttpClient {
             } catch (IOException ioe) {
                 in = connection.getErrorStream();
             }
-            return "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
+            in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
+            if (uncompress) {
+                return Compression.forContentType(getContentType()).getUncompressedInputStream(in);
+            } else {
+                return in;
+            }
         }
 
         /**
