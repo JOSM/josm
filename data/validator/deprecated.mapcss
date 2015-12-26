@@ -574,3 +574,48 @@ relation[/^..$/][!to] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "{1.tag}";
 }
+
+/* #12205 */
+*[amenity=kiosk] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=kiosk";
+  fixChangeKey: "amenity => shop";
+}
+*[amenity=shop] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=*";
+}
+*[shop=fishmonger] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=seafood";
+  fixAdd: "shop=seafood";
+}
+*[shop=fish] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=seafood, shop=pet or shop=fishing";
+}
+*[shop=betting] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=bookmaker, shop=lottery, amenity=casino, leisure=amusement_arcade, leisure=adult_gaming_centre or amenity=gambling";
+}
+*[shop=perfume] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=perfumery";
+  fixAdd: "shop=perfumery";
+}
+*[amenity=exercise_point] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leisure=fitness_station";
+  fixAdd: "leisure=fitness_station";
+  fixRemove: "amenity";
+}
+*[shop=auto_parts] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=car_parts";
+  fixAdd: "shop=car_parts";
+}
+*[amenity=car_repair] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=car_repair";
+  fixChangeKey: "amenity => shop";
+}
