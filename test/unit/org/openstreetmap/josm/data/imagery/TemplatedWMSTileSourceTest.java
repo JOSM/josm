@@ -14,7 +14,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -106,8 +105,9 @@ public class TemplatedWMSTileSourceTest {
                         + "+units=m +no_defs +axis=neu +wmssrs=EPSG:3006 +bounds=10.5700,55.2000,24.1800,69.1000 "));
         TemplatedWMSTileSource source = getSource();
 
-        verifyLocation(source, new LatLon(60, 18), 3);
-        verifyLocation(source, new LatLon(60, 18));
+        verifyTileSquarness(source, 0, 1, 4);
+        verifyLocation(source, new LatLon(60, 18.1), 3);
+        verifyLocation(source, new LatLon(60, 18.1));
     }
 
     @Test
@@ -157,15 +157,25 @@ public class TemplatedWMSTileSourceTest {
         assertTrue("Y index: " + tileIndex.getYIndex() + " greater than tileYmax: " + source.getTileYMax(z) + " at zoom: " + z,
                 tileIndex.getYIndex() <= source.getTileYMax(z));
 
+        EastNorth locationEN = Main.getProjection().latlon2eastNorth(location);
+        EastNorth x1 = Main.getProjection().latlon2eastNorth(getTileLatLon(source, tileIndex, z));
+        EastNorth x2 = Main.getProjection().latlon2eastNorth(getTileLatLon(source, tileIndex.getXIndex() + 1, tileIndex.getYIndex() + 1, z));
         // test that location is within tile bounds
-        BBox bbox = new BBox(
-                getTileLatLon(source, tileIndex, z),
-                getTileLatLon(source, tileIndex.getXIndex() + 1, tileIndex.getYIndex() + 1, z)
-                );
-        assertTrue(location.toDisplayString() + " not within " + bbox.toString() +
+        assertTrue(locationEN.toString() + " not within " + bboxStr(x1, x2) +
                 " for tile " + z + "/" + tileIndex.getXIndex() + "/" + tileIndex.getYIndex(),
-                bbox.bounds(location));
+                isWithin(locationEN, x1, x2));
         verifyTileSquarness(source, tileIndex.getXIndex(), tileIndex.getYIndex(), z);
+    }
+
+    private static boolean isWithin(EastNorth point, EastNorth topLeft, EastNorth bottomRight) {
+        return Math.min(topLeft.east(), bottomRight.east()) <= point.east() &&
+                point.east() <= Math.max(topLeft.east(), bottomRight.east())  &&
+                Math.min(topLeft.north(), bottomRight.north()) <= point.north() &&
+                point.north() <= Math.max(topLeft.north(), bottomRight.north());
+    }
+
+    private static String bboxStr(EastNorth x1, EastNorth x2) {
+        return "[" + x1.east() +", " + x1.north() + ", " + x2.east() + ", " + x2.north() +"]";
     }
 
     private LatLon getTileLatLon(TemplatedWMSTileSource source, TileXY tileIndex, int z) {
