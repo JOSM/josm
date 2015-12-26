@@ -24,7 +24,7 @@ import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -45,7 +45,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     private boolean canceled;
     private final Component parent;
     private final String apiUrl;
-    private HttpURLConnection connection;
+    private HttpClient.Response connection;
 
     /**
      * Create the task
@@ -79,7 +79,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     @Override
     protected void finish() {}
 
-    protected void sign(HttpURLConnection con) throws OAuthException {
+    protected void sign(HttpClient con) throws OAuthException {
         OAuthConsumer consumer = oauthParameters.buildConsumer();
         consumer.setTokenWithSecret(token.getKey(), token.getSecret());
         consumer.sign(con);
@@ -102,14 +102,12 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             URL url = new URL(normalizeApiUrl(apiUrl) + "/0.6/user/details");
             authenticatorEnabled = DefaultAuthenticator.getInstance().isEnabled();
             DefaultAuthenticator.getInstance().setEnabled(false);
-            synchronized (this) {
-                connection = Utils.openHttpConnection(url);
-            }
 
-            connection.setDoOutput(true);
-            connection.setRequestMethod("GET");
-            sign(connection);
-            connection.connect();
+            final HttpClient client = HttpClient.create(url);
+            sign(client);
+            synchronized (this) {
+                connection = client.connect();
+            }
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
                 throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,
@@ -121,7 +119,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
 
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
                 throw new OsmApiException(connection.getResponseCode(), connection.getHeaderField("Error"), null);
-            Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connection.getInputStream());
+            Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connection.getContent());
             return OsmServerUserInfoReader.buildFromXML(d);
         } catch (SAXException | ParserConfigurationException e) {
             throw new XmlParsingException(e);

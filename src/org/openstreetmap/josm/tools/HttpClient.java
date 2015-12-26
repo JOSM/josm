@@ -10,9 +10,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import org.openstreetmap.josm.Main;
@@ -29,45 +32,26 @@ public class HttpClient {
     private final String requestMethod;
     private int connectTimeout = Main.pref.getInteger("socket.timeout.connect", 15) * 1000;
     private int readTimeout = Main.pref.getInteger("socket.timeout.read", 30) * 1000;
-    private String accept;
-    private String contentType;
-    private String acceptEncoding = "gzip";
-    private long contentLength;
     private byte[] requestBody;
     private long ifModifiedSince;
-    private final Map<String, String> headers = new ConcurrentHashMap<>();
+    private final Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private int maxRedirects = Main.pref.getInteger("socket.maxredirects", 5);
     private boolean useCache;
-    private boolean keepAlive;
+    private String reasonForRequest;
 
     private HttpClient(URL url, String requestMethod) {
         this.url = url;
         this.requestMethod = requestMethod;
+        this.headers.put("Accept-Encoding", "gzip");
     }
 
     public Response connect() throws IOException {
         final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod(requestMethod);
         connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
         connection.setConnectTimeout(connectTimeout);
         connection.setReadTimeout(readTimeout);
-        if (accept != null) {
-            connection.setRequestProperty("Accept", accept);
-        }
-        if (contentType != null) {
-            connection.setRequestProperty("Content-Type", contentType);
-        }
-        if (acceptEncoding != null) {
-            connection.setRequestProperty("Accept-Encoding", acceptEncoding);
-        }
-        if (contentLength > 0) {
-            connection.setRequestProperty("Content-Length", String.valueOf(contentLength));
-        }
-        if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
-            connection.setDoOutput(true);
-            try (OutputStream out = new BufferedOutputStream(connection.getOutputStream())) {
-                out.write(requestBody);
-            }
-        }
+        connection.setInstanceFollowRedirects(maxRedirects > 0);
         if (ifModifiedSince > 0) {
             connection.setIfModifiedSince(ifModifiedSince);
         }
@@ -75,18 +59,32 @@ public class HttpClient {
         if (!useCache) {
             connection.setRequestProperty("Cache-Control", "no-cache");
         }
-        if (!keepAlive) {
-            connection.setRequestProperty("Connection", "close");
-        }
         for (Map.Entry<String, String> header : headers.entrySet()) {
-            connection.setRequestProperty(header.getKey(), header.getValue());
+            if (header.getValue() != null) {
+                connection.setRequestProperty(header.getKey(), header.getValue());
+            }
+        }
+
+        if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
+            headers.put("Content-Length", String.valueOf(requestBody.length));
+            connection.setDoOutput(true);
+            try (OutputStream out = new BufferedOutputStream(connection.getOutputStream())) {
+                out.write(requestBody);
+            }
         }
 
         boolean successfulConnection = false;
         try {
             try {
                 connection.connect();
-                Main.info("{0} {1} => {2}", requestMethod, url, connection.getResponseCode());
+                if (reasonForRequest != null && "".equalsIgnoreCase(reasonForRequest)) {
+                    Main.info("{0} {1} ({2}) -> {3}", requestMethod, url, reasonForRequest, connection.getResponseCode());
+                } else {
+                    Main.info("{0} {1} -> {2}", requestMethod, url, connection.getResponseCode());
+                }
+                if (Main.isDebugEnabled()) {
+                    Main.debug("RESPONSE: " + connection.getHeaderFields());
+                }
             } catch (IOException e) {
                 //noinspection ThrowableResultOfMethodCallIgnored
                 Main.addNetworkError(url, Utils.getRootCause(e));
@@ -104,7 +102,7 @@ public class HttpClient {
                     maxRedirects--;
                     Main.info(tr("Download redirected to ''{0}''", redirectLocation));
                     return connect();
-                } else {
+                } else if (maxRedirects == 0) {
                     String msg = tr("Too many redirects to the download URL detected. Aborting.");
                     throw new IOException(msg);
                 }
@@ -125,11 +123,15 @@ public class HttpClient {
     public static class Response {
         private final HttpURLConnection connection;
         private final int responseCode;
+        private final String responseMessage;
         private boolean uncompress;
+        private boolean uncompressAccordingToContentDisposition;
 
         private Response(HttpURLConnection connection) throws IOException {
+            CheckParameterUtil.ensureParameterNotNull(connection, "connection");
             this.connection = connection;
             this.responseCode = connection.getResponseCode();
+            this.responseMessage = connection.getResponseMessage();
         }
 
         /**
@@ -143,9 +145,31 @@ public class HttpClient {
             return this;
         }
 
+        public Response uncompressAccordingToContentDisposition(boolean uncompressAccordingToContentDisposition) {
+            this.uncompressAccordingToContentDisposition = uncompressAccordingToContentDisposition;
+            return this;
+        }
+
+        /**
+         * @see HttpURLConnection#getURL()
+         */
+        public URL getURL() {
+            return connection.getURL();
+        }
+
+        /**
+         * @see HttpURLConnection#getRequestMethod()
+         */
+        public String getRequestMethod() {
+            return connection.getRequestMethod();
+        }
+
         /**
          * Returns an input stream that reads from this HTTP connection, or,
          * error stream if the connection failed but the server sent useful data.
+         *
+         * Note: the return value can be null, if both the input and the error stream are null.
+         * Seems to be the case if the OSM server replies a 401 Unauthorized, see #3887
          *
          * @see HttpURLConnection#getInputStream()
          * @see HttpURLConnection#getErrorStream()
@@ -159,10 +183,19 @@ public class HttpClient {
             }
             in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
             if (uncompress) {
-                return Compression.forContentType(getContentType()).getUncompressedInputStream(in);
-            } else {
-                return in;
+                final String contentType = getContentType();
+                Main.debug("Uncompressing input stream according to Content-Type header: {0}", contentType);
+                in = Compression.forContentType(contentType).getUncompressedInputStream(in);
             }
+            if (uncompressAccordingToContentDisposition) {
+                final String contentDisposition = getHeaderField("Content-Disposition");
+                final Matcher matcher = Pattern.compile("filename=\"([^\"]+)\"").matcher(contentDisposition);
+                if (matcher.find()) {
+                    Main.debug("Uncompressing input stream according to Content-Disposition header: {0}", contentDisposition);
+                    in = Compression.byExtension(matcher.group(1)).getUncompressedInputStream(in);
+                }
+            }
+            return in;
         }
 
         /**
@@ -182,8 +215,8 @@ public class HttpClient {
          * @throws IOException
          */
         public String fetchContent() throws IOException {
-            try (Scanner scanner = new Scanner(getContentReader())) {
-                return scanner.useDelimiter("\\A").next();
+            try (Scanner scanner = new Scanner(getContentReader()).useDelimiter("\\A")) {
+                return scanner.hasNext() ? scanner.next() : "";
             }
         }
 
@@ -194,6 +227,15 @@ public class HttpClient {
          */
         public int getResponseCode() {
             return responseCode;
+        }
+
+        /**
+         * Gets the response message from this HTTP connection.
+         *
+         * @see HttpURLConnection#getResponseMessage()
+         */
+        public String getResponseMessage() {
+            return responseMessage;
         }
 
         /**
@@ -218,9 +260,33 @@ public class HttpClient {
         }
 
         /**
+         * @see HttpURLConnection#getHeaderField(String)
+         */
+        public String getHeaderField(String name) {
+            return connection.getHeaderField(name);
+        }
+
+        /**
+         * @see HttpURLConnection#getHeaderFields()
+         */
+        public List<String> getHeaderFields(String name) {
+            return connection.getHeaderFields().get(name);
+        }
+
+        /**
          * @see HttpURLConnection#disconnect()
          */
         public void disconnect() {
+            // TODO is this block necessary for disconnecting?
+            // Fix upload aborts - see #263
+            connection.setConnectTimeout(100);
+            connection.setReadTimeout(100);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Main.warn("InterruptedException in " + getClass().getSimpleName() + " during cancel");
+            }
+
             connection.disconnect();
         }
     }
@@ -238,12 +304,36 @@ public class HttpClient {
     /**
      * Creates a new instance for the given URL and a {@code GET} request
      *
-     * @param url           the URL
+     * @param url the URL
      * @param requestMethod the HTTP request method to perform when calling
      * @return a new instance
      */
     public static HttpClient create(URL url, String requestMethod) {
         return new HttpClient(url, requestMethod);
+    }
+
+    /**
+     * Returns the URL set for this connection.
+     * @see #create(URL)
+     * @see #create(URL, String)
+     */
+    public URL getURL() {
+        return url;
+    }
+
+    /**
+     * Returns the request method set for this connection.
+     * @see #create(URL, String)
+     */
+    public String getRequestMethod() {
+        return requestMethod;
+    }
+
+    /**
+     * Returns the set value for the given {@code header}.
+     */
+    public String getRequestHeader(String header) {
+        return headers.get(header);
     }
 
     /**
@@ -267,8 +357,7 @@ public class HttpClient {
      * @return {@code this}
      */
     public HttpClient keepAlive(boolean keepAlive) {
-        this.keepAlive = keepAlive;
-        return this;
+        return setHeader("Connection", keepAlive ? null : "close");
     }
 
     /**
@@ -296,38 +385,7 @@ public class HttpClient {
      * @return {@code this}
      */
     public HttpClient setAccept(String accept) {
-        this.accept = accept;
-        return this;
-    }
-
-    /**
-     * Sets the {@code Content-Type} header.
-     *
-     * @return {@code this}
-     */
-    public HttpClient setContentType(String contentType) {
-        this.contentType = contentType;
-        return this;
-    }
-
-    /**
-     * Sets the {@code Accept-Encoding} header.
-     *
-     * @return {@code this}
-     */
-    public HttpClient setAcceptEncoding(String acceptEncoding) {
-        this.acceptEncoding = acceptEncoding;
-        return this;
-    }
-
-    /**
-     * Sets the {@code Content-Length} header for {@code PUT}/{@code POST} requests.
-     *
-     * @return {@code this}
-     */
-    public HttpClient setContentLength(long contentLength) {
-        this.contentLength = contentLength;
-        return this;
+        return setHeader("Accept", accept);
     }
 
     /**
@@ -353,6 +411,9 @@ public class HttpClient {
     /**
      * Sets the maximum number of redirections to follow.
      *
+     * Set {@code maxRedirects} to {@code -1} in order to ignore redirects, i.e.,
+     * to not throw an {@link IOException} in {@link #connect()}.
+     *
      * @return {@code this}
      */
     public HttpClient setMaxRedirects(int maxRedirects) {
@@ -377,6 +438,14 @@ public class HttpClient {
      */
     public HttpClient setHeaders(Map<String, String> headers) {
         this.headers.putAll(headers);
+        return this;
+    }
+
+    /**
+     * Sets a reason to show on console. Can be {@code null} if no reason is given.
+     */
+    public HttpClient setReasonForRequest(String reasonForRequest) {
+        this.reasonForRequest = reasonForRequest;
         return this;
     }
 

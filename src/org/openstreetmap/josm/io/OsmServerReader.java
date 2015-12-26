@@ -3,26 +3,18 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.HttpClient;
 
 /**
  * This DataReader reads directly from the REST API of the osm server.
@@ -128,34 +120,17 @@ public abstract class OsmServerReader extends OsmConnection {
             } catch (MalformedURLException e) {
                 throw new OsmTransferException(e);
             }
-            try {
-                // fix #7640, see http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive
-                activeConnection = Utils.openHttpConnection(url, false);
-            } catch (Exception e) {
-                throw new OsmTransferException(tr("Failed to open connection to API {0}.", url.toExternalForm()), e);
-            }
-            Utils.setupURLConnection(activeConnection);
-            if (cancel) {
-                activeConnection.disconnect();
-                return null;
-            }
 
+            final HttpClient client = HttpClient.create(url);
+            client.setReasonForRequest(reason);
             if (doAuthenticate) {
-                addAuth(activeConnection);
+                addAuth(client);
             }
             if (cancel)
                 throw new OsmTransferCanceledException("Operation canceled");
-            if (Main.pref.getBoolean("osm-server.use-compression", true)) {
-                activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
-            }
 
             try {
-                if (reason != null && !reason.isEmpty()) {
-                    Main.info("GET " + url + " (" + reason + ')');
-                } else {
-                    Main.info("GET " + url);
-                }
-                activeConnection.connect();
+                activeConnection = client.connect();
             } catch (Exception e) {
                 Main.error(e);
                 OsmTransferException ote = new OsmTransferException(
@@ -164,41 +139,23 @@ public abstract class OsmServerReader extends OsmConnection {
                 throw ote;
             }
             try {
-                if (Main.isDebugEnabled()) {
-                    Main.debug("RESPONSE: "+activeConnection.getHeaderFields());
-                }
                 if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
                     throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED, null, null);
 
                 if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_PROXY_AUTH)
                     throw new OsmTransferCanceledException("Proxy Authentication Required");
 
-                String encoding = activeConnection.getContentEncoding();
                 if (activeConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     String errorHeader = activeConnection.getHeaderField("Error");
-                    StringBuilder errorBody = new StringBuilder();
-                    try {
-                        InputStream i = fixEncoding(activeConnection.getErrorStream(), encoding);
-                        if (i != null) {
-                            BufferedReader in = new BufferedReader(new InputStreamReader(i, StandardCharsets.UTF_8));
-                            String s;
-                            while ((s = in.readLine()) != null) {
-                                errorBody.append(s);
-                                errorBody.append('\n');
-                            }
-                        }
-                    } catch (Exception e) {
-                        errorBody.append(tr("Reading error text failed."));
-                    }
-
-                    throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody.toString(), url.toString());
+                    final String errorBody = activeConnection.fetchContent();
+                    throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody, url.toString());
                 }
 
                 InputStream in = new ProgressInputStream(activeConnection, progressMonitor);
                 if (uncompressAccordingToContentDisposition) {
-                    in = uncompressAccordingToContentDisposition(in, activeConnection.getHeaderFields());
+                    activeConnection.uncompressAccordingToContentDisposition(true);
                 }
-                return fixEncoding(in, encoding);
+                return in;
             } catch (OsmTransferException e) {
                 throw e;
             } catch (Exception e) {
@@ -206,26 +163,6 @@ public abstract class OsmServerReader extends OsmConnection {
             }
         } finally {
             progressMonitor.invalidate();
-        }
-    }
-
-    private static InputStream fixEncoding(InputStream stream, String encoding) throws IOException {
-        if ("gzip".equalsIgnoreCase(encoding)) {
-            stream = new GZIPInputStream(stream);
-        } else if ("deflate".equalsIgnoreCase(encoding)) {
-            stream = new InflaterInputStream(stream, new Inflater(true));
-        }
-        return stream;
-    }
-
-    private InputStream uncompressAccordingToContentDisposition(InputStream stream, Map<String, List<String>> headerFields) throws IOException {
-        List<String> field = headerFields.get("Content-Disposition");
-        if (field != null && field.toString().contains(".gz\"")) {
-            return Compression.GZIP.getUncompressedInputStream(stream);
-        } else if (field != null && field.toString().contains(".bz2\"")) {
-            return Compression.BZIP2.getUncompressedInputStream(stream);
-        } else {
-            return stream;
         }
     }
 

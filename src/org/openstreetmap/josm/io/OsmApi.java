@@ -4,13 +4,7 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -41,6 +35,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Capabilities.CapabilitiesParser;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.xml.sax.InputSource;
@@ -616,45 +611,30 @@ public class OsmApi extends OsmConnection {
      */
     protected final String sendRequest(String requestMethod, String urlSuffix, String requestBody, ProgressMonitor monitor,
             boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
-        StringBuilder responseBody = new StringBuilder();
         int retries = fastFail ? 0 : getMaxRetries();
 
         while (true) { // the retry loop
             try {
                 url = new URL(new URL(getBaseUrl()), urlSuffix);
-                Main.info(requestMethod + ' ' + url + "... ");
-                Main.debug(requestBody);
-                // fix #5369, see http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive
-                activeConnection = Utils.openHttpConnection(url, false);
-                activeConnection.setConnectTimeout(fastFail ? 1000 : Main.pref.getInteger("socket.timeout.connect", 15)*1000);
+                final HttpClient client = HttpClient.create(url, requestMethod).keepAlive(false);
                 if (fastFail) {
-                    activeConnection.setReadTimeout(1000);
+                    client.setReadTimeout(1000);
                 }
-                activeConnection.setRequestMethod(requestMethod);
                 if (doAuthenticate) {
-                    addAuth(activeConnection);
+                    addAuth(client);
                 }
 
                 if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
-                    activeConnection.setDoOutput(true);
-                    activeConnection.setRequestProperty("Content-type", "text/xml");
-                    try (OutputStream out = activeConnection.getOutputStream()) {
-                        // It seems that certain bits of the Ruby API are very unhappy upon
-                        // receipt of a PUT/POST message without a Content-length header,
-                        // even if the request has no payload.
-                        // Since Java will not generate a Content-length header unless
-                        // we use the output stream, we create an output stream for PUT/POST
-                        // even if there is no payload.
-                        if (requestBody != null) {
-                            try (BufferedWriter bwr = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))) {
-                                bwr.write(requestBody);
-                                bwr.flush();
-                            }
-                        }
-                    }
+                    // It seems that certain bits of the Ruby API are very unhappy upon
+                    // receipt of a PUT/POST message without a Content-length header,
+                    // even if the request has no payload.
+                    // Since Java will not generate a Content-length header unless
+                    // we use the output stream, we create an output stream for PUT/POST
+                    // even if there is no payload.
+                    client.setRequestBody(requestBody.getBytes(StandardCharsets.UTF_8));
                 }
 
-                activeConnection.connect();
+                activeConnection = client.connect();
                 Main.info(activeConnection.getResponseMessage());
                 int retCode = activeConnection.getResponseCode();
 
@@ -666,22 +646,8 @@ public class OsmApi extends OsmConnection {
                     }
                 }
 
-                // populate return fields.
-                responseBody.setLength(0);
+                final String responseBody = activeConnection.fetchContent();
 
-                // If the API returned an error code like 403 forbidden, getInputStream will fail with an IOException.
-                InputStream i = getConnectionStream();
-                if (i != null) {
-                    // the input stream can be null if both the input and the error stream
-                    // are null. Seems to be the case if the OSM server replies a 401 Unauthorized, see #3887.
-                    String s;
-                    try (BufferedReader in = new BufferedReader(new InputStreamReader(i, StandardCharsets.UTF_8))) {
-                        while ((s = in.readLine()) != null) {
-                            responseBody.append(s);
-                            responseBody.append('\n');
-                        }
-                    }
-                }
                 String errorHeader = null;
                 // Look for a detailed error message from the server
                 if (activeConnection.getHeaderField("Error") != null) {
@@ -692,15 +658,11 @@ public class OsmApi extends OsmConnection {
                 }
                 activeConnection.disconnect();
 
-                if (Main.isDebugEnabled()) {
-                    Main.debug("RESPONSE: "+ activeConnection.getHeaderFields());
-                }
-
                 errorHeader = errorHeader == null ? null : errorHeader.trim();
-                String errorBody = responseBody.length() == 0 ? null : responseBody.toString().trim();
+                String errorBody = responseBody.length() == 0 ? null : responseBody.trim();
                 switch(retCode) {
                 case HttpURLConnection.HTTP_OK:
-                    return responseBody.toString();
+                    return responseBody;
                 case HttpURLConnection.HTTP_GONE:
                     throw new OsmApiPrimitiveGoneException(errorHeader, errorBody);
                 case HttpURLConnection.HTTP_CONFLICT:
@@ -725,15 +687,6 @@ public class OsmApi extends OsmConnection {
             } catch (OsmTransferException e) {
                 throw e;
             }
-        }
-    }
-
-    private InputStream getConnectionStream() {
-        try {
-            return activeConnection.getInputStream();
-        } catch (IOException ioe) {
-            Main.warn(ioe);
-            return activeConnection.getErrorStream();
         }
     }
 
