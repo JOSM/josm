@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -21,8 +20,8 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.xml.sax.SAXException;
 
 /**
@@ -44,7 +43,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
     private final Collection<PluginInformation> failed = new LinkedList<>();
     private final Collection<PluginInformation> downloaded = new LinkedList<>();
     private boolean canceled;
-    private HttpURLConnection downloadConnection;
+    private HttpClient.Response downloadConnection;
 
     /**
      * Creates the download task
@@ -123,10 +122,12 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
             }
             URL url = new URL(pi.downloadlink);
             synchronized (this) {
-                downloadConnection = CachedFile.connectFollowingRedirect(url, PLUGIN_MIME_TYPES, null);
+                downloadConnection = HttpClient.create(url)
+                        .setAccept(PLUGIN_MIME_TYPES)
+                        .connect();
             }
             try (
-                InputStream in = downloadConnection.getInputStream();
+                InputStream in = downloadConnection.getContent();
                 OutputStream out = new FileOutputStream(file)
             ) {
                 byte[] buffer = new byte[8192];

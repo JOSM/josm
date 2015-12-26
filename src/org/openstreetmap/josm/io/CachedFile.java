@@ -20,13 +20,12 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -414,7 +413,11 @@ public class CachedFile {
         String localPath = "mirror_" + a;
         destDirFile = new File(destDir, localPath + ".tmp");
         try {
-            HttpURLConnection con = connectFollowingRedirect(url, httpAccept, ifModifiedSince, httpHeaders);
+            final HttpClient.Response con = HttpClient.create(url)
+                    .setAccept(httpAccept)
+                    .setIfModifiedSince(ifModifiedSince == null ? 0L : ifModifiedSince)
+                    .setHeaders(httpHeaders)
+                    .connect();
             if (ifModifiedSince != null && con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
                 if (Main.isDebugEnabled()) {
                     Main.debug("304 Not Modified ("+urlStr+')');
@@ -426,7 +429,7 @@ public class CachedFile {
                 return localFile;
             }
             try (
-                InputStream bis = new BufferedInputStream(con.getInputStream());
+                InputStream bis = new BufferedInputStream(con.getContent());
                 OutputStream fos = new FileOutputStream(destDirFile);
                 OutputStream bos = new BufferedOutputStream(fos)
             ) {
@@ -461,115 +464,4 @@ public class CachedFile {
         OnlineResource.OSM_API.checkOfflineAccess(urlString, Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
     }
 
-    /**
-     * Opens a connection for downloading a resource.
-     * <p>
-     * Manually follows redirects because
-     * {@link HttpURLConnection#setFollowRedirects(boolean)} fails if the redirect
-     * is going from a http to a https URL, see <a href="https://bugs.openjdk.java.net/browse/JDK-4620571">bug report</a>.
-     * <p>
-     * This can cause problems when downloading from certain GitHub URLs.
-     *
-     * @param downloadUrl The resource URL to download
-     * @param httpAccept The accepted MIME types sent in the HTTP Accept header. Can be {@code null}
-     * @param ifModifiedSince The download time of the cache file, optional
-     * @return The HTTP connection effectively linked to the resource, after all potential redirections
-     * @throws MalformedURLException If a redirected URL is wrong
-     * @throws IOException If any I/O operation goes wrong
-     * @throws OfflineAccessException if resource is accessed in offline mode, in any protocol
-     * @since 6867
-     */
-    public static HttpURLConnection connectFollowingRedirect(URL downloadUrl, String httpAccept, Long ifModifiedSince)
-            throws MalformedURLException, IOException {
-        return connectFollowingRedirect(downloadUrl, httpAccept, ifModifiedSince, null);
-    }
-
-    /**
-     * Opens a connection for downloading a resource.
-     * <p>
-     * Manually follows redirects because
-     * {@link HttpURLConnection#setFollowRedirects(boolean)} fails if the redirect
-     * is going from a http to a https URL, see <a href="https://bugs.openjdk.java.net/browse/JDK-4620571">bug report</a>.
-     * <p>
-     * This can cause problems when downloading from certain GitHub URLs.
-     *
-     * @param downloadUrl The resource URL to download
-     * @param httpAccept The accepted MIME types sent in the HTTP Accept header. Can be {@code null}
-     * @param ifModifiedSince The download time of the cache file, optional
-     * @param headers http headers to be sent together with http request
-     * @return The HTTP connection effectively linked to the resource, after all potential redirections
-     * @throws MalformedURLException If a redirected URL is wrong
-     * @throws IOException If any I/O operation goes wrong
-     * @throws OfflineAccessException if resource is accessed in offline mode, in any protocol
-     * @since TODO
-     */
-    public static HttpURLConnection connectFollowingRedirect(URL downloadUrl, String httpAccept, Long ifModifiedSince,
-            Map<String, String> headers) throws MalformedURLException, IOException {
-        CheckParameterUtil.ensureParameterNotNull(downloadUrl, "downloadUrl");
-        String downloadString = downloadUrl.toExternalForm();
-
-        checkOfflineAccess(downloadString);
-
-        int numRedirects = 0;
-        while (true) {
-            HttpURLConnection con = Utils.openHttpConnection(downloadUrl);
-            if (ifModifiedSince != null) {
-                con.setIfModifiedSince(ifModifiedSince);
-            }
-            if (headers != null) {
-                for (Entry<String, String> header: headers.entrySet()) {
-                    con.setRequestProperty(header.getKey(), header.getValue());
-                }
-            }
-            con.setInstanceFollowRedirects(false);
-            con.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);
-            con.setReadTimeout(Main.pref.getInteger("socket.timeout.read", 30)*1000);
-            if (Main.isDebugEnabled()) {
-                Main.debug("GET "+downloadString);
-            }
-            if (httpAccept != null) {
-                if (Main.isTraceEnabled()) {
-                    Main.trace("Accept: "+httpAccept);
-                }
-                con.setRequestProperty("Accept", httpAccept);
-            }
-            try {
-                con.connect();
-            } catch (IOException e) {
-                Main.addNetworkError(downloadUrl, Utils.getRootCause(e));
-                throw e;
-            }
-            switch(con.getResponseCode()) {
-            case HttpURLConnection.HTTP_OK:
-                return con;
-            case HttpURLConnection.HTTP_NOT_MODIFIED:
-                if (ifModifiedSince != null)
-                    return con;
-            case HttpURLConnection.HTTP_MOVED_PERM:
-            case HttpURLConnection.HTTP_MOVED_TEMP:
-            case HttpURLConnection.HTTP_SEE_OTHER:
-                String redirectLocation = con.getHeaderField("Location");
-                if (redirectLocation == null) {
-                    /* I18n: argument is HTTP response code */
-                    String msg = tr("Unexpected response from HTTP server. Got {0} response without ''Location'' header."+
-                            " Can''t redirect. Aborting.", con.getResponseCode());
-                    throw new IOException(msg);
-                }
-                downloadUrl = new URL(redirectLocation);
-                downloadString = downloadUrl.toExternalForm();
-                // keep track of redirect attempts to break a redirect loops if it happens
-                // to occur for whatever reason
-                numRedirects++;
-                if (numRedirects >= Main.pref.getInteger("socket.maxredirects", 5)) {
-                    String msg = tr("Too many redirects to the download URL detected. Aborting.");
-                    throw new IOException(msg);
-                }
-                Main.info(tr("Download redirected to ''{0}''", downloadString));
-                break;
-            default:
-                String msg = tr("Failed to read from ''{0}''. Server responded with status code {1}.", downloadString, con.getResponseCode());
-                throw new IOException(msg);
-            }
-        }
-    }
 }

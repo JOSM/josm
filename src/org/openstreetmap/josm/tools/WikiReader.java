@@ -52,7 +52,7 @@ public class WikiReader {
      */
     public String read(String url) throws IOException {
         URL u = new URL(url);
-        try (BufferedReader in = Utils.openURLReader(u)) {
+        try (BufferedReader in = HttpClient.create(u).connect().getContentReader()) {
             boolean txt = url.endsWith("?format=txt");
             if (url.startsWith(getBaseUrlWiki()) && !txt)
                 return readFromTrac(in, u);
@@ -97,11 +97,8 @@ public class WikiReader {
     }
 
     private String readLang(URL url) throws IOException {
-        try (BufferedReader in = Utils.openURLReader(url)) {
+        try (BufferedReader in = HttpClient.create(url).connect().getContentReader()) {
             return readFromTrac(in, url);
-        } catch (IOException e) {
-            Main.addNetworkError(url, Utils.getRootCause(e));
-            throw e;
         }
     }
 
