@@ -35,7 +35,7 @@ public class TaggingPresetPreferenceTest {
     /**
      * Test that available tagging presets are valid.
      */
-    @Test
+    @Test(timeout = 10*60*1000)
     public void testValidityOfAvailablePresets() {
         Collection<ExtendedSourceEntry> sources = new TaggingPresetPreference.TaggingPresetSourceEditor()
                 .loadAndGetAvailableSources();
