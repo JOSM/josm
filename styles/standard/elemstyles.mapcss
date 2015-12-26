@@ -681,12 +681,12 @@ node[highway=milestone] {
     text: auto;
 }
 node[direction=clockwise] {
-    icon-image: "vehicle/restriction/roundabout_left.png";
+    icon-image: "vehicle/restriction/roundabout_left.svg";
     set icon_z17;
     text: auto;
 }
 node[highway=mini_roundabout] {
-    icon-image: "vehicle/restriction/roundabout_left.png";
+    icon-image: "vehicle/restriction/mini_roundabout_left.svg";
     set icon_z17;
     text: auto;
 }
@@ -913,7 +913,7 @@ node[traffic_calming=island] {
 /****************/
 
 node[junction=roundabout] {
-    icon-image: "vehicle/restriction/roundabout_left.png";
+    icon-image: "vehicle/restriction/roundabout_left.svg";
     set icon_z17;
     text: auto;
 }

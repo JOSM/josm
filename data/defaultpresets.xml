@@ -1247,7 +1247,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=give_way" />
             <key key="highway" value="give_way" />
         </item> <!-- Give Way -->
-        <item name="Mini-Roundabout" icon="presets/roundabout_left.png" type="node" preset_name_label="true">
+        <item name="Mini-Roundabout" icon="styles/standard/vehicle/restriction/mini_roundabout_left.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=mini_roundabout"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=mini_roundabout"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=mini_roundabout"
