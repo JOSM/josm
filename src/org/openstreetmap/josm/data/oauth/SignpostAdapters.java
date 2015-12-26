@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.HttpClient;
 /**
  * Adapters to make {@link oauth.signpost} work with {@link HttpClient}.
  */
-public class SignpostAdapters {
+public final class SignpostAdapters {
 
     private SignpostAdapters() {
     }
@@ -57,7 +57,7 @@ public class SignpostAdapters {
     private static class HttpRequest implements oauth.signpost.http.HttpRequest {
         private final HttpClient request;
 
-        public HttpRequest(HttpClient request) {
+        HttpRequest(HttpClient request) {
             this.request = request;
         }
 
@@ -110,7 +110,7 @@ public class SignpostAdapters {
     private static class HttpResponse implements oauth.signpost.http.HttpResponse {
         private final HttpClient.Response response;
 
-        public HttpResponse(HttpClient.Response response) {
+        HttpResponse(HttpClient.Response response) {
             this.response = response;
         }
 

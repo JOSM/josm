@@ -26,7 +26,7 @@ import org.openstreetmap.josm.io.UTFInputStreamReader;
 /**
  * Provides a uniform access for a HTTP/HTTPS server. This class should be used in favour of {@link HttpURLConnection}.
  */
-public class HttpClient {
+public final class HttpClient {
 
     private URL url;
     private final String requestMethod;
@@ -120,7 +120,7 @@ public class HttpClient {
     /**
      * A wrapper for the HTTP response.
      */
-    public static class Response {
+    public static final class Response {
         private final HttpURLConnection connection;
         private final int responseCode;
         private final String responseMessage;
@@ -212,7 +212,6 @@ public class HttpClient {
         /**
          * Fetches the HTTP response as String.
          * @return the response
-         * @throws IOException
          */
         public String fetchContent() throws IOException {
             try (Scanner scanner = new Scanner(getContentReader()).useDelimiter("\\A")) {
@@ -351,7 +350,8 @@ public class HttpClient {
     /**
      * Sets whether not to set header {@code Connection=close}
      * <p/>
-     * This might fix #7640, see <a href='https://web.archive.org/web/20140118201501/http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive'>here</a>.
+     * This might fix #7640, see
+     * <a href='https://web.archive.org/web/20140118201501/http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive'>here</a>.
      *
      * @param keepAlive whether not to set header {@code Connection=close}
      * @return {@code this}
