@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -35,7 +35,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
     private boolean canceled;
     private boolean success;
     private final Component parent;
-    private HttpURLConnection connection;
+    private HttpClient.Response connection;
 
     /**
      * Constructs a new {@code ApiUrlTestTask}.
@@ -176,12 +176,8 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
             }
 
             synchronized (this) {
-                connection = Utils.openHttpConnection(capabilitiesUrl);
+                connection = HttpClient.create(capabilitiesUrl).connect();
             }
-            connection.setDoInput(true);
-            connection.setDoOutput(false);
-            connection.setRequestMethod("GET");
-            connection.connect();
 
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 alertInvalidServerResult(connection.getResponseCode());
@@ -189,7 +185,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
             }
 
             try {
-                Capabilities.CapabilitiesParser.parse(new InputSource(connection.getInputStream()));
+                Capabilities.CapabilitiesParser.parse(new InputSource(connection.getContent()));
             } catch (SAXException | ParserConfigurationException e) {
                 Main.warn(e.getMessage());
                 alertInvalidCapabilities();

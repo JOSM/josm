@@ -64,6 +64,7 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.FontsManager;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -391,7 +392,7 @@ public class MainApplication extends Main {
             CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(Main.pref);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
                 info("Reading preferences from " + i);
-                try (InputStream is = Utils.openURL(new URL(i))) {
+                try (InputStream is = HttpClient.create(new URL(i)).connect().getContent()) {
                     config.openAndReadXML(is);
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);

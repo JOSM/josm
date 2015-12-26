@@ -12,7 +12,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SessionLoadAction.Loader;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.HttpClient;
 
 /**
  * Task allowing to download JOSM session (*.jos, *.joz file).
@@ -44,7 +44,7 @@ public class DownloadSessionTask extends AbstractDownloadTask<Object> {
         if (url != null && (url.matches(PATTERN_SESSION))) {
             try {
                 URL u = new URL(url);
-                loader = new Loader(Utils.openURL(u), u.toURI(), url.endsWith(".joz"));
+                loader = new Loader(HttpClient.create(u).connect().getContent(), u.toURI(), url.endsWith(".joz"));
                 return Main.worker.submit(loader);
             } catch (URISyntaxException | IOException e) {
                 Main.error(e);

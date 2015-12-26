@@ -370,7 +370,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
     class SaveSessionAction extends SessionSaveAsAction {
 
-        public SaveSessionAction() {
+        SaveSessionAction() {
             super(false, false);
         }
 

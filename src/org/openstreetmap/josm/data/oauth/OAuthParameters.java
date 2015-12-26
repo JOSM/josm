@@ -6,8 +6,6 @@ import java.net.URL;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
-import oauth.signpost.basic.DefaultOAuthConsumer;
-import oauth.signpost.basic.DefaultOAuthProvider;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
@@ -219,7 +217,7 @@ public class OAuthParameters {
      * @return the consumer
      */
     public OAuthConsumer buildConsumer() {
-        return new DefaultOAuthConsumer(consumerKey, consumerSecret);
+        return new SignpostAdapters.OAuthConsumer(consumerKey, consumerSecret);
     }
 
     /**
@@ -231,7 +229,7 @@ public class OAuthParameters {
      */
     public OAuthProvider buildProvider(OAuthConsumer consumer) {
         CheckParameterUtil.ensureParameterNotNull(consumer, "consumer");
-        return new DefaultOAuthProvider(
+        return new SignpostAdapters.OAuthProvider(
                 requestTokenUrl,
                 accessTokenUrl,
                 authoriseUrl

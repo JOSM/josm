@@ -9,6 +9,7 @@ import java.net.URLConnection;
 
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.HttpClient;
 
 /**
  * Read from an other reader and increment an progress counter while on the way.
@@ -17,14 +18,28 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 public class ProgressInputStream extends InputStream {
 
     private final InputStream in;
+    private final long size;
     private int readSoFar;
     private int lastDialogUpdate;
-    private boolean sizeKnown;
-    private final URLConnection connection;
     private final ProgressMonitor progressMonitor;
 
+    public ProgressInputStream(InputStream in, long size, ProgressMonitor progressMonitor) {
+        if (progressMonitor == null) {
+            progressMonitor = NullProgressMonitor.INSTANCE;
+        }
+        this.in = in;
+        this.size = size;
+        this.progressMonitor = progressMonitor;
+        progressMonitor.beginTask(tr("Contacting OSM Server..."), 1);
+        progressMonitor.indeterminateSubTask(null);
+        initProgressMonitor();
+    }
+
+    public ProgressInputStream(HttpClient.Response response, ProgressMonitor progressMonitor) throws IOException {
+        this(response.getContent(), response.getContentLength(), progressMonitor);
+    }
+
     public ProgressInputStream(URLConnection con, ProgressMonitor progressMonitor) throws OsmTransferException {
-        this.connection = con;
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
@@ -34,15 +49,21 @@ public class ProgressInputStream extends InputStream {
 
         try {
             this.in = con.getInputStream();
+            this.size = con.getContentLength();
         } catch (IOException e) {
             progressMonitor.finishTask();
             if (con.getHeaderField("Error") != null)
                 throw new OsmTransferException(tr(con.getHeaderField("Error")), e);
             throw new OsmTransferException(e);
         }
+        initProgressMonitor();
+    }
 
-        updateSize();
-        if (!sizeKnown) {
+    protected void initProgressMonitor() {
+        if (size > 0) {
+            progressMonitor.subTask(tr("Downloading OSM data..."));
+            progressMonitor.setTicksCount((int) size);
+        } else {
             progressMonitor.indeterminateSubTask(tr("Downloading OSM data..."));
         }
     }
@@ -81,22 +102,13 @@ public class ProgressInputStream extends InputStream {
      */
     private void advanceTicker(int amount) {
         readSoFar += amount;
-        updateSize();
 
         if (readSoFar / 1024 != lastDialogUpdate) {
             lastDialogUpdate++;
-            if (sizeKnown) {
+            if (size > 0) {
                 progressMonitor.setTicks(readSoFar);
             }
             progressMonitor.setExtraText(readSoFar/1024 + " KB");
-        }
-    }
-
-    private void updateSize() {
-        if (!sizeKnown && connection.getContentLength() > 0) {
-            sizeKnown = true;
-            progressMonitor.subTask(tr("Downloading OSM data..."));
-            progressMonitor.setTicksCount(connection.getContentLength());
         }
     }
 }

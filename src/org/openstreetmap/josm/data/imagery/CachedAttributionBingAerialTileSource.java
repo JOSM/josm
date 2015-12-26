@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.Callable;
 
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -13,8 +12,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CacheCustomContent;
-import org.openstreetmap.josm.io.UTFInputStreamReader;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.xml.sax.InputSource;
 
 /**
@@ -54,11 +52,9 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
         @Override
         protected byte[] updateData() throws IOException {
             URL u = getAttributionUrl();
-            try (Scanner scanner = new Scanner(UTFInputStreamReader.create(Utils.openURL(u)))) {
-                String r = scanner.useDelimiter("\\A").next();
-                Main.info("Successfully loaded Bing attribution data.");
-                return r.getBytes("UTF-8");
-            }
+            final String r = HttpClient.create(u).connect().fetchContent();
+            Main.info("Successfully loaded Bing attribution data.");
+            return r.getBytes("UTF-8");
         }
     }
 

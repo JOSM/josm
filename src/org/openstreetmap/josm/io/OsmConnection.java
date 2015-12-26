@@ -4,7 +4,6 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.net.Authenticator.RequestorType;
-import java.net.HttpURLConnection;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -18,6 +17,7 @@ import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.Base64;
+import org.openstreetmap.josm.tools.HttpClient;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.exception.OAuthException;
@@ -30,37 +30,14 @@ import oauth.signpost.exception.OAuthException;
  */
 public class OsmConnection {
     protected boolean cancel;
-    protected HttpURLConnection activeConnection;
+    protected HttpClient.Response activeConnection;
     protected OAuthParameters oauthParameters;
-
-    /**
-     * Initialize the http defaults and the authenticator.
-     */
-    static {
-        try {
-            HttpURLConnection.setFollowRedirects(true);
-        } catch (SecurityException e) {
-            Main.error(e);
-        }
-    }
 
     /**
      * Cancels the connection.
      */
     public void cancel() {
         cancel = true;
-        synchronized (this) {
-            if (activeConnection != null) {
-                activeConnection.setConnectTimeout(100);
-                activeConnection.setReadTimeout(100);
-            }
-        }
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {
-            Main.warn("InterruptedException in "+getClass().getSimpleName()+" during cancel");
-        }
-
         synchronized (this) {
             if (activeConnection != null) {
                 activeConnection.disconnect();
@@ -74,7 +51,7 @@ public class OsmConnection {
      * @param con the connection
      * @throws OsmTransferException if something went wrong. Check for nested exceptions
      */
-    protected void addBasicAuthorizationHeader(HttpURLConnection con) throws OsmTransferException {
+    protected void addBasicAuthorizationHeader(HttpClient con) throws OsmTransferException {
         CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
         CredentialsAgentResponse response;
         String token;
@@ -97,7 +74,7 @@ public class OsmConnection {
             token = username + ':' + password;
             try {
                 ByteBuffer bytes = encoder.encode(CharBuffer.wrap(token));
-                con.addRequestProperty("Authorization", "Basic "+Base64.encode(bytes));
+                con.setHeader("Authorization", "Basic "+Base64.encode(bytes));
             } catch (CharacterCodingException e) {
                 throw new OsmTransferException(e);
             }
@@ -112,7 +89,7 @@ public class OsmConnection {
      * @throws OsmTransferException if there is currently no OAuth Access Token configured
      * @throws OsmTransferException if signing fails
      */
-    protected void addOAuthAuthorizationHeader(HttpURLConnection connection) throws OsmTransferException {
+    protected void addOAuthAuthorizationHeader(HttpClient connection) throws OsmTransferException {
         if (oauthParameters == null) {
             oauthParameters = OAuthParameters.createFromPreferences(Main.pref);
         }
@@ -128,7 +105,7 @@ public class OsmConnection {
         }
     }
 
-    protected void addAuth(HttpURLConnection connection) throws OsmTransferException {
+    protected void addAuth(HttpClient connection) throws OsmTransferException {
         String authMethod = Main.pref.get("osm-server.auth-method", "basic");
         if ("basic".equals(authMethod)) {
             addBasicAuthorizationHeader(connection);

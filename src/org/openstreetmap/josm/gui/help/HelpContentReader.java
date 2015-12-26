@@ -3,14 +3,10 @@ package org.openstreetmap.josm.gui.help;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.WikiReader;
 
 /**
@@ -45,12 +41,11 @@ public class HelpContentReader extends WikiReader {
     public String fetchHelpTopicContent(String helpTopicUrl, boolean dotest) throws HelpContentReaderException {
         if (helpTopicUrl == null)
             throw new MissingHelpContentException("helpTopicUrl is null");
-        HttpURLConnection con = null;
+        HttpClient.Response con = null;
         try {
             URL u = new URL(helpTopicUrl);
-            con = Utils.openHttpConnection(u);
-            con.connect();
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+            con = HttpClient.create(u).connect();
+            try (BufferedReader in = con.getContentReader()) {
                 return prepareHelpContent(in, dotest, u);
             }
         } catch (MalformedURLException e) {
@@ -58,14 +53,7 @@ public class HelpContentReader extends WikiReader {
         } catch (IOException e) {
             HelpContentReaderException ex = new HelpContentReaderException(e);
             if (con != null) {
-                try {
-                    ex.setResponseCode(con.getResponseCode());
-                } catch (IOException e1) {
-                    // ignore
-                    if (Main.isTraceEnabled()) {
-                        Main.trace(e1.getMessage());
-                    }
-                }
+                ex.setResponseCode(con.getResponseCode());
             }
             throw ex;
         }

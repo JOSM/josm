@@ -5,17 +5,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -41,6 +38,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -52,7 +50,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
 
     private Collection<String> sites;
     private boolean canceled;
-    private HttpURLConnection connection;
+    private HttpClient.Response connection;
     private List<PluginInformation> availablePlugins;
     private boolean displayErrMsg;
 
@@ -152,32 +150,25 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             site = printsite;
         }
 
+        String content = null;
         try {
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Downloading plugin list from ''{0}''", printsite));
 
             URL url = new URL(site);
-            synchronized (this) {
-                connection = Utils.openHttpConnection(url);
-                connection.setRequestProperty("Cache-Control", "no-cache");
-                connection.setRequestProperty("Accept-Charset", "utf-8");
+            connection = HttpClient.create(url).useCache(false).connect();
+            content = connection.fetchContent();
+            if (connection.getResponseCode() != 200) {
+                throw new IOException(tr("Unsuccessful HTTP request"));
             }
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = in.readLine()) != null) {
-                    sb.append(line).append('\n');
-                }
-                return sb.toString();
-            }
+            return content;
         } catch (MalformedURLException e) {
             if (canceled) return null;
             Main.error(e);
             return null;
         } catch (IOException e) {
             if (canceled) return null;
-            Main.addNetworkError(site, e);
-            handleIOException(monitor, e, tr("Plugin list download error"), tr("JOSM failed to download plugin list:"), displayErrMsg);
+            handleIOException(monitor, e, content);
             return null;
         } finally {
             synchronized (this) {
@@ -190,34 +181,16 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         }
     }
 
-    private void handleIOException(final ProgressMonitor monitor, IOException e, final String title, final String firstMessage,
-            boolean displayMsg) {
-        StringBuilder sb = new StringBuilder();
-        try (InputStream errStream = connection.getErrorStream()) {
-            if (errStream != null) {
-                try (BufferedReader err = new BufferedReader(new InputStreamReader(errStream, StandardCharsets.UTF_8))) {
-                    String line;
-                    while ((line = err.readLine()) != null) {
-                        sb.append(line).append('\n');
-                    }
-                } catch (Exception ex) {
-                    Main.error(e);
-                    Main.error(ex);
-                }
-            }
-        } catch (IOException ex) {
-            Main.warn(ex);
-        }
+    private void handleIOException(final ProgressMonitor monitor, IOException e, String details) {
         final String msg = e.getMessage();
-        final String details = sb.toString();
         if (details.isEmpty()) {
             Main.error(e.getClass().getSimpleName()+": " + msg);
         } else {
             Main.error(msg + " - Details:\n" + details);
         }
 
-        if (displayMsg) {
-            displayErrorMessage(monitor, msg, details, title, firstMessage);
+        if (displayErrMsg) {
+            displayErrorMessage(monitor, msg, details, tr("Plugin list download error"), tr("JOSM failed to download plugin list:"));
         }
     }
 
