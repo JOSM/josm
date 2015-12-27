@@ -25,6 +25,7 @@ import org.openstreetmap.josm.io.UTFInputStreamReader;
 
 /**
  * Provides a uniform access for a HTTP/HTTPS server. This class should be used in favour of {@link HttpURLConnection}.
+ * @since 9168
  */
 public final class HttpClient {
 
@@ -45,6 +46,11 @@ public final class HttpClient {
         this.headers.put("Accept-Encoding", "gzip");
     }
 
+    /**
+     * Opens the HTTP connection.
+     * @return HTTP response
+     * @throws IOException if any I/O error occurs
+     */
     public Response connect() throws IOException {
         final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(requestMethod);
@@ -145,12 +151,21 @@ public final class HttpClient {
             return this;
         }
 
+        /**
+         * Sets whether {@link #getContent()} should uncompress the input stream according to {@code Content-Disposition}
+         * HTTP header.
+         * @param uncompressAccordingToContentDisposition whether the input stream should be uncompressed according to
+         * {@code Content-Disposition}
+         * @return {@code this}
+         */
         public Response uncompressAccordingToContentDisposition(boolean uncompressAccordingToContentDisposition) {
             this.uncompressAccordingToContentDisposition = uncompressAccordingToContentDisposition;
             return this;
         }
 
         /**
+         * Returns the URL.
+         * @return the URL
          * @see HttpURLConnection#getURL()
          */
         public URL getURL() {
@@ -158,6 +173,8 @@ public final class HttpClient {
         }
 
         /**
+         * Returns the request method.
+         * @return the HTTP request method
          * @see HttpURLConnection#getRequestMethod()
          */
         public String getRequestMethod() {
@@ -167,9 +184,11 @@ public final class HttpClient {
         /**
          * Returns an input stream that reads from this HTTP connection, or,
          * error stream if the connection failed but the server sent useful data.
-         *
+         * <p>
          * Note: the return value can be null, if both the input and the error stream are null.
          * Seems to be the case if the OSM server replies a 401 Unauthorized, see #3887
+         * @return input or error stream
+         * @throws IOException if any I/O error occurs
          *
          * @see HttpURLConnection#getInputStream()
          * @see HttpURLConnection#getErrorStream()
@@ -204,6 +223,8 @@ public final class HttpClient {
          * Returns {@link #getContent()} wrapped in a buffered reader.
          *
          * Detects Unicode charset in use utilizing {@link UTFInputStreamReader}.
+         * @return buffered reader
+         * @throws IOException if any I/O error occurs
          */
         public BufferedReader getContentReader() throws IOException {
             return new BufferedReader(
@@ -214,7 +235,9 @@ public final class HttpClient {
         /**
          * Fetches the HTTP response as String.
          * @return the response
+         * @throws IOException if any I/O error occurs
          */
+        @SuppressWarnings("resource")
         public String fetchContent() throws IOException {
             try (Scanner scanner = new Scanner(getContentReader()).useDelimiter("\\A")) {
                 return scanner.hasNext() ? scanner.next() : "";
@@ -223,6 +246,7 @@ public final class HttpClient {
 
         /**
          * Gets the response code from this HTTP connection.
+         * @return HTTP response code
          *
          * @see HttpURLConnection#getResponseCode()
          */
@@ -232,6 +256,7 @@ public final class HttpClient {
 
         /**
          * Gets the response message from this HTTP connection.
+         * @return HTTP response message
          *
          * @see HttpURLConnection#getResponseMessage()
          */
@@ -241,6 +266,7 @@ public final class HttpClient {
 
         /**
          * Returns the {@code Content-Encoding} header.
+         * @return {@code Content-Encoding} HTTP header
          */
         public String getContentEncoding() {
             return connection.getContentEncoding();
@@ -248,6 +274,7 @@ public final class HttpClient {
 
         /**
          * Returns the {@code Content-Type} header.
+         * @return {@code Content-Type} HTTP header
          */
         public String getContentType() {
             return connection.getHeaderField("Content-Type");
@@ -255,12 +282,16 @@ public final class HttpClient {
 
         /**
          * Returns the {@code Content-Length} header.
+         * @return {@code Content-Length} HTTP header
          */
         public long getContentLength() {
             return connection.getContentLengthLong();
         }
 
         /**
+         * Returns the value of the named header field.
+         * @param name the name of a header field
+         * @return the value of the named header field, or {@code null} if there is no such field in the header
          * @see HttpURLConnection#getHeaderField(String)
          */
         public String getHeaderField(String name) {
@@ -268,6 +299,9 @@ public final class HttpClient {
         }
 
         /**
+         * Returns the list of Strings that represents the named header field values.
+         * @param name the name of a header field
+         * @return unmodifiable List of Strings that represents the corresponding field values
          * @see HttpURLConnection#getHeaderFields()
          */
         public List<String> getHeaderFields(String name) {
@@ -315,6 +349,7 @@ public final class HttpClient {
 
     /**
      * Returns the URL set for this connection.
+     * @return the URL
      * @see #create(URL)
      * @see #create(URL, String)
      */
@@ -324,6 +359,7 @@ public final class HttpClient {
 
     /**
      * Returns the request method set for this connection.
+     * @return the HTTP request method
      * @see #create(URL, String)
      */
     public String getRequestMethod() {
@@ -332,6 +368,8 @@ public final class HttpClient {
 
     /**
      * Returns the set value for the given {@code header}.
+     * @param header HTTP header name
+     * @return HTTP header value
      */
     public String getRequestHeader(String header) {
         return headers.get(header);
@@ -363,6 +401,10 @@ public final class HttpClient {
     }
 
     /**
+     * Sets a specified timeout value, in milliseconds, to be used when opening a communications link to the resource referenced
+     * by this URLConnection. If the timeout expires before the connection can be established, a
+     * {@link java.net.SocketTimeoutException} is raised. A timeout of zero is interpreted as an infinite timeout.
+     * @param connectTimeout an {@code int} that specifies the connect timeout value in milliseconds
      * @return {@code this}
      * @see HttpURLConnection#setConnectTimeout(int)
      */
@@ -372,10 +414,13 @@ public final class HttpClient {
     }
 
     /**
+     * Sets the read timeout to a specified timeout, in milliseconds. A non-zero value specifies the timeout when reading from
+     * input stream when a connection is established to a resource. If the timeout expires before there is data available for
+     * read, a {@link java.net.SocketTimeoutException} is raised. A timeout of zero is interpreted as an infinite timeout.
+     * @param readTimeout an {@code int} that specifies the read timeout value in milliseconds
      * @return {@code this}
      * @see HttpURLConnection#setReadTimeout(int) (int)
      */
-
     public HttpClient setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
         return this;
@@ -383,6 +428,7 @@ public final class HttpClient {
 
     /**
      * Sets the {@code Accept} header.
+     * @param accept header value
      *
      * @return {@code this}
      */
@@ -392,6 +438,7 @@ public final class HttpClient {
 
     /**
      * Sets the request body for {@code PUT}/{@code POST} requests.
+     * @param requestBody request body
      *
      * @return {@code this}
      */
@@ -402,6 +449,7 @@ public final class HttpClient {
 
     /**
      * Sets the {@code If-Modified-Since} header.
+     * @param ifModifiedSince header value
      *
      * @return {@code this}
      */
@@ -415,6 +463,7 @@ public final class HttpClient {
      *
      * Set {@code maxRedirects} to {@code -1} in order to ignore redirects, i.e.,
      * to not throw an {@link IOException} in {@link #connect()}.
+     * @param maxRedirects header value
      *
      * @return {@code this}
      */
@@ -425,6 +474,8 @@ public final class HttpClient {
 
     /**
      * Sets an arbitrary HTTP header.
+     * @param key header name
+     * @param value header value
      *
      * @return {@code this}
      */
@@ -435,6 +486,7 @@ public final class HttpClient {
 
     /**
      * Sets arbitrary HTTP headers.
+     * @param headers HTTP headers
      *
      * @return {@code this}
      */
@@ -445,6 +497,8 @@ public final class HttpClient {
 
     /**
      * Sets a reason to show on console. Can be {@code null} if no reason is given.
+     * @param reasonForRequest Reason to show
+     * @return {@code this}
      */
     public HttpClient setReasonForRequest(String reasonForRequest) {
         this.reasonForRequest = reasonForRequest;
@@ -463,5 +517,4 @@ public final class HttpClient {
                 return false;
         }
     }
-
 }
