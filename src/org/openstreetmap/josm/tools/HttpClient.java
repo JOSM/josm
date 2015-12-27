@@ -21,6 +21,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 
@@ -54,6 +55,17 @@ public final class HttpClient {
      * @throws IOException if any I/O error occurs
      */
     public Response connect() throws IOException {
+        return connect(null);
+    }
+
+    /**
+     * Opens the HTTP connection.
+     * @param monitor progress monitor
+     * @return HTTP response
+     * @throws IOException if any I/O error occurs
+     * @since 9179
+     */
+    public Response connect(ProgressMonitor monitor) throws IOException {
         final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(requestMethod);
         connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
@@ -75,6 +87,8 @@ public final class HttpClient {
                 connection.setRequestProperty(header.getKey(), header.getValue());
             }
         }
+
+        // FIXME: use ProgressMonitor
 
         if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
             headers.put("Content-Length", String.valueOf(requestBody.length));
