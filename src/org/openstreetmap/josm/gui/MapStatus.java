@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.data.osm.OsmPrimitive.isSelectablePredicate;
+import static org.openstreetmap.josm.data.osm.OsmPrimitive.isUsablePredicate;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -72,6 +74,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Predicate;
 
 /**
  * A component that manages some status information display about the map.
@@ -284,7 +287,12 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                     // Popup Information
                     // display them if the middle mouse button is pressed and keep them until the mouse is moved
                     if (middleMouseDown || isAtOldPosition) {
-                        Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos, OsmPrimitive.isUsablePredicate);
+                        Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos, new Predicate<OsmPrimitive>() {
+                            @Override
+                            public boolean evaluate(OsmPrimitive o) {
+                                return isUsablePredicate.evaluate(o) && isSelectablePredicate.evaluate(o);
+                            }
+                        });
 
                         final JPanel c = new JPanel(new GridBagLayout());
                         final JLabel lbl = new JLabel(
@@ -431,7 +439,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          * @param ms mouse state
          */
         private void statusBarElementUpdate(MouseState ms) {
-            final OsmPrimitive osmNearest = mv.getNearestNodeOrWay(ms.mousePos, OsmPrimitive.isUsablePredicate, false);
+            final OsmPrimitive osmNearest = mv.getNearestNodeOrWay(ms.mousePos, isUsablePredicate, false);
             if (osmNearest != null) {
                 nameText.setText(osmNearest.getDisplayName(DefaultNameFormatter.getInstance()));
             } else {

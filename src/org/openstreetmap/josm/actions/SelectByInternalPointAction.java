@@ -48,7 +48,7 @@ public class SelectByInternalPointAction extends JosmAction {
             }
         }
         for (Relation r : ds.getRelations()) {
-            if (r.isUsable() && r.isMultipolygon()) {
+            if (r.isUsable() && r.isMultipolygon() && r.isSelectable()) {
                 if (Geometry.isNodeInsideMultiPolygon(n, r, null)) {
                     for (RelationMember m : r.getMembers()) {
                         if (m.isWay() && m.getWay().isClosed()) {
@@ -67,7 +67,6 @@ public class SelectByInternalPointAction extends JosmAction {
         }
         return found.values();
     }
-
 
     /**
      * Returns the smallest surrounding polygon/multipolygon which contains the internal point.
