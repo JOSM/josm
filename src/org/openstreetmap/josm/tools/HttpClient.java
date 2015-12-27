@@ -103,15 +103,17 @@ public final class HttpClient {
         try {
             try {
                 connection.connect();
-                if (reasonForRequest != null && "".equalsIgnoreCase(reasonForRequest)) {
-                    Main.info("{0} {1} ({2}) -> {3}", requestMethod, url, reasonForRequest, connection.getResponseCode());
-                } else {
-                    Main.info("{0} {1} -> {2}", requestMethod, url, connection.getResponseCode());
-                }
+                final boolean hasReason = reasonForRequest != null && "".equalsIgnoreCase(reasonForRequest);
+                Main.info("{0} {1}{2} -> {3}{4}",
+                        requestMethod, url, hasReason ? " (" + reasonForRequest + ")" : "",
+                        connection.getResponseCode(),
+                        connection.getContentLengthLong() > 0 ? " (" + connection.getContentLengthLong() / 1024 + "KB)" : ""
+                );
                 if (Main.isDebugEnabled()) {
                     Main.debug("RESPONSE: " + connection.getHeaderFields());
                 }
             } catch (IOException e) {
+                Main.info("{0} {1} -> !!!", requestMethod, url);
                 Main.warn(e);
                 //noinspection ThrowableResultOfMethodCallIgnored
                 Main.addNetworkError(url, Utils.getRootCause(e));
