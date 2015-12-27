@@ -147,7 +147,12 @@ public abstract class OsmServerReader extends OsmConnection {
 
                 if (activeConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     String errorHeader = activeConnection.getHeaderField("Error");
-                    final String errorBody = activeConnection.fetchContent();
+                    String errorBody;
+                    try {
+                        errorBody = activeConnection.fetchContent();
+                    } catch (Exception e) {
+                        errorBody = tr("Reading error text failed.");
+                    }
                     throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody, url.toString());
                 }
 
