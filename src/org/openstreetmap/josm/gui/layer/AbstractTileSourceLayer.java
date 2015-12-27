@@ -878,7 +878,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      * already in the cache.
      */
     private Tile getTile(int x, int y, int zoom) {
-        if (x < 0 || x > tileSource.getTileXMax(zoom) || y < 0 || y > tileSource.getTileYMax(zoom))
+        if (x < tileSource.getTileXMin(zoom) || x > tileSource.getTileXMax(zoom) || y < tileSource.getTileYMin(zoom) || y > tileSource.getTileYMax(zoom))
             return null;
         return tileCache.getTile(tileSource, x, y, zoom);
     }
