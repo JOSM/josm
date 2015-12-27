@@ -91,6 +91,7 @@ public final class HttpClient {
         // FIXME: use ProgressMonitor
 
         if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
+            Main.info("{0} {1} ({2} kB) ...", requestMethod, url, requestBody.length / 1024);
             headers.put("Content-Length", String.valueOf(requestBody.length));
             connection.setDoOutput(true);
             try (OutputStream out = new BufferedOutputStream(connection.getOutputStream())) {
@@ -111,6 +112,7 @@ public final class HttpClient {
                     Main.debug("RESPONSE: " + connection.getHeaderFields());
                 }
             } catch (IOException e) {
+                Main.warn(e);
                 //noinspection ThrowableResultOfMethodCallIgnored
                 Main.addNetworkError(url, Utils.getRootCause(e));
                 throw e;

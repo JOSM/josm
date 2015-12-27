@@ -618,20 +618,25 @@ public class OsmApi extends OsmConnection {
                 url = new URL(new URL(getBaseUrl()), urlSuffix);
                 final HttpClient client = HttpClient.create(url, requestMethod).keepAlive(false);
                 if (fastFail) {
+                    client.setConnectTimeout(1000);
                     client.setReadTimeout(1000);
+                } else {
+                    // use default connect timeout from org.openstreetmap.josm.tools.HttpClient.connectTimeout
+                    client.setReadTimeout(0);
                 }
                 if (doAuthenticate) {
                     addAuth(client);
                 }
 
                 if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
+                    client.setHeader("Content-Type", "text/xml");
                     // It seems that certain bits of the Ruby API are very unhappy upon
                     // receipt of a PUT/POST message without a Content-length header,
                     // even if the request has no payload.
                     // Since Java will not generate a Content-length header unless
                     // we use the output stream, we create an output stream for PUT/POST
                     // even if there is no payload.
-                    client.setRequestBody(requestBody.getBytes(StandardCharsets.UTF_8));
+                    client.setRequestBody((requestBody != null ? requestBody : "").getBytes(StandardCharsets.UTF_8));
                 }
 
                 activeConnection = client.connect();
