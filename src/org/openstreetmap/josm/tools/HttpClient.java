@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpRetryException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -35,6 +36,7 @@ public final class HttpClient {
     private int readTimeout = Main.pref.getInteger("socket.timeout.read", 30) * 1000;
     private byte[] requestBody;
     private long ifModifiedSince;
+    private long contentLength;
     private final Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private int maxRedirects = Main.pref.getInteger("socket.maxredirects", 5);
     private boolean useCache;
@@ -60,6 +62,9 @@ public final class HttpClient {
         connection.setInstanceFollowRedirects(maxRedirects > 0);
         if (ifModifiedSince > 0) {
             connection.setIfModifiedSince(ifModifiedSince);
+        }
+        if (contentLength > 0) {
+            connection.setFixedLengthStreamingMode(contentLength);
         }
         connection.setUseCaches(useCache);
         if (!useCache) {
@@ -157,6 +162,7 @@ public final class HttpClient {
          * @param uncompressAccordingToContentDisposition whether the input stream should be uncompressed according to
          * {@code Content-Disposition}
          * @return {@code this}
+         * @since 9172
          */
         public Response uncompressAccordingToContentDisposition(boolean uncompressAccordingToContentDisposition) {
             this.uncompressAccordingToContentDisposition = uncompressAccordingToContentDisposition;
@@ -167,6 +173,7 @@ public final class HttpClient {
          * Returns the URL.
          * @return the URL
          * @see HttpURLConnection#getURL()
+         * @since 9172
          */
         public URL getURL() {
             return connection.getURL();
@@ -176,6 +183,7 @@ public final class HttpClient {
          * Returns the request method.
          * @return the HTTP request method
          * @see HttpURLConnection#getRequestMethod()
+         * @since 9172
          */
         public String getRequestMethod() {
             return connection.getRequestMethod();
@@ -259,6 +267,7 @@ public final class HttpClient {
          * @return HTTP response message
          *
          * @see HttpURLConnection#getResponseMessage()
+         * @since 9172
          */
         public String getResponseMessage() {
             return responseMessage;
@@ -293,6 +302,7 @@ public final class HttpClient {
          * @param name the name of a header field
          * @return the value of the named header field, or {@code null} if there is no such field in the header
          * @see HttpURLConnection#getHeaderField(String)
+         * @since 9172
          */
         public String getHeaderField(String name) {
             return connection.getHeaderField(name);
@@ -303,6 +313,7 @@ public final class HttpClient {
          * @param name the name of a header field
          * @return unmodifiable List of Strings that represents the corresponding field values
          * @see HttpURLConnection#getHeaderFields()
+         * @since 9172
          */
         public List<String> getHeaderFields(String name) {
             return connection.getHeaderFields().get(name);
@@ -352,6 +363,7 @@ public final class HttpClient {
      * @return the URL
      * @see #create(URL)
      * @see #create(URL, String)
+     * @since 9172
      */
     public URL getURL() {
         return url;
@@ -361,6 +373,7 @@ public final class HttpClient {
      * Returns the request method set for this connection.
      * @return the HTTP request method
      * @see #create(URL, String)
+     * @since 9172
      */
     public String getRequestMethod() {
         return requestMethod;
@@ -370,6 +383,7 @@ public final class HttpClient {
      * Returns the set value for the given {@code header}.
      * @param header HTTP header name
      * @return HTTP header value
+     * @since 9172
      */
     public String getRequestHeader(String header) {
         return headers.get(header);
@@ -419,10 +433,31 @@ public final class HttpClient {
      * read, a {@link java.net.SocketTimeoutException} is raised. A timeout of zero is interpreted as an infinite timeout.
      * @param readTimeout an {@code int} that specifies the read timeout value in milliseconds
      * @return {@code this}
-     * @see HttpURLConnection#setReadTimeout(int) (int)
+     * @see HttpURLConnection#setReadTimeout(int)
      */
     public HttpClient setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
+        return this;
+    }
+
+    /**
+     * This method is used to enable streaming of a HTTP request body without internal buffering,
+     * when the content length is known in advance.
+     * <p>
+     * An exception will be thrown if the application attempts to write more data than the indicated content-length,
+     * or if the application closes the OutputStream before writing the indicated amount.
+     * <p>
+     * When output streaming is enabled, authentication and redirection cannot be handled automatically.
+     * A {@linkplain HttpRetryException} will be thrown when reading the response if authentication or redirection
+     * are required. This exception can be queried for the details of the error.
+     *
+     * @param contentLength The number of bytes which will be written to the OutputStream
+     * @return {@code this}
+     * @see HttpURLConnection#setFixedLengthStreamingMode(long)
+     * @since 9178
+     */
+    public HttpClient setFixedLengthStreamingMode(long contentLength) {
+        this.contentLength = contentLength;
         return this;
     }
 
@@ -499,6 +534,7 @@ public final class HttpClient {
      * Sets a reason to show on console. Can be {@code null} if no reason is given.
      * @param reasonForRequest Reason to show
      * @return {@code this}
+     * @since 9172
      */
     public HttpClient setReasonForRequest(String reasonForRequest) {
         this.reasonForRequest = reasonForRequest;
