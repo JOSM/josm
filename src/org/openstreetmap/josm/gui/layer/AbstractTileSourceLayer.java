@@ -169,7 +169,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      * @return TileSource for specified ImageryInfo
      * @throws IllegalArgumentException when Imagery is not supported by layer
      */
-    protected abstract AbstractTMSTileSource getTileSource(ImageryInfo info) throws IllegalArgumentException;
+    protected abstract AbstractTMSTileSource getTileSource(ImageryInfo info);
 
     protected Map<String, String> getHeaders(TileSource tileSource) {
         if (tileSource instanceof TemplatedTileSource) {
@@ -265,6 +265,8 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
     /**
      * Returns average number of screen pixels per tile pixel for current mapview
+     * @param zoom zoom level
+     * @return average number of screen pixels per tile pixel
      */
     private double getScaleFactor(int zoom) {
         if (!Main.isDisplayingMapView()) return 1;
@@ -873,12 +875,17 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         return tile;
     }
 
-    /*
-     * This can and will return null for tiles that are not
-     * already in the cache.
+    /**
+     * Returns tile at given position.
+     * This can and will return null for tiles that are not already in the cache.
+     * @param x tile number on the x axis of the tile to be retrieved
+     * @param y tile number on the y axis of the tile to be retrieved
+     * @param zoom zoom level of the tile to be retrieved
+     * @return tile at given position
      */
     private Tile getTile(int x, int y, int zoom) {
-        if (x < tileSource.getTileXMin(zoom) || x > tileSource.getTileXMax(zoom) || y < tileSource.getTileYMin(zoom) || y > tileSource.getTileYMax(zoom))
+        if (x < tileSource.getTileXMin(zoom) || x > tileSource.getTileXMax(zoom)
+         || y < tileSource.getTileYMin(zoom) || y > tileSource.getTileYMax(zoom))
             return null;
         return tileCache.getTile(tileSource, x, y, zoom);
     }
@@ -1165,6 +1172,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
         /**
          * Create a TileSet by EastNorth bbox taking a layer shift in account
+         * @param topLeft top-left lat/lon
+         * @param botRight bottom-right lat/lon
+         * @param zoom zoom level
          */
         private TileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
             this(getShiftedLatLon(topLeft), getShiftedLatLon(botRight), zoom);
@@ -1172,6 +1182,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
         /**
          * Create a TileSet by known LatLon bbox without layer shift correction
+         * @param topLeft top-left lat/lon
+         * @param botRight bottom-right lat/lon
+         * @param zoom zoom level
          */
         private TileSet(LatLon topLeft, LatLon botRight, int zoom) {
             this.zoom = zoom;
@@ -1542,8 +1555,11 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     }
 
     /**
-     * This isn't very efficient, but it is only used when the
-     * user right-clicks on the map.
+     * Returns tile for a pixel position.<p>
+     * This isn't very efficient, but it is only used when the user right-clicks on the map.
+     * @param px pixel X coordinate
+     * @param py pixel Y coordinate
+     * @return Tile at pixel position
      */
     private Tile getTileForPixelpos(int px, int py) {
         if (Main.isDebugEnabled()) {
@@ -1575,8 +1591,10 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
         if (clickedTile == null)
             return null;
-        /*Main.debug("Clicked on tile: " + clickedTile.getXtile() + " " + clickedTile.getYtile() +
-                " currentZoomLevel: " + currentZoomLevel);*/
+        if (Main.isTraceEnabled()) {
+            Main.trace("Clicked on tile: " + clickedTile.getXtile() + " " + clickedTile.getYtile() +
+                " currentZoomLevel: " + currentZoomLevel);
+        }
         return clickedTile;
     }
 
