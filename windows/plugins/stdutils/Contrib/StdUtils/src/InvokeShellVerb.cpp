@@ -33,7 +33,7 @@
 
 typedef struct
 {
-	const DWORD uiVerbId;
+	const DWORD *uiVerbIds;
 	const TCHAR *const pcDirectoryName;
 	const TCHAR *const pcFileName;
 }
@@ -43,7 +43,7 @@ static const WCHAR *shell32 = L"shell32";
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static bool MyInvokeShellVerb_LoadResStr(const WCHAR *const libFile, const DWORD &id, wchar_t *const buffer, const size_t &buffSize)
+static bool MyInvokeShellVerb_LoadResStr(const WCHAR *const libFile, const DWORD *const ids, wchar_t *const buffer, const size_t &buffSize)
 {
 	memset(buffer, 0, sizeof(WCHAR) * buffSize);
 
@@ -60,9 +60,13 @@ static bool MyInvokeShellVerb_LoadResStr(const WCHAR *const libFile, const DWORD
 	}
 
 	bool success = false;
-	if(LoadStringW(hMod, id, buffer, buffSize) > 0)
+	for(size_t i = 0; ids[i] != MAXDWORD; i++)
 	{
-		success = true;
+		if(LoadStringW(hMod, ids[i], buffer, buffSize) > 0)
+		{
+			success = true;
+			break;
+		}
 	}
 
 	if(bUnloadDll)
@@ -80,7 +84,7 @@ static int MyInvokeShellVerb_HandlerProc(IShellDispatch2 *const dispatch, const 
 	const invoke_shellverb_param_t *const param = (const invoke_shellverb_param_t*) data;
 
 	WCHAR pcVerbName[256];
-	if(!MyInvokeShellVerb_LoadResStr(shell32, param->uiVerbId, pcVerbName, 256))
+	if(!MyInvokeShellVerb_LoadResStr(shell32, param->uiVerbIds, pcVerbName, 256))
 	{
 		return (iSuccess = INVOKE_SHELLVERB_NOT_FOUND);
 	}
@@ -175,7 +179,7 @@ static int MyInvokeShellVerb_HandlerProc(IShellDispatch2 *const dispatch, const 
 	return iSuccess;
 }
 
-int MyInvokeShellVerb(const TCHAR *const pcDirectoryName, const TCHAR *const pcFileName, const DWORD uiVerbId, const bool threaded)
+int MyInvokeShellVerb(const TCHAR *const pcDirectoryName, const TCHAR *const pcFileName, const DWORD *const uiVerbIds, const bool threaded)
 {
 	int iSuccess = INVOKE_SHELLVERB_FAILED;
 
@@ -200,7 +204,7 @@ int MyInvokeShellVerb(const TCHAR *const pcDirectoryName, const TCHAR *const pcF
 	{
 		if((osVersion.dwPlatformId == VER_PLATFORM_WIN32_NT) && ((osVersion.dwMajorVersion > 6) || ((osVersion.dwMajorVersion == 6) && (osVersion.dwMinorVersion >= 1))))
 		{
-			invoke_shellverb_param_t params = { uiVerbId, pcDirectoryName, pcFileName };
+			invoke_shellverb_param_t params = { uiVerbIds, pcDirectoryName, pcFileName };
 			iSuccess = MyShellDispatch(MyInvokeShellVerb_HandlerProc, &params, threaded);
 		}
 		else

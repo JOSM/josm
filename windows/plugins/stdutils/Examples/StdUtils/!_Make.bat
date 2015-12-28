@@ -19,10 +19,12 @@ for %%i in (%NSIS_PROJECTS%) do (
 )
 REM ----------------------------------------------------------------------
 for %%i in (%NSIS_PROJECTS%) do (
+	echo --- BASTARD ---
 	"%NSIS_ANSI%\makensis.exe" "%~dp0\%%i.nsi"
 	if not "!ERRORLEVEL!"=="0" pause && exit
 	if not exist "%~dp0\%%i-ANSI.exe" pause && exit
 	
+	echo --- GEHIRN ---
 	"%NSIS_Unicode%\makensis.exe" "%~dp0\%%i.nsi"
 	if not "!ERRORLEVEL!"=="0" pause && exit
 	if not exist "%~dp0\%%i-Unicode.exe" pause && exit

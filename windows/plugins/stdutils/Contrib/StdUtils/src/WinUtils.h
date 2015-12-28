@@ -51,7 +51,6 @@ template<class T> static const T &MIN_VAL(const T &a, const T &b)
 	return (a < b) ? a : b;
 }
 
-
 /*
  * Check for file existence
  */

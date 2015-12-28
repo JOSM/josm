@@ -68,7 +68,7 @@ static UINT_PTR PluginCallback(enum NSPIM msg)
 	case NSPIM_GUIUNLOAD:
 		break;
 	default:
-		MessageBoxA(NULL, "Unknown callback message. Take care!", "StdUtils", MB_ICONWARNING|MB_TOPMOST|MB_TASKMODAL);
+		OutputDebugStringA("StdUtils: Unknown callback message. Take care!\n");
 		break;
 	}
 
@@ -720,12 +720,20 @@ NSISFUNC(ExecShellAsUser)
 
 NSISFUNC(InvokeShellVerb)
 {
+	static const DWORD ID_LUT[][3] =
+	{
+		{ 5386, MAXDWORD },
+		{ 5387, MAXDWORD },
+		{ 51201, 5381, MAXDWORD },
+		{ 51394, 5382, MAXDWORD }
+	};
+
 	EXDLL_INIT();
 	REGSITER_CALLBACK(g_StdUtilsInstance);
 	MAKESTR(path, g_stringsize);
 	MAKESTR(file, g_stringsize);
 
-	int verb = popint();
+	const int verb = popint();
 	popstringn(file, 0);
 	popstringn(path, 0);
 	
@@ -734,13 +742,29 @@ NSISFUNC(InvokeShellVerb)
 
 	if(!(file && path))
 	{
+		if(g_bStdUtilsVerbose)
+		{
+			MessageBox(NULL, T("Specified file name and/or path is missing!"), T("StdUtils::InvokeShellVerb"), MB_TOPMOST | MB_ICONSTOP);
+		}
 		pushstring(T("einval"));
 		if(file) delete [] file;
 		if(path) delete [] path;
 		return;
 	}
 
-	int result = MyInvokeShellVerb(path, file, verb, true);
+	if((verb < 0) || (verb > 3))
+	{
+		if(g_bStdUtilsVerbose)
+		{
+			MessageBox(NULL, T("And invalid verb id has been specified!"), T("StdUtils::InvokeShellVerb"), MB_TOPMOST | MB_ICONSTOP);
+		}
+		pushstring(T("einval"));
+		if(file) delete [] file;
+		if(path) delete [] path;
+		return;
+	}
+
+	int result = MyInvokeShellVerb(path, file, ID_LUT[verb], true);
 	
 	switch(result)
 	{
