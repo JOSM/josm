@@ -21,8 +21,11 @@ import java.util.zip.GZIPInputStream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
+import org.openstreetmap.josm.io.ProgressInputStream;
+import org.openstreetmap.josm.io.ProgressOutputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 
 /**
@@ -60,12 +63,15 @@ public final class HttpClient {
 
     /**
      * Opens the HTTP connection.
-     * @param monitor progress monitor
+     * @param progressMonitor progress monitor
      * @return HTTP response
      * @throws IOException if any I/O error occurs
      * @since 9179
      */
-    public Response connect(ProgressMonitor monitor) throws IOException {
+    public Response connect(ProgressMonitor progressMonitor) throws IOException {
+        if (progressMonitor == null) {
+            progressMonitor = NullProgressMonitor.INSTANCE;
+        }
         final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(requestMethod);
         connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
@@ -88,13 +94,15 @@ public final class HttpClient {
             }
         }
 
-        // FIXME: use ProgressMonitor
+        progressMonitor.beginTask(tr("Contacting Server..."), 1);
+        progressMonitor.indeterminateSubTask(null);
 
         if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
             Main.info("{0} {1} ({2} kB) ...", requestMethod, url, requestBody.length / 1024);
             headers.put("Content-Length", String.valueOf(requestBody.length));
             connection.setDoOutput(true);
-            try (OutputStream out = new BufferedOutputStream(connection.getOutputStream())) {
+            try (OutputStream out = new BufferedOutputStream(
+                    new ProgressOutputStream(connection.getOutputStream(), requestBody.length, progressMonitor))) {
                 out.write(requestBody);
             }
         }
@@ -136,7 +144,7 @@ public final class HttpClient {
                     throw new IOException(msg);
                 }
             }
-            Response response = new Response(connection);
+            Response response = new Response(connection, progressMonitor);
             successfulConnection = true;
             return response;
         } finally {
@@ -151,14 +159,17 @@ public final class HttpClient {
      */
     public static final class Response {
         private final HttpURLConnection connection;
+        private final ProgressMonitor monitor;
         private final int responseCode;
         private final String responseMessage;
         private boolean uncompress;
         private boolean uncompressAccordingToContentDisposition;
 
-        private Response(HttpURLConnection connection) throws IOException {
+        private Response(HttpURLConnection connection, ProgressMonitor monitor) throws IOException {
             CheckParameterUtil.ensureParameterNotNull(connection, "connection");
+            CheckParameterUtil.ensureParameterNotNull(monitor, "monitor");
             this.connection = connection;
+            this.monitor = monitor;
             this.responseCode = connection.getResponseCode();
             this.responseMessage = connection.getResponseMessage();
         }
@@ -226,6 +237,7 @@ public final class HttpClient {
             } catch (IOException ioe) {
                 in = connection.getErrorStream();
             }
+            in = new ProgressInputStream(in, getContentLength(), monitor);
             in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
             Compression compression = Compression.NONE;
             if (uncompress) {
