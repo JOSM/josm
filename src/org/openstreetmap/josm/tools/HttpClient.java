@@ -111,7 +111,7 @@ public final class HttpClient {
         try {
             try {
                 connection.connect();
-                final boolean hasReason = reasonForRequest != null && "".equalsIgnoreCase(reasonForRequest);
+                final boolean hasReason = reasonForRequest != null && !"".equalsIgnoreCase(reasonForRequest);
                 Main.info("{0} {1}{2} -> {3}{4}",
                         requestMethod, url, hasReason ? " (" + reasonForRequest + ")" : "",
                         connection.getResponseCode(),
