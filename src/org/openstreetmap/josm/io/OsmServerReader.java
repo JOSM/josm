@@ -130,7 +130,7 @@ public abstract class OsmServerReader extends OsmConnection {
                 throw new OsmTransferCanceledException("Operation canceled");
 
             try {
-                activeConnection = client.connect();
+                activeConnection = client.connect(progressMonitor);
             } catch (Exception e) {
                 Main.error(e);
                 OsmTransferException ote = new OsmTransferException(
@@ -157,8 +157,7 @@ public abstract class OsmServerReader extends OsmConnection {
                 }
 
                 activeConnection.uncompressAccordingToContentDisposition(uncompressAccordingToContentDisposition);
-                InputStream in = new ProgressInputStream(activeConnection, progressMonitor);
-                return in;
+                return activeConnection.getContent();
             } catch (OsmTransferException e) {
                 throw e;
             } catch (Exception e) {
