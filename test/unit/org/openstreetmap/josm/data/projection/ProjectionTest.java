@@ -24,9 +24,7 @@ public class ProjectionTest {
 
         testProj(Projections.getProjectionByCode("EPSG:4326")); // WGS 84
         testProj(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        if (!"yes".equals(System.getProperty("suppressPermanentFailure"))) {
-            testProj(Projections.getProjectionByCode("EPSG:3301")); // Lambert EST
-        }
+        testProj(Projections.getProjectionByCode("EPSG:3301")); // Lambert EST
 
         for (int i = 0; i <= 3; ++i) {
             testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(27561+i))); // Lambert 4 Zones France
@@ -43,10 +41,8 @@ public class ProjectionTest {
             testProj(Projections.getProjectionByCode("EPSG:"+Integer.toString(32701+i))); // UTM South
         }
 
-        if (!"yes".equals(System.getProperty("suppressPermanentFailure"))) {
-            for (String c : Arrays.asList("2969", "2970", "2972", "2973")) {
-                testProj(Projections.getProjectionByCode("EPSG:"+c)); // UTM France DOM
-            }
+        for (String c : Arrays.asList("2969", "2970", "2972", "2973")) {
+            testProj(Projections.getProjectionByCode("EPSG:"+c)); // UTM France DOM
         }
 
         for (int i = 0; i <= 8; ++i) {
