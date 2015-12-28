@@ -35,7 +35,7 @@ public class SelectActionTest {
     class PreferencesMock extends Preferences {
         @Override
         public synchronized int getInteger(String key, int def) {
-            if (key == "edit.initial-move-delay") {
+            if ("edit.initial-move-delay".equals(key)) {
                 return 0;
             } else {
                 return super.getInteger(key, def);

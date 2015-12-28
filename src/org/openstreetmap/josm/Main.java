@@ -555,6 +555,7 @@ public abstract class Main {
     public Main() {
         main = this;
         isOpenjdk = System.getProperty("java.vm.name").toUpperCase(Locale.ENGLISH).indexOf("OPENJDK") != -1;
+        fileWatcher.start();
 
         new InitializationTask(tr("Executing platform startup hook")) {
             @Override

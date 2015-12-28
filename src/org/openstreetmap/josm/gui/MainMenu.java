@@ -625,7 +625,7 @@ public class MainMenu extends JMenuBar {
      * @return the given {@code }menu}
      */
     public <T extends JMenu> T addMenu(T menu, String name, int mnemonicKey, int position, String relativeHelpTopic) {
-        Shortcut.registerShortcut("menu:" + name, tr("Menu: {0}", getName()), mnemonicKey,
+        Shortcut.registerShortcut("menu:" + name, tr("Menu: {0}", name), mnemonicKey,
                 Shortcut.MNEMONIC).setMnemonic(menu);
         add(menu, position);
         menu.putClientProperty("help", relativeHelpTopic);

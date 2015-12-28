@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="test/lib/unitils-core/unitils-core-3.3.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/debug-1.0.jar"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
+	<classpathentry kind="lib" path="tools/findbugs/annotations.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

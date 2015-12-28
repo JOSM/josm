@@ -30,6 +30,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class FileWatcher {
 
     private WatchService watcher;
+    private Thread thread;
 
     private final Map<Path, StyleSource> styleMap = new HashMap<>();
     private final Map<Path, SourceEntry> ruleMap = new HashMap<>();
@@ -40,14 +41,23 @@ public class FileWatcher {
     public FileWatcher() {
         try {
             watcher = FileSystems.getDefault().newWatchService();
-            new Thread(new Runnable() {
+            thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     processEvents();
                 }
-            }, "File Watcher").start();
+            }, "File Watcher");
         } catch (IOException e) {
             Main.error(e);
+        }
+    }
+
+    /**
+     * Starts the File Watcher thread.
+     */
+    public final void start() {
+        if (!thread.isAlive()) {
+            thread.start();
         }
     }
 
