@@ -33,4 +33,4 @@ typedef enum
 }
 invoke_shellverb_err_t;
 
-int MyInvokeShellVerb(const TCHAR *const pcDirectoryName, const TCHAR *const pcFileName, const DWORD uiVerbId, const bool threaded = true);
+int MyInvokeShellVerb(const TCHAR *const pcDirectoryName, const TCHAR *const pcFileName, const DWORD *uiVerbIds, const bool threaded = true);

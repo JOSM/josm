@@ -622,7 +622,14 @@ SectionEnd</pre>
 <a name="d452a779"></a><h2>InvokeShellVerb</h2>
 
 <p><b><tt>${StdUtils.InvokeShellVerb} <i>user_var(output)</i> <i>path</i> <i>file</i> <i>verb_id</i></tt></b></p>
-<p>The <tt>${StdUtils.InvokeShellVerb}</tt> function can be used to invoke a so-called "Shell Verb" on an arbitary item. The most common use for this is pinning (or unpinning) an item to (from) the Taskbar or Startmenu on Windows 7. Despite the fact the Microsoft claimes that there is no API for this, the API <i>does</i> exist and is commonly used (e.g. Firefox' insatller makes use of it too). The function expects three arguments: The directory where the item (e.g. executable file) is located, the name of the item (e.g. executable file) and the <i>resource id</i> of the verbt o be invoked. We need the resource id of the verb, because the verb itself is <i>language-specific</i>, but we certainly do <i>no</i> want to adjust the installer for each system langauge. Resource id's are langauge-independant and you can use the pre-defined constants <tt>${StdUtils.Const.ISV_PinToTaskbar}</tt>, <tt>${StdUtils.Const.ISV_UnpinFromTaskbar}</tt>, <tt>${StdUtils.Const.ISV_PinToStartmenu}</tt> or <tt>${StdUtils.Const.ISV_UnpinFromStartmenu}</tt> for convenience. Note that while this function works on Windows 7 (and later) only, it still is perfectly safe to call on older versions of Windows. If the function succeeded, then it returns "ok"; if the function is called with invalid parameters, then it returns "einval"; if the requested verb was not found for the specified item, or if the specified item does <i>not</i> exist, then "not_found" will be returned; if this function is used on Windows versions prior to Windows 7 (e.g. Vista or XP), then it will return "unsupported"; and if the function failed for another reason (e.g. file not found or invalid <i>verb_id</i>), then it will return "error".</p>
+<p>The <tt>${StdUtils.InvokeShellVerb}</tt> function can be used to invoke a so-called "Shell Verb" on an arbitary item. The most common use for this is (un)pinning an item to/from the Taskbar or the Startmenu, on Windows 7 and later. The function expects three arguments: The directory where the item (e.g. executable file or shortcut) is located, the name of the item, and the <i>id</i> of the shell verb to be invoked. We need the <i>id</i> of the verb, because the verb's name (string), which is used to select the desired verb from the list of available verbs, is <i>language-specific</i>; it depends on the Windows system language. However, we certainly do <b>not</b> want to make our installer specific to a certain system language. Resource id's, on the other hand, are <i>language-independant</i>. By using resource id's, we can load the actual verb name (string) <i>at runtime</i>. Note that while this function works on Windows 7 (and later) only, it still is perfectly safe to call on older versions of Windows. If the function succeeded, then it returns "ok"; if the function is called with invalid parameters, then it returns "einval"; if the requested verb could <i>not</i> be found, if the request verb is unavailable for the specified item, or if the specified item does <i>not</i> exist, then "not_found" will be returned; if this function is used on Windows versions prior to Windows 7 (e.g. Vista or XP), then it will return "unsupported"; and if the function failed for another reason, then it will return "error".</p>
+<p>Supported shell verbs IDs are:</p>
+<ul>
+<li><tt>${StdUtils.Const.ShellVerb.PinToTaskbar}</tt>
+<li><tt>${StdUtils.Const.ShellVerb.UnpinFromTaskbar}</tt>
+<li><tt>${StdUtils.Const.ShellVerb.PinToStart}</tt>
+<li><tt>${StdUtils.Const.ShellVerb.UnpinFromStart}</tt>
+</ul>
 <p>Hint: If you are getting the "not_found" error for a verb that is supposed to exists, then it's probably because the desired action isn't currently available for the item (e.g. it could be that you are trying to pin an item that already is pinned).</p>
 
 <pre>!include 'StdUtils.nsh'
@@ -638,7 +645,7 @@ SectionEnd
 
 Section
 	DetailPrint "Going to pin MSPaint..."
-	${StdUtils.InvokeShellVerb} $0 "$SYSDIR" "mspaint.exe" ${StdUtils.Const.ISV_PinToTaskbar}
+	${StdUtils.InvokeShellVerb} $0 "$SYSDIR" "mspaint.exe" ${StdUtils.Const.ShellVerb.PinToTaskbar}
 	DetailPrint "Result: $0"
 
 	StrCmp "$0" "ok" 0 +3
@@ -649,7 +656,7 @@ SectionEnd
 
 Section
 	DetailPrint "Going to un-pin MSPaint..."
-	${StdUtils.InvokeShellVerb} $0 "$SYSDIR" "mspaint.exe" ${StdUtils.Const.ISV_UnpinFromTaskbar}
+	${StdUtils.InvokeShellVerb} $0 "$SYSDIR" "mspaint.exe" ${StdUtils.Const.ShellVerb.UnpinFromTaskbar}
 	DetailPrint "Result: $0"
 	
 	StrCmp "$0" "ok" 0 +3
@@ -1021,6 +1028,12 @@ this software. If not, see &lt;http://creativecommons.org/publicdomain/zero/1.0/
 <a name="53c38996"></a><h1>Version History</h1>
 
 <ul>
+	<li><b>Version 1.09, 2015-11-16</b>
+	<ul>
+		<li>Modified the <tt>InvokeShellVerb</tt> function in order to make Startmenu pinning work on Windows 10.
+		<li>Silently ignore unknown NSIS callback message values.
+	</ul>
+	<br>
 	<li><b>Version 1.08, released 2015-10-10</b>
 	<ul>
 		<li>Modified the <tt>InvokeShellVerb</tt> function in order to make Taskbar pinning work on Windows 10.
