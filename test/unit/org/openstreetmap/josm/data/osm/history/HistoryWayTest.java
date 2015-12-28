@@ -7,28 +7,48 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 
 /**
  * Unit tests for class {@link HistoryWay}.
  */
 public class HistoryWayTest {
 
-    @Test
-    public void wayTest() {
-        Date d = new Date();
-        HistoryWay way = new HistoryWay(
-                1,
-                2,
-                true,
+    /**
+     * Setup test.
+     */
+    @BeforeClass
+    public static void init() {
+        JOSMFixture.createUnitTestFixture().init();
+    }
+
+    private static HistoryWay create(Date d) {
+        return new HistoryWay(
+                1,    // id
+                2,    // version
+                true, // visible
                 User.createOsmUser(3, "testuser"),
-                4,
-                d
+                4,    // changesetId
+                d     // timestamp
                 );
+    }
+
+    /**
+     * Unit test for {@link HistoryWay#HistoryWay}.
+     */
+    @Test
+    public void testHistoryWay() {
+        Date d = new Date();
+        HistoryWay way = create(d);
 
         assertEquals(1, way.getId());
         assertEquals(2, way.getVersion());
@@ -41,32 +61,17 @@ public class HistoryWayTest {
         assertEquals(0, way.getNumNodes());
     }
 
+    /**
+     * Unit test for {@link HistoryWay#getType}.
+     */
     @Test
-    public void getType() {
-        Date d = new Date();
-        HistoryWay way = new HistoryWay(
-                1,
-                2,
-                true,
-                User.createOsmUser(3, "testuser"),
-                4,
-                d
-                );
-
-        assertEquals(OsmPrimitiveType.WAY, way.getType());
+    public void testGetType() {
+        assertEquals(OsmPrimitiveType.WAY, create(new Date()).getType());
     }
 
     @Test
-    public void nodeManipulation() {
-        Date d = new Date();
-        HistoryWay way = new HistoryWay(
-                1,
-                2,
-                true,
-                User.createOsmUser(3, "testuser"),
-                4,
-                d
-                );
+    public void testNodeManipulation() {
+        HistoryWay way = create(new Date());
 
         way.addNode(1);
         assertEquals(1, way.getNumNodes());
@@ -87,16 +92,8 @@ public class HistoryWayTest {
     }
 
     @Test
-    public void iterating() {
-        Date d = new Date();
-        HistoryWay way = new HistoryWay(
-                1,
-                2,
-                true,
-                User.createOsmUser(3, "testuser"),
-                4,
-                d
-                );
+    public void testIterating() {
+        HistoryWay way = create(new Date());
 
         way.addNode(1);
         way.addNode(2);
@@ -108,5 +105,35 @@ public class HistoryWayTest {
         assertEquals(2, ids.size());
         assertEquals(1, (long) ids.get(0));
         assertEquals(2, (long) ids.get(1));
+    }
+
+    /**
+     * Unit test for {@link HistoryWay#getDisplayName}.
+     */
+    @Test
+    public void testGetDisplayName() {
+        HistoryNameFormatter hnf = DefaultNameFormatter.getInstance();
+        HistoryWay way0 = create(new Date()); // no node
+        HistoryWay way1 = create(new Date()); // 1 node
+        HistoryWay way2 = create(new Date()); // 2 nodes
+
+        way1.addNode(1);
+        way2.addNode(1);
+        way2.addNode(2);
+
+        assertEquals("1 (0 nodes)", way0.getDisplayName(hnf));
+        assertEquals("1 (1 node)",  way1.getDisplayName(hnf));
+        assertEquals("1 (2 nodes)", way2.getDisplayName(hnf));
+
+        Map<String, String> map = new HashMap<>();
+        map.put("name", "WayName");
+
+        way0.setTags(map);
+        way1.setTags(map);
+        way2.setTags(map);
+
+        assertEquals("WayName (0 nodes)", way0.getDisplayName(hnf));
+        assertEquals("WayName (1 node)",  way1.getDisplayName(hnf));
+        assertEquals("WayName (2 nodes)", way2.getDisplayName(hnf));
     }
 }
