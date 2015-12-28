@@ -53,7 +53,7 @@ public class ProjectionRegressionTest {
     }
 
     private static String getProjectionDataFile() {
-        return TestUtils.getJavaVersion() >= 1.9 ? PROJECTION_DATA_FILE_JAVA_9 : PROJECTION_DATA_FILE;
+        return TestUtils.getJavaVersion() >= 9 ? PROJECTION_DATA_FILE_JAVA_9 : PROJECTION_DATA_FILE;
     }
 
     public static void main(String[] args) throws IOException {
