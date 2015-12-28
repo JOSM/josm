@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * BasicUploadSettingsPanel allows to enter the basic parameters required for uploading data.
@@ -72,7 +73,8 @@ public class BasicUploadSettingsPanel extends JPanel {
             @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
-                    hcbUploadSource.setText(Main.map.mapView.getLayerInformationForSourceTag());
+                    final String source = Main.map.mapView.getLayerInformationForSourceTag();
+                    hcbUploadSource.setText(Utils.shortenString(source, Changeset.MAX_CHANGESET_TAG_LENGTH));
                     // Fix #9965
                     changesetSourceModel.setComment(hcbUploadSource.getText());
                 }
