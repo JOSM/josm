@@ -1283,7 +1283,7 @@ public final class Utils {
         try {
             return URLEncoder.encode(s, enc);
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(e);
         }
     }
 
@@ -1303,7 +1303,7 @@ public final class Utils {
         try {
             return URLDecoder.decode(s, enc);
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(e);
         }
     }
 
