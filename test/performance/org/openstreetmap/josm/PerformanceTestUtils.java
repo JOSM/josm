@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Timer utilities for performance tests.
  * @author Michael Zangl
@@ -36,6 +38,7 @@ public final class PerformanceTestUtils {
      * @param name The name/description of the timer.
      * @return A {@link PerformanceTestTimer} object of which you can call {@link PerformanceTestTimer#done()} when done.
      */
+    @SuppressFBWarnings(value = "DM_GC", justification = "Performance test code")
     public static PerformanceTestTimer startTimer(String name) {
         System.gc();
         System.runFinalization();

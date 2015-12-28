@@ -300,6 +300,7 @@ Build-Date: ${build.tstamp}
         </fileset>
         <pathelement path="dist/josm-custom.jar"/>
         <pathelement path="${groovy.jar}"/>
+        <pathelement path="tools/findbugs/annotations.jar"/>
     </path>
     <macrodef name="init-test-preferences">
         <attribute name="testfamily"/>
