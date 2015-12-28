@@ -116,6 +116,15 @@ public final class TestUtils {
         if (version.startsWith("1.")) {
             version = version.substring(2);
         }
-        return Integer.parseInt(version.substring(0, version.indexOf('.')));
+        // Allow these formats:
+        // 1.7.0_91
+        // 1.8.0_72-ea
+        // 9-ea
+        // 9
+        // 9.0.1
+        int dotPos = version.indexOf('.');
+        int dashPos = version.indexOf('-');
+        return Integer.parseInt(version.substring(0,
+                dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
     }
 }
