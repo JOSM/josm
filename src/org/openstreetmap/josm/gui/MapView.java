@@ -1150,10 +1150,14 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             layerInfo.add("survey");
         }
         for (final GeoImageLayer i : getLayersOfType(GeoImageLayer.class)) {
-            layerInfo.add(i.getName());
+            if (i.isVisible()) {
+                layerInfo.add(i.getName());
+            }
         }
         for (final ImageryLayer i : getLayersOfType(ImageryLayer.class)) {
-            layerInfo.add(ImageryInfo.ImageryType.BING.equals(i.getInfo().getImageryType()) ? "Bing" : i.getName());
+            if (i.isVisible()) {
+                layerInfo.add(ImageryInfo.ImageryType.BING.equals(i.getInfo().getImageryType()) ? "Bing" : i.getName());
+            }
         }
         return Utils.join("; ", layerInfo);
     }
