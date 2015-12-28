@@ -44,8 +44,9 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
- * This is the default implementation of a {@link NameFormatter} for names of {@link OsmPrimitive}s.
- *
+ * This is the default implementation of a {@link NameFormatter} for names of {@link OsmPrimitive}s
+ * and {@link HistoryOsmPrimitive}s.
+ * @since 1990
  */
 public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter {
 
@@ -134,12 +135,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
     }
 
-    /**
-     * Formats a name for a node
-     *
-     * @param node the node
-     * @return the name
-     */
     @Override
     public String format(Node node) {
         StringBuilder name = new StringBuilder();
@@ -210,13 +205,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return nodeComparator;
     }
 
-
-    /**
-     * Formats a name for a way
-     *
-     * @param way the way
-     * @return the name
-     */
     @Override
     public String format(Way way) {
         StringBuilder name = new StringBuilder();
@@ -248,10 +236,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     n = way.get("ref");
                 }
                 if (n == null) {
-                    n =     (way.get("highway") != null) ? tr("highway") :
-                                (way.get("railway") != null) ? tr("railway") :
-                                    (way.get("waterway") != null) ? tr("waterway") :
-                                            (way.get("landuse") != null) ? tr("landuse") : null;
+                    n = (way.get("highway") != null) ? tr("highway") :
+                            (way.get("railway") != null) ? tr("railway") :
+                                (way.get("waterway") != null) ? tr("waterway") :
+                                        (way.get("landuse") != null) ? tr("landuse") : null;
                 }
                 if (n == null) {
                     String s;
@@ -312,13 +300,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return wayComparator;
     }
 
-
-    /**
-     * Formats a name for a relation
-     *
-     * @param relation the relation
-     * @return the name
-     */
     @Override
     public String format(Relation relation) {
         StringBuilder name = new StringBuilder();
@@ -487,12 +468,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return null;
     }
 
-    /**
-     * Formats a name for a changeset
-     *
-     * @param changeset the changeset
-     * @return the name
-     */
     @Override
     public String format(Changeset changeset) {
         return tr("Changeset {0}", changeset.getId());
@@ -553,12 +528,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
     }
 
-    /**
-     * Formats a name for a history node
-     *
-     * @param node the node
-     * @return the name
-     */
     @Override
     public String format(HistoryNode node) {
         StringBuilder sb = new StringBuilder();
@@ -585,12 +554,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return sb.toString();
     }
 
-    /**
-     * Formats a name for a way
-     *
-     * @param way the way
-     * @return the name
-     */
     @Override
     public String format(HistoryWay way) {
         StringBuilder sb = new StringBuilder();
@@ -627,12 +590,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return sb.toString();
     }
 
-    /**
-     * Formats a name for a {@link HistoryRelation})
-     *
-     * @param relation the relation
-     * @return the name
-     */
     @Override
     public String format(HistoryRelation relation) {
         StringBuilder sb = new StringBuilder();
@@ -683,6 +640,11 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return buildDefaultToolTip(primitive.getId(), primitive.getTags());
     }
 
+    /**
+     * Formats the given collection of primitives as an HTML unordered list.
+     * @param primitives collection of primitives to format
+     * @return HTML unordered list
+     */
     public String formatAsHtmlUnorderedList(Collection<? extends OsmPrimitive> primitives) {
         return Utils.joinAsHtmlUnorderedList(Utils.transform(primitives, new Function<OsmPrimitive, String>() {
 
@@ -693,6 +655,11 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }));
     }
 
+    /**
+     * Formats the given primitive(s) as an HTML unordered list.
+     * @param primitives primitive(s) to format
+     * @return HTML unordered list
+     */
     public String formatAsHtmlUnorderedList(OsmPrimitive... primitives) {
         return formatAsHtmlUnorderedList(Arrays.asList(primitives));
     }
