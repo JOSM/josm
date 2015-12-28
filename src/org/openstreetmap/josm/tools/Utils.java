@@ -1283,8 +1283,7 @@ public final class Utils {
         try {
             return URLEncoder.encode(s, enc);
         } catch (UnsupportedEncodingException e) {
-            Main.error(e);
-            return null;
+            throw new IllegalStateException();
         }
     }
 
@@ -1304,8 +1303,7 @@ public final class Utils {
         try {
             return URLDecoder.decode(s, enc);
         } catch (UnsupportedEncodingException e) {
-            Main.error(e);
-            return null;
+            throw new IllegalStateException();
         }
     }
 
