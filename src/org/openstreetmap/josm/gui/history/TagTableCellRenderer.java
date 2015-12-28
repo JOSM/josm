@@ -14,7 +14,7 @@ import javax.swing.table.TableCellRenderer;
  *
  */
 public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
-    public static final Color BGCOLOR_DIFFERENCE = new Color(255, 197, 197);
+    public static final Color BGCOLOR_SELECTED = new Color(143, 170, 255);
 
     /**
      * Constructs a new {@code TagTableCellRenderer}.
@@ -23,48 +23,22 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         setOpaque(true);
     }
 
-    protected void renderName(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected) {
-        String text = key;
+    protected void setBackground(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected) {
         Color bgColor = UIManager.getColor("Table.background");
-        Color fgColor = UIManager.getColor("Table.foreground");
-        if (!model.hasTag(key)) {
-            text = "";
-            bgColor = BGCOLOR_DIFFERENCE;
-        } else if (!model.oppositeHasTag(key)) {
-            bgColor = BGCOLOR_DIFFERENCE;
+        if (!model.hasTag(key) && model.isCurrentPointInTime()
+                || !model.oppositeHasTag(key) && model.isReferencePointInTime()) {
+            bgColor = TwoColumnDiff.Item.DiffItemType.DELETED.getColor();
+        } else if (!model.oppositeHasTag(key) && model.isCurrentPointInTime()
+                || !model.hasTag(key) && model.isReferencePointInTime()) {
+            bgColor = TwoColumnDiff.Item.DiffItemType.INSERTED.getColor();
+        } else if (model.hasTag(key) && model.oppositeHasTag(key) && !model.hasSameValueAsOpposite(key)) {
+            bgColor = TwoColumnDiff.Item.DiffItemType.CHANGED.getColor();
         }
         if (isSelected) {
-            bgColor = UIManager.getColor("Table.backgroundSelected");
-            fgColor = UIManager.getColor("Table.foregroundSelected");
+            bgColor = BGCOLOR_SELECTED;
         }
 
-        setText(text);
-        setToolTipText(text);
         setBackground(bgColor);
-        setForeground(fgColor);
-    }
-
-    protected void renderValue(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected) {
-        String text = "";
-        Color bgColor = UIManager.getColor("Table.background");
-        Color fgColor = UIManager.getColor("Table.foreground");
-        if (!model.hasTag(key)) {
-            bgColor = BGCOLOR_DIFFERENCE;
-        } else {
-            text = model.getValue(key);
-            if (!model.hasSameValueAsOpposite(key)) {
-                bgColor = BGCOLOR_DIFFERENCE;
-            }
-        }
-        if (isSelected) {
-            bgColor = UIManager.getColor("Table.backgroundSelected");
-            fgColor = UIManager.getColor("Table.foregroundSelected");
-        }
-
-        setText(text);
-        setToolTipText(text);
-        setBackground(bgColor);
-        setForeground(fgColor);
     }
 
     @Override
@@ -80,11 +54,15 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         switch(column) {
         case 0:
             // the name column
-            renderName(key, model, isSelected);
+            setText(model.hasTag(key) ? key : "");
+            setToolTipText(getText());
+            setBackground(key, model, isSelected);
             break;
         case 1:
             // the value column
-            renderValue(key, model, isSelected);
+            setText(model.hasTag(key) ? model.getValue(key) : "");
+            setToolTipText(getText());
+            setBackground(key, model, isSelected);
             break;
         }
 
