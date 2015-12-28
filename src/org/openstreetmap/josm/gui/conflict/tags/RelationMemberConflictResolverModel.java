@@ -199,6 +199,20 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      */
     public void prepareDefaultRelationDecisions() {
 
+        if (Utils.forAll(primitives, OsmPrimitive.nodePredicate)) {
+            final Collection<OsmPrimitive> primitivesInDecisions = new HashSet<>();
+            for (final RelationMemberConflictDecision i : decisions) {
+                primitivesInDecisions.add(i.getOriginalPrimitive());
+            }
+            if (primitivesInDecisions.size() == 1) {
+                for (final RelationMemberConflictDecision i : decisions) {
+                    i.decide(RelationMemberConflictDecisionType.KEEP);
+                }
+                refresh();
+                return;
+            }
+        }
+
         for (final Relation relation : relations) {
             final Map<OsmPrimitive, List<RelationMemberConflictDecision>> decisionsByPrimitive = new LinkedHashMap<>(primitives.size(), 1);
             for (final RelationMemberConflictDecision decision : decisions) {
