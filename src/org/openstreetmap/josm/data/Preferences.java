@@ -1877,7 +1877,7 @@ public class Preferences {
         // drop this block march 2016
         // update old style JOSM server links to use zip now, see #10581, #12189
         // actually also cache and mirror entries should be cleared
-        if (getInteger("josm.version", Version.getInstance().getVersion()) < 9120) {
+        if (getInteger("josm.version", 0 /* current version avoids this value being written in #save() */) < 9206) {
             for (String key: new String[]{"mappaint.style.entries", "taggingpreset.entries"}) {
                 Collection<Map<String, String>> data = getListOfStructs(key, (Collection<Map<String, String>>) null);
                 if (data != null) {
