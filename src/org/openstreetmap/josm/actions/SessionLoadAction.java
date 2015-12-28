@@ -121,7 +121,7 @@ public class SessionLoadAction extends DiskAccessAction {
                         }
                         for (Layer l : layers) {
                             if (canceled) return;
-                            Main.main.addLayer(l);
+                            Main.main.addLayer(l, (ViewportData) null);
                         }
                         if (active != null) {
                             Main.map.mapView.setActiveLayer(active);
