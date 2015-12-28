@@ -108,13 +108,14 @@ public final class TestUtils {
     }
 
     /**
-     * Returns the Java version as a double value.
-     * @return the Java version as a double value (1.7, 1.8, 1.9, etc.)
+     * Returns the Java version as an int value.
+     * @return the Java version as an int value (7, 8, 9, etc.)
      */
-    public static double getJavaVersion() {
+    public static int getJavaVersion() {
         String version = System.getProperty("java.version");
-        int pos = version.indexOf('.');
-        pos = version.indexOf('.', pos + 1);
-        return Double.parseDouble(version.substring(0, pos));
+        if (version.startsWith("1.")) {
+            version = version.substring(2);
+        }
+        return Integer.parseInt(version.substring(0, version.indexOf('.')));
     }
 }
