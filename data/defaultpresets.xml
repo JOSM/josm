@@ -7011,7 +7011,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Vacuum Cleaner -->
-        <item name="Hifi" icon="styles/standard/shop/hifi.png" type="node,closedway" preset_name_label="true">
+        <item name="Hifi" icon="styles/standard/shop/hifi.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hifi"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=hifi"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:shop=hifi"

@@ -2090,7 +2090,7 @@ node[shop=hearing_aids] {
     text: auto;
 }
 node[shop=hifi] {
-    icon-image: "shop/hifi.png";
+    icon-image: "shop/hifi.svg";
     set icon_z17;
     text: auto;
 }
