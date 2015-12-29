@@ -119,7 +119,7 @@ class taginfoextract {
         }
 
         def find_url(boolean generate_image) {
-            osm = new Node(new LatLon(0,0))
+            osm = new Node(LatLon.ZERO)
             def env = apply_stylesheet(osm)
             def c = env.mc.getCascade("default")
             def image = c.get("icon-image")

@@ -80,13 +80,13 @@ public class DataSetMergerTest {
      */
     @Test
     public void nodeSimple_IdenticalNoConflict() {
-        Node n = new Node(new LatLon(0, 0));
+        Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setModified(false);
         n.put("key1", "value1");
         my.addPrimitive(n);
 
-        Node n1 = new Node(new LatLon(0, 0));
+        Node n1 = new Node(LatLon.ZERO);
         n1.setOsmId(1, 1);
         n1.setModified(false);
         n1.put("key1", "value1");
@@ -115,13 +115,13 @@ public class DataSetMergerTest {
      */
     @Test
     public void nodeSimple_locallyUnmodifiedNoConflict() {
-        Node n = new Node(new LatLon(0, 0));
+        Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setModified(false);
         n.put("key1", "value1");
         my.addPrimitive(n);
 
-        Node n1 = new Node(new LatLon(0, 0));
+        Node n1 = new Node(LatLon.ZERO);
         n1.setOsmId(1, 2);
         n1.setModified(false);
         n1.put("key1", "value1-new");
@@ -155,14 +155,14 @@ public class DataSetMergerTest {
      */
     @Test
     public void nodeSimple_TagConflict() {
-        Node n = new Node(new LatLon(0, 0));
+        Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setModified(true);
         n.put("key1", "value1");
         n.put("key2", "value2");
         my.addPrimitive(n);
 
-        Node n1 = new Node(new LatLon(0, 0));
+        Node n1 = new Node(LatLon.ZERO);
         n1.setOsmId(1, 2);
         n1.setModified(false);
         n1.put("key1", "value1-new");
@@ -190,12 +190,12 @@ public class DataSetMergerTest {
     @Test
     public void nodeSimple_DeleteConflict() {
         Node n = new Node(1, 1);
-        n.setCoor(new LatLon(0, 0));
+        n.setCoor(LatLon.ZERO);
         n.setDeleted(true);
         n.put("key1", "value1");
         my.addPrimitive(n);
 
-        Node n1 = new Node(new LatLon(0, 0));
+        Node n1 = new Node(LatLon.ZERO);
         n1.setOsmId(1, 2);
         n1.setModified(false);
         n1.put("key1", "value1-new");
@@ -220,12 +220,12 @@ public class DataSetMergerTest {
      */
     @Test
     public void nodeSimple_DeleteConflict_2() {
-        Node n = new Node(new LatLon(0, 0));
+        Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setDeleted(true);
         my.addPrimitive(n);
 
-        Node n1 = new Node(new LatLon(0, 0));
+        Node n1 = new Node(LatLon.ZERO);
         n1.setOsmId(1, 1);
         their.addPrimitive(n1);
 
@@ -306,7 +306,7 @@ public class DataSetMergerTest {
         User theirUser = User.createOsmUser(222, "their");
 
         Node n = new Node();
-        n.setCoor(new LatLon(0, 0));
+        n.setCoor(LatLon.ZERO);
         n.put("key1", "value1");
         n.setUser(myUser);
         n.setTimestamp(cal.getTime());
@@ -314,7 +314,7 @@ public class DataSetMergerTest {
         my.addPrimitive(n);
 
         Node n1 = new Node();
-        n1.setCoor(new LatLon(0, 0));
+        n1.setCoor(LatLon.ZERO);
         n1.put("key1", "value1");
         cal.add(Calendar.HOUR, 1);
         Date timestamp = cal.getTime();
@@ -348,7 +348,7 @@ public class DataSetMergerTest {
         my.addPrimitive(n);
 
         Node n1 = new Node();
-        n1.setCoor(new LatLon(0, 0));
+        n1.setCoor(LatLon.ZERO);
         n1.setOsmId(1, 1);
         n1.put("key1", "value1");
         Date timestamp = new Date();
@@ -379,12 +379,12 @@ public class DataSetMergerTest {
         // -- the target dataset
 
         Node n1 = new Node();
-        n1.setCoor(new LatLon(0, 0));
+        n1.setCoor(LatLon.ZERO);
         n1.setOsmId(1, 1);
         my.addPrimitive(n1);
 
         Node n2 = new Node();
-        n2.setCoor(new LatLon(0, 0));
+        n2.setCoor(LatLon.ZERO);
         n2.setOsmId(2, 1);
 
         my.addPrimitive(n2);
@@ -398,7 +398,7 @@ public class DataSetMergerTest {
 
         // -- the source data set
 
-        Node n3 = new Node(new LatLon(0, 0));
+        Node n3 = new Node(LatLon.ZERO);
         n3.setOsmId(1, 1);
         their.addPrimitive(n3);
 
@@ -451,7 +451,7 @@ public class DataSetMergerTest {
 
         // -- my data set
 
-        Node n1 = new Node(new LatLon(0, 0));
+        Node n1 = new Node(LatLon.ZERO);
         n1.setOsmId(1, 1);
         my.addPrimitive(n1);
 
@@ -467,7 +467,7 @@ public class DataSetMergerTest {
 
         // --- their data set
 
-        Node n3 = new Node(new LatLon(0, 0));
+        Node n3 = new Node(LatLon.ZERO);
         n3.setOsmId(1, 1);
         their.addPrimitive(n3);
 
@@ -521,7 +521,7 @@ public class DataSetMergerTest {
 
         // -- the target dataset
 
-        Node n1 = new Node(new LatLon(0, 0));
+        Node n1 = new Node(LatLon.ZERO);
         n1.setOsmId(1, 1);
         my.addPrimitive(n1);
 
@@ -540,7 +540,7 @@ public class DataSetMergerTest {
 
         // -- the source dataset
 
-        Node n3 = new Node(new LatLon(0, 0));
+        Node n3 = new Node(LatLon.ZERO);
         n3.setOsmId(1, 1);
         their.addPrimitive(n3);
 
@@ -584,7 +584,7 @@ public class DataSetMergerTest {
     @Test
     public void waySimple_TheirVersionNotVisibleMyIsModified() {
 
-        Node mn1 = new Node(new LatLon(0, 0));
+        Node mn1 = new Node(LatLon.ZERO);
         mn1.setOsmId(1, 1);
         my.addPrimitive(mn1);
 
@@ -629,7 +629,7 @@ public class DataSetMergerTest {
 
         // -- my data set
 
-        Node n1 = new Node(new LatLon(0, 0));
+        Node n1 = new Node(LatLon.ZERO);
         n1.setOsmId(1, 1);
         my.addPrimitive(n1);
 
@@ -644,7 +644,7 @@ public class DataSetMergerTest {
 
         // -- their data set
 
-        Node n3 = new Node(new LatLon(0, 0));
+        Node n3 = new Node(LatLon.ZERO);
         n3.setOsmId(1, 1);
         their.addPrimitive(n3);
 
@@ -687,7 +687,7 @@ public class DataSetMergerTest {
 
         // -- my data set
 
-        Node n1 = new Node(new LatLon(0, 0));
+        Node n1 = new Node(LatLon.ZERO);
         my.addPrimitive(n1);
 
         Node n2 = new Node(new LatLon(1, 1));
@@ -700,7 +700,7 @@ public class DataSetMergerTest {
 
         // -- their data set
 
-        Node n3 = new Node(new LatLon(0, 0));
+        Node n3 = new Node(LatLon.ZERO);
         their.addPrimitive(n3);
 
         Node n4 = new Node(new LatLon(1, 1));
@@ -743,12 +743,12 @@ public class DataSetMergerTest {
 
         // -- my dataset
 
-        Node mn1 = new Node(new LatLon(0, 0));
+        Node mn1 = new Node(LatLon.ZERO);
         mn1.setOsmId(1, 1);
         mn1.setDeleted(true);
         my.addPrimitive(mn1);
 
-        Node tn1 = new Node(new LatLon(0, 0));
+        Node tn1 = new Node(LatLon.ZERO);
         tn1.setOsmId(1, 1);
         their.addPrimitive(tn1);
 
@@ -796,13 +796,13 @@ public class DataSetMergerTest {
     @Test
     public void relationComplex_mergingADeletedNode() {
 
-        Node mn1 = new Node(new LatLon(0, 0));
+        Node mn1 = new Node(LatLon.ZERO);
         mn1.setOsmId(1, 1);
         mn1.setDeleted(true);
         my.addPrimitive(mn1);
 
 
-        Node tn1 = new Node(new LatLon(0, 0));
+        Node tn1 = new Node(LatLon.ZERO);
         tn1.setOsmId(1, 1);
         their.addPrimitive(tn1);
 
@@ -902,7 +902,7 @@ public class DataSetMergerTest {
         w3.setNodes(Arrays.asList(n1, n2));
         their.addPrimitive(w3);
 
-        Node n4 = new Node(new LatLon(0, 0));
+        Node n4 = new Node(LatLon.ZERO);
         n4.setOsmId(1, 1);
         my.addPrimitive(n4);
 

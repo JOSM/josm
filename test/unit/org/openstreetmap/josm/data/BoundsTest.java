@@ -40,7 +40,7 @@ public class BoundsTest {
         assertTrue(b2.intersects(b3));
         assertTrue(b3.intersects(b2));
 
-        b3.extend(new LatLon(0, 0));
+        b3.extend(LatLon.ZERO);
         assertEquals(b3, new Bounds(0, 0, 90, -170));
     }
 }

@@ -164,7 +164,7 @@ public class MergeSourceBuildingVisitorTest {
         DataSet source = new DataSet();
         Relation r1 = new Relation(1, 1);
         Node n20 = new Node(20, 1);
-        n20.setCoor(new LatLon(0, 0));
+        n20.setCoor(LatLon.ZERO);
         r1.addMember(new RelationMember("node-20", n20));
         Way w30 = new Way(30, 1);
         Node n21  = new Node(21);

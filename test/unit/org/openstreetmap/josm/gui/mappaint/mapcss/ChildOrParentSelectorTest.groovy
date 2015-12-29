@@ -1,10 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss
 
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType
-import org.openstreetmap.josm.gui.mappaint.MultiCascade
-import org.openstreetmap.josm.io.OsmReader
-
 import java.util.logging.Logger
 
 import org.junit.*
@@ -12,11 +8,14 @@ import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
 import org.openstreetmap.josm.data.osm.Node
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType
 import org.openstreetmap.josm.data.osm.Relation
 import org.openstreetmap.josm.data.osm.RelationMember
 import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.gui.mappaint.Environment
+import org.openstreetmap.josm.gui.mappaint.MultiCascade
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector
+import org.openstreetmap.josm.io.OsmReader
 
 class ChildOrParentSelectorTest {
     static private Logger logger = Logger.getLogger(ChildOrParentSelectorTest.class.getName());
@@ -43,7 +42,7 @@ class ChildOrParentSelectorTest {
 
     def node(id) {
         def n = new Node(id,1)
-        n.setCoor(new LatLon(0,0))
+        n.setCoor(LatLon.ZERO)
         ds.addPrimitive(n)
         return n
     }

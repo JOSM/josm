@@ -39,9 +39,9 @@ public class FilterTest {
     @Test
     public void basic() throws ParseError {
         DataSet ds = new DataSet();
-        Node n1 = new Node(new LatLon(0, 0));
+        Node n1 = new Node(LatLon.ZERO);
         n1.put("amenity", "parking");
-        Node n2 = new Node(new LatLon(0, 0));
+        Node n2 = new Node(LatLon.ZERO);
         n2.put("fixme", "continue");
         ds.addPrimitive(n1);
         ds.addPrimitive(n2);
