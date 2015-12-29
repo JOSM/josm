@@ -309,21 +309,7 @@ public class Preferences {
 
         @Override
         public boolean equalVal(List<String> otherVal) {
-            return equalCollection(value, otherVal);
-        }
-
-        public static boolean equalCollection(Collection<String> a, Collection<String> b) {
-            if (a == null) return b == null;
-            if (b == null) return false;
-            if (a.size() != b.size()) return false;
-            Iterator<String> itA = a.iterator();
-            Iterator<String> itB = b.iterator();
-            while (itA.hasNext()) {
-                String aStr = itA.next();
-                String bStr = itB.next();
-                if (!Objects.equals(aStr, bStr)) return false;
-            }
-            return true;
+            return Utils.equalCollection(value, otherVal);
         }
 
         @Override
@@ -391,7 +377,7 @@ public class Preferences {
             Iterator<List<String>> itA = value.iterator();
             Iterator<List<String>> itB = otherVal.iterator();
             while (itA.hasNext()) {
-                if (!ListSetting.equalCollection(itA.next(), itB.next())) return false;
+                if (!Utils.equalCollection(itA.next(), itB.next())) return false;
             }
             return true;
         }
@@ -517,15 +503,37 @@ public class Preferences {
         void visit(MapListSetting value);
     }
 
+    /**
+     * Event triggered when a preference entry value changes.
+     */
     public interface PreferenceChangeEvent {
+        /**
+         * Returns the preference key.
+         * @return the preference key
+         */
         String getKey();
 
+        /**
+         * Returns the old preference value.
+         * @return the old preference value
+         */
         Setting<?> getOldValue();
 
+        /**
+         * Returns the new preference value.
+         * @return the new preference value
+         */
         Setting<?> getNewValue();
     }
 
+    /**
+     * Listener to preference change events.
+     */
     public interface PreferenceChangedListener {
+        /**
+         * Trigerred when a preference entry value changes.
+         * @param e the preference change event
+         */
         void preferenceChanged(PreferenceChangeEvent e);
     }
 
@@ -896,7 +904,7 @@ public class Preferences {
      * @throws SAXException if the settings file does not contain valid XML
      * @throws XMLStreamException if an XML error occurs while parsing the file (after validation)
      */
-    public void load() throws IOException, SAXException, XMLStreamException {
+    protected void load() throws IOException, SAXException, XMLStreamException {
         settingsMap.clear();
         File pref = getPreferenceFile();
         try (BufferedReader in = Files.newBufferedReader(pref.toPath(), StandardCharsets.UTF_8)) {
@@ -1292,9 +1300,9 @@ public class Preferences {
      * Annotation used for converting objects to String Maps and vice versa.
      * Indicates that a certain field should be considered in the conversion
      * process. Otherwise it is ignored.
-     * 
+     *
      * @see #serializeStruct(java.lang.Object, java.lang.Class)
-     * @see #deserializeStruct(java.util.Map, java.lang.Class) 
+     * @see #deserializeStruct(java.util.Map, java.lang.Class)
      */
     @Retention(RetentionPolicy.RUNTIME) // keep annotation at runtime
     public @interface pref { }
@@ -1303,7 +1311,7 @@ public class Preferences {
      * Annotation used for converting objects to String Maps.
      * Indicates that a certain field should be written to the map, even if
      * the value is the same as the default value.
-     * 
+     *
      * @see #serializeStruct(java.lang.Object, java.lang.Class)
      */
     @Retention(RetentionPolicy.RUNTIME) // keep annotation at runtime
@@ -1346,18 +1354,18 @@ public class Preferences {
     /**
      * Convenience method that saves a MapListSetting which is provided as a
      * Collection of objects.
-     * 
+     *
      * Each object is converted to a <code>Map&lt;String, String&gt;</code> using
      * the fields with {@link pref} annotation. The field name is the key and
      * the value will be converted to a string.
-     * 
+     *
      * Considers only fields that have the @pref annotation.
      * In addition it does not write fields with null values. (Thus they are cleared)
      * Default values are given by the field values after default constructor has
      * been called.
      * Fields equal to the default value are not written unless the field has
      * the @writeExplicitly annotation.
-     * @param <T> the class, 
+     * @param <T> the class,
      * @param key main preference key
      * @param val the list that is supposed to be saved
      * @param klass The struct class
@@ -1416,16 +1424,16 @@ public class Preferences {
     /**
      * Convert an object to a String Map, by using field names and values as map
      * key and value.
-     * 
+     *
      * The field value is converted to a String.
-     * 
+     *
      * Only fields with annotation {@link pref} are taken into account.
-     * 
+     *
      * Fields will not be written to the map if the value is null or unchanged
      * (compared to an object created with the no-arg-constructor).
      * The {@link writeExplicitly} annotation overrides this behavior, i.e. the
      * default value will also be written.
-     * 
+     *
      * @param <T> the class of the object <code>struct</code>
      * @param struct the object to be converted
      * @param klass the class T
@@ -1469,11 +1477,11 @@ public class Preferences {
      * Converts a String-Map to an object of a certain class, by comparing
      * map keys to field names of the class and assigning map values to the
      * corresponding fields.
-     * 
+     *
      * The map value (a String) is converted to the field type. Supported
      * types are: boolean, Boolean, int, Integer, double, Double, String and
      * Map&lt;String, String&gt;.
-     * 
+     *
      * Only fields with annotation {@link pref} are taken into account.
      * @param <T> the class
      * @param hash the string map with initial values
@@ -1624,7 +1632,7 @@ public class Preferences {
 
     protected XMLStreamReader parser;
 
-    public void validateXML(Reader in) throws IOException, SAXException {
+    public static void validateXML(Reader in) throws IOException, SAXException {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         try (InputStream xsdStream = new CachedFile("resource://data/preferences.xsd").getInputStream()) {
             Schema schema = factory.newSchema(new StreamSource(xsdStream));
@@ -1633,20 +1641,22 @@ public class Preferences {
         }
     }
 
-    public void fromXML(Reader in) throws XMLStreamException {
+    protected void fromXML(Reader in) throws XMLStreamException {
         XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
         this.parser = parser;
         parse();
     }
 
-    public void parse() throws XMLStreamException {
+    private void parse() throws XMLStreamException {
         int event = parser.getEventType();
         while (true) {
             if (event == XMLStreamConstants.START_ELEMENT) {
-                try
-                {
-                  loadedVersion = Integer.parseInt(parser.getAttributeValue(null, "version"));
-                } catch (Exception e) {
+                try {
+                    loadedVersion = Integer.parseInt(parser.getAttributeValue(null, "version"));
+                } catch (NumberFormatException e) {
+                    if (Main.isDebugEnabled()) {
+                        Main.debug(e.getMessage());
+                    }
                 }
                 parseRoot();
             } else if (event == XMLStreamConstants.END_ELEMENT) {
@@ -1661,7 +1671,7 @@ public class Preferences {
         parser.close();
     }
 
-    public void parseRoot() throws XMLStreamException {
+    private void parseRoot() throws XMLStreamException {
         while (true) {
             int event = parser.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
@@ -1697,7 +1707,7 @@ public class Preferences {
         }
     }
 
-    protected void parseToplevelList() throws XMLStreamException {
+    private void parseToplevelList() throws XMLStreamException {
         String key = parser.getAttributeValue(null, "key");
         String name = parser.getLocalName();
 
@@ -1752,7 +1762,7 @@ public class Preferences {
         }
     }
 
-    protected List<String> parseInnerList() throws XMLStreamException {
+    private List<String> parseInnerList() throws XMLStreamException {
         List<String> entries = new ArrayList<>();
         while (true) {
             int event = parser.next();
@@ -1770,7 +1780,7 @@ public class Preferences {
         return Collections.unmodifiableList(entries);
     }
 
-    protected Map<String, String> parseMap() throws XMLStreamException {
+    private Map<String, String> parseMap() throws XMLStreamException {
         Map<String, String> map = new LinkedHashMap<>();
         while (true) {
             int event = parser.next();

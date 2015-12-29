@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -514,6 +515,26 @@ public final class Utils {
      */
     public static boolean equalsEpsilon(double a, double b) {
         return Math.abs(a - b) <= EPSILON;
+    }
+
+    /**
+     * Determines if two collections are equal.
+     * @param a first collection
+     * @param b second collection
+     * @return {@code true} if collections are equal, {@code false} otherwise
+     * @since 9217
+     */
+    public static boolean equalCollection(Collection<?> a, Collection<?> b) {
+        if (a == null) return b == null;
+        if (b == null) return false;
+        if (a.size() != b.size()) return false;
+        Iterator<?> itA = a.iterator();
+        Iterator<?> itB = b.iterator();
+        while (itA.hasNext()) {
+            if (!Objects.equals(itA.next(), itB.next()))
+                return false;
+        }
+        return true;
     }
 
     /**
