@@ -48,9 +48,14 @@ import org.w3c.dom.Element;
 public class OsmDataSessionExporter implements SessionLayerExporter {
 
     private final OsmDataLayer layer;
-    private JRadioButton link, include;
+    private JRadioButton link;
+    private JRadioButton include;
     private JCheckBox export;
 
+    /**
+     * Constructs a new {@code OsmDataSessionExporter}.
+     * @param layer Data layer to export
+     */
     public OsmDataSessionExporter(OsmDataLayer layer) {
         this.layer = layer;
     }
@@ -61,6 +66,9 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
     }
 
     private class LayerSaveAction extends AbstractAction {
+        /**
+         * Constructs a new {@code LayerSaveAction}.
+         */
         LayerSaveAction() {
             putValue(SMALL_ICON, new ImageProvider("save").setWidth(16).get());
             putValue(SHORT_DESCRIPTION, layer.requiresSaveToFile() ?
@@ -104,7 +112,7 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
         final File file = layer.getAssociatedFile();
         final LayerSaveAction saveAction = new LayerSaveAction();
         final JButton save = new JButton(saveAction);
-        if (file != null) {
+        if (file != null && file.exists()) {
             JosmTextField tf = new JosmTextField();
             tf.setText(file.getPath());
             tf.setEditable(false);
@@ -125,7 +133,7 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
         cards.add(cardLink, "link");
         cards.add(cardInclude, "include");
 
-        if (file != null) {
+        if (file != null && file.exists()) {
             link.setSelected(true);
         } else {
             link.setEnabled(false);
@@ -165,7 +173,7 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
                 } else {
                     GuiHelper.setEnabledRec(p, true);
                     save.setEnabled(saveAction.isEnabled());
-                    link.setEnabled(file != null);
+                    link.setEnabled(file != null && file.exists());
                 }
             }
         });
