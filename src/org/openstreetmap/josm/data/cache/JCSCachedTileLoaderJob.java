@@ -9,6 +9,7 @@ import java.net.URLConnection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -458,6 +459,13 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         ret.setExpirationTime(lng);
         ret.setLastModification(now);
         ret.setEtag(urlConn.getHeaderField("ETag"));
+
+        if(Main.isDebugEnabled()) {
+            for(Entry<String, List<String>> header: urlConn.getHeaderFields().entrySet()) {
+                log.log(Level.FINE, "Response header - {0}: {1}", new Object[]{header.getKey(), header.getValue()});
+            }
+        }
+
         return ret;
     }
 
