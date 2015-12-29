@@ -43,9 +43,14 @@ import org.w3c.dom.Element;
 public class GpxTracksSessionExporter implements SessionLayerExporter {
 
     private final GpxLayer layer;
-    private JRadioButton link, include;
+    private JRadioButton link;
+    private JRadioButton include;
     private JCheckBox export;
 
+    /**
+     * Constructs a new {@code GpxTracksSessionExporter}.
+     * @param layer GPX layer to export
+     */
     public GpxTracksSessionExporter(GpxLayer layer) {
         this.layer = layer;
     }
@@ -77,7 +82,7 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
 
         JPanel cardLink = new JPanel(new GridBagLayout());
         final File file = layer.getAssociatedFile();
-        if (file != null) {
+        if (file != null && file.exists()) {
             JosmTextField tf = new JosmTextField();
             tf.setText(file.getPath());
             tf.setEditable(false);
@@ -96,7 +101,7 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
         cards.add(cardLink, "link");
         cards.add(cardInclude, "include");
 
-        if (file != null) {
+        if (file != null && file.exists()) {
             link.setSelected(true);
         } else {
             link.setEnabled(false);
@@ -135,7 +140,7 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
                     export.setEnabled(true);
                 } else {
                     GuiHelper.setEnabledRec(p, true);
-                    link.setEnabled(file != null);
+                    link.setEnabled(file != null && file.exists());
                 }
             }
         });
