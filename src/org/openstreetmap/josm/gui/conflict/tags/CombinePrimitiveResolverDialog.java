@@ -329,11 +329,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
         getContentPane().add(pnlButtons, BorderLayout.SOUTH);
         validate();
-        int numTagDecisions = getTagConflictResolverModel().getNumDecisions();
-        int numRelationDecisions = getRelationMemberConflictResolverModel().getNumDecisions();
-        if (numTagDecisions > 0 && numRelationDecisions > 0) {
-            spTagConflictTypes.setDividerLocation(0.5);
-        }
+        adjustDividerLocation();
         pnlRelationMemberConflictResolver.prepareForEditing();
     }
 
@@ -353,6 +349,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     public void setVisible(boolean visible) {
         if (visible) {
             prepareGUIBeforeConflictResolutionStarts();
+            setMinimumSize(new Dimension(400, 400));
             new WindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(Main.parent,
                     new Dimension(800, 600))).applySafe(this);
             setApplied(false);
@@ -410,14 +407,20 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
     }
 
+    private void adjustDividerLocation() {
+        int numTagDecisions = getTagConflictResolverModel().getNumDecisions();
+        int numRelationDecisions = getRelationMemberConflictResolverModel().getNumDecisions();
+        if (numTagDecisions > 0 && numRelationDecisions > 0) {
+            double nTop = 1.0 + numTagDecisions;
+            double nBottom = 2.5 + numRelationDecisions;
+            spTagConflictTypes.setDividerLocation(nTop/(nTop+nBottom));
+        }
+    }
+
     class AdjustDividerLocationAction extends WindowAdapter {
         @Override
         public void windowOpened(WindowEvent e) {
-            int numTagDecisions = getTagConflictResolverModel().getNumDecisions();
-            int numRelationDecisions = getRelationMemberConflictResolverModel().getNumDecisions();
-            if (numTagDecisions > 0 && numRelationDecisions > 0) {
-                spTagConflictTypes.setDividerLocation(0.5);
-            }
+            adjustDividerLocation();
         }
     }
 
