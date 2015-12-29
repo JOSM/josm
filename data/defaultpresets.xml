@@ -1612,6 +1612,7 @@
         <separator/> <!-- *** Access *** -->
         <item name="Entrance (Barrier Opening)" icon="styles/standard/vehicle/entrance.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=entrance"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:barrier=entrance"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=entrance"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=entrance" />
             <key key="barrier" value="entrance" />
@@ -8815,7 +8816,7 @@
             <key key="landuse" value="greenfield" />
             <text key="name" text="Name" />
         </item> <!-- Greenfield -->
-        <item name="Landfill" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
+        <item name="Landfill" icon="styles/standard/misc/landuse/landfill.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=landfill"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=landfill"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=landfill"
