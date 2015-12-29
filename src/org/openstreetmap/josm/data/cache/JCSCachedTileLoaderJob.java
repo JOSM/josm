@@ -460,8 +460,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         ret.setLastModification(now);
         ret.setEtag(urlConn.getHeaderField("ETag"));
 
-        if(Main.isDebugEnabled()) {
-            for(Entry<String, List<String>> header: urlConn.getHeaderFields().entrySet()) {
+        if (Main.isDebugEnabled()) {
+            for (Entry<String, List<String>> header: urlConn.getHeaderFields().entrySet()) {
                 log.log(Level.FINE, "Response header - {0}: {1}", new Object[]{header.getKey(), header.getValue()});
             }
         }

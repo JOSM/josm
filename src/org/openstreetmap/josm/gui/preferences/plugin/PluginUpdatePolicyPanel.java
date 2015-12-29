@@ -31,7 +31,7 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 public class PluginUpdatePolicyPanel extends JPanel {
 
     private enum Policy {
-        ASK ("ask"),
+        ASK("ask"),
         ALWAYS("always"),
         NEVER("never");
 

@@ -12,22 +12,22 @@ public enum CoordinateFormat {
     /**
      * the decimal format 999.999
      */
-    DECIMAL_DEGREES (tr("Decimal Degrees")),
+    DECIMAL_DEGREES(tr("Decimal Degrees")),
 
     /**
      * the degrees/minutes/seconds format 9 deg 99 min 99 sec
      */
-    DEGREES_MINUTES_SECONDS (tr("deg\u00B0 min'' sec\"")),
+    DEGREES_MINUTES_SECONDS(tr("deg\u00B0 min'' sec\"")),
 
     /**
      * the nautical format
      */
-    NAUTICAL (tr("deg\u00B0 min'' (Nautical)")),
+    NAUTICAL(tr("deg\u00B0 min'' (Nautical)")),
 
     /**
      * coordinates East/North
      */
-    EAST_NORTH (tr("Projected Coordinates"));
+    EAST_NORTH(tr("Projected Coordinates"));
 
     private String displayName;
     CoordinateFormat(String displayName) {

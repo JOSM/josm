@@ -10,13 +10,13 @@ import java.util.Collection;
 
 public enum OsmPrimitiveType {
 
-    NODE (marktr(/* ICON(data/) */"node"), Node.class, NodeData.class),
-    WAY  (marktr(/* ICON(data/) */"way"), Way.class, WayData.class),
-    RELATION (marktr(/* ICON(data/) */"relation"), Relation.class, RelationData.class),
+    NODE(marktr(/* ICON(data/) */"node"), Node.class, NodeData.class),
+    WAY(marktr(/* ICON(data/) */"way"), Way.class, WayData.class),
+    RELATION(marktr(/* ICON(data/) */"relation"), Relation.class, RelationData.class),
 
     /* only for display, no real type */
-    CLOSEDWAY  (marktr(/* ICON(data/) */"closedway"), null, WayData.class),
-    MULTIPOLYGON (marktr(/* ICON(data/) */"multipolygon"), null, RelationData.class);
+    CLOSEDWAY(marktr(/* ICON(data/) */"closedway"), null, WayData.class),
+    MULTIPOLYGON(marktr(/* ICON(data/) */"multipolygon"), null, RelationData.class);
 
     private static final Collection<OsmPrimitiveType> DATA_VALUES = Arrays.asList(NODE, WAY, RELATION);
 
