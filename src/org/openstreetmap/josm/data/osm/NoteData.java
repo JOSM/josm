@@ -92,10 +92,12 @@ public class NoteData {
      */
     public NoteData(Collection<Note> notes) {
         noteList = new Storage<>();
-        for (Note note : notes) {
-            noteList.add(note);
-            if (note.getId() <= newNoteId) {
-                newNoteId = note.getId() - 1;
+        if (notes != null) {
+            for (Note note : notes) {
+                noteList.add(note);
+                if (note.getId() <= newNoteId) {
+                    newNoteId = note.getId() - 1;
+                }
             }
         }
     }
