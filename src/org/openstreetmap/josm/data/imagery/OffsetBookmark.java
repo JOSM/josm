@@ -105,7 +105,7 @@ public class OffsetBookmark {
         if (Main.isDisplayingMapView()) {
             center = Main.getProjection().eastNorth2latlon(Main.map.mapView.getCenter());
         } else {
-            center = new LatLon(0, 0);
+            center = LatLon.ZERO;
         }
         OffsetBookmark nb = new OffsetBookmark(
                 Main.getProjection().toCode(), layer.getInfo().getName(),

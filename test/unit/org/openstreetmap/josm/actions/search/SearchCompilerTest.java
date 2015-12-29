@@ -38,7 +38,7 @@ public class SearchCompilerTest {
 
     private static final class SearchContext {
         final DataSet ds = new DataSet();
-        final Node n1 = new Node(new LatLon(0, 0));
+        final Node n1 = new Node(LatLon.ZERO);
         final Node n2 = new Node(new LatLon(5, 5));
         final Way w1 = new Way();
         final Way w2 = new Way();

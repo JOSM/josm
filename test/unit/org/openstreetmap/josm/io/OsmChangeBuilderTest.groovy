@@ -42,7 +42,7 @@ class OsmChangeBuilderTest {
 
         // should be OK
         builder.start()
-        Node n = new Node(new LatLon(0,0))
+        Node n = new Node(LatLon.ZERO)
         builder.append n
         builder.finish()
 
@@ -72,7 +72,7 @@ class OsmChangeBuilderTest {
     public void testDocumentWithNewNode() {
         def Changeset cs = new Changeset(1)
         OsmChangeBuilder builder = new OsmChangeBuilder(cs)
-        Node n = new Node(new LatLon(0,0))
+        Node n = new Node(LatLon.ZERO)
 
         builder.start()
         builder.append n
@@ -104,7 +104,7 @@ class OsmChangeBuilderTest {
         def Changeset cs = new Changeset(1)
         OsmChangeBuilder builder = new OsmChangeBuilder(cs)
         Node n = new Node(1)
-        n.coor = new LatLon(0,0)
+        n.coor = LatLon.ZERO
         n.incomplete = false
         n.modified = true
 
@@ -138,7 +138,7 @@ class OsmChangeBuilderTest {
         def Changeset cs = new Changeset(1)
         OsmChangeBuilder builder = new OsmChangeBuilder(cs)
         Node n = new Node(1)
-        n.coor = new LatLon(0,0)
+        n.coor = LatLon.ZERO
         n.incomplete = false
         n.deleted = true
 
@@ -173,14 +173,14 @@ class OsmChangeBuilderTest {
         def Changeset cs = new Changeset(1)
         OsmChangeBuilder builder = new OsmChangeBuilder(cs)
         Node n1 = new Node(1)
-        n1.coor = new LatLon(0,0)
+        n1.coor = LatLon.ZERO
         n1.incomplete = false
         n1.deleted = true
 
-        Node n2 = new Node(new LatLon(0,0))
+        Node n2 = new Node(LatLon.ZERO)
 
         Node n3 = new Node(2)
-        n3.coor = new LatLon(0,0)
+        n3.coor = LatLon.ZERO
         n3.incomplete = false
         n3.modified = true
 

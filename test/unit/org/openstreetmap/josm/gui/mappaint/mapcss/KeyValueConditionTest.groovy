@@ -39,7 +39,7 @@ class KeyValueConditionTest {
 
     def node(id) {
         def n = new Node(id,1)
-        n.setCoor(new LatLon(0,0))
+        n.setCoor(LatLon.ZERO)
         ds.addPrimitive(n)
         return n
     }

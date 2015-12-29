@@ -194,7 +194,7 @@ public class LatLonDialog extends ExtendedDialog {
 
     public void setCoordinates(LatLon ll) {
         if (ll == null) {
-            ll = new LatLon(0, 0);
+            ll = LatLon.ZERO;
         }
         this.latLonCoordinates = ll;
         tfLatLon.setText(ll.latToString(CoordinateFormat.getDefaultFormat()) + ' ' + ll.lonToString(CoordinateFormat.getDefaultFormat()));

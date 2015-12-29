@@ -38,7 +38,7 @@ public class HistoryNodeTest {
                 User.createOsmUser(3, "testuser"),
                 4L,   // changesetId
                 d,    // timestamp
-                new LatLon(0, 0)
+                LatLon.ZERO
                 );
     }
 

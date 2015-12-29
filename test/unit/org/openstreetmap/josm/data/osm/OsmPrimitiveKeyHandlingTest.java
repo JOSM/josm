@@ -118,12 +118,12 @@ public class OsmPrimitiveKeyHandlingTest {
     @Test
     public void hasEqualSemanticAttributes() {
         Node n1 = new Node(1);
-        n1.setCoor(new LatLon(0, 0));
+        n1.setCoor(LatLon.ZERO);
         n1.put("key.1", "value.1");
         n1.put("key.2", "value.2");
 
         Node n2 = new Node(1);
-        n2.setCoor(new LatLon(0, 0));
+        n2.setCoor(LatLon.ZERO);
         n2.put("key.2", "value.2");
         n2.put("key.1", "value.1");
 
@@ -136,12 +136,12 @@ public class OsmPrimitiveKeyHandlingTest {
     @Test
     public void hasEqualSemanticAttributes_2() {
         Node n1 = new Node(1);
-        n1.setCoor(new LatLon(0, 0));
+        n1.setCoor(LatLon.ZERO);
         n1.put("key.1", "value.1");
         n1.put("key.2", "value.3");
 
         Node n2 = new Node(1);
-        n2.setCoor(new LatLon(0, 0));
+        n2.setCoor(LatLon.ZERO);
         n2.put("key.1", "value.1");
         n2.put("key.2", "value.4");
 

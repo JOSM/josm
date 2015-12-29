@@ -454,7 +454,7 @@ public class NmeaReader {
 
         // return a zero latlon instead of null so it is logged as zero coordinate
         // instead of malformed sentence
-        if (widthNorth.isEmpty() && lengthEast.isEmpty()) return new LatLon(0.0, 0.0);
+        if (widthNorth.isEmpty() && lengthEast.isEmpty()) return LatLon.ZERO;
 
         // The format is xxDDLL.LLLL
         // xx optional whitespace

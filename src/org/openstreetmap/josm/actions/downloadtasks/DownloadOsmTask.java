@@ -359,7 +359,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 }
                 // need to synthesize a download bounds lest the visual indication of downloaded area doesn't work
                 dataSet.dataSources.add(new DataSource(currentBounds != null ? currentBounds :
-                    new Bounds(new LatLon(0, 0)), "OpenStreetMap server"));
+                    new Bounds(LatLon.ZERO), "OpenStreetMap server"));
             }
 
             rememberDownloadedData(dataSet);

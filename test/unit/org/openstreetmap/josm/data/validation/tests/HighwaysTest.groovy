@@ -17,7 +17,7 @@ class HighwaysTest extends GroovyTestCase {
     public static Way createTestSetting(String highway, String highwayLink) {
         def ds = new DataSet()
 
-        def n00 = new Node(new LatLon(0, 0))
+        def n00 = new Node(LatLon.ZERO)
         def n10 = new Node(new LatLon(1, 0))
         def n20 = new Node(new LatLon(2, 0))
         def n01 = new Node(new LatLon(0, 1))

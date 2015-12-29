@@ -60,7 +60,7 @@ public final class PlayHeadMarker extends Marker {
     }
 
     private PlayHeadMarker() {
-        super(new LatLon(0.0, 0.0), "",
+        super(LatLon.ZERO, "",
                 Main.pref.get("marker.audiotracericon", "audio-tracer"),
                 null, -1.0, 0.0);
         enabled = Main.pref.getBoolean("marker.traceaudio", true);

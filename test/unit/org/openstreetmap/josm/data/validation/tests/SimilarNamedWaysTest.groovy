@@ -22,7 +22,7 @@ class SimilarNamedWaysTest extends GroovyTestCase {
     public static List<TestError> testWays(String namea, String nameb) {
         def ds = new DataSet()
 
-        def n00 = new Node(new LatLon(0, 0))
+        def n00 = new Node(LatLon.ZERO)
         def n10 = new Node(new LatLon(1, 0))
         def n20 = new Node(new LatLon(2, 0))
         def n30 = new Node(new LatLon(3, 0))

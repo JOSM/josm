@@ -19,7 +19,7 @@ public class WaySegmentTest {
     @Test
     public void testForNodePair() throws Exception {
         final DataSet ds = new DataSet();
-        final Node n1 = new Node(new LatLon(0, 0));
+        final Node n1 = new Node(LatLon.ZERO);
         final Node n2 = new Node(new LatLon(1, 0));
         final Node n3 = new Node(new LatLon(2, 0));
         final Node n4 = new Node(new LatLon(3, 0));
