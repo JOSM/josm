@@ -111,6 +111,11 @@ public class Preferences {
     private File preferencesDir;
 
     /**
+     * Version of the loaded data file, required for updates
+     */
+    private int loadedVersion = 0;
+
+    /**
      * Internal storage for the cache directory.
      */
     private File cacheDir;
@@ -1638,6 +1643,11 @@ public class Preferences {
         int event = parser.getEventType();
         while (true) {
             if (event == XMLStreamConstants.START_ELEMENT) {
+                try
+                {
+                  loadedVersion = Integer.parseInt(parser.getAttributeValue(null, "version"));
+                } catch (Exception e) {
+                }
                 parseRoot();
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 return;
@@ -1877,7 +1887,7 @@ public class Preferences {
         // drop this block march 2016
         // update old style JOSM server links to use zip now, see #10581, #12189
         // actually also cache and mirror entries should be cleared
-        if (getInteger("josm.version", 0 /* current version avoids this value being written in #save() */) < 9206) {
+        if (loadedVersion < 9216) {
             for (String key: new String[]{"mappaint.style.entries", "taggingpreset.entries"}) {
                 Collection<Map<String, String>> data = getListOfStructs(key, (Collection<Map<String, String>>) null);
                 if (data != null) {
