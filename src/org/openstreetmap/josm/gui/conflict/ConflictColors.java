@@ -33,17 +33,17 @@ public enum ConflictColors implements ColorKey {
     BGCOLOR_IN_OPPOSITE(marktr("Conflict background: in opposite"), new Color(255, 234, 213)),
     BGCOLOR_SAME_POSITION_IN_OPPOSITE(marktr("Conflict background: same position in opposite"), new Color(217, 255, 217)),
 
-    BGCOLOR_TAG_KEEP_ONE (marktr("Conflict background: keep one tag"), new Color(217, 255, 217)),
-    FGCOLOR_TAG_KEEP_ONE (marktr("Conflict foreground: keep one tag"), Color.black),
+    BGCOLOR_TAG_KEEP_ONE(marktr("Conflict background: keep one tag"), new Color(217, 255, 217)),
+    FGCOLOR_TAG_KEEP_ONE(marktr("Conflict foreground: keep one tag"), Color.black),
     BGCOLOR_TAG_KEEP_NONE(marktr("Conflict background: drop tag"), Color.lightGray),
     FGCOLOR_TAG_KEEP_NONE(marktr("Conflict foreground: drop tag"), Color.black),
-    BGCOLOR_TAG_KEEP_ALL (marktr("Conflict background: keep all tags"), new Color(255, 234, 213)),
-    FGCOLOR_TAG_KEEP_ALL (marktr("Conflict foreground: keep all tags"), Color.black),
+    BGCOLOR_TAG_KEEP_ALL(marktr("Conflict background: keep all tags"), new Color(255, 234, 213)),
+    FGCOLOR_TAG_KEEP_ALL(marktr("Conflict foreground: keep all tags"), Color.black),
     BGCOLOR_TAG_SUM_ALL_NUM(marktr("Conflict background: sum all numeric tags"), new Color(255, 234, 213)),
     FGCOLOR_TAG_SUM_ALL_NUM(marktr("Conflict foreground: sum all numeric tags"), Color.black),
 
-    BGCOLOR_MEMBER_KEEP  (marktr("Conflict background: keep member"), new Color(217, 255, 217)),
-    FGCOLOR_MEMBER_KEEP  (marktr("Conflict foreground: keep member"), Color.black),
+    BGCOLOR_MEMBER_KEEP(marktr("Conflict background: keep member"), new Color(217, 255, 217)),
+    FGCOLOR_MEMBER_KEEP(marktr("Conflict foreground: keep member"), Color.black),
     BGCOLOR_MEMBER_REMOVE(marktr("Conflict background: remove member"), Color.lightGray),
     FGCOLOR_MEMBER_REMOVE(marktr("Conflict foreground: remove member"), Color.black);
 
