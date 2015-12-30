@@ -5760,7 +5760,7 @@
             <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
             <check key="disused" text="Disused" />
         </item> <!-- Adit -->
-        <item name="Embankment" icon="styles/standard/misc/cliff.svg" type="way" preset_name_label="true">
+        <item name="Embankment" icon="styles/standard/misc/embankment.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=embankment"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=embankment"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=embankment"
