@@ -36,6 +36,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -61,6 +62,7 @@ import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -247,15 +249,12 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     isSelected, boolean hasFocus, int row, int column) {
                 JLabel label = (JLabel) super.getTableCellRendererComponent(
                         table, value, isSelected, hasFocus, row, column);
-                label.setBackground(Main.pref.getUIColor("Table.background"));
-                if (isSelected) {
-                    label.setForeground(Main.pref.getUIColor("Table.foreground"));
-                }
+                GuiHelper.setBackgroundReadable(label, UIManager.getColor("Table.background"));
                 if (value != null) { // Fix #8159
                     String t = value.toString();
                     for (ImageryInfo l : layers) {
                         if (l.getExtendedUrl().equals(t)) {
-                            label.setBackground(Main.pref.getColor(
+                            GuiHelper.setBackgroundReadable(label, Main.pref.getColor(
                                     marktr("Imagery Background: Default"),
                                     new Color(200, 255, 200)));
                             break;
@@ -278,10 +277,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 ImageryInfo info = (ImageryInfo) value;
                 JLabel label = (JLabel) super.getTableCellRendererComponent(
                         table, info.getName(), isSelected, hasFocus, row, column);
-                label.setBackground(Main.pref.getUIColor("Table.background"));
-                if (isSelected) {
-                    label.setForeground(Main.pref.getUIColor("Table.foreground"));
-                }
+                GuiHelper.setBackgroundReadable(label, UIManager.getColor("Table.background"));
                 label.setToolTipText(info.getToolTipText());
                 return label;
             }

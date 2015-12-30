@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -33,6 +34,7 @@ import org.openstreetmap.josm.data.Preferences.MapListSetting;
 import org.openstreetmap.josm.data.Preferences.Setting;
 import org.openstreetmap.josm.data.Preferences.StringSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -297,11 +299,10 @@ public class PreferencesTable extends JTable {
     }
 
     private static class SettingCellRenderer extends DefaultTableCellRenderer {
-        private final Color backgroundColor = Main.pref.getUIColor("Table.background");
+        private final Color backgroundColor = UIManager.getColor("Table.background");
         private final Color changedColor = Main.pref.getColor(
                          marktr("Advanced Background: Changed"),
                          new Color(200, 255, 200));
-        private final Color foregroundColor = Main.pref.getUIColor("Table.foreground");
         private final Color nonDefaultColor = Main.pref.getColor(
                             marktr("Advanced Background: NonDefault"),
                             new Color(255, 255, 200));
@@ -318,14 +319,11 @@ public class PreferencesTable extends JTable {
             JLabel label = (JLabel) super.getTableCellRendererComponent(table,
                     display, isSelected, hasFocus, row, column);
 
-            label.setBackground(backgroundColor);
-            if (isSelected) {
-                label.setForeground(foregroundColor);
-            }
+            GuiHelper.setBackgroundReadable(label, backgroundColor);
             if (pe.isChanged()) {
-                label.setBackground(changedColor);
+                GuiHelper.setBackgroundReadable(label, changedColor);
             } else if (!pe.isDefault()) {
-                label.setBackground(nonDefaultColor);
+                GuiHelper.setBackgroundReadable(label, nonDefaultColor);
             }
 
             if (!pe.isDefault()) {
