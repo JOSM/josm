@@ -192,13 +192,12 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     public OAuthParameters getAdvancedParameters() {
         if (cbUseDefaults.isSelected())
             return OAuthParameters.createDefault(apiUrl);
-        OAuthParameters parameters = new OAuthParameters();
-        parameters.setConsumerKey(tfConsumerKey.getText());
-        parameters.setConsumerSecret(tfConsumerSecret.getText());
-        parameters.setRequestTokenUrl(tfRequestTokenURL.getText());
-        parameters.setAccessTokenUrl(tfAccessTokenURL.getText());
-        parameters.setAuthoriseUrl(tfAuthoriseURL.getText());
-        return parameters;
+        return new OAuthParameters(
+            tfConsumerKey.getText(),
+            tfConsumerSecret.getText(),
+            tfRequestTokenURL.getText(),
+            tfAccessTokenURL.getText(),
+            tfAuthoriseURL.getText());
     }
 
     /**
