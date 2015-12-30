@@ -227,8 +227,12 @@ public class ColorPreference implements SubPreferenceSetting {
                 if (o == null)
                     return new JLabel();
                 if (column == 1) {
-                    JLabel l = new JLabel(ColorHelper.color2html((Color) o));
-                    l.setBackground((Color) o);
+                    Color c = (Color) o;
+                    JLabel l = new JLabel(ColorHelper.color2html(c));
+                    l.setBackground(c);
+                    // http://stackoverflow.com/a/3943023/2257172
+                    l.setForeground((c.getRed()*0.299 + c.getGreen()*0.587 + c.getBlue()*0.114) > 186 ?
+                            Color.BLACK : Color.WHITE);
                     l.setOpaque(true);
                     return l;
                 }

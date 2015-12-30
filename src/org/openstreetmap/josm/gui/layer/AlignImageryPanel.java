@@ -44,9 +44,11 @@ public class AlignImageryPanel extends JPanel {
         UrlLabel detailsList = new UrlLabel(tr("http://wiki.openstreetmap.org/wiki/Using_Imagery"), tr("Details..."));
         nagLabel.setLabelFor(detailsList);
         nagLabel.setFont(font);
+        nagLabel.setForeground(Color.BLACK);
         detailsList.setFont(font);
         final JCheckBox doNotShowAgain = new JCheckBox(tr("Do not show this message again"));
         doNotShowAgain.setOpaque(false);
+        doNotShowAgain.setForeground(Color.BLACK);
 
         JButton closeButton = new JButton(ImageProvider.get("misc", "black_x"));
         closeButton.setContentAreaFilled(false);

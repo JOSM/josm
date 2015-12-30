@@ -1,9 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.Icon;
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -101,6 +103,8 @@ public class Notification {
     public Notification setContent(String msg) {
         JMultilineLabel lbl = new JMultilineLabel(msg);
         lbl.setMaxWidth(DEFAULT_CONTENT_WIDTH);
+        lbl.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        lbl.setForeground(Color.BLACK);
         content = lbl;
         return this;
     }
