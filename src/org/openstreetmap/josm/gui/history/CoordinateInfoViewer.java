@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -208,7 +209,7 @@ public class CoordinateInfoViewer extends JPanel {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             add(lblLat = new JLabel(), gc);
-            lblLat.setBackground(Color.WHITE);
+            GuiHelper.setBackgroundReadable(lblLat, Color.WHITE);
             lblLat.setOpaque(true);
             lblLat.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
@@ -226,7 +227,7 @@ public class CoordinateInfoViewer extends JPanel {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             add(lblLon = new JLabel(), gc);
-            lblLon.setBackground(Color.WHITE);
+            GuiHelper.setBackgroundReadable(lblLon, Color.WHITE);
             lblLon.setOpaque(true);
             lblLon.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
@@ -274,15 +275,15 @@ public class CoordinateInfoViewer extends JPanel {
             // update background color to reflect differences in the coordinates
             if (coord == oppositeCoord ||
                     (coord != null && oppositeCoord != null && coord.lat() == oppositeCoord.lat())) {
-                lblLat.setBackground(Color.WHITE);
+                GuiHelper.setBackgroundReadable(lblLat, Color.WHITE);
             } else {
-                lblLat.setBackground(BGCOLOR_DIFFERENCE);
+                GuiHelper.setBackgroundReadable(lblLat, BGCOLOR_DIFFERENCE);
             }
             if (coord == oppositeCoord ||
                     (coord != null && oppositeCoord != null && coord.lon() == oppositeCoord.lon())) {
-                lblLon.setBackground(Color.WHITE);
+                GuiHelper.setBackgroundReadable(lblLon, Color.WHITE);
             } else {
-                lblLon.setBackground(BGCOLOR_DIFFERENCE);
+                GuiHelper.setBackgroundReadable(lblLon, BGCOLOR_DIFFERENCE);
             }
         }
 
@@ -321,7 +322,7 @@ public class CoordinateInfoViewer extends JPanel {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             add(lblDistance = new JLabel(), gc);
-            lblDistance.setBackground(Color.WHITE);
+            GuiHelper.setBackgroundReadable(lblDistance, Color.WHITE);
             lblDistance.setOpaque(true);
             lblDistance.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         }
@@ -334,14 +335,10 @@ public class CoordinateInfoViewer extends JPanel {
             //
             if (coord != null && oppositeCoord != null) {
                 double distance = coord.greatCircleDistance(oppositeCoord);
-                if (distance > 0) {
-                    lblDistance.setBackground(BGCOLOR_DIFFERENCE);
-                } else {
-                    lblDistance.setBackground(Color.WHITE);
-                }
+                GuiHelper.setBackgroundReadable(lblDistance, distance > 0 ? BGCOLOR_DIFFERENCE : Color.WHITE);
                 lblDistance.setText(NavigatableComponent.getDistText(distance));
             } else {
-                lblDistance.setBackground(coord != oppositeCoord ? BGCOLOR_DIFFERENCE : Color.WHITE);
+                GuiHelper.setBackgroundReadable(lblDistance, coord != oppositeCoord ? BGCOLOR_DIFFERENCE : Color.WHITE);
                 lblDistance.setText(tr("(none)"));
             }
         }

@@ -12,6 +12,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -55,7 +56,7 @@ public class SelectionTableCellRenderer extends JLabel implements TableCellRende
         } else if (primitive != null && model != null && model.getNumMembersWithPrimitive(primitive) > 1) {
             bgc = BGCOLOR_DOUBLE_ENTRY;
         }
-        setBackground(bgc);
+        GuiHelper.setBackgroundReadable(this, bgc);
     }
 
     protected void renderPrimitive(OsmPrimitive primitive, Rectangle cellSize) {

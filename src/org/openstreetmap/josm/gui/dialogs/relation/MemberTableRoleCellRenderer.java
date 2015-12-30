@@ -14,9 +14,8 @@ public class MemberTableRoleCellRenderer extends MemberTableCellRenderer {
         if (value == null)
             return this;
 
-        renderForeground(isSelected);
         String role = (String) value;
-        renderBackground(getModel(table), null, isSelected);
+        renderBackgroundForeground(getModel(table), null, isSelected);
         setText(role);
         return this;
     }

@@ -39,9 +39,8 @@ public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
 
         Rectangle cellSize = table.getCellRect(row, column, false);
 
-        renderForeground(isSelected);
         OsmPrimitive primitive = (OsmPrimitive) value;
-        renderBackground(getModel(table), primitive, isSelected);
+        renderBackgroundForeground(getModel(table), primitive, isSelected);
         renderPrimitive(primitive, cellSize);
         return this;
     }

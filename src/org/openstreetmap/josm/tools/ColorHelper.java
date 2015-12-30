@@ -71,4 +71,17 @@ public final class ColorHelper {
         }
         return code;
     }
+
+    /**
+     * Determines the correct foreground color (black or white) to use for the given background,
+     * so the text will be readable.
+     * @param bg background color
+     * @return {@code Color#BLACK} or {@code Color#WHITE}
+     * @since 9223
+     */
+    public static Color getForegroundColor(Color bg) {
+        // http://stackoverflow.com/a/3943023/2257172
+        return (bg.getRed()*0.299 + bg.getGreen()*0.587 + bg.getBlue()*0.114) > 186 ?
+                Color.BLACK : Color.WHITE;
+    }
 }

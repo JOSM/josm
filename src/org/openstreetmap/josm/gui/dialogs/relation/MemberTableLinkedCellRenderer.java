@@ -32,9 +32,8 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
             return this;
 
         this.value = (WayConnectionType) value;
-        renderForeground(isSelected);
         setToolTipText(((WayConnectionType) value).getToolTip());
-        renderBackground(getModel(table), null, isSelected);
+        renderBackgroundForeground(getModel(table), null, isSelected);
         return this;
     }
 

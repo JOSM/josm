@@ -9,6 +9,8 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
+import org.openstreetmap.josm.gui.util.GuiHelper;
+
 /**
  * The {@link TableCellRenderer} for a list of tags in {@link HistoryBrowser}
  *
@@ -23,7 +25,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         setOpaque(true);
     }
 
-    protected void setBackground(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected) {
+    protected void setBackgroundReadable(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected) {
         Color bgColor = UIManager.getColor("Table.background");
         if (!model.hasTag(key) && model.isCurrentPointInTime()
                 || !model.oppositeHasTag(key) && model.isReferencePointInTime()) {
@@ -38,7 +40,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
             bgColor = BGCOLOR_SELECTED;
         }
 
-        setBackground(bgColor);
+        GuiHelper.setBackgroundReadable(this, bgColor);
     }
 
     @Override
@@ -56,13 +58,13 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
             // the name column
             setText(model.hasTag(key) ? key : "");
             setToolTipText(getText());
-            setBackground(key, model, isSelected);
+            setBackgroundReadable(key, model, isSelected);
             break;
         case 1:
             // the value column
             setText(model.hasTag(key) ? model.getValue(key) : "");
             setToolTipText(getText());
-            setBackground(key, model, isSelected);
+            setBackgroundReadable(key, model, isSelected);
             break;
         }
 
