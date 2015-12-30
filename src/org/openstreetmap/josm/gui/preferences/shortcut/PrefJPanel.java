@@ -32,6 +32,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -43,6 +44,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
@@ -168,16 +170,13 @@ public class PrefJPanel extends JPanel {
             if (sc == null) return null;
             JLabel label = (JLabel) super.getTableCellRendererComponent(
                 table, name ? sc.getLongText() : sc.getKeyText(), isSelected, hasFocus, row, column);
-            label.setBackground(Main.pref.getUIColor("Table.background"));
-            if (isSelected) {
-                label.setForeground(Main.pref.getUIColor("Table.foreground"));
-            }
+            GuiHelper.setBackgroundReadable(label, UIManager.getColor("Table.background"));
             if (sc.isAssignedUser()) {
-                label.setBackground(Main.pref.getColor(
+                GuiHelper.setBackgroundReadable(label, Main.pref.getColor(
                         marktr("Shortcut Background: User"),
                         new Color(200, 255, 200)));
             } else if (!sc.isAssignedDefault()) {
-                label.setBackground(Main.pref.getColor(
+                GuiHelper.setBackgroundReadable(label, Main.pref.getColor(
                         marktr("Shortcut Background: Modified"),
                         new Color(255, 255, 200)));
             }

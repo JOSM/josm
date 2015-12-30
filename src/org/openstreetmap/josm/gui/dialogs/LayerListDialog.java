@@ -1114,7 +1114,7 @@ public class LayerListDialog extends ToggleDialog {
                     }
                 }
                 if (c == null) {
-                    c = Main.pref.getUIColor(isSelected ? "Table.selectionForeground" : "Table.foreground");
+                    c = UIManager.getColor(isSelected ? "Table.selectionForeground" : "Table.foreground");
                 }
                 label.setForeground(c);
             }

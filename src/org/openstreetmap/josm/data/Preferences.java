@@ -49,7 +49,6 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -1011,10 +1010,6 @@ public class Preferences {
      */
     public synchronized Color getColor(String colName, Color def) {
         return getColor(colName, null, def);
-    }
-
-    public synchronized Color getUIColor(String colName) {
-        return UIManager.getColor(colName);
     }
 
     /* only for preferences */
