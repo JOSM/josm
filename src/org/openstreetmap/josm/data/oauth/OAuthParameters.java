@@ -13,7 +13,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * This class manages a set of OAuth parameters.
+ * This class manages an immutable set of OAuth parameters.
  * @since 2747
  */
 public class OAuthParameters {
@@ -39,7 +39,6 @@ public class OAuthParameters {
      */
     public static final String DEFAULT_AUTHORISE_URL = Main.getOSMWebsite() + "/oauth/authorize";
 
-
     /**
      * Replies a set of default parameters for a consumer accessing the standard OSM server
      * at {@link OsmApi#DEFAULT_API_URL}.
@@ -60,20 +59,10 @@ public class OAuthParameters {
      * @since 5422
      */
     public static OAuthParameters createDefault(String apiUrl) {
-        OAuthParameters parameters = new OAuthParameters();
-        parameters.setConsumerKey(DEFAULT_JOSM_CONSUMER_KEY);
-        parameters.setConsumerSecret(DEFAULT_JOSM_CONSUMER_SECRET);
-        parameters.setRequestTokenUrl(DEFAULT_REQUEST_TOKEN_URL);
-        parameters.setAccessTokenUrl(DEFAULT_ACCESS_TOKEN_URL);
-        parameters.setAuthoriseUrl(DEFAULT_AUTHORISE_URL);
+        String host = "";
         if (!OsmApi.DEFAULT_API_URL.equals(apiUrl)) {
             try {
-                String host = new URL(apiUrl).getHost();
-                if (host.endsWith("dev.openstreetmap.org")) {
-                    parameters.setRequestTokenUrl(DEFAULT_REQUEST_TOKEN_URL.replace("www.openstreetmap.org", host));
-                    parameters.setAccessTokenUrl(DEFAULT_ACCESS_TOKEN_URL.replace("www.openstreetmap.org", host));
-                    parameters.setAuthoriseUrl(DEFAULT_AUTHORISE_URL.replace("www.openstreetmap.org", host));
-                }
+                host = new URL(apiUrl).getHost();
             } catch (MalformedURLException e) {
                 // Ignored
                 if (Main.isTraceEnabled()) {
@@ -81,7 +70,13 @@ public class OAuthParameters {
                 }
             }
         }
-        return parameters;
+        boolean osmDevServer = host.endsWith("dev.openstreetmap.org");
+        return new OAuthParameters(
+            DEFAULT_JOSM_CONSUMER_KEY,
+            DEFAULT_JOSM_CONSUMER_SECRET,
+            osmDevServer ? DEFAULT_REQUEST_TOKEN_URL.replace("www.openstreetmap.org", host) : DEFAULT_REQUEST_TOKEN_URL,
+            osmDevServer ? DEFAULT_ACCESS_TOKEN_URL.replace("www.openstreetmap.org", host) : DEFAULT_ACCESS_TOKEN_URL,
+            osmDevServer ? DEFAULT_AUTHORISE_URL.replace("www.openstreetmap.org", host) : DEFAULT_AUTHORISE_URL);
     }
 
     /**
@@ -92,28 +87,40 @@ public class OAuthParameters {
      */
     public static OAuthParameters createFromPreferences(Preferences pref) {
         OAuthParameters parameters = createDefault(pref.get("osm-server.url"));
-        parameters.setConsumerKey(pref.get("oauth.settings.consumer-key", parameters.getConsumerKey()));
-        parameters.setConsumerSecret(pref.get("oauth.settings.consumer-secret", parameters.getConsumerSecret()));
-        parameters.setRequestTokenUrl(pref.get("oauth.settings.request-token-url", parameters.getRequestTokenUrl()));
-        parameters.setAccessTokenUrl(pref.get("oauth.settings.access-token-url", parameters.getAccessTokenUrl()));
-        parameters.setAuthoriseUrl(pref.get("oauth.settings.authorise-url", parameters.getAuthoriseUrl()));
-        return parameters;
+        return new OAuthParameters(
+                pref.get("oauth.settings.consumer-key", parameters.getConsumerKey()),
+                pref.get("oauth.settings.consumer-secret", parameters.getConsumerSecret()),
+                pref.get("oauth.settings.request-token-url", parameters.getRequestTokenUrl()),
+                pref.get("oauth.settings.access-token-url", parameters.getAccessTokenUrl()),
+                pref.get("oauth.settings.authorise-url", parameters.getAuthoriseUrl())
+                );
     }
 
-    private String consumerKey;
-    private String consumerSecret;
-    private String requestTokenUrl;
-    private String accessTokenUrl;
-    private String authoriseUrl;
+    private final String consumerKey;
+    private final String consumerSecret;
+    private final String requestTokenUrl;
+    private final String accessTokenUrl;
+    private final String authoriseUrl;
 
     /**
-     * Constructs a new, unitialized, {@code OAuthParameters}.
+     * Constructs a new {@code OAuthParameters}.
+     * @param consumerKey consumer key
+     * @param consumerSecret consumer secret
+     * @param requestTokenUrl request token URL
+     * @param accessTokenUrl access token URL
+     * @param authoriseUrl authorise URL
      *
      * @see #createDefault
      * @see #createFromPreferences
+     * @since 9220
      */
-    public OAuthParameters() {
-        // contents can be set later with setters
+    public OAuthParameters(String consumerKey, String consumerSecret,
+            String requestTokenUrl, String accessTokenUrl, String authoriseUrl) {
+        this.consumerKey = consumerKey;
+        this.consumerSecret = consumerSecret;
+        this.requestTokenUrl = requestTokenUrl;
+        this.accessTokenUrl = accessTokenUrl;
+        this.authoriseUrl = authoriseUrl;
     }
 
     /**
@@ -140,27 +147,11 @@ public class OAuthParameters {
     }
 
     /**
-     * Sets the consumer key.
-     * @param consumerKey The consumer key
-     */
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
-    }
-
-    /**
      * Gets the consumer secret.
      * @return The consumer secret
      */
     public String getConsumerSecret() {
         return consumerSecret;
-    }
-
-    /**
-     * Sets the consumer secret.
-     * @param consumerSecret The consumer secret
-     */
-    public void setConsumerSecret(String consumerSecret) {
-        this.consumerSecret = consumerSecret;
     }
 
     /**
@@ -172,14 +163,6 @@ public class OAuthParameters {
     }
 
     /**
-     * Sets the request token URL.
-     * @param requestTokenUrl the request token URL
-     */
-    public void setRequestTokenUrl(String requestTokenUrl) {
-        this.requestTokenUrl = requestTokenUrl;
-    }
-
-    /**
      * Gets the access token URL.
      * @return The access token URL
      */
@@ -188,27 +171,11 @@ public class OAuthParameters {
     }
 
     /**
-     * Sets the access token URL.
-     * @param accessTokenUrl The access token URL
-     */
-    public void setAccessTokenUrl(String accessTokenUrl) {
-        this.accessTokenUrl = accessTokenUrl;
-    }
-
-    /**
      * Gets the authorise URL.
      * @return The authorise URL
      */
     public String getAuthoriseUrl() {
         return authoriseUrl;
-    }
-
-    /**
-     * Sets the authorise URL.
-     * @param authoriseUrl The authorise URL
-     */
-    public void setAuthoriseUrl(String authoriseUrl) {
-        this.authoriseUrl = authoriseUrl;
     }
 
     /**

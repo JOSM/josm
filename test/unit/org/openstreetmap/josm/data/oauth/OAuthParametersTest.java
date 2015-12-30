@@ -4,8 +4,10 @@ package org.openstreetmap.josm.data.oauth;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmApi;
 
 /**
@@ -24,16 +26,15 @@ public class OAuthParametersTest {
         OAuthParameters dev = OAuthParameters.createDefault("http://api06.dev.openstreetmap.org/api");
         assertNotNull(dev);
         assertNotEquals(def, dev);
+        Main.logLevel = 5; // enable trace for line coverage
         assertEquals(def, OAuthParameters.createDefault("wrong_url"));
     }
 
     /**
-     * Unit test of method {@link OAuthParameters#equals}.
+     * Unit test of methods {@link OAuthParameters#equals} and {@link OAuthParameters#hashCode}.
      */
     @Test
-    public void testEquals() {
-        OAuthParameters dev = OAuthParameters.createDefault("http://master.apis.dev.openstreetmap.org/api");
-        OAuthParameters dev2 = new OAuthParameters(dev);
-        assertEquals(dev, dev2);
+    public void equalsContract() {
+        EqualsVerifier.forClass(OAuthParameters.class).usingGetClass().verify();
     }
 }
