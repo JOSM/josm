@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.util;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -42,6 +43,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -365,5 +367,16 @@ public final class GuiHelper {
                 UIManager.put(key, new FontUIResource(name, fui.getStyle(), fui.getSize()));
             }
         }
+    }
+
+    /**
+     * Sets the background color for this component, and adjust the foreground color so the text remains readable.
+     * @param c component
+     * @param background background color
+     * @since 9223
+     */
+    public static void setBackgroundReadable(JComponent c, Color background) {
+        c.setBackground(background);
+        c.setForeground(ColorHelper.getForegroundColor(background));
     }
 }

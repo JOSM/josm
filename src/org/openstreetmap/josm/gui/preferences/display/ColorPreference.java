@@ -46,6 +46,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -229,10 +230,7 @@ public class ColorPreference implements SubPreferenceSetting {
                 if (column == 1) {
                     Color c = (Color) o;
                     JLabel l = new JLabel(ColorHelper.color2html(c));
-                    l.setBackground(c);
-                    // http://stackoverflow.com/a/3943023/2257172
-                    l.setForeground((c.getRed()*0.299 + c.getGreen()*0.587 + c.getBlue()*0.114) > 186 ?
-                            Color.BLACK : Color.WHITE);
+                    GuiHelper.setBackgroundReadable(l, c);
                     l.setOpaque(true);
                     return l;
                 }

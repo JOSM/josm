@@ -12,6 +12,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item.DiffItemType;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
@@ -45,7 +46,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
             bgColor = BGCOLOR_SELECTED;
         }
         setText(text);
-        setBackground(bgColor);
+        GuiHelper.setBackgroundReadable(this, bgColor);
     }
 
     // Warning: The model pads with null-rows to match the size of the opposite table. 'value' could be null

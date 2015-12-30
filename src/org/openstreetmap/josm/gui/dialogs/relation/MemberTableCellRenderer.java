@@ -10,6 +10,7 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * This is the {@link TableCellRenderer} used in the tables of
@@ -42,7 +43,7 @@ public abstract class MemberTableCellRenderer extends JLabel implements TableCel
         setToolTipText(null);
     }
 
-    protected void renderBackground(MemberTableModel model, OsmPrimitive primitive, boolean isSelected) {
+    protected void renderBackgroundForeground(MemberTableModel model, OsmPrimitive primitive, boolean isSelected) {
         Color bgc = UIManager.getColor("Table.background");
         if (isSelected) {
             bgc = UIManager.getColor("Table.selectionBackground");
@@ -51,17 +52,7 @@ public abstract class MemberTableCellRenderer extends JLabel implements TableCel
         } else if (primitive != null && model.getNumMembersWithPrimitive(primitive) > 1) {
             bgc = BGCOLOR_DOUBLE_ENTRY;
         }
-        setBackground(bgc);
-    }
-
-    protected void renderForeground(boolean isSelected) {
-        Color fgc;
-        if (isSelected) {
-            fgc = UIManager.getColor("Table.selectionForeground");
-        } else {
-            fgc = UIManager.getColor("Table.foreground");
-        }
-        setForeground(fgc);
+        GuiHelper.setBackgroundReadable(this, bgc);
     }
 
     @Override

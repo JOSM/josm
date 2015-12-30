@@ -16,6 +16,7 @@ import javax.swing.table.TableCellRenderer;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -57,7 +58,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         text = member == null ? "" : member.getRole();
         setText(text);
         setToolTipText(text);
-        setBackground(bgColor);
+        GuiHelper.setBackgroundReadable(this, bgColor);
     }
 
     protected void renderPrimitive(Item diffItem) {
@@ -74,7 +75,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         }
         setText(text);
         setToolTipText(text);
-        setBackground(bgColor);
+        GuiHelper.setBackgroundReadable(this, bgColor);
     }
 
     // Warning: The model pads with null-rows to match the size of the opposite table. 'value' could be null
