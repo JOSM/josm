@@ -974,6 +974,12 @@ public abstract class Main {
         UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));
         UIManager.put("OptionPane.cancelIcon", ImageProvider.get("cancel"));
         UIManager.put("OptionPane.noIcon", UIManager.get("OptionPane.cancelIcon"));
+        // Ensures caret color is the same than text foreground color, see #12257
+        // See http://docs.oracle.com/javase/7/docs/api/javax/swing/plaf/synth/doc-files/componentProperties.html
+        for (String p : Arrays.asList(
+                "EditorPane", "FormattedTextField", "PasswordField", "TextArea", "TextField", "TextPane")) {
+            UIManager.put(p+".caretForeground", UIManager.getColor(p+".foreground"));
+        }
 
         I18n.translateJavaInternalMessages();
 
