@@ -1579,9 +1579,10 @@ public class Preferences {
                 }
             }
         }
-        // Workaround to fix a Java "feature"
-        // See http://stackoverflow.com/q/7615645/2257172 and #9875
-        if (getBoolean("jdk.tls.disableSNIExtension", true)) {
+        // Possibility to disable SNI (not by default) in case of misconfigured https servers
+        // See #9875 + http://stackoverflow.com/a/14884941/2257172
+        // then https://josm.openstreetmap.de/ticket/12152#comment:5 for details
+        if (getBoolean("jdk.tls.disableSNIExtension", false)) {
             Utils.updateSystemProperty("jsse.enableSNIExtension", "false");
         }
         // Workaround to fix another Java bug
