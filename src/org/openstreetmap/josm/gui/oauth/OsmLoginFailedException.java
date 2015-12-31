@@ -1,21 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.oauth;
 
+/**
+ * OSM login failure exception.
+ * @since 2746
+ */
 public class OsmLoginFailedException extends OsmOAuthAuthorizationException {
 
-    public OsmLoginFailedException() {
-        super();
-    }
-
-    public OsmLoginFailedException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
-    }
-
-    public OsmLoginFailedException(String arg0) {
-        super(arg0);
-    }
-
-    public OsmLoginFailedException(Throwable arg0) {
-        super(arg0);
+    /**
+     * Constructs a new {@code OsmLoginFailedException} with the specified cause.
+     * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+     */
+    public OsmLoginFailedException(Throwable cause) {
+        super(cause);
     }
 }

@@ -52,16 +52,6 @@ public class OsmOAuthAuthorizationClient {
     }
 
     /**
-     * Creates a new authorisation client with default OAuth parameters
-     *
-     */
-    public OsmOAuthAuthorizationClient() {
-        oauthProviderParameters = OAuthParameters.createDefault(Main.pref.get("osm-server.url"));
-        consumer = oauthProviderParameters.buildConsumer();
-        provider = oauthProviderParameters.buildProvider(consumer);
-    }
-
-    /**
      * Creates a new authorisation client with the parameters <code>parameters</code>.
      *
      * @param parameters the OAuth parameters. Must not be null.
@@ -240,7 +230,7 @@ public class OsmOAuthAuthorizationClient {
         return null;
     }
 
-    protected String buildPostRequest(Map<String, String> parameters) throws OsmOAuthAuthorizationException {
+    protected static String buildPostRequest(Map<String, String> parameters) {
         StringBuilder sb = new StringBuilder(32);
 
         for (Iterator<Entry<String, String>> it = parameters.entrySet().iterator(); it.hasNext();) {
@@ -321,6 +311,8 @@ public class OsmOAuthAuthorizationClient {
     /**
      * Submits a request to the OSM website for a OAuth form. The OSM website replies a session token in
      * a hidden parameter.
+     * @param sessionId session id
+     * @param requestToken request token
      *
      * @throws OsmOAuthAuthorizationException if something went wrong
      */

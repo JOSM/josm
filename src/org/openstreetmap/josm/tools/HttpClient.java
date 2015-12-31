@@ -230,6 +230,7 @@ public final class HttpClient {
          * @see HttpURLConnection#getInputStream()
          * @see HttpURLConnection#getErrorStream()
          */
+        @SuppressWarnings("resource")
         public InputStream getContent() throws IOException {
             InputStream in;
             try {
@@ -237,23 +238,25 @@ public final class HttpClient {
             } catch (IOException ioe) {
                 in = connection.getErrorStream();
             }
-            in = new ProgressInputStream(in, getContentLength(), monitor);
-            in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
-            Compression compression = Compression.NONE;
-            if (uncompress) {
-                final String contentType = getContentType();
-                Main.debug("Uncompressing input stream according to Content-Type header: {0}", contentType);
-                compression = Compression.forContentType(contentType);
-            }
-            if (uncompressAccordingToContentDisposition && Compression.NONE.equals(compression)) {
-                final String contentDisposition = getHeaderField("Content-Disposition");
-                final Matcher matcher = Pattern.compile("filename=\"([^\"]+)\"").matcher(contentDisposition);
-                if (matcher.find()) {
-                    Main.debug("Uncompressing input stream according to Content-Disposition header: {0}", contentDisposition);
-                    compression = Compression.byExtension(matcher.group(1));
+            if (in != null) {
+                in = new ProgressInputStream(in, getContentLength(), monitor);
+                in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
+                Compression compression = Compression.NONE;
+                if (uncompress) {
+                    final String contentType = getContentType();
+                    Main.debug("Uncompressing input stream according to Content-Type header: {0}", contentType);
+                    compression = Compression.forContentType(contentType);
                 }
+                if (uncompressAccordingToContentDisposition && Compression.NONE.equals(compression)) {
+                    final String contentDisposition = getHeaderField("Content-Disposition");
+                    final Matcher matcher = Pattern.compile("filename=\"([^\"]+)\"").matcher(contentDisposition);
+                    if (matcher.find()) {
+                        Main.debug("Uncompressing input stream according to Content-Disposition header: {0}", contentDisposition);
+                        compression = Compression.byExtension(matcher.group(1));
+                    }
+                }
+                in = compression.getUncompressedInputStream(in);
             }
-            in = compression.getUncompressedInputStream(in);
             return in;
         }
 

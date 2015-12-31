@@ -9,6 +9,7 @@ import java.net.URLConnection;
 
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Read from an other reader and increment an progress counter while on the way.
@@ -22,12 +23,13 @@ public class ProgressInputStream extends InputStream {
     /**
      * Constructs a new {@code ProgressInputStream}.
      *
-     * @param in the stream to monitor
+     * @param in the stream to monitor. Must not be null
      * @param size the total size which will be sent
      * @param progressMonitor the monitor to report to
      * @since 9172
      */
     public ProgressInputStream(InputStream in, long size, ProgressMonitor progressMonitor) {
+        CheckParameterUtil.ensureParameterNotNull(in, "in");
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
@@ -42,6 +44,7 @@ public class ProgressInputStream extends InputStream {
      *
      * @param con the connection to monitor
      * @param progressMonitor the monitor to report to
+     * @throws OsmTransferException if any I/O error occurs
      */
     public ProgressInputStream(URLConnection con, ProgressMonitor progressMonitor) throws OsmTransferException {
         if (progressMonitor == null) {
