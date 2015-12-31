@@ -11,6 +11,7 @@
 package oauth.signpost;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ import oauth.signpost.http.HttpResponse;
  * ABC for all provider implementations. If you're writing a custom provider,
  * you will probably inherit from this class, since it takes a lot of work from
  * you.
- * 
+ *
  * @author Matthias Kaeppler
  */
 public abstract class AbstractOAuthProvider implements OAuthProvider {
@@ -127,7 +128,7 @@ public abstract class AbstractOAuthProvider implements OAuthProvider {
      * OAuth specific parameters being removed</li>
      * </ul>
      * </p>
-     * 
+     *
      * @param consumer
      *        the {@link OAuthConsumer} that should be used to sign the request
      * @param endpointUrl
@@ -167,13 +168,13 @@ public abstract class AbstractOAuthProvider implements OAuthProvider {
             if (customOAuthParams != null && !customOAuthParams.isEmpty()) {
                 consumer.setAdditionalParameters(customOAuthParams);
             }
-            
+
             if (this.listener != null) {
                 this.listener.prepareRequest(request);
             }
 
             consumer.sign(request);
-            
+
             if (this.listener != null) {
                 this.listener.prepareSubmission(request);
             }
@@ -229,13 +230,16 @@ public abstract class AbstractOAuthProvider implements OAuthProvider {
         if (response == null) {
             return;
         }
-        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getContent()));
         StringBuilder responseBody = new StringBuilder();
+        InputStream content = response.getContent();
+        if (content != null) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(content));
 
-        String line = reader.readLine();
-        while (line != null) {
-            responseBody.append(line);
-            line = reader.readLine();
+            String line = reader.readLine();
+            while (line != null) {
+                responseBody.append(line);
+                line = reader.readLine();
+            }
         }
 
         switch (statusCode) {
@@ -250,7 +254,7 @@ public abstract class AbstractOAuthProvider implements OAuthProvider {
     /**
      * Overrride this method if you want to customize the logic for building a
      * request object for the given endpoint URL.
-     * 
+     *
      * @param endpointUrl
      *        the URL to which the request will go
      * @return the request object
@@ -262,7 +266,7 @@ public abstract class AbstractOAuthProvider implements OAuthProvider {
     /**
      * Override this method if you want to customize the logic for how the given
      * request is sent to the server.
-     * 
+     *
      * @param request
      *        the request to send
      * @return the response to the request
@@ -274,7 +278,7 @@ public abstract class AbstractOAuthProvider implements OAuthProvider {
     /**
      * Called when the connection is being finalized after receiving the
      * response. Use this to do any cleanup / resource freeing.
-     * 
+     *
      * @param request
      *        the request that has been sent
      * @param response
@@ -294,7 +298,7 @@ public abstract class AbstractOAuthProvider implements OAuthProvider {
      * Returns a single query parameter as served by the service provider in a
      * token reply. You must call {@link #setResponseParameters} with the set of
      * parameters before using this method.
-     * 
+     *
      * @param key
      *        the parameter name
      * @return the parameter value
