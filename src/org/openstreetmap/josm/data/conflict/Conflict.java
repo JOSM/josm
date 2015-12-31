@@ -16,10 +16,9 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
  *   it was tried to merge it onto <code>my</code>. <code>their</code> is usually the
  *   {@link OsmPrimitive} from the dataset in another layer or the one retrieved from the server.</li>
  * </ul>
- *
- *
+ * @since 1750
  */
-public class  Conflict<T extends OsmPrimitive> {
+public class Conflict<T extends OsmPrimitive> {
     private final T my;
     private final T their;
     private final boolean isMyDeleted;

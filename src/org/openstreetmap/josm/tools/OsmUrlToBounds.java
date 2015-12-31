@@ -11,6 +11,7 @@ import java.util.Map;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Ellipsoid;
 
 public final class OsmUrlToBounds {
     private static final String SHORTLINK_PREFIX = "http://osm.org/go/";
@@ -187,9 +188,6 @@ public final class OsmUrlToBounds {
                 zoom - 8 - (zoomOffset % 3) - 2);
     }
 
-    /** radius of the earth */
-    public static final double R = 6378137.0;
-
     public static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
         int tileSizeInPixels = 256;
         int height;
@@ -206,20 +204,22 @@ public final class OsmUrlToBounds {
             height = 480;
             width = 640;
         }
-        double scale = (1 << zoom) * tileSizeInPixels / (2 * Math.PI * R);
+        double scale = (1 << zoom) * tileSizeInPixels / (2 * Math.PI * Ellipsoid.WGS84.a);
         double deltaX = width / 2.0 / scale;
         double deltaY = height / 2.0 / scale;
-        double x = Math.toRadians(lon) * R;
+        double x = Math.toRadians(lon) * Ellipsoid.WGS84.a;
         double y = mercatorY(lat);
-        return new Bounds(invMercatorY(y - deltaY), Math.toDegrees(x - deltaX) / R, invMercatorY(y + deltaY), Math.toDegrees(x + deltaX) / R);
+        return new Bounds(
+                invMercatorY(y - deltaY), Math.toDegrees(x - deltaX) / Ellipsoid.WGS84.a,
+                invMercatorY(y + deltaY), Math.toDegrees(x + deltaX) / Ellipsoid.WGS84.a);
     }
 
     public static double mercatorY(double lat) {
-        return Math.log(Math.tan(Math.PI/4 + Math.toRadians(lat)/2)) * R;
+        return Math.log(Math.tan(Math.PI/4 + Math.toRadians(lat)/2)) * Ellipsoid.WGS84.a;
     }
 
     public static double invMercatorY(double north) {
-        return Math.toDegrees(Math.atan(Math.sinh(north / R)));
+        return Math.toDegrees(Math.atan(Math.sinh(north / Ellipsoid.WGS84.a)));
     }
 
     public static Pair<Double, Double> getTileOfLatLon(double lat, double lon, double zoom) {

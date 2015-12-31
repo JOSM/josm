@@ -198,6 +198,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
     /**
      * Collect groups of ways with common nodes in order to orthogonalize each group separately.
+     * @param wayDataList list of ways
      * @return groups of ways with common nodes
      */
     private static List<List<WayData>> buildGroups(List<WayData> wayDataList) {
@@ -245,6 +246,8 @@ public final class OrthogonalizeAction extends JosmAction {
      *      the mean value of their y-Coordinates.
      *      - The same for vertical segments.
      *  5. Rotate back.
+     * @param wayDataList list of ways
+     * @param headingNodes list of heading nodes
      * @return list of commands to perform
      * @throws InvalidUserInputException if selected ways have an angle different from 90 or 180 degrees
      **/
@@ -397,7 +400,7 @@ public final class OrthogonalizeAction extends JosmAction {
     }
 
     /**
-     * Class contains everything we need to know about a singe way.
+     * Class contains everything we need to know about a single way.
      */
     private static class WayData {
         public final Way way;             // The assigned way
@@ -476,6 +479,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
     /**
      * Make sure angle (up to 2*Pi) is in interval [ 0, 2*Pi ).
+     * @param a angle
      * @return correct angle
      */
     private static double standard_angle_0_to_2PI(double a) {
@@ -490,6 +494,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
     /**
      * Make sure angle (up to 2*Pi) is in interval ( -Pi, Pi ].
+     * @param a angle
      * @return correct angle
      */
     private static double standard_angle_mPI_to_PI(double a) {
@@ -512,6 +517,9 @@ public final class OrthogonalizeAction extends JosmAction {
 
         /**
          * Rotate counter-clock-wise.
+         * @param pivot pivot
+         * @param en original east/north
+         * @param angle angle, in radians
          * @return new east/north
          */
         public static EastNorth rotateCC(EastNorth pivot, EastNorth en, double angle) {
@@ -540,6 +548,8 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Recognize angle to be approximately 0, 90, 180 or 270 degrees.
      * returns an integral value, corresponding to a counter clockwise turn.
+     * @param a angle, in radians
+     * @param deltaMax maximum tolerance, in radians
      * @return an integral value, corresponding to a counter clockwise turn
      * @throws RejectedAngleException in case of invalid angle
      */

@@ -22,6 +22,7 @@ package org.openstreetmap.josm.data.projection.datum;
 import java.io.Serializable;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Ellipsoid;
 
 /**
  * A value object for storing Longitude and Latitude of a point, the
@@ -38,7 +39,7 @@ public class NTV2GridShift implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final double METRE_PER_SECOND = 2.0 * Math.PI * 6378137.0 / 3600.0 / 360.0;
+    private static final double METRE_PER_SECOND = 2.0 * Math.PI * Ellipsoid.WGS84.a / 3600.0 / 360.0;
     private static final double RADIANS_PER_SECOND = 2.0 * Math.PI / 3600.0 / 360.0;
     private double lon;
     private double lat;

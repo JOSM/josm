@@ -119,8 +119,8 @@ public class DownloadTaskList {
     }
 
     /**
-     * Replies the set of ids of all complete, non-new primitives (i.e. those with !
-     * primitive.incomplete)
+     * Replies the set of ids of all complete, non-new primitives (i.e. those with !primitive.incomplete)
+     * @param ds data set
      *
      * @return the set of ids of all complete, non-new primitives
      */
@@ -284,7 +284,7 @@ public class DownloadTaskList {
             //
             for (DownloadTask task : tasks) {
                 if (task instanceof AbstractDownloadTask) {
-                    AbstractDownloadTask absTask = (AbstractDownloadTask) task;
+                    AbstractDownloadTask<?> absTask = (AbstractDownloadTask<?>) task;
                     if (absTask.isCanceled() || absTask.isFailed())
                         return;
                 }

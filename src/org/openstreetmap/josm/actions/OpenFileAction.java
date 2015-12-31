@@ -81,18 +81,27 @@ public class OpenFileAction extends DiskAccessAction {
 
     /**
      * Open a list of files. The complete list will be passed to batch importers.
+     * Filenames will not be saved in history.
      * @param fileList A list of files
      */
     public static void openFiles(List<File> fileList) {
         openFiles(fileList, false);
     }
 
+    /**
+     * Open a list of files. The complete list will be passed to batch importers.
+     * @param fileList A list of files
+     * @param recordHistory {@code true} to save filename in history (default: false)
+     */
     public static void openFiles(List<File> fileList, boolean recordHistory) {
         OpenFileTask task = new OpenFileTask(fileList, null);
         task.setRecordHistory(recordHistory);
         Main.worker.submit(task);
     }
 
+    /**
+     * Task to open files.
+     */
     public static class OpenFileTask extends PleaseWaitRunnable {
         private final List<File> files;
         private final List<File> successfullyOpenedFiles = new ArrayList<>();
@@ -102,6 +111,12 @@ public class OpenFileAction extends DiskAccessAction {
         private boolean canceled;
         private boolean recordHistory;
 
+        /**
+         * Constructs a new {@code OpenFileTask}.
+         * @param files files to open
+         * @param fileFilter file filter
+         * @param title message for the user
+         */
         public OpenFileTask(final List<File> files, final FileFilter fileFilter, final String title) {
             super(title, false /* don't ignore exception */);
             this.fileFilter = fileFilter;
@@ -129,18 +144,27 @@ public class OpenFileAction extends DiskAccessAction {
             }
         }
 
+        /**
+         * Constructs a new {@code OpenFileTask}.
+         * @param files files to open
+         * @param fileFilter file filter
+         */
         public OpenFileTask(List<File> files, FileFilter fileFilter) {
             this(files, fileFilter, tr("Opening files"));
         }
 
         /**
-         * save filename in history (for list of recently opened files)
-         * default: false
+         * Sets whether to save filename in history (for list of recently opened files).
+         * @param recordHistory {@code true} to save filename in history (default: false)
          */
         public void setRecordHistory(boolean recordHistory) {
             this.recordHistory = recordHistory;
         }
 
+        /**
+         * Determines if filename must be saved in history (for list of recently opened files).
+         * @return {@code true} if filename must be saved in history
+         */
         public boolean isRecordHistory() {
             return recordHistory;
         }
@@ -318,6 +342,11 @@ public class OpenFileAction extends DiskAccessAction {
             }
         }
 
+        /**
+         * Import data files with the given importer.
+         * @param importer file importer
+         * @param files data files to import
+         */
         public void importData(FileImporter importer, List<File> files) {
             if (importer.isBatchImporter()) {
                 if (canceled) return;

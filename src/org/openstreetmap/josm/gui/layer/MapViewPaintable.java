@@ -10,8 +10,9 @@ public interface MapViewPaintable {
 
     /**
      * Paint the dataset using the engine set.
+     * @param g Graphics
      * @param mv The object that can translate GeoPoints to screen coordinates.
+     * @param bbox Bounding box
      */
     void paint(Graphics2D g, MapView mv, Bounds bbox);
-
 }
