@@ -310,7 +310,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 return true;
             }
 
-            HttpURLConnection urlConn = getURLConnection(getUrl());
+            HttpURLConnection urlConn = getURLConnection(getUrl(), true);
 
             if (isObjectLoadable()  &&
                     (now - attributes.getLastModification()) <= ABSOLUTE_EXPIRE_TIME_LIMIT) {
@@ -325,7 +325,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             // follow redirects
             for (int i = 0; i < 5; i++) {
                 if (urlConn.getResponseCode() == 302) {
-                    urlConn = getURLConnection(new URL(urlConn.getHeaderField("Location")));
+                    urlConn = getURLConnection(new URL(urlConn.getHeaderField("Location")), true);
                 } else {
                     break;
                 }
@@ -469,7 +469,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         return ret;
     }
 
-    private HttpURLConnection getURLConnection(URL url) throws IOException {
+    private HttpURLConnection getURLConnection(URL url, boolean noCache) throws IOException {
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.setRequestProperty("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
         urlConn.setReadTimeout(readTimeout); // 30 seconds read timeout
@@ -480,18 +480,18 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             }
         }
 
-        if (force) {
+        if (force || noCache) {
             urlConn.setUseCaches(false);
         }
         return urlConn;
     }
 
     private boolean isCacheValidUsingHead() throws IOException {
-        HttpURLConnection urlConn = getURLConnection(getUrl());
+        HttpURLConnection urlConn = getURLConnection(getUrl(), false);
         urlConn.setRequestMethod("HEAD");
         for (int i = 0; i < 5; i++) {
             if (urlConn.getResponseCode() == 302) {
-                urlConn = getURLConnection(new URL(urlConn.getHeaderField("Location")));
+                urlConn = getURLConnection(new URL(urlConn.getHeaderField("Location")), false);
             } else {
                 break;
             }
