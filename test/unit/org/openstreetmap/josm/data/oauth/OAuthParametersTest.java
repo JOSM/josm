@@ -28,6 +28,8 @@ public class OAuthParametersTest {
         assertNotEquals(def, dev);
         Main.logLevel = 5; // enable trace for line coverage
         assertEquals(def, OAuthParameters.createDefault("wrong_url"));
+        OAuthParameters dev2 = new OAuthParameters(dev);
+        assertEquals(dev, dev2);
     }
 
     /**

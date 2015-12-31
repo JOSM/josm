@@ -10,11 +10,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.CombineWayAction.NodeGraph;
+import org.openstreetmap.josm.actions.CombineWayAction.NodePair;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -53,5 +56,15 @@ public class CombineWayActionTest {
             firstAndLastExpected.add(35213705L);
             assertEquals(firstAndLastExpected, firstAndLastObtained);
         }
+    }
+
+    /**
+     * Unit test of methods {@link NodePair#equals} and {@link NodePair#hashCode}.
+     */
+    @Test
+    public void equalsContract() {
+        EqualsVerifier.forClass(NodePair.class).usingGetClass()
+            .withPrefabValues(Node.class, new Node(1), new Node(2))
+            .verify();
     }
 }
