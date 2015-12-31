@@ -280,6 +280,7 @@ public class DownloadDialog extends JDialog  {
     /**
      * Distributes a "bounding box changed" from one DownloadSelection
      * object to the others, so they may update or clear their input fields.
+     * @param b new current bounds
      *
      * @param eventSource - the DownloadSelection object that fired this notification.
      */
@@ -428,6 +429,10 @@ public class DownloadDialog extends JDialog  {
         return Main.pref.getBoolean("download.autorun", false);
     }
 
+    /**
+     * Automatically opens the download dialog, if autorun is enabled.
+     * @see #isAutorunEnabled
+     */
     public static void autostartIfNeeded() {
         if (isAutorunEnabled()) {
             Main.main.menu.download.actionPerformed(null);

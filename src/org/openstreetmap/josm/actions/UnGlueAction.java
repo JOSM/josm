@@ -164,6 +164,7 @@ public class UnGlueAction extends JosmAction {
     /**
      * Assumes there is one tagged Node stored in selectedNode that it will try to unglue.
      * (i.e. copy node and remove all tags from the old one. Relations will not be removed)
+     * @param e event that trigerred the action
      */
     private void unglueNode(ActionEvent e) {
         List<Command> cmds = new LinkedList<>();
@@ -216,14 +217,13 @@ public class UnGlueAction extends JosmAction {
      * Checks if the selection consists of something we can work with.
      * Checks only if the number and type of items selected looks good.
      *
-     * If this method returns "true", selectedNode and selectedWay will
-     * be set.
+     * If this method returns "true", selectedNode and selectedWay will be set.
      *
      * Returns true if either one node is selected or one node and one
      * way are selected and the node is part of the way.
      *
-     * The way will be put into the object variable "selectedWay", the
-     * node into "selectedNode".
+     * The way will be put into the object variable "selectedWay", the node into "selectedNode".
+     * @param selection selected primitives
      * @return true if either one node is selected or one node and one way are selected and the node is part of the way
      */
     private boolean checkSelection(Collection<? extends OsmPrimitive> selection) {
@@ -254,12 +254,11 @@ public class UnGlueAction extends JosmAction {
      * Checks if the selection consists of something we can work with.
      * Checks only if the number and type of items selected looks good.
      *
-     * Returns true if one way and any number of nodes that are part of
-     * that way are selected. Note: "any" can be none, then all nodes of
-     * the way are used.
+     * Returns true if one way and any number of nodes that are part of that way are selected.
+     * Note: "any" can be none, then all nodes of the way are used.
      *
-     * The way will be put into the object variable "selectedWay", the
-     * nodes into "selectedNodes".
+     * The way will be put into the object variable "selectedWay", the nodes into "selectedNodes".
+     * @param selection selected primitives
      * @return true if one way and any number of nodes that are part of that way are selected
      */
     private boolean checkSelection2(Collection<? extends OsmPrimitive> selection) {
@@ -297,13 +296,17 @@ public class UnGlueAction extends JosmAction {
     /**
      * dupe the given node of the given way
      *
-     * assume that OrginalNode is in the way
+     * assume that originalNode is in the way
      * <ul>
      * <li>the new node will be put into the parameter newNodes.</li>
      * <li>the add-node command will be put into the parameter cmds.</li>
      * <li>the changed way will be returned and must be put into cmds by the caller!</li>
      * </ul>
-     * @return new way
+     * @param originalNode original node to duplicate
+     * @param w parent way
+     * @param cmds List of commands that will contain the new "add node" command
+     * @param newNodes List of nodes that will contain the new node
+     * @return new way The modified way. Change command mus be handled by the caller
      */
     private static Way modifyWay(Node originalNode, Way w, List<Command> cmds, List<Node> newNodes) {
         // clone the node for the way
@@ -326,6 +329,9 @@ public class UnGlueAction extends JosmAction {
 
     /**
      * put all newNodes into the same relation(s) that originalNode is in
+     * @param originalNode original node to duplicate
+     * @param cmds List of commands that will contain the new "change relation" commands
+     * @param newNodes List of nodes that contain the new node
      */
     private void fixRelations(Node originalNode, List<Command> cmds, List<Node> newNodes) {
         // modify all relations containing the node
@@ -342,14 +348,18 @@ public class UnGlueAction extends JosmAction {
                         newRel = new Relation(r);
                         rolesToReAdd = new HashMap<>();
                     }
-                    rolesToReAdd.put(rm.getRole(), i);
+                    if (rolesToReAdd != null) {
+                        rolesToReAdd.put(rm.getRole(), i);
+                    }
                 }
                 i++;
             }
             if (newRel != null) {
-                for (Node n : newNodes) {
-                    for (Map.Entry<String, Integer> role : rolesToReAdd.entrySet()) {
-                        newRel.addMember(role.getValue() + 1, new RelationMember(role.getKey(), n));
+                if (rolesToReAdd != null) {
+                    for (Node n : newNodes) {
+                        for (Map.Entry<String, Integer> role : rolesToReAdd.entrySet()) {
+                            newRel.addMember(role.getValue() + 1, new RelationMember(role.getKey(), n));
+                        }
                     }
                 }
                 cmds.add(new ChangeCommand(r, newRel));

@@ -893,8 +893,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     /**
-     * if one of the ends of @param way is given @param node ,
+     * if one of the ends of {@code way} is given {@code  node},
      * then set  currentBaseNode = node and previousNode = adjacent node of way
+     * @param way way to continue
+     * @param node starting node
      */
     private void continueWayFromNode(Way way, Node node) {
         int n = way.getNodesCount();
@@ -925,6 +927,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     /**
+     * @param n node
      * @return If the node is the end of exactly one way, return this.
      *  <code>null</code> otherwise.
      */

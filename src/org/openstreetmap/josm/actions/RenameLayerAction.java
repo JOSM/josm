@@ -31,8 +31,10 @@ public class RenameLayerAction extends AbstractAction {
     private final transient Layer layer;
 
     /**
+     * Constructs a new {@code RenameLayerAction}.
      * @param file The file of the original location of this layer.
      *      If null, no possibility to "rename the file as well" is provided.
+     * @param layer layer to rename
      */
     public RenameLayerAction(File file, Layer layer) {
         super(tr("Rename layer"), ImageProvider.get("dialogs", "edit"));

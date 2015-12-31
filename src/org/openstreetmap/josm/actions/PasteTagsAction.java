@@ -58,6 +58,11 @@ public final class PasteTagsAction extends JosmAction {
         private final Collection<OsmPrimitive> target;
         private final List<Tag> tags = new ArrayList<>();
 
+        /**
+         * Constructs a new {@code TagPaster}.
+         * @param source source primitives
+         * @param target target primitives
+         */
         public TagPaster(Collection<PrimitiveData> source, Collection<OsmPrimitive> target) {
             this.source = source;
             this.target = target;
@@ -68,7 +73,7 @@ public final class PasteTagsAction extends JosmAction {
          * {@link OsmPrimitive}s of exactly one type
          * @return true if the source for tag pasting is heterogeneous
          */
-        protected boolean isHeteogeneousSource() {
+        protected boolean isHeterogeneousSource() {
             int count = 0;
             count = !getSourcePrimitivesByType(OsmPrimitiveType.NODE).isEmpty() ? count + 1 : count;
             count = !getSourcePrimitivesByType(OsmPrimitiveType.WAY).isEmpty() ? count + 1 : count;
@@ -229,9 +234,13 @@ public final class PasteTagsAction extends JosmAction {
             }
         }
 
+        /**
+         * Performs the paste operation.
+         * @return list of tags
+         */
         public List<Tag> execute() {
             tags.clear();
-            if (isHeteogeneousSource()) {
+            if (isHeterogeneousSource()) {
                 pasteFromHeterogeneousSource();
             } else {
                 pasteFromHomogeneousSource();
@@ -257,8 +266,12 @@ public final class PasteTagsAction extends JosmAction {
         }
     }
 
-    /** Paste tags from arbitrary text, not using JOSM buffer
+    /**
+     * Paste tags from arbitrary text, not using JOSM buffer
+     * @param selection selected primitives
+     * @param text text containing tags
      * @return true if action was successful
+     * @see TextTagParser#readTagsFromText
      */
     public static boolean pasteTagsFromText(Collection<OsmPrimitive> selection, String text) {
         Map<String, String> tags = TextTagParser.readTagsFromText(text);
@@ -277,7 +290,8 @@ public final class PasteTagsAction extends JosmAction {
         return !commands.isEmpty();
     }
 
-    /** Paste tags from JOSM buffer
+    /**
+     * Paste tags from JOSM buffer
      * @param selection objects that will have the tags
      * @return false if JOSM buffer was empty
      */
@@ -296,6 +310,7 @@ public final class PasteTagsAction extends JosmAction {
 
     /**
      * Create and execute SequenceCommand with descriptive title
+     * @param selection selected primitives
      * @param commands the commands to perform in a sequential command
      */
     private static void commitCommands(Collection<OsmPrimitive> selection, List<Command> commands) {

@@ -54,7 +54,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  * Ways are just split at the selected nodes.  The nodes remain in their
  * original order.  Selected nodes at the end of a way are ignored.
  */
-
 public class SplitWayAction extends JosmAction {
 
     /**
@@ -319,6 +318,7 @@ public class SplitWayAction extends JosmAction {
 
         /**
          * Returns a strategy which selects the way chunk with the highest node count to keep.
+         * @return strategy which selects the way chunk with the highest node count to keep
          */
         public static Strategy keepLongestChunk() {
             return new Strategy() {
@@ -337,6 +337,7 @@ public class SplitWayAction extends JosmAction {
 
         /**
          * Returns a strategy which selects the first way chunk.
+         * @return strategy which selects the first way chunk
          */
         public static Strategy keepFirstChunk() {
             return new Strategy() {
@@ -347,7 +348,6 @@ public class SplitWayAction extends JosmAction {
             };
         }
     }
-
 
     /**
      * Determine which ways to split.

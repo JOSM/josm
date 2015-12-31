@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.Notification;
@@ -216,6 +217,7 @@ public class SimplifyWayAction extends JosmAction {
      * @param from the lower index
      * @param to the upper index
      * @param threshold the max error threshold
+     * @param simplifiedNodes list that will contain resulting nodes
      */
     protected void buildSimplifiedNodeList(List<Node> wnew, int from, int to, double threshold, List<Node> simplifiedNodes) {
 
@@ -227,7 +229,7 @@ public class SimplifyWayAction extends JosmAction {
         double xtemax = 0;
         for (int i = from + 1; i < to; i++) {
             Node n = wnew.get(i);
-            double xte = Math.abs(EARTH_RAD
+            double xte = Math.abs(Ellipsoid.WGS84.a
                     * xtd(fromN.getCoor().lat() * Math.PI / 180, fromN.getCoor().lon() * Math.PI / 180, toN.getCoor().lat() * Math.PI
                             / 180, toN.getCoor().lon() * Math.PI / 180, n.getCoor().lat() * Math.PI / 180, n.getCoor().lon() * Math.PI
                             / 180));
@@ -251,8 +253,6 @@ public class SimplifyWayAction extends JosmAction {
             }
         }
     }
-
-    public static final double EARTH_RAD = 6378137.0;
 
     /* From Aviaton Formulary v1.3
      * http://williams.best.vwh.net/avform.htm

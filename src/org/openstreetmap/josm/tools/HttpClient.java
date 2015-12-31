@@ -436,7 +436,7 @@ public final class HttpClient {
 
     /**
      * Sets whether not to set header {@code Connection=close}
-     * <p/>
+     * <p>
      * This might fix #7640, see
      * <a href='https://web.archive.org/web/20140118201501/http://www.tikalk.com/java/forums/httpurlconnection-disable-keep-alive'>here</a>.
      *

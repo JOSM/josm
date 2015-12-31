@@ -255,6 +255,8 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * mouse is not moved and only modifier keys are pressed, no mouse event
      * occurs. We can use AWTEvent to catch those but still lack a proper
      * mouseevent. Instead we copy the previous event and only update the modifiers.
+     * @param e mouse event
+     * @param modifiers mouse modifiers
      */
     private void giveUserFeedback(MouseEvent e, int modifiers) {
         updateCursor(e, modifiers);
@@ -265,6 +267,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * Gives the user feedback for the action he/she is about to do. Currently
      * calls the cursor and target highlighting routines. Extracts modifiers
      * from mouse event.
+     * @param e mouse event
      */
     private void giveUserFeedback(MouseEvent e) {
         giveUserFeedback(e, e.getModifiers());
