@@ -81,7 +81,8 @@ public final class ColorHelper {
      */
     public static Color getForegroundColor(Color bg) {
         // http://stackoverflow.com/a/3943023/2257172
-        return (bg.getRed()*0.299 + bg.getGreen()*0.587 + bg.getBlue()*0.114) > 186 ?
-                Color.BLACK : Color.WHITE;
+        return bg == null ? null :
+              (bg.getRed()*0.299 + bg.getGreen()*0.587 + bg.getBlue()*0.114) > 186 ?
+                  Color.BLACK : Color.WHITE;
     }
 }
