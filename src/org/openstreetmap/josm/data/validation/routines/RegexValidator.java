@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
  *         String[] regexs = new String[] {...};
  *         RegexValidator validator = new RegexValidator(regexs, false);
  * </pre>
- * <p>
  * <ul>
  *   <li>Validate <code>true</code> or <code>false</code>:
  *   <ul>

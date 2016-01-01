@@ -34,7 +34,7 @@ public class HelpContentReader extends WikiReader {
      * Fetches the content of a help topic from the JOSM wiki.
      *
      * @param helpTopicUrl  the absolute help topic URL
-     * @param dotest
+     * @param dotest if {@code true}, checks if help content is empty
      * @return the content, filtered and transformed for being displayed in the internal help browser
      * @throws HelpContentReaderException if problem occurs
      * @throws MissingHelpContentException if this helpTopicUrl doesn't point to an existing Wiki help page

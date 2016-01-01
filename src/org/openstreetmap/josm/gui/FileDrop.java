@@ -33,6 +33,7 @@ import javax.swing.border.Border;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction;
+import org.openstreetmap.josm.gui.FileDrop.TransferableObject;
 
 // CHECKSTYLE.OFF: HideUtilityClassConstructor
 
@@ -64,7 +65,6 @@ import org.openstreetmap.josm.actions.OpenFileAction;
  * You can turn on some debugging features by passing a <tt>PrintStream</tt>
  * object (such as <tt>System.out</tt>) into the full constructor. A <tt>null</tt>
  * value will result in no extra debugging information being output.
- * <p>
  *
  * <p>I'm releasing this code into the Public Domain. Enjoy.
  * </p>

@@ -275,6 +275,7 @@ Build-Date: ${build.tstamp}
                 sourcepath="${src.dir}"
                 encoding="UTF-8"    
                 packagenames="org.openstreetmap.josm.*,org.openstreetmap.gui.jmapviewer.*"
+        	    excludepackagenames="org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.*"
                 windowtitle="JOSM"
                 use="true"
                 private="true"
