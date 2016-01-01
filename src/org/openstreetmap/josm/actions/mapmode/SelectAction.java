@@ -1263,6 +1263,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
     /**
      * Returns {@code o} as collection of {@code o}'s type.
+     * @param <T> object type
      * @param o any object
      * @return {@code o} as collection of {@code o}'s type.
      */

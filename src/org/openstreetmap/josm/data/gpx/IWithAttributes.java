@@ -30,6 +30,7 @@ public interface IWithAttributes {
     /**
      * Returns the Collection value to which the specified key is mapped,
      * or {@code null} if this map contains no Collection mapping for the key.
+     * @param <T> type of items
      *
      * @param key the key whose associated value is to be returned
      * @return the Collection value to which the specified key is mapped,

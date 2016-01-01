@@ -26,7 +26,7 @@ import org.openstreetmap.josm.data.osm.Way;
  * (that are shared by other members).
  *
  * @author Christiaan Welvaart &lt;cjw@time4t.net&gt;
- *
+ * @since 1785
  */
 public class RelationNodeMap {
 
@@ -172,9 +172,10 @@ public class RelationNodeMap {
     private Node firstCircular;
 
     /**
-     * Return a relation member that is linked to the
-     * member 'i', but has not been popped yet.
+     * Return a relation member that is linked to the member 'i', but has not been popped yet.
      * Return null if there is no such member left.
+     * @param way way key
+     * @return a relation member that is linked to the member 'i', but has not been popped yet
      */
     public Integer popAdjacent(Integer way) {
         if (lastOnewayNode != null) return popBackwardOnewayPart(way);
@@ -294,8 +295,8 @@ public class RelationNodeMap {
     }
 
     /**
-     * Returns some remaining member or null if
-     * every sortable member has been processed.
+     * Returns some remaining member or null if every sortable member has been processed.
+     * @return member key
      */
     public Integer pop() {
         if (!remaining.isEmpty()) {
@@ -305,7 +306,7 @@ public class RelationNodeMap {
         }
 
         if (remainingOneway.isEmpty()) return null;
-        for (Integer i :remainingOneway.keySet()) { //find oneway, which is connected to more than one way (is between two oneway loops)
+        for (Integer i : remainingOneway.keySet()) { //find oneway, which is connected to more than one way (is between two oneway loops)
             for (Node n : onewayReverseMap.ways.get(i)) {
                 if (onewayReverseMap.nodes.containsKey(n) && onewayReverseMap.nodes.get(n).size() > 1) {
                     doneOneway(i);
@@ -323,6 +324,7 @@ public class RelationNodeMap {
     /**
      * This relation member has been processed.
      * Remove references in the map.nodes.
+     * @param i member key
      */
     private void doneOneway(Integer i) {
         Set<Node> nodesForward = remainingOneway.get(i);

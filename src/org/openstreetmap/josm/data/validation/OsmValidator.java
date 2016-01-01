@@ -228,6 +228,7 @@ public class OsmValidator implements LayerChangeListener {
 
     /**
      * Returns the instance of the given test class.
+     * @param <T> testClass type
      * @param testClass The class of test to retrieve
      * @return the instance of the given test class, if any, or {@code null}
      * @since 6670

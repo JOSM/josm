@@ -68,6 +68,8 @@ public final class Pair<A, B> {
 
     /**
      * Convenient constructor method
+     * @param <U> type of first item
+     * @param <V> type of second item
      * @param u The first item
      * @param v The second item
      * @return The newly created Pair(u,v)

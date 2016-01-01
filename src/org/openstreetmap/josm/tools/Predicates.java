@@ -17,6 +17,7 @@ public final class Predicates {
 
     /**
      * Returns the negation of {@code predicate}.
+     * @param <T> type of items
      * @param predicate the predicate to negate
      * @return the negation of {@code predicate}
      */
@@ -31,6 +32,7 @@ public final class Predicates {
 
     /**
      * Returns a {@link Predicate} executing {@link Objects#equals}.
+     * @param <T> type of items
      * @param ref the reference object
      * @return a {@link Predicate} executing {@link Objects#equals}
      */
@@ -116,6 +118,7 @@ public final class Predicates {
 
     /**
      * Returns a {@link Predicate} executing {@link Collection#contains(Object)}.
+     * @param <T> type of items
      * @param target collection
      * @return a {@link Predicate} executing {@link Collection#contains(Object)}
      */
@@ -130,6 +133,7 @@ public final class Predicates {
 
     /**
      * Returns a {@link Predicate} testing whether objects are {@code null}.
+     * @param <T> type of items
      * @return a {@link Predicate} testing whether objects are {@code null}
      */
     public static <T> Predicate<T> isNull() {

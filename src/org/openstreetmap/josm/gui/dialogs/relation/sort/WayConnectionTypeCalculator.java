@@ -21,6 +21,8 @@ public class WayConnectionTypeCalculator {
 
     /**
      * refresh the cache of member WayConnectionTypes
+     * @param members relation members
+     * @return way connections
      */
     public List<WayConnectionType> updateLinks(List<RelationMember> members) {
         this.members = members;
@@ -214,17 +216,20 @@ public class WayConnectionTypeCalculator {
     }
 
     /**
-     * Determines the direction of way k with respect to the way ref_i.
-     * The way ref_i is assumed to have the direction ref_direction and
-     * to be the predecessor of k.
+     * Determines the direction of way {@code k} with respect to the way {@code ref_i}.
+     * The way {@code ref_i} is assumed to have the direction {@code ref_direction} and to be the predecessor of {@code k}.
      *
      * If both ways are not linked in any way, NONE is returned.
      *
      * Else the direction is given as follows:
      * Let the relation be a route of oneway streets, and someone travels them in the given order.
      * Direction is FORWARD if it is legal and BACKWARD if it is illegal to do so for the given way.
-     *
-     **/
+     * @param ref_i way key
+     * @param ref_direction direction of ref_i
+     * @param k successor of ref_i
+     * @param reversed if {@code true} determine reverse direction
+     * @return direction of way {@code k}
+     */
     private Direction determineDirection(int ref_i, final Direction ref_direction, int k, boolean reversed) {
         if (ref_i < 0 || k < 0 || ref_i >= members.size() || k >= members.size())
             return NONE;

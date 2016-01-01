@@ -120,8 +120,11 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
         return false;
     }
 
-    /** adds layer name label to (this) using the given info. Returns tooltip that
-     * should be added to the panel **/
+    /**
+     * Adds layer name label to (this) using the given info. Returns tooltip that should be added to the panel
+     * @param info information, user preferences and save/upload states of the layer
+     * @return tooltip that should be added to the panel
+     */
     private String addLblLayerName(SaveLayerInfo info) {
         lblLayerName.setIcon(info.getLayer().getIcon());
         lblLayerName.setText(info.getName());
@@ -129,8 +132,11 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
         return tr("The bold text is the name of the layer.");
     }
 
-    /** adds filename label to (this) using the given info. Returns tooltip that
-     * should be added to the panel */
+    /**
+     * Adds filename label to (this) using the given info. Returns tooltip that should be added to the panel
+     * @param info information, user preferences and save/upload states of the layer
+     * @return tooltip that should be added to the panel
+     */
     private String addLblFilename(SaveLayerInfo info) {
         String tooltip = "";
         boolean error = false;
@@ -156,8 +162,12 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
         return tr("Click cell to change the file path.") + "<br/>" + tooltip;
     }
 
-    /** makes the given path fit lblFilename, appends ellipsis on the left if it doesn’t fit.
-     * Idea: /home/user/josm → …/user/josm → …/josm; and take the first one that fits */
+    /**
+     * Makes the given path fit lblFilename, appends ellipsis on the left if it doesn’t fit.
+     * Idea: /home/user/josm → …/user/josm → …/josm; and take the first one that fits
+     * @param t complete path
+     * @return shorter path
+     */
     private String makePathFit(String t) {
         boolean hasEllipsis = false;
         while (t != null && !t.isEmpty()) {

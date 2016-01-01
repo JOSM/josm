@@ -94,6 +94,7 @@ public final class Utils {
 
     /**
      * Tests whether {@code predicate} applies to at least one element from {@code collection}.
+     * @param <T> type of items
      * @param collection the collection
      * @param predicate the predicate
      * @return {@code true} if {@code predicate} applies to at least one element from {@code collection}
@@ -108,6 +109,7 @@ public final class Utils {
 
     /**
      * Tests whether {@code predicate} applies to all elements from {@code collection}.
+     * @param <T> type of items
      * @param collection the collection
      * @param predicate the predicate
      * @return {@code true} if {@code predicate} applies to all elements from {@code collection}
@@ -148,6 +150,7 @@ public final class Utils {
 
     /**
      * Returns the first element from {@code items} which is non-null, or null if all elements are null.
+     * @param <T> type of items
      * @param items the items to look for
      * @return first non-null item if there is one
      */
@@ -164,6 +167,8 @@ public final class Utils {
     /**
      * Filter a collection by (sub)class.
      * This is an efficient read-only implementation.
+     * @param <S> Super type of items
+     * @param <T> type of items
      * @param collection the collection
      * @param klass the (sub)class
      * @return a read-only filtered collection
@@ -348,6 +353,7 @@ public final class Utils {
 
     /**
      * Copies the given array. Unlike {@link Arrays#copyOf}, this method is null-safe.
+     * @param <T> type of items
      * @param array The array to copy
      * @return A copy of the original array, or {@code null} if {@code array} is null
      * @since 6221
@@ -656,6 +662,7 @@ public final class Utils {
 
     /**
      * Topological sort.
+     * @param <T> type of items
      *
      * @param dependencies contains mappings (key -&gt; value). In the final list of sorted objects, the key will come
      * after the value. (In other words, the key depends on the value(s).)
@@ -1224,6 +1231,7 @@ public final class Utils {
 
     /**
      * Adds the given item at the end of a new copy of given array.
+     * @param <T> type of items
      * @param array The source array
      * @param item The item to add
      * @return An extended copy of {@code array} containing {@code item} as additional last element

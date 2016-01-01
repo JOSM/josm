@@ -49,6 +49,7 @@ public final class TestUtils {
 
     /**
      * Checks that the given Comparator respects its contract on the given table.
+     * @param <T> type of elements
      * @param comparator The comparator to test
      * @param array The array sorted for test purpose
      */
