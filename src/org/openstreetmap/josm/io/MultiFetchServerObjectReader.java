@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.preferences.server.OverpassServerPreference;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Utils;
@@ -84,13 +85,13 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
 
     /**
      * Creates a new instance of {@link MultiFetchServerObjectReader} or {@link MultiFetchOverpassObjectReader}
-     * depending on the {@code download.overpass.for-multi-fetch} preference.
+     * depending on the {@link OverpassServerPreference#useForMultiFetch preference}.
      *
      * @return a new instance
      * @since 9241
      */
     public static MultiFetchServerObjectReader create() {
-        return create(Main.pref.getBoolean("download.overpass.for-multi-fetch", false));
+        return create(OverpassServerPreference.useForMultiFetch());
     }
 
     /**
