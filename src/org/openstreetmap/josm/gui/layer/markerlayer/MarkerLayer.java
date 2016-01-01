@@ -73,6 +73,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     private Marker currentMarker;
     public AudioMarker syncAudioMarker;
 
+    private static final Color DEFAULT_COLOR = Color.magenta;
+
     /**
      * Constructs a new {@code MarkerLayer}.
      * @param indata The GPX data for this layer
@@ -189,12 +191,12 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     @Override
     public Color getColor(boolean ignoreCustom) {
         String name = getName();
-        return Main.pref.getColor(marktr("gps marker"), name != null ? "layer "+name : null, Color.gray);
+        return Main.pref.getColor(marktr("gps marker"), name != null ? "layer "+name : null, DEFAULT_COLOR);
     }
 
     /* for preferences */
     public static Color getGenericColor() {
-        return Main.pref.getColor(marktr("gps marker"), Color.gray);
+        return Main.pref.getColor(marktr("gps marker"), DEFAULT_COLOR);
     }
 
     @Override
