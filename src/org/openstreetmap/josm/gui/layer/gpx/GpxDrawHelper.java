@@ -10,7 +10,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -223,6 +225,7 @@ public class GpxDrawHelper {
 
         if (colorModeDynamic) {
             if (colored == ColorMode.VELOCITY) {
+                final List<Double> velocities = new ArrayList<>();
                 for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
                     if (!forceLines) {
                         oldWp = null;
@@ -235,6 +238,7 @@ public class GpxDrawHelper {
                         if (oldWp != null && trkPnt.time > oldWp.time) {
                             double vel = c.greatCircleDistance(oldWp.getCoor())
                                     / (trkPnt.time - oldWp.time);
+                            velocities.add(vel);
                             if (vel > maxval) {
                                 maxval = vel;
                             }
@@ -245,6 +249,9 @@ public class GpxDrawHelper {
                         oldWp = trkPnt;
                     }
                 }
+                Collections.sort(velocities);
+                minval = velocities.get(velocities.size() / 20); // 5% percentile to remove outliers
+                maxval = velocities.get(velocities.size() * 19 / 20); // 95% percentile to remove outliers
                 if (minval >= maxval) {
                     velocityScale.setRange(0, 120/3.6);
                 } else {
