@@ -144,6 +144,7 @@ public class SessionReader {
         /**
          * Add a task, e.g. a message dialog, that should
          * be executed in EDT after all layers have been added.
+         * @param task task to run in EDT
          */
         public void addPostLayersTask(Runnable task) {
             postLoadTasks.add(task);

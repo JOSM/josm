@@ -107,6 +107,7 @@ public class TaggingPresetMenu extends TaggingPreset {
 
     /**
      * Sorts the menu items using the translated item text
+     * @param menu menu to sort
      */
     public static void sortMenu(JMenu menu) {
         Component[] items = menu.getMenuComponents();

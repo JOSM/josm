@@ -167,6 +167,12 @@ public class MapPaintPreference implements SubPreferenceSetting {
         }
     }
 
+    /**
+     * Returns title from a source entry.
+     * @param entry source entry
+     * @return title
+     * @see MapCSSStyleSource#title
+     */
     public static String getTitleFromSourceEntry(SourceEntry entry) {
         try {
             final MapCSSStyleSource css = new MapCSSStyleSource(entry);
@@ -232,6 +238,8 @@ public class MapPaintPreference implements SubPreferenceSetting {
          * If the selection of default styles changes in future releases, add
          * the new entries to the user-configured list. Remember the known URLs,
          * so an item that was deleted explicitly is not added again.
+         * @param list new defaults
+         * @return {@code true} if a change occurred
          */
         private boolean insertNewDefaults(List<SourceEntry> list) {
             boolean changed = false;

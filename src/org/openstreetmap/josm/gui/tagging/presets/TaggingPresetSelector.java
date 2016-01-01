@@ -214,6 +214,8 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
 
     /**
      * Constructs a new {@code TaggingPresetSelector}.
+     * @param displayOnlyApplicable if {@code true} display "Show only applicable to selection" checkbox
+     * @param displaySearchInTags if {@code true} display "Search in tags" checkbox
      */
     public TaggingPresetSelector(boolean displayOnlyApplicable, boolean displaySearchInTags) {
         super(new BorderLayout());

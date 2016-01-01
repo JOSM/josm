@@ -97,6 +97,7 @@ public final class CheckParameterUtil {
     /**
      * Ensures that the condition {@code condition} holds.
      * @param condition The condition to check
+     * @param message error message
      * @throws IllegalArgumentException if the condition does not hold
      */
     public static void ensureThat(boolean condition, String message) {

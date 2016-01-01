@@ -16,6 +16,10 @@ public class XmlWriter implements Closeable {
 
     protected final PrintWriter out;
 
+    /**
+     * Constructs a new {@code XmlWriter}.
+     * @param out print writer
+     */
     public XmlWriter(PrintWriter out) {
         this.out = out;
     }
@@ -29,6 +33,13 @@ public class XmlWriter implements Closeable {
         }
     }
 
+    /**
+     * Encode the given string in XML1.0 format.
+     * Optimized to fast pass strings that don't need encoding (normal case).
+     *
+     * @param unencoded the unencoded input string
+     * @return XML1.0 string
+     */
     public static String encode(String unencoded) {
         return encode(unencoded, false);
     }

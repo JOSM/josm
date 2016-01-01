@@ -300,6 +300,8 @@ public class RequestProcessor extends Thread {
      *
      * @param out
      *            The writer where the error is written
+     * @param help
+     *            Optional HTML help content to display, can be null
      * @throws IOException
      *             If the error can not be written
      */
@@ -322,6 +324,8 @@ public class RequestProcessor extends Thread {
      *
      * @param out
      *            The writer where the error is written
+     * @param help
+     *            Optional HTML help content to display, can be null
      * @throws IOException
      *             If the error can not be written
      */

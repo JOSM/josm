@@ -29,9 +29,12 @@ public class ToolbarPreferencesTest {
             putValue("toolbar", "action");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e, Map<String, Object> parameters) {
+            // Do nothing
         }
 
+        @Override
         public List<ActionParameter<?>> getActionParameters() {
             List<ActionParameter<?>> result = new ArrayList<>();
             result.add(new StringActionParameter("param1"));
@@ -39,8 +42,9 @@ public class ToolbarPreferencesTest {
             return result;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
-
+            // Do nothing
         }
     }
 

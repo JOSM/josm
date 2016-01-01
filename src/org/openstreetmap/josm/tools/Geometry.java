@@ -257,7 +257,11 @@ public final class Geometry {
     }
 
     /**
-     * Finds the intersection of two line segments
+     * Finds the intersection of two line segments.
+     * @param p1 the coordinates of the start point of the first specified line segment
+     * @param p2 the coordinates of the end point of the first specified line segment
+     * @param p3 the coordinates of the start point of the second specified line segment
+     * @param p4 the coordinates of the end point of the second specified line segment
      * @return EastNorth null if no intersection was found, the EastNorth coordinates of the intersection otherwise
      */
     public static EastNorth getSegmentSegmentIntersection(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {

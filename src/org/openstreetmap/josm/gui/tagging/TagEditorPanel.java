@@ -58,6 +58,11 @@ public class TagEditorPanel extends JPanel {
         return pnl;
     }
 
+    /**
+     * Sets the next component to request focus after navigation (with tab or enter).
+     * @param nextFocusComponent next component to request focus after navigation (with tab or enter)
+     * @see TagTable#setNextFocusComponent
+     */
     public void setNextFocusComponent(Component nextFocusComponent) {
         tagTable.setNextFocusComponent(nextFocusComponent);
     }
@@ -90,6 +95,10 @@ public class TagEditorPanel extends JPanel {
         return pnl;
     }
 
+    /**
+     * Returns the paste action.
+     * @return the paste action
+     */
     public AbstractAction getPasteAction() {
         return tagTable.getPasteAction();
     }
@@ -140,16 +149,17 @@ public class TagEditorPanel extends JPanel {
     /**
      * Creates a new tag editor panel. The editor model is created
      * internally and can be retrieved with {@link #getModel()}.
+     * @param presetHandler tagging preset handler
      */
     public TagEditorPanel(TaggingPresetHandler presetHandler) {
         this(null, presetHandler, 0);
     }
 
     /**
-     * Creates a new tag editor panel with a supplied model. If
-     * {@code model} is null, a new model is created.
+     * Creates a new tag editor panel with a supplied model. If {@code model} is null, a new model is created.
      *
      * @param model the tag editor model
+     * @param presetHandler tagging preset handler
      * @param maxCharacters maximum number of characters allowed, 0 for unlimited
      */
     public TagEditorPanel(TagEditorModel model, TaggingPresetHandler presetHandler, final int maxCharacters) {

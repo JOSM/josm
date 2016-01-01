@@ -51,8 +51,11 @@ public class ImageProviderTest {
         assertNotNull(img);
     }
 
+    /**
+     * Test fetching an image using {@code wiki://} protocol.
+     */
     @Test
-    public void testWikiProtocol() throws Exception {
+    public void testWikiProtocol() {
         // https://commons.wikimedia.org/wiki/File:OpenJDK_logo.svg
         assertNotNull(ImageProvider.get("wiki://OpenJDK_logo.svg"));
     }

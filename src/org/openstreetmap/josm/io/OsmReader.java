@@ -56,7 +56,10 @@ public class OsmReader extends AbstractReader {
     /** Used by plugins to register themselves as data postprocessors. */
     private static volatile List<OsmServerReadPostprocessor> postprocessors;
 
-    /** register a new postprocessor */
+    /** Register a new postprocessor.
+     * @param pp postprocessor
+     * @see #deregisterPostprocessor
+     */
     public static void registerPostprocessor(OsmServerReadPostprocessor pp) {
         if (postprocessors == null) {
             postprocessors = new ArrayList<>();
@@ -64,7 +67,11 @@ public class OsmReader extends AbstractReader {
         postprocessors.add(pp);
     }
 
-    /** deregister a postprocessor previously registered with registerPostprocessor */
+    /**
+     * Deregister a postprocessor previously registered with {@link #registerPostprocessor}.
+     * @param pp postprocessor
+     * @see #registerPostprocessor
+     */
     public static void deregisterPostprocessor(OsmServerReadPostprocessor pp) {
         if (postprocessors != null) {
             postprocessors.remove(pp);
@@ -398,6 +405,7 @@ public class OsmReader extends AbstractReader {
      *
      * This is basically the same code as parseUnknown(), except for the warnings, which
      * are displayed for inner elements and not at top level.
+     * @param printWarning if {@code true}, a warning message will be printed if an unknown element is met
      * @throws XMLStreamException if there is an error processing the underlying XML source
      */
     private void jumpToEnd(boolean printWarning) throws XMLStreamException {
@@ -431,6 +439,7 @@ public class OsmReader extends AbstractReader {
 
     /**
      * Read out the common attributes and put them into current OsmPrimitive.
+     * @param current primitive to update
      * @throws XMLStreamException if there is an error processing the underlying XML source
      */
     private void readCommon(PrimitiveData current) throws XMLStreamException {

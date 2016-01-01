@@ -76,6 +76,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public final class Utils {
 
+    /** Pattern matching white spaces */
     public static final Pattern WHITE_SPACES_PATTERN = Pattern.compile("\\s+");
 
     private Utils() {
@@ -310,6 +311,7 @@ public final class Utils {
     /**
      * convert float range 0 &lt;= x &lt;= 1 to integer range 0..255
      * when dealing with colors and color alpha value
+     * @param val float value between 0 and 1
      * @return null if val is null, the corresponding int if val is in the
      *         range 0...1. If val is outside that range, return 255
      */
@@ -335,6 +337,11 @@ public final class Utils {
         return ((float) val) / 255f;
     }
 
+    /**
+     * Returns the complementary color of {@code clr}.
+     * @param clr the color to complement
+     * @return the complementary color of {@code clr}
+     */
     public static Color complement(Color clr) {
         return new Color(255 - clr.getRed(), 255 - clr.getGreen(), 255 - clr.getBlue(), clr.getAlpha());
     }

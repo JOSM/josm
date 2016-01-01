@@ -19,6 +19,9 @@ public final class TableHelper {
      * (originally from @class org.openstreetmap.josm.gui.preferences.SourceEditor)
      * adjust the preferred width of column col to the maximum preferred width of the cells
      * requires JTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+     * @param tbl table
+     * @param col column index
+     * @param maxColumnWidth maximum column width
      */
     public static void adjustColumnWidth(JTable tbl, int col, int maxColumnWidth) {
         int maxwidth = 0;

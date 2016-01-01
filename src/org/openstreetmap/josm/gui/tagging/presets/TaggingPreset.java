@@ -203,7 +203,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     /**
      * Called from the XML parser to set the types this preset affects.
+     * @param types comma-separated primitive types ("node", "way", "relation" or "closedway")
      * @throws SAXException if any SAX error occurs
+     * @see TaggingPresetType#fromString
      */
     public void setType(String types) throws SAXException {
         this.types = TaggingPresetItem.getType(types);

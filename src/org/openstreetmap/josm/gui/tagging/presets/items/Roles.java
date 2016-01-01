@@ -67,6 +67,9 @@ public class Roles extends TaggingPresetItem {
 
         /**
          * Return either argument, the highest possible value or the lowest allowed value
+         * @param c count
+         * @return the highest possible value or the lowest allowed value
+         * @see #required
          */
         public long getValidCount(long c) {
             if (count > 0 && !required)

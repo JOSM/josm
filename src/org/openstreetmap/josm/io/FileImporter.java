@@ -18,6 +18,10 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
+/**
+ * Abstract file importer.
+ * @since 1637
+ */
 public abstract class FileImporter implements Comparable<FileImporter>, LayerChangeListener {
 
     /**
@@ -76,7 +80,9 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
     }
 
     /**
-     * Wrapper to give meaningful output if things go wrong.
+     * Wrapper to {@link #importData(File, ProgressMonitor)} to give meaningful output if things go wrong.
+     * @param f data file to import
+     * @param progressMonitor progress monitor
      * @return true if data import was successful
      */
     public boolean importDataHandleExceptions(File f, ProgressMonitor progressMonitor) {
@@ -120,6 +126,12 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
         });
     }
 
+    /**
+     * Wrapper to {@link #importData(List, ProgressMonitor)} to give meaningful output if things go wrong.
+     * @param files data files to import
+     * @param progressMonitor progress monitor
+     * @return true if data import was successful
+     */
     public boolean importDataHandleExceptions(List<File> files, ProgressMonitor progressMonitor) {
         try {
             Main.info("Open "+files.size()+" files");

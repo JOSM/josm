@@ -122,21 +122,27 @@ public final class Shortcut {
     }
 
     /**
-     * FOR PREF PANE ONLY
+     * FOR PREF PANE ONLY.<p>
+     * Sets the modifiers that are used.
+     * @param assignedModifier assigned modifier
      */
     public void setAssignedModifier(int assignedModifier) {
         this.assignedModifier = assignedModifier;
     }
 
     /**
-     * FOR PREF PANE ONLY
+     * FOR PREF PANE ONLY.<p>
+     * Sets the key that actually is used.
+     * @param assignedKey assigned key
      */
     public void setAssignedKey(int assignedKey) {
         this.assignedKey = assignedKey;
     }
 
     /**
-     * FOR PREF PANE ONLY
+     * FOR PREF PANE ONLY.<p>
+     * Sets whether the user has changed this shortcut.
+     * @param assignedUser {@code true} if the user has changed this shortcut
      */
     public void setAssignedUser(boolean assignedUser) {
         this.reset = (this.assignedUser || reset) && !assignedUser;
@@ -201,6 +207,7 @@ public final class Shortcut {
 
     /**
      * use this to set a menu's mnemonic
+     * @param menu menu
      */
     public void setMnemonic(JMenu menu) {
         if (assignedModifier == getGroupModifier(MNEMONIC) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
@@ -210,6 +217,7 @@ public final class Shortcut {
 
     /**
      * use this to set a buttons's mnemonic
+     * @param button button
      */
     public void setMnemonic(AbstractButton button) {
         if (assignedModifier == getGroupModifier(MNEMONIC)  && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
@@ -219,6 +227,7 @@ public final class Shortcut {
 
     /**
      * Sets the mnemonic key on a text component.
+     * @param component component
      */
     public void setFocusAccelerator(JTextComponent component) {
         if (assignedModifier == getGroupModifier(MNEMONIC)  && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
@@ -228,6 +237,7 @@ public final class Shortcut {
 
     /**
      * use this to set a actions's accelerator
+     * @param action action
      */
     public void setAccelerator(AbstractAction action) {
         if (getKeyStroke() != null) {

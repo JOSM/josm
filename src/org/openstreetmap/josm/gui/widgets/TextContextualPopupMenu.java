@@ -80,6 +80,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
      * Attaches this contextual menu to the given text component.
      * A menu can only be attached to a single component.
      * @param component The text component that will display the menu and handle its actions.
+     * @param undoRedo {@code true} if undo/redo must be supported
      * @return {@code this}
      * @see #detach()
      */

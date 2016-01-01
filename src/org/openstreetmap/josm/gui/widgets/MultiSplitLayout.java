@@ -93,6 +93,7 @@ public class MultiSplitLayout implements LayoutManager {
      * Create a MultiSplitLayout with the specified model.
      *
      * #see setModel
+     * @param model model
      */
     public MultiSplitLayout(Node model) {
         this.model = model;
@@ -195,6 +196,7 @@ public class MultiSplitLayout implements LayoutManager {
      * If false then the Dividers define the bounds of the adjacent
      * Split and Leaf nodes.  Typically this property is set to false
      * after the (MultiSplitPane) user has dragged a Divider.
+     * @param floatingDividers boolean value
      *
      * @see #getFloatingDividers
      */
@@ -689,6 +691,11 @@ public class MultiSplitLayout implements LayoutManager {
     public static class InvalidLayoutException extends RuntimeException {
         private final transient Node node;
 
+        /**
+         * Constructs a new {@code InvalidLayoutException}.
+         * @param msg the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+         * @param node node
+         */
         public InvalidLayoutException(String msg, Node node) {
             super(msg);
             this.node = node;
@@ -1233,37 +1240,27 @@ public class MultiSplitLayout implements LayoutManager {
     }
 
     /**
-     * A convenience method that converts a string to a
-     * MultiSplitLayout model (a tree of Nodes) using a
-     * a simple syntax.  Nodes are represented by
-     * parenthetical expressions whose first token
-     * is one of ROW/COLUMN/LEAF.  ROW and COLUMN specify
-     * horizontal and vertical Split nodes respectively,
-     * LEAF specifies a Leaf node.  A Leaf's name and
-     * weight can be specified with attributes,
+     * A convenience method that converts a string to a MultiSplitLayout model (a tree of Nodes) using a
+     * a simple syntax.  Nodes are represented by parenthetical expressions whose first token
+     * is one of ROW/COLUMN/LEAF.  ROW and COLUMN specify horizontal and vertical Split nodes respectively,
+     * LEAF specifies a Leaf node.  A Leaf's name and weight can be specified with attributes,
      * name=<i>myLeafName</i> weight=<i>myLeafWeight</i>.
-     * Similarly, a Split's weight can be specified with
-     * weight=<i>mySplitWeight</i>.
+     * Similarly, a Split's weight can be specified with weight=<i>mySplitWeight</i>.
      *
-     * <p> For example, the following expression generates
-     * a horizontal Split node with three children:
-     * the Leafs named left and right, and a Divider in
-     * between:
+     * <p> For example, the following expression generates a horizontal Split node with three children:
+     * the Leafs named left and right, and a Divider in between:
      * <pre>
      * (ROW (LEAF name=left) (LEAF name=right weight=1.0))
      * </pre>
      *
-     * <p> Dividers should not be included in the string,
-     * they're added automatcially as needed.  Because
-     * Leaf nodes often only need to specify a name, one
-     * can specify a Leaf by just providing the name.
+     * <p> Dividers should not be included in the string, they're added automatcially as needed.  Because
+     * Leaf nodes often only need to specify a name, one can specify a Leaf by just providing the name.
      * The previous example can be written like this:
      * <pre>
      * (ROW left (LEAF name=right weight=1.0))
      * </pre>
      *
-     * <p>Here's a more complex example.  One row with
-     * three elements, the first and last of which are columns
+     * <p>Here's a more complex example.  One row with three elements, the first and last of which are columns
      * with two leaves each:
      * <pre>
      * (ROW (COLUMN weight=0.5 left.top left.bottom)
@@ -1271,10 +1268,9 @@ public class MultiSplitLayout implements LayoutManager {
      *      (COLUMN weight=0.5 right.top right.bottom))
      * </pre>
      *
-     *
-     * <p> This syntax is not intended for archiving or
-     * configuration files .  It's just a convenience for
+     * <p> This syntax is not intended for archiving or configuration files .  It's just a convenience for
      * examples and tests.
+     * @param s model as string
      *
      * @return the Node root of a tree based on s.
      */

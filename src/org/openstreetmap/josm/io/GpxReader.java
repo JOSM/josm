@@ -498,6 +498,7 @@ public class GpxReader implements GpxConstants {
 
         /**
          * convert url/urlname to link element (GPX 1.0 -&gt; GPX 1.1).
+         * @param attr attributes
          */
         private void convertUrlToLink(Map<String, Object> attr) {
             String url = (String) attr.get("url");
@@ -508,7 +509,7 @@ public class GpxReader implements GpxConstants {
                 }
                 GpxLink link = new GpxLink(url);
                 link.text = urlname;
-                @SuppressWarnings({ "unchecked", "rawtypes" })
+                @SuppressWarnings("unchecked")
                 Collection<GpxLink> links = (Collection<GpxLink>) attr.get(META_LINKS);
                 links.add(link);
             }
@@ -530,7 +531,6 @@ public class GpxReader implements GpxConstants {
      * @param source the source input stream
      * @throws IOException if an IO error occurs, e.g. the input stream is closed.
      */
-    @SuppressWarnings("resource")
     public GpxReader(InputStream source) throws IOException {
         Reader utf8stream = UTFInputStreamReader.create(source);
         Reader filtered = new InvalidXmlCharacterFilter(utf8stream);

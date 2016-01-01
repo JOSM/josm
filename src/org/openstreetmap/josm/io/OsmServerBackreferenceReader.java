@@ -147,6 +147,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     /**
      * Reads referring ways from the API server and replies them in a {@link DataSet}
      *
+     * @param progressMonitor progress monitor
      * @return the data set
      * @throws OsmTransferException if any error occurs during dialog with OSM API
      */
