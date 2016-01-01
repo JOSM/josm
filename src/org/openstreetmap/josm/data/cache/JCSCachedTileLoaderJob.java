@@ -3,13 +3,10 @@ package org.openstreetmap.josm.data.cache;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,6 +23,7 @@ import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -310,40 +308,32 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 return true;
             }
 
-            HttpURLConnection urlConn = getURLConnection(getUrl(), true);
+            final HttpClient request = getRequest("GET", true);
 
             if (isObjectLoadable()  &&
                     (now - attributes.getLastModification()) <= ABSOLUTE_EXPIRE_TIME_LIMIT) {
-                urlConn.setIfModifiedSince(attributes.getLastModification());
+                request.setIfModifiedSince(attributes.getLastModification());
             }
             if (isObjectLoadable() && attributes.getEtag() != null) {
-                urlConn.addRequestProperty("If-None-Match", attributes.getEtag());
+                request.setHeader("If-None-Match", attributes.getEtag());
             }
 
-            log.log(Level.INFO, "GET {0} -> {1}", new Object[]{getUrl(), urlConn.getResponseCode()});
+            final HttpClient.Response urlConn = request.connect();
 
-            // follow redirects
-            for (int i = 0; i < 5; i++) {
-                if (urlConn.getResponseCode() == 302) {
-                    urlConn = getURLConnection(new URL(urlConn.getHeaderField("Location")), true);
-                } else {
-                    break;
-                }
-            }
             if (urlConn.getResponseCode() == 304) {
                 // If isModifiedSince or If-None-Match has been set
                 // and the server answers with a HTTP 304 = "Not Modified"
-                log.log(Level.FINE, "JCS - IfModifiedSince/Etag test: local version is up to date: {0}", getUrl());
+                log.log(Level.FINE, "JCS - If-Modified-Since/ETag test: local version is up to date: {0}", getUrl());
                 return true;
-            } else if (isObjectLoadable() // we have an object in cache, but we haven't received 304 resposne code
+            } else if (isObjectLoadable() // we have an object in cache, but we haven't received 304 response code
                     && (
-                            (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getRequestProperty("ETag"))) ||
+                            (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getHeaderField("ETag"))) ||
                             attributes.getLastModification() == urlConn.getLastModified())
                     ) {
                 // we sent ETag or If-Modified-Since, but didn't get 304 response code
                 // for further requests - use HEAD
                 String serverKey = getServerKey();
-                log.log(Level.INFO, "JCS - Host: {0} found not to return 304 codes for If-Modifed-Since or If-None-Match headers",
+                log.log(Level.INFO, "JCS - Host: {0} found not to return 304 codes for If-Modified-Since or If-None-Match headers",
                         serverKey);
                 useHead.put(serverKey, Boolean.TRUE);
             }
@@ -360,7 +350,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 attributes.setResponseCode(urlConn.getResponseCode());
                 byte[] raw;
                 if (urlConn.getResponseCode() == 200) {
-                    raw = Utils.readBytesFromStream(urlConn.getInputStream());
+                    raw = Utils.readBytesFromStream(urlConn.getContent());
                 } else {
                     raw = new byte[]{};
                 }
@@ -433,7 +423,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
     protected abstract V createCacheEntry(byte[] content);
 
-    protected CacheEntryAttributes parseHeaders(URLConnection urlConn) {
+    protected CacheEntryAttributes parseHeaders(HttpClient.Response urlConn) {
         CacheEntryAttributes ret = new CacheEntryAttributes();
 
         Long lng = urlConn.getExpiration();
@@ -460,44 +450,28 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         ret.setLastModification(now);
         ret.setEtag(urlConn.getHeaderField("ETag"));
 
-        if (Main.isDebugEnabled()) {
-            for (Entry<String, List<String>> header: urlConn.getHeaderFields().entrySet()) {
-                log.log(Level.FINE, "Response header - {0}: {1}", new Object[]{header.getKey(), header.getValue()});
-            }
-        }
-
         return ret;
     }
 
-    private HttpURLConnection getURLConnection(URL url, boolean noCache) throws IOException {
-        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-        urlConn.setRequestProperty("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
+    private HttpClient getRequest(String requestMethod, boolean noCache) throws IOException {
+        final HttpClient urlConn = HttpClient.create(getUrl(), requestMethod);
+        urlConn.setAccept("text/html, image/png, image/jpeg, image/gif, */*");
         urlConn.setReadTimeout(readTimeout); // 30 seconds read timeout
         urlConn.setConnectTimeout(connectTimeout);
         if (headers != null) {
-            for (Map.Entry<String, String> e: headers.entrySet()) {
-                urlConn.setRequestProperty(e.getKey(), e.getValue());
-            }
+            urlConn.setHeaders(headers);
         }
 
         if (force || noCache) {
-            urlConn.setUseCaches(false);
+            urlConn.useCache(false);
         }
         return urlConn;
     }
 
     private boolean isCacheValidUsingHead() throws IOException {
-        HttpURLConnection urlConn = getURLConnection(getUrl(), false);
-        urlConn.setRequestMethod("HEAD");
-        for (int i = 0; i < 5; i++) {
-            if (urlConn.getResponseCode() == 302) {
-                urlConn = getURLConnection(new URL(urlConn.getHeaderField("Location")), false);
-            } else {
-                break;
-            }
-        }
+        final HttpClient.Response urlConn = getRequest("HEAD", false).connect();
         long lastModified = urlConn.getLastModified();
-        return (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getRequestProperty("ETag"))) ||
+        return (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getHeaderField("ETag"))) ||
                 (lastModified != 0 && lastModified <= attributes.getLastModification());
     }
 

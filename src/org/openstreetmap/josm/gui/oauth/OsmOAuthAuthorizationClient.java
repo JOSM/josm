@@ -199,7 +199,7 @@ public class OsmOAuthAuthorizationClient {
     }
 
     protected SessionId extractOsmSession() {
-        List<String> setCookies = connection.getHeaderFields("Set-Cookie");
+        List<String> setCookies = connection.getHeaderFields().get("Set-Cookie");
         if (setCookies == null)
             // no cookies set
             return null;
