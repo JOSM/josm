@@ -401,6 +401,7 @@ public final class ExpressionFactory {
          * Returns the value of the property {@code key} from layer {@code layer}.
          * @param env the environment
          * @param key the property key
+         * @param layer layer
          * @return the property value
          */
         public static Object prop(final Environment env, String key, String layer) {
@@ -421,6 +422,7 @@ public final class ExpressionFactory {
          * Determines whether property {@code key} is set on layer {@code layer}.
          * @param env the environment
          * @param key the property key
+         * @param layer layer
          * @return {@code true} if the property is set, {@code false} otherwise
          */
         public static Boolean is_prop_set(final Environment env, String key, String layer) {
@@ -675,6 +677,7 @@ public final class ExpressionFactory {
         /**
          * Obtains the JOSM'key {@link org.openstreetmap.josm.data.Preferences} string for key {@code key},
          * and defaults to {@code def} if that is null.
+         * @param env the environment
          * @param key Key in JOSM preference
          * @param def Default value
          * @return value for key, or default value if not found
@@ -1134,6 +1137,9 @@ public final class ExpressionFactory {
 
         /**
          * Constructs a new {@code ParameterFunction}.
+         * @param m method
+         * @param args arguments
+         * @param needsEnvironment whether function needs environment
          */
         public ParameterFunction(Method m, List<Expression> args, boolean needsEnvironment) {
             this.m = m;
@@ -1207,6 +1213,8 @@ public final class ExpressionFactory {
 
         /**
          * Constructs a new {@code ArrayFunction}.
+         * @param m method
+         * @param args arguments
          */
         public ArrayFunction(Method m, List<Expression> args) {
             this.m = m;

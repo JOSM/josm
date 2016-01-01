@@ -60,6 +60,7 @@ public interface DataSetListener {
     /**
      * Called after big changes in dataset. Usually other events are stopped using Dataset.beginUpdate() and
      * after operation is completed (Dataset.endUpdate()), {@link #dataChanged(DataChangedEvent event)} is called.
+     * @param event data change event
      */
     void dataChanged(DataChangedEvent event);
 }

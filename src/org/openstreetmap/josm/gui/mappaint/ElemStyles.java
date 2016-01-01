@@ -80,6 +80,10 @@ public class ElemStyles implements PreferenceChangedListener {
      *
      * Automatically adds default styles in case no proper style was found.
      * Uses the cache, if possible, and saves the results to the cache.
+     * @param osm OSM primitive
+     * @param scale scale
+     * @param nc navigatable component
+     * @return pair containing style list and range
      */
     public Pair<StyleList, Range> getStyleCacheWithRange(OsmPrimitive osm, double scale, NavigatableComponent nc) {
         if (osm.mappaintStyle == null || osm.mappaintCacheIdx != cacheIdx || scale <= 0) {
@@ -168,6 +172,10 @@ public class ElemStyles implements PreferenceChangedListener {
      * Then check, if the way describes something in its own right. (linear feature
      * or area) If not, add a default line style from the area color of the multipolygon.
      *
+     * @param osm OSM primitive
+     * @param scale scale
+     * @param nc navigatable component
+     * @return pair containing style list and range
      */
     private Pair<StyleList, Range> getImpl(OsmPrimitive osm, double scale, NavigatableComponent nc) {
         if (osm instanceof Node)
@@ -371,6 +379,7 @@ public class ElemStyles implements PreferenceChangedListener {
 
     /**
      * Draw a default node symbol for nodes that have no style?
+     * @return {@code true} if default node symbol must be drawn
      */
     private boolean isDefaultNodes() {
         if (defaultNodesIdx == cacheIdx)
@@ -382,6 +391,7 @@ public class ElemStyles implements PreferenceChangedListener {
 
     /**
      * Draw a default line for ways that do not have an own line style?
+     * @return {@code true} if default line must be drawn
      */
     private boolean isDefaultLines() {
         if (defaultLinesIdx == cacheIdx)
@@ -421,6 +431,7 @@ public class ElemStyles implements PreferenceChangedListener {
 
     /**
      * add a style source; only accessed from MapPaintStyles
+     * @param style style source to add
      */
     void add(StyleSource style) {
         styleSources.add(style);
@@ -428,6 +439,7 @@ public class ElemStyles implements PreferenceChangedListener {
 
     /**
      * set the style sources; only accessed from MapPaintStyles
+     * @param sources new style sources
      */
     void setStyleSources(Collection<StyleSource> sources) {
         styleSources.clear();

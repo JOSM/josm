@@ -112,6 +112,7 @@ public final class PlayHeadMarker extends Marker {
 
     /**
      * reinstate the old map mode after switching temporarily to do a play head drag
+     * @param reset whether to reset state (pause audio and restore old coordinates)
      */
     private void endDrag(boolean reset) {
         if (!wasPlaying || reset) {
@@ -181,8 +182,10 @@ public final class PlayHeadMarker extends Marker {
                     );
             endDrag(true);
         } else {
-            setCoor(cw.getCoor());
-            ca.play(cw.time - ca.time);
+            if (cw != null) {
+                setCoor(cw.getCoor());
+                ca.play(cw.time - ca.time);
+            }
             endDrag(false);
         }
     }

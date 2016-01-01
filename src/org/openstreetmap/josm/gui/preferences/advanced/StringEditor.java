@@ -25,6 +25,8 @@ public class StringEditor extends ExtendedDialog {
     /**
      * Constructs a new {@code StringEditor}.
      * @param gui The parent component
+     * @param entry preference entry
+     * @param setting string setting
      */
     public StringEditor(final JComponent gui, PrefEntry entry, StringSetting setting) {
         super(gui, tr("Change string setting"), new String[] {tr("OK"), tr("Cancel")});

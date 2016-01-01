@@ -75,7 +75,8 @@ public class TextElement implements StyleKeys {
      * Derives a suitable label composition strategy from the style properties in {@code c}.
      *
      * @param c the style properties
-     * @return the label composition strategy
+     * @param defaultAnnotate whether to return {@link #AUTO_LABEL_COMPOSITION_STRATEGY} if not strategy is found
+     * @return the label composition strategy, or {@code null}
      */
     protected static LabelCompositionStrategy buildLabelCompositionStrategy(Cascade c, boolean defaultAnnotate) {
         /*

@@ -93,8 +93,9 @@ public interface Selector {
         public final ChildOrParentSelectorType type;
 
         /**
-         *
+         * Constructs a new {@code ChildOrParentSelector}.
          * @param a the first selector
+         * @param link link
          * @param b the second selector
          * @param type the selector type
          */

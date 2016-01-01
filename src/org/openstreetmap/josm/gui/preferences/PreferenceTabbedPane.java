@@ -273,6 +273,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     /**
      * Construct a PreferencePanel for the preference settings. Layout is GridBagLayout
      * and a centered title label and the description are added.
+     * @param caller Preference settings, that display a top level tab
      * @return The created panel ready to add other controls.
      */
     public PreferencePanel createPreferenceTab(TabPreferenceSetting caller) {
@@ -282,12 +283,13 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     /**
      * Construct a PreferencePanel for the preference settings. Layout is GridBagLayout
      * and a centered title label and the description are added.
+     * @param caller Preference settings, that display a top level tab
      * @param inScrollPane if <code>true</code> the added tab will show scroll bars
      *        if the panel content is larger than the available space
      * @return The created panel ready to add other controls.
      */
     public PreferencePanel createPreferenceTab(TabPreferenceSetting caller, boolean inScrollPane) {
-        CheckParameterUtil.ensureParameterNotNull(caller);
+        CheckParameterUtil.ensureParameterNotNull(caller, "caller");
         PreferencePanel p = new PreferencePanel(caller);
 
         PreferenceTab tab = p;

@@ -30,7 +30,11 @@ public class LinemodPrototype extends LinePrototype implements Comparable<Linemo
         widthMode = WidthMode.ABSOLUTE;
     }
 
-    /** get width for overlays */
+    /**
+     * get width for overlays
+     * @param ref reference width
+     * @return width according to {@link #widthMode} with a minimal value of 1
+     */
     public float getWidth(float ref) {
         float res;
         if (widthMode == WidthMode.ABSOLUTE) {

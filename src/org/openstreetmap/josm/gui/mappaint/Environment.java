@@ -52,6 +52,7 @@ public class Environment {
 
     /**
      * Creates a new environment.
+     * @param osm OSM primitive
      * @since 8415
      */
     public Environment(OsmPrimitive osm) {
@@ -60,6 +61,10 @@ public class Environment {
 
     /**
      * Creates a new environment.
+     * @param osm OSM primitive
+     * @param mc multi cascade
+     * @param layer layer
+     * @param source style source
      */
     public Environment(OsmPrimitive osm, MultiCascade mc, String layer, StyleSource source) {
         this.osm = osm;
@@ -89,6 +94,7 @@ public class Environment {
 
     /**
      * Creates a clone of this environment, with the specified primitive.
+     * @param osm OSM primitive
      * @return A clone of this environment, with the specified primitive
      * @see #osm
      */
@@ -176,6 +182,7 @@ public class Environment {
 
     /**
      * Creates a clone of this environment, with the specified {@link Context}.
+     * @param context context
      * @return A clone of this environment, with the specified {@code Context}
      */
     public Environment withContext(Context context) {

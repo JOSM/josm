@@ -57,6 +57,9 @@ public interface ProjectionChoice {
      *
      * Will be called when the preference dialog is dismissed or
      * when the listener from getPreferencePanel is invoked.
+     * @param panel projection preferences panel
+     * @return preferences as a list of strings; may be null to reset everything.
+     * @see #setPreferences
      */
     Collection<String> getPreferences(JPanel panel);
 
@@ -81,5 +84,6 @@ public interface ProjectionChoice {
      *
      * @return the name
      */
+    @Override
     String toString();
 }

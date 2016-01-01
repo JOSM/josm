@@ -1017,6 +1017,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     }
 
     /**
+     * @param action Action to register
      * @return The parameter (for better chaining)
      */
     public Action register(Action action) {

@@ -139,6 +139,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
      * @param candidate the new Prototype that could be used instead
      * @param scale ignored if null, otherwise checks if scale is within the range of candidate
      * @param mc side effect: update the valid region for the current MultiCascade
+     * @return {@code true} if {@code candidate} is better than the current match
      */
     private static boolean requiresUpdate(Prototype current, Prototype candidate, Double scale, MultiCascade mc) {
         if (current == null || candidate.priority >= current.priority) {
@@ -180,6 +181,7 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
     }
 
     /**
+     * @param primitive OSM primitive
      * @param closed The primitive is a closed way or we pretend it is closed.
      *  This is useful for multipolygon relations and outer ways of untagged
      *  multipolygon relations.

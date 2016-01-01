@@ -11,6 +11,7 @@ public interface SubPreferenceSetting extends PreferenceSetting {
 
     /**
      * Returns the preference setting (displayed in the specified preferences tab pane) that contains this preference setting.
+     * @param gui preferences tabbed pane
      * @return parent preference setting
      */
     TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui);
