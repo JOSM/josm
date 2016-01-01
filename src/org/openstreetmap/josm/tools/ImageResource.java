@@ -162,6 +162,15 @@ public class ImageResource {
         if (svg != null) {
             realWidth = svg.getWidth();
             realHeight = svg.getHeight();
+            /* extend small images to the possible maximum, may get reduced later again */
+            if(maxSize.width != -1 && realWidth < maxSize.width) {
+                realHeight *= maxSize.width/realWidth;
+                realWidth = maxSize.width;
+            }
+            if(maxSize.height != -1 && realHeight < maxSize.height) {
+                realWidth *= maxSize.height/realHeight;
+                realHeight = maxSize.height;
+            }
         } else {
             if (baseImage == null) throw new AssertionError();
             ImageIcon icon = new ImageIcon(baseImage);
