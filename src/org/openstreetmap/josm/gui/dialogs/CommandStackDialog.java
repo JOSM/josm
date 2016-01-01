@@ -321,6 +321,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
      * Wraps a command in a CommandListMutableTreeNode.
      * Recursively adds child commands.
      * @param c the command
+     * @param idx index
      * @return the resulting node
      */
     protected CommandListMutableTreeNode getNodeForCommand(PseudoCommand c, int idx) {

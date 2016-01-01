@@ -16,7 +16,8 @@ import org.openstreetmap.josm.data.coor.QuadTiling;
  * be removed and readded.
  *
  * This class is (no longer) thread safe.
- *
+ * @param <T> type of primitives
+ * @since 2165
  */
 public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     private static final boolean consistency_testing = false;
@@ -84,6 +85,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         /**
          * Constructor for root node
+         * @param buckets quadbuckets
          */
         QBLevel(final QuadBuckets<T> buckets) {
             level = 0;

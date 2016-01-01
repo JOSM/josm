@@ -33,6 +33,9 @@ public class PresetListPanel extends JPanel {
     /**
      * Updates the preset list based on the {@code tags} and {@code types},
      * and associates an interaction with (matching) presets via {@code presetHandler}.
+     * @param types collection of tagging presets types
+     * @param tags colelction of tags
+     * @param presetHandler tagging preset handler
      */
     public void updatePresets(final Collection<TaggingPresetType> types, final Map<String, String> tags,
             final TaggingPresetHandler presetHandler) {

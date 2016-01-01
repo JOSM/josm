@@ -50,7 +50,8 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     ImageEntry tmp;
 
     /**
-     * getter methods that refer to the temporary value
+     * Returns the cached temporary position value.
+     * @return the cached temporary position value
      */
     public CachedLatLon getPos() {
         if (tmp != null)
@@ -58,18 +59,30 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         return pos;
     }
 
+    /**
+     * Returns the cached temporary speed value.
+     * @return the cached temporary speed value
+     */
     public Double getSpeed() {
         if (tmp != null)
             return tmp.speed;
         return speed;
     }
 
+    /**
+     * Returns the cached temporary elevation value.
+     * @return the cached temporary elevation value
+     */
     public Double getElevation() {
         if (tmp != null)
             return tmp.elevation;
         return elevation;
     }
 
+    /**
+     * Returns the cached temporary GPS time value.
+     * @return the cached temporary GPS time value
+     */
     public Date getGpsTime() {
         if (tmp != null)
             return getDefensiveDate(tmp.gpsTime);
@@ -86,16 +99,25 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     }
 
     /**
-     * other getter methods
+     * Returns associated file.
+     * @return associated file
      */
     public File getFile() {
         return file;
     }
 
+    /**
+     * Returns EXIF orientation
+     * @return EXIF orientation
+     */
     public Integer getExifOrientation() {
         return exifOrientation;
     }
 
+    /**
+     * Returns EXIF time
+     * @return EXIF time
+     */
     public Date getExifTime() {
         return getDefensiveDate(exifTime);
     }
@@ -146,32 +168,57 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     }
 
     /**
-     * setter methods
+     * Sets the position.
+     * @param pos cached position
      */
     public void setPos(CachedLatLon pos) {
         this.pos = pos;
     }
 
+    /**
+     * Sets the position.
+     * @param pos position (will be cached)
+     */
     public void setPos(LatLon pos) {
-        this.pos = new CachedLatLon(pos);
+        setPos(new CachedLatLon(pos));
     }
 
+    /**
+     * Sets the speed.
+     * @param speed speed
+     */
     public void setSpeed(Double speed) {
         this.speed = speed;
     }
 
+    /**
+     * Sets the elevation.
+     * @param elevation elevation
+     */
     public void setElevation(Double elevation) {
         this.elevation = elevation;
     }
 
+    /**
+     * Sets associated file.
+     * @param file associated file
+     */
     public void setFile(File file) {
         this.file = file;
     }
 
+    /**
+     * Sets EXIF orientation.
+     * @param exifOrientation EXIF orientation
+     */
     public void setExifOrientation(Integer exifOrientation) {
         this.exifOrientation = exifOrientation;
     }
 
+    /**
+     * Sets EXIF time.
+     * @param exifTime EXIF time
+     */
     public void setExifTime(Date exifTime) {
         this.exifTime = getDefensiveDate(exifTime);
     }
@@ -244,6 +291,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
 
     /**
      * If it has been tagged i.e. matched to a gpx track or retrieved lat/lon from exif
+     * @return {@code true} if it has been tagged
      */
     public boolean isTagged() {
         return pos != null;

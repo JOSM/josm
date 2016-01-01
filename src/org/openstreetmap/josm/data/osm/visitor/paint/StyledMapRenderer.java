@@ -1003,6 +1003,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     /**
      * highlights a given point by drawing a rounded rectangle around it. Give the
      * size of the object you want to be highlighted, width is added automatically.
+     * @param p point
+     * @param size highlight size
      */
     private void drawPointHighlight(Point p, int size) {
         g.setColor(highlightColorTransparent);

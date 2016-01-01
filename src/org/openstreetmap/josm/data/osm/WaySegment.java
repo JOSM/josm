@@ -47,6 +47,10 @@ public final class WaySegment implements Comparable<WaySegment> {
 
     /**
      * Determines and returns the way segment for the given way and node pair.
+     * @param way way
+     * @param first first node
+     * @param second second node
+     * @return way segment
      * @throws IllegalArgumentException if the node pair is not part of way
      */
     public static WaySegment forNodePair(Way way, Node first, Node second) {

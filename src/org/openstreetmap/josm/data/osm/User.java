@@ -188,7 +188,11 @@ public final class User {
         return uid;
     }
 
-    /** private constructor, only called from get method. */
+    /**
+     * Private constructor, only called from get method.
+     * @param uid user id
+     * @param name user name
+     */
     private User(long uid, String name) {
         this.uid = uid;
         if (name != null) {

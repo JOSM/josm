@@ -34,6 +34,8 @@ public class RotateCommand extends TransformNodesCommand {
     /**
      * Creates a RotateCommand.
      * Assign the initial object set, compute pivot point and inital rotation angle.
+     * @param objects objects to fetch nodes from
+     * @param currentEN cuurent eats/north
      */
     public RotateCommand(Collection<OsmPrimitive> objects, EastNorth currentEN) {
         super(objects);
@@ -47,6 +49,7 @@ public class RotateCommand extends TransformNodesCommand {
 
     /**
      * Get angle between the horizontal axis and the line formed by the pivot and given point.
+     * @param currentEN cuurent eats/north
      * @return angle between the horizontal axis and the line formed by the pivot and given point
      **/
     protected final double getAngle(EastNorth currentEN) {

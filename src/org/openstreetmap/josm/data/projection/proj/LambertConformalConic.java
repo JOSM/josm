@@ -129,6 +129,8 @@ public class LambertConformalConic extends AbstractProj {
 
     /**
      * auxiliary function t
+     * @param lat_rad latitude in radians
+     * @return result
      */
     protected double t(double lat_rad) {
         return tan(PI/4 - lat_rad / 2.0)
@@ -137,6 +139,8 @@ public class LambertConformalConic extends AbstractProj {
 
     /**
      * auxiliary function m
+     * @param lat_rad latitude in radians
+     * @return result
      */
     protected double m(double lat_rad) {
         return cos(lat_rad) / (sqrt(1 - e * e * pow(sin(lat_rad), 2)));

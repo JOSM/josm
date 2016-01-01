@@ -107,8 +107,10 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     }
 
     /**
-     * gathers all available data for the tracks and returns them as array of arrays
-     * in the expected column order  */
+     * Gathers all available data for the tracks and returns them as array of arrays
+     * in the expected column order.
+     * @return table data
+     */
     private Object[][] buildTableContents() {
         Object[][] tracks = new Object[layer.data.tracks.size()][5];
         int i = 0;
@@ -127,7 +129,10 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
 
     /**
      * Builds an non-editable table whose 5th column will open a browser when double clicked.
-     * The table will fill its parent. */
+     * The table will fill its parent.
+     * @param content table data
+     * @return non-editable table
+     */
     private JTable buildTable(Object[][] content) {
         final String[] headers = {tr("Name"), tr("Description"), tr("Timespan"), tr("Length"), tr("URL")};
         DefaultTableModel model = new DefaultTableModel(content, headers);

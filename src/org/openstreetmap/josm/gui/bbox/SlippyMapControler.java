@@ -63,6 +63,8 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     /**
      * Constructs a new {@code SlippyMapControler}.
+     * @param navComp navigatable component
+     * @param contentPane content pane
      */
     public SlippyMapControler(SlippyMapBBoxChooser navComp, JPanel contentPane) {
         iSlippyMapChooser = navComp;

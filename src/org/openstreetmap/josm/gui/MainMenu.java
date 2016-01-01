@@ -572,7 +572,12 @@ public class MainMenu extends JMenuBar {
         return mi;
     }
 
-    /** finds the correct insertion index for a given group and adds separators if necessary */
+    /**
+     * Finds the correct insertion index for a given group and adds separators if necessary
+     * @param menu menu
+     * @param group group number
+     * @return correct insertion index
+     */
     private static int getInsertionIndexForGroup(JMenu menu, int group) {
         if (group < 0)
             return -1;

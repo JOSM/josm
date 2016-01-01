@@ -78,6 +78,8 @@ public class Bounds {
 
     /**
      * Construct bounds out of two points. Coords will be rounded.
+     * @param min min lat/lon
+     * @param max max lat/lon
      */
     public Bounds(LatLon min, LatLon max) {
         this(min.lat(), min.lon(), max.lat(), max.lon());
@@ -87,6 +89,10 @@ public class Bounds {
         this(min.lat(), min.lon(), max.lat(), max.lon(), roundToOsmPrecision);
     }
 
+    /**
+     * Constructs bounds out a single point.
+     * @param b lat/lon
+     */
     public Bounds(LatLon b) {
         this(b, true);
     }
@@ -359,6 +365,8 @@ public class Bounds {
     /**
      * The two bounds intersect? Compared to java Shape.intersects, if does not use
      * the interior but the closure. ("&gt;=" instead of "&gt;")
+     * @param b other bounds
+     * @return {@code true} if the two bounds intersect
      */
     public boolean intersects(Bounds b) {
         if (b.maxLat < minLat || b.minLat > maxLat)

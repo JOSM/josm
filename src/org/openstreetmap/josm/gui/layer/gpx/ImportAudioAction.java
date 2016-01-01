@@ -125,8 +125,10 @@ public class ImportAudioAction extends AbstractAction {
      * explict waypoints in the GPX layer, or (b) named trackpoints in the GPX layer, or (d)
      * timestamp on the wav file (e) (in future) voice recognised markers in the sound recording (f)
      * a single marker at the beginning of the track
-     * @param wavFile : the file to be associated with the markers in the new marker layer
-     * @param markers : keeps track of warning messages to avoid repeated warnings
+     * @param wavFile the file to be associated with the markers in the new marker layer
+     * @param ml marker layer
+     * @param firstStartTime first start time in milliseconds, used for (d)
+     * @param markers keeps track of warning messages to avoid repeated warnings
      */
     private void importAudio(File wavFile, MarkerLayer ml, double firstStartTime, Markers markers) {
         URL url = Utils.fileToURL(wavFile);

@@ -14,7 +14,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -40,9 +39,9 @@ import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
+import org.openstreetmap.josm.gui.preferences.server.OverpassServerPreference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -57,13 +56,6 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 8684
  */
 public class OverpassDownloadAction extends JosmAction {
-
-    /**
-     * The {@link StringProperty property} of the currently selected Overpass server.
-     *
-     * @since 9241
-     */
-    public static final StringProperty OVERPASS_SERVER = new StringProperty("download.overpass.server", "http://overpass-api.de/api/");
 
     /**
      * Constructs a new {@code OverpassDownloadAction}.
@@ -87,7 +79,7 @@ public class OverpassDownloadAction extends JosmAction {
             Bounds area = dialog.getSelectedDownloadArea();
             DownloadOsmTask task = new DownloadOsmTask();
             Future<?> future = task.download(
-                    new OverpassDownloadReader(area, dialog.getOverpassServer(), dialog.getOverpassQuery()),
+                    new OverpassDownloadReader(area, OverpassServerPreference.getOverpassServer(), dialog.getOverpassQuery()),
                     dialog.isNewLayerRequired(), area, null);
             Main.worker.submit(new PostDownloadHandler(task, future));
         }
@@ -123,12 +115,9 @@ public class OverpassDownloadAction extends JosmAction {
 
     private static final class OverpassDownloadDialog extends DownloadDialog {
 
-        private HistoryComboBox overpassServer;
         private HistoryComboBox overpassWizard;
         private JosmTextArea overpassQuery;
         private static OverpassDownloadDialog instance;
-        private static final CollectionProperty OVERPASS_SERVER_HISTORY = new CollectionProperty("download.overpass.servers",
-                Arrays.asList("http://overpass-api.de/api/", "http://overpass.osm.rambler.ru/cgi/"));
         private static final CollectionProperty OVERPASS_WIZARD_HISTORY = new CollectionProperty("download.overpass.wizard",
                 new ArrayList<String>());
 
@@ -202,14 +191,6 @@ public class OverpassDownloadAction extends JosmAction {
             gbc.ipady = 200;
             pnl.add(pane, gbc);
 
-            overpassServer = new HistoryComboBox();
-            overpassServer.getEditor().getEditorComponent().addFocusListener(disableActionsFocusListener);
-            pnl.add(new JLabel(tr("Overpass server: ")), GBC.std().insets(5, 5, 5, 5));
-            pnl.add(overpassServer, GBC.eol().fill(GBC.HORIZONTAL));
-        }
-
-        public String getOverpassServer() {
-            return overpassServer.getText();
         }
 
         public String getOverpassQuery() {
@@ -223,8 +204,6 @@ public class OverpassDownloadAction extends JosmAction {
         @Override
         public void restoreSettings() {
             super.restoreSettings();
-            overpassServer.setPossibleItems(OVERPASS_SERVER_HISTORY.get());
-            overpassServer.setText(OVERPASS_SERVER.get());
             overpassWizard.setPossibleItems(OVERPASS_WIZARD_HISTORY.get());
         }
 
@@ -232,8 +211,6 @@ public class OverpassDownloadAction extends JosmAction {
         public void rememberSettings() {
             super.rememberSettings();
             overpassWizard.addCurrentItemToHistory();
-            OVERPASS_SERVER.put(getOverpassServer());
-            OVERPASS_SERVER_HISTORY.put(overpassServer.getHistory());
             OVERPASS_WIZARD_HISTORY.put(overpassWizard.getHistory());
             OverpassQueryHistoryPopup.addToHistory(getOverpassQuery());
         }

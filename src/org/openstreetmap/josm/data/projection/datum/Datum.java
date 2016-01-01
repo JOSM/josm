@@ -29,13 +29,16 @@ public interface Datum {
     Ellipsoid getEllipsoid();
 
     /**
-     * Convert lat/lon from this datum to WGS84 datum.
+     * Convert lat/lon from this datum to {@link Ellipsoid#WGS84} datum.
+     * @param ll original lat/lon in this datum
+     * @return lat/lon converted to WGS84
      */
     LatLon toWGS84(LatLon ll);
 
     /**
-     * Convert lat/lon from WGS84 to this datum.
+     * Convert lat/lon from {@link Ellipsoid#WGS84} to this datum.
+     * @param ll original lat/lon in WGS84
+     * @return converted lat/lon in this datum
      */
     LatLon fromWGS84(LatLon ll);
-
 }

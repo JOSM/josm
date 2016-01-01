@@ -821,7 +821,7 @@ public class Preferences {
      * @param key the unique identifier for the setting
      * @param value the value of the setting. Can be null or "" which both removes
      *  the key-value entry.
-     * @return true, if something has changed (i.e. value is different than before)
+     * @return {@code true}, if something has changed (i.e. value is different than before)
      */
     public boolean put(final String key, String value) {
         if (value != null && value.isEmpty()) {
@@ -1177,7 +1177,7 @@ public class Preferences {
      * @param key the unique identifier for the setting
      * @param setting the value of the setting. In case it is null, the key-value
      * entry will be removed.
-     * @return true, if something has changed (i.e. value is different than before)
+     * @return {@code true}, if something has changed (i.e. value is different than before)
      */
     public boolean putSetting(final String key, Setting<?> setting) {
         CheckParameterUtil.ensureParameterNotNull(key);
@@ -1246,12 +1246,22 @@ public class Preferences {
         }
     }
 
+    /**
+     * Put a collection.
+     * @param key key
+     * @param value value
+     * @return {@code true}, if something has changed (i.e. value is different than before)
+     */
     public boolean putCollection(String key, Collection<String> value) {
         return putSetting(key, value == null ? null : ListSetting.create(value));
     }
 
     /**
      * Saves at most {@code maxsize} items of collection {@code val}.
+     * @param key key
+     * @param maxsize max number of items to save
+     * @param val value
+     * @return {@code true}, if something has changed (i.e. value is different than before)
      */
     public boolean putCollectionBounded(String key, int maxsize, Collection<String> val) {
         Collection<String> newCollection = new ArrayList<>(Math.min(maxsize, val.size()));
@@ -1267,6 +1277,9 @@ public class Preferences {
     /**
      * Used to read a 2-dimensional array of strings from the preference file.
      * If not a single entry could be found, <code>def</code> is returned.
+     * @param key preference key
+     * @param def default array value
+     * @return array value
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public synchronized Collection<Collection<String>> getArray(String key, Collection<Collection<String>> def) {
@@ -1279,6 +1292,12 @@ public class Preferences {
         return res == null ? Collections.<Collection<String>>emptyList() : res;
     }
 
+    /**
+     * Put an array.
+     * @param key key
+     * @param value value
+     * @return {@code true}, if something has changed (i.e. value is different than before)
+     */
     public boolean putArray(String key, Collection<Collection<String>> value) {
         return putSetting(key, value == null ? null : ListListSetting.create(value));
     }
@@ -1332,6 +1351,10 @@ public class Preferences {
 
     /**
      * same as above, but returns def if nothing was found
+     * @param key main preference key
+     * @param def default value
+     * @param klass The struct class
+     * @return a list of objects of type T or {@code def} if nothing was found
      */
     public <T> List<T> getListOfStructs(String key, Collection<T> def, Class<T> klass) {
         Collection<Map<String, String>> prop =

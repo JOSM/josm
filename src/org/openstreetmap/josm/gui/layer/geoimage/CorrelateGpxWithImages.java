@@ -1143,6 +1143,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
     /**
      * Match a list of photos to a gpx track with a given offset.
      * All images need a exifTime attribute and the List must be sorted according to these times.
+     * @param images images to match
+     * @param selectedGpx selected GPX data
+     * @param offset offset
+     * @return number of matched points
      */
     private int matchGpxTrack(List<ImageEntry> images, GpxData selectedGpx, long offset) {
         int ret = 0;

@@ -9,6 +9,8 @@ package org.openstreetmap.josm.data.osm;
  *
  * For use cases, see {@link Storage}.
  * @author nenik
+ * @param <K> type for hashCode and first equals parameter
+ * @param <T> type for second equals parameter
  */
 public interface Hash<K, T> {
 

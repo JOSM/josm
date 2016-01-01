@@ -162,6 +162,10 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         /**
          * Evaluates given object as {@link Expression} or {@link String} on the matched {@link OsmPrimitive} and {@code matchingSelector}.
+         * @param obj object to evaluate ({@link Expression} or {@link String})
+         * @param p OSM primitive
+         * @param matchingSelector matching selector
+         * @return result string
          */
         private static String evaluateObject(final Object obj, final OsmPrimitive p, final Selector matchingSelector) {
             final String s;
@@ -177,6 +181,8 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         /**
          * Creates a fixing command which executes a {@link ChangePropertyCommand} on the specified tag.
+         * @param obj object to evaluate ({@link Expression} or {@link String})
+         * @return created fix command
          */
         static FixCommand fixAdd(final Object obj) {
             checkObject(obj);
@@ -192,11 +198,12 @@ public class MapCSSTagChecker extends Test.TagTest {
                     return "fixAdd: " + obj;
                 }
             };
-
         }
 
         /**
          * Creates a fixing command which executes a {@link ChangePropertyCommand} to delete the specified key.
+         * @param obj object to evaluate ({@link Expression} or {@link String})
+         * @return created fix command
          */
         static FixCommand fixRemove(final Object obj) {
             checkObject(obj);
@@ -216,6 +223,9 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         /**
          * Creates a fixing command which executes a {@link ChangePropertyKeyCommand} on the specified keys.
+         * @param oldKey old key
+         * @param newKey new key
+         * @return created fix command
          */
         static FixCommand fixChangeKey(final String oldKey, final String newKey) {
             return new FixCommand() {
@@ -415,6 +425,11 @@ public class MapCSSTagChecker extends Test.TagTest {
         /**
          * Determines the {@code index}-th key/value/tag (depending on {@code type}) of the
          * {@link org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector}.
+         * @param matchingSelector matching selector
+         * @param index index
+         * @param type selector type ("key", "value" or "tag")
+         * @param p OSM primitive
+         * @return argument value, can be {@code null}
          */
         static String determineArgument(Selector.GeneralSelector matchingSelector, int index, String type, OsmPrimitive p) {
             try {
@@ -446,6 +461,10 @@ public class MapCSSTagChecker extends Test.TagTest {
         /**
          * Replaces occurrences of <code>{i.key}</code>, <code>{i.value}</code>, <code>{i.tag}</code> in {@code s} by the corresponding
          * key/value/tag of the {@code index}-th {@link Condition} of {@code matchingSelector}.
+         * @param matchingSelector matching selector
+         * @param s any string
+         * @param p OSM primitive
+         * @return string with arguments inserted
          */
         static String insertArguments(Selector matchingSelector, String s, OsmPrimitive p) {
             if (s != null && matchingSelector instanceof Selector.ChildOrParentSelector) {
@@ -493,6 +512,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         /**
          * Constructs a (localized) message for this deprecation check.
+         * @param p OSM primitive
          *
          * @return a message
          */
@@ -512,6 +532,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         /**
          * Constructs a (localized) description for this deprecation check.
+         * @param p OSM primitive
          *
          * @return a description (possibly with alternative suggestions)
          * @see #getDescriptionForMatchingSelector
@@ -529,6 +550,8 @@ public class MapCSSTagChecker extends Test.TagTest {
          * Constructs a (localized) description for this deprecation check
          * where any placeholders are replaced by values of the matched selector.
          *
+         * @param matchingSelector matching selector
+         * @param p OSM primitive
          * @return a description (possibly with alternative suggestions)
          */
         String getDescriptionForMatchingSelector(OsmPrimitive p, Selector matchingSelector) {

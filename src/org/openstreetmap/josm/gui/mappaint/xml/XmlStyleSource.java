@@ -185,6 +185,9 @@ public class XmlStyleSource extends StyleSource implements StyleKeys {
      * @param closed The primitive is a closed way or we pretend it is closed.
      *  This is useful for multipolygon relations and outer ways of untagged
      *  multipolygon relations.
+     * @param p helper
+     * @param scale scale
+     * @param mc multi cascade
      */
     private void get(OsmPrimitive primitive, boolean closed, WayPrototypesRecord p, Double scale, MultiCascade mc) {
         String lineIdx = null;

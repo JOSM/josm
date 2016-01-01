@@ -30,6 +30,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
 
     /**
      * Construct the toggle button with the given action.
+     * @param action associated action
      */
     public IconToggleButton(Action action) {
         this(action, false);
@@ -37,6 +38,8 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
 
     /**
      * Construct the toggle button with the given action.
+     * @param action associated action
+     * @param isExpert {@code true} if it's reserved to expert mode
      */
     public IconToggleButton(Action action, boolean isExpert) {
         super(action);

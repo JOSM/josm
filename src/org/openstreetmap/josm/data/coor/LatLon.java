@@ -114,6 +114,7 @@ public class LatLon extends Coordinate {
      * Returns a valid OSM longitude [-180,+180] for the given extended longitude value.
      * For example, a value of -181 will return +179, a value of +181 will return -179.
      * @param value A longitude value not restricted to the [-180,+180] range.
+     * @return a valid OSM longitude [-180,+180]
      */
     public static double toIntervalLon(double value) {
         if (isValidLon(value))
@@ -236,9 +237,9 @@ public class LatLon extends Coordinate {
     }
 
     /**
+     * @param other other lat/lon
      * @return <code>true</code> if the other point has almost the same lat/lon
-     * values, only differing by no more than
-     * 1 / {@link #MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
+     * values, only differing by no more than 1 / {@link #MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
      */
     public boolean equalsEpsilon(LatLon other) {
         double p = MAX_SERVER_PRECISION / 2;
@@ -246,8 +247,8 @@ public class LatLon extends Coordinate {
     }
 
     /**
-     * @return <code>true</code>, if the coordinate is outside the world, compared
-     * by using lat/lon.
+     * Determines if this lat/lon is outside of the world
+     * @return <code>true</code>, if the coordinate is outside the world, compared by using lat/lon.
      */
     public boolean isOutSideWorld() {
         Bounds b = Main.getProjection().getWorldBoundsLatLon();
@@ -256,6 +257,8 @@ public class LatLon extends Coordinate {
     }
 
     /**
+     * Determines if this lat/lon is within the given bounding box.
+     * @param b bounding box
      * @return <code>true</code> if this is within the given bounding box.
      */
     public boolean isWithin(Bounds b) {
@@ -329,6 +332,7 @@ public class LatLon extends Coordinate {
 
     /**
      * Returns this lat/lon pair in human-readable format separated by {@code separator}.
+     * @param separator values separator
      * @return String in the format {@code "1.23456[separator]2.34567"}
      */
     public String toStringCSV(String separator) {
@@ -375,8 +379,8 @@ public class LatLon extends Coordinate {
     }
 
     /**
-     * Returns the value rounded to OSM precisions, i.e. to
-     * LatLon.MAX_SERVER_PRECISION
+     * Returns the value rounded to OSM precisions, i.e. to {@link LatLon#MAX_SERVER_PRECISION}.
+     * @param value lat/lon value
      *
      * @return rounded value
      */
@@ -387,6 +391,7 @@ public class LatLon extends Coordinate {
     /**
      * Returns the value rounded to OSM precision. This function is now the same as
      * {@link #roundToOsmPrecision(double)}, since the rounding error has been fixed.
+     * @param value lat/lon value
      *
      * @return rounded value
      */

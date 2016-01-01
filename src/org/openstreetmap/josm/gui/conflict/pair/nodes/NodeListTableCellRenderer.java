@@ -48,8 +48,9 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
 
     /**
      * render a node
-     * @param model  the model
+     * @param model the model
      * @param node the node
+     * @param row the row
      * @param isSelected true, if the current row is selected
      */
     protected void renderNode(ListMergeModel<Node>.EntriesTableModel model, Node node, int row, boolean isSelected) {

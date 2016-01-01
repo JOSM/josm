@@ -701,10 +701,11 @@ public final class CustomConfigurator {
 
         /**
          * substitute ${expression} = expression evaluated by JavaScript
+         * @param s string
+         * @return evaluation result
          */
         private String evalVars(String s) {
-            Pattern p = Pattern.compile("\\$\\{([^\\}]*)\\}");
-            Matcher mr =  p.matcher(s);
+            Matcher mr = Pattern.compile("\\$\\{([^\\}]*)\\}").matcher(s);
             StringBuffer sb = new StringBuffer();
             while (mr.find()) {
                 try {
@@ -809,8 +810,10 @@ public final class CustomConfigurator {
         }
 
         /**
-        * Delete items from @param mainpref collections that match items from @param fragment collections
-        */
+         * Delete items from {@code mainpref} collections that match items from {@code fragment} collections.
+         * @param fragment preferences
+         * @param mainpref main preferences
+         */
         private static void deletePreferenceValues(Preferences fragment, Preferences mainpref) {
 
             for (Entry<String, Setting<?>> entry : fragment.settingsMap.entrySet()) {

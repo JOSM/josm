@@ -50,6 +50,9 @@ public class PurgeCommand extends Command {
      *      have all its referrers in toPurge.
      *  - Each element of makeIncomplete must not be new and must have only
      *      referrers that are either a relation or included in toPurge.
+     * @param layer OSM data layer
+     * @param toPurge primitives to purge
+     * @param makeIncomplete primitives to make incomplete
      */
     public PurgeCommand(OsmDataLayer layer, Collection<OsmPrimitive> toPurge, Collection<OsmPrimitive> makeIncomplete) {
         super(layer);
@@ -141,6 +144,7 @@ public class PurgeCommand extends Command {
     /**
      * Sorts a collection of primitives such that for each object
      * its referrers come later in the sorted collection.
+     * @param sel collection of primitives to sort
      * @return sorted list
      */
     public static List<OsmPrimitive> topoSort(Collection<OsmPrimitive> sel) {

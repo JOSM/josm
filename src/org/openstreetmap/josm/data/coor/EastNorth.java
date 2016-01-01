@@ -155,8 +155,10 @@ public class EastNorth extends Coordinate {
 
     /**
      * Compares two EastNorth values
+     * @param other other east.north
+     * @param e epsilon
      *
-     * @return true if "x" and "y" values are within 1E-6 of each other
+     * @return true if "x" and "y" values are within epsilon {@code e} of each other
      */
     public boolean equalsEpsilon(EastNorth other, double e) {
         return Math.abs(x - other.x) < e && Math.abs(y - other.y) < e;

@@ -597,6 +597,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
      * Extract GPS metadata from image EXIF
      *
      * If successful, fills in the LatLon and EastNorth attributes of passed in image
+     * @param e image entry
      */
     private static void extractExif(ImageEntry e) {
 

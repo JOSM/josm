@@ -46,6 +46,7 @@ public class MultipolygonBuilder {
         /**
          * Constructs a new {@code JoinedPolygon} from given list of ways.
          * @param ways The ways used to build joined polygon
+         * @param reversed list of reversed states
          */
         public JoinedPolygon(List<Way> ways, List<Boolean> reversed) {
             this.ways = ways;
@@ -93,7 +94,7 @@ public class MultipolygonBuilder {
      * Helper storage class for finding findOuterWays
      */
     static class PolygonLevel {
-        public final int level; //nesting level , even for outer, odd for inner polygons.
+        public final int level; // nesting level, even for outer, odd for inner polygons.
         public final JoinedPolygon outerWay;
 
         public List<JoinedPolygon> innerWays;
@@ -297,6 +298,7 @@ public class MultipolygonBuilder {
 
     /**
      * Collects outer way and corresponding inner ways from all boundaries.
+     * @param boundaryWays boundary ways
      * @return the outermostWay, or {@code null} if intersection found.
      */
     private static List<PolygonLevel> findOuterWaysMultiThread(List<JoinedPolygon> boundaryWays) {
@@ -353,6 +355,8 @@ public class MultipolygonBuilder {
 
         /**
          * Collects outer way and corresponding inner ways from all boundaries.
+         * @param level nesting level
+         * @param boundaryWays boundary ways
          * @return the outermostWay, or {@code null} if intersection found.
          */
         private static List<PolygonLevel> findOuterWaysRecursive(int level, List<JoinedPolygon> boundaryWays) {

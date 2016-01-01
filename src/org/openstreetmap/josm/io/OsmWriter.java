@@ -48,6 +48,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
      * Constructs a new {@code OsmWriter}.
      * Do not call this directly. Use {@link OsmWriterFactory} instead.
      * @param out print writer
+     * @param osmConform if {@code true}, prevents modification attributes to be written to the common part
      * @param version OSM API version (0.6)
      */
     protected OsmWriter(PrintWriter out, boolean osmConform, String version) {
