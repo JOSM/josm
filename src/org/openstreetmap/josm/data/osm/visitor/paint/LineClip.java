@@ -58,6 +58,14 @@ public class LineClip {
     /**
      * Cohen–Sutherland algorithm.
      * See <a href="https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm">Wikipedia article</a>
+     * @param x1 X coordinate of first point
+     * @param y1 Y coordinate of first point
+     * @param x2 X coordinate of second point
+     * @param y2 Y coordinate of second point
+     * @param xmin minimal X coordinate
+     * @param ymin minimal Y coordinate
+     * @param xmax maximal X coordinate
+     * @param ymax maximal Y coordinate
      * @return true, if line is visible in the given clip region
      */
     private boolean cohenSutherland(long x1, long y1, long x2, long y2, long xmin, long ymin, long xmax, long ymax) {
@@ -113,7 +121,14 @@ public class LineClip {
 
     /**
      * The outcode of the point.
-     * We cannot use Rectangle.outcode since it does not work with long ints.
+     * We cannot use {@link Rectangle#outcode} since it does not work with long ints.
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param xmin minimal X coordinate
+     * @param ymin minimal Y coordinate
+     * @param xmax maximal X coordinate
+     * @param ymax maximal Y coordinate
+     * @return outcode
      */
     private static int computeOutCode(long x, long y, long xmin, long ymin, long xmax, long ymax) {
         int code = 0;

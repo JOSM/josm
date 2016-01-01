@@ -464,6 +464,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
      *     becomes active</li>
      *   <li>otherwise, the top most layer of any type becomes active</li>
      * </ul>
+     * @param layersList lit of layers
      *
      * @return the next active data layer
      */

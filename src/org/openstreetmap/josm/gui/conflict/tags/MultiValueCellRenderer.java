@@ -108,6 +108,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
 
     /**
      * Sets the text of the tooltip for both renderers, this (the JLabel) and the combobox renderer.
+     * @param decision conflict resolution decision
      */
     protected void renderToolTipText(MultiValueResolutionDecision decision) {
         String toolTipText = null;

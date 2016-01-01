@@ -388,6 +388,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         /**
          * Sets the tasks to displayed. A HTML formatted list is expected.
+         * @param tasks HTML formatted list of tasks
          */
         public void setTasks(String tasks) {
             lblTaskTitle.setText(LABEL_HTML + tasks);

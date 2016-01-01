@@ -348,6 +348,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
     /**
      * Selects all errors related to the specified {@code primitives}, i.e. where {@link TestError#getPrimitives()}
      * returns a primitive present in {@code primitives}.
+     * @param primitives collection of primitives
      */
     public void selectRelatedErrors(final Collection<OsmPrimitive> primitives) {
         final Collection<TreePath> paths = new ArrayList<>();

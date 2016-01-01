@@ -329,6 +329,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     /**
      * Call this to add new toggle dialogs to the left button-list
      * @param dlg The toggle dialog. It must not be in the list already.
+     * @param isExpert {@code true} if it's reserved to expert mode
      * @return button allowing to toggle the dialog
      */
     public IconToggleButton addToggleDialog(final ToggleDialog dlg, boolean isExpert) {
@@ -630,6 +631,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
     /**
      * Remove panel from top of MapView by class
+     * @param type type of panel
      */
     public void removeTopPanel(Class<?> type) {
         int n = leftPanel.getComponentCount();
@@ -643,8 +645,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         }
     }
 
-    /*
+    /**
      * Find panel on top of MapView by class
+     * @param type type of panel
+     * @return found panel
      */
     public <T> T getTopPanel(Class<T> type) {
         int n = leftPanel.getComponentCount();
@@ -657,7 +661,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     }
 
     /**
-     * Add component @param c on top of MapView
+     * Add component {@code c} on top of MapView
+     * @param c component
      */
     public void addTopPanel(Component c) {
         leftPanel.add(c, GBC.eol().fill(GBC.HORIZONTAL), leftPanel.getComponentCount()-1);
@@ -669,6 +674,11 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      * Interface to notify listeners of the change of the mapMode.
      */
     public interface MapModeChangeListener {
+        /**
+         * Trigerred when map mode changes.
+         * @param oldMapMode old map mode
+         * @param newMapMode new map mode
+         */
         void mapModeChange(MapMode oldMapMode, MapMode newMapMode);
     }
 

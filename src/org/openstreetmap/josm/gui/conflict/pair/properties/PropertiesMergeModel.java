@@ -100,6 +100,7 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * replies true if the current decision for the coordinate conflict is <code>decision</code>
+     * @param decision conflict resolution decision
      *
      * @return true if the current decision for the coordinate conflict is <code>decision</code>;
      *  false, otherwise
@@ -110,6 +111,7 @@ public class PropertiesMergeModel extends Observable {
 
     /**
      * replies true if the current decision for the deleted state conflict is <code>decision</code>
+     * @param decision conflict resolution decision
      *
      * @return true if the current decision for the deleted state conflict is <code>decision</code>;
      *  false, otherwise

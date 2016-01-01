@@ -221,6 +221,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
      * @param b Second value
      * @param c Third value
      * @param d Fourth value
+     * @return maximumof {@code a}, {@code b}, {@code c}, {@code d}
      */
     private static int max(int a, int b, int c, int d) {
         return Math.max(Math.max(a, b), Math.max(c, d));

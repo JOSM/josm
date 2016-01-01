@@ -36,7 +36,10 @@ public class DateFilterPanel extends JPanel {
     /**
      * Create the panel to filter tracks on GPX layer @param layer by date
      * Preferences will be stored in @param preferencePrefix
-     * If @param enabled = true, the the panel is created as active and filtering occurs immediately.
+     * If @param enabled = true, then the panel is created as active and filtering occurs immediately.
+     * @param layer GPX layer
+     * @param preferencePrefix preference prefix
+     * @param enabled panel initial enabled state
      */
     public DateFilterPanel(GpxLayer layer, String preferencePrefix, boolean enabled) {
         super(new GridBagLayout());

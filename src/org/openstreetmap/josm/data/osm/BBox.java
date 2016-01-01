@@ -113,6 +113,8 @@ public class BBox {
 
     /**
      * Extends this bbox to include the point (x, y)
+     * @param x X coordinate
+     * @param y Y coordinate
      */
     public final void add(double x, double y) {
         xmin = Math.min(xmin, x);
@@ -145,8 +147,9 @@ public class BBox {
     }
 
     /**
-     * Tests, weather the bbox b lies completely inside
-     * this bbox.
+     * Tests, whether the bbox {@code b} lies completely inside this bbox.
+     * @param b bounding box
+     * @return {@code true} if {@code b} lies completely inside this bbox
      */
     public boolean bounds(BBox b) {
         if (!(xmin <= b.xmin) ||
@@ -158,7 +161,9 @@ public class BBox {
     }
 
     /**
-     * Tests, weather the Point c lies within the bbox.
+     * Tests, whether the Point {@code c} lies within the bbox.
+     * @param c point
+     * @return {@code true} if {@code c} lies within the bbox
      */
     public boolean bounds(LatLon c) {
         if ((xmin <= c.lon()) &&
@@ -170,8 +175,10 @@ public class BBox {
     }
 
     /**
-     * Tests, weather two BBoxes intersect as an area.
+     * Tests, whether two BBoxes intersect as an area.
      * I.e. whether there exists a point that lies in both of them.
+     * @param b other bounding box
+     * @return {@code true} if this bbox intersects with the other
      */
     public boolean intersects(BBox b) {
         if (xmin > b.xmax)

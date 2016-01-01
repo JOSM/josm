@@ -12,12 +12,26 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class ProjectionBounds {
     /**
-     * The minimum and maximum coordinates.
+     * The minimum east coordinate.
      */
-    public double minEast, minNorth, maxEast, maxNorth;
+    public double minEast;
+    /**
+     * The minimum north coordinate.
+     */
+    public double minNorth;
+    /**
+     * The maximum east coordinate.
+     */
+    public double maxEast;
+    /**
+     * The minimum north coordinate.
+     */
+    public double maxNorth;
 
     /**
      * Construct bounds out of two points.
+     * @param min min east/north
+     * @param max max east/north
      */
     public ProjectionBounds(EastNorth min, EastNorth max) {
         this.minEast = min.east();
@@ -26,11 +40,21 @@ public class ProjectionBounds {
         this.maxNorth = max.north();
     }
 
+    /**
+     * Construct bounds out of a single point.
+     * @param p east/north
+     */
     public ProjectionBounds(EastNorth p) {
         this.minEast = this.maxEast = p.east();
         this.minNorth = this.maxNorth = p.north();
     }
 
+    /**
+     * Construct bounds out of a center point and east/north dimensions.
+     * @param center center east/north
+     * @param east east dimension
+     * @param north north dimension
+     */
     public ProjectionBounds(EastNorth center, double east, double north) {
         this.minEast = center.east()-east/2.0;
         this.minNorth = center.north()-north/2.0;
@@ -38,6 +62,13 @@ public class ProjectionBounds {
         this.maxNorth = center.north()+north/2.0;
     }
 
+    /**
+     * Construct bounds out of two points.
+     * @param minEast min east
+     * @param minNorth min north
+     * @param maxEast max east
+     * @param maxNorth max north
+     */
     public ProjectionBounds(double minEast, double minNorth, double maxEast, double maxNorth) {
         this.minEast = minEast;
         this.minNorth = minNorth;
@@ -45,6 +76,10 @@ public class ProjectionBounds {
         this.maxNorth = maxNorth;
     }
 
+    /**
+     * Extends bounds to include point {@code e}.
+     * @param e east/north to include
+     */
     public void extend(EastNorth e) {
         if (e.east() < minEast) {
             minEast = e.east();
@@ -60,6 +95,10 @@ public class ProjectionBounds {
         }
     }
 
+    /**
+     * Returns the center east/north.
+     * @return the center east/north
+     */
     public EastNorth getCenter() {
         return new EastNorth((minEast + maxEast) / 2.0, (minNorth + maxNorth) / 2.0);
     }
@@ -72,6 +111,8 @@ public class ProjectionBounds {
     /**
      * The two bounds intersect? Compared to java Shape.intersects, if does not use
      * the interior but the closure. ("&gt;=" instead of "&gt;")
+     * @param b projection bounds
+     * @return {@code true} if the two bounds intersect
      */
     public boolean intersects(ProjectionBounds b) {
         return b.maxEast >= minEast &&
@@ -80,10 +121,18 @@ public class ProjectionBounds {
         b.minNorth <= maxNorth;
     }
 
+    /**
+     * Returns the min east/north.
+     * @return the min east/north
+     */
     public EastNorth getMin() {
         return new EastNorth(minEast, minNorth);
     }
 
+    /**
+     * Returns the max east/north.
+     * @return the max east/north
+     */
     public EastNorth getMax() {
         return new EastNorth(maxEast, maxNorth);
     }

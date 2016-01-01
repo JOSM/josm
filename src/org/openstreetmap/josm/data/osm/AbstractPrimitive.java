@@ -448,6 +448,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     /**
      * If set to true, this object is incomplete, which means only the id
      * and type is known (type is the objects instance class)
+     * @param incomplete incomplete flag value
      */
     protected void setIncomplete(boolean incomplete) {
         updateFlags(FLAG_INCOMPLETE, incomplete);
@@ -648,6 +649,8 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     /**
      * Returns true if the {@code key} corresponds to an OSM true value.
+     * @param key OSM key
+     * @return {@code true} if the {@code key} corresponds to an OSM true value
      * @see OsmUtils#isTrue(String)
      */
     public final boolean isKeyTrue(String key) {
@@ -656,6 +659,8 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     /**
      * Returns true if the {@code key} corresponds to an OSM false value.
+     * @param key OSM key
+     * @return {@code true} if the {@code key} corresponds to an OSM false value
      * @see OsmUtils#isFalse(String)
      */
     public final boolean isKeyFalse(String key) {
@@ -724,6 +729,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     /**
      * What to do, when the tags have changed by one of the tag-changing methods.
+     * @param originalKeys original tags
      */
     protected abstract void keysChangedImpl(Map<String, String> originalKeys);
 

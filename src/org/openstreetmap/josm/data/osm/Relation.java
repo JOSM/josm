@@ -348,6 +348,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     /**
      * Obtains all members with member.member == primitive
      * @param primitives the primitives to check for
+     * @return all relation members for the given primitives
      */
     public Collection<RelationMember> getMembersFor(final Collection<? extends OsmPrimitive> primitives) {
         return Utils.filter(getMembers(), new Predicate<RelationMember>() {

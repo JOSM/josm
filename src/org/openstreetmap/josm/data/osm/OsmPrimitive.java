@@ -476,8 +476,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Remove the disabled flag from the primitive.
-     * Afterwards, the primitive is displayed normally and can be selected
-     * again.
+     * Afterwards, the primitive is displayed normally and can be selected again.
+     * @return {@code true} if a change occurred
      */
     public boolean unsetDisabledState() {
         boolean locked = writeLock();
@@ -492,6 +492,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Set binary property used internally by the filter mechanism.
+     * @param isExplicit new "disabled type" flag value
      */
     public void setDisabledType(boolean isExplicit) {
         updateFlags(FLAG_DISABLED_TYPE, isExplicit);
@@ -499,22 +500,23 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Set binary property used internally by the filter mechanism.
+     * @param isExplicit new "hidden type" flag value
      */
     public void setHiddenType(boolean isExplicit) {
         updateFlags(FLAG_HIDDEN_TYPE, isExplicit);
     }
 
     /**
-     * Replies true, if this primitive is disabled. (E.g. a filter
-     * applies)
+     * Replies true, if this primitive is disabled. (E.g. a filter applies)
+     * @return {@code true} if this object has the "disabled" flag enabled
      */
     public boolean isDisabled() {
         return (flags & FLAG_DISABLED) != 0;
     }
 
     /**
-     * Replies true, if this primitive is disabled and marked as
-     * completely hidden on the map.
+     * Replies true, if this primitive is disabled and marked as completely hidden on the map.
+     * @return {@code true} if this object has both the "disabled" and "hide if disabled" flags enabled
      */
     public boolean isDisabledAndHidden() {
         return ((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0);
@@ -522,6 +524,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Get binary property used internally by the filter mechanism.
+     * @return {@code true} if this object has the "hidden type" flag enabled
      */
     public boolean getHiddenType() {
         return (flags & FLAG_HIDDEN_TYPE) != 0;
@@ -529,15 +532,24 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Get binary property used internally by the filter mechanism.
+     * @return {@code true} if this object has the "disabled type" flag enabled
      */
     public boolean getDisabledType() {
         return (flags & FLAG_DISABLED_TYPE) != 0;
     }
 
+    /**
+     * Determines if this object is selectable.
+     * @return {@code true} if this object is selectable
+     */
     public boolean isSelectable() {
         return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_DISABLED + FLAG_HIDE_IF_DISABLED)) == 0;
     }
 
+    /**
+     * Determines if this object is drawable.
+     * @return {@code true} if this object is drawable
+     */
     public boolean isDrawable() {
         return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_HIDE_IF_DISABLED)) == 0;
     }
@@ -763,6 +775,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Returns {@link #getKeys()} for which {@code key} does not fulfill {@link #isUninterestingKey}.
+     * @return list of interesting tags
      */
     public Map<String, String> getInterestingTags() {
         Map<String, String> result = new HashMap<>();
@@ -882,11 +895,16 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * true if this object has direction dependent tags (e.g. oneway)
+     * @return {@code true} if this object has direction dependent tags
      */
     public boolean hasDirectionKeys() {
         return (flags & FLAG_HAS_DIRECTIONS) != 0;
     }
 
+    /**
+     * true if this object has the "reversed diretion" flag enabled
+     * @return {@code true} if this object has the "reversed diretion" flag enabled
+     */
     public boolean reversedDirection() {
         return (flags & FLAG_DIRECTION_REVERSED) != 0;
     }
@@ -1081,6 +1099,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     /**
       Return true, if this primitive is referred by at least n ways
       @param n Minimal number of ways to return true. Must be positive
+     * @return {@code true} if this primitive is referred by at least n ways
      */
     public final boolean isReferredByWays(int n) {
         // Count only referrers that are members of the same dataset (primitive can have some fake references, for example
@@ -1116,6 +1135,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     /**
      * Get and write all attributes from the parameter. Does not fire any listener, so
      * use this only in the data initializing phase
+     * @param other other primitive
      */
     public void cloneFrom(OsmPrimitive other) {
         // write lock is provided by subclasses
@@ -1324,6 +1344,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Replies the display name of a primitive formatted by <code>formatter</code>
+     * @param formatter formatter to use
      *
      * @return the display name
      */
@@ -1361,6 +1382,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Replies the set of referring relations
+     * @param primitives primitives to fetch relations from
      *
      * @return the set of referring relations
      */

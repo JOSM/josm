@@ -7,6 +7,7 @@ public interface DownloadSelection  {
 
     /**
      * Add the GUI elements to the dialog.
+     * @param gui download dialog
      */
     void addGui(DownloadDialog gui);
 

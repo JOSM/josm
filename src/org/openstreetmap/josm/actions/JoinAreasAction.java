@@ -195,7 +195,9 @@ public class JoinAreasAction extends JosmAction {
         /** Direction of current way */
         private boolean lastWayReverse;
 
-        /** Constructor */
+        /** Constructor
+         * @param ways available ways
+         */
         WayTraverser(Collection<WayInPolygon> ways) {
             availableWays = new HashSet<>(ways);
             lastWay = null;
@@ -259,6 +261,9 @@ public class JoinAreasAction extends JosmAction {
 
         /**
          * Returns oriented angle (N1N2, N1N3) in range [0; 2*Math.PI[
+         * @param N1 first node
+         * @param N2 second node
+         * @param N3 third node
          * @return oriented angle (N1N2, N1N3) in range [0; 2*Math.PI[
          */
         private static double getAngle(Node N1, Node N2, Node N3) {

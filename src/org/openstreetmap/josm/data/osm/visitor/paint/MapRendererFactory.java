@@ -257,6 +257,9 @@ public final class MapRendererFactory {
 
     /**
      * <p>Creates an instance of the currently active renderer.</p>
+     * @param g Graphics
+     * @param viewport Navigatable component
+     * @param isInactiveMode {@code true} if the paint visitor shall render OSM objects such that they look inactive
      * @return an instance of the currently active renderer
      *
      * @throws MapRendererFactoryException if creating an instance fails

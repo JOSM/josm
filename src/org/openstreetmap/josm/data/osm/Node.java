@@ -108,6 +108,8 @@ public final class Node extends OsmPrimitive implements INode {
 
     /**
      * To be used only by Dataset.reindexNode
+     * @param coor lat/lon
+     * @param eastNorth east/north
      */
     protected void setCoorInternal(LatLon coor, EastNorth eastNorth) {
         if (coor != null) {
@@ -353,6 +355,10 @@ public final class Node extends OsmPrimitive implements INode {
     /**
      * Tests whether {@code this} node is connected to {@code otherNode} via at most {@code hops} nodes
      * matching the {@code predicate} (which may be {@code null} to consider all nodes).
+     * @param otherNodes other nodes
+     * @param hops number of hops
+     * @param predicate predicate to match
+     * @return {@code true} if {@code this} node mets the conditions
      */
     public boolean isConnectedTo(final Collection<Node> otherNodes, final int hops, Predicate<Node> predicate) {
         CheckParameterUtil.ensureParameterNotNull(otherNodes);
