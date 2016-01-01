@@ -45,7 +45,9 @@ public class RestartAction extends JosmAction {
                 Shortcut.registerShortcut("file:restart", tr("File: {0}", tr("Restart")), KeyEvent.VK_J, Shortcut.ALT_CTRL_SHIFT), false);
         putValue("help", ht("/Action/Restart"));
         putValue("toolbar", "action/restart");
-        Main.toolbar.register(this);
+        if (Main.toolbar != null) {
+            Main.toolbar.register(this);
+        }
         setEnabled(isRestartSupported());
     }
 
