@@ -282,6 +282,12 @@ public final class Projections {
         return proj;
     }
 
+    /**
+     * Get a list of all supported projection codes.
+     *
+     * @return all supported projection codes
+     * @see #getProjectionByCode(java.lang.String)
+     */
     public static Collection<String> getAllProjectionCodes() {
         return Collections.unmodifiableCollection(allCodes);
     }
