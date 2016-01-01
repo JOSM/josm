@@ -1082,7 +1082,9 @@ public abstract class Main {
             worker.shutdown();
             ImageProvider.shutdown(false);
             JCSCacheManager.shutdown();
-            geometry.remember("gui.geometry");
+            if (geometry != null) {
+                geometry.remember("gui.geometry");
+            }
             if (map != null) {
                 map.rememberToggleDialogWidth();
             }

@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
+import gnu.getopt.Getopt;
+import gnu.getopt.LongOpt;
 
 import java.awt.Dimension;
 import java.awt.Image;
@@ -47,6 +49,7 @@ import javax.swing.SwingUtilities;
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.PreferencesAction;
+import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Version;
@@ -70,9 +73,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Utils;
-
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
 
 /**
  * Main window class application.
@@ -582,6 +582,8 @@ public class MainApplication extends Main {
                     }
                     if (wasv6 && !hasv6) {
                         Main.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
+                        Main.pref.put("validated.ipv6", hasv6); // be sure it is stored before the restart!
+                        new RestartAction().actionPerformed(null);
                     }
                     Main.pref.put("validated.ipv6", hasv6);
                 }
