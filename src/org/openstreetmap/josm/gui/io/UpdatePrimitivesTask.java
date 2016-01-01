@@ -127,7 +127,7 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
         try {
             synchronized (this) {
                 if (canceled) return;
-                multiObjectReader = new MultiFetchServerObjectReader();
+                multiObjectReader = MultiFetchServerObjectReader.create();
             }
             initMultiFetchReaderWithNodes(multiObjectReader);
             initMultiFetchReaderWithWays(multiObjectReader);

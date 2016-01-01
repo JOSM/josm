@@ -116,7 +116,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
         try {
             synchronized (this) {
                 if (canceled) return;
-                objectReader = new MultiFetchServerObjectReader();
+                objectReader = MultiFetchServerObjectReader.create();
             }
             objectReader.append(children);
             progressMonitor.indeterminateSubTask(

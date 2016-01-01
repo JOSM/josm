@@ -219,7 +219,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
             // Don't retrieve any nodes we've already grabbed
             nodes.removeAll(targetLayer.data.getNodes());
             if (!nodes.isEmpty()) {
-                reader = new MultiFetchServerObjectReader();
+                reader = MultiFetchServerObjectReader.create();
                 ((MultiFetchServerObjectReader) reader).append(nodes);
                 DataSet wayNodes = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
                 synchronized (this) { // avoid race condition in cancel()

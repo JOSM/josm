@@ -38,7 +38,7 @@ public class UpdateSelectionAction extends JosmAction {
      * {@link OsmPrimitiveType#WAY WAY}, {@link OsmPrimitiveType#RELATION RELATION}
      */
     public static void handlePrimitiveGoneException(long id, OsmPrimitiveType type) {
-        MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
+        MultiFetchServerObjectReader reader = MultiFetchServerObjectReader.create();
         reader.append(getCurrentDataSet(), id, type);
         try {
             DataSet ds = reader.parseOsm(NullProgressMonitor.INSTANCE);

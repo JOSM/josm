@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -73,12 +74,39 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
     /**
      * Constructs a {@code MultiFetchServerObjectReader}.
      */
-    public MultiFetchServerObjectReader() {
+    protected MultiFetchServerObjectReader() {
         nodes = new LinkedHashSet<>();
         ways = new LinkedHashSet<>();
         relations = new LinkedHashSet<>();
         this.outputDataSet = new DataSet();
         this.missingPrimitives = new LinkedHashSet<>();
+    }
+
+    /**
+     * Creates a new instance of {@link MultiFetchServerObjectReader} or {@link MultiFetchOverpassObjectReader}
+     * depending on the {@code download.overpass.for-multi-fetch} preference.
+     *
+     * @return a new instance
+     * @since 9241
+     */
+    public static MultiFetchServerObjectReader create() {
+        return create(Main.pref.getBoolean("download.overpass.for-multi-fetch", false));
+    }
+
+    /**
+     * Creates a new instance of {@link MultiFetchServerObjectReader} or {@link MultiFetchOverpassObjectReader}
+     * depending on the {@code fromMirror} parameter.
+     *
+     * @param fromMirror {@code false} for {@link MultiFetchServerObjectReader}, {@code true} for {@link MultiFetchOverpassObjectReader}
+     * @return a new instance
+     * @since 9241
+     */
+    static MultiFetchServerObjectReader create(final boolean fromMirror) {
+        if (fromMirror) {
+            return new MultiFetchOverpassObjectReader();
+        } else {
+            return new MultiFetchServerObjectReader();
+        }
     }
 
     /**
@@ -239,35 +267,13 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * @param idPackage  the package of ids
      * @return the request string
      */
-    protected static String buildRequestString(OsmPrimitiveType type, Set<Long> idPackage) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(type.getAPIName()).append("s?")
-        .append(type.getAPIName()).append("s=");
-
-        Iterator<Long> it = idPackage.iterator();
-        for (int i = 0; i < idPackage.size(); i++) {
-            sb.append(it.next());
-            if (i < idPackage.size()-1) {
-                sb.append(',');
-            }
-        }
-        return sb.toString();
+    protected String buildRequestString(final OsmPrimitiveType type, Set<Long> idPackage) {
+        return type.getAPIName() + "s?" + type.getAPIName() + "s=" + Utils.join(",", idPackage);
     }
 
-    /**
-     * builds the Multi Get request string for a single id and a given {@link OsmPrimitiveType}.
-     *
-     * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
-     * {@link OsmPrimitiveType#RELATION RELATION}
-     * @param id the id
-     * @return the request string
-     */
-    protected static String buildRequestString(OsmPrimitiveType type, long id) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(type.getAPIName()).append("s?")
-        .append(type.getAPIName()).append("s=")
-        .append(id);
-        return sb.toString();
+    @Override
+    protected String getBaseUrl() {
+        return super.getBaseUrl();
     }
 
     protected void rememberNodesOfIncompleteWaysToLoad(DataSet from) {
@@ -303,7 +309,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      */
     protected void fetchPrimitives(Set<Long> ids, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException {
         String msg = "";
-        String baseUrl = OsmApi.getOsmApi().getBaseUrl();
+        final String baseUrl = getBaseUrl();
         switch (type) {
             case NODE:     msg = tr("Fetching a package of nodes from ''{0}''",     baseUrl); break;
             case WAY:      msg = tr("Fetching a package of ways from ''{0}''",      baseUrl); break;
@@ -428,7 +434,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * The inheritance of {@link OsmServerReader} is only explained by the need to have a distinct OSM connection by {@code Fetcher} instance.
      * @see FetchResult
      */
-    protected static class Fetcher extends OsmServerReader implements Callable<FetchResult> {
+    protected class Fetcher extends OsmServerReader implements Callable<FetchResult> {
 
         private final Set<Long> pkg;
         private final OsmPrimitiveType type;
@@ -478,6 +484,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
             }
         }
 
+        @Override
+        protected String getBaseUrl() {
+            return MultiFetchServerObjectReader.this.getBaseUrl();
+        }
+
         /**
          * invokes a Multi Get for a set of ids and a given {@link OsmPrimitiveType}.
          * The retrieved primitives are merged to {@link #outputDataSet}.
@@ -519,7 +530,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
          * @throws OsmTransferException if an error occurs while communicating with the API server
          */
         protected DataSet singleGetId(OsmPrimitiveType type, long id, ProgressMonitor progressMonitor) throws OsmTransferException {
-            String request = buildRequestString(type, id);
+            String request = buildRequestString(type, Collections.singleton(id));
             DataSet result = null;
             try (InputStream in = getInputStream(request, NullProgressMonitor.INSTANCE)) {
                 if (in == null) return null;
