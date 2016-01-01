@@ -80,6 +80,7 @@ public class GpxDrawHelper {
     /** Opacity for hdop points **/
     private int hdopAlpha;
 
+    private static final Color DEFAULT_COLOR = Color.magenta;
 
     // lookup array to draw arrows without doing any math
     private static final int ll0 = 9;
@@ -127,7 +128,7 @@ public class GpxDrawHelper {
      * @return the color or null if the color is not constant
      */
     public Color getColor(String layerName, boolean ignoreCustom) {
-        Color c = Main.pref.getColor(marktr("gps point"), specName(layerName), Color.gray);
+        Color c = Main.pref.getColor(marktr("gps point"), specName(layerName), DEFAULT_COLOR);
         return ignoreCustom || getColorMode(layerName) == ColorMode.NONE ? c : null;
     }
 
@@ -150,7 +151,7 @@ public class GpxDrawHelper {
      * @return the color
      **/
     public static Color getGenericColor() {
-        return Main.pref.getColor(marktr("gps point"), Color.gray);
+        return Main.pref.getColor(marktr("gps point"), DEFAULT_COLOR);
     }
 
     /**
