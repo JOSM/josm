@@ -8,13 +8,16 @@ import java.awt.Color;
 
 import org.junit.Test;
 
+/**
+ * Unit tests for class {@link ColorScale}.
+ */
 public class ColorScaleTest {
 
     /**
      * Test method for {@link ColorScale#createHSBScale(int)}.
      */
     @Test
-    public void testHSBScale() throws Exception {
+    public void testHSBScale() {
         final ColorScale scale = ColorScale.createHSBScale(256);
         assertEquals(new Color(255, 0, 0), scale.getColor(0));
         assertEquals(new Color(0, 255, 143), scale.getColor(128));

@@ -33,6 +33,9 @@ public class ExportProfileAction extends AbstractAction {
 
     /**
      * Constructs a new {@code ExportProfileAction}.
+     * @param prefs preferences
+     * @param schemaKey filename prefix
+     * @param prefPattern preference key pattern used to determine which entries are exported
      */
     public ExportProfileAction(Preferences prefs, String schemaKey, String prefPattern) {
         super(tr("Save {0} profile", tr(schemaKey)));
@@ -66,7 +69,7 @@ public class ExportProfileAction extends AbstractAction {
         FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(File f) {
-                return f.isDirectory() || Utils.hasExtension(f, "xml") && f.getName().toLowerCase(Locale.ENGLISH).startsWith(schemaKey);
+                return f.isDirectory() || (Utils.hasExtension(f, "xml") && f.getName().toLowerCase(Locale.ENGLISH).startsWith(schemaKey));
             }
 
             @Override

@@ -415,17 +415,41 @@ public abstract class SourceEditor extends JPanel {
     public abstract boolean finish();
 
     /**
-     * Provide the GUI strings. (There are differences for MapPaint and Preset)
+     * Provide the GUI strings. (There are differences for MapPaint, Preset and TagChecker Rule)
+     * @param ident any {@link I18nString} value
+     * @return the translated string for {@code ident}
      */
     protected abstract String getStr(I18nString ident);
 
     /**
      * Identifiers for strings that need to be provided.
      */
-    public enum I18nString { AVAILABLE_SOURCES, ACTIVE_SOURCES, NEW_SOURCE_ENTRY_TOOLTIP, NEW_SOURCE_ENTRY,
-        REMOVE_SOURCE_TOOLTIP, EDIT_SOURCE_TOOLTIP, ACTIVATE_TOOLTIP, RELOAD_ALL_AVAILABLE,
-        LOADING_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC,
-        ILLEGAL_FORMAT_OF_ENTRY }
+    public enum I18nString {
+        /** Available (styles|presets|rules) */
+        AVAILABLE_SOURCES,
+        /** Active (styles|presets|rules) */
+        ACTIVE_SOURCES,
+        /** Add a new (style|preset|rule) by entering filename or URL */
+        NEW_SOURCE_ENTRY_TOOLTIP,
+        /** New (style|preset|rule) entry */
+        NEW_SOURCE_ENTRY,
+        /** Remove the selected (styles|presets|rules) from the list of active (styles|presets|rules) */
+        REMOVE_SOURCE_TOOLTIP,
+        /** Edit the filename or URL for the selected active (style|preset|rule) */
+        EDIT_SOURCE_TOOLTIP,
+        /** Add the selected available (styles|presets|rules) to the list of active (styles|presets|rules) */
+        ACTIVATE_TOOLTIP,
+        /** Reloads the list of available (styles|presets|rules) */
+        RELOAD_ALL_AVAILABLE,
+        /** Loading (style|preset|rule) sources */
+        LOADING_SOURCES_FROM,
+        /** Failed to load the list of (style|preset|rule) sources */
+        FAILED_TO_LOAD_SOURCES_FROM,
+        /** /Preferences/(Styles|Presets|Rules)#FailedToLoad(Style|Preset|Rule)Sources */
+        FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC,
+        /** Illegal format of entry in (style|preset|rule) list */
+        ILLEGAL_FORMAT_OF_ENTRY
+    }
 
     public boolean hasActiveSourcesChanged() {
         Collection<? extends SourceEntry> prev = getInitialSourcesList();

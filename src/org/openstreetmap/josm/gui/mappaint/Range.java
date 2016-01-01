@@ -54,6 +54,9 @@ public class Range {
      *                         (-----------------]
      *
      * result (----------------]
+     * @param x value
+     * @param other other range
+     * @return reduced range
      */
     public Range reduceAround(double x, Range other) {
         if (!contains(x))

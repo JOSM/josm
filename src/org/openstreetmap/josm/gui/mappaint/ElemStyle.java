@@ -63,8 +63,8 @@ public abstract class ElemStyle implements StyleKeys {
      * Get a property value of type Width
      * @param c the cascade
      * @param key property key for the width value
-     * @param relativeTo reference width. Only needed, when relative width syntax
-     *              is used, e.g. "+4".
+     * @param relativeTo reference width. Only needed, when relative width syntax is used, e.g. "+4".
+     * @return width
      */
     protected static Float getWidth(Cascade c, String key, Float relativeTo) {
         Float width = c.get(key, null, Float.class, true);

@@ -149,6 +149,7 @@ public final class MapPaintStyles {
 
     /**
      * No icon with the given name was found, show a dummy icon instead
+     * @param source style source
      * @return the icon misc/no_icon.png, in descending priority:
      *   - relative to source file
      *   - from user icon paths

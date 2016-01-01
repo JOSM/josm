@@ -51,7 +51,6 @@ import org.openstreetmap.josm.tools.Utils;
  * line and column numbers in the error messages correct for the second pass.
  *
  */
-
 public class MapCSSParser {
     MapCSSStyleSource sheet;
     StringBuilder sb;
@@ -76,6 +75,9 @@ public class MapCSSParser {
     
     /**
      * Constructor which initializes the parser with a certain lexical state.
+     * @param in input
+     * @param encoding contents encoding
+     * @param initState initial state
      */
     public MapCSSParser(InputStream in, String encoding, LexicalState initState) {
         this(createTokenManager(in, encoding, initState));
@@ -94,6 +96,8 @@ public class MapCSSParser {
 
     /**
      * Constructor which initializes the parser with a certain lexical state.
+     * @param in input
+     * @param initState initial state
      */
     public MapCSSParser(Reader in, LexicalState initState) {
         this(createTokenManager(in, initState));
@@ -107,7 +111,7 @@ public class MapCSSParser {
 }
 PARSER_END(MapCSSParser)
 
-/*************
+/**
  * Token definitions
  *
  * Lexical states for the preprocessor: <PREPROCESSOR>, <PP_COMMENT>
@@ -221,8 +225,7 @@ SKIP:
 }
 
 
-/*************
- *
+/*
  * Preprocessor parser definitions:
  *
  * <pre>
@@ -242,6 +245,9 @@ SKIP:
 
 /**
  * root method for the preprocessor.
+ * @param sheet MapCSS style source
+ * @return result string
+ * @throws ParseException in case of parsing error
  */
 String pp_root(MapCSSStyleSource sheet):
 {
@@ -259,6 +265,7 @@ String pp_root(MapCSSStyleSource sheet):
  * opening and closing curly brackets.
  *
  * @param write false if this content should be skipped (@pp_media condition is not fulfilled), true otherwise
+ * @throws ParseException in case of parsing error
  */
 void pp_black_box(boolean write):
 {
@@ -283,6 +290,7 @@ void pp_black_box(boolean write):
  *
  * @param ignore if the content of this rule should be ignored
  * (because we are already inside a @supports block that didn't pass)
+ * @throws ParseException in case of parsing error
  */
 void pp_supports(boolean ignore):
 {
@@ -301,6 +309,7 @@ void pp_supports(boolean ignore):
  *
  * Unlike other parsing rules, grabs trailing whitespace.
  * @return true, if the condition is fulfilled
+ * @throws ParseException in case of parsing error
  */
 boolean pp_supports_condition():
 {
@@ -328,6 +337,7 @@ boolean pp_supports_condition():
  * Parses something in parenthesis inside the condition of the @supports rule.
  *
  * @return true, if the condition is fulfilled
+ * @throws ParseException in case of parsing error
  */
 boolean pp_supports_condition_in_parens():
 {
@@ -349,6 +359,7 @@ boolean pp_supports_condition_in_parens():
  * The parsing rule {@link #literal()} from the main mapcss parser is reused here.
  *
  * @return true if the condition is fulfilled
+ * @throws ParseException in case of parsing error
  */
 boolean pp_supports_declaration_condition():
 {
@@ -410,6 +421,7 @@ boolean pp_media_query():
  * The parsing rule {@link #literal()} from the main mapcss parser is reused here.
  *
  * @return true if the condition is fulfilled
+ * @throws ParseException in case of parsing error
  */
 // deprecated
 boolean pp_media_expression():
@@ -442,8 +454,7 @@ void pp_w():
  ( pp_w1() )*
 }
 
-/*************
- *
+/*
  * Parser definition for the main MapCSS parser:
  *
  * <pre>
@@ -541,6 +552,7 @@ String regex() :
 
 /**
  * white-space
+ * @throws ParseException in case of parsing error
  */
 void s() :
 {
@@ -551,6 +563,7 @@ void s() :
 
 /**
  * mix of white-space and comments
+ * @throws ParseException in case of parsing error
  */
 void w() :
 {
@@ -561,6 +574,8 @@ void w() :
 
 /**
  * comma delimited list of floats (at least 2, all &gt;= 0)
+ * @return list of floats
+ * @throws ParseException in case of parsing error 
  */
 List<Float> float_array() :
 {
@@ -580,6 +595,8 @@ List<Float> float_array() :
 
 /**
  * entry point for the main parser
+ * @param sheet MapCSS style source
+ * @throws ParseException in case of parsing error
  */
 void sheet(MapCSSStyleSource sheet):
 {

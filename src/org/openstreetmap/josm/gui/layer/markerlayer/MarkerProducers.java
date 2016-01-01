@@ -22,6 +22,9 @@ public interface MarkerProducers {
      * @param wp waypoint data
      * @param relativePath An path to use for constructing relative URLs or
      *        <code>null</code> for no relative URLs
+     * @param parentLayer parent marker layer
+     * @param time Absolute time of marker in seconds since epoch
+     * @param offset Time offset in seconds from the gpx point from which it was derived
      * @return A collection of Marker objects, or <code>null</code>.
      */
     Collection<Marker> createMarkers(WayPoint wp, File relativePath, MarkerLayer parentLayer, double time, double offset);

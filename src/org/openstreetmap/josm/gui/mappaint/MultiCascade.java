@@ -30,6 +30,8 @@ public class MultiCascade implements StyleKeys {
      * Return the cascade with the given name. If it doesn't exist, create
      * a new layer with that name and return it. The new layer will be
      * a clone of the "*" layer, if it exists.
+     * @param layer layer
+     * @return cascade
      */
     public Cascade getOrCreateCascade(String layer) {
         CheckParameterUtil.ensureParameterNotNull(layer);
@@ -51,9 +53,11 @@ public class MultiCascade implements StyleKeys {
     }
 
     /**
-     * Read-only version of getOrCreateCascade. For convenience, it returns an
+     * Read-only version of {@link #getOrCreateCascade}. For convenience, it returns an
      * empty cascade for non-existing layers. However this empty (read-only) cascade
      * is not added to this MultiCascade object.
+     * @param layer layer
+     * @return cascade
      */
     public Cascade getCascade(String layer) {
         if (layer == null) {

@@ -120,7 +120,10 @@ public final class DomainValidator extends AbstractValidator {
        return DOMAIN_VALIDATOR;
     }
 
-    /** Private constructor. */
+    /**
+     * Private constructor.
+     * @param allowLocal whether to allow local domains
+     */
     private DomainValidator(boolean allowLocal) {
        this.allowLocal = allowLocal;
     }

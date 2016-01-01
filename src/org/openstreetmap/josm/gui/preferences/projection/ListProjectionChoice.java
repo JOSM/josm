@@ -52,11 +52,17 @@ public abstract class ListProjectionChoice extends AbstractProjectionChoice {
 
     /**
      * Convert 0-based index to preference value.
+     * @param idx 0-based index
+     * @return preference value
+     * @see #zoneToIndex
      */
     protected abstract String indexToZone(int idx);
 
     /**
      * Convert preference value to 0-based index.
+     * @param zone preference value
+     * @return 0-based index
+     * @see #indexToZone
      */
     protected abstract int zoneToIndex(String zone);
 

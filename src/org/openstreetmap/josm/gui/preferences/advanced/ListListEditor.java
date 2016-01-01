@@ -50,6 +50,8 @@ public class ListListEditor extends ExtendedDialog {
     /**
      * Constructs a new {@code ListListEditor}.
      * @param gui The parent component
+     * @param entry preference entry
+     * @param setting list of lists setting
      */
     public ListListEditor(final JComponent gui, PrefEntry entry, ListListSetting setting) {
         super(gui, tr("Change list of lists setting"), new String[] {tr("OK"), tr("Cancel")});

@@ -102,6 +102,8 @@ public final class StyleCache {
 
     /**
      * looks up styles for a certain scale value
+     * @param scale scale
+     * @return style list
      */
     public StyleList get(double scale) {
         if (scale <= 0)
@@ -117,6 +119,8 @@ public final class StyleCache {
     /**
      * looks up styles for a certain scale value and additionally returns
      * the scale range for the returned styles
+     * @param scale scale
+     * @return pair containing syle list and range
      */
     public Pair<StyleList, Range> getWithRange(double scale) {
         if (scale <= 0)
@@ -136,6 +140,10 @@ public final class StyleCache {
     /**
      * add a new styles to the cache. this is only possible, if
      * for this scale range, there is nothing in the cache yet.
+     * @param sl style list
+     * @param lower lower bound
+     * @param upper upper bound
+     * @return interned style cache
      */
     public StyleCache put(StyleList sl, double lower, double upper) {
         StyleCache s = new StyleCache(this);
@@ -164,6 +172,9 @@ public final class StyleCache {
      *
      *         (--------]
      *       lower     upper
+     * @param sl style list
+     * @param lower lower bound
+     * @param upper upper bound
      */
     private void putImpl(StyleList sl, double lower, double upper) {
         int i = 0;
@@ -226,8 +237,8 @@ public final class StyleCache {
 
     /**
      * Like String.intern() (reduce memory consumption).
-     * StyleCache must not be changed after it has
-     * been added to the intern pool.
+     * StyleCache must not be changed after it has been added to the intern pool.
+     * @return style cache
      */
     public StyleCache intern() {
         return internPool.putUnique(this);
