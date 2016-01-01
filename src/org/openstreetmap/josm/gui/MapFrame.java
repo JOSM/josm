@@ -647,6 +647,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
     /**
      * Find panel on top of MapView by class
+     * @param <T> type
      * @param type type of panel
      * @return found panel
      */

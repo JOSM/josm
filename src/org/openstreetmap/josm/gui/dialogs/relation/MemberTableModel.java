@@ -63,6 +63,8 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
 
     /**
      * constructor
+     * @param layer data layer
+     * @param presetHandler tagging preset handler
      */
     public MemberTableModel(OsmDataLayer layer, TaggingPresetHandler presetHandler) {
         members = new ArrayList<>();
@@ -72,6 +74,10 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         addTableModelListener(this);
     }
 
+    /**
+     * Returns the data layer.
+     * @return the data layer
+     */
     public OsmDataLayer getLayer() {
         return layer;
     }
@@ -524,6 +530,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
 
     /**
      * Replies the set of selected referers. Never null, but may be empty.
+     * @param referenceSet reference set
      *
      * @return the set of selected referers
      */

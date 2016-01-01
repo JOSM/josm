@@ -79,6 +79,10 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
         return tag.getValue();
     }
 
+    /**
+     * Initialize panel from changeset.
+     * @param cs changeset
+     */
     public void initFromChangeset(Changeset cs) {
         Map<String, String> tags = getDefaultTags();
         if (cs != null) {
@@ -102,19 +106,27 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
 
     /**
      * Replies the map with the current tags in the tag editor model.
-     *
+     * @param keepEmpty {@code true} to keep empty tags
      * @return the map with the current tags in the tag editor model.
      */
     public Map<String, String> getTags(boolean keepEmpty) {
         return pnlTagEditor.getModel().getTags(keepEmpty);
     }
 
+    /**
+     * Replies the map with the default tags.
+     * @return the map with the default tags
+     */
     public Map<String, String> getDefaultTags() {
         Map<String, String> tags = new HashMap<>();
         tags.putAll(defaultTags);
         return tags;
     }
 
+    /**
+     * Sets the map with the default tags.
+     * @param tags the map with the default tags
+     */
     public void setDefaultTags(Map<String, String> tags) {
         defaultTags.clear();
         defaultTags.putAll(tags);

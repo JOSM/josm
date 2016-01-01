@@ -90,6 +90,10 @@ class TwoColumnDiff {
     /**
      * The result from the diff algorithm is a "script" (a compressed description of the changes)
      * This method expands this script into a full two column description.
+     * @param script diff script
+     * @param a reference version
+     * @param b current version
+     * @param reversed if {@code true} use {@link DiffItemType#REVERSED} instead of {@link DiffItemType#SAME}
      */
     private void twoColumnDiffFromScript(Diff.Change script, Object[] a, Object[] b, final boolean reversed) {
         int ia = 0;

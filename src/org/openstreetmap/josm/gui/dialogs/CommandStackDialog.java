@@ -196,6 +196,8 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
     /**
      * Wires updater for enabled state to the events. Also updates dialog title if needed.
+     * @param updater updater
+     * @param tree tree on which wire updater
      */
     protected void wireUpdateEnabledStateUpdater(final IEnabledStateUpdating updater, JTree tree) {
         addShowNotifyListener(updater);

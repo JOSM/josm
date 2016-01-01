@@ -276,6 +276,7 @@ public class Storage<T> extends AbstractSet<T> {
 
     /**
      * Finds a bucket for given key.
+     * @param <K> type for hashCode and first equals parameter
      * @param ha hash function
      *
      * @param key The key to compare
@@ -349,8 +350,8 @@ public class Storage<T> extends AbstractSet<T> {
     // -------------- factories --------------------
     /**
      * A factory for default hash implementation.
-     * @return a hash implementation that just delegates to object's own
-     * hashCode and equals.
+     * @param <O> type for hash
+     * @return a hash implementation that just delegates to object's own hashCode and equals.
      */
     public static <O> Hash<O, O> defaultHash() {
         return new Hash<O, O>() {

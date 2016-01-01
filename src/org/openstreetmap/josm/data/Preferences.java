@@ -1337,6 +1337,7 @@ public class Preferences {
      * the @pref annotation.
      * Default constructor is used to initialize the struct objects, properties
      * then override some of these default values.
+     * @param <T> klass type
      * @param key main preference key
      * @param klass The struct class
      * @return a list of objects of type T or an empty list if nothing was found
@@ -1351,6 +1352,7 @@ public class Preferences {
 
     /**
      * same as above, but returns def if nothing was found
+     * @param <T> klass type
      * @param key main preference key
      * @param def default value
      * @param klass The struct class

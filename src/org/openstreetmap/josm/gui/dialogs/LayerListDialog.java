@@ -159,6 +159,7 @@ public class LayerListDialog extends ToggleDialog {
 
     /**
      * Creates a layer list and attach it to the given mapView.
+     * @param mapFrame map frame
      */
     protected LayerListDialog(MapFrame mapFrame) {
         super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
@@ -830,6 +831,8 @@ public class LayerListDialog extends ToggleDialog {
 
         /**
          * Constructs a new {@code MergeAction}.
+         * @param layer the layer (null if layer list if specified)
+         * @param layers the layer list (null if a single layer is specified)
          */
         private MergeAction(Layer layer, List<Layer> layers) {
             this.layer = layer;

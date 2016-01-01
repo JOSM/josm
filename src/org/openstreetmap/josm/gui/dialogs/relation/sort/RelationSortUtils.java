@@ -18,11 +18,12 @@ final class RelationSortUtils {
 
     /**
      * determine, if the way i is a roundabout and if yes, what type of roundabout
+     * @param member relation member
+     * @return roundabout type
      */
     static Direction roundaboutType(RelationMember member) {
         if (member == null || !member.isWay()) return NONE;
-        Way w = member.getWay();
-        return roundaboutType(w);
+        return roundaboutType(member.getWay());
     }
 
     static Direction roundaboutType(Way w) {

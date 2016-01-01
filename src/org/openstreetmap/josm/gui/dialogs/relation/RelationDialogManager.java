@@ -230,7 +230,8 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
      * Replies true, if there is another open {@link RelationEditor} whose
      * upper left corner is close to <code>p</code>.
      *
-     * @param p  the reference point to check
+     * @param p the reference point to check
+     * @param thisEditor the current editor
      * @return true, if there is another open {@link RelationEditor} whose
      * upper left corner is close to <code>p</code>.
      */

@@ -435,10 +435,19 @@ public class TagEditorModel extends AbstractTableModel {
         return result;
     }
 
+    /**
+     * Returns tags, without empty ones.
+     * @return not-empty tags
+     */
     public Map<String, String> getTags() {
         return getTags(false);
     }
 
+    /**
+     * Returns tags.
+     * @param keepEmpty {@code true} to keep empty tags
+     * @return tags
+     */
     public Map<String, String> getTags(boolean keepEmpty) {
         return applyToTags(keepEmpty);
     }

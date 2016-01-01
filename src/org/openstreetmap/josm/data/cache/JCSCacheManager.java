@@ -123,6 +123,8 @@ public final class JCSCacheManager {
 
     /**
      * Returns configured cache object for named cache region
+     * @param <K> key type
+     * @param <V> value type
      * @param cacheName region name
      * @return cache access object
      * @throws IOException if directory is not found
@@ -133,6 +135,8 @@ public final class JCSCacheManager {
 
     /**
      * Returns configured cache object with defined limits of memory cache and disk cache
+     * @param <K> key type
+     * @param <V> value type
      * @param cacheName         region name
      * @param maxMemoryObjects  number of objects to keep in memory
      * @param maxDiskObjects    maximum size of the objects stored on disk in kB

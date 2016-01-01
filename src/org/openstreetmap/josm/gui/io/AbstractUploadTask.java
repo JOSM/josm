@@ -52,7 +52,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
     /**
      * Synchronizes the local state of an {@link OsmPrimitive} with its state on the
      * server. The method uses an individual GET for the primitive.
-     *
+     * @param type the primitive type
      * @param id the primitive ID
      */
     protected void synchronizePrimitive(final OsmPrimitiveType type, final long id) {
@@ -191,7 +191,8 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
     /**
      * Handles the case that a conflict was detected while uploading where we don't
      * know what {@link OsmPrimitive} actually caused the conflict (for whatever reason)
-     *
+     * @param changesetId changeset ID
+     * @param d changeset date
      */
     protected void handleUploadConflictForClosedChangeset(long changesetId, Date d) {
         String msg =  tr("<html>Uploading <strong>failed</strong> because you have been using<br>"
@@ -210,6 +211,8 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
     /**
      * Handles the case where deleting a node failed because it is still in use in
      * a non-deleted way on the server.
+     * @param e exception
+     * @param conflict conflict
      */
     protected void handleUploadPreconditionFailedConflict(OsmApiException e, Pair<OsmPrimitive, Collection<OsmPrimitive>> conflict) {
         ButtonSpec[] options = new ButtonSpec[] {

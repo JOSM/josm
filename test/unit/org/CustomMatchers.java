@@ -25,6 +25,7 @@ public final class CustomMatchers {
 
     /**
      * Matcher for a predicate.
+     * @param <T> type of elements
      * @param predicate the predicate
      * @return matcher for a predicate
      */
