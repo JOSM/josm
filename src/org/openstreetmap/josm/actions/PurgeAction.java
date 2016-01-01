@@ -25,6 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -36,7 +37,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -205,13 +206,10 @@ public class PurgeAction extends JosmAction {
         boolean clearUndoRedo = false;
 
         if (!GraphicsEnvironment.isHeadless()) {
-            ExtendedDialog confirmDlg = new ExtendedDialog(Main.parent, tr("Confirm Purging"),
-                    new String[] {tr("Purge"), tr("Cancel")});
-            confirmDlg.setContent(buildPanel(modified), false);
-            confirmDlg.setButtonIcons(new String[] {"ok", "cancel"});
-
-            int answer = confirmDlg.showDialog().getValue();
-            if (answer != 1)
+            final boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
+                    "purge", Main.parent, buildPanel(modified), tr("Confirm Purging"),
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_OPTION);
+            if (!answer)
                 return;
 
             clearUndoRedo = cbClearUndoRedo.isSelected();
