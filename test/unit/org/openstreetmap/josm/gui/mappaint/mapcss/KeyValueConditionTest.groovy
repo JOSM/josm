@@ -100,4 +100,20 @@ class KeyValueConditionTest {
         assert selNeg.matches(new Environment(OsmUtils.createPrimitive("way foo=bar source=baz")))
         assert selNeg.matches(new Environment(OsmUtils.createPrimitive("way foo=bar src=1,2")))
     }
+
+    @Test
+    public void testValueFive() throws Exception {
+        // ticket #5985
+        def sel = new MapCSSParser(new StringReader("*[width=5]")).selector()
+        assert sel.matches(new Environment(OsmUtils.createPrimitive("way highway=track width=5")))
+        assert !sel.matches(new Environment(OsmUtils.createPrimitive("way highway=track width=2")))
+    }
+
+    @Test
+    public void testValueZero() throws Exception {
+        // ticket #12267
+        def sel = new MapCSSParser(new StringReader("*[frequency=0]")).selector()
+        assert sel.matches(new Environment(OsmUtils.createPrimitive("way railway=rail frequency=0")))
+        assert !sel.matches(new Environment(OsmUtils.createPrimitive("way railway=rail frequency=50")))
+    }
 }
