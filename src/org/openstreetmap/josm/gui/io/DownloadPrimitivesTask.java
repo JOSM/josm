@@ -140,7 +140,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
         try {
             synchronized (this) {
                 if (canceled) return;
-                multiObjectReader = new MultiFetchServerObjectReader();
+                multiObjectReader = MultiFetchServerObjectReader.create();
             }
             initMultiFetchReader(multiObjectReader);
             theirDataSet = multiObjectReader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));

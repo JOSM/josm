@@ -59,6 +59,13 @@ import org.openstreetmap.josm.tools.Utils;
 public class OverpassDownloadAction extends JosmAction {
 
     /**
+     * The {@link StringProperty property} of the currently selected Overpass server.
+     *
+     * @since 9241
+     */
+    public static final StringProperty OVERPASS_SERVER = new StringProperty("download.overpass.server", "http://overpass-api.de/api/");
+
+    /**
      * Constructs a new {@code OverpassDownloadAction}.
      */
     public OverpassDownloadAction() {
@@ -120,7 +127,6 @@ public class OverpassDownloadAction extends JosmAction {
         private HistoryComboBox overpassWizard;
         private JosmTextArea overpassQuery;
         private static OverpassDownloadDialog instance;
-        private static final StringProperty OVERPASS_SERVER = new StringProperty("download.overpass.server", "http://overpass-api.de/api/");
         private static final CollectionProperty OVERPASS_SERVER_HISTORY = new CollectionProperty("download.overpass.servers",
                 Arrays.asList("http://overpass-api.de/api/", "http://overpass.osm.rambler.ru/cgi/"));
         private static final CollectionProperty OVERPASS_WIZARD_HISTORY = new CollectionProperty("download.overpass.wizard",

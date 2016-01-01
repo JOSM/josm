@@ -1,0 +1,33 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.io;
+
+import org.openstreetmap.josm.actions.OverpassDownloadAction;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.tools.Utils;
+
+import java.util.Set;
+
+/**
+ * Retrieves a set of {@link org.openstreetmap.josm.data.osm.OsmPrimitive}s from an Overpass API server.
+ *
+ * @since 9241
+ */
+class MultiFetchOverpassObjectReader extends MultiFetchServerObjectReader {
+
+    @Override
+    protected String buildRequestString(final OsmPrimitiveType type, Set<Long> idPackage) {
+        final Utils.Function<Long, Object> toOverpassExpression = new Utils.Function<Long, Object>() {
+            @Override
+            public Object apply(Long x) {
+                return type.getAPIName() + "(" + x + ");>;";
+            }
+        };
+        final String query = "(" + Utils.join("", Utils.transform(idPackage, toOverpassExpression)) + ");out meta;";
+        return "interpreter?data=" + Utils.encodeUrl(query);
+    }
+
+    @Override
+    protected String getBaseUrl() {
+        return OverpassDownloadAction.OVERPASS_SERVER.get();
+    }
+}
