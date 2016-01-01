@@ -327,7 +327,7 @@ public final class HttpClient {
          * Returns the {@code Expire} header.
          * @return {@code Expire} HTTP header
          * @see HttpURLConnection#getExpiration()
-         * @since 
+         * @since 9232
          */
         public long getExpiration() {
             return connection.getExpiration();
