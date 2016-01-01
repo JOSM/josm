@@ -9,6 +9,7 @@ public interface PreferenceSetting {
     /**
      * Add the GUI elements to the dialog. The elements should be initialized after
      * the current preferences.
+     * @param gui the preferences tab pane
      */
     void addGui(PreferenceTabbedPane gui);
 

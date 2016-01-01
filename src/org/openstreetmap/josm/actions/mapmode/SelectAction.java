@@ -886,6 +886,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * Merges the selected nodes to the one closest to the given mouse position if the control
      * key is pressed. If there is no such node, no action will be done and no error will be
      * reported. If there is, it will execute the merge and add it to the undo buffer.
+     * @param p mouse position
      */
     private void mergePrims(Point p) {
         Collection<Node> selNodes = getCurrentDataSet().getSelectedNodes();
@@ -934,6 +935,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     /**
      * Tries to find a node to merge to when in move-merge mode for the current mouse
      * position. Either returns the node or null, if no suitable one is nearby.
+     * @param p mouse position
      * @return node to merge to, or null
      */
     private Node findNodeToMergeTo(Point p) {
@@ -1260,7 +1262,9 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     }
 
     /**
-     * @return o as collection of o's type.
+     * Returns {@code o} as collection of {@code o}'s type.
+     * @param o any object
+     * @return {@code o} as collection of {@code o}'s type.
      */
     protected static <T> Collection<T> asColl(T o) {
         if (o == null)

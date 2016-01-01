@@ -138,13 +138,20 @@ public class MoveCommand extends Command {
         this.y += y;
     }
 
+    /**
+     * Move again to the specified coordinates.
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @see #moveAgain
+     */
     public void moveAgainTo(double x, double y) {
         moveAgain(x - this.x, y - this.y);
     }
 
     /**
-     * Change the displacement vector to have endpoint @param currentEN
-     * starting point is  startEN
+     * Change the displacement vector to have endpoint {@code currentEN}.
+     * starting point is startEN
+     * @param currentEN the new endpoint
      */
     public void applyVectorTo(EastNorth currentEN) {
         if (startEN == null)

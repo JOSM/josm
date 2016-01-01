@@ -49,6 +49,7 @@ public class OsmServerHistoryReader extends OsmServerReader {
 
     /**
      * Fetches the history from the OSM API and parses it
+     * @param progressMonitor progress monitor
      *
      * @return the data set with the parsed history data
      * @throws OsmTransferException if an exception occurs

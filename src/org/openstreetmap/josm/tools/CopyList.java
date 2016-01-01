@@ -15,6 +15,7 @@ import java.util.RandomAccess;
  * an ArrayList.
  *
  * @author nenik
+ * @param <E> the type of elements in this list
  */
 public final class CopyList<E> extends AbstractList<E> implements RandomAccess, Cloneable {
     private E[] array;
@@ -23,13 +24,17 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
 
     /**
      * Create a List over given array.
-     * @param array The initial List content. The array is never modified
-     * by the {@code CopyList}.
+     * @param array The initial List content. The array is never modified by the {@code CopyList}.
      */
     public CopyList(E[] array) {
         this(array, array.length);
     }
 
+    /**
+     * Create a List over given array and size.
+     * @param array The initial List content. The array is never modified by the {@code CopyList}.
+     * @param size number of items
+     */
     public CopyList(E[] array, int size) {
         this.array = array;
         this.size = size;

@@ -91,11 +91,20 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     /**
      * Alternative constructor that allows to turn off the actionListener.
      * This can be useful if the enter key stroke needs to be forwarded to the default button in a dialog.
+     * @param tc text component
+     * @param addActionListener {@code true} to add the action listener
      */
     public AbstractTextComponentValidator(JTextComponent tc, boolean addActionListener) {
         this(tc, true, true, addActionListener);
     }
 
+    /**
+     * Constructs a new {@code AbstractTextComponentValidator}.
+     * @param tc text component
+     * @param addFocusListener {@code true} to add the focus listener
+     * @param addDocumentListener {@code true} to add the document listener
+     * @param addActionListener {@code true} to add the action listener
+     */
     public AbstractTextComponentValidator(JTextComponent tc, boolean addFocusListener, boolean addDocumentListener, boolean addActionListener) {
         CheckParameterUtil.ensureParameterNotNull(tc, "tc");
         this.tc = tc;

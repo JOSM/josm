@@ -61,6 +61,8 @@ public final class GuiHelper {
 
     /**
      * disable / enable a component and all its child components
+     * @param root component
+     * @param enabled enabled state
      */
     public static void setEnabledRec(Container root, boolean enabled) {
         root.setEnabled(enabled);

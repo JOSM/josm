@@ -247,6 +247,8 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     /**
      * if content not null, open tag, write encoded content, and close tag
      * else do nothing.
+     * @param tag GPX tag
+     * @param content content
      */
     private void simpleTag(String tag, String content) {
         if (content != null && !content.isEmpty()) {
@@ -259,6 +261,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
 
     /**
      * output link
+     * @param link link
      */
     private void gpxLink(GpxLink link) {
         if (link != null) {
@@ -271,6 +274,8 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
 
     /**
      * output a point
+     * @param pnt waypoint
+     * @param mode {@code WAY_POINT} for {@code wpt}, {@code ROUTE_POINT} for {@code rtept}, {@code TRACK_POINT} for {@code trkpt}
      */
     private void wayPoint(WayPoint pnt, int mode) {
         String type;

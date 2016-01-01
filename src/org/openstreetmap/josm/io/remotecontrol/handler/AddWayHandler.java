@@ -121,10 +121,11 @@ public class AddWayHandler extends RequestHandler {
     /**
      * Find the node with almost the same coords in dataset or in already added nodes
      * @param ll coordinates
+     * @param commands list of commands that will be modified if needed
      * @return node with almost the same coords
      * @since 5845
      */
-    Node findOrCreateNode(LatLon ll,  List<Command> commands) {
+    Node findOrCreateNode(LatLon ll, List<Command> commands) {
         Node nd = null;
 
         if (Main.isDisplayingMapView()) {

@@ -39,32 +39,48 @@ public class TagCheckerTest {
         return checker.getErrors();
     }
 
+    /**
+     * Check for mispelled key.
+     * @throws IOException if any I/O error occurs
+     */
     @Test
-    public void testInvalidKey() throws Exception {
+    public void testInvalidKey() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node Name=Main"));
         assertEquals(1, errors.size());
         assertEquals("Misspelled property key", errors.get(0).getMessage());
         assertEquals("Key 'Name' looks like 'name'.", errors.get(0).getDescription());
     }
 
+    /**
+     * Check for mispelled key.
+     * @throws IOException if any I/O error occurs
+     */
     @Test
-    public void testMisspelledKey() throws Exception {
+    public void testMisspelledKey() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node landuse;=forest"));
         assertEquals(1, errors.size());
         assertEquals("Misspelled property key", errors.get(0).getMessage());
         assertEquals("Key 'landuse;' looks like 'landuse'.", errors.get(0).getDescription());
     }
 
+    /**
+     * Check for unknown key.
+     * @throws IOException if any I/O error occurs
+     */
     @Test
-    public void testTranslatedNameKey() throws Exception {
+    public void testTranslatedNameKey() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node namez=Baz"));
         assertEquals(1, errors.size());
         assertEquals("Presets do not contain property key", errors.get(0).getMessage());
         assertEquals("Key 'namez' not in presets.", errors.get(0).getDescription());
     }
 
+    /**
+     * Check for mispelled value.
+     * @throws IOException if any I/O error occurs
+     */
     @Test
-    public void testMisspelledTag() throws Exception {
+    public void testMisspelledTag() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node landuse=forrest"));
         assertEquals(1, errors.size());
         assertEquals("Presets do not contain property value", errors.get(0).getMessage());

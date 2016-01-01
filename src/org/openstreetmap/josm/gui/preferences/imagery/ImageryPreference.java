@@ -807,6 +807,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
         /**
          * Constructs a new {@code OffsetBookmarksPanel}.
+         * @param gui the preferences tab pane
          */
         OffsetBookmarksPanel(final PreferenceTabbedPane gui) {
             super(new GridBagLayout());

@@ -71,9 +71,10 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
     }
 
     /**
-     * Sets whether adjustable participates in adjustment synchronization or not
+     * Sets whether {@code adjustable} participates in adjustment synchronization or not
      *
      * @param adjustable the adjustable
+     * @param isParticipating {@code true} if {@code adjustable} participates in adjustment synchronization
      */
     protected void setParticipatingInSynchronizedScrolling(Adjustable adjustable, boolean isParticipating) {
         CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");

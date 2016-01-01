@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.Tagged;
 
 /**
  * A {@link RowFilter} implementation which matches tags w.r.t. the specified filter's
- * {@link SearchCompiler.Match#match(org.openstreetmap.josm.data.osm.Tagged)} method.
+ * {@link org.openstreetmap.josm.actions.search.SearchCompiler.Match#match(org.openstreetmap.josm.data.osm.Tagged)} method.
  *
  * <p>An {@link javax.swing.RowFilter.Entry}'s column 0 is considered as key, and column 1 is considered as value.</p>
  */

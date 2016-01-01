@@ -123,6 +123,8 @@ public final class GBC extends GridBagConstraints {
 
     /**
      * Sets the constraint's {@code gridx}, {@code gridy}.
+     * @param gridx cell containing the leading edge of the component's display area
+     * @param gridy cell at the top of the component's display area
      * @return This constraint for chaining.
      * @see #gridx
      * @see #gridy
@@ -135,6 +137,8 @@ public final class GBC extends GridBagConstraints {
 
     /**
      * Sets the constraint's {@code gridwidth}, {@code gridheight}.
+     * @param gridwidth number of cells in a row for the component's display area
+     * @param gridheight number of cells in a column for the component's display area
      * @return This constraint for chaining.
      * @see #gridwidth
      * @see #gridheight
@@ -147,6 +151,7 @@ public final class GBC extends GridBagConstraints {
 
     /**
      * Sets the constraint's {@code gridwidth}.
+     * @param gridwidth number of cells in a row for the component's display area
      * @return This constraint for chaining.
      * @see #gridwidth
      */
@@ -159,6 +164,8 @@ public final class GBC extends GridBagConstraints {
      * Create a standard constraint with the {@code gridx}, {@code gridy} set.
      *
      * Is equivalent to {@code std().grid(gridx, gridy)}
+     * @param gridx cell containing the leading edge of the component's display area
+     * @param gridy cell at the top of the component's display area
      * @return A standard constraint.
      * @see #std()
      * @see #grid(int, int)
@@ -168,5 +175,4 @@ public final class GBC extends GridBagConstraints {
     public static GBC std(int gridx, int gridy) {
         return std().grid(gridx, gridy);
     }
-
 }

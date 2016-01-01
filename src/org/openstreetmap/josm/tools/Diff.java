@@ -151,6 +151,11 @@ public class Diff {
      * the value of bdiag at that diagonal is "wrong",
      * the worst this can do is cause suboptimal diff output.
      * It cannot cause incorrect diff output.
+     * @param xoff xoff
+     * @param xlim xlim
+     * @param yoff yoff
+     * @param ylim ylim
+     * @return midpoint of the shortest edit script
      */
     private int diag(int xoff, int xlim, int yoff, int ylim) {
         final int[] fd = fdiag; // Give the compiler a chance.
@@ -163,8 +168,7 @@ public class Diff {
         final int bmid = xlim - ylim;   // Center diagonal of bottom-up search.
         int fmin = fmid, fmax = fmid;   // Limits of top-down search.
         int bmin = bmid, bmax = bmid;   // Limits of bottom-up search.
-        /* True if southeast corner is on an odd
-                     diagonal with respect to the northwest. */
+        // True if southeast corner is on an odd diagonal with respect to the northwest.
         final boolean odd = (fmid - bmid & 1) != 0;
 
         fd[fdiagoff + fmid] = xoff;
@@ -314,17 +318,22 @@ public class Diff {
         }
     }
 
-    /** Compare in detail contiguous subsequences of the two files
-     which are known, as a whole, to match each other.
-
-     The results are recorded in the vectors filevec[N].changed_flag, by
-     storing a 1 in the element for each line that is an insertion or deletion.
-
-     The subsequence of file 0 is [XOFF, XLIM) and likewise for file 1.
-
-     Note that XLIM, YLIM are exclusive bounds.
-     All line numbers are origin-0 and discarded lines are not counted.  */
-
+    /**
+     * Compare in detail contiguous subsequences of the two files
+     * which are known, as a whole, to match each other.
+     *
+     * The results are recorded in the vectors filevec[N].changed_flag, by
+     * storing a 1 in the element for each line that is an insertion or deletion.
+     *
+     * The subsequence of file 0 is [XOFF, XLIM) and likewise for file 1.
+     *
+     * Note that XLIM, YLIM are exclusive bounds.
+     * All line numbers are origin-0 and discarded lines are not counted.
+     * @param xoff xoff
+     * @param xlim xlim
+     * @param yoff yoff
+     * @param ylim ylim
+     */
     private void compareseq(int xoff, int xlim, int yoff, int ylim) {
         /* Slide down the bottom initial diagonal. */
         while (xoff < xlim && yoff < ylim && xvec[xoff] == yvec[yoff]) {
@@ -378,8 +387,8 @@ public class Diff {
 
     private boolean inhibit;
 
-    /** Adjust inserts/deletes of blank lines to join changes
-        as much as possible.
+    /**
+     * Adjust inserts/deletes of blank lines to join changes as much as possible.
      */
     private void shift_boundaries() {
         if (inhibit)
@@ -388,14 +397,17 @@ public class Diff {
         filevec[1].shift_boundaries(filevec[0]);
     }
 
+    /**
+     * Script builder.
+     */
     public interface ScriptBuilder {
-        /** Scan the tables of which lines are inserted and deleted,
-            producing an edit script.
-            @param changed0 true for lines in first file which do not match 2nd
-            @param len0 number of lines in first file
-            @param changed1 true for lines in 2nd file which do not match 1st
-            @param len1 number of lines in 2nd file
-            @return a linked list of changes - or null
+        /**
+         * Scan the tables of which lines are inserted and deleted, producing an edit script.
+         * @param changed0 true for lines in first file which do not match 2nd
+         * @param len0 number of lines in first file
+         * @param changed1 true for lines in 2nd file which do not match 1st
+         * @param len1 number of lines in 2nd file
+         * @return a linked list of changes - or null
          */
         Change build_script(
                 boolean[] changed0, int len0,
@@ -471,64 +483,60 @@ public class Diff {
         }
     }
 
-    /** Standard ScriptBuilders. */
-    public static final ScriptBuilder
-    forwardScript = new ForwardScript(),
-    reverseScript = new ReverseScript();
+    /** Standard Forward ScriptBuilder. */
+    public static final ScriptBuilder forwardScript = new ForwardScript();
+    /** Standard Reverse ScriptBuilder. */
+    public static final ScriptBuilder reverseScript = new ReverseScript();
 
-    /** Report the differences of two files. DEPTH is the current directory depth. */
+    /**
+     * Report the differences of two files. DEPTH is the current directory depth.
+     * @param reverse if {@code true} use {@link #reverseScript} else use {@link #forwardScript}
+     * @return the differences of two files
+     */
     public final Change diff_2(final boolean reverse) {
         return diff(reverse ? reverseScript : forwardScript);
     }
 
-    /** Get the results of comparison as an edit script.  The script
-     is described by a list of changes.  The standard ScriptBuilder
-     implementations provide for forward and reverse edit scripts.
-     Alternate implementations could, for instance, list common elements
-     instead of differences.
-     @param bld an object to build the script from change flags
-     @return the head of a list of changes
+    /**
+     * Get the results of comparison as an edit script.  The script
+     * is described by a list of changes.  The standard ScriptBuilder
+     * implementations provide for forward and reverse edit scripts.
+     * Alternate implementations could, for instance, list common elements
+     * instead of differences.
+     * @param bld an object to build the script from change flags
+     * @return the head of a list of changes
      */
     public Change diff(final ScriptBuilder bld) {
 
-        /* Some lines are obviously insertions or deletions
-       because they don't match anything.  Detect them now,
-       and avoid even thinking about them in the main comparison algorithm.  */
-
+        // Some lines are obviously insertions or deletions because they don't match anything.
+        // Detect them now, and avoid even thinking about them in the main comparison algorithm.
         discard_confusing_lines();
 
-        /* Now do the main comparison algorithm, considering just the
-       undiscarded lines.  */
-
+        // Now do the main comparison algorithm, considering just the undiscarded lines.
         xvec = filevec[0].undiscarded;
         yvec = filevec[1].undiscarded;
 
-        int diags =
-            filevec[0].nondiscardedLines + filevec[1].nondiscardedLines + 3;
+        int diags = filevec[0].nondiscardedLines + filevec[1].nondiscardedLines + 3;
         fdiag = new int[diags];
         fdiagoff = filevec[1].nondiscardedLines + 1;
         bdiag = new int[diags];
         bdiagoff = filevec[1].nondiscardedLines + 1;
 
         compareseq(0, filevec[0].nondiscardedLines,
-                0, filevec[1].nondiscardedLines);
+                   0, filevec[1].nondiscardedLines);
         fdiag = null;
         bdiag = null;
 
-        /* Modify the results slightly to make them prettier
-       in cases where that can validly be done.  */
-
+        // Modify the results slightly to make them prettier in cases where that can validly be done.
         shift_boundaries();
 
-        /* Get the results of comparison in the form of a chain
-       of `struct change's -- an edit script.  */
+        // Get the results of comparison in the form of a chain of `struct change's -- an edit script.
         return bld.build_script(
                 filevec[0].changedFlag,
                 filevec[0].bufferedLines,
                 filevec[1].changedFlag,
                 filevec[1].bufferedLines
         );
-
     }
 
     /** The result of comparison is an "edit script": a chain of change objects.
@@ -554,13 +562,20 @@ public class Diff {
         /** Line number of 1st inserted line.  */
         public final int line1;
 
-        /** Cons an additional entry onto the front of an edit script OLD.
-       LINE0 and LINE1 are the first affected lines in the two files (origin 0).
-       DELETED is the number of lines deleted here from file 0.
-       INSERTED is the number of lines inserted here in file 1.
-
-       If DELETED is 0 then LINE0 is the number of the line before
-       which the insertion was done; vice versa for INSERTED and LINE1.  */
+        /**
+         * Cons an additional entry onto the front of an edit script OLD.
+         * LINE0 and LINE1 are the first affected lines in the two files (origin 0).
+         * DELETED is the number of lines deleted here from file 0.
+         * INSERTED is the number of lines inserted here in file 1.
+         *
+         * If DELETED is 0 then LINE0 is the number of the line before
+         * which the insertion was done; vice versa for INSERTED and LINE1.
+         * @param line0 first affected lines in the two files (origin 0)
+         * @param line1 first affected lines in the two files (origin 0)
+         * @param deleted the number of lines deleted here from file 0
+         * @param inserted the number of lines inserted here in file 1
+         * @param old edit script
+         */
         public Change(int line0, int line1, int deleted, int inserted, Change old) {
             this.line0 = line0;
             this.line1 = line1;
@@ -572,6 +587,7 @@ public class Diff {
         /**
          * Returns the number of insertions and deletions of this change as well as
          * (recursively) the changes linked via {@link #link}.
+         * @return recursive number of insertions and deletions
          */
         public int getTotalNumberOfChanges() {
             return inserted + deleted + (link != null ? link.getTotalNumberOfChanges() : 0);
@@ -584,22 +600,21 @@ public class Diff {
         }
     }
 
-    /** Data on one input file being compared.
+    /**
+     * Data on one input file being compared.
      */
     class FileData {
 
         /** Allocate changed array for the results of comparison.  */
         void clear() {
-            /* Allocate a flag for each line of each file, saying whether that line
-               is an insertion or deletion.
-               Allocate an extra element, always zero, at each end of each vector.
-             */
+            // Allocate a flag for each line of each file, saying whether that line is an insertion or deletion.
+            // Allocate an extra element, always zero, at each end of each vector.
             changedFlag = new boolean[bufferedLines + 2];
         }
 
-        /** Return equiv_count[I] as the number of lines in this file
-         that fall in equivalence class I.
-         @return the array of equivalence class counts.
+        /**
+         * Return equiv_count[I] as the number of lines in this file that fall in equivalence class I.
+         * @return the array of equivalence class counts.
          */
         int[] equivCount() {
             int[] equiv_count = new int[equivMax];
@@ -609,30 +624,29 @@ public class Diff {
             return equiv_count;
         }
 
-        /** Discard lines that have no matches in another file.
-
-       A line which is discarded will not be considered by the actual
-       comparison algorithm; it will be as if that line were not in the file.
-       The file's `realindexes' table maps virtual line numbers
-       (which don't count the discarded lines) into real line numbers;
-       this is how the actual comparison algorithm produces results
-       that are comprehensible when the discarded lines are counted.
-<p>
-       When we discard a line, we also mark it as a deletion or insertion
-       so that it will be printed in the output.
-      @param f the other file
+        /**
+         * Discard lines that have no matches in another file.
+         *
+         * A line which is discarded will not be considered by the actual comparison algorithm;
+         * it will be as if that line were not in the file.
+         * The file's `realindexes' table maps virtual line numbers
+         * (which don't count the discarded lines) into real line numbers;
+         * this is how the actual comparison algorithm produces results
+         * that are comprehensible when the discarded lines are counted.
+         * <p>
+         * When we discard a line, we also mark it as a deletion or insertion so that it will be printed in the output.
+         * @param f the other file
          */
         void discard_confusing_lines(FileData f) {
             clear();
-            /* Set up table of which lines are going to be discarded. */
+            // Set up table of which lines are going to be discarded.
             final byte[] discarded = discardable(f.equivCount());
 
-            /* Don't really discard the provisional lines except when they occur
-       in a run of discardables, with nonprovisionals at the beginning
-       and end.  */
+            // Don't really discard the provisional lines except when they occur in a run of discardables,
+            // with nonprovisionals at the beginning and end.
             filterDiscards(discarded);
 
-            /* Actually discard the lines. */
+            // Actually discard the lines.
             discard(discarded);
         }
 
@@ -673,8 +687,8 @@ public class Diff {
 
         /**
          * Don't really discard the provisional lines except when they occur
-         * in a run of discardables, with nonprovisionals at the beginning
-         * and end.
+         * in a run of discardables, with nonprovisionals at the beginning and end.
+         * @param discards discards
          */
         private void filterDiscards(final byte[] discards) {
             final int end = bufferedLines;

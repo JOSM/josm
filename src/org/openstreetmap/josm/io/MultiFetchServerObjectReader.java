@@ -298,6 +298,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * @param ids the set of ids
      * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
      * {@link OsmPrimitiveType#RELATION RELATION}
+     * @param progressMonitor progress monitor
      * @throws OsmTransferException if an error occurs while communicating with the API server
      */
     protected void fetchPrimitives(Set<Long> ids, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException {
@@ -484,6 +485,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
          * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
          * {@link OsmPrimitiveType#RELATION RELATION}
          * @param pkg the package of ids
+         * @param progressMonitor progress monitor
          * @return the {@link FetchResult} of this operation
          * @throws OsmTransferException if an error occurs while communicating with the API server
          */
@@ -512,6 +514,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
          * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
          * {@link OsmPrimitiveType#RELATION RELATION}
          * @param id the id
+         * @param progressMonitor progress monitor
          * @return the {@link DataSet} resulting of this operation
          * @throws OsmTransferException if an error occurs while communicating with the API server
          */
@@ -543,6 +546,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
          * @param type The primitive type. Must be one of {@link OsmPrimitiveType#NODE NODE}, {@link OsmPrimitiveType#WAY WAY},
          * {@link OsmPrimitiveType#RELATION RELATION}
          * @param pkg the set of ids
+         * @param progressMonitor progress monitor
          * @return the {@link FetchResult} of this operation
          * @throws OsmTransferException if an error occurs while communicating with the API server
          */

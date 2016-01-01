@@ -257,6 +257,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
      * @param delimiter the delimiter, e.g. a comma. separates the entries and
      *      must be escaped within one entry
      * @param s the string
+     * @return splitted items
      */
     public static String[] splitEscaped(char delimiter, String s) {
         if (s == null)

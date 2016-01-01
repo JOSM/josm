@@ -412,6 +412,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * applies the current state of the tag editor model to a map of tags
+     * @param keepEmpty {@code true} to keep empty tags
      *
      * @return the map of key/value pairs
      */

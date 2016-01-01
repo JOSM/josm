@@ -41,7 +41,12 @@ public class BuildProjectionDefinitions {
     private static int noJosm = 0;
     private static int noProj4 = 0;
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    /**
+     * Program entry point
+     * @param args command line arguments (not used)
+     * @throws IOException if any I/O error occurs
+     */
+    public static void main(String[] args) throws IOException {
         buildList();
     }
 

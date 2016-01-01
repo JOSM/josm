@@ -247,6 +247,18 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
     /**
      * Add all those listeners to handle the enable state of the fields.
+     * @param data GPX data
+     * @param author Author checkbox
+     * @param authorName Author name textfield
+     * @param email E-mail textfield
+     * @param copyright Copyright textfield
+     * @param predefined Predefined button
+     * @param copyrightYear Copyright year textfield
+     * @param nameLabel Name label
+     * @param emailLabel E-mail label
+     * @param copyrightLabel Copyright label
+     * @param copyrightYearLabel Copyright year label
+     * @param warning Warning label
      */
     private static void addDependencies(
             final GpxData data,

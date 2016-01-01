@@ -255,6 +255,7 @@ public class OsmServerWriter {
 
     /**
      * Calls all registered upload postprocessors.
+     * @param pm progress monitor
      */
     public void executePostprocessors(ProgressMonitor pm) {
         if (postprocessors != null) {

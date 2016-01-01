@@ -118,6 +118,9 @@ public class AddTagsDialog extends ExtendedDialog {
 
     /**
      * Constructs a new {@code AddTagsDialog}.
+     * @param tags tags to add
+     * @param senderName String for skipping confirmations. Use empty string for always confirmed adding.
+     * @param primitives OSM objects that will be modified
      */
     public AddTagsDialog(String[][] tags, String senderName, Collection<? extends OsmPrimitive> primitives) {
         super(Main.parent, tr("Add tags to selected objects"), new String[] {tr("Add selected tags"), tr("Add all tags"), tr("Cancel")},
@@ -259,6 +262,9 @@ public class AddTagsDialog extends ExtendedDialog {
     /**
      * parse addtags parameters Example URL (part):
      * addtags=wikipedia:de%3DResidenzschloss Dresden|name:en%3DDresden Castle
+     * @param args request arguments
+     * @param sender is a string for skipping confirmations. Use empty string for always confirmed adding.
+     * @param primitives OSM objects that will be modified
      */
     public static void addTags(final Map<String, String> args, final String sender, final Collection<? extends OsmPrimitive> primitives) {
         if (args.containsKey("addtags")) {

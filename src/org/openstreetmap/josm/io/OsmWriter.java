@@ -45,7 +45,10 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     private Changeset changeset;
 
     /**
-     * Do not call this directly. Use OsmWriterFactory instead.
+     * Constructs a new {@code OsmWriter}.
+     * Do not call this directly. Use {@link OsmWriterFactory} instead.
+     * @param out print writer
+     * @param version OSM API version (0.6)
      */
     protected OsmWriter(PrintWriter out, boolean osmConform, String version) {
         super(out);
@@ -278,6 +281,8 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     /**
      * Add the common part as the form of the tag as well as the XML attributes
      * id, action, user, and visible.
+     * @param osm osm primitive
+     * @param tagname XML tag matching osm primitive (node, way, relation)
      */
     protected void addCommon(IPrimitive osm, String tagname) {
         out.print("  <"+tagname);

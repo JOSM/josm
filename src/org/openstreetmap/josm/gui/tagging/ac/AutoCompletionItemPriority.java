@@ -105,6 +105,7 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
     /**
      * Merges two priorities.
      * The resulting priority is always &gt;= the original ones.
+     * @param other other priority
      * @return the merged priority
      */
     public AutoCompletionItemPriority mergeWith(AutoCompletionItemPriority other) {

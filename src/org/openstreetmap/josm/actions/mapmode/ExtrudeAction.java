@@ -908,6 +908,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * Calculate newN1en, newN2en best suitable for given mouse coordinates
      * For dual align, calculates positions of new nodes, aligning them to neighboring segments.
      * Elsewhere, just adds the vetor returned by calculateBestMovement to {@link #initialN1en},  {@link #initialN2en}.
+     * @param mouseEn mouse coordinates
      * @return best movement vector
      */
     private EastNorth calculateBestMovementAndNewNodes(EastNorth mouseEn) {
@@ -1108,8 +1109,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     }
 
     /**
-     * Determines if from1-to1 and from2-to2 vertors directions are opposite
-     * @return true if from1-to1 and from2-to2 vertors directions are opposite
+     * Determines if from1-to1 and from2-to2 vectors directions are opposite
+     * @param from1 vector1 start
+     * @param to1 vector1 end
+     * @param from2 vector2 start
+     * @param to2 vector2 end
+     * @return true if from1-to1 and from2-to2 vectors directions are opposite
      */
     private static boolean isOppositeDirection(EastNorth from1, EastNorth to1, EastNorth from2, EastNorth to2) {
         return (from1.getX()-to1.getX())*(from2.getX()-to2.getX())

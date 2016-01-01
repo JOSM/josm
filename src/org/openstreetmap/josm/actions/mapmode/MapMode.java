@@ -17,8 +17,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * A class implementing MapMode is able to be selected as an mode for map editing.
- * As example scrolling the map is a MapMode, connecting Nodes to new Ways
- * is another.
+ * As example scrolling the map is a MapMode, connecting Nodes to new Ways is another.
  *
  * MapModes should register/deregister all necessary listeners on the map's view control.
  */
@@ -29,8 +28,13 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     protected boolean shift;
 
     /**
-     * Constructor for mapmodes without an menu
+     * Constructor for mapmodes without a menu
+     * @param name the action's text
+     * @param iconName icon filename in {@code mapmode} directory
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip.
+     * @param shortcut a ready-created shortcut object or null if you don't want a shortcut.
      * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
+     * @param cursor cursor displayed when map mode is active
      */
     public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, MapFrame mapFrame, Cursor cursor) {
         super(name, "mapmode/"+iconName, tooltip, shortcut, false);
@@ -39,8 +43,12 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     }
 
     /**
-     * Constructor for mapmodes with an menu (no shortcut will be registered)
+     * Constructor for mapmodes with a menu (no shortcut will be registered)
+     * @param name the action's text
+     * @param iconName icon filename in {@code mapmode} directory
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip.
      * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
+     * @param cursor cursor displayed when map mode is active
      */
     public MapMode(String name, String iconName, String tooltip, MapFrame mapFrame, Cursor cursor) {
         putValue(NAME, name);

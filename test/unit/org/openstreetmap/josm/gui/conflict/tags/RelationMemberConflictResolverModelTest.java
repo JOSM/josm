@@ -19,6 +19,9 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
+/**
+ * Unit tests of {@link RelationMemberConflictResolverModel} class.
+ */
 public class RelationMemberConflictResolverModelTest {
 
     /**

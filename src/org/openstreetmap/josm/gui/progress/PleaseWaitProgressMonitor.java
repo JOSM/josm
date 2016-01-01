@@ -107,6 +107,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     /**
      * Constructs a new {@code PleaseWaitProgressMonitor}.
+     * @param windowTitle window title
      */
     public PleaseWaitProgressMonitor(String windowTitle) {
         this(Main.parent);
@@ -115,6 +116,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     /**
      * Constructs a new {@code PleaseWaitProgressMonitor}.
+     * @param dialogParent component to get parent frame from
      */
     public PleaseWaitProgressMonitor(Component dialogParent) {
         super(new CancelHandler());
@@ -128,6 +130,8 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     /**
      * Constructs a new {@code PleaseWaitProgressMonitor}.
+     * @param dialogParent component to get parent frame from
+     * @param windowTitle window title
      */
     public PleaseWaitProgressMonitor(Component dialogParent, String windowTitle) {
         this(JOptionPane.getFrameForComponent(dialogParent));
