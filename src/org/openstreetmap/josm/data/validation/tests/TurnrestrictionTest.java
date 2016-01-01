@@ -143,8 +143,9 @@ public class TurnrestrictionTest extends Test {
             errors.add(new TestError(this, Severity.ERROR, tr("No \"to\" way found"), NO_TO, r));
             return;
         }
-        if (fromWay.equals(toWay) && !r.hasTag("restriction", "no_u_turn")) {
-            errors.add(new TestError(this, Severity.WARNING, tr("\"from\" way equals \"to\" way"), FROM_EQUALS_TO, r));
+        if (fromWay.equals(toWay)) {
+            errors.add(new TestError(this, r.hasTag("restriction", "no_u_turn") ? Severity.OTHER : Severity.WARNING,
+                    tr("\"from\" way equals \"to\" way"), FROM_EQUALS_TO, r));
         }
         if (via.isEmpty()) {
             errors.add(new TestError(this, Severity.ERROR, tr("No \"via\" node or way found"), NO_VIA, r));
