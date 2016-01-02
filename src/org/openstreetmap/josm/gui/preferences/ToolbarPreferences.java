@@ -1059,6 +1059,18 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 Icon i = action.getDisplayIcon();
                 if (i != null) {
                     b.setIcon(i);
+                    Dimension s = b.getPreferredSize();
+                    /* make squared toolbar icons */
+                    if (s.width < s.height) {
+                        s.width = s.height;
+                        b.setMinimumSize(s);
+                        b.setMaximumSize(s);
+                        //b.setSize(s);
+                    } else if (s.height < s.width) {
+                        s.height = s.width;
+                        b.setMinimumSize(s);
+                        b.setMaximumSize(s);
+                    }
                 } else {
                     // hide action text if an icon is set later (necessary for delayed/background image loading)
                     action.getParametrizedAction().addPropertyChangeListener(new PropertyChangeListener() {

@@ -149,7 +149,15 @@ public class ImageProvider {
         /** Layer list icon size
          * @since 8323
          */
-        LAYER
+        LAYER,
+        /** Toolbar button icon size
+         * @since 9253
+         */
+        TOOLBAR,
+        /** Side button maximum height
+         * @since 9253
+         */
+        SIDEBUTTON
     }
 
     /**
@@ -347,6 +355,8 @@ public class ImageProvider {
         switch(size) {
         case MAPMAX: sizeval = Main.pref.getInteger("iconsize.mapmax", 48); break;
         case MAP: sizeval = Main.pref.getInteger("iconsize.mapmax", 16); break;
+        case SIDEBUTTON: sizeval = Main.pref.getInteger("iconsize.sidebutton", 20); break;
+        case TOOLBAR: /* TOOLBAR is LARGELICON - only provided in case of future changes */
         case POPUPMENU: /* POPUPMENU is LARGELICON - only provided in case of future changes */
         case LARGEICON: sizeval = Main.pref.getInteger("iconsize.largeicon", 24); break;
         case MENU: /* MENU is SMALLICON - only provided in case of future changes */
