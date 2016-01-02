@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -33,15 +32,13 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class DistributeAction extends JosmAction {
 
-    private static final String ACTION_SHORT_NAME = marktr("Distribute Nodes");
-
     /**
      * Constructs a new {@code DistributeAction}.
      */
     public DistributeAction() {
-        super(tr(ACTION_SHORT_NAME), "distribute",
+        super(tr("Distribute Nodes"), "distribute",
               tr("Distribute the selected nodes to equal distances along a line."),
-              Shortcut.registerShortcut("tools:distribute", tr("Tool: {0}", tr(ACTION_SHORT_NAME)), KeyEvent.VK_B, Shortcut.SHIFT),
+              Shortcut.registerShortcut("tools:distribute", tr("Tool: {0}", tr("Distribute Nodes")), KeyEvent.VK_B, Shortcut.SHIFT),
               true);
         putValue("help", ht("/Action/DistributeNodes"));
     }
@@ -99,7 +96,7 @@ public final class DistributeAction extends JosmAction {
         }
 
         // Do it!
-        Main.main.undoRedo.add(new SequenceCommand(tr(ACTION_SHORT_NAME), cmds));
+        Main.main.undoRedo.add(new SequenceCommand(tr("Distribute Nodes"), cmds));
         Main.map.repaint();
     }
 
