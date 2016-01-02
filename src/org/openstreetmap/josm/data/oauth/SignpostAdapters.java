@@ -8,10 +8,11 @@ import java.util.Map;
 
 import oauth.signpost.AbstractOAuthConsumer;
 import oauth.signpost.AbstractOAuthProvider;
+
 import org.openstreetmap.josm.tools.HttpClient;
 
 /**
- * Adapters to make {@link oauth.signpost} work with {@link HttpClient}.
+ * Adapters to make {@code oauth.signpost} work with {@link HttpClient}.
  */
 public final class SignpostAdapters {
 
