@@ -3,10 +3,25 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
+import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.lang.CompoundException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.GpsDirectory;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.ExifReader;
 
 /**
  * Stores info about each image
@@ -25,7 +40,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     private boolean isNewGpsData;
     /** Temporary source of GPS time if not correlated with GPX track. */
     private Date exifGpsTime;
-    Image thumbnail;
+    private Image thumbnail;
 
     /**
      * The following values are computed from the correlation with the gpx track
@@ -43,15 +58,29 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * When the correlation dialog is open, we like to show the image position
      * for the current time offset on the map in real time.
      * On the other hand, when the user aborts this operation, the old values
-     * should be restored. We have a temprary copy, that overrides
+     * should be restored. We have a temporary copy, that overrides
      * the normal values if it is not null. (This may be not the most elegant
      * solution for this, but it works.)
      */
     ImageEntry tmp;
 
     /**
-     * Returns the cached temporary position value.
-     * @return the cached temporary position value
+     * Constructs a new {@code ImageEntry}.
+     */
+    public ImageEntry() {}
+
+    /**
+     * Constructs a new {@code ImageEntry}.
+     * @param file Path to image file on disk
+     */
+    public ImageEntry(File file) {
+        setFile(file);
+    }
+
+    /**
+     * Returns the position value. The position value from the temporary copy
+     * is returned if that copy exists.
+     * @return the position value
      */
     public CachedLatLon getPos() {
         if (tmp != null)
@@ -60,8 +89,9 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     }
 
     /**
-     * Returns the cached temporary speed value.
-     * @return the cached temporary speed value
+     * Returns the speed value. The speed value from the temporary copy is
+     * returned if that copy exists.
+     * @return the speed value
      */
     public Double getSpeed() {
         if (tmp != null)
@@ -70,8 +100,9 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     }
 
     /**
-     * Returns the cached temporary elevation value.
-     * @return the cached temporary elevation value
+     * Returns the elevation value. The elevation value from the temporary
+     * copy is returned if that copy exists.
+     * @return the elevation value
      */
     public Double getElevation() {
         if (tmp != null)
@@ -80,8 +111,9 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     }
 
     /**
-     * Returns the cached temporary GPS time value.
-     * @return the cached temporary GPS time value
+     * Returns the GPS time value. The GPS time value from the temporary copy
+     * is returned if that copy exists.
+     * @return the GPS time value
      */
     public Date getGpsTime() {
         if (tmp != null)
@@ -160,11 +192,33 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     }
 
     public Double getExifImgDir() {
+        if (tmp != null)
+            return tmp.exifImgDir;
         return exifImgDir;
     }
 
+    /**
+     * Determines whether a thumbnail is set
+     * @return {@code true} if a thumbnail is set
+     */
     public boolean hasThumbnail() {
         return thumbnail != null;
+    }
+
+    /**
+     * Returns the thumbnail.
+     * @return the thumbnail
+     */
+    public Image getThumbnail() {
+        return thumbnail;
+    }
+
+    /**
+     * Sets the thumbnail.
+     * @param thumbnail thumbnail
+     */
+    public void setThumbnail(Image thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
     /**
@@ -180,7 +234,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * @param pos position (will be cached)
      */
     public void setPos(LatLon pos) {
-        setPos(new CachedLatLon(pos));
+        setPos(pos != null ? new CachedLatLon(pos) : null);
     }
 
     /**
@@ -240,7 +294,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         this.exifCoor = exifCoor;
     }
 
-    public void setExifImgDir(double exifDir) {
+    public void setExifImgDir(Double exifDir) {
         this.exifImgDir = exifDir;
     }
 
@@ -268,16 +322,33 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     }
 
     /**
-     * Make a fresh copy and save it in the temporary variable.
+     * Make a fresh copy and save it in the temporary variable. Use
+     * {@link #applyTmp()} or {@link #discardTmp()} if the temporary variable
+     * is not needed anymore.
      */
-    public void cleanTmp() {
+    public void createTmp() {
         tmp = clone();
-        tmp.setPos(null);
         tmp.tmp = null;
     }
 
     /**
-     * Copy the values from the temporary variable to the main instance.
+     * Get temporary variable that is used for real time parameter
+     * adjustments. The temporary variable is created if it does not exist
+     * yet. Use {@link #applyTmp()} or {@link #discardTmp()} if the temporary
+     * variable is not needed anymore.
+     * @return temporary variable
+     */
+    public ImageEntry getTmp() {
+        if (tmp == null) {
+            createTmp();
+        }
+        return tmp;
+    }
+
+    /**
+     * Copy the values from the temporary variable to the main instance. The
+     * temporary variable is deleted.
+     * @see #discardTmp()
      */
     public void applyTmp() {
         if (tmp != null) {
@@ -285,8 +356,17 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             speed = tmp.speed;
             elevation = tmp.elevation;
             gpsTime = tmp.gpsTime;
+            exifImgDir = tmp.exifImgDir;
             tmp = null;
         }
+    }
+
+    /**
+     * Delete the temporary variable. Temporary modifications are lost.
+     * @see #applyTmp()
+     */
+    public void discardTmp() {
+        tmp = null;
     }
 
     /**
@@ -334,5 +414,136 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      */
     public boolean hasNewGpsData() {
         return isNewGpsData;
+    }
+
+    /**
+     * Extract GPS metadata from image EXIF. Has no effect if the image file is not set
+     *
+     * If successful, fills in the LatLon, speed, elevation, image direction, and other attributes
+     */
+    public void extractExif() {
+
+        Metadata metadata;
+        Directory dirExif;
+        GpsDirectory dirGps;
+
+        if (file == null) {
+            return;
+        }
+
+        try {
+            metadata = JpegMetadataReader.readMetadata(file);
+            dirExif = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+            dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+        } catch (CompoundException | IOException p) {
+            setExifCoor(null);
+            setPos(null);
+            return;
+        }
+
+        try {
+            if (dirExif != null) {
+                int orientation = dirExif.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+                setExifOrientation(orientation);
+            }
+        } catch (MetadataException ex) {
+            Main.debug(ex.getMessage());
+        }
+
+        if (dirGps == null) {
+            setExifCoor(null);
+            setPos(null);
+            return;
+        }
+
+        try {
+            double speed = dirGps.getDouble(GpsDirectory.TAG_SPEED);
+            String speedRef = dirGps.getString(GpsDirectory.TAG_SPEED_REF);
+            if ("M".equalsIgnoreCase(speedRef)) {
+                // miles per hour
+                speed *= SystemOfMeasurement.IMPERIAL.bValue / 1000;
+            } else if ("N".equalsIgnoreCase(speedRef)) {
+                // knots == nautical miles per hour
+                speed *= SystemOfMeasurement.NAUTICAL_MILE.bValue / 1000;
+            }
+            // default is K (km/h)
+            setSpeed(speed);
+        } catch (Exception ex) {
+            Main.debug(ex.getMessage());
+        }
+
+        try {
+            double ele = dirGps.getDouble(GpsDirectory.TAG_ALTITUDE);
+            int d = dirGps.getInt(GpsDirectory.TAG_ALTITUDE_REF);
+            if (d == 1) {
+                ele *= -1;
+            }
+            setElevation(ele);
+        } catch (MetadataException ex) {
+            Main.debug(ex.getMessage());
+        }
+
+        try {
+            LatLon latlon = ExifReader.readLatLon(dirGps);
+            setExifCoor(latlon);
+            setPos(getExifCoor());
+
+        } catch (Exception ex) { // (other exceptions, e.g. #5271)
+            Main.error("Error reading EXIF from file: " + ex);
+            setExifCoor(null);
+            setPos(null);
+        }
+
+        try {
+            Double direction = ExifReader.readDirection(dirGps);
+            if (direction != null) {
+                setExifImgDir(direction);
+            }
+        } catch (Exception ex) { // (CompoundException and other exceptions, e.g. #5271)
+            Main.debug(ex.getMessage());
+        }
+
+        // Changed to silently cope with no time info in exif. One case
+        // of person having time that couldn't be parsed, but valid GPS info
+        try {
+            setExifTime(ExifReader.readTime(file));
+        } catch (ParseException ex) {
+            setExifTime(null);
+        }
+
+        // Time and date. We can have these cases:
+        // 1) GPS_TIME_STAMP not set -> date/time will be null
+        // 2) GPS_DATE_STAMP not set -> use EXIF date or set to default
+        // 3) GPS_TIME_STAMP and GPS_DATE_STAMP are set
+        int[] timeStampComps = dirGps.getIntArray(GpsDirectory.TAG_TIME_STAMP);
+        if (timeStampComps != null) {
+            int gpsHour = timeStampComps[0];
+            int gpsMin = timeStampComps[1];
+            int gpsSec = timeStampComps[2];
+            Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+
+            // We have the time. Next step is to check if the GPS date stamp is set.
+            // dirGps.getString() always succeeds, but the return value might be null.
+            String dateStampStr = dirGps.getString(GpsDirectory.TAG_DATE_STAMP);
+            if (dateStampStr != null && dateStampStr.matches("^\\d+:\\d+:\\d+$")) {
+                String[] dateStampComps = dateStampStr.split(":");
+                cal.set(Calendar.YEAR, Integer.parseInt(dateStampComps[0]));
+                cal.set(Calendar.MONTH, Integer.parseInt(dateStampComps[1]) - 1);
+                cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateStampComps[2]));
+            } else {
+                // No GPS date stamp in EXIF data. Copy it from EXIF time.
+                // Date is not set if EXIF time is not available.
+                if (hasExifTime()) {
+                    // Time not set yet, so we can copy everything, not just date.
+                    cal.setTime(getExifTime());
+                }
+            }
+
+            cal.set(Calendar.HOUR_OF_DAY, gpsHour);
+            cal.set(Calendar.MINUTE, gpsMin);
+            cal.set(Calendar.SECOND, gpsSec);
+
+            setExifGpsTime(cal.getTime());
+        }
     }
 }

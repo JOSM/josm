@@ -69,6 +69,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private JButton btnNext;
     private JButton btnPrevious;
     private JButton btnCollapse;
+    private JToggleButton tbCentre;
 
     private ImageViewerDialog() {
         super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged",
@@ -149,7 +150,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                         "geoimage:last", tr("Geoimage: {0}", tr("Show last Image")), KeyEvent.VK_END, Shortcut.DIRECT)
         );
 
-        JToggleButton tbCentre = new JToggleButton(new ImageAction(COMMAND_CENTERVIEW,
+        tbCentre = new JToggleButton(new ImageAction(COMMAND_CENTERVIEW,
                 ImageProvider.get("dialogs", "centreview"), tr("Center view")));
         tbCentre.setPreferredSize(buttonDim);
 
@@ -224,7 +225,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             } else if (COMMAND_LAST.equals(action) && currentLayer != null) {
                 currentLayer.showLastPhoto();
             } else if (COMMAND_CENTERVIEW.equals(action)) {
-                centerView = ((JToggleButton) e.getSource()).isSelected();
+                final JToggleButton button = (JToggleButton) e.getSource();
+                centerView = button.isEnabled() && button.isSelected();
                 if (centerView && currentEntry != null && currentEntry.getPos() != null) {
                     Main.map.mapView.zoomTo(currentEntry.getPos());
                 }
@@ -275,6 +277,19 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         getInstance().btnNext.setEnabled(value);
     }
 
+    /**
+     * Enables (or disables) the "Center view" button.
+     * @param value {@code true} to enable the button, {@code false} otherwise
+     * @return the old enabled value. Can be used to restore the original enable state
+     */
+    public static synchronized boolean setCentreEnabled(boolean value) {
+        final ImageViewerDialog instance = getInstance();
+        final boolean wasEnabled = instance.tbCentre.isEnabled();
+        instance.tbCentre.setEnabled(value);
+        instance.tbCentre.getAction().actionPerformed(new ActionEvent(instance.tbCentre, 0, null));
+        return wasEnabled;
+    }
+
     private transient GeoImageLayer currentLayer;
     private transient ImageEntry currentEntry;
 
@@ -303,7 +318,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             setTitle(tr("Geotagged Images") + (entry.getFile() != null ? " - " + entry.getFile().getName() : ""));
             StringBuilder osd = new StringBuilder(entry.getFile() != null ? entry.getFile().getName() : "");
             if (entry.getElevation() != null) {
-                osd.append(tr("\nAltitude: {0} m", entry.getElevation().longValue()));
+                osd.append(tr("\nAltitude: {0} m", Math.round(entry.getElevation())));
             }
             if (entry.getSpeed() != null) {
                 osd.append(tr("\nSpeed: {0} km/h", Math.round(entry.getSpeed())));

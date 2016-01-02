@@ -21,19 +21,15 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -49,7 +45,6 @@ import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -67,17 +62,8 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.JpgImporter;
-import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
-
-import com.drew.imaging.jpeg.JpegMetadataReader;
-import com.drew.lang.CompoundException;
-import com.drew.metadata.Directory;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
-import com.drew.metadata.exif.ExifIFD0Directory;
-import com.drew.metadata.exif.GpsDirectory;
 
 /**
  * Layer displaying geottaged pictures.
@@ -157,18 +143,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 progressMonitor.subTask(tr("Reading {0}...", f.getName()));
                 progressMonitor.worked(1);
 
-                ImageEntry e = new ImageEntry();
-
-                // Changed to silently cope with no time info in exif. One case
-                // of person having time that couldn't be parsed, but valid GPS info
-
-                try {
-                    e.setExifTime(ExifReader.readTime(f));
-                } catch (ParseException ex) {
-                    e.setExifTime(null);
-                }
-                e.setFile(f);
-                extractExif(e);
+                ImageEntry e = new ImageEntry(f);
+                e.extractExif();
                 data.add(e);
             }
             layer = new GeoImageLayer(data, gpxLayer);
@@ -498,11 +474,11 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                             continue;
                         }
                         Point p = mv.getPoint(e.getPos());
-                        if (e.thumbnail != null) {
-                            Dimension d = scaledDimension(e.thumbnail);
+                        if (e.hasThumbnail()) {
+                            Dimension d = scaledDimension(e.getThumbnail());
                             Rectangle target = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
                             if (clip.intersects(target)) {
-                                tempG.drawImage(e.thumbnail, target.x, target.y, target.width, target.height, null);
+                                tempG.drawImage(e.getThumbnail(), target.x, target.y, target.width, target.height, null);
                             }
                         } else { // thumbnail not loaded yet
                             icon.paintIcon(mv, tempG,
@@ -534,8 +510,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
                 int imgWidth = 100;
                 int imgHeight = 100;
-                if (useThumbs && e.thumbnail != null) {
-                    Dimension d = scaledDimension(e.thumbnail);
+                if (useThumbs && e.hasThumbnail()) {
+                    Dimension d = scaledDimension(e.getThumbnail());
                     imgWidth = d.width;
                     imgHeight = d.height;
                 } else {
@@ -573,7 +549,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     g.drawPolyline(xar, yar, 3);
                 }
 
-                if (useThumbs && e.thumbnail != null) {
+                if (useThumbs && e.hasThumbnail()) {
                     g.setColor(new Color(128, 0, 0, 122));
                     g.fillRect(p.x - imgWidth / 2, p.y - imgHeight / 2, imgWidth, imgHeight);
                 } else {
@@ -590,126 +566,6 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     public void visitBoundingBox(BoundingXYVisitor v) {
         for (ImageEntry e : data) {
             v.visit(e.getPos());
-        }
-    }
-
-    /**
-     * Extract GPS metadata from image EXIF
-     *
-     * If successful, fills in the LatLon and EastNorth attributes of passed in image
-     * @param e image entry
-     */
-    private static void extractExif(ImageEntry e) {
-
-        Metadata metadata;
-        Directory dirExif;
-        GpsDirectory dirGps;
-
-        try {
-            metadata = JpegMetadataReader.readMetadata(e.getFile());
-            dirExif = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-            dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
-        } catch (CompoundException | IOException p) {
-            e.setExifCoor(null);
-            e.setPos(null);
-            return;
-        }
-
-        try {
-            if (dirExif != null) {
-                int orientation = dirExif.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-                e.setExifOrientation(orientation);
-            }
-        } catch (MetadataException ex) {
-            Main.debug(ex.getMessage());
-        }
-
-        if (dirGps == null) {
-            e.setExifCoor(null);
-            e.setPos(null);
-            return;
-        }
-
-        try {
-            double speed = dirGps.getDouble(GpsDirectory.TAG_SPEED);
-            String speedRef = dirGps.getString(GpsDirectory.TAG_SPEED_REF);
-            if ("M".equalsIgnoreCase(speedRef)) {
-                // miles per hour
-                speed *= 1.609344;
-            } else if ("N".equalsIgnoreCase(speedRef)) {
-                // knots == nautical miles per hour
-                speed *= 1.852;
-            }
-            // default is K (km/h)
-            e.setSpeed(speed);
-        } catch (Exception ex) {
-            Main.debug(ex.getMessage());
-        }
-
-        try {
-            double ele = dirGps.getDouble(GpsDirectory.TAG_ALTITUDE);
-            int d = dirGps.getInt(GpsDirectory.TAG_ALTITUDE_REF);
-            if (d == 1) {
-                ele *= -1;
-            }
-            e.setElevation(ele);
-        } catch (MetadataException ex) {
-            Main.debug(ex.getMessage());
-        }
-
-        try {
-            LatLon latlon = ExifReader.readLatLon(dirGps);
-            e.setExifCoor(latlon);
-            e.setPos(e.getExifCoor());
-
-        } catch (Exception ex) { // (other exceptions, e.g. #5271)
-            Main.error("Error reading EXIF from file: "+ex);
-            e.setExifCoor(null);
-            e.setPos(null);
-        }
-
-        try {
-            Double direction = ExifReader.readDirection(dirGps);
-            if (direction != null) {
-                e.setExifImgDir(direction.doubleValue());
-            }
-        } catch (Exception ex) { // (CompoundException and other exceptions, e.g. #5271)
-            Main.debug(ex.getMessage());
-        }
-
-        // Time and date. We can have these cases:
-        // 1) GPS_TIME_STAMP not set -> date/time will be null
-        // 2) GPS_DATE_STAMP not set -> use EXIF date or set to default
-        // 3) GPS_TIME_STAMP and GPS_DATE_STAMP are set
-        int[] timeStampComps = dirGps.getIntArray(GpsDirectory.TAG_TIME_STAMP);
-        if (timeStampComps != null) {
-            int gpsHour = timeStampComps[0];
-            int gpsMin = timeStampComps[1];
-            int gpsSec = timeStampComps[2];
-            Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-
-            // We have the time. Next step is to check if the GPS date stamp is set.
-            // dirGps.getString() always succeeds, but the return value might be null.
-            String dateStampStr = dirGps.getString(GpsDirectory.TAG_DATE_STAMP);
-            if (dateStampStr != null && dateStampStr.matches("^\\d+:\\d+:\\d+$")) {
-                String[] dateStampComps = dateStampStr.split(":");
-                cal.set(Calendar.YEAR, Integer.parseInt(dateStampComps[0]));
-                cal.set(Calendar.MONTH, Integer.parseInt(dateStampComps[1]) - 1);
-                cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateStampComps[2]));
-            } else {
-                // No GPS date stamp in EXIF data. Copy it from EXIF time.
-                // Date is not set if EXIF time is not available.
-                if (e.hasExifTime()) {
-                    // Time not set yet, so we can copy everything, not just date.
-                    cal.setTime(e.getExifTime());
-                }
-            }
-
-            cal.set(Calendar.HOUR_OF_DAY, gpsHour);
-            cal.set(Calendar.MINUTE, gpsMin);
-            cal.set(Calendar.SECOND, gpsSec);
-
-            e.setExifGpsTime(cal.getTime());
         }
     }
 
@@ -861,8 +717,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                 }
                 Point p = Main.map.mapView.getPoint(img.getPos());
                 Rectangle r;
-                if (useThumbs && img.thumbnail != null) {
-                    Dimension d = scaledDimension(img.thumbnail);
+                if (useThumbs && img.hasThumbnail()) {
+                    Dimension d = scaledDimension(img.getThumbnail());
                     r = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
                 } else {
                     r = new Rectangle(p.x - icon.getIconWidth() / 2,
@@ -971,8 +827,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     }
                     Point p = Main.map.mapView.getPoint(e.getPos());
                     Rectangle r;
-                    if (useThumbs && e.thumbnail != null) {
-                        Dimension d = scaledDimension(e.thumbnail);
+                    if (useThumbs && e.hasThumbnail()) {
+                        Dimension d = scaledDimension(e.getThumbnail());
                         r = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
                     } else {
                         r = new Rectangle(p.x - icon.getIconWidth() / 2,
