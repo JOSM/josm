@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
@@ -421,7 +422,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     }
 
     private void addMembersAtIndex(List<? extends OsmPrimitive> primitives, int index) {
-        final Collection<TaggingPreset> presets = TaggingPreset.getMatchingPresets(EnumSet.of(TaggingPresetType.RELATION),
+        final Collection<TaggingPreset> presets = TaggingPresets.getMatchingPresets(EnumSet.of(TaggingPresetType.RELATION),
                 presetHandler.getSelection().iterator().next().getKeys(), false);
         if (primitives == null)
             return;
