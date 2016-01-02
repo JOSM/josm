@@ -59,6 +59,7 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
@@ -84,7 +85,7 @@ import org.openstreetmap.josm.tools.Utils;
  * We don't have such dialogs for nodes, segments, and ways, because those
  * objects are visible on the map and can be selected there. Relations are not.
  */
-public class RelationListDialog extends ToggleDialog implements DataSetListener {
+public class RelationListDialog extends ToggleDialog implements DataSetListener, NavigatableComponent.ZoomChangeListener {
     /** The display list. */
     private final JList<Relation> displaylist;
     /** the list model used */
@@ -205,6 +206,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     @Override
     public void showNotify() {
         MapView.addLayerChangeListener(newAction);
+        MapView.addZoomChangeListener(this);
         newAction.updateEnabledState();
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
         DataSet.addSelectionListener(addSelectionToRelations);
@@ -214,6 +216,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     @Override
     public void hideNotify() {
         MapView.removeLayerChangeListener(newAction);
+        MapView.removeZoomChangeListener(this);
         DatasetEventManager.getInstance().removeDatasetListener(this);
         DataSet.removeSelectionListener(addSelectionToRelations);
     }
@@ -669,5 +672,13 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     @Override
     public void otherDatasetChange(AbstractDatasetChangedEvent event) {
         /* ignore */
+    }
+
+    @Override
+    public void zoomChanged() {
+        // re-filter relations
+        if (model.filter != null) {
+            model.setFilter(model.filter);
+        }
     }
 }
