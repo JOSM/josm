@@ -77,7 +77,7 @@ public final class HttpClient {
         connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
         connection.setConnectTimeout(connectTimeout);
         connection.setReadTimeout(readTimeout);
-        connection.setInstanceFollowRedirects(maxRedirects > 0);
+        connection.setInstanceFollowRedirects(false); // we do that ourselves
         if (ifModifiedSince > 0) {
             connection.setIfModifiedSince(ifModifiedSince);
         }
@@ -135,7 +135,7 @@ public final class HttpClient {
                             " Can''t redirect. Aborting.", connection.getResponseCode());
                     throw new IOException(msg);
                 } else if (maxRedirects > 0) {
-                    url = new URL(redirectLocation);
+                    url = new URL(url, redirectLocation);
                     maxRedirects--;
                     Main.info(tr("Download redirected to ''{0}''", redirectLocation));
                     return connect();
