@@ -705,12 +705,10 @@ class TagEditHelper {
             for (int i = tags.size()-1; i >= 0 && count <= tagsToShow; i--, count++) {
                 final Tag t = tags.get(i);
                 // Create action for reusing the tag, with keyboard shortcut
-                final String actionShortcutKey = "properties:recent:" + count;
-                final String actionShortcutShiftKey = "properties:recent:shift:" + count;
                 /* POSSIBLE SHORTCUTS: 1,2,3,4,5,6,7,8,9,0=10 */
                 final Shortcut sc = count > 10 ? null : Shortcut.registerShortcut(
-                        actionShortcutKey, tr("Choose recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL);
-                final JosmAction action = new JosmAction(actionShortcutKey, null, tr("Use this tag again"), sc, false) {
+                        "properties:recent:" + count, tr("Choose recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL);
+                final JosmAction action = new JosmAction(tr("Choose recent tag {0}", count), null, tr("Use this tag again"), sc, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         keys.setSelectedItem(t.getKey());
@@ -722,8 +720,8 @@ class TagEditHelper {
                 };
                 /* POSSIBLE SHORTCUTS: 1,2,3,4,5,6,7,8,9,0=10 */
                 final Shortcut scShift = count > 10 ? null : Shortcut.registerShortcut(
-                        actionShortcutShiftKey, tr("Apply recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL_SHIFT);
-                final JosmAction actionShift = new JosmAction(actionShortcutShiftKey, null, tr("Use this tag again"), scShift, false) {
+                        "properties:recent:apply:" + count, tr("Apply recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL_SHIFT);
+                final JosmAction actionShift = new JosmAction(tr("Apply recent tag {0}", count), null, tr("Use this tag again"), scShift, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         action.actionPerformed(null);
@@ -765,10 +763,10 @@ class TagEditHelper {
                 tagLabel.setFont(tagLabel.getFont().deriveFont(Font.PLAIN));
                 if (action.isEnabled() && sc != null && scShift != null) {
                     // Register action
-                    mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), actionShortcutKey);
-                    mainPanel.getActionMap().put(actionShortcutKey, action);
-                    mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scShift.getKeyStroke(), actionShortcutShiftKey);
-                    mainPanel.getActionMap().put(actionShortcutShiftKey, actionShift);
+                    mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "choose"+count);
+                    mainPanel.getActionMap().put("choose"+count, action);
+                    mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scShift.getKeyStroke(), "apply"+count);
+                    mainPanel.getActionMap().put("apply"+count, actionShift);
                 }
                 if (action.isEnabled()) {
                     // Make the tag label clickable and set tooltip to the action description (this displays also the keyboard shortcut)
