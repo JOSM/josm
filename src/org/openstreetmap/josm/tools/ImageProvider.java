@@ -64,6 +64,8 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.w3c.dom.Element;
@@ -1330,6 +1332,15 @@ public class ImageProvider {
 
                         return new ImageIcon(image);
                     }
+                }
+            }
+        }
+
+        // Check if the presets have icons for nodes/relations.
+        if (!OsmPrimitiveType.WAY.equals(primitive.getType())) {
+            for (final TaggingPreset preset : TaggingPresets.getMatchingPresets(primitive)) {
+                if (preset.getIcon() != null) {
+                    return preset.getIcon();
                 }
             }
         }

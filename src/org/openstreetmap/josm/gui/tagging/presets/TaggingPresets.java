@@ -11,8 +11,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Class holding Tagging Presets and allowing to manage them.
@@ -90,6 +93,15 @@ public final class TaggingPresets {
      */
     public static Collection<TaggingPreset> getTaggingPresets() {
         return new ArrayList<>(taggingPresets);
+    }
+
+    public static Collection<TaggingPreset> getMatchingPresets(final OsmPrimitive primitive) {
+        return Utils.filter(getTaggingPresets(), new Predicate<TaggingPreset>() {
+            @Override
+            public boolean evaluate(TaggingPreset object) {
+                return object.evaluate(primitive);
+            }
+        });
     }
 
     /**
