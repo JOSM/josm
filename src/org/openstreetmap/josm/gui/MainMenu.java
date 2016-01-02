@@ -367,7 +367,7 @@ public class MainMenu extends JMenuBar {
     /**
      * imageryMenu contains all imagery-related actions
      */
-    public final ImageryMenu imageryMenu = addMenu(new ImageryMenu(imagerySubMenu), /* I18N: mnemonic: I */ "Imagery", KeyEvent.VK_I, 8, ht("/Menu/Imagery"));
+    public final ImageryMenu imageryMenu = addMenu(new ImageryMenu(imagerySubMenu), /* untranslated name */ "Imagery", KeyEvent.VK_I, 8, ht("/Menu/Imagery"));
     // CHECKSTYLE.ON: LineLength
     /**
      * gpsMenu contains all plugin actions that are related
