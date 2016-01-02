@@ -775,7 +775,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Returns {@link #getKeys()} for which {@code key} does not fulfill {@link #isUninterestingKey}.
-     * @return list of interesting tags
+     * @return A map of interesting tags
      */
     public Map<String, String> getInterestingTags() {
         Map<String, String> result = new HashMap<>();
@@ -832,26 +832,22 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     private void updateTagged() {
-        if (keys != null) {
-            for (String key: keySet()) {
-                // 'area' is not really uninteresting (putting it in that list may have unpredictable side effects)
-                // but it's clearly not enough to consider an object as tagged (see #9261)
-                if (!isUninterestingKey(key) && !"area".equals(key)) {
-                    updateFlagsNoLock(FLAG_TAGGED, true);
-                    return;
-                }
+        for (String key: keySet()) {
+            // 'area' is not really uninteresting (putting it in that list may have unpredictable side effects)
+            // but it's clearly not enough to consider an object as tagged (see #9261)
+            if (!isUninterestingKey(key) && !"area".equals(key)) {
+                updateFlagsNoLock(FLAG_TAGGED, true);
+                return;
             }
         }
         updateFlagsNoLock(FLAG_TAGGED, false);
     }
 
     private void updateAnnotated() {
-        if (keys != null) {
-            for (String key: keySet()) {
-                if (getWorkInProgressKeys().contains(key)) {
-                    updateFlagsNoLock(FLAG_ANNOTATED, true);
-                    return;
-                }
+        for (String key: keySet()) {
+            if (getWorkInProgressKeys().contains(key)) {
+                updateFlagsNoLock(FLAG_ANNOTATED, true);
+                return;
             }
         }
         updateFlagsNoLock(FLAG_ANNOTATED, false);
@@ -1187,12 +1183,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @return true if other isn't null and has the same interesting tags (key/value-pairs) as this.
      */
     public boolean hasSameInterestingTags(OsmPrimitive other) {
-        // We cannot directly use Arrays.equals(keys, other.keys) as keys is not ordered by key
-        // but we can at least check if both arrays are null or of the same size before creating
-        // and comparing the key maps (costly operation, see #7159)
         return (keys == null && other.keys == null)
-                || (keys != null && other.keys != null && keys.length == other.keys.length
-                        && (keys.length == 0 || getInterestingTags().equals(other.getInterestingTags())));
+                || getInterestingTags().equals(other.getInterestingTags());
     }
 
     /**
