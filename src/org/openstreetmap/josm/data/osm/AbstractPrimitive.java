@@ -481,14 +481,26 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Keys handling
      ------------*/
 
-    // Note that all methods that read keys first make local copy of keys array reference. This is to ensure thread safety - reading
-    // doesn't have to be locked so it's possible that keys array will be modified. But all write methods make copy of keys array so
-    // the array itself will be never modified - only reference will be changed
-
     /**
      * The key/value list for this primitive.
+     * <p>
+     * Note that the keys field is synchronized using RCU.
+     * Writes to it are not synchronized by this object, the writers have to synchronize writes themselves.
+     * <p>
+     * In short this means that you should not rely on this variable being the same value when read again and your should always
+     * copy it on writes.
+     * <p>
+     * Further reading:
+     * <ul>
+     * <li>{@link java.util.concurrent.CopyOnWriteArrayList}</li>
+     * <li> <a href="http://stackoverflow.com/questions/2950871/how-can-copyonwritearraylist-be-thread-safe">
+     *     http://stackoverflow.com/questions/2950871/how-can-copyonwritearraylist-be-thread-safe</a></li>
+     * <li> <a href="https://en.wikipedia.org/wiki/Read-copy-update">
+     *     https://en.wikipedia.org/wiki/Read-copy-update</a> (mind that we have a Garbage collector,
+     *     {@code rcu_assign_pointer} and {@code rcu_dereference} are ensured by the {@code volatile} keyword)</li>
+     * </ul>
      */
-    protected String[] keys;
+    protected volatile String[] keys;
 
     /**
      * Replies the map of key/value pairs. Never replies null. The map can be empty, though.
@@ -530,6 +542,9 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Sets the keys of this primitives to the key/value pairs in <code>keys</code>.
      * Old key/value pairs are removed.
      * If <code>keys</code> is null, clears existing key/value pairs.
+     * <p>
+     * Note that this method, like all methods that modify keys, is not synchronized and may lead to data corruption when being used
+     * from multiple threads.
      *
      * @param keys the key/value pairs to set. If null, removes all existing key/value pairs.
      */
@@ -554,6 +569,9 @@ public abstract class AbstractPrimitive implements IPrimitive {
     /**
      * Set the given value to the given key. If key is null, does nothing. If value is null,
      * removes the key and behaves like {@link #remove(String)}.
+     * <p>
+     * Note that this method, like all methods that modify keys, is not synchronized and may lead to data corruption when being used
+     * from multiple threads.
      *
      * @param key  The key, for which the value is to be set. Can be null or empty, does nothing in this case.
      * @param value The value for the key. If null, removes the respective key/value pair.
@@ -571,24 +589,48 @@ public abstract class AbstractPrimitive implements IPrimitive {
             keys = new String[] {key, value};
             keysChangedImpl(originalKeys);
         } else {
-            for (int i = 0; i < keys.length; i += 2) {
-                if (keys[i].equals(key)) {
-                    // This modifies the keys array but it doesn't make it invalidate for any time so its ok (see note no top)
-                    keys[i+1] = value;
-                    keysChangedImpl(originalKeys);
-                    return;
-                }
+            int keyIndex = indexOfKey(keys, key);
+            int tagArrayLength = keys.length;
+            if (keyIndex < 0) {
+                keyIndex = tagArrayLength;
+                tagArrayLength += 2;
             }
-            String[] newKeys = Arrays.copyOf(keys, keys.length + 2);
-            newKeys[keys.length] = key;
-            newKeys[keys.length + 1] = value;
+
+            // Do not try to optimize this array creation if the key already exists.
+            // We would need to convert the keys array to be an AtomicReferenceArray
+            // Or we would at least need a volatile write after the array was modified to
+            // ensure that changes are visible by other threads.
+            String[] newKeys = Arrays.copyOf(keys, tagArrayLength);
+            newKeys[keyIndex] = key;
+            newKeys[keyIndex + 1] = value;
             keys = newKeys;
             keysChangedImpl(originalKeys);
         }
     }
 
     /**
+     * Scans a key/value array for a given key.
+     * @param keys The key array. It is not modified. It may be null to indicate an emtpy array.
+     * @param key The key to search for.
+     * @return The position of that key in the keys array - which is always a multiple of 2 - or -1 if it was not found.
+     */
+    private static int indexOfKey(String[] keys, String key) {
+        if (keys == null) {
+            return -1;
+        }
+        for (int i = 0; i < keys.length; i += 2) {
+            if (keys[i].equals(key)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Remove the given key from the list
+     * <p>
+     * Note that this method, like all methods that modify keys, is not synchronized and may lead to data corruption when being used
+     * from multiple threads.
      *
      * @param key  the key to be removed. Ignored, if key is null.
      */
@@ -617,6 +659,9 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     /**
      * Removes all keys from this primitive.
+     * <p>
+     * Note that this method, like all methods that modify keys, is not synchronized and may lead to data corruption when being used
+     * from multiple threads.
      */
     @Override
     public void removeAll() {
@@ -680,6 +725,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     public final int getNumKeys() {
+        String[] keys = this.keys;
         return keys == null ? 0 : keys.length / 2;
     }
 
@@ -718,13 +764,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * @return true, if his primitive has a tag with key <code>key</code>
      */
     public boolean hasKey(String key) {
-        String[] keys = this.keys;
-        if (key == null) return false;
-        if (keys == null) return false;
-        for (int i = 0; i < keys.length; i += 2) {
-            if (keys[i].equals(key)) return true;
-        }
-        return false;
+        return key != null && indexOfKey(keys, key) >= 0;
     }
 
     /**
