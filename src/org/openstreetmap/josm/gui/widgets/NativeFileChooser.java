@@ -32,7 +32,9 @@ public class NativeFileChooser extends AbstractFileChooser {
         fileDialog = new FileDialog((Frame) Main.parent);
         if (file != null) {
             fileDialog.setDirectory(file.getAbsolutePath());
-            fileDialog.setFile(file.toString());
+            if (file.isFile()) {
+                fileDialog.setFile(file.toString());
+            }
         }
     }
 
