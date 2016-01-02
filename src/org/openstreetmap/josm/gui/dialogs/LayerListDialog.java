@@ -137,18 +137,7 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
-    private final transient Shortcut[] visibilityToggleShortcuts = new Shortcut[]{
-            Shortcut.registerShortcut("subwindow:layers:toggleLayer1", tr("Toggle visibility of layer: {0}", 1), KeyEvent.VK_1, Shortcut.ALT),
-            Shortcut.registerShortcut("subwindow:layers:toggleLayer2", tr("Toggle visibility of layer: {0}", 2), KeyEvent.VK_2, Shortcut.ALT),
-            Shortcut.registerShortcut("subwindow:layers:toggleLayer3", tr("Toggle visibility of layer: {0}", 3), KeyEvent.VK_3, Shortcut.ALT),
-            Shortcut.registerShortcut("subwindow:layers:toggleLayer4", tr("Toggle visibility of layer: {0}", 4), KeyEvent.VK_4, Shortcut.ALT),
-            Shortcut.registerShortcut("subwindow:layers:toggleLayer5", tr("Toggle visibility of layer: {0}", 5), KeyEvent.VK_5, Shortcut.ALT),
-            Shortcut.registerShortcut("subwindow:layers:toggleLayer6", tr("Toggle visibility of layer: {0}", 6), KeyEvent.VK_6, Shortcut.ALT),
-            Shortcut.registerShortcut("subwindow:layers:toggleLayer7", tr("Toggle visibility of layer: {0}", 7), KeyEvent.VK_7, Shortcut.ALT),
-            Shortcut.registerShortcut("subwindow:layers:toggleLayer8", tr("Toggle visibility of layer: {0}", 8), KeyEvent.VK_8, Shortcut.ALT),
-            Shortcut.registerShortcut("subwindow:layers:toggleLayer9", tr("Toggle visibility of layer: {0}", 9), KeyEvent.VK_9, Shortcut.ALT),
-            Shortcut.registerShortcut("subwindow:layers:toggleLayer10", tr("Toggle visibility of layer: {0}", 10), KeyEvent.VK_0, Shortcut.ALT),
-    };
+    private final transient Shortcut[] visibilityToggleShortcuts = new Shortcut[10];
     private final ToggleLayerIndexVisibility[] visibilityToggleActions = new ToggleLayerIndexVisibility[10];
 
     /**
@@ -157,6 +146,9 @@ public class LayerListDialog extends ToggleDialog {
      */
     private void createVisibilityToggleShortcuts() {
         for (int i = 0; i < 10; i++) {
+            final int i1 = i + 1;
+            visibilityToggleShortcuts[i] = Shortcut.registerShortcut("subwindow:layers:toggleLayer" + i1,
+                    tr("Toggle visibility of layer: {0}", i1), KeyEvent.VK_0 + (i1 % 10), Shortcut.ALT);
             visibilityToggleActions[i] = new ToggleLayerIndexVisibility(i);
             Main.registerActionShortcut(visibilityToggleActions[i], visibilityToggleShortcuts[i]);
         }

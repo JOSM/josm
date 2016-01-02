@@ -708,7 +708,7 @@ class TagEditHelper {
                 final String actionShortcutKey = "properties:recent:" + count;
                 final String actionShortcutShiftKey = "properties:recent:shift:" + count;
                 final Shortcut sc = count > 10 ? null : Shortcut.registerShortcut(
-                        actionShortcutKey, tr("Choose recent tag {0}", count), KeyEvent.VK_0 + count, Shortcut.CTRL);
+                        actionShortcutKey, tr("Choose recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL);
                 final JosmAction action = new JosmAction(actionShortcutKey, null, tr("Use this tag again"), sc, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -720,7 +720,7 @@ class TagEditHelper {
                     }
                 };
                 final Shortcut scShift = count > 10 ? null : Shortcut.registerShortcut(
-                        actionShortcutShiftKey, tr("Apply recent tag {0}", count), KeyEvent.VK_0 + count, Shortcut.CTRL_SHIFT);
+                        actionShortcutShiftKey, tr("Apply recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL_SHIFT);
                 final JosmAction actionShift = new JosmAction(actionShortcutShiftKey, null, tr("Use this tag again"), scShift, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
