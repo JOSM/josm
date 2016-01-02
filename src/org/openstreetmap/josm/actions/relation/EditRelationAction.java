@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +19,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * The action for editing a relation.
@@ -32,6 +34,8 @@ public class EditRelationAction extends AbstractRelationAction  {
         putValue(NAME, tr("Edit"));
         putValue(SHORT_DESCRIPTION, tr("Call relation editor for selected relation"));
         putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+        Main.registerActionShortcut(this,
+                Shortcut.registerShortcut("relations:edit", tr("Edit relation"), KeyEvent.VK_X, Shortcut.ALT));
     }
 
     /**
