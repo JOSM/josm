@@ -707,9 +707,10 @@ class TagEditHelper {
                 final Tag t = tags.get(i);
                 // Create action for reusing the tag, with keyboard shortcut
                 /* POSSIBLE SHORTCUTS: 1,2,3,4,5,6,7,8,9,0=10 */
-                final Shortcut sc = count > 10 ? null : Shortcut.registerShortcut(
-                        "properties:recent:" + count, tr("Choose recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL);
-                final JosmAction action = new JosmAction(tr("Choose recent tag {0}", count), null, tr("Use this tag again"), sc, false) {
+                final Shortcut sc = count > 10 ? null : Shortcut.registerShortcut("properties:recent:" + count,
+                        tr("Choose recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL);
+                final JosmAction action = new JosmAction(
+                        tr("Choose recent tag {0}", count), null, tr("Use this tag again"), sc, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         keys.setSelectedItem(t.getKey());
@@ -720,9 +721,10 @@ class TagEditHelper {
                     }
                 };
                 /* POSSIBLE SHORTCUTS: 1,2,3,4,5,6,7,8,9,0=10 */
-                final Shortcut scShift = count > 10 ? null : Shortcut.registerShortcut(
-                        "properties:recent:apply:" + count, tr("Apply recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL_SHIFT);
-                final JosmAction actionShift = new JosmAction(tr("Apply recent tag {0}", count), null, tr("Use this tag again"), scShift, false) {
+                final Shortcut scShift = count > 10 ? null : Shortcut.registerShortcut("properties:recent:apply:" + count,
+                         tr("Apply recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL_SHIFT);
+                final JosmAction actionShift = new JosmAction(
+                        tr("Apply recent tag {0}", count), null, tr("Use this tag again"), scShift, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         action.actionPerformed(null);

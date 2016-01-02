@@ -32,9 +32,20 @@ public class ThumbsLoader implements Runnable {
     private ICacheAccess<String, BufferedImageCacheEntry> cache;
     private final boolean cacheOff = Main.pref.getBoolean("geoimage.noThumbnailCache", false);
 
+    /**
+     * Constructs a new thumbnail loader that operates on a geoimage layer.
+     * @param layer geoimage layer
+     */
     public ThumbsLoader(GeoImageLayer layer) {
         this.layer = layer;
         this.data = new ArrayList<>(layer.data);
+        initCache();
+    }
+
+    /**
+     * Initialize the thumbnail cache.
+     */
+    private void initCache() {
         if (!cacheOff) {
             try {
                 cache = JCSCacheManager.getCache("geoimage-thumbnails", 0, 120,
@@ -54,8 +65,8 @@ public class ThumbsLoader implements Runnable {
             if (stop) return;
 
             // Do not load thumbnails that were loaded before.
-            if (entry.thumbnail == null) {
-                entry.thumbnail = loadThumb(entry);
+            if (!entry.hasThumbnail()) {
+                entry.setThumbnail(loadThumb(entry));
 
                 if (Main.isDisplayingMapView()) {
                     layer.updateOffscreenBuffer = true;

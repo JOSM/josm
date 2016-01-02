@@ -156,7 +156,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 if (yLayer != null) {
                     if (yLayer.data != null) {
                         for (ImageEntry ie : yLayer.data) {
-                            ie.tmp = null;
+                            ie.discardTmp();
                         }
                     }
                     yLayer.updateBufferAndRepaint();
@@ -825,7 +825,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             // So reset all images.
             if (yLayer.data != null) {
                 for (ImageEntry ie: yLayer.data) {
-                    ie.tmp = null;
+                    ie.discardTmp();
                 }
             }
 
@@ -833,7 +833,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
             List<ImageEntry> dateImgLst = getSortedImgList();
             // Create a temporary copy for each image
             for (ImageEntry ie : dateImgLst) {
-                ie.cleanTmp();
+                ie.createTmp();
+                ie.tmp.setPos(null);
             }
 
             GpxDataWrapper selGpx = selectedGPX(false);
