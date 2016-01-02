@@ -707,6 +707,7 @@ class TagEditHelper {
                 // Create action for reusing the tag, with keyboard shortcut
                 final String actionShortcutKey = "properties:recent:" + count;
                 final String actionShortcutShiftKey = "properties:recent:shift:" + count;
+                /* POSSIBLE SHORTCUTS: 1,2,3,4,5,6,7,8,9,0=10 */
                 final Shortcut sc = count > 10 ? null : Shortcut.registerShortcut(
                         actionShortcutKey, tr("Choose recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL);
                 final JosmAction action = new JosmAction(actionShortcutKey, null, tr("Use this tag again"), sc, false) {
@@ -719,6 +720,7 @@ class TagEditHelper {
                         selectValuesCombobox();
                     }
                 };
+                /* POSSIBLE SHORTCUTS: 1,2,3,4,5,6,7,8,9,0=10 */
                 final Shortcut scShift = count > 10 ? null : Shortcut.registerShortcut(
                         actionShortcutShiftKey, tr("Apply recent tag {0}", count), KeyEvent.VK_0 + (count % 10), Shortcut.CTRL_SHIFT);
                 final JosmAction actionShift = new JosmAction(actionShortcutShiftKey, null, tr("Use this tag again"), scShift, false) {
