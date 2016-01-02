@@ -91,7 +91,9 @@ import org.openstreetmap.josm.tools.Predicate;
  */
 public class MapStatus extends JPanel implements Helpful, Destroyable, PreferenceChangedListener {
 
-    private static final DecimalFormat ONE_DECIMAL_PLACE = new DecimalFormat("0.0");
+    private static final DecimalFormat ONE_DECIMAL_PLACE = new DecimalFormat(
+            Main.pref.get("statusbar.decimal-format", "0.0")); // change of preference requires restart
+    private static final double DISTANCE_THRESHOLD = Main.pref.getDouble("statusbar.distance-threshold", 0.01);
 
     /**
      * Property for map status background color.
@@ -998,7 +1000,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
      */
     public void setDist(double dist) {
         distValue = dist;
-        distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist, ONE_DECIMAL_PLACE, 0.01));
+        distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist, ONE_DECIMAL_PLACE, DISTANCE_THRESHOLD));
     }
 
     /**
