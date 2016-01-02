@@ -110,7 +110,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * Creates a new {@link JMapViewer} instance.
      * @param tileCache The cache where to store tiles
      * @param downloadThreadCount not used anymore
-     * @deprecated
+     * @deprecated use {@link #JMapViewer(TileCache)}
      */
     @Deprecated
     public JMapViewer(TileCache tileCache, int downloadThreadCount) {
