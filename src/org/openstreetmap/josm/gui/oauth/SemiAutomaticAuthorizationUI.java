@@ -19,12 +19,12 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -402,7 +402,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                     if (task.isCanceled()) return;
                     if (task.getRequestToken() == null) return;
                     requestToken = task.getRequestToken();
-                    SwingUtilities.invokeLater(new Runnable() {
+                    GuiHelper.runInEDT(new Runnable() {
                         @Override
                         public void run() {
                             transitionToRetrieveAccessToken();
@@ -438,10 +438,10 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 public void run() {
                     if (task.isCanceled()) return;
                     if (task.getAccessToken() == null) return;
-                    setAccessToken(task.getAccessToken());
-                    SwingUtilities.invokeLater(new Runnable() {
+                    GuiHelper.runInEDT(new Runnable() {
                         @Override
                         public void run() {
+                            setAccessToken(task.getAccessToken());
                             transitionToShowAccessToken();
                         }
                     });
