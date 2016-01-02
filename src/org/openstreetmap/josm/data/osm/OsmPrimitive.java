@@ -1164,7 +1164,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
                 throw new DataIntegrityProblemException(
                         tr("Cannot merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
 
-            setKeys(other.getKeys());
+            setKeys(other.hasKeys() ? other.getKeys() : null);
             timestamp = other.timestamp;
             version = other.version;
             setIncomplete(other.isIncomplete());
@@ -1240,7 +1240,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public void load(PrimitiveData data) {
         // Write lock is provided by subclasses
-        setKeys(data.getKeys());
+        setKeys(data.hasKeys() ? data.getKeys() : null);
         setRawTimestamp(data.getRawTimestamp());
         user = data.getUser();
         setChangesetId(data.getChangesetId());
@@ -1262,7 +1262,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     protected void saveCommonAttributes(PrimitiveData data) {
         data.setId(id);
-        data.setKeys(getKeys());
+        data.setKeys(hasKeys() ? getKeys() : null);
         data.setRawTimestamp(getRawTimestamp());
         data.setUser(user);
         data.setDeleted(isDeleted());
