@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetLabel;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -46,7 +47,7 @@ public class PresetListPanel extends JPanel {
             return;
         }
 
-        for (final TaggingPreset t : TaggingPreset.getMatchingPresets(types, tags, true)) {
+        for (final TaggingPreset t : TaggingPresets.getMatchingPresets(types, tags, true)) {
             final JLabel lbl = new TaggingPresetLabel(t);
             lbl.addMouseListener(new MouseAdapter() {
                 @Override

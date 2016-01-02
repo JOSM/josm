@@ -95,6 +95,34 @@ public final class TaggingPresets {
         return new ArrayList<>(taggingPresets);
     }
 
+    /**
+     * Replies a new collection of all presets matching the parameters.
+     *
+     * @param t the preset types to include
+     * @param tags the tags to perform matching on, see {@link TaggingPresetItem#matches(Map)}
+     * @param onlyShowable whether only {@link TaggingPreset#isShowable() showable} presets should be returned
+     * @return a new collection of all presets matching the parameters.
+     * @see TaggingPreset#matches(Collection, Map, boolean)
+     * @since 9266
+     */
+    public static Collection<TaggingPreset> getMatchingPresets(final Collection<TaggingPresetType> t,
+                                                               final Map<String, String> tags, final boolean onlyShowable) {
+        return Utils.filter(getTaggingPresets(), new Predicate<TaggingPreset>() {
+            @Override
+            public boolean evaluate(TaggingPreset object) {
+                return object.matches(t, tags, onlyShowable);
+            }
+        });
+    }
+
+    /**
+     * Replies a new collection of all presets matching the given preset.
+     *
+     * @param primitive the primitive
+     * @return a new collection of all presets matching the given preset.
+     * @see TaggingPreset#evaluate(OsmPrimitive)
+     * @since 9265
+     */
     public static Collection<TaggingPreset> getMatchingPresets(final OsmPrimitive primitive) {
         return Utils.filter(getTaggingPresets(), new Predicate<TaggingPreset>() {
             @Override

@@ -73,6 +73,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.XmlWriter;
@@ -738,7 +739,7 @@ class TagEditHelper {
                     // If no icon found in map style look at presets
                     Map<String, String> map = new HashMap<>();
                     map.put(t.getKey(), t.getValue());
-                    for (TaggingPreset tp : TaggingPreset.getMatchingPresets(null, map, false)) {
+                    for (TaggingPreset tp : TaggingPresets.getMatchingPresets(null, map, false)) {
                         icon = tp.getIcon();
                         if (icon != null) {
                             break;

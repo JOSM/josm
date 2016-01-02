@@ -85,6 +85,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -762,7 +763,7 @@ public class GenericRelationEditor extends RelationEditor  {
     public static Command addPrimitivesToRelation(final Relation orig, Collection<? extends OsmPrimitive> primitivesToAdd) {
         CheckParameterUtil.ensureParameterNotNull(orig, "orig");
         try {
-            final Collection<TaggingPreset> presets = TaggingPreset.getMatchingPresets(
+            final Collection<TaggingPreset> presets = TaggingPresets.getMatchingPresets(
                     EnumSet.of(TaggingPresetType.RELATION), orig.getKeys(), false);
             Relation relation = new Relation(orig);
             boolean modified = false;

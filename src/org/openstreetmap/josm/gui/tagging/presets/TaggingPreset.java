@@ -295,6 +295,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return p;
     }
 
+    /**
+     * Determines whether a dialog can be shown for this preset, i.e., at least one tag can/must be set by the user.
+     *
+     * @return {@code true} if a dialog can be shown for this preset
+     */
     public boolean isShowable() {
         for (TaggingPresetItem i : data) {
             if (!(i instanceof Optional || i instanceof Space || i instanceof Key))
@@ -502,11 +507,26 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return t == null || types == null || types.containsAll(t);
     }
 
-    @Override
+    /**
+     * Determines whether this preset matches the given primitive, i.e.,
+     * whether the {@link #typeMatches(Collection) type matches} and the {@link TaggingPresetItem#matches(Map) tags match}.
+     *
+     * @param p the primitive
+     * @return {@code true} if this preset matches the primitive
+     */
+     @Override
     public boolean evaluate(OsmPrimitive p) {
         return matches(EnumSet.of(TaggingPresetType.forPrimitive(p)), p.getKeys(), false);
     }
 
+    /**
+     * Determines whether this preset matches the parameters.
+     *
+     * @param t the preset types to include, see {@link #typeMatches(Collection)}
+     * @param tags the tags to perform matching on, see {@link TaggingPresetItem#matches(Map)}
+     * @param onlyShowable whether the preset must be {@link #isShowable() showable}
+     * @return {@code true} if this preset matches the parameters.
+     */
     public boolean matches(Collection<TaggingPresetType> t, Map<String, String> tags, boolean onlyShowable) {
         if (onlyShowable && !isShowable())
             return false;
@@ -522,16 +542,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
         }
         return atLeastOnePositiveMatch;
-    }
-
-    public static Collection<TaggingPreset> getMatchingPresets(final Collection<TaggingPresetType> t,
-            final Map<String, String> tags, final boolean onlyShowable) {
-        return Utils.filter(TaggingPresets.getTaggingPresets(), new Predicate<TaggingPreset>() {
-            @Override
-            public boolean evaluate(TaggingPreset object) {
-                return object.matches(t, tags, onlyShowable);
-            }
-        });
     }
 
     /**
