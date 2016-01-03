@@ -18,7 +18,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
-import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
+import org.openstreetmap.josm.gui.mappaint.StyleElementList;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvider;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.SimpleBoxProvider;
 import org.openstreetmap.josm.gui.util.RotationAngle;
@@ -94,8 +94,8 @@ public class NodeElement extends StyleElement {
         SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER = SIMPLE_NODE_ELEMSTYLE.getBoxProvider();
     }
 
-    public static final StyleList DEFAULT_NODE_STYLELIST = new StyleList(NodeElement.SIMPLE_NODE_ELEMSTYLE);
-    public static final StyleList DEFAULT_NODE_STYLELIST_TEXT = new StyleList(NodeElement.SIMPLE_NODE_ELEMSTYLE,
+    public static final StyleElementList DEFAULT_NODE_STYLELIST = new StyleElementList(NodeElement.SIMPLE_NODE_ELEMSTYLE);
+    public static final StyleElementList DEFAULT_NODE_STYLELIST_TEXT = new StyleElementList(NodeElement.SIMPLE_NODE_ELEMSTYLE,
             BoxTextElement.SIMPLE_NODE_TEXT_ELEMSTYLE);
 
     protected NodeElement(Cascade c, MapImage mapImage, Symbol symbol, float default_major_z_index, RotationAngle rotationAngle) {
