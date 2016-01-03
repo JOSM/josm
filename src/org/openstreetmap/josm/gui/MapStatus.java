@@ -186,9 +186,11 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     private final ImageLabel lonText = new ImageLabel("lon",
             tr("The geographic longitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel headingText = new ImageLabel("heading",
-            tr("The (compass) heading of the line segment being drawn."), 6, PROP_BACKGROUND_COLOR.get());
+            tr("The (compass) heading of the line segment being drawn."),
+            ONE_DECIMAL_PLACE.format(360).length() + 1, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel angleText = new ImageLabel("angle",
-            tr("The angle between the previous and the current way segment."), 6, PROP_BACKGROUND_COLOR.get());
+            tr("The angle between the previous and the current way segment."),
+            ONE_DECIMAL_PLACE.format(360).length() + 1, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel distText = new ImageLabel("dist",
             tr("The length of the new way segment being drawn."), 10, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel nameText = new ImageLabel("name",
