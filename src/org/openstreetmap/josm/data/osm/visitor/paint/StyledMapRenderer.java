@@ -60,7 +60,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
+import org.openstreetmap.josm.gui.mappaint.StyleElementList;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
@@ -1824,14 +1824,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
 
         public void add(Node osm, int flags) {
-            StyleList sl = styles.get(osm, circum, nc);
+            StyleElementList sl = styles.get(osm, circum, nc);
             for (StyleElement s : sl) {
                 output.add(new StyleRecord(s, osm, flags));
             }
         }
 
         public void add(Relation osm, int flags) {
-            StyleList sl = styles.get(osm, circum, nc);
+            StyleElementList sl = styles.get(osm, circum, nc);
             for (StyleElement s : sl) {
                 if (drawMultipolygon && drawArea && s instanceof AreaElement && (flags & FLAG_DISABLED) == 0) {
                     output.add(new StyleRecord(s, osm, flags));
@@ -1842,7 +1842,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
 
         public void add(Way osm, int flags) {
-            StyleList sl = styles.get(osm, circum, nc);
+            StyleElementList sl = styles.get(osm, circum, nc);
             for (StyleElement s : sl) {
                 if (!(drawArea && (flags & FLAG_DISABLED) == 0) && s instanceof AreaElement) {
                     continue;
