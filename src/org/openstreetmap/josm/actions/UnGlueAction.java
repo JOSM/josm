@@ -71,7 +71,7 @@ public class UnGlueAction extends JosmAction {
 
         String errMsg = null;
         int errorTime = Notification.TIME_DEFAULT;
-        if (checkSelection(selection)) {
+        if (checkSelectionOneNodeAtMostOneWay(selection)) {
             if (!checkAndConfirmOutlyingUnglue()) {
                 // FIXME: Leaving action without clearing selectedNode, selectedWay, selectedNodes
                 return;
@@ -93,7 +93,7 @@ public class UnGlueAction extends JosmAction {
                 // (= copy tags to a new node)
                 if (!selfCrossing)
                     if (checkForUnglueNode(selection)) {
-                        unglueNode(e);
+                        unglueOneNodeAtMostOneWay(e);
                     } else {
                         errorTime = Notification.TIME_SHORT;
                         errMsg = tr("This node is not glued to anything else.");
@@ -102,7 +102,7 @@ public class UnGlueAction extends JosmAction {
                 // and then do the work.
                 unglueWays();
             }
-        } else if (checkSelection2(selection)) {
+        } else if (checkSelectionOneWayAnyNodes(selection)) {
             if (!checkAndConfirmOutlyingUnglue()) {
                 // FIXME: Leaving action without clearing selectedNode, selectedWay, selectedNodes
                 return;
@@ -129,7 +129,7 @@ public class UnGlueAction extends JosmAction {
             } else {
                 // and then do the work.
                 selectedNodes = tmpNodes;
-                unglueWays2();
+                unglueOneWayAnyNodes();
             }
         } else {
             errorTime = Notification.TIME_VERY_LONG;
@@ -166,7 +166,7 @@ public class UnGlueAction extends JosmAction {
      * (i.e. copy node and remove all tags from the old one. Relations will not be removed)
      * @param e event that trigerred the action
      */
-    private void unglueNode(ActionEvent e) {
+    private void unglueOneNodeAtMostOneWay(ActionEvent e) {
         List<Command> cmds = new LinkedList<>();
 
         Node c = new Node(selectedNode);
@@ -226,7 +226,7 @@ public class UnGlueAction extends JosmAction {
      * @param selection selected primitives
      * @return true if either one node is selected or one node and one way are selected and the node is part of the way
      */
-    private boolean checkSelection(Collection<? extends OsmPrimitive> selection) {
+    private boolean checkSelectionOneNodeAtMostOneWay(Collection<? extends OsmPrimitive> selection) {
 
         int size = selection.size();
         if (size < 1 || size > 2)
@@ -261,7 +261,7 @@ public class UnGlueAction extends JosmAction {
      * @param selection selected primitives
      * @return true if one way and any number of nodes that are part of that way are selected
      */
-    private boolean checkSelection2(Collection<? extends OsmPrimitive> selection) {
+    private boolean checkSelectionOneWayAnyNodes(Collection<? extends OsmPrimitive> selection) {
         if (selection.isEmpty())
             return false;
 
@@ -466,7 +466,7 @@ public class UnGlueAction extends JosmAction {
      * dupe all nodes that are selected, and put the copies on the selected way
      *
      */
-    private void unglueWays2() {
+    private void unglueOneWayAnyNodes() {
         List<Command> cmds = new LinkedList<>();
         List<Node> allNewNodes = new LinkedList<>();
         Way tmpWay = selectedWay;
