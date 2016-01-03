@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,6 +12,8 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -181,15 +182,8 @@ public class DownloadFileTask extends PleaseWaitRunnable {
                 File newFile = new File(dir, ze.getName());
                 if (ze.isDirectory()) {
                     newFile.mkdirs();
-                } else try (
-                    InputStream is = zf.getInputStream(ze);
-                    OutputStream os = new BufferedOutputStream(new FileOutputStream(newFile))
-                ) {
-                    byte[] buffer = new byte[8192];
-                    int read;
-                    while ((read = is.read(buffer)) != -1) {
-                        os.write(buffer, 0, read);
-                    }
+                } else try (InputStream is = zf.getInputStream(ze)) {
+                    Files.copy(is, newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
         }

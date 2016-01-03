@@ -15,15 +15,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -509,19 +508,13 @@ public class MapPaintDialog extends ToggleDialog {
                         tr("Save style ''{0}'' as ''{1}''", s.getDisplayString(), file.getPath()));
                 try {
                     InputStream in = s.getSourceInputStream();
-                    try (
-                        InputStream bis = new BufferedInputStream(in);
-                        OutputStream bos = new BufferedOutputStream(new FileOutputStream(file))
-                    ) {
-                        byte[] buffer = new byte[4096];
-                        int length;
-                        while ((length = bis.read(buffer)) > -1 && !canceled) {
-                            bos.write(buffer, 0, length);
-                        }
+                    try (InputStream bis = new BufferedInputStream(in)) {
+                        Files.copy(bis, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     } finally {
                         s.closeSourceInputStream(in);
                     }
                 } catch (IOException e) {
+                    Main.warn(e);
                     error = true;
                 }
             }
