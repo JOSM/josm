@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -162,4 +163,26 @@ public class UtilsTest {
         assertEquals("1\n2\n3", Utils.restrictStringLines("1\n2\n3", 3));
         assertEquals("1\n2\n3", Utils.restrictStringLines("1\n2\n3", 4));
     }
+
+    /**
+     * Test of {@link Utils#getSizeString} method.
+     */
+    @Test
+    public void testSizeString() throws Exception {
+        assertEquals("0 B", Utils.getSizeString(0, Locale.ENGLISH));
+        assertEquals("123 B", Utils.getSizeString(123, Locale.ENGLISH));
+        assertEquals("1023 B", Utils.getSizeString(1023, Locale.ENGLISH));
+        assertEquals("1.00 kB", Utils.getSizeString(1024, Locale.ENGLISH));
+        assertEquals("11.7 kB", Utils.getSizeString(12024, Locale.ENGLISH));
+        assertEquals("8.00 EB", Utils.getSizeString(Long.MAX_VALUE, Locale.ENGLISH));
+    }
+
+    /**
+     * Test of {@link Utils#getSizeString} method.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSizeStringNegative() throws Exception {
+        Utils.getSizeString(-1, Locale.ENGLISH);
+    }
+
 }

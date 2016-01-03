@@ -12,6 +12,7 @@ import java.net.HttpRetryException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -98,7 +99,7 @@ public final class HttpClient {
         progressMonitor.indeterminateSubTask(null);
 
         if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
-            Main.info("{0} {1} ({2} kB) ...", requestMethod, url, requestBody.length / 1024);
+            Main.info("{0} {1} ({2}) ...", requestMethod, url, Utils.getSizeString(requestBody.length, Locale.getDefault()));
             headers.put("Content-Length", String.valueOf(requestBody.length));
             connection.setDoOutput(true);
             try (OutputStream out = new BufferedOutputStream(
@@ -115,7 +116,9 @@ public final class HttpClient {
                 Main.info("{0} {1}{2} -> {3}{4}",
                         requestMethod, url, hasReason ? " (" + reasonForRequest + ")" : "",
                         connection.getResponseCode(),
-                        connection.getContentLengthLong() > 0 ? " (" + connection.getContentLengthLong() / 1024 + "KB)" : ""
+                        connection.getContentLengthLong() > 0
+                                ? " (" + Utils.getSizeString(connection.getContentLengthLong(), Locale.getDefault()) + ")"
+                                : ""
                 );
                 if (Main.isDebugEnabled()) {
                     Main.debug("RESPONSE: " + connection.getHeaderFields());

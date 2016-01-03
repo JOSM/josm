@@ -1145,6 +1145,33 @@ public final class Utils {
     }
 
     /**
+     * Returns a human readable representation (B, kB, MB, ...) for the given number of byes.
+     * @param bytes the number of bytes
+     * @param locale the locale used for formatting
+     * @return a human readable representation
+     * @since 9274
+     */
+    public static String getSizeString(long bytes, Locale locale) {
+        if (bytes < 0) {
+            throw new IllegalArgumentException("bytes must be >= 0");
+        }
+        final String[] units = {"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
+        int unitIndex = 0;
+        double value = bytes;
+        while (value >= 1024 && unitIndex < units.length) {
+            value /= 1024;
+            unitIndex++;
+        }
+        if (value > 100 || unitIndex == 0) {
+            return String.format(locale, "%.0f %s", value, units[unitIndex]);
+        } else if (value > 10) {
+            return String.format(locale, "%.1f %s", value, units[unitIndex]);
+        } else {
+            return String.format(locale, "%.2f %s", value, units[unitIndex]);
+        }
+    }
+
+    /**
      * Returns a human readable representation of a list of positions.
      * <p>
      * For instance, {@code [1,5,2,6,7} yields "1-2,5-7
