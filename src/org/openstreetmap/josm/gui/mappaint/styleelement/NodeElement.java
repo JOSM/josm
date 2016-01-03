@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint;
+package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -13,17 +13,21 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
-import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.BoxProvider;
-import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.SimpleBoxProvider;
+import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
+import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
+import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvider;
+import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.SimpleBoxProvider;
 import org.openstreetmap.josm.gui.util.RotationAngle;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
  * applies for Nodes and turn restriction relations
  */
-public class NodeElemStyle extends ElemStyle implements StyleKeys {
+public class NodeElement extends StyleElement {
     public final MapImage mapImage;
     public final RotationAngle mapImageAngle;
     public final Symbol symbol;
@@ -80,7 +84,7 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         }
     }
 
-    public static final NodeElemStyle SIMPLE_NODE_ELEMSTYLE;
+    public static final NodeElement SIMPLE_NODE_ELEMSTYLE;
     public static final BoxProvider SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER;
     static {
         MultiCascade mc = new MultiCascade();
@@ -90,22 +94,22 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER = SIMPLE_NODE_ELEMSTYLE.getBoxProvider();
     }
 
-    public static final StyleList DEFAULT_NODE_STYLELIST = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
-    public static final StyleList DEFAULT_NODE_STYLELIST_TEXT = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE,
-            BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE);
+    public static final StyleList DEFAULT_NODE_STYLELIST = new StyleList(NodeElement.SIMPLE_NODE_ELEMSTYLE);
+    public static final StyleList DEFAULT_NODE_STYLELIST_TEXT = new StyleList(NodeElement.SIMPLE_NODE_ELEMSTYLE,
+            BoxTextElement.SIMPLE_NODE_TEXT_ELEMSTYLE);
 
-    protected NodeElemStyle(Cascade c, MapImage mapImage, Symbol symbol, float default_major_z_index, RotationAngle rotationAngle) {
+    protected NodeElement(Cascade c, MapImage mapImage, Symbol symbol, float default_major_z_index, RotationAngle rotationAngle) {
         super(c, default_major_z_index);
         this.mapImage = mapImage;
         this.symbol = symbol;
         this.mapImageAngle = rotationAngle;
     }
 
-    public static NodeElemStyle create(Environment env) {
+    public static NodeElement create(Environment env) {
         return create(env, 4f, false);
     }
 
-    private static NodeElemStyle create(Environment env, float default_major_z_index, boolean allowDefault) {
+    private static NodeElement create(Environment env, float default_major_z_index, boolean allowDefault) {
         Cascade c = env.mc.getCascade(env.layer);
 
         MapImage mapImage = createIcon(env, ICON_KEYS);
@@ -139,7 +143,7 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         // have to allocate a node element style.
         if (!allowDefault && symbol == null && mapImage == null) return null;
 
-        return new NodeElemStyle(c, mapImage, symbol, default_major_z_index, rotationAngle);
+        return new NodeElement(c, mapImage, symbol, default_major_z_index, rotationAngle);
     }
 
     public static MapImage createIcon(final Environment env, final String[] keys) {
@@ -373,7 +377,7 @@ public class NodeElemStyle extends ElemStyle implements StyleKeys {
         if (!super.equals(obj))
             return false;
 
-        final NodeElemStyle other = (NodeElemStyle) obj;
+        final NodeElement other = (NodeElement) obj;
         // we should get the same image object due to caching
         if (!Objects.equals(mapImage, other.mapImage))
             return false;

@@ -22,6 +22,14 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.LineElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.LineTextElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.RepeatImageElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.TextLabel;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
@@ -96,16 +104,16 @@ public class ElemStyles implements PreferenceChangedListener {
         Pair<StyleList, Range> p = getImpl(osm, scale, nc);
         if (osm instanceof Node && isDefaultNodes()) {
             if (p.a.isEmpty()) {
-                if (TextElement.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
-                    p.a = NodeElemStyle.DEFAULT_NODE_STYLELIST_TEXT;
+                if (TextLabel.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
+                    p.a = NodeElement.DEFAULT_NODE_STYLELIST_TEXT;
                 } else {
-                    p.a = NodeElemStyle.DEFAULT_NODE_STYLELIST;
+                    p.a = NodeElement.DEFAULT_NODE_STYLELIST;
                 }
             } else {
                 boolean hasNonModifier = false;
                 boolean hasText = false;
-                for (ElemStyle s : p.a) {
-                    if (s instanceof BoxTextElemStyle) {
+                for (StyleElement s : p.a) {
+                    if (s instanceof BoxTextElement) {
                         hasText = true;
                     } else {
                         if (!s.isModifier) {
@@ -114,25 +122,25 @@ public class ElemStyles implements PreferenceChangedListener {
                     }
                 }
                 if (!hasNonModifier) {
-                    p.a = new StyleList(p.a, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
+                    p.a = new StyleList(p.a, NodeElement.SIMPLE_NODE_ELEMSTYLE);
                     if (!hasText) {
-                        if (TextElement.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
-                            p.a = new StyleList(p.a, BoxTextElemStyle.SIMPLE_NODE_TEXT_ELEMSTYLE);
+                        if (TextLabel.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
+                            p.a = new StyleList(p.a, BoxTextElement.SIMPLE_NODE_TEXT_ELEMSTYLE);
                         }
                     }
                 }
             }
         } else if (osm instanceof Way && isDefaultLines()) {
             boolean hasProperLineStyle = false;
-            for (ElemStyle s : p.a) {
+            for (StyleElement s : p.a) {
                 if (s.isProperLineStyle()) {
                     hasProperLineStyle = true;
                     break;
                 }
             }
             if (!hasProperLineStyle) {
-                AreaElemStyle area = Utils.find(p.a, AreaElemStyle.class);
-                LineElemStyle line = area == null ? LineElemStyle.UNTAGGED_WAY : LineElemStyle.createSimpleLineStyle(area.color, true);
+                AreaElement area = Utils.find(p.a, AreaElement.class);
+                LineElement line = area == null ? LineElement.UNTAGGED_WAY : LineElement.createSimpleLineStyle(area.color, true);
                 p.a = new StyleList(p.a, line);
             }
         }
@@ -196,10 +204,10 @@ public class ElemStyles implements PreferenceChangedListener {
                 if (multipolygon.getOuterWays().contains(osm)) {
                     boolean hasIndependentLineStyle = false;
                     if (!isOuterWayOfSomeMP) { // do this only one time
-                        List<ElemStyle> tmp = new ArrayList<>(p.a.size());
-                        for (ElemStyle s : p.a) {
-                            if (s instanceof AreaElemStyle) {
-                                wayColor = ((AreaElemStyle) s).color;
+                        List<StyleElement> tmp = new ArrayList<>(p.a.size());
+                        for (StyleElement s : p.a) {
+                            if (s instanceof AreaElement) {
+                                wayColor = ((AreaElement) s).color;
                             } else {
                                 tmp.add(s);
                                 if (s.isProperLineStyle()) {
@@ -216,8 +224,8 @@ public class ElemStyles implements PreferenceChangedListener {
                         synchronized (r) {
                             mpElemStyles = getStyleCacheWithRange(r, scale, nc);
                         }
-                        ElemStyle mpLine = null;
-                        for (ElemStyle s : mpElemStyles.a) {
+                        StyleElement mpLine = null;
+                        for (StyleElement s : mpElemStyles.a) {
                             if (s.isProperLineStyle()) {
                                 mpLine = s;
                                 break;
@@ -228,7 +236,7 @@ public class ElemStyles implements PreferenceChangedListener {
                             p.a = new StyleList(p.a, mpLine);
                             break;
                         } else if (wayColor == null && isDefaultLines()) {
-                            AreaElemStyle mpArea = Utils.find(mpElemStyles.a, AreaElemStyle.class);
+                            AreaElement mpArea = Utils.find(mpElemStyles.a, AreaElement.class);
                             if (mpArea != null) {
                                 wayColor = mpArea.color;
                             }
@@ -239,14 +247,14 @@ public class ElemStyles implements PreferenceChangedListener {
             if (isOuterWayOfSomeMP) {
                 if (isDefaultLines()) {
                     boolean hasLineStyle = false;
-                    for (ElemStyle s : p.a) {
+                    for (StyleElement s : p.a) {
                         if (s.isProperLineStyle()) {
                             hasLineStyle = true;
                             break;
                         }
                     }
                     if (!hasLineStyle) {
-                        p.a = new StyleList(p.a, LineElemStyle.createSimpleLineStyle(wayColor, true));
+                        p.a = new StyleList(p.a, LineElement.createSimpleLineStyle(wayColor, true));
                     }
                 }
                 return p;
@@ -264,8 +272,8 @@ public class ElemStyles implements PreferenceChangedListener {
                 if (multipolygon.getInnerWays().contains(osm)) {
                     p = generateStyles(osm, scale, false);
                     boolean hasIndependentElemStyle = false;
-                    for (ElemStyle s : p.a) {
-                        if (s.isProperLineStyle() || s instanceof AreaElemStyle) {
+                    for (StyleElement s : p.a) {
+                        if (s.isProperLineStyle() || s instanceof AreaElement) {
                             hasIndependentElemStyle = true;
                             break;
                         }
@@ -276,13 +284,13 @@ public class ElemStyles implements PreferenceChangedListener {
                         synchronized (ref) {
                             mpElemStyles = get(ref, scale, nc);
                         }
-                        for (ElemStyle mpS : mpElemStyles) {
-                            if (mpS instanceof AreaElemStyle) {
-                                mpColor = ((AreaElemStyle) mpS).color;
+                        for (StyleElement mpS : mpElemStyles) {
+                            if (mpS instanceof AreaElement) {
+                                mpColor = ((AreaElement) mpS).color;
                                 break;
                             }
                         }
-                        p.a = new StyleList(p.a, LineElemStyle.createSimpleLineStyle(mpColor, true));
+                        p.a = new StyleList(p.a, LineElement.createSimpleLineStyle(mpColor, true));
                     }
                     return p;
                 }
@@ -291,13 +299,13 @@ public class ElemStyles implements PreferenceChangedListener {
         } else if (osm instanceof Relation) {
             Pair<StyleList, Range> p = generateStyles(osm, scale, true);
             if (drawMultipolygon && ((Relation) osm).isMultipolygon()) {
-                if (!Utils.exists(p.a, AreaElemStyle.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", true)) {
+                if (!Utils.exists(p.a, AreaElement.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", true)) {
                     // look at outer ways to find area style
                     Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
                     for (Way w : multipolygon.getOuterWays()) {
                         Pair<StyleList, Range> wayStyles = generateStyles(w, scale, false);
                         p.b = Range.cut(p.b, wayStyles.b);
-                        ElemStyle area = Utils.find(wayStyles.a, AreaElemStyle.class);
+                        StyleElement area = Utils.find(wayStyles.a, AreaElement.class);
                         if (area != null) {
                             p.a = new StyleList(p.a, area);
                             break;
@@ -325,7 +333,7 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     public Pair<StyleList, Range> generateStyles(OsmPrimitive osm, double scale, boolean pretendWayIsClosed) {
 
-        List<ElemStyle> sl = new ArrayList<>();
+        List<StyleElement> sl = new ArrayList<>();
         MultiCascade mc = new MultiCascade();
         Environment env = new Environment(osm, mc, null, null);
 
@@ -341,30 +349,30 @@ public class ElemStyles implements PreferenceChangedListener {
             }
             env.layer = e.getKey();
             if (osm instanceof Way) {
-                addIfNotNull(sl, AreaElemStyle.create(env));
-                addIfNotNull(sl, RepeatImageElemStyle.create(env));
-                addIfNotNull(sl, LineElemStyle.createLine(env));
-                addIfNotNull(sl, LineElemStyle.createLeftCasing(env));
-                addIfNotNull(sl, LineElemStyle.createRightCasing(env));
-                addIfNotNull(sl, LineElemStyle.createCasing(env));
-                addIfNotNull(sl, LineTextElemStyle.create(env));
+                addIfNotNull(sl, AreaElement.create(env));
+                addIfNotNull(sl, RepeatImageElement.create(env));
+                addIfNotNull(sl, LineElement.createLine(env));
+                addIfNotNull(sl, LineElement.createLeftCasing(env));
+                addIfNotNull(sl, LineElement.createRightCasing(env));
+                addIfNotNull(sl, LineElement.createCasing(env));
+                addIfNotNull(sl, LineTextElement.create(env));
             } else if (osm instanceof Node) {
-                NodeElemStyle nodeStyle = NodeElemStyle.create(env);
+                NodeElement nodeStyle = NodeElement.create(env);
                 if (nodeStyle != null) {
                     sl.add(nodeStyle);
-                    addIfNotNull(sl, BoxTextElemStyle.create(env, nodeStyle.getBoxProvider()));
+                    addIfNotNull(sl, BoxTextElement.create(env, nodeStyle.getBoxProvider()));
                 } else {
-                    addIfNotNull(sl, BoxTextElemStyle.create(env, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER));
+                    addIfNotNull(sl, BoxTextElement.create(env, NodeElement.SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER));
                 }
             } else if (osm instanceof Relation) {
                 if (((Relation) osm).isMultipolygon()) {
-                    addIfNotNull(sl, AreaElemStyle.create(env));
-                    addIfNotNull(sl, RepeatImageElemStyle.create(env));
-                    addIfNotNull(sl, LineElemStyle.createLine(env));
-                    addIfNotNull(sl, LineElemStyle.createCasing(env));
-                    addIfNotNull(sl, LineTextElemStyle.create(env));
+                    addIfNotNull(sl, AreaElement.create(env));
+                    addIfNotNull(sl, RepeatImageElement.create(env));
+                    addIfNotNull(sl, LineElement.createLine(env));
+                    addIfNotNull(sl, LineElement.createCasing(env));
+                    addIfNotNull(sl, LineTextElement.create(env));
                 } else if ("restriction".equals(osm.get("type"))) {
-                    addIfNotNull(sl, NodeElemStyle.create(env));
+                    addIfNotNull(sl, NodeElement.create(env));
                 }
             }
         }
@@ -447,21 +455,21 @@ public class ElemStyles implements PreferenceChangedListener {
     }
 
     /**
-     * Returns the first AreaElemStyle for a given primitive.
+     * Returns the first AreaElement for a given primitive.
      * @param p the OSM primitive
      * @param pretendWayIsClosed For styles that require the way to be closed,
      * we pretend it is. This is useful for generating area styles from the (segmented)
      * outer ways of a multipolygon.
-     * @return first AreaElemStyle found or {@code null}.
+     * @return first AreaElement found or {@code null}.
      */
-    public static AreaElemStyle getAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
+    public static AreaElement getAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
         MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
         try {
             if (MapPaintStyles.getStyles() == null)
                 return null;
-            for (ElemStyle s : MapPaintStyles.getStyles().generateStyles(p, 1.0, pretendWayIsClosed).a) {
-                if (s instanceof AreaElemStyle)
-                    return (AreaElemStyle) s;
+            for (StyleElement s : MapPaintStyles.getStyles().generateStyles(p, 1.0, pretendWayIsClosed).a) {
+                if (s instanceof AreaElement)
+                    return (AreaElement) s;
             }
             return null;
         } finally {
@@ -470,21 +478,21 @@ public class ElemStyles implements PreferenceChangedListener {
     }
 
     /**
-     * Determines whether primitive has an AreaElemStyle.
+     * Determines whether primitive has an AreaElement.
      * @param p the OSM primitive
      * @param pretendWayIsClosed For styles that require the way to be closed,
      * we pretend it is. This is useful for generating area styles from the (segmented)
      * outer ways of a multipolygon.
-     * @return {@code true} if primitive has an AreaElemStyle
+     * @return {@code true} if primitive has an AreaElement
      */
     public static boolean hasAreaElemStyle(OsmPrimitive p, boolean pretendWayIsClosed) {
         return getAreaElemStyle(p, pretendWayIsClosed) != null;
     }
 
     /**
-     * Determines whether primitive has <b>only</b> an AreaElemStyle.
+     * Determines whether primitive has <b>only</b> an AreaElement.
      * @param p the OSM primitive
-     * @return {@code true} if primitive has only an AreaElemStyle
+     * @return {@code true} if primitive has only an AreaElement
      * @since 7486
      */
     public static boolean hasOnlyAreaElemStyle(OsmPrimitive p) {
@@ -496,8 +504,8 @@ public class ElemStyles implements PreferenceChangedListener {
             if (styles.isEmpty()) {
                 return false;
             }
-            for (ElemStyle s : styles) {
-                if (!(s instanceof AreaElemStyle)) {
+            for (StyleElement s : styles) {
+                if (!(s instanceof AreaElement)) {
                     return false;
                 }
             }

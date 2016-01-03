@@ -58,21 +58,21 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
-import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle;
-import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.HorizontalTextAlignment;
-import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.VerticalTextAlignment;
-import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
-import org.openstreetmap.josm.gui.mappaint.MapImage;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
-import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
-import org.openstreetmap.josm.gui.mappaint.RepeatImageElemStyle.LineImageAlignment;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
-import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
+import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.HorizontalTextAlignment;
+import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.VerticalTextAlignment;
+import org.openstreetmap.josm.gui.mappaint.styleelement.MapImage;
+import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement.Symbol;
+import org.openstreetmap.josm.gui.mappaint.styleelement.RepeatImageElement.LineImageAlignment;
+import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.TextLabel;
 import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
@@ -189,11 +189,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     private static class StyleRecord implements Comparable<StyleRecord> {
-        private final ElemStyle style;
+        private final StyleElement style;
         private final OsmPrimitive osm;
         private final int flags;
 
-        StyleRecord(ElemStyle style, OsmPrimitive osm, int flags) {
+        StyleRecord(StyleElement style, OsmPrimitive osm, int flags) {
             this.style = style;
             this.osm = osm;
             this.flags = flags;
@@ -222,9 +222,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 return dz;
 
             // simple node on top of icons and shapes
-            if (this.style == NodeElemStyle.SIMPLE_NODE_ELEMSTYLE && other.style != NodeElemStyle.SIMPLE_NODE_ELEMSTYLE)
+            if (this.style == NodeElement.SIMPLE_NODE_ELEMSTYLE && other.style != NodeElement.SIMPLE_NODE_ELEMSTYLE)
                 return 1;
-            if (this.style != NodeElemStyle.SIMPLE_NODE_ELEMSTYLE && other.style == NodeElemStyle.SIMPLE_NODE_ELEMSTYLE)
+            if (this.style != NodeElement.SIMPLE_NODE_ELEMSTYLE && other.style == NodeElement.SIMPLE_NODE_ELEMSTYLE)
                 return -1;
 
             // newer primitives to the front
@@ -417,7 +417,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param disabled {@code true} if element is disabled (filtered out)
      * @param text text style to use
      */
-    private void displayText(GlyphVector gv, String s, int x, int y, boolean disabled, TextElement text) {
+    private void displayText(GlyphVector gv, String s, int x, int y, boolean disabled, TextLabel text) {
         if (gv == null && s.isEmpty()) return;
         if (isInactiveMode || disabled) {
             g.setColor(inactiveColor);
@@ -471,7 +471,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param text The text to write on the area.
      */
     protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color,
-            MapImage fillImage, Float extent, Path2D.Double pfClip, boolean disabled, TextElement text) {
+            MapImage fillImage, Float extent, Path2D.Double pfClip, boolean disabled, TextLabel text) {
 
         Shape area = path.createTransformedShape(nc.getAffineTransform());
 
@@ -524,7 +524,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         drawAreaText(osm, text, area);
     }
 
-    private void drawAreaText(OsmPrimitive osm, TextElement text, Shape area) {
+    private void drawAreaText(OsmPrimitive osm, TextLabel text, Shape area) {
         if (text != null && isShowNames()) {
             // abort if we can't compose the label to be rendered
             if (text.labelCompositionStrategy == null) return;
@@ -611,7 +611,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param disabled If this should be drawn with a special disabled style.
      * @param text The text to write on the area.
      */
-    public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextElement text) {
+    public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextLabel text) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
@@ -647,7 +647,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param disabled If this should be drawn with a special disabled style.
      * @param text The text to write on the area.
      */
-    public void drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextElement text) {
+    public void drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextLabel text) {
         Path2D.Double pfClip = null;
         if (extent != null) {
             if (!usePartialFill(Geometry.getAreaAndPerimeter(w.getNodes()), extent, extentThreshold)) {
@@ -677,12 +677,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         return ap.getPerimeter() * extent * scale < threshold * ap.getArea();
     }
 
-    public void drawBoxText(Node n, BoxTextElemStyle bs) {
+    public void drawBoxText(Node n, BoxTextElement bs) {
         if (!isShowNames() || bs == null)
             return;
 
         Point p = nc.getPoint(n);
-        TextElement text = bs.text;
+        TextLabel text = bs.text;
         String s = text.labelCompositionStrategy.compose(n);
         if (s == null) return;
 
@@ -1203,7 +1203,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param way The way to draw the text on.
      * @param text The text definition (font/.../text content) to draw.
      */
-    public void drawTextOnPath(Way way, TextElement text) {
+    public void drawTextOnPath(Way way, TextLabel text) {
         if (way == null || text == null)
             return;
         String name = text.getString(way);
@@ -1825,17 +1825,17 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         public void add(Node osm, int flags) {
             StyleList sl = styles.get(osm, circum, nc);
-            for (ElemStyle s : sl) {
+            for (StyleElement s : sl) {
                 output.add(new StyleRecord(s, osm, flags));
             }
         }
 
         public void add(Relation osm, int flags) {
             StyleList sl = styles.get(osm, circum, nc);
-            for (ElemStyle s : sl) {
-                if (drawMultipolygon && drawArea && s instanceof AreaElemStyle && (flags & FLAG_DISABLED) == 0) {
+            for (StyleElement s : sl) {
+                if (drawMultipolygon && drawArea && s instanceof AreaElement && (flags & FLAG_DISABLED) == 0) {
                     output.add(new StyleRecord(s, osm, flags));
-                } else if (drawRestriction && s instanceof NodeElemStyle) {
+                } else if (drawRestriction && s instanceof NodeElement) {
                     output.add(new StyleRecord(s, osm, flags));
                 }
             }
@@ -1843,8 +1843,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         public void add(Way osm, int flags) {
             StyleList sl = styles.get(osm, circum, nc);
-            for (ElemStyle s : sl) {
-                if (!(drawArea && (flags & FLAG_DISABLED) == 0) && s instanceof AreaElemStyle) {
+            for (StyleElement s : sl) {
+                if (!(drawArea && (flags & FLAG_DISABLED) == 0) && s instanceof AreaElement) {
                     continue;
                 }
                 output.add(new StyleRecord(s, osm, flags));

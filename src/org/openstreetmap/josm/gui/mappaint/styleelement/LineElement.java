@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint;
+package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -13,12 +13,16 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
+import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 import org.openstreetmap.josm.tools.Utils;
 
-public class LineElemStyle extends ElemStyle {
+public class LineElement extends StyleElement {
 
-    public static LineElemStyle createSimpleLineStyle(Color color, boolean isAreaEdge) {
+    public static LineElement createSimpleLineStyle(Color color, boolean isAreaEdge) {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
         c.put(WIDTH, Keyword.DEFAULT);
@@ -30,7 +34,7 @@ public class LineElemStyle extends ElemStyle {
         return createLine(new Environment(null, mc, "default", null));
     }
 
-    public static final LineElemStyle UNTAGGED_WAY = createSimpleLineStyle(null, false);
+    public static final LineElement UNTAGGED_WAY = createSimpleLineStyle(null, false);
 
     private BasicStroke line;
     public Color color;
@@ -55,7 +59,7 @@ public class LineElemStyle extends ElemStyle {
         }
     }
 
-    protected LineElemStyle(Cascade c, float default_major_z_index, BasicStroke line, Color color, BasicStroke dashesLine,
+    protected LineElement(Cascade c, float default_major_z_index, BasicStroke line, Color color, BasicStroke dashesLine,
             Color dashesBackground, float offset, float realWidth) {
         super(c, default_major_z_index);
         this.line = line;
@@ -66,35 +70,35 @@ public class LineElemStyle extends ElemStyle {
         this.realWidth = realWidth;
     }
 
-    public static LineElemStyle createLine(Environment env) {
+    public static LineElement createLine(Environment env) {
         return createImpl(env, LineType.NORMAL);
     }
 
-    public static LineElemStyle createLeftCasing(Environment env) {
-        LineElemStyle leftCasing = createImpl(env, LineType.LEFT_CASING);
+    public static LineElement createLeftCasing(Environment env) {
+        LineElement leftCasing = createImpl(env, LineType.LEFT_CASING);
         if (leftCasing != null) {
             leftCasing.isModifier = true;
         }
         return leftCasing;
     }
 
-    public static LineElemStyle createRightCasing(Environment env) {
-        LineElemStyle rightCasing = createImpl(env, LineType.RIGHT_CASING);
+    public static LineElement createRightCasing(Environment env) {
+        LineElement rightCasing = createImpl(env, LineType.RIGHT_CASING);
         if (rightCasing != null) {
             rightCasing.isModifier = true;
         }
         return rightCasing;
     }
 
-    public static LineElemStyle createCasing(Environment env) {
-        LineElemStyle casing = createImpl(env, LineType.CASING);
+    public static LineElement createCasing(Environment env) {
+        LineElement casing = createImpl(env, LineType.CASING);
         if (casing != null) {
             casing.isModifier = true;
         }
         return casing;
     }
 
-    private static LineElemStyle createImpl(Environment env, LineType type) {
+    private static LineElement createImpl(Environment env, LineType type) {
         Cascade c = env.mc.getCascade(env.layer);
         Cascade c_def = env.mc.getCascade("default");
         Float width;
@@ -259,7 +263,7 @@ public class LineElemStyle extends ElemStyle {
             dashesLine = new BasicStroke(width, cap, join, miterlimit, dashes2, dashes2[0] + dashesOffset);
         }
 
-        return new LineElemStyle(c, type.defaultMajorZIndex, line, color, dashesLine, dashesBackground, offset, realWidth);
+        return new LineElement(c, type.defaultMajorZIndex, line, color, dashesLine, dashesBackground, offset, realWidth);
     }
 
     @Override
@@ -331,7 +335,7 @@ public class LineElemStyle extends ElemStyle {
             return false;
         if (!super.equals(obj))
             return false;
-        final LineElemStyle other = (LineElemStyle) obj;
+        final LineElement other = (LineElement) obj;
         return Objects.equals(line, other.line) &&
             Objects.equals(color, other.color) &&
             Objects.equals(dashesLine, other.dashesLine) &&

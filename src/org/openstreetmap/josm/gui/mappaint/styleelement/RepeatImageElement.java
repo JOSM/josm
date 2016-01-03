@@ -1,13 +1,16 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint;
+package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
+public class RepeatImageElement extends StyleElement {
 
     public enum LineImageAlignment { TOP, CENTER, BOTTOM }
 
@@ -17,7 +20,7 @@ public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
     public float phase;
     public LineImageAlignment align;
 
-    public RepeatImageElemStyle(Cascade c, MapImage pattern, float offset, float spacing, float phase, LineImageAlignment align) {
+    public RepeatImageElement(Cascade c, MapImage pattern, float offset, float spacing, float phase, LineImageAlignment align) {
         super(c, 2.9f);
         CheckParameterUtil.ensureParameterNotNull(pattern);
         CheckParameterUtil.ensureParameterNotNull(align);
@@ -28,8 +31,8 @@ public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
         this.align = align;
     }
 
-    public static RepeatImageElemStyle create(Environment env) {
-        MapImage pattern = NodeElemStyle.createIcon(env, REPEAT_IMAGE_KEYS);
+    public static RepeatImageElement create(Environment env) {
+        MapImage pattern = NodeElement.createIcon(env, REPEAT_IMAGE_KEYS);
         if (pattern == null)
             return null;
         Cascade c = env.mc.getCascade(env.layer);
@@ -45,7 +48,7 @@ public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
             align = LineImageAlignment.BOTTOM;
         }
 
-        return new RepeatImageElemStyle(c, pattern, offset, spacing, phase, align);
+        return new RepeatImageElement(c, pattern, offset, spacing, phase, align);
     }
 
     @Override
@@ -66,7 +69,7 @@ public class RepeatImageElemStyle extends ElemStyle implements StyleKeys {
             return false;
         if (!super.equals(obj))
             return false;
-        final RepeatImageElemStyle other = (RepeatImageElemStyle) obj;
+        final RepeatImageElement other = (RepeatImageElement) obj;
         if (!this.pattern.equals(other.pattern)) return false;
         if (this.offset != other.offset) return false;
         if (this.spacing != other.spacing) return false;

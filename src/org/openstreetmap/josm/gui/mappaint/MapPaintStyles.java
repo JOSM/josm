@@ -28,6 +28,9 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.mappaint.styleelement.MapImage;
+import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference.MapPaintPrefHelper;
@@ -191,9 +194,9 @@ public final class MapPaintStyles {
                 MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
             }
             if (styleList != null) {
-                for (ElemStyle style : styleList) {
-                    if (style instanceof NodeElemStyle) {
-                        MapImage mapImage = ((NodeElemStyle) style).mapImage;
+                for (StyleElement style : styleList) {
+                    if (style instanceof NodeElement) {
+                        MapImage mapImage = ((NodeElement) style).mapImage;
                         if (mapImage != null) {
                             if (includeDeprecatedIcon || mapImage.name == null || !"misc/deprecated.png".equals(mapImage.name)) {
                                 return new ImageIcon(mapImage.getImage(false));

@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint;
+package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.util.Objects;
 
@@ -8,27 +8,30 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
 
-public class LineTextElemStyle extends ElemStyle {
+public class LineTextElement extends StyleElement {
 
-    private final TextElement text;
+    private final TextLabel text;
 
-    protected LineTextElemStyle(Cascade c, TextElement text) {
+    protected LineTextElement(Cascade c, TextLabel text) {
         super(c, 4.9f);
         this.text = text;
     }
 
-    public static LineTextElemStyle create(final Environment env) {
+    public static LineTextElement create(final Environment env) {
         final Cascade c = env.mc.getCascade(env.layer);
 
         Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
         if (textPos != null && !"line".equals(textPos.val))
             return null;
 
-        TextElement text = TextElement.create(env, PaintColors.TEXT.get(), false);
+        TextLabel text = TextLabel.create(env, PaintColors.TEXT.get(), false);
         if (text == null)
             return null;
-        return new LineTextElemStyle(c, text);
+        return new LineTextElement(c, text);
     }
 
     @Override
@@ -44,7 +47,7 @@ public class LineTextElemStyle extends ElemStyle {
             return false;
         if (!super.equals(obj))
             return false;
-        final LineTextElemStyle other = (LineTextElemStyle) obj;
+        final LineTextElement other = (LineTextElement) obj;
         return Objects.equals(text, other.text);
     }
 

@@ -37,7 +37,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
-import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleKeys;
@@ -55,6 +54,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelec
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
+import org.openstreetmap.josm.gui.mappaint.styleelement.LineElement;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -112,7 +112,7 @@ public class MapCSSStyleSource extends StyleSource {
                 throw new RuntimeException(ex);
             }
         }
-        for (LineElemStyle.LineType lt : LineElemStyle.LineType.values()) {
+        for (LineElement.LineType lt : LineElement.LineType.values()) {
             SUPPORTED_KEYS.add(lt.prefix + StyleKeys.COLOR);
             SUPPORTED_KEYS.add(lt.prefix + StyleKeys.DASHES);
             SUPPORTED_KEYS.add(lt.prefix + StyleKeys.DASHES_BACKGROUND_COLOR);

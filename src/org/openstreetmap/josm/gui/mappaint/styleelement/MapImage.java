@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint;
+package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -10,8 +10,10 @@ import java.util.Objects;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.BoxProvider;
-import org.openstreetmap.josm.gui.mappaint.BoxTextElemStyle.BoxProviderResult;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvider;
+import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProviderResult;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageCallback;
