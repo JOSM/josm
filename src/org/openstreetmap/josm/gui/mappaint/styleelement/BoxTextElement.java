@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint;
+package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -9,12 +9,16 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
+import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Text style attached to a style with a bounding box, like an icon or a symbol.
  */
-public class BoxTextElemStyle extends ElemStyle {
+public class BoxTextElement extends StyleElement {
 
     public enum HorizontalTextAlignment { LEFT, CENTER, RIGHT }
 
@@ -84,7 +88,7 @@ public class BoxTextElemStyle extends ElemStyle {
 
     public static final Rectangle ZERO_BOX = new Rectangle(0, 0, 0, 0);
 
-    public TextElement text;
+    public TextLabel text;
     // Either boxProvider or box is not null. If boxProvider is different from
     // null, this means, that the box can still change in future, otherwise
     // it is fixed.
@@ -93,7 +97,7 @@ public class BoxTextElemStyle extends ElemStyle {
     public HorizontalTextAlignment hAlign;
     public VerticalTextAlignment vAlign;
 
-    public BoxTextElemStyle(Cascade c, TextElement text, BoxProvider boxProvider, Rectangle box,
+    public BoxTextElement(Cascade c, TextLabel text, BoxProvider boxProvider, Rectangle box,
             HorizontalTextAlignment hAlign, VerticalTextAlignment vAlign) {
         super(c, 5f);
         CheckParameterUtil.ensureParameterNotNull(text);
@@ -106,23 +110,23 @@ public class BoxTextElemStyle extends ElemStyle {
         this.vAlign = vAlign;
     }
 
-    public static BoxTextElemStyle create(Environment env, BoxProvider boxProvider) {
+    public static BoxTextElement create(Environment env, BoxProvider boxProvider) {
         return create(env, boxProvider, null);
     }
 
-    public static BoxTextElemStyle create(Environment env, Rectangle box) {
+    public static BoxTextElement create(Environment env, Rectangle box) {
         return create(env, null, box);
     }
 
-    public static BoxTextElemStyle create(Environment env, BoxProvider boxProvider, Rectangle box) {
+    public static BoxTextElement create(Environment env, BoxProvider boxProvider, Rectangle box) {
         initDefaultParameters();
         Cascade c = env.mc.getCascade(env.layer);
 
-        TextElement text = TextElement.create(env, DEFAULT_TEXT_COLOR, false);
+        TextLabel text = TextLabel.create(env, DEFAULT_TEXT_COLOR, false);
         if (text == null) return null;
         // Skip any primitives that don't have text to draw. (Styles are recreated for any tag change.)
         // The concrete text to render is not cached in this object, but computed for each
-        // repaint. This way, one BoxTextElemStyle object can be used by multiple primitives (to save memory).
+        // repaint. This way, one BoxTextElement object can be used by multiple primitives (to save memory).
         if (text.labelCompositionStrategy.compose(env.osm) == null) return null;
 
         HorizontalTextAlignment hAlign = HorizontalTextAlignment.RIGHT;
@@ -153,7 +157,7 @@ public class BoxTextElemStyle extends ElemStyle {
                 vAlign = VerticalTextAlignment.BELOW;
         }
 
-        return new BoxTextElemStyle(c, text, boxProvider, box, hAlign, vAlign);
+        return new BoxTextElement(c, text, boxProvider, box, hAlign, vAlign);
     }
 
     public Rectangle getBox() {
@@ -168,14 +172,14 @@ public class BoxTextElemStyle extends ElemStyle {
         return box;
     }
 
-    public static final BoxTextElemStyle SIMPLE_NODE_TEXT_ELEMSTYLE;
+    public static final BoxTextElement SIMPLE_NODE_TEXT_ELEMSTYLE;
     static {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
         c.put(TEXT, Keyword.AUTO);
         Node n = new Node();
         n.put("name", "dummy");
-        SIMPLE_NODE_TEXT_ELEMSTYLE = create(new Environment(n, mc, "default", null), NodeElemStyle.SIMPLE_NODE_ELEMSTYLE.getBoxProvider());
+        SIMPLE_NODE_TEXT_ELEMSTYLE = create(new Environment(n, mc, "default", null), NodeElement.SIMPLE_NODE_ELEMSTYLE.getBoxProvider());
         if (SIMPLE_NODE_TEXT_ELEMSTYLE == null) throw new AssertionError();
     }
 
@@ -206,7 +210,7 @@ public class BoxTextElemStyle extends ElemStyle {
             return false;
         if (obj == null || getClass() != obj.getClass())
             return false;
-        final BoxTextElemStyle other = (BoxTextElemStyle) obj;
+        final BoxTextElement other = (BoxTextElement) obj;
         if (!text.equals(other.text)) return false;
         if (boxProvider != null) {
             if (!boxProvider.equals(other.boxProvider)) return false;

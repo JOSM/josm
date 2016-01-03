@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint;
+package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.awt.Color;
 import java.util.Objects;
@@ -11,11 +11,14 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
-public class AreaElemStyle extends ElemStyle {
+public class AreaElement extends StyleElement {
 
     /**
      * If fillImage == null, color is the fill-color, otherwise
@@ -23,11 +26,11 @@ public class AreaElemStyle extends ElemStyle {
      */
     public Color color;
     public MapImage fillImage;
-    public TextElement text;
+    public TextLabel text;
     public Float extent;
     public Float extentThreshold;
 
-    protected AreaElemStyle(Cascade c, Color color, MapImage fillImage, Float extent, Float extentThreshold, TextElement text) {
+    protected AreaElement(Cascade c, Color color, MapImage fillImage, Float extent, Float extentThreshold, TextLabel text) {
         super(c, 1f);
         CheckParameterUtil.ensureParameterNotNull(color);
         this.color = color;
@@ -37,7 +40,7 @@ public class AreaElemStyle extends ElemStyle {
         this.text = text;
     }
 
-    public static AreaElemStyle create(final Environment env) {
+    public static AreaElement create(final Environment env) {
         final Cascade c = env.mc.getCascade(env.layer);
         MapImage fillImage = null;
         Color color;
@@ -75,17 +78,17 @@ public class AreaElemStyle extends ElemStyle {
             }
         }
 
-        TextElement text = null;
+        TextLabel text = null;
         Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
         if (textPos == null || "center".equals(textPos.val)) {
-            text = TextElement.create(env, PaintColors.AREA_TEXT.get(), true);
+            text = TextLabel.create(env, PaintColors.AREA_TEXT.get(), true);
         }
 
         Float extent = c.get(FILL_EXTENT, null, float.class);
         Float extentThreshold = c.get(FILL_EXTENT_THRESHOLD, null, float.class);
 
         if (color != null)
-            return new AreaElemStyle(c, color, fillImage, extent, extentThreshold, text);
+            return new AreaElement(c, color, fillImage, extent, extentThreshold, text);
         else
             return null;
     }
@@ -117,7 +120,7 @@ public class AreaElemStyle extends ElemStyle {
             return false;
         if (!super.equals(obj))
             return false;
-        AreaElemStyle other = (AreaElemStyle) obj;
+        AreaElement other = (AreaElement) obj;
         // we should get the same image object due to caching
         if (!Objects.equals(fillImage, other.fillImage))
             return false;

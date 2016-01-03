@@ -1,15 +1,19 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint;
+package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy;
-import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.StaticLabelCompositionStrategy;
-import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.TagLookupCompositionStrategy;
+import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.TagKeyReference;
+import org.openstreetmap.josm.gui.mappaint.StyleKeys;
+import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy;
+import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.StaticLabelCompositionStrategy;
+import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.TagLookupCompositionStrategy;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -17,7 +21,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Represents the rendering style for a textual label placed somewhere on the map.
  * @since 3880
  */
-public class TextElement implements StyleKeys {
+public class TextLabel implements StyleKeys {
     public static final LabelCompositionStrategy AUTO_LABEL_COMPOSITION_STRATEGY = new DeriveLabelFromNameTagsCompositionStrategy();
 
     /** the strategy for building the actual label value for a given a {@link OsmPrimitive}.
@@ -44,7 +48,7 @@ public class TextElement implements StyleKeys {
      * @param haloRadius halo radius
      * @param haloColor halo color
      */
-    public TextElement(LabelCompositionStrategy strategy, Font font, int xOffset, int yOffset, Color color, Float haloRadius, Color haloColor) {
+    public TextLabel(LabelCompositionStrategy strategy, Font font, int xOffset, int yOffset, Color color, Float haloRadius, Color haloColor) {
         CheckParameterUtil.ensureParameterNotNull(font);
         CheckParameterUtil.ensureParameterNotNull(color);
         labelCompositionStrategy = strategy;
@@ -61,7 +65,7 @@ public class TextElement implements StyleKeys {
      *
      * @param other the other element.
      */
-    public TextElement(TextElement other) {
+    public TextLabel(TextLabel other) {
         this.labelCompositionStrategy = other.labelCompositionStrategy;
         this.font = other.font;
         this.xOffset = other.xOffset;
@@ -115,7 +119,7 @@ public class TextElement implements StyleKeys {
      * properties for text rendering
      * @throws IllegalArgumentException if {@code defaultTextColor} is null
      */
-    public static TextElement create(Environment env, Color defaultTextColor, boolean defaultAnnotate) {
+    public static TextLabel create(Environment env, Color defaultTextColor, boolean defaultAnnotate) {
         CheckParameterUtil.ensureParameterNotNull(defaultTextColor);
         Cascade c = env.mc.getCascade(env.layer);
 
@@ -123,7 +127,7 @@ public class TextElement implements StyleKeys {
         if (strategy == null) return null;
         String s = strategy.compose(env.osm);
         if (s == null) return null;
-        Font font = ElemStyle.getFont(c, s);
+        Font font = StyleElement.getFont(c, s);
 
         float xOffset = 0;
         float yOffset = 0;
@@ -156,7 +160,7 @@ public class TextElement implements StyleKeys {
                     haloColor.getBlue(), Utils.color_float2int(haloAlpha));
         }
 
-        return new TextElement(strategy, font, (int) xOffset, -(int) yOffset, color, haloRadius, haloColor);
+        return new TextLabel(strategy, font, (int) xOffset, -(int) yOffset, color, haloRadius, haloColor);
     }
 
     /**
@@ -211,7 +215,7 @@ public class TextElement implements StyleKeys {
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass())
             return false;
-        final TextElement other = (TextElement) obj;
+        final TextLabel other = (TextLabel) obj;
         return Objects.equals(labelCompositionStrategy, other.labelCompositionStrategy) &&
         Objects.equals(font, other.font) &&
         xOffset == other.xOffset &&

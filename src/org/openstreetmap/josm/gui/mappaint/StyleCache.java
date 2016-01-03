@@ -9,14 +9,15 @@ import java.util.List;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.Storage;
+import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Caches styles for a single primitive.
  * Splits the range of possible scale values (0 &lt; scale &lt; +Infinity) into multiple
  * subranges, for each scale range it keeps a list of styles.
- * Immutable class, equals &amp; hashCode is required (the same for StyleList, ElemStyle
- * and its subclasses).
+ * Immutable class, equals &amp; hashCode is required (the same for StyleList, StyleElement
+ and its subclasses).
  */
 public final class StyleCache {
     /* list of boundaries for the scale ranges */
@@ -45,8 +46,8 @@ public final class StyleCache {
     /**
      * List of Styles, immutable
      */
-    public static class StyleList implements Iterable<ElemStyle> {
-        private final List<ElemStyle> lst;
+    public static class StyleList implements Iterable<StyleElement> {
+        private final List<StyleElement> lst;
 
         /**
          * Constructs a new {@code StyleList}.
@@ -55,21 +56,21 @@ public final class StyleCache {
             lst = new ArrayList<>();
         }
 
-        public StyleList(ElemStyle... init) {
+        public StyleList(StyleElement... init) {
             lst = new ArrayList<>(Arrays.asList(init));
         }
 
-        public StyleList(Collection<ElemStyle> sl) {
+        public StyleList(Collection<StyleElement> sl) {
             lst = new ArrayList<>(sl);
         }
 
-        public StyleList(StyleList sl, ElemStyle s) {
+        public StyleList(StyleList sl, StyleElement s) {
             lst = new ArrayList<>(sl.lst);
             lst.add(s);
         }
 
         @Override
-        public Iterator<ElemStyle> iterator() {
+        public Iterator<StyleElement> iterator() {
             return lst.iterator();
         }
 

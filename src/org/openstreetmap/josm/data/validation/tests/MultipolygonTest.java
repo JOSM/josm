@@ -30,7 +30,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
+import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -181,7 +181,7 @@ public class MultipolygonTest extends Test {
             }
 
             if (styles != null && !"boundary".equals(r.get("type"))) {
-                AreaElemStyle area = ElemStyles.getAreaElemStyle(r, false);
+                AreaElement area = ElemStyles.getAreaElemStyle(r, false);
                 boolean areaStyle = area != null;
                 // If area style was not found for relation then use style of ways
                 if (area == null) {
@@ -205,7 +205,7 @@ public class MultipolygonTest extends Test {
 
                 if (area != null) {
                     for (Way wInner : polygon.getInnerWays()) {
-                        AreaElemStyle areaInner = ElemStyles.getAreaElemStyle(wInner, false);
+                        AreaElement areaInner = ElemStyles.getAreaElemStyle(wInner, false);
 
                         if (areaInner != null && area.equals(areaInner)) {
                             List<OsmPrimitive> l = new ArrayList<>();
@@ -217,7 +217,7 @@ public class MultipolygonTest extends Test {
                         }
                     }
                     for (Way wOuter : polygon.getOuterWays()) {
-                        AreaElemStyle areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
+                        AreaElement areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
                         if (areaOuter != null) {
                             List<OsmPrimitive> l = new ArrayList<>();
                             l.add(r);

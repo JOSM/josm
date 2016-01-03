@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint;
+package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.awt.Font;
 import java.util.HashMap;
@@ -9,9 +9,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
+import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 
-public abstract class ElemStyle implements StyleKeys {
+public abstract class StyleElement implements StyleKeys {
 
     protected static final int ICON_IMAGE_IDX = 0;
     protected static final int ICON_WIDTH_IDX = 1;
@@ -29,14 +32,14 @@ public abstract class ElemStyle implements StyleKeys {
     public boolean isModifier;  // false, if style can serve as main style for the
     // primitive; true, if it is a highlight or modifier
 
-    public ElemStyle(float major_z_index, float z_index, float object_z_index, boolean isModifier) {
+    public StyleElement(float major_z_index, float z_index, float object_z_index, boolean isModifier) {
         this.majorZIndex = major_z_index;
         this.zIndex = z_index;
         this.objectZIndex = object_z_index;
         this.isModifier = isModifier;
     }
 
-    protected ElemStyle(Cascade c, float default_major_z_index) {
+    protected StyleElement(Cascade c, float default_major_z_index) {
         majorZIndex = c.get(MAJOR_Z_INDEX, default_major_z_index, Float.class);
         zIndex = c.get(Z_INDEX, 0f, Float.class);
         objectZIndex = c.get(OBJECT_Z_INDEX, 0f, Float.class);
@@ -207,9 +210,9 @@ public abstract class ElemStyle implements StyleKeys {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ElemStyle))
+        if (!(o instanceof StyleElement))
             return false;
-        ElemStyle s = (ElemStyle) o;
+        StyleElement s = (StyleElement) o;
         return isModifier == s.isModifier &&
                 majorZIndex == s.majorZIndex &&
                 zIndex == s.zIndex &&
