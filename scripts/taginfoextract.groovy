@@ -21,6 +21,7 @@ import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.Version
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.Node
+import org.openstreetmap.josm.data.osm.OsmPrimitive
 import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer
@@ -33,7 +34,9 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
+import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement
 import org.openstreetmap.josm.gui.mappaint.styleelement.LineElement
+import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader
@@ -51,8 +54,8 @@ class taginfoextract {
     String input_file
     MapCSSStyleSource style_source
     FileWriter output_file
-    def base_dir = "."
-    def tags = [] as Set
+    String base_dir = "."
+    Set tags = []
 
     private def cached_svnrev
 
@@ -62,17 +65,17 @@ class taginfoextract {
     abstract class Checker {
 
         def tag
-        def osm
+        OsmPrimitive osm
 
         Checker(tag) {
             this.tag = tag
         }
 
-        def apply_stylesheet(osm) {
+        Environment apply_stylesheet(OsmPrimitive osm) {
             osm.put(tag[0], tag[1])
-            def mc = new MultiCascade()
+            MultiCascade mc = new MultiCascade()
 
-            def env = new Environment(osm, mc, null, style_source)
+            Environment env = new Environment(osm, mc, null, style_source)
             for (def r in style_source.rules) {
                 env.clearSelectorMatchingInformation()
                 if (r.selector.matches(env)) {
@@ -88,10 +91,10 @@ class taginfoextract {
         }
 
         /**
-         * Create image file from ElemStyle.
+         * Create image file from StyleElement.
          * @return the URL
          */
-        def create_image(elem_style, type, nc) {
+        def create_image(StyleElement elem_style, type, nc) {
             def img = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB)
             def g = img.createGraphics()
             g.setClip(0, 0, 16, 16)
@@ -141,8 +144,8 @@ class taginfoextract {
             def nc = new NavigatableComponent()
             def n1 = new Node(nc.getLatLon(2,8))
             def n2 = new Node(nc.getLatLon(14,8))
-            osm.addNode(n1)
-            osm.addNode(n2)
+            ((Way)osm).addNode(n1)
+            ((Way)osm).addNode(n2)
             def env = apply_stylesheet(osm)
             def les = LineElement.createLine(env)
             if (les != null) {
@@ -164,13 +167,13 @@ class taginfoextract {
             def n2 = new Node(nc.getLatLon(14,2))
             def n3 = new Node(nc.getLatLon(14,14))
             def n4 = new Node(nc.getLatLon(2,14))
-            osm.addNode(n1)
-            osm.addNode(n2)
-            osm.addNode(n3)
-            osm.addNode(n4)
-            osm.addNode(n1)
+            ((Way)osm).addNode(n1)
+            ((Way)osm).addNode(n2)
+            ((Way)osm).addNode(n3)
+            ((Way)osm).addNode(n4)
+            ((Way)osm).addNode(n1)
             def env = apply_stylesheet(osm)
-            def aes = AreaElemStyle.create(env)
+            def aes = AreaElement.create(env)
             if (aes != null) {
                 if (!generate_image) return true
                 return create_image(aes, 'area', nc)
@@ -388,7 +391,7 @@ class taginfoextract {
     /**
      * Determine full image url (can refer to JOSM or OSM repository).
      */
-    def find_image_url(path) {
+    def find_image_url(String path) {
         def f = new File("${base_dir}/images/styles/standard/${path}")
         if (f.exists()) {
             def rev = osm_svn_revision()
