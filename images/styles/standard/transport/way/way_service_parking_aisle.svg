@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="2"
+   width="4"
    height="16"
-   viewBox="0 0 2 16"
+   viewBox="0 0 4 16"
    id="svg4264"
    version="1.1"
    inkscape:version="0.91 r13725"
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="-0.6035295"
-     inkscape:cy="9.4113212"
+     inkscape:zoom="45.254834"
+     inkscape:cx="-0.75848883"
+     inkscape:cy="6.6411186"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -71,7 +71,7 @@
      transform="translate(0,-1036.3621)">
     <g
        id="g3382"
-       transform="matrix(0.30768329,0,0,1.1346381,-45.506298,616.43092)"
+       transform="matrix(0.6153756,0,0,1.1346381,-91.013989,616.43092)"
        style="fill:#ffffff;fill-opacity:1">
       <rect
          id="XMLID_61_"
@@ -82,5 +82,19 @@
          height="14.1"
          style="fill:#ffffff;fill-opacity:1" />
     </g>
+    <path
+       class="st5"
+       d="m 1.0000031,1052.3621 -1.000003159604648,0 0,-15.9984 1.000003159604648,0 z"
+       id="path4144-2"
+       inkscape:connector-curvature="0"
+       style="fill:#808080;fill-opacity:1"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       style="fill:#808080;fill-opacity:1"
+       inkscape:connector-curvature="0"
+       id="path4142"
+       d="m 4.0000001,1052.3605 -1.0000031,0 0,-15.9984 1.0000031,0 z"
+       class="st5" />
   </g>
 </svg>

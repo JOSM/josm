@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.627417"
-     inkscape:cx="0.10809181"
-     inkscape:cy="6.6838606"
+     inkscape:zoom="32"
+     inkscape:cx="2.7365774"
+     inkscape:cy="7.827016"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -49,7 +49,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
         <cc:license
            rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
       </cc:Work>
@@ -82,6 +82,13 @@
          height="14.1"
          style="fill:#ffffff;fill-opacity:1" />
     </g>
+    <path
+       sodipodi:nodetypes="ccccc"
+       style="fill:#808080;fill-opacity:1"
+       inkscape:connector-curvature="0"
+       id="path4158"
+       d="m 9.0000011,1052.3621 -1.0000029,0 0,-16 1.0000029,0 z"
+       class="st5" />
     <path
        sodipodi:nodetypes="ccccc"
        style="fill:#808080;fill-opacity:1"
@@ -239,5 +246,12 @@
        y="978.1189"
        x="381.49002"
        id="XMLID_293_-0" />
+    <path
+       class="st5"
+       d="m 1.0000025,1052.3621 -1.00000297683724,0 0,-16 1.00000297683724,0 z"
+       id="path4156"
+       inkscape:connector-curvature="0"
+       style="fill:#808080;fill-opacity:1"
+       sodipodi:nodetypes="ccccc" />
   </g>
 </svg>
