@@ -9,7 +9,7 @@ Documentation of MapCSS format:
 */
 
 meta {
-    icon: "dialogs/mappaint/josm_small.png";
+    icon: "logo.svg";
 }
 
 canvas {
