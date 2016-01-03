@@ -1,8 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import java.util.Locale;
+
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Utils;
 
 final class StreamProgressUpdater {
 
@@ -44,7 +47,7 @@ final class StreamProgressUpdater {
             if (size > 0) {
                 progressMonitor.setTicks(soFar);
             }
-            progressMonitor.setExtraText(soFar / 1024 + " KB");
+            progressMonitor.setExtraText(Utils.getSizeString(soFar, Locale.getDefault()));
         }
     }
 
