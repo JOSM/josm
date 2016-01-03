@@ -5,12 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -126,14 +126,8 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
                         .setAccept(PLUGIN_MIME_TYPES)
                         .connect();
             }
-            try (
-                InputStream in = downloadConnection.getContent();
-                OutputStream out = new FileOutputStream(file)
-            ) {
-                byte[] buffer = new byte[8192];
-                for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
-                    out.write(buffer, 0, read);
-                }
+            try (InputStream in = downloadConnection.getContent()) {
+                Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (MalformedURLException e) {
             String msg = tr("Cannot download plugin ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.",

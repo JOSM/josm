@@ -6,10 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 
@@ -152,9 +153,7 @@ public class SessionLoadAction extends DiskAccessAction {
                         // Download and write entire joz file as a temp file on disk as we need random access later
                         file = File.createTempFile("session_", ".joz", Utils.getJosmTempDir());
                         tempFile = true;
-                        try (FileOutputStream out = new FileOutputStream(file)) {
-                            Utils.copyStream(is, out);
-                        }
+                        Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     }
                     reader.loadSession(file, zip, monitor);
                     layers = reader.getLayers();

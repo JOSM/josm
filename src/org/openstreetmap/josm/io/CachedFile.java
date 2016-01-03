@@ -4,17 +4,16 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -428,16 +427,8 @@ public class CachedFile {
                         Arrays.asList(Long.toString(System.currentTimeMillis()), localPathEntry.get(1)));
                 return localFile;
             }
-            try (
-                InputStream bis = new BufferedInputStream(con.getContent());
-                OutputStream fos = new FileOutputStream(destDirFile);
-                OutputStream bos = new BufferedOutputStream(fos)
-            ) {
-                byte[] buffer = new byte[4096];
-                int length;
-                while ((length = bis.read(buffer)) > -1) {
-                    bos.write(buffer, 0, length);
-                }
+            try (InputStream bis = new BufferedInputStream(con.getContent())) {
+                Files.copy(bis, destDirFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
             localFile = new File(destDir, localPath);
             if (Main.platform.rename(destDirFile, localFile)) {

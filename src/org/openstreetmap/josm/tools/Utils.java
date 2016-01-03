@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -431,24 +430,6 @@ public final class Utils {
                 }
             }
         }
-    }
-
-    /**
-     * Copy data from source stream to output stream.
-     * @param source source stream
-     * @param destination target stream
-     * @return number of bytes copied
-     * @throws IOException if any I/O error occurs
-     */
-    public static int copyStream(InputStream source, OutputStream destination) throws IOException {
-        int count = 0;
-        byte[] b = new byte[512];
-        int read;
-        while ((read = source.read(b)) != -1) {
-            count += read;
-            destination.write(b, 0, read);
-        }
-        return count;
     }
 
     /**
