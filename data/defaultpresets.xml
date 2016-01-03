@@ -4795,6 +4795,7 @@
                 <reference ref="fee" />
                 <text key="operator" text="Operator" />
                 <combo key="toilets:position" text="Usage Position" values="seated,seated;urinal,squat,urinal" />
+                <combo key="diaper" text="Diaper" values="yes,no,room,1,2,3,4,5" text_context="toilets" />
                 <reference ref="wheelchair" />
             </optional>
         </item> <!-- Toilets/Restrooms -->
