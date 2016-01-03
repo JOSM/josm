@@ -855,7 +855,7 @@ area[highway=emergency_access_point] {
     fill-color: emergency_access_point#c0c0c0;
 }
 node[highway=emergency_access_point] {
-    icon-image: "service/emergency_access_point.png";
+    icon-image: "service/emergency_access_point.svg";
     set icon_z17;
     text: auto;
 }
@@ -2747,17 +2747,25 @@ area[amenity=veterinary] {
     fill-color: health#eeeeee;
 }
 node[amenity=pharmacy] {
-    icon-image: "health/pharmacy.png";
+    icon-image: "health/pharmacy.svg";
     set icon_z17;
     text: auto;
 }
-node[amenity=hospital],
+node[amenity=hospital] {
+    icon-image: "health/hospital.svg";
+    set icon_z17;
+    text: auto;
+}
 node[amenity=clinic] {
-    icon-image: "health/hospital.png";
+    icon-image: "health/clinic.svg";
     set icon_z17;
     text: auto;
 }
-node[amenity=nursing_home],
+node[amenity=nursing_home] {
+    icon-image: "social_facility/nursing_home.svg";
+    set icon_z17;
+    text: auto;
+}
 node[amenity=social_facility][social_facility=group_home] {
     icon-image: "social_facility/group_home.svg";
     set icon_z17;
@@ -2784,22 +2792,22 @@ node[amenity=social_facility][social_facility=food_bank] {
     text: auto;
 }
 node[amenity=baby_hatch] {
-    icon-image: "health/baby_hatch.png";
+    icon-image: "health/baby_hatch.svg";
     set icon_z17;
     text: auto;
 }
 node[amenity=doctors] {
-    icon-image: "health/doctor.png";
+    icon-image: "health/doctors.svg";
     set icon_z17;
     text: auto;
 }
 node[amenity=dentist] {
-    icon-image: "health/dentist.png";
+    icon-image: "health/dentist.svg";
     set icon_z17;
     text: auto;
 }
 node[amenity=veterinary] {
-    icon-image: "health/veterinary.png";
+    icon-image: "health/veterinary.svg";
     set icon_z17;
     text: auto;
 }

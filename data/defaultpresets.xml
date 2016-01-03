@@ -4560,8 +4560,8 @@
             <reference ref="link_contact_address" />
         </item> <!-- Driving School -->
     </group> <!-- Education -->
-    <group name="Health" icon="styles/standard/health/pharmacy.png">
-        <item name="Hospital" icon="styles/standard/health/hospital.png" type="node,closedway" preset_name_label="true">
+    <group name="Health" icon="styles/standard/health/pharmacy.svg">
+        <item name="Hospital" icon="styles/standard/health/hospital.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=hospital"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=hospital"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=hospital"
@@ -4576,7 +4576,7 @@
             <reference ref="name_operator" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Hospital -->
-        <item name="Clinic" icon="styles/standard/health/hospital.png" type="node,closedway" preset_name_label="true">
+        <item name="Clinic" icon="styles/standard/health/clinic.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=clinic"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=clinic"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=clinic"
@@ -4587,7 +4587,7 @@
             <reference ref="name_operator" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Clinic -->
-        <item name="Doctor's Office" icon="styles/standard/health/doctor.png" type="node,closedway" preset_name_label="true">
+        <item name="Doctor's Office" icon="styles/standard/health/doctors.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=doctors"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=doctors"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=doctors"
@@ -4601,7 +4601,7 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Doctor's Office -->
-        <item name="Dentist" icon="styles/standard/health/dentist.png" type="node,closedway" preset_name_label="true">
+        <item name="Dentist" icon="styles/standard/health/dentist.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=dentist"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=dentist"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=dentist"
@@ -4613,7 +4613,7 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Dentist -->
-        <item name="Pharmacy" icon="styles/standard/health/pharmacy.png" type="node,closedway" preset_name_label="true">
+        <item name="Pharmacy" icon="styles/standard/health/pharmacy.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=pharmacy"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=pharmacy"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=pharmacy"
@@ -4630,7 +4630,7 @@
             <reference ref="link_contact_address_payment" />
         </item> <!-- Pharmacy -->
         <separator/>
-        <item name="Baby Hatch/Safe Haven" icon="presets/baby_hatch.png" type="node,closedway" preset_name_label="true">
+        <item name="Baby Hatch/Safe Haven" icon="styles/standard/health/baby_hatch.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=baby_hatch"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=baby_hatch"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=baby_hatch"
@@ -4648,7 +4648,7 @@
             <reference ref="link_contact_address" />
         </item> <!-- Baby Hatch/Safe Haven -->
         <separator/>
-        <item name="Emergency Access Point" icon="styles/standard/service/emergency_access_point.png" type="node,closedway" preset_name_label="true">
+        <item name="Emergency Access Point" icon="styles/standard/service/emergency_access_point.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=emergency_access_point"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=emergency_access_point"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=emergency_access_point"
@@ -4664,7 +4664,7 @@
             <space />
         </item> <!-- Emergency Access Point -->
         <separator/>
-        <item name="Veterinary" icon="styles/standard/health/veterinary.png" type="node,closedway" preset_name_label="true">
+        <item name="Veterinary" icon="styles/standard/health/veterinary.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=veterinary"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=veterinary"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=veterinary"
@@ -4682,7 +4682,7 @@
         </item> <!-- Veterinary -->
     </group> <!-- Health -->
     <group name="Social Facility" icon="styles/standard/social_facility/outreach.svg">
-        <item name="Nursing Home" icon="styles/standard/social_facility/group_home.svg" type="node,closedway" preset_name_label="true">
+        <item name="Nursing Home" icon="styles/standard/social_facility/nursing_home.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nursing_home"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=nursing_home"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=nursing_home"
