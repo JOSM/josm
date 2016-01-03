@@ -1509,22 +1509,10 @@ public class JoinAreasAction extends JosmAction {
      */
     private void stripTags(Collection<Way> ways) {
         for (Way w : ways) {
-            stripTags(w);
+            w.removeAll();
         }
         /* I18N: current action printed in status display */
         commitCommands(marktr("Remove tags from inner ways"));
-    }
-
-    /**
-     * Remove all tags from the way
-     * @param x The Way to remove all tags from
-     */
-    private void stripTags(Way x) {
-        Way y = new Way(x);
-        for (String key : x.keySet()) {
-            y.remove(key);
-        }
-        cmds.add(new ChangeCommand(x, y));
     }
 
     /**
