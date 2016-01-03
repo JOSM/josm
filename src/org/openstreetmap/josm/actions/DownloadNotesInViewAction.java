@@ -42,6 +42,8 @@ public final class DownloadNotesInViewAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.map != null && Main.map.mapView != null && !Main.isOffline(OnlineResource.OSM_API));
+        setEnabled(Main.isDisplayingMapView()
+                && Main.map.mapView.getActiveLayer() != null
+                && !Main.isOffline(OnlineResource.OSM_API));
     }
 }
