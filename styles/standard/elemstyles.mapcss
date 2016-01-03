@@ -2740,7 +2740,6 @@ area[amenity=hospital],
 area[amenity=clinic],
 area[amenity=nursing_home],
 area[amenity=social_facility],
-area[amenity=nursery],
 area[amenity=baby_hatch],
 area[amenity=doctors],
 area[amenity=dentist],
@@ -2759,9 +2758,28 @@ node[amenity=clinic] {
     text: auto;
 }
 node[amenity=nursing_home],
-node[amenity=social_facility],
-node[amenity=nursery] {
-    icon-image: "misc/no_icon.png";
+node[amenity=social_facility][social_facility=group_home] {
+    icon-image: "social_facility/group_home.svg";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=social_facility][social_facility=assisted_living] {
+    icon-image: "social_facility/assisted_living.svg";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=social_facility][social_facility=outreach] {
+    icon-image: "social_facility/outreach.svg";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=social_facility][social_facility=shelter] {
+    icon-image: "social_facility/shelter.svg";
+    set icon_z17;
+    text: auto;
+}
+node[amenity=social_facility][social_facility=food_bank] {
+    icon-image: "social_facility/food_bank.svg";
     set icon_z17;
     text: auto;
 }
