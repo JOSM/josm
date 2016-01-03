@@ -1509,7 +1509,9 @@ public class JoinAreasAction extends JosmAction {
      */
     private void stripTags(Collection<Way> ways) {
         for (Way w : ways) {
+            final Way wayWithoutTags = new Way(w);
             w.removeAll();
+            cmds.add(new ChangeCommand(w, wayWithoutTags));
         }
         /* I18N: current action printed in status display */
         commitCommands(marktr("Remove tags from inner ways"));
