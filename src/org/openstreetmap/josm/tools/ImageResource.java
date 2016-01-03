@@ -176,7 +176,7 @@ public class ImageResource {
                 maxHeight = -1;
             }
         }
-        
+
         if (maxWidth == -1 && maxHeight == -1)
             return getImageIcon(DEFAULT_DIMENSION);
         else if (maxWidth == -1)
