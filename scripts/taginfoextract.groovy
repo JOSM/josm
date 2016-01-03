@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
+import org.openstreetmap.josm.gui.mappaint.styleelement.LineElement
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader
@@ -143,7 +144,7 @@ class taginfoextract {
             osm.addNode(n1)
             osm.addNode(n2)
             def env = apply_stylesheet(osm)
-            def les = LineElemStyle.createLine(env)
+            def les = LineElement.createLine(env)
             if (les != null) {
                 if (!generate_image) return true
                 return create_image(les, 'way', nc)
