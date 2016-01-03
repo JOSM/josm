@@ -12,7 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.imageio.ImageIO;
 
@@ -26,20 +26,32 @@ public class ThumbsLoader implements Runnable {
     public static final int maxSize = 120;
     public static final int minSize = 22;
     public volatile boolean stop;
-    private final List<ImageEntry> data;
+    private final Collection<ImageEntry> data;
     private final GeoImageLayer layer;
     private MediaTracker tracker;
     private ICacheAccess<String, BufferedImageCacheEntry> cache;
     private final boolean cacheOff = Main.pref.getBoolean("geoimage.noThumbnailCache", false);
+
+    private ThumbsLoader(Collection<ImageEntry> data, GeoImageLayer layer) {
+        this.data = data;
+        this.layer = layer;
+        initCache();
+    }
 
     /**
      * Constructs a new thumbnail loader that operates on a geoimage layer.
      * @param layer geoimage layer
      */
     public ThumbsLoader(GeoImageLayer layer) {
-        this.layer = layer;
-        this.data = new ArrayList<>(layer.data);
-        initCache();
+        this(new ArrayList<>(layer.data), layer);
+    }
+
+    /**
+     * Constructs a new thumbnail loader that operates on the image entries
+     * @param entries image entries
+     */
+    public ThumbsLoader(Collection<ImageEntry> entries) {
+        this(entries, null);
     }
 
     /**
@@ -68,15 +80,17 @@ public class ThumbsLoader implements Runnable {
             if (!entry.hasThumbnail()) {
                 entry.setThumbnail(loadThumb(entry));
 
-                if (Main.isDisplayingMapView()) {
+                if (layer != null && Main.isDisplayingMapView()) {
                     layer.updateOffscreenBuffer = true;
                     Main.map.mapView.repaint();
                 }
             }
         }
-        layer.thumbsLoaded();
-        layer.updateOffscreenBuffer = true;
-        Main.map.mapView.repaint();
+        if (layer != null) {
+            layer.thumbsLoaded();
+            layer.updateOffscreenBuffer = true;
+            Main.map.mapView.repaint();
+        }
     }
 
     private BufferedImage loadThumb(ImageEntry entry) {

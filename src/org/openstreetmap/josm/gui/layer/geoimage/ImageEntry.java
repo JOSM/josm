@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -219,6 +220,16 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      */
     public void setThumbnail(Image thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    /**
+     * Loads the thumbnail if it was not loaded yet.
+     * @see ThumbsLoader
+     */
+    public void loadThumbnail() {
+        if (thumbnail == null) {
+            new ThumbsLoader(Collections.singleton(this)).run();
+        }
     }
 
     /**
