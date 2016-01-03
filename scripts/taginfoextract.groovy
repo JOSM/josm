@@ -26,9 +26,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer
 import org.openstreetmap.josm.data.projection.Projections
 import org.openstreetmap.josm.gui.NavigatableComponent
-import org.openstreetmap.josm.gui.mappaint.AreaElemStyle
 import org.openstreetmap.josm.gui.mappaint.Environment
-import org.openstreetmap.josm.gui.mappaint.LineElemStyle
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource
