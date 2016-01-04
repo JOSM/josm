@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
@@ -92,9 +93,18 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         out.println("</osm>");
     }
 
-    protected static final Comparator<OsmPrimitive> byIdComparator = new Comparator<OsmPrimitive>() {
-        @Override public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-            return o1.getUniqueId() < o2.getUniqueId() ? -1 : (o1.getUniqueId() == o2.getUniqueId() ? 0 : 1);
+    /**
+     * Sorts {@code -1} &rarr; {@code -infinity}, then {@code +1} &rarr; {@code +infinity}
+     */
+    protected static final Comparator<AbstractPrimitive> byIdComparator = new Comparator<AbstractPrimitive>() {
+        @Override public int compare(AbstractPrimitive o1, AbstractPrimitive o2) {
+            final long i1 = o1.getUniqueId();
+            final long i2 = o2.getUniqueId();
+            if (i1 < 0 && i2 < 0) {
+                return Long.compare(i2, i1);
+            } else {
+                return Long.compare(i1, i2);
+            }
         }
     };
 
