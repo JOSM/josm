@@ -41,7 +41,6 @@ public final class HttpClient {
     private int readTimeout = Main.pref.getInteger("socket.timeout.read", 30) * 1000;
     private byte[] requestBody;
     private long ifModifiedSince;
-    private long contentLength;
     private final Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private int maxRedirects = Main.pref.getInteger("socket.maxredirects", 5);
     private boolean useCache;
@@ -85,9 +84,6 @@ public final class HttpClient {
         if (ifModifiedSince > 0) {
             connection.setIfModifiedSince(ifModifiedSince);
         }
-        if (contentLength > 0) {
-            connection.setFixedLengthStreamingMode(contentLength);
-        }
         connection.setUseCaches(useCache);
         if (!useCache) {
             connection.setRequestProperty("Cache-Control", "no-cache");
@@ -103,7 +99,7 @@ public final class HttpClient {
 
         if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
             Main.info("{0} {1} ({2}) ...", requestMethod, url, Utils.getSizeString(requestBody.length, Locale.getDefault()));
-            headers.put("Content-Length", String.valueOf(requestBody.length));
+            connection.setFixedLengthStreamingMode(requestBody.length);
             connection.setDoOutput(true);
             try (OutputStream out = new BufferedOutputStream(
                     new ProgressOutputStream(connection.getOutputStream(), requestBody.length, progressMonitor))) {
@@ -516,9 +512,10 @@ public final class HttpClient {
      * @return {@code this}
      * @see HttpURLConnection#setFixedLengthStreamingMode(long)
      * @since 9178
+     * @deprecated Submitting data via POST, PUT, DELETE automatically sets this property on the connection
      */
+    @Deprecated
     public HttpClient setFixedLengthStreamingMode(long contentLength) {
-        this.contentLength = contentLength;
         return this;
     }
 
