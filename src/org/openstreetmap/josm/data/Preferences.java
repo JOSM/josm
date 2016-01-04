@@ -964,6 +964,8 @@ public class Preferences {
                 resetToDefault();
                 save();
             } else if (reset) {
+                File backupFile = new File(prefDir, "preferences.xml.bak");
+                Main.platform.rename(preferenceFile, backupFile);
                 Main.warn(tr("Replacing existing preference file ''{0}'' with default preference file.", preferenceFile.getAbsoluteFile()));
                 resetToDefault();
                 save();
