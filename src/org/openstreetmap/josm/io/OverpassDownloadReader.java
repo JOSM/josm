@@ -4,6 +4,8 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -12,6 +14,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -100,6 +103,17 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
                 }
             }
             throw ex;
+        }
+    }
+
+    @Override
+    protected void adaptRequest(HttpClient request) {
+        // see https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#timeout
+        final Matcher timeoutMatcher = Pattern.compile("\\[timeout:(\\d+)\\]").matcher(overpassQuery);
+        if (timeoutMatcher.find()) {
+            final int timeout = 1000 * Integer.parseInt(timeoutMatcher.group(1));
+            request.setConnectTimeout(timeout);
+            request.setReadTimeout(timeout);
         }
     }
 

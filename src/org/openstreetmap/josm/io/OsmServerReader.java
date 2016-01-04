@@ -123,6 +123,7 @@ public abstract class OsmServerReader extends OsmConnection {
 
             final HttpClient client = HttpClient.create(url);
             client.setReasonForRequest(reason);
+            adaptRequest(client);
             if (doAuthenticate) {
                 addAuth(client);
             }
@@ -166,6 +167,14 @@ public abstract class OsmServerReader extends OsmConnection {
         } finally {
             progressMonitor.invalidate();
         }
+    }
+
+    /**
+     * Allows subclasses to modify the request.
+     * @param request the prepared request
+     * @since 9308
+     */
+    protected void adaptRequest(HttpClient request) {
     }
 
     /**
