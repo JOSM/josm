@@ -46,6 +46,8 @@ public final class HttpClient {
     private int maxRedirects = Main.pref.getInteger("socket.maxredirects", 5);
     private boolean useCache;
     private String reasonForRequest;
+    private transient HttpURLConnection connection; // to allow disconnecting before `response` is set
+    private transient Response response;
 
     private HttpClient(URL url, String requestMethod) {
         this.url = url;
@@ -74,6 +76,7 @@ public final class HttpClient {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
         final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        this.connection = connection;
         connection.setRequestMethod(requestMethod);
         connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
         connection.setConnectTimeout(connectTimeout);
@@ -147,7 +150,7 @@ public final class HttpClient {
                     throw new IOException(msg);
                 }
             }
-            Response response = new Response(connection, progressMonitor);
+            response = new Response(connection, progressMonitor);
             successfulConnection = true;
             return response;
         } finally {
@@ -155,6 +158,17 @@ public final class HttpClient {
                 connection.disconnect();
             }
         }
+    }
+
+    /**
+     * Returns the HTTP response which is set only after calling {@link #connect()}.
+     * Calling this method again, returns the identical object (unless another {@link #connect()} is performed).
+     *
+     * @return the HTTP response
+     * @since 9309
+     */
+    public Response getResponse() {
+        return response;
     }
 
     /**
@@ -380,17 +394,7 @@ public final class HttpClient {
          * @see HttpURLConnection#disconnect()
          */
         public void disconnect() {
-            // TODO is this block necessary for disconnecting?
-            // Fix upload aborts - see #263
-            connection.setConnectTimeout(100);
-            connection.setReadTimeout(100);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-                Main.warn("InterruptedException in " + getClass().getSimpleName() + " during cancel");
-            }
-
-            connection.disconnect();
+            HttpClient.disconnect(connection);
         }
     }
 
@@ -609,5 +613,25 @@ public final class HttpClient {
             default:
                 return false;
         }
+    }
+
+    /**
+     * @see HttpURLConnection#disconnect()
+     * @since 9309
+     */
+    public void disconnect() {
+        HttpClient.disconnect(connection);
+    }
+
+    private static void disconnect(final HttpURLConnection connection) {
+        // Fix upload aborts - see #263
+        connection.setConnectTimeout(100);
+        connection.setReadTimeout(100);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {
+            Main.warn("InterruptedException in " + HttpClient.class + " during cancel");
+        }
+        connection.disconnect();
     }
 }

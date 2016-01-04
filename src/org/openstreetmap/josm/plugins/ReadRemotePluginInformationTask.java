@@ -50,7 +50,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
 
     private Collection<String> sites;
     private boolean canceled;
-    private HttpClient.Response connection;
+    private HttpClient connection;
     private List<PluginInformation> availablePlugins;
     private boolean displayErrMsg;
 
@@ -156,9 +156,10 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             monitor.indeterminateSubTask(tr("Downloading plugin list from ''{0}''", printsite));
 
             URL url = new URL(site);
-            connection = HttpClient.create(url).useCache(false).connect();
-            content = connection.fetchContent();
-            if (connection.getResponseCode() != 200) {
+            connection = HttpClient.create(url).useCache(false);
+            final HttpClient.Response response = connection.connect();
+            content = response.fetchContent();
+            if (response.getResponseCode() != 200) {
                 throw new IOException(tr("Unsuccessful HTTP request"));
             }
             return content;

@@ -35,7 +35,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
     private boolean canceled;
     private boolean success;
     private final Component parent;
-    private HttpClient.Response connection;
+    private HttpClient connection;
 
     /**
      * Constructs a new {@code ApiUrlTestTask}.
@@ -176,16 +176,17 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
             }
 
             synchronized (this) {
-                connection = HttpClient.create(capabilitiesUrl).connect();
+                connection = HttpClient.create(capabilitiesUrl);
+                connection.connect();
             }
 
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                alertInvalidServerResult(connection.getResponseCode());
+            if (connection.getResponse().getResponseCode() != HttpURLConnection.HTTP_OK) {
+                alertInvalidServerResult(connection.getResponse().getResponseCode());
                 return;
             }
 
             try {
-                Capabilities.CapabilitiesParser.parse(new InputSource(connection.getContent()));
+                Capabilities.CapabilitiesParser.parse(new InputSource(connection.getResponse().getContent()));
             } catch (SAXException | ParserConfigurationException e) {
                 Main.warn(e.getMessage());
                 alertInvalidCapabilities();

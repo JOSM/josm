@@ -617,6 +617,7 @@ public class OsmApi extends OsmConnection {
             try {
                 url = new URL(new URL(getBaseUrl()), urlSuffix);
                 final HttpClient client = HttpClient.create(url, requestMethod).keepAlive(false);
+                activeConnection = client;
                 if (fastFail) {
                     client.setConnectTimeout(1000);
                     client.setReadTimeout(1000);
@@ -639,9 +640,9 @@ public class OsmApi extends OsmConnection {
                     client.setRequestBody((requestBody != null ? requestBody : "").getBytes(StandardCharsets.UTF_8));
                 }
 
-                activeConnection = client.connect();
-                Main.info(activeConnection.getResponseMessage());
-                int retCode = activeConnection.getResponseCode();
+                final HttpClient.Response response = client.connect();
+                Main.info(response.getResponseMessage());
+                int retCode = response.getResponseCode();
 
                 if (retCode >= 500) {
                     if (retries-- > 0) {
@@ -651,12 +652,12 @@ public class OsmApi extends OsmConnection {
                     }
                 }
 
-                final String responseBody = activeConnection.fetchContent();
+                final String responseBody = response.fetchContent();
 
                 String errorHeader = null;
                 // Look for a detailed error message from the server
-                if (activeConnection.getHeaderField("Error") != null) {
-                    errorHeader = activeConnection.getHeaderField("Error");
+                if (response.getHeaderField("Error") != null) {
+                    errorHeader = response.getHeaderField("Error");
                     Main.error("Error header: " + errorHeader);
                 } else if (retCode != HttpURLConnection.HTTP_OK && responseBody.length() > 0) {
                     Main.error("Error body: " + responseBody);

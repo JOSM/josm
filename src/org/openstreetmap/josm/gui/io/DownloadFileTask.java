@@ -68,7 +68,7 @@ public class DownloadFileTask extends PleaseWaitRunnable {
     }
 
     private boolean canceled;
-    private HttpClient.Response downloadConnection;
+    private HttpClient downloadConnection;
 
     private synchronized void closeConnectionIfNeeded() {
         if (downloadConnection != null) {
@@ -102,15 +102,16 @@ public class DownloadFileTask extends PleaseWaitRunnable {
             URL url = new URL(address);
             long size;
             synchronized (this) {
-                downloadConnection = HttpClient.create(url).useCache(false).connect();
-                size = downloadConnection.getContentLength();
+                downloadConnection = HttpClient.create(url).useCache(false);
+                downloadConnection.connect();
+                size = downloadConnection.getResponse().getContentLength();
             }
 
             progressMonitor.setTicksCount(100);
             progressMonitor.subTask(tr("Downloading File {0}: {1} bytes...", file.getName(), size));
 
             try (
-                InputStream in = downloadConnection.getContent();
+                InputStream in = downloadConnection.getResponse().getContent();
                 OutputStream out = new FileOutputStream(file)
             ) {
                 byte[] buffer = new byte[32768];

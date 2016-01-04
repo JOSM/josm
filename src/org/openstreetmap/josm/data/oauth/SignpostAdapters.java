@@ -39,6 +39,8 @@ public final class SignpostAdapters {
         protected void closeConnection(oauth.signpost.http.HttpRequest request, oauth.signpost.http.HttpResponse response) throws Exception {
             if (response != null) {
                 ((HttpResponse) response).response.disconnect();
+            } else if (request != null) {
+                ((HttpRequest) request).request.disconnect();
             }
         }
     }
