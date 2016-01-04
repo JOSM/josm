@@ -5,6 +5,7 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmApi;
@@ -46,7 +47,9 @@ public final class DefaultAuthenticator extends Authenticator {
         if (!enabled)
             return null;
         try {
-            if (getRequestorType().equals(Authenticator.RequestorType.SERVER) && OsmApi.isUsingOAuth()) {
+            if (OsmApi.isUsingOAuth()
+                    && Objects.equals(OsmApi.getOsmApi().getHost(), getRequestingHost())
+                    && RequestorType.SERVER.equals(getRequestorType())) {
                 // if we are working with OAuth we don't prompt for a password
                 return null;
             }
