@@ -1031,7 +1031,7 @@
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Dedicated Bridleway -->
-        <item name="Cycle Lane/Track" icon="styles/standard/transport/way/cycle_lane_track.svg" type="way" type="way" preset_name_label="true">
+        <item name="Cycle Lane/Track" icon="styles/standard/transport/way/cycle_lane_track.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Bicycle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Bicycle"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Bicycle"
