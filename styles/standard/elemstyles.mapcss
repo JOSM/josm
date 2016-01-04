@@ -646,11 +646,6 @@ way[highway=steps] {
     color: foot#00ff00;
     dashes: 2,2;
 }
-node[highway=steps] {
-    icon-image: "transport/steps.png";
-    set icon_z17;
-    text: auto;
-}
 way[highway=bus_guideway] {
     width: 1;
     color: rail#404040;
@@ -3476,12 +3471,12 @@ node[railway=subway_entrance] {
     text: auto;
 }
 node[railway=crossing] {
-    icon-image: "vehicle/crossing.png";
+    icon-image: "transport/railway/crossing.svg";
     set icon_z17;
     text: auto;
 }
 node[railway=level_crossing] {
-    icon-image: "presets/level_crossing.png";
+    icon-image: "transport/railway/level_crossing.svg";
     icon-width: 16;
     set icon_z17;
     text: auto;
@@ -3552,12 +3547,12 @@ area[railway=turntable] {
     fill-color: rail#404040;
 }
 node[railway=turntable] {
-    icon-image: "transport/turntable.png";
+    icon-image: "transport/railway/turntable.svg";
     set icon_z17;
     text: auto;
 }
 node[railway=buffer_stop] {
-    icon-image: "transport/buffer_stop.png";
+    icon-image: "transport/railway/buffer_stop.svg";
     set icon_z17;
     text: auto;
 }
@@ -3574,18 +3569,18 @@ way[railway=funicular] {
     dashes: 9,9;
 }
 node[railway=switch] {
-    icon-image: "presets/railway_switch.svg";
+    icon-image: "transport/railway/switch.svg";
     icon-width: 16;
     set icon_z17;
     text: auto;
 }
 node[railway=signal] {
-    icon-image: "vehicle/railway_signal.svg";
+    icon-image: "transport/railway/signal.svg";
     set icon_z17;
     text: auto;
 }
 node[railway=milestone] {
-    icon-image: "vehicle/milestone.svg";
+    icon-image: "transport/railway/milestone.svg";
     set icon_z17;
     text: auto;
 }
