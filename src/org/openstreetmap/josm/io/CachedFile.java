@@ -334,7 +334,7 @@ public class CachedFile {
                 if (localPath.size() == 2) {
                     File lfile = new File(localPath.get(1));
                     if (lfile.exists()) {
-                        lfile.delete();
+                        Utils.deleteFile(lfile);
                     }
                 }
                 Main.pref.putCollection(prefKey, null);

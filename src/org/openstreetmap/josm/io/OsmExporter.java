@@ -92,7 +92,7 @@ public class OsmExporter extends FileExporter {
             doSave(file, layer);
             if (noBackup || !Main.pref.getBoolean("save.keepbackup", false)) {
                 if (tmpFile != null) {
-                    tmpFile.delete();
+                    Utils.deleteFile(tmpFile);
                 }
             }
             layer.onPostSaveToFile();

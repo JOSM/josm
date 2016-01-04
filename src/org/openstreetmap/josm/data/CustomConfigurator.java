@@ -313,10 +313,8 @@ public final class CustomConfigurator {
                 }
             }
         }
-        try {
-            f.delete();
-        } catch (Exception e) {
-            log("Warning: Can not delete file "+f.getPath()+": "+e.getMessage());
+        if (!Utils.deleteFile(f)) {
+            log("Warning: Can not delete file "+f.getPath());
         }
     }
 

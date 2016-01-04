@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -445,13 +446,40 @@ public final class Utils {
                 for (File file : files) {
                     if (file.isDirectory()) {
                         deleteDirectory(file);
-                    } else if (!file.delete()) {
-                        Main.warn("Unable to delete file: "+file.getPath());
+                    } else {
+                        deleteFile(file);
                     }
                 }
             }
         }
         return path.delete();
+    }
+
+    /**
+     * Deletes a file and log a default warning if the deletion fails.
+     * @param file file to delete
+     * and must contain a single parameter <code>{0}</code> for the file path
+     * @return {@code true} if and only if the file is successfully deleted; {@code false} otherwise
+     * @since XXXX
+     */
+    public static boolean deleteFile(File file) {
+        return deleteFile(file, marktr("Unable to delete file {0}"));
+    }
+
+    /**
+     * Deletes a file and log a configurable warning if the deletion fails.
+     * @param file file to delete
+     * @param warnMsg warning message. It will be translated with {@code tr()}
+     * and must contain a single parameter <code>{0}</code> for the file path
+     * @return {@code true} if and only if the file is successfully deleted; {@code false} otherwise
+     * @since XXXX
+     */
+    public static boolean deleteFile(File file, String warnMsg) {
+        boolean result = file.delete();
+        if (!result) {
+            Main.warn(tr(warnMsg, file.getPath()));
+        }
+        return result;
     }
 
     /**

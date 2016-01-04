@@ -22,6 +22,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -131,7 +132,7 @@ public class DownloadFileTask extends PleaseWaitRunnable {
                 if (unpack) {
                     Main.info(tr("Unpacking {0} into {1}", file.getAbsolutePath(), file.getParent()));
                     unzipFileRecursively(file, file.getParent());
-                    file.delete();
+                    Utils.deleteFile(file);
                 }
             }
         } catch (MalformedURLException e) {
