@@ -126,9 +126,9 @@ public class AreaElement extends StyleElement {
             return false;
         if (!Objects.equals(color, other.color))
             return false;
-        if (extent != other.extent)
+        if (!Objects.equals(extent, other.extent))
             return false;
-        if (extentThreshold != other.extentThreshold)
+        if (!Objects.equals(extentThreshold, other.extentThreshold))
             return false;
         if (!Objects.equals(text, other.text))
             return false;

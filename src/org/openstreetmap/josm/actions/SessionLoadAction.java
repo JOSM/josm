@@ -162,9 +162,7 @@ public class SessionLoadAction extends DiskAccessAction {
                     viewport = reader.getViewport();
                 } finally {
                     if (tempFile) {
-                        if (!file.delete()) {
-                            file.deleteOnExit();
-                        }
+                        Utils.deleteFile(file);
                         file = null;
                     }
                 }

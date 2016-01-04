@@ -3,20 +3,20 @@
      "-//Puppy Crawl//DTD Suppressions 1.0//EN"
      "http://www.puppycrawl.com/dtds/suppressions_1_0.dtd">
 <suppressions>
-  <suppress checks="HeaderCheck" files="Ellipsoid.java" />
-  <suppress checks="HeaderCheck" files="NTV2GridShift.java" />
-  <suppress checks="HeaderCheck" files="NTV2GridShiftFile.java" />
-  <suppress checks="HeaderCheck" files="NTV2SubGrid.java" />
-  <suppress checks="HeaderCheck" files="NTV2Util.java" />
-  <suppress checks="HeaderCheck" files="DomainValidator.java" />
-  <suppress checks="HeaderCheck" files="EmailValidator.java" />
-  <suppress checks="HeaderCheck" files="InetAddressValidator.java" />
-  <suppress checks="HeaderCheck" files="RegexValidator.java" />
-  <suppress checks="HeaderCheck" files="UrlValidator.java" />
-  <suppress checks="HeaderCheck" files="Entities.java" />
-  <suppress checks="HeaderCheck" files="FileDrop.java" />
-  <suppress checks="HeaderCheck" files="MenuScroller.java" />
-  <suppress checks="HeaderCheck" files="MultiSplitLayout.java" />
-  <suppress checks="HeaderCheck" files="MultiSplitPane.java" />
-  <suppress checks="HeaderCheck" files="DNSName.java" />
+  <suppress checks="HeaderCheck" files="Ellipsoid\.java" />
+  <suppress checks="HeaderCheck" files="NTV2GridShift\.java" />
+  <suppress checks="HeaderCheck" files="NTV2GridShiftFile\.java" />
+  <suppress checks="HeaderCheck" files="NTV2SubGrid\.java" />
+  <suppress checks="HeaderCheck" files="NTV2Util\.java" />
+  <suppress checks="HeaderCheck" files="DomainValidator\.java" />
+  <suppress checks="HeaderCheck" files="EmailValidator\.java" />
+  <suppress checks="HeaderCheck" files="InetAddressValidator\.java" />
+  <suppress checks="HeaderCheck" files="RegexValidator\.java" />
+  <suppress checks="HeaderCheck" files="UrlValidator\.java" />
+  <suppress checks="HeaderCheck" files="Entities\.java" />
+  <suppress checks="HeaderCheck" files="FileDrop\.java" />
+  <suppress checks="HeaderCheck" files="MenuScroller\.java" />
+  <suppress checks="HeaderCheck" files="MultiSplitLayout\.java" />
+  <suppress checks="HeaderCheck" files="MultiSplitPane\.java" />
+  <suppress checks="HeaderCheck" files="DNSName\.java" />
 </suppressions>

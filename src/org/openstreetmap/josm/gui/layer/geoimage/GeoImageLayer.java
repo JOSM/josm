@@ -665,7 +665,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
                     ImageViewerDialog.showImage(this, null);
                 }
 
-                if (toDelete.getFile().delete()) {
+                if (Utils.deleteFile(toDelete.getFile())) {
                     Main.info("File "+toDelete.getFile()+" deleted. ");
                 } else {
                     JOptionPane.showMessageDialog(

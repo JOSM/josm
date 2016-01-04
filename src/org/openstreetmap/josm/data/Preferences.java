@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
@@ -871,9 +872,7 @@ public class Preferences {
 
         File tmpFile = new File(prefFile + "_tmp");
         Utils.copyFile(tmpFile, prefFile);
-        if (!tmpFile.delete()) {
-            Main.warn(tr("Unable to delete temporary file {0}", tmpFile.getAbsolutePath()));
-        }
+        Utils.deleteFile(tmpFile, marktr("Unable to delete temporary file {0}"));
 
         setCorrectPermissions(prefFile);
         setCorrectPermissions(backupFile);

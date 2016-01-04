@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
@@ -39,6 +40,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmExporter;
 import org.openstreetmap.josm.io.OsmImporter;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Saves data layers periodically so they can be recovered in case of a crash.
@@ -193,13 +195,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
         while (info.backupFiles.size() > PROP_FILES_PER_LAYER.get()) {
             File oldFile = info.backupFiles.remove();
-            if (!oldFile.delete()) {
-                Main.warn(tr("Unable to delete old backup file {0}", oldFile.getAbsolutePath()));
-            } else {
-                File pidFile = getPidFile(oldFile);
-                if (!pidFile.delete()) {
-                    Main.warn(tr("Unable to delete old backup file {0}", pidFile.getAbsolutePath()));
-                }
+            if (Utils.deleteFile(oldFile, marktr("Unable to delete old backup file {0}"))) {
+                Utils.deleteFile(getPidFile(oldFile), marktr("Unable to delete old backup file {0}"));
             }
         }
     }
@@ -272,8 +269,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                             moveToDeletedLayersFolder(lastFile);
                         }
                         for (File file: info.backupFiles) {
-                            if (file.delete()) {
-                                getPidFile(file).delete();
+                            if (Utils.deleteFile(file)) {
+                                Utils.deleteFile(getPidFile(file));
                             }
                         }
 
@@ -368,20 +365,16 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
 
         if (backupFile.exists()) {
             deletedLayers.remove(backupFile);
-            if (!backupFile.delete()) {
-                Main.warn(String.format("Could not delete old backup file %s", backupFile));
-            }
+            Utils.deleteFile(backupFile, marktr("Unable to delete old backup file {0}"));
         }
         if (f.renameTo(backupFile)) {
             deletedLayers.add(backupFile);
-            pidFile.delete();
+            Utils.deleteFile(pidFile);
         } else {
             Main.warn(String.format("Could not move autosaved file %s to %s folder", f.getName(), deletedLayersDir.getName()));
             // we cannot move to deleted folder, so just try to delete it directly
-            if (!f.delete()) {
-                Main.warn(String.format("Could not delete backup file %s", f));
-            } else if (!pidFile.delete()) {
-                Main.warn(String.format("Could not delete PID file %s", pidFile));
+            if (Utils.deleteFile(f, marktr("Unable to delete backup file {0}"))) {
+                Utils.deleteFile(pidFile, marktr("Unable to delete PID file {0}"));
             }
         }
         while (deletedLayers.size() > PROP_DELETED_LAYERS.get()) {
@@ -389,9 +382,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             if (next == null) {
                 break;
             }
-            if (!next.delete()) {
-                Main.warn(String.format("Could not delete archived backup file %s", next));
-            }
+            Utils.deleteFile(next, marktr("Unable to delete archived backup file {0}"));
         }
     }
 

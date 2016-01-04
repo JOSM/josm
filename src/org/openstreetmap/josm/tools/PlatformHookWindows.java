@@ -189,7 +189,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     @Override
     public boolean rename(File from, File to) {
         if (to.exists())
-            to.delete();
+            Utils.deleteFile(to);
         return from.renameTo(to);
     }
 

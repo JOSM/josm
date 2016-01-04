@@ -325,7 +325,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         }
         // remove old stuff or whole update process is broken
         for (File file: siteCacheFiles) {
-            file.delete();
+            Utils.deleteFile(file);
         }
     }
 

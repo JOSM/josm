@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Unit tests for Session writing.
@@ -107,7 +108,7 @@ public class SessionWriterTest {
             fail(e.getMessage());
         } finally {
             if (file.exists()) {
-                file.delete();
+                Utils.deleteFile(file);
             }
         }
     }

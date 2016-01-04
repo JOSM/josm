@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Image;
@@ -365,9 +366,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
                         Main.pref.getPreferencesDirectory().mkdirs();
                         Main.info("Copying old preferences file to new location");
                         Utils.copyFile(oldPref, newPref);
-                        if (!oldPref.delete()) {
-                            Main.warn("Unable to delete old preferences file: "+oldPref.getPath());
-                        }
+                        Utils.deleteFile(oldPref, marktr("Unable to delete old preferences file {0}"));
                     } catch (IOException e) {
                         Main.error(e);
                         error = true;
