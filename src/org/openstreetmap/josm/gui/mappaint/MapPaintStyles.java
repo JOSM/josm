@@ -26,7 +26,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.mappaint.StyleElementList;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.MapImage;
 import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
