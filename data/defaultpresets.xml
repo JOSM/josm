@@ -947,7 +947,7 @@
         </item> <!-- Ford -->
     </group> <!-- Streets -->
     <group name="Ways" icon="styles/standard/transport/way/way_unclassified.svg">
-        <item name="Track" icon="presets/track1.png" type="way,closedway" preset_name_label="true">
+        <item name="Track" icon="styles/standard/transport/way/track.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=track"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:highway=track"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=track"
@@ -977,7 +977,7 @@
                 <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
             </optional>
         </item> <!-- Track -->
-        <item name="Path" icon="presets/path.png" type="way,closedway" preset_name_label="true">
+        <item name="Path" icon="styles/standard/transport/way/path.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=path"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=path"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=path"
@@ -1015,7 +1015,7 @@
             </optional>
         </item> <!-- Path -->
         <separator/>
-        <item name="Dedicated Bridleway" icon="presets/equestrian.png" type="way" preset_name_label="true">
+        <item name="Dedicated Bridleway" icon="styles/standard/transport/way/dedicated_bridleway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=bridleway"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:highway=bridleway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=bridleway"
@@ -1031,7 +1031,7 @@
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Dedicated Bridleway -->
-        <item name="Cycle Lane/Track" type="way" preset_name_label="true">
+        <item name="Cycle Lane/Track" icon="styles/standard/transport/way/cycle_lane_track.svg" type="way" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Bicycle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Bicycle"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Bicycle"
@@ -1055,7 +1055,7 @@
                 <check key="oneway" text="Oneway" />
             </optional>
         </item> <!-- Cycle Lane/Track -->
-        <item name="Dedicated Cycleway" icon="presets/cycleway.png" type="way" preset_name_label="true">
+        <item name="Dedicated Cycleway" icon="styles/standard/transport/way/dedicated_cycleway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=cycleway"
@@ -1073,7 +1073,7 @@
                 <combo key="foot" text="Pedestrians" values="yes,no" />
             </optional>
         </item> <!-- Dedicated Cycleway -->
-        <item name="Segregated Foot- and Cycleway" icon="presets/foot_and_cycleway_segregated.png" type="way" preset_name_label="true">
+        <item name="Segregated Foot- and Cycleway" icon="styles/standard/transport/way/segregated_foot_cycleway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway" />
@@ -1087,7 +1087,7 @@
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Segregated Foot- and Cycleway -->
-        <item name="Combined Foot- and Cycleway" icon="presets/foot_and_cycleway_combined.png" type="way" preset_name_label="true">
+        <item name="Combined Foot- and Cycleway" icon="styles/standard/transport/way/combined_foot_cycleway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway" />
@@ -1102,7 +1102,7 @@
                 <check key="passing_places" text="Passing Places" />
             </optional>
         </item> <!-- Combined Foot- and Cycleway -->
-        <item name="Dedicated Footway" icon="presets/footway.png" type="way" preset_name_label="true">
+        <item name="Dedicated Footway" icon="styles/standard/transport/way/dedicated_footway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=footway"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:highway=footway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=footway"
@@ -1126,7 +1126,7 @@
                 <text key="width" text="Width (meters)" />
             </optional>
         </item> <!-- Dedicated Footway -->
-        <item name="Steps" icon="presets/steps.png" type="way" preset_name_label="true">
+        <item name="Steps" icon="styles/standard/transport/way/steps.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=steps"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=steps"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:highway=steps"
@@ -2312,9 +2312,9 @@
         </item> <!-- Dock -->
     </group> <!-- Shipping -->
   </group> <!-- Water -->
-  <group name="Transport" icon="presets/railway.svg">
-    <group name="Railway" icon="presets/railway.svg">
-        <item name="Rail" icon="presets/railway.svg" type="way" preset_name_label="true">
+  <group name="Transport" icon="styles/standard/transport/railway/rail.svg">
+    <group name="Railway" icon="styles/standard/transport/railway/rail.svg">
+        <item name="Rail" icon="styles/standard/transport/railway/rail.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=rail"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=rail"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=rail"
@@ -2330,7 +2330,7 @@
                 <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item> <!-- Rail -->
-        <item name="Narrow Gauge Rail" icon="presets/railway.svg" type="way" preset_name_label="true">
+        <item name="Narrow Gauge Rail" icon="styles/standard/transport/railway/narrow_gauge_rail.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=light_rail"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=light_rail"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=light_rail" />
@@ -2340,7 +2340,7 @@
                 <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item> <!-- Narrow Gauge Rail -->
-        <item name="Monorail" icon="presets/railway.svg" type="way" preset_name_label="true">
+        <item name="Monorail" icon="styles/standard/transport/railway/monorail.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=monorail"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=monorail"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=monorail"
@@ -2351,7 +2351,7 @@
                 <reference ref="railway_electrified" />
             </optional>
         </item> <!-- Monorail -->
-        <item name="Preserved" icon="presets/rail_preserved.png" type="way" preset_name_label="true">
+        <item name="Preserved" icon="styles/standard/transport/railway/preserved.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=preserved"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=preserved"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=preserved"
@@ -2362,14 +2362,14 @@
                 <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item> <!-- Preserved -->
-        <item name="Light Rail" icon="presets/rail_light.png" type="way" preset_name_label="true">
+        <item name="Light Rail" icon="styles/standard/transport/railway/light_rail.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=light_rail" />
             <key key="railway" value="light_rail" />
             <optional>
                 <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item> <!-- Light Rail -->
-        <item name="Subway" icon="presets/rail_light.png" type="way" preset_name_label="true">
+        <item name="Subway" icon="styles/standard/transport/railway/subway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=subway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=subway"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=subway"
@@ -2381,7 +2381,7 @@
                 <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item> <!-- Subway -->
-        <item name="Tram" icon="presets/tram.png" type="way" preset_name_label="true">
+        <item name="Tram" icon="styles/standard/transport/railway/tram.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=tram"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=tram"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=tram"
@@ -2394,7 +2394,7 @@
                 <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item> <!-- Tram -->
-        <item name="Bus Guideway" icon="presets/busway.png" type="way" preset_name_label="true">
+        <item name="Bus Guideway" icon="styles/standard/transport/railway/bus_guideway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=bus_guideway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=bus_guideway"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=bus_guideway"
@@ -2412,7 +2412,7 @@
             </optional>
         </item> <!-- Bus Guideway -->
         <separator/>
-        <item name="Disused Rail" icon="presets/railway.svg" type="way" preset_name_label="true">
+        <item name="Disused Rail" icon="styles/standard/transport/railway/disused_rail.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=disused"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=disused"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=disused" />
@@ -2421,7 +2421,7 @@
                 <reference ref="railway_service" />
             </optional>
         </item> <!-- Disused Rail -->
-        <item name="Abandoned Rail" icon="presets/railway.svg" type="way" preset_name_label="true">
+        <item name="Abandoned Rail" icon="styles/standard/transport/railway/abandoned_rail.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=abandoned"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=abandoned"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=abandoned"
@@ -2433,7 +2433,7 @@
             </optional>
         </item> <!-- Abandoned Rail -->
         <separator/>
-        <item name="Level Crossing" icon="presets/level_crossing.png" type="node" preset_name_label="true">
+        <item name="Level Crossing" icon="styles/standard/transport/railway/level_crossing.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=level_crossing"
                   bg.href="http://wiki.openstreetmap.org/wiki/Bg:Tag:railway=level_crossing"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:railway=level_crossing"
@@ -2455,7 +2455,7 @@
                 <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" values_context="crossing:barrier" />
             </optional>
         </item> <!-- Level Crossing -->
-        <item name="Crossing" icon="styles/standard/vehicle/crossing.png" type="node" preset_name_label="true">
+        <item name="Crossing" icon="styles/standard/transport/railway/crossing.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:crossing"
                   bg.href="http://wiki.openstreetmap.org/wiki/Bg:Key:crossing"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:crossing"
@@ -2474,7 +2474,7 @@
                 <combo key="crossing:barrier" text="Barrier" values="yes,no,half,full,double_half" values_context="crossing:barrier" />
             </optional>
         </item> <!-- Crossing -->
-        <item name="Turntable" icon="presets/turntable.png" type="node,closedway" preset_name_label="true">
+        <item name="Turntable" icon="styles/standard/transport/railway/turntable.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=turntable"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=turntable"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=turntable"
@@ -2482,13 +2482,13 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:railway=turntable" />
             <key key="railway" value="turntable" />
         </item> <!-- Turntable -->
-        <item name="Buffer Stop" icon="styles/standard/transport/buffer_stop.png" type="node" preset_name_label="true">
+        <item name="Buffer Stop" icon="styles/standard/transport/railway/buffer_stop.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=buffer_stop"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=buffer_stop"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=buffer_stop" />
             <key key="railway" value="buffer_stop" />
         </item> <!-- Buffer Stop -->
-        <item name="Railway Switch" icon="presets/railway_switch.svg" type="node" preset_name_label="true">
+        <item name="Railway Switch" icon="styles/standard/transport/railway/switch.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=switch"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=switch"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:railway=switch" />
@@ -2496,14 +2496,14 @@
             <text key="ref" text="Reference" />
             <text key="operator" text="Operator" />
         </item> <!-- Railway Switch -->
-        <item name="Railway Signal" icon="styles/standard/vehicle/railway_signal.svg" type="node" preset_name_label="true">
+        <item name="Railway Signal" icon="styles/standard/transport/railway/signal.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=signal"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=signal" />
             <key key="railway" value="signal" />
             <text key="ref" text="Reference" />
             <text key="operator" text="Operator" />
         </item> <!-- Railway Signal -->
-        <item name="Railway milestone" icon="styles/standard/vehicle/milestone.svg" type="node" preset_name_label="true">
+        <item name="Railway milestone" icon="styles/standard/transport/railway/milestone.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=milestone" />
             <key key="railway" value="milestone" />
             <text key="distance" text="Distance (kilometers)" />
