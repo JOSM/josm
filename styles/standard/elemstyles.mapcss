@@ -320,7 +320,8 @@ node[building=garages] {
     set icon_z17;
     text: auto;
 }
-node[entrance=yes] {
+node[entrance=yes],
+node[entrance=staircase] {
     icon-image: "misc/entrance-yes.png";
     set icon_z17;
     text: auto;
@@ -3031,9 +3032,10 @@ area[tourism=guest_house],
 area[tourism=hostel],
 area[tourism=chalet],
 area[tourism=alpine_hut],
+area[tourism=wilderness_hut],
 area[tourism=camp_site],
 area[tourism=caravan_site] {
-    fill-color: hotel#e1a0a2;
+    fill-color: hotel#feced0;
 }
 node[tourism=hotel] {
     icon-image: "accommodation/hotel.svg";
@@ -4976,7 +4978,7 @@ area[setting("partial_fill")] {
     fill-extent: 15;
 }
 
-/* Turn partial fill off and us plain fill, when the partial fill covers about
+/* Turn partial fill off and use plain fill, when the partial fill covers about
    100% of the area. This reduces artifacts (typically for incomplete multipolygons).
    Switching between full and partial fill while drawing an area might be irritating,
    so only do this at low zoom. */
@@ -4985,7 +4987,7 @@ area|z-13[setting("partial_fill")] {
 }
 
 /* Larger extent for closed areas.
-   Turn partial fill off, when it covers more than about 50% of the area. This is avoids
+   Turn partial fill off, when it covers more than about 50% of the area. This avoids
    areas with small unfilled patches in the center. */
 area[setting("partial_fill")]:closed2 {
     fill-extent: 25;
