@@ -460,6 +460,7 @@ public class UnGlueAction extends JosmAction {
      * @param originalNode original node to duplicate
      * @param cmds List of commands that will contain the new "change relation" commands
      * @param newNodes List of nodes that contain the new node
+     * @param removeOldMember whether the membership of the "old node" should be removed
      */
     private static void fixRelations(Node originalNode, Collection<Command> cmds, List<Node> newNodes, boolean removeOldMember) {
         // modify all relations containing the node
