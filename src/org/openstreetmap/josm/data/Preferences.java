@@ -150,6 +150,12 @@ public class Preferences {
     protected final SortedMap<String, String> colornames = new TreeMap<>();
 
     /**
+     * Indicates whether {@link #init(boolean)} completed successfully.
+     * Used to decide whether to write backup preference file in {@link #save()}
+     */
+    protected boolean initSuccessful = false;
+
+    /**
      * Interface for a preference value.
      *
      * Implementations must provide a proper <code>equals</code> method.
@@ -861,7 +867,7 @@ public class Preferences {
         File backupFile = new File(prefFile + "_backup");
 
         // Backup old preferences if there are old preferences
-        if (prefFile.exists()) {
+        if (prefFile.exists() && prefFile.length() > 0 && initSuccessful) {
             Utils.copyFile(prefFile, backupFile);
         }
 
@@ -920,6 +926,7 @@ public class Preferences {
      * @param reset if {@code true}, current settings file is replaced by the default one
      */
     public void init(boolean reset) {
+        initSuccessful = false;
         // get the preferences.
         File prefDir = getPreferencesDirectory();
         if (prefDir.exists()) {
@@ -974,6 +981,7 @@ public class Preferences {
         }
         try {
             load();
+            initSuccessful = true;
         } catch (Exception e) {
             Main.error(e);
             File backupFile = new File(prefDir, "preferences.xml.bak");
