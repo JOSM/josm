@@ -321,8 +321,10 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         popupMenu.add(new AbstractAction(tr("Add toolbar button")) {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                String res = getSelectedPreset().getToolbarString();
-                Main.toolbar.addCustomButton(res, -1, false);
+                final TaggingPreset preset = lsResult.getSelectedValue();
+                if (preset != null) {
+                    Main.toolbar.addCustomButton(preset.getToolbarString(), -1, false);
+                }
             }
         });
         lsResult.addMouseListener(new PopupMenuLauncher(popupMenu));
@@ -353,9 +355,9 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
         final List<PresetClassification> result = classifications.getMatchingPresets(
                 text, onlyApplicable, inTags, getTypesInSelection(), selected);
 
-        TaggingPreset oldPreset = getSelectedPreset();
+        final TaggingPreset oldPreset = lsResult.getSelectedValue();
         lsResultModel.setPresets(result);
-        TaggingPreset newPreset = getSelectedPreset();
+        final TaggingPreset newPreset = lsResult.getSelectedValue();
         if (!Objects.equals(oldPreset, newPreset)) {
             int[] indices = lsResult.getSelectedIndices();
             for (ListSelectionListener listener : listSelectionListeners) {
@@ -521,7 +523,7 @@ public class TaggingPresetSelector extends JPanel implements SelectionChangedLis
     }
 
     /**
-     * Determines, which preset is selected at the current moment
+     * Determines, which preset is selected at the moment. Updates {@link PresetClassification#favoriteIndex}!
      * @return selected preset (as action)
      */
     public synchronized TaggingPreset getSelectedPreset() {
