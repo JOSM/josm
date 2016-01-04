@@ -272,7 +272,7 @@ public class OsmOAuthAuthorizationClient {
     protected String buildOsmLogoutUrl() throws OsmOAuthAuthorizationException {
         try {
             URL autUrl = new URL(oauthProviderParameters.getAuthoriseUrl());
-            URL url = new URL("http", autUrl.getHost(), autUrl.getPort(), "/logout");
+            URL url = new URL(Main.pref.get("oauth.protocol", "https"), autUrl.getHost(), autUrl.getPort(), "/logout");
             return url.toString();
         } catch (MalformedURLException e) {
             throw new OsmOAuthAuthorizationException(e);
@@ -382,7 +382,7 @@ public class OsmOAuthAuthorizationClient {
         try {
             URL url = new URL(buildOsmLogoutUrl());
             synchronized (this) {
-                connection = HttpClient.create(url).connect();
+                connection = HttpClient.create(url).setMaxRedirects(-1).connect();
             }
         } catch (IOException e) {
             throw new OsmOAuthAuthorizationException(e);

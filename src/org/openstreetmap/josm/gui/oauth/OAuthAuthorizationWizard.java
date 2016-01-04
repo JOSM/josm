@@ -167,7 +167,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         getContentPane().add(buildHeaderInfoPanel(), BorderLayout.NORTH);
 
         setTitle(tr("Get an Access Token for ''{0}''", apiUrl));
-        this.setMinimumSize(new Dimension(420, 400));
+        this.setMinimumSize(new Dimension(600, 420));
 
         pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorizationUI(apiUrl);
         pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorizationUI(apiUrl);
