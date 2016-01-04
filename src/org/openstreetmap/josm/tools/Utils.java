@@ -460,7 +460,7 @@ public final class Utils {
      * @param file file to delete
      * and must contain a single parameter <code>{0}</code> for the file path
      * @return {@code true} if and only if the file is successfully deleted; {@code false} otherwise
-     * @since XXXX
+     * @since 9296
      */
     public static boolean deleteFile(File file) {
         return deleteFile(file, marktr("Unable to delete file {0}"));
@@ -472,7 +472,7 @@ public final class Utils {
      * @param warnMsg warning message. It will be translated with {@code tr()}
      * and must contain a single parameter <code>{0}</code> for the file path
      * @return {@code true} if and only if the file is successfully deleted; {@code false} otherwise
-     * @since XXXX
+     * @since 9296
      */
     public static boolean deleteFile(File file, String warnMsg) {
         boolean result = file.delete();
