@@ -43,7 +43,7 @@ public class OsmOAuthAuthorizationClient {
     private final OAuthConsumer consumer;
     private final OAuthProvider provider;
     private boolean canceled;
-    private HttpClient.Response connection;
+    private HttpClient connection;
 
     private static class SessionId {
         private String id;
@@ -182,7 +182,7 @@ public class OsmOAuthAuthorizationClient {
     }
 
     protected String extractToken() {
-        try (BufferedReader r = connection.getContentReader()) {
+        try (BufferedReader r = connection.getResponse().getContentReader()) {
             String c;
             Pattern p = Pattern.compile(".*authenticity_token.*value=\"([^\"]+)\".*");
             while ((c = r.readLine()) != null) {
@@ -199,7 +199,7 @@ public class OsmOAuthAuthorizationClient {
     }
 
     protected SessionId extractOsmSession() {
-        List<String> setCookies = connection.getHeaderFields().get("Set-Cookie");
+        List<String> setCookies = connection.getResponse().getHeaderFields().get("Set-Cookie");
         if (setCookies == null)
             // no cookies set
             return null;
@@ -292,7 +292,8 @@ public class OsmOAuthAuthorizationClient {
             sb.append(buildOsmLoginUrl()).append("?cookie_test=true");
             URL url = new URL(sb.toString());
             synchronized (this) {
-                connection = HttpClient.create(url).connect();
+                connection = HttpClient.create(url);
+                connection.connect();
             }
             SessionId sessionId = extractOsmSession();
             if (sessionId == null)
@@ -321,8 +322,8 @@ public class OsmOAuthAuthorizationClient {
             URL url = new URL(getAuthoriseUrl(requestToken));
             synchronized (this) {
                 connection = HttpClient.create(url)
-                        .setHeader("Cookie", "_osm_session=" + sessionId.id + "; _osm_username=" + sessionId.userName)
-                        .connect();
+                        .setHeader("Cookie", "_osm_session=" + sessionId.id + "; _osm_username=" + sessionId.userName);
+                connection.connect();
             }
             sessionId.token = extractToken();
             if (sessionId.token == null)
@@ -356,14 +357,15 @@ public class OsmOAuthAuthorizationClient {
             client.setMaxRedirects(-1);
 
             synchronized (this) {
-                connection = client.connect();
+                connection = client;
+                connection.connect();
             }
 
             // after a successful login the OSM website sends a redirect to a follow up page. Everything
             // else, including a 200 OK, is a failed login. A 200 OK is replied if the login form with
             // an error page is sent to back to the user.
             //
-            int retCode = connection.getResponseCode();
+            int retCode = connection.getResponse().getResponseCode();
             if (retCode != HttpURLConnection.HTTP_MOVED_TEMP)
                 throw new OsmOAuthAuthorizationException(tr("Failed to authenticate user ''{0}'' with password ''***'' as OAuth user",
                         userName));
@@ -382,7 +384,8 @@ public class OsmOAuthAuthorizationClient {
         try {
             URL url = new URL(buildOsmLogoutUrl());
             synchronized (this) {
-                connection = HttpClient.create(url).setMaxRedirects(-1).connect();
+                connection = HttpClient.create(url).setMaxRedirects(-1);
+                connection.connect();
             }
         } catch (IOException e) {
             throw new OsmOAuthAuthorizationException(e);
@@ -431,10 +434,11 @@ public class OsmOAuthAuthorizationClient {
             client.setRequestBody(request.getBytes(StandardCharsets.UTF_8));
 
             synchronized (this) {
-                connection = client.connect();
+                connection = client;
+                connection.connect();
             }
 
-            int retCode = connection.getResponseCode();
+            int retCode = connection.getResponse().getResponseCode();
             if (retCode != HttpURLConnection.HTTP_OK)
                 throw new OsmOAuthAuthorizationException(tr("Failed to authorize OAuth request  ''{0}''", requestToken.getKey()));
         } catch (IOException e) {

@@ -324,7 +324,7 @@ public class PlaceSelection implements DownloadSelection {
     class NameQueryTask extends PleaseWaitRunnable {
 
         private final String searchExpression;
-        private HttpClient.Response connection;
+        private HttpClient connection;
         private List<SearchResult> data;
         private boolean canceled;
         private final Server useserver;
@@ -367,9 +367,10 @@ public class PlaceSelection implements DownloadSelection {
                 getProgressMonitor().indeterminateSubTask(tr("Querying name server ..."));
                 URL url = new URL(urlString);
                 synchronized (this) {
-                    connection = HttpClient.create(url).connect();
+                    connection = HttpClient.create(url);
+                    connection.connect();
                 }
-                try (Reader reader = connection.getContentReader()) {
+                try (Reader reader = connection.getResponse().getContentReader()) {
                     InputSource inputSource = new InputSource(reader);
                     NameFinderResultParser parser = new NameFinderResultParser();
                     Utils.parseSafeSAX(inputSource, parser);

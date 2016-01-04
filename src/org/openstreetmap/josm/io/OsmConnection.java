@@ -30,7 +30,7 @@ import oauth.signpost.exception.OAuthException;
  */
 public class OsmConnection {
     protected boolean cancel;
-    protected HttpClient.Response activeConnection;
+    protected HttpClient activeConnection;
     protected OAuthParameters oauthParameters;
 
     /**

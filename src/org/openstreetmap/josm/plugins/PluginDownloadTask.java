@@ -43,7 +43,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
     private final Collection<PluginInformation> failed = new LinkedList<>();
     private final Collection<PluginInformation> downloaded = new LinkedList<>();
     private boolean canceled;
-    private HttpClient.Response downloadConnection;
+    private HttpClient downloadConnection;
 
     /**
      * Creates the download task
@@ -123,10 +123,10 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
             URL url = new URL(pi.downloadlink);
             synchronized (this) {
                 downloadConnection = HttpClient.create(url)
-                        .setAccept(PLUGIN_MIME_TYPES)
-                        .connect();
+                        .setAccept(PLUGIN_MIME_TYPES);
+                downloadConnection.connect();
             }
-            try (InputStream in = downloadConnection.getContent()) {
+            try (InputStream in = downloadConnection.getResponse().getContent()) {
                 Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (MalformedURLException e) {

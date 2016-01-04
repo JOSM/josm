@@ -45,7 +45,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     private boolean canceled;
     private final Component parent;
     private final String apiUrl;
-    private HttpClient.Response connection;
+    private HttpClient connection;
 
     /**
      * Create the task
@@ -106,20 +106,22 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             final HttpClient client = HttpClient.create(url);
             sign(client);
             synchronized (this) {
-                connection = client.connect();
+                connection = client;
+                connection.connect();
             }
 
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
+            if (connection.getResponse().getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
                 throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,
                         tr("Retrieving user details with Access Token Key ''{0}'' was rejected.", token.getKey()), null);
 
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN)
+            if (connection.getResponse().getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN)
                 throw new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN,
                         tr("Retrieving user details with Access Token Key ''{0}'' was forbidden.", token.getKey()), null);
 
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
-                throw new OsmApiException(connection.getResponseCode(), connection.getHeaderField("Error"), null);
-            Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connection.getContent());
+            if (connection.getResponse().getResponseCode() != HttpURLConnection.HTTP_OK)
+                throw new OsmApiException(connection.getResponse().getResponseCode(),
+                        connection.getResponse().getHeaderField("Error"), null);
+            Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connection.getResponse().getContent());
             return OsmServerUserInfoReader.buildFromXML(d);
         } catch (SAXException | ParserConfigurationException e) {
             throw new XmlParsingException(e);
