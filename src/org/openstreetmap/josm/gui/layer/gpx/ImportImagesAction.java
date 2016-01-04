@@ -41,6 +41,9 @@ public class ImportImagesAction extends AbstractAction {
     }
 
     private static void addRecursiveFiles(List<File> files, File[] sel) {
+        if (sel == null) { // listFiles might return null
+            return;
+        }
         for (File f : sel) {
             if (f.isDirectory()) {
                 addRecursiveFiles(files, f.listFiles());
