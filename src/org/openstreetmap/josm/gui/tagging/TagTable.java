@@ -297,8 +297,7 @@ public class TagTable extends JTable  {
                 getCellEditor().stopCellEditing();
             }
             final int rowIdx = model.getRowCount()-1;
-            String key = ((TagModel) model.getValueAt(rowIdx, 0)).getName();
-            if (!key.trim().isEmpty()) {
+            if (rowIdx < 0 || !((TagModel) model.getValueAt(rowIdx, 0)).getName().trim().isEmpty()) {
                 model.appendNewTag();
             }
             requestFocusInCell(model.getRowCount()-1, 0);
