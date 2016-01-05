@@ -18,8 +18,8 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -324,7 +324,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         // we will run up to MAX_DOWNLOAD_THREADS concurrent fetchers.
         int threadsNumber = Main.pref.getInteger("osm.download.threads", OsmApi.MAX_DOWNLOAD_THREADS);
         threadsNumber = Math.min(Math.max(threadsNumber, 1), OsmApi.MAX_DOWNLOAD_THREADS);
-        Executor exec = Executors.newFixedThreadPool(threadsNumber, Utils.newThreadFactory(getClass() + "-%d", Thread.NORM_PRIORITY));
+        final ExecutorService exec = Executors.newFixedThreadPool(
+                threadsNumber, Utils.newThreadFactory(getClass() + "-%d", Thread.NORM_PRIORITY));
         CompletionService<FetchResult> ecs = new ExecutorCompletionService<>(exec);
         List<Future<FetchResult>> jobs = new ArrayList<>();
         while (!toFetch.isEmpty()) {
@@ -346,7 +347,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                 Main.error(e);
             }
         }
-        // Cancel requests if the user choosed to
+        exec.shutdown();
+        // Cancel requests if the user chose to
         if (isCanceled()) {
             for (Future<FetchResult> job : jobs) {
                 job.cancel(true);
