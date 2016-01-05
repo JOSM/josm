@@ -110,11 +110,14 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
     protected void adaptRequest(HttpClient request) {
         // see https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#timeout
         final Matcher timeoutMatcher = Pattern.compile("\\[timeout:(\\d+)\\]").matcher(overpassQuery);
+        final int timeout;
         if (timeoutMatcher.find()) {
-            final int timeout = 1000 * Integer.parseInt(timeoutMatcher.group(1));
-            request.setConnectTimeout(timeout);
-            request.setReadTimeout(timeout);
+            timeout = 1000 * Integer.parseInt(timeoutMatcher.group(1));
+        } else {
+            timeout = 180_000;
         }
+        request.setConnectTimeout(timeout);
+        request.setReadTimeout(timeout);
     }
 
     @Override
