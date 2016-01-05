@@ -30,4 +30,11 @@ class MultiFetchOverpassObjectReader extends MultiFetchServerObjectReader {
     protected String getBaseUrl() {
         return OverpassServerPreference.getOverpassServer();
     }
+
+    @Override
+    protected boolean recursesDown() {
+        // see https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#Recurse_down_.28.3E.29 for documentation
+        // accomplished using >; in the query string above
+        return true;
+    }
 }
