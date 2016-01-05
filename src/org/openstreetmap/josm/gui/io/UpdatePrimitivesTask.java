@@ -91,13 +91,6 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
         for (OsmPrimitive primitive : toUpdate) {
             if (primitive instanceof Node && !primitive.isNew()) {
                 reader.append(primitive);
-            } else if (primitive instanceof Way) {
-                Way way = (Way) primitive;
-                for (Node node: way.getNodes()) {
-                    if (!node.isNew()) {
-                        reader.append(node);
-                    }
-                }
             }
         }
     }
@@ -106,6 +99,7 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
         getProgressMonitor().indeterminateSubTask(tr("Initializing ways to update ..."));
         for (OsmPrimitive primitive : toUpdate) {
             if (primitive instanceof Way && !primitive.isNew()) {
+                // this also adds way nodes
                 reader.append(primitive);
             }
         }
@@ -115,6 +109,7 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
         getProgressMonitor().indeterminateSubTask(tr("Initializing relations to update ..."));
         for (OsmPrimitive primitive : toUpdate) {
             if (primitive instanceof Relation && !primitive.isNew()) {
+                // this also adds relation members
                 reader.append(primitive);
             }
         }

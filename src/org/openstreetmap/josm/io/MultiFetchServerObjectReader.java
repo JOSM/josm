@@ -170,7 +170,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
     public MultiFetchServerObjectReader appendWay(Way way) {
         if (way == null) return this;
         if (way.isNew()) return this;
-        for (Node node: way.getNodes()) {
+        for (Node node: !recursesDown() ? way.getNodes() : Collections.<Node>emptyList()) {
             if (!node.isNew()) {
                 remember(node.getPrimitiveId());
             }
@@ -189,7 +189,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         if (relation == null) return this;
         if (relation.isNew()) return this;
         remember(relation.getPrimitiveId());
-        for (RelationMember member : relation.getMembers()) {
+        for (RelationMember member : !recursesDown() ? relation.getMembers() : Collections.<RelationMember>emptyList()) {
             if (OsmPrimitiveType.from(member.getMember()).equals(OsmPrimitiveType.RELATION)) {
                 // avoid infinite recursion in case of cyclic dependencies in relations
                 //
@@ -402,6 +402,15 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      */
     public Set<PrimitiveId> getMissingPrimitives() {
         return missingPrimitives;
+    }
+
+    /**
+     * Whether this reader fetches nodes when loading ways, or members when loading relations.
+     *
+     * @return {@code true} if the reader recurses down
+     */
+    protected boolean recursesDown() {
+        return false;
     }
 
     /**
