@@ -817,13 +817,11 @@ public class MainMenu extends JMenuBar {
             }
         });
 
-        helpMenu.add(statusreport);
-        helpMenu.add(reportbug);
+        add(helpMenu, statusreport);
+        add(helpMenu, reportbug);
         helpMenu.addSeparator();
 
-        // FIXME why is help not a JosmAction?
-        helpMenu.add(help).setAccelerator(Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1,
-                Shortcut.DIRECT).getKeyStroke());
+        add(helpMenu, help);
         add(helpMenu, about);
         add(Box.createHorizontalGlue());
         final DisableShortcutsOnFocusGainedTextField searchField = createSearchField();
