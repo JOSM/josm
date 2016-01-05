@@ -383,8 +383,12 @@ public class OsmReader extends AbstractReader {
     }
 
     protected void parseUnknown(boolean printWarning) throws XMLStreamException {
-        if (printWarning) {
-            Main.info(tr("Undefined element ''{0}'' found in input stream. Skipping.", parser.getLocalName()));
+        final String element = parser.getLocalName();
+        if (printWarning && ("note".equals(element) || "meta".equals(element))) {
+            // we know that Overpass API returns those elements
+            Main.debug(tr("Undefined element ''{0}'' found in input stream. Skipping.", element));
+        } else if (printWarning) {
+            Main.info(tr("Undefined element ''{0}'' found in input stream. Skipping.", element));
         }
         while (true) {
             int event = parser.next();
