@@ -191,7 +191,7 @@ public final class HelpUtil {
         if (Main.main != null && Main.main.menu != null) {
             return Main.main.menu.help;
         }
-        return new HelpAction();
+        return HelpAction.createWithoutShortcut();
     }
 
     /**

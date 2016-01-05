@@ -6,30 +6,42 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.OnlineResource;
-import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Open a help browser and displays lightweight online help.
  * @since 155
  */
-public class HelpAction extends AbstractAction {
+public class HelpAction extends JosmAction {
 
     /**
      * Constructs a new {@code HelpAction}.
      */
     public HelpAction() {
-        super(tr("Help"));
-        new ImageProvider("help").getResource().getImageIcon(this);
-        putValue("toolbar", "help");
+        this(true);
+    }
+
+    private HelpAction(boolean shortcut) {
+        super(tr("Help"), "help", null,
+                shortcut ? Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1, Shortcut.DIRECT) : null,
+                true);
         setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
+    }
+
+    /**
+     * Constructs a new {@code HelpAction} without assigning a shortcut.
+     * @return a new {@code HelpAction}
+     */
+    public static HelpAction createWithoutShortcut() {
+        return new HelpAction(false);
     }
 
     @Override
