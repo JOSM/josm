@@ -760,7 +760,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
         private final JMenuItem jumpButton = add(Main.main.menu.jumpToAct);
 
+        /** Icons for selecting {@link SystemOfMeasurement} */
         private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<>();
+        /** Icons for selecting {@link CoordinateFormat}  */
+        private final Collection<JCheckBoxMenuItem> coordinateFormatItems = new ArrayList<>();
 
         private final JSeparator separator = new JSeparator();
 
@@ -783,6 +786,16 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                 somItems.add(item);
                 add(item);
             }
+            for (final CoordinateFormat format : CoordinateFormat.values()) {
+                JCheckBoxMenuItem item = new JCheckBoxMenuItem(new AbstractAction(format.getDisplayName()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        CoordinateFormat.setCoordinateFormat(format);
+                    }
+                });
+                coordinateFormatItems.add(item);
+                add(item);
+            }
 
             add(separator);
             add(doNotHide);
@@ -797,7 +810,12 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                         item.setSelected(item.getText().equals(currentSOM));
                         item.setVisible(distText.equals(invoker));
                     }
-                    separator.setVisible(distText.equals(invoker));
+                    final String currentCorrdinateFormat = CoordinateFormat.getDefaultFormat().getDisplayName();
+                    for (JMenuItem item : coordinateFormatItems) {
+                        item.setSelected(currentCorrdinateFormat.equals(item.getText()));
+                        item.setVisible(latText.equals(invoker) || lonText.equals(invoker));
+                    }
+                    separator.setVisible(distText.equals(invoker) || latText.equals(invoker) || lonText.equals(invoker));
                     doNotHide.setSelected(Main.pref.getBoolean("statusbar.always-visible", true));
                 }
 
