@@ -140,7 +140,7 @@ public class AreaElement extends StyleElement {
         int hash = 3;
         hash = 61 * hash + color.hashCode();
         hash = 61 * hash + (extent != null ? Float.floatToIntBits(extent) : 0);
-        hash = 61 * hash + (extentThreshold != null ? Float.floatToIntBits(extent) : 0);
+        hash = 61 * hash + (extentThreshold != null ? Float.floatToIntBits(extentThreshold) : 0);
         hash = 61 * hash + (fillImage != null ? fillImage.hashCode() : 0);
         hash = 61 * hash + (text != null ? text.hashCode() : 0);
         return hash;
