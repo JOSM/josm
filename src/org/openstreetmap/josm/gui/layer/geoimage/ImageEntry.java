@@ -11,6 +11,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
+import org.openstreetmap.josm.data.coor.CachedLatLon;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.ExifReader;
+
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.lang.CompoundException;
 import com.drew.metadata.Directory;
@@ -18,11 +24,6 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.GpsDirectory;
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.SystemOfMeasurement;
-import org.openstreetmap.josm.data.coor.CachedLatLon;
-import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.tools.ExifReader;
 
 /**
  * Stores info about each image
@@ -431,6 +432,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      * Extract GPS metadata from image EXIF. Has no effect if the image file is not set
      *
      * If successful, fills in the LatLon, speed, elevation, image direction, and other attributes
+     * @since 9270
      */
     public void extractExif() {
 
@@ -447,6 +449,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             dirExif = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
             dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
         } catch (CompoundException | IOException p) {
+            Main.warn(p);
             setExifCoor(null);
             setPos(null);
             return;
@@ -458,7 +461,17 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
                 setExifOrientation(orientation);
             }
         } catch (MetadataException ex) {
-            Main.debug(ex.getMessage());
+            if (Main.isDebugEnabled()) {
+                Main.debug(ex.getMessage());
+            }
+        }
+
+        // Changed to silently cope with no time info in exif. One case
+        // of person having time that couldn't be parsed, but valid GPS info
+        try {
+            setExifTime(ExifReader.readTime(file));
+        } catch (ParseException ex) {
+            setExifTime(null);
         }
 
         if (dirGps == null) {
@@ -480,7 +493,9 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             // default is K (km/h)
             setSpeed(speed);
         } catch (Exception ex) {
-            Main.debug(ex.getMessage());
+            if (Main.isDebugEnabled()) {
+                Main.debug(ex.getMessage());
+            }
         }
 
         try {
@@ -491,7 +506,9 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             }
             setElevation(ele);
         } catch (MetadataException ex) {
-            Main.debug(ex.getMessage());
+            if (Main.isDebugEnabled()) {
+                Main.debug(ex.getMessage());
+            }
         }
 
         try {
@@ -511,15 +528,9 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
                 setExifImgDir(direction);
             }
         } catch (Exception ex) { // (CompoundException and other exceptions, e.g. #5271)
-            Main.debug(ex.getMessage());
-        }
-
-        // Changed to silently cope with no time info in exif. One case
-        // of person having time that couldn't be parsed, but valid GPS info
-        try {
-            setExifTime(ExifReader.readTime(file));
-        } catch (ParseException ex) {
-            setExifTime(null);
+            if (Main.isDebugEnabled()) {
+                Main.debug(ex.getMessage());
+            }
         }
 
         // Time and date. We can have these cases:
