@@ -69,6 +69,7 @@ public final class ShowStatusReportAction extends JosmAction {
      */
     public static String getReportHeader() {
         StringBuilder text = new StringBuilder();
+        String runtimeVersion = System.getProperty("java.runtime.version");
         text.append(Version.getInstance().getReleaseAttributes())
             .append("\nIdentification: ").append(Version.getInstance().getAgentString())
             .append("\nMemory Usage: ")
@@ -78,7 +79,7 @@ public final class ShowStatusReportAction extends JosmAction {
             .append(" MB (")
             .append(Runtime.getRuntime().freeMemory()/1024/1024)
             .append(" MB allocated, but free)\nJava version: ")
-            .append(System.getProperty("java.version")).append(", ")
+            .append(runtimeVersion != null ? runtimeVersion : System.getProperty("java.version")).append(", ")
             .append(System.getProperty("java.vendor")).append(", ")
             .append(System.getProperty("java.vm.name")).append('\n');
         if (Main.platform.getClass() == PlatformHookUnixoid.class) {
