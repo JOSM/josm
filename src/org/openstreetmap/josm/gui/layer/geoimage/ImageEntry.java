@@ -444,6 +444,14 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             return;
         }
 
+        // Changed to silently cope with no time info in exif. One case
+        // of person having time that couldn't be parsed, but valid GPS info
+        try {
+            setExifTime(ExifReader.readTime(file));
+        } catch (ParseException ex) {
+            setExifTime(null);
+        }
+
         try {
             metadata = JpegMetadataReader.readMetadata(file);
             dirExif = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
@@ -464,14 +472,6 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             if (Main.isDebugEnabled()) {
                 Main.debug(ex.getMessage());
             }
-        }
-
-        // Changed to silently cope with no time info in exif. One case
-        // of person having time that couldn't be parsed, but valid GPS info
-        try {
-            setExifTime(ExifReader.readTime(file));
-        } catch (ParseException ex) {
-            setExifTime(null);
         }
 
         if (dirGps == null) {
