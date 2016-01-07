@@ -648,6 +648,12 @@ public abstract class Condition {
                 return MultipolygonCache.getInstance().get(Main.map.mapView, (Relation) e.osm).getOpenEnds().isEmpty();
             return false;
         }
+
+        static boolean selected(Environment e) {
+            Cascade c = e.mc.getCascade(e.layer);
+            c.setDefaultSelectedHandling(false);
+            return e.osm.isSelected();
+        }
     }
 
     public static class PseudoClassCondition extends Condition {

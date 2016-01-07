@@ -23,6 +23,8 @@ public final class Cascade implements Cloneable {
 
     private Map<String, Object> prop = new HashMap<>();
 
+    private boolean defaultSelectedHandling = true;
+
     private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
 
     public <T> T get(String key, T def, Class<T> klass) {
@@ -223,5 +225,13 @@ public final class Cascade implements Cloneable {
 
     public boolean containsKey(String key) {
         return prop.containsKey(key);
+    }
+
+    public boolean isDefaultSelectedHandling() {
+        return defaultSelectedHandling;
+    }
+
+    public void setDefaultSelectedHandling(boolean defaultSelectedHandling) {
+        this.defaultSelectedHandling = defaultSelectedHandling;
     }
 }

@@ -80,7 +80,7 @@ public class RepeatImageElement extends StyleElement {
 
     @Override
     public int hashCode() {
-        int hash = 7;
+        int hash = super.hashCode();
         hash = 83 * hash + this.pattern.hashCode();
         hash = 83 * hash + Float.floatToIntBits(this.offset);
         hash = 83 * hash + Float.floatToIntBits(this.spacing);

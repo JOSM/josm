@@ -137,7 +137,7 @@ public class AreaElement extends StyleElement {
 
     @Override
     public int hashCode() {
-        int hash = 3;
+        int hash = super.hashCode();
         hash = 61 * hash + color.hashCode();
         hash = 61 * hash + (extent != null ? Float.floatToIntBits(extent) : 0);
         hash = 61 * hash + (extentThreshold != null ? Float.floatToIntBits(extentThreshold) : 0);
