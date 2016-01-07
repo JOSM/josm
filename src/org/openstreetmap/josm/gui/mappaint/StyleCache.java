@@ -1,42 +1,76 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.util.Arrays;
+
 import org.openstreetmap.josm.data.osm.Storage;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Caches styles for a single primitive.
  */
-public final class StyleCache extends DividedScale<StyleElementList> {
+public final class StyleCache {
 
     // TODO: clean up the intern pool from time to time (after purge or layer removal)
     private static final Storage<StyleCache> internPool = new Storage<>();
 
     public static final StyleCache EMPTY_STYLECACHE = (new StyleCache()).intern();
 
+    private static final int PLAIN = 0;
+    private static final int SELECTED = 1;
+
+    @SuppressWarnings("unchecked")
+    private final DividedScale<StyleElementList>[] states = (DividedScale<StyleElementList>[]) new DividedScale[2];
+
     private StyleCache(StyleCache sc) {
-        super(sc);
+        states[0] = sc.states[0];
+        states[1] = sc.states[1];
     }
 
     private StyleCache() {
-        super();
     }
 
-    /**
-     * Add data object which is valid for the given range.
-     *
-     * This is only possible, if there is no data for the given range yet.
-     *
-     * @param o data object
-     * @param r the valid range
-     * @return a new, updated, <code>DividedScale</code> object
-     */
-    @Override
-    public StyleCache put(StyleElementList o, Range r) {
+    public StyleCache put(StyleElementList o, Range r, boolean selected) {
         StyleCache s = new StyleCache(this);
-        s.putImpl(o, r.getLower(), r.getUpper());
-        s.consistencyTest();
+
+        int idx = getIndex(selected);
+        DividedScale<StyleElementList> ds = s.states[idx];
+        if (ds == null) {
+            ds = s.states[idx] = new DividedScale<>();
+        }
+        ds.putImpl(o, r.getLower(), r.getUpper());
+        ds.consistencyTest();
         s.intern();
         return s;
+    }
+
+    public Pair<StyleElementList, Range> getWithRange(double scale, boolean selected) {
+        int idx = getIndex(selected);
+        if (states[idx] == null) {
+            return Pair.create(null, Range.ZERO_TO_INFINITY);
+        }
+        return states[idx].getWithRange(scale);
+    }
+
+    private int getIndex(boolean selected) {
+        return selected ? SELECTED : PLAIN;
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(this.states);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final StyleCache other = (StyleCache) obj;
+        return Arrays.deepEquals(this.states, other.states);
     }
 
     /**

@@ -31,12 +31,14 @@ public abstract class StyleElement implements StyleKeys {
     public float objectZIndex;
     public boolean isModifier;  // false, if style can serve as main style for the
     // primitive; true, if it is a highlight or modifier
+    public boolean defaultSelectedHandling;
 
-    public StyleElement(float major_z_index, float z_index, float object_z_index, boolean isModifier) {
+    public StyleElement(float major_z_index, float z_index, float object_z_index, boolean isModifier, boolean defaultSelectedHandling) {
         this.majorZIndex = major_z_index;
         this.zIndex = z_index;
         this.objectZIndex = object_z_index;
         this.isModifier = isModifier;
+        this.defaultSelectedHandling = defaultSelectedHandling;
     }
 
     protected StyleElement(Cascade c, float default_major_z_index) {
@@ -44,6 +46,7 @@ public abstract class StyleElement implements StyleKeys {
         zIndex = c.get(Z_INDEX, 0f, Float.class);
         objectZIndex = c.get(OBJECT_Z_INDEX, 0f, Float.class);
         isModifier = c.get(MODIFIER, Boolean.FALSE, Boolean.class);
+        defaultSelectedHandling = c.isDefaultSelectedHandling();
     }
 
     /**

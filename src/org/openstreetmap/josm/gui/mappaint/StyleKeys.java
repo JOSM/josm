@@ -53,6 +53,7 @@ public interface StyleKeys {
     String TEXT_OFFSET_Y = "text-offset-y";
     String TEXT_OPACITY = "text-opacity";
     String TEXT_POSITION = "text-position";
+    String WAY_DIRECTION_ARROWS = "way-direction-arrows";
     String WIDTH = "width";
     String Z_INDEX = "z-index";
 

@@ -31,7 +31,8 @@ public class LineElement extends StyleElement {
         if (isAreaEdge) {
             c.put(Z_INDEX, -3f);
         }
-        return createLine(new Environment(null, mc, "default", null));
+        Way w = new Way();
+        return createLine(new Environment(w, mc, "default", null));
     }
 
     public static final LineElement UNTAGGED_WAY = createSimpleLineStyle(null, false);
@@ -41,6 +42,7 @@ public class LineElement extends StyleElement {
     public Color dashesBackground;
     public float offset;
     public float realWidth; // the real width of this line in meter
+    public boolean wayDirectionArrows;
 
     private BasicStroke dashesLine;
 
@@ -60,7 +62,7 @@ public class LineElement extends StyleElement {
     }
 
     protected LineElement(Cascade c, float default_major_z_index, BasicStroke line, Color color, BasicStroke dashesLine,
-            Color dashesBackground, float offset, float realWidth) {
+            Color dashesBackground, float offset, float realWidth, boolean wayDirectionArrows) {
         super(c, default_major_z_index);
         this.line = line;
         this.color = color;
@@ -68,6 +70,7 @@ public class LineElement extends StyleElement {
         this.dashesBackground = dashesBackground;
         this.offset = offset;
         this.realWidth = realWidth;
+        this.wayDirectionArrows = wayDirectionArrows;
     }
 
     public static LineElement createLine(Environment env) {
@@ -263,7 +266,10 @@ public class LineElement extends StyleElement {
             dashesLine = new BasicStroke(width, cap, join, miterlimit, dashes2, dashes2[0] + dashesOffset);
         }
 
-        return new LineElement(c, type.defaultMajorZIndex, line, color, dashesLine, dashesBackground, offset, realWidth);
+        boolean wayDirectionArrows = c.get(type.prefix + WAY_DIRECTION_ARROWS, env.osm.isSelected(), Boolean.class);
+
+        return new LineElement(c, type.defaultMajorZIndex, line, color, dashesLine, dashesBackground,
+                offset, realWidth, wayDirectionArrows);
     }
 
     @Override
@@ -273,7 +279,12 @@ public class LineElement extends StyleElement {
         /* show direction arrows, if draw.segment.relevant_directions_only is not set,
         the way is tagged with a direction key
         (even if the tag is negated as in oneway=false) or the way is selected */
-        boolean showOrientation = !isModifier && (selected || paintSettings.isShowDirectionArrow()) && !paintSettings.isUseRealWidth();
+        boolean showOrientation;
+        if (defaultSelectedHandling) {
+            showOrientation = !isModifier && (selected || paintSettings.isShowDirectionArrow()) && !paintSettings.isUseRealWidth();
+        } else {
+            showOrientation = wayDirectionArrows;
+        }
         boolean showOneway = !isModifier && !selected &&
                 !paintSettings.isUseRealWidth() &&
                 paintSettings.isShowOnewayArrow() && w.hasDirectionKeys();
@@ -299,7 +310,7 @@ public class LineElement extends StyleElement {
         }
 
         Color myColor = color;
-        if (selected) {
+        if (defaultSelectedHandling && selected) {
             myColor = paintSettings.getSelectedColor(color.getAlpha());
         } else if (member || outermember) {
             myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
@@ -341,7 +352,8 @@ public class LineElement extends StyleElement {
             Objects.equals(dashesLine, other.dashesLine) &&
             Objects.equals(dashesBackground, other.dashesBackground) &&
             offset == other.offset &&
-            realWidth == other.realWidth;
+            realWidth == other.realWidth &&
+            wayDirectionArrows == other.wayDirectionArrows;
     }
 
     @Override
@@ -353,6 +365,7 @@ public class LineElement extends StyleElement {
         hash = 29 * hash + (dashesBackground != null ? dashesBackground.hashCode() : 0);
         hash = 29 * hash + Float.floatToIntBits(offset);
         hash = 29 * hash + Float.floatToIntBits(realWidth);
+        hash = 29 * hash + (this.wayDirectionArrows ? 1 : 0);
         return hash;
     }
 

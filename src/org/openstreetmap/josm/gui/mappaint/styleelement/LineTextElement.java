@@ -53,7 +53,9 @@ public class LineTextElement extends StyleElement {
 
     @Override
     public int hashCode() {
-        return text.hashCode();
+        int hash = super.hashCode();
+        hash = 43 * hash + text.hashCode();
+        return hash;
     }
 
     @Override

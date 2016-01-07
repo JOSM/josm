@@ -284,7 +284,7 @@ public class NodeElement extends StyleElement {
                 if (fillColor != null) {
                     if (painter.isInactiveMode() || n.isDisabled()) {
                         fillColor = settings.getInactiveColor();
-                    } else if (selected) {
+                    } else if (defaultSelectedHandling && selected) {
                         fillColor = settings.getSelectedColor(fillColor.getAlpha());
                     } else if (member) {
                         fillColor = settings.getRelationSelectedColor(fillColor.getAlpha());
@@ -294,7 +294,7 @@ public class NodeElement extends StyleElement {
                 if (strokeColor != null) {
                     if (painter.isInactiveMode() || n.isDisabled()) {
                         strokeColor = settings.getInactiveColor();
-                    } else if (selected) {
+                    } else if (defaultSelectedHandling && selected) {
                         strokeColor = settings.getSelectedColor(strokeColor.getAlpha());
                     } else if (member) {
                         strokeColor = settings.getRelationSelectedColor(strokeColor.getAlpha());

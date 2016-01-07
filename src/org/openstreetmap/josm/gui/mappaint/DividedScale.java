@@ -123,9 +123,9 @@ public class DividedScale<T> {
         }
         if (bd.get(i) == lower) {
             if (upper > bd.get(i+1))
-                throw new StyleCache.RangeViolatedError("the new range must be within a single subrange (1)");
+                throw new RangeViolatedError("the new range must be within a single subrange (1)");
             if (data.get(i) != null)
-                throw new StyleCache.RangeViolatedError("the new range must be within a subrange that has no data");
+                throw new RangeViolatedError("the new range must be within a subrange that has no data");
 
             if (bd.get(i+1) == upper) {
                 //  --|-------|--------|--
@@ -141,7 +141,7 @@ public class DividedScale<T> {
             }
         } else {
             if (bd.get(i) < upper)
-                throw new StyleCache.RangeViolatedError("the new range must be within a single subrange (2)");
+                throw new RangeViolatedError("the new range must be within a single subrange (2)");
             if (data.get(i-1) != null)
                 throw new AssertionError();
 

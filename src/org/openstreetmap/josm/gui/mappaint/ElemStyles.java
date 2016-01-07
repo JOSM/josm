@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.mappaint.DividedScale.RangeViolatedError;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement;
@@ -96,7 +97,7 @@ public class ElemStyles implements PreferenceChangedListener {
         if (osm.mappaintStyle == null || osm.mappaintCacheIdx != cacheIdx || scale <= 0) {
             osm.mappaintStyle = StyleCache.EMPTY_STYLECACHE;
         } else {
-            Pair<StyleElementList, Range> lst = osm.mappaintStyle.getWithRange(scale);
+            Pair<StyleElementList, Range> lst = osm.mappaintStyle.getWithRange(scale, osm.isSelected());
             if (lst.a != null)
                 return lst;
         }
@@ -145,8 +146,8 @@ public class ElemStyles implements PreferenceChangedListener {
         }
         StyleCache style = osm.mappaintStyle != null ? osm.mappaintStyle : StyleCache.EMPTY_STYLECACHE;
         try {
-            osm.mappaintStyle = style.put(p.a, p.b);
-        } catch (StyleCache.RangeViolatedError e) {
+            osm.mappaintStyle = style.put(p.a, p.b, osm.isSelected());
+        } catch (RangeViolatedError e) {
             throw new AssertionError("Range violated: " + e.getMessage()
                     + " (object: " + osm.getPrimitiveId() + ", current style: "+osm.mappaintStyle
                     + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b + ')', e);
