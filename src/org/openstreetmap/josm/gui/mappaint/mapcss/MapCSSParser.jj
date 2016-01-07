@@ -7,6 +7,8 @@ options {
 PARSER_BEGIN(MapCSSParser)
 package org.openstreetmap.josm.gui.mappaint.mapcss.parsergen;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -380,6 +382,14 @@ void pp_media(boolean ignore):
     boolean empty = true;
 }
 {
+    {
+        if (sheet != null) {
+            String msg = tr("Detected deprecated ''{0}'' in ''{1}'' which will be removed shortly. Use ''{2}'' instead.",
+                            "@media", sheet.getDisplayString(), "@supports");
+            Main.error(msg);
+            sheet.logWarning(msg);
+        }
+    }
     <PP_MEDIA> pp_w()
     ( q=pp_media_query() { pass = pass || q; empty = false; }
         ( <COMMA> pp_w() q=pp_media_query() { pass = pass || q; } )*
