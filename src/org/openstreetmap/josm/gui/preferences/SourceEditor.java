@@ -700,6 +700,8 @@ public abstract class SourceEditor extends JPanel {
         public String author;
         public String link;
         public String description;
+        /** Style type: can only have one value: "xml". Used to filter out old XML styles. For MapCSS styles, the value is not set. */
+        public String styleType;
         public Integer minJosmVersion;
 
         public ExtendedSourceEntry(String simpleFileName, String url) {
@@ -1417,6 +1419,8 @@ public abstract class SourceEditor extends JPanel {
                                         Main.trace(e.getMessage());
                                     }
                                 }
+                            } else if ("style-type".equals(key)) {
+                                last.styleType = value;
                             }
                         }
                     } else {

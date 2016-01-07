@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.styleelement;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -101,6 +103,7 @@ public class MapImage {
                     public void finished(ImageIcon result) {
                         synchronized (MapImage.this) {
                             if (result == null) {
+                                source.logWarning(tr("Failed to locate image ''{0}''", name));
                                 ImageIcon noIcon = MapPaintStyles.getNoIcon_Icon(source);
                                 img = noIcon == null ? null : (BufferedImage) noIcon.getImage();
                             } else {
