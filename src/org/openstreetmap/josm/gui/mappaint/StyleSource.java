@@ -13,6 +13,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.swing.ImageIcon;
 
@@ -32,7 +35,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class StyleSource extends SourceEntry {
 
-    private final List<Throwable> errors = new ArrayList<>();
+    private final List<Throwable> errors = new CopyOnWriteArrayList<>();
+    private final Set<String> warnings = new CopyOnWriteArraySet<>();
     public File zipIcons;
 
     /** image provider returning the icon for this style */
@@ -41,9 +45,8 @@ public abstract class StyleSource extends SourceEntry {
     /** image provider returning the default icon */
     private static ImageProvider defaultIconProvider;
 
-    /******
-     * The following fields is additional information found in the header
-     * of the source file.
+    /**
+     * The following fields is additional information found in the header of the source file.
      */
     public String icon;
 
@@ -120,12 +123,44 @@ public abstract class StyleSource extends SourceEntry {
         Utils.close(is);
     }
 
+    /**
+     * Log an error that occured with this style.
+     * @param e error
+     */
     public void logError(Throwable e) {
         errors.add(e);
     }
 
+    /**
+     * Log a warning that occured with this style.
+     * @param w warnings
+     */
+    public void logWarning(String w) {
+        warnings.add(w);
+    }
+
+    /**
+     * Replies the collection of errors that occured with this style.
+     * @return collection of errors
+     */
     public Collection<Throwable> getErrors() {
         return Collections.unmodifiableCollection(errors);
+    }
+
+    /**
+     * Replies the collection of warnings that occured with this style.
+     * @return collection of warnings
+     */
+    public Collection<String> getWarnings() {
+        return Collections.unmodifiableCollection(warnings);
+    }
+
+    /**
+     * Determines if this style is valid (no error, no warning).
+     * @return {@code true} if this style has 0 errors and 0 warnings
+     */
+    public boolean isValid() {
+        return errors.isEmpty() && warnings.isEmpty();
     }
 
     /**
@@ -179,7 +214,9 @@ public abstract class StyleSource extends SourceEntry {
     public final ImageProvider getIconProvider() {
         ImageProvider i = getSourceIconProvider();
         if (!getErrors().isEmpty()) {
-            i = new ImageProvider(i).addOverlay(new ImageOverlay(new ImageProvider("dialogs/mappaint/error_small")));
+            i = new ImageProvider(i).addOverlay(new ImageOverlay(new ImageProvider("misc", "error"), 0.5, 0.5, 1, 1));
+        } else if (!getWarnings().isEmpty()) {
+            i = new ImageProvider(i).addOverlay(new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1, 1));
         }
         return i;
     }
@@ -199,12 +236,12 @@ public abstract class StyleSource extends SourceEntry {
      * @return tooltip text containing error status
      */
     public String getToolTipText() {
-        if (errors.isEmpty())
+        if (errors.isEmpty() && warnings.isEmpty())
             return null;
-        else
-            return trn("There was an error when loading this style. Select ''Info'' from the right click menu for details.",
-                    "There were {0} errors when loading this style. Select ''Info'' from the right click menu for details.",
-                    errors.size(), errors.size());
+        int n = errors.size() + warnings.size();
+        return trn("There was an error when loading this style. Select ''Info'' from the right click menu for details.",
+                "There were {0} errors when loading this style. Select ''Info'' from the right click menu for details.",
+                n, n);
     }
 
     public Color getBackgroundColorOverride() {

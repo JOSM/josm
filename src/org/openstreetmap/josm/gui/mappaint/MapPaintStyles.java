@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -269,11 +268,11 @@ public final class MapPaintStyles {
                 Main.error(e);
             }
         }
-        if (Main.isDebugEnabled() || !source.getErrors().isEmpty()) {
+        if (Main.isDebugEnabled() || !source.isValid()) {
             final long elapsedTime = System.currentTimeMillis() - startTime;
             String message = "Initializing map style " + source.url + " completed in " + Utils.getDurationString(elapsedTime);
-            if (!source.getErrors().isEmpty()) {
-                Main.warn(message + " (" + source.getErrors().size() + " errors)");
+            if (!source.isValid()) {
+                Main.warn(message + " (" + source.getErrors().size() + " errors, " + source.getWarnings().size() + " warnings)");
             } else {
                 Main.debug(message);
             }
@@ -444,9 +443,9 @@ public final class MapPaintStyles {
     /**
      * Add a new map paint style.
      * @param entry map paint style
-     * @return list of errors that occured during loading
+     * @return loaded style source, or {@code null}
      */
-    public static Collection<Throwable> addStyle(SourceEntry entry) {
+    public static StyleSource addStyle(SourceEntry entry) {
         StyleSource source = fromSourceEntry(entry);
         if (source != null) {
             styles.add(source);
@@ -457,9 +456,8 @@ public final class MapPaintStyles {
             if (Main.isDisplayingMapView()) {
                 Main.map.mapView.repaint();
             }
-            return source.getErrors();
         }
-        return Collections.emptyList();
+        return source;
     }
 
     /***********************************

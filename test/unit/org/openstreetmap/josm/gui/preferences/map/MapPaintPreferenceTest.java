@@ -13,6 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 
@@ -40,14 +41,23 @@ public class MapPaintPreferenceTest {
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());
         Map<String, Collection<Throwable>> allErrors = new HashMap<>();
+        Map<String, Collection<String>> allWarnings = new HashMap<>();
         for (ExtendedSourceEntry source : sources) {
-            System.out.println(source.url);
-            Collection<Throwable> errors = MapPaintStyles.addStyle(source);
-            System.out.println(errors.isEmpty() ? " => OK" : " => KO");
-            if (!errors.isEmpty()) {
-                allErrors.put(source.url, errors);
+            // Do not validate XML styles
+            if (!"xml".equalsIgnoreCase(source.styleType)) {
+                System.out.println(source.url);
+                StyleSource style = MapPaintStyles.addStyle(source);
+                System.out.println(style.isValid() ? " => OK" : " => KO");
+                Collection<Throwable> errors = style.getErrors();
+                Collection<String> warnings = style.getWarnings();
+                if (!errors.isEmpty()) {
+                    allErrors.put(source.url, errors);
+                }
+                if (!warnings.isEmpty()) {
+                    allWarnings.put(source.url, warnings);
+                }
             }
         }
-        assertTrue(allErrors.toString(), allErrors.isEmpty());
+        assertTrue(allErrors.toString()+"\n"+allWarnings.toString(), allErrors.isEmpty() && allWarnings.isEmpty());
     }
 }
