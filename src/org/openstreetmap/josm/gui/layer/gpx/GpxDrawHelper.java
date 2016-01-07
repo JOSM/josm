@@ -240,22 +240,16 @@ public class GpxDrawHelper {
                             double vel = c.greatCircleDistance(oldWp.getCoor())
                                     / (trkPnt.time - oldWp.time);
                             velocities.add(vel);
-                            if (vel > maxval) {
-                                maxval = vel;
-                            }
-                            if (vel < minval) {
-                                minval = vel;
-                            }
                         }
                         oldWp = trkPnt;
                     }
                 }
                 Collections.sort(velocities);
-                minval = velocities.get(velocities.size() / 20); // 5% percentile to remove outliers
-                maxval = velocities.get(velocities.size() * 19 / 20); // 95% percentile to remove outliers
-                if (minval >= maxval) {
+                if (velocities.isEmpty()) {
                     velocityScale.setRange(0, 120/3.6);
                 } else {
+                    minval = velocities.get(velocities.size() / 20); // 5% percentile to remove outliers
+                    maxval = velocities.get(velocities.size() * 19 / 20); // 95% percentile to remove outliers
                     velocityScale.setRange(minval, maxval);
                 }
             } else if (colored == ColorMode.HDOP) {
