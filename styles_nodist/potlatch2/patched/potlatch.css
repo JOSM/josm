@@ -11,6 +11,6 @@ way[is_prop_set("prop_area_small_name")] {text-color: black; font-size: 10; text
 /*way[_status=no]::status       { z-index: 0; width: eval('_width+7'); color: #AA0000; }
 way[_status=partial]::status  { z-index: 0; width: eval('_width+7'); color: #AA0000; opacity: 0.6; }
 way[_status=unsure]::status   { z-index: 0; width: eval('_width+7'); color: darkorange; opacity: 0.6; }
-node[_status=no]::status      { z-index: 0; icon-image: square; icon-width: eval('_width+7'); color: #AA0000; }
-node[_status=partial]::status { z-index: 0; icon-image: square; icon-width: eval('_width+7'); color: #AA0000; opacity: 0.6; }
-node[_status=unsure]::status  { z-index: 0; icon-image: square; icon-width: eval('_width+7'); color: darkorange; opacity: 0.6; }*/
+node[_status=no]::status      { z-index: 0; i|||con-image: square; icon-width: eval('_width+7'); color: #AA0000; }
+node[_status=partial]::status { z-index: 0; i|||con-image: square; icon-width: eval('_width+7'); color: #AA0000; opacity: 0.6; }
+node[_status=unsure]::status  { z-index: 0; i|||con-image: square; icon-width: eval('_width+7'); color: darkorange; opacity: 0.6; }*/

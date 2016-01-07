@@ -128,7 +128,7 @@ node[highway=crossing] { icon-image: icons/transport_zebracrossing.n.16.png; z-i
 /* Misc */
 node[leisure=playground] { icon-image: icons/amenity_playground.n.16.png; z-index: 20; }
 node[leisure=sports_centre] { icon-image: icons/sport_leisure_centre.n.16.png; z-index: 20; text-offset:0; text: auto; font-size: 10; z-index: 20; }
-/* node[landuse=cemetery], node[landuse=grave_yard] { icon-image: icons/?.png; z-index: 20; } */
+/* node[landuse=cemetery], node[landuse=grave_yard] { i|||con-image: icons/?.png; z-index: 20; } */
 node[man_made=survey_point] { icon-image: icons/manmade_lighthouse.png; z-index: 20; }
 node[man_made=tower] { icon-image: icons/manmade_tower.png; z-index: 20; }
 /* Yes these power stations seem a little backward - but that's seemingly what the side menu uses ATM */
