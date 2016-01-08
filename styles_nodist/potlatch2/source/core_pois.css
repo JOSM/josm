@@ -130,6 +130,9 @@ node[power=generator] { icon-image: icons/power_station.png; z-index: 20; text-o
 node[power=tower] { icon-image: cross; icon-width: 7; width: 3; color: #F44; z-index: 20; }
 node[power=pole] { icon-image: cross; icon-width: 7; width: 3; color: #444; z-index: 20; }
 node[waterway=weir] { icon-image: icons/transport_weir.n.16.png; z-index: 20; }
+/* Natural */
+node[natural=peak] { icon-image: icons/natural_peak.n.16.png; z-index: 20; text-offset:15; text: name; font-size: 10; z-index: 20; }
+node[natural=tree] { icon-image: icons/natural_tree.n.16.png; z-index: 20; text-offset:15; text: name; font-size: 10; z-index: 20; }
 
 /* Addressing */
 
