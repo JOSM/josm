@@ -304,7 +304,7 @@ public class Test extends AbstractVisitor {
      * @return {@code true} if the test has been canceled, {@code false} otherwise
      */
     public boolean isCanceled() {
-        return progressMonitor.isCanceled();
+        return progressMonitor != null ? progressMonitor.isCanceled() : false;
     }
 
     /**
