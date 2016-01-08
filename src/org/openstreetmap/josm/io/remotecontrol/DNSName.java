@@ -56,7 +56,7 @@ import sun.security.x509.GeneralNameInterface;
  * @author JOSM developers
  * @since 7347
  */
-public class DNSName implements GeneralNameInterface {
+public final class DNSName implements GeneralNameInterface {
     private final String name;
 
     private static final String alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -99,6 +99,7 @@ public class DNSName implements GeneralNameInterface {
 
     /**
      * Return the type of the GeneralName.
+     * @return the type of the GeneralName
      */
     @Override
     public int getType() {
