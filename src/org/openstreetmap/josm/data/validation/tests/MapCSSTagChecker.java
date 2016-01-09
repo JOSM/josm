@@ -504,7 +504,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             for (FixCommand fixCommand : fixCommands) {
                 cmds.add(fixCommand.createCommand(p, matchingSelector));
             }
-            if (deletion) {
+            if (deletion && !p.isDeleted()) {
                 cmds.add(new DeleteCommand(p));
             }
             return new SequenceCommand(tr("Fix of {0}", getDescriptionForMatchingSelector(p, matchingSelector)), cmds);
