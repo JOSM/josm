@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data.coor;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.BBox;
 

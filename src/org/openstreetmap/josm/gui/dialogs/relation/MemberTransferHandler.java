@@ -99,7 +99,8 @@ class MemberTransferHandler extends TransferHandler {
         });
     }
 
-    protected <T> void importData(MemberTable destination, int insertRow, Collection<T> memberData, Function<T, RelationMember> toMemberFunction) {
+    protected <T> void importData(MemberTable destination, int insertRow,
+                                  Collection<T> memberData, Function<T, RelationMember> toMemberFunction) {
         final Collection<RelationMember> membersToAdd = new ArrayList<>(memberData.size());
         for (T i : memberData) {
             final RelationMember member = toMemberFunction.apply(i);

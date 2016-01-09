@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.osm;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
-import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
