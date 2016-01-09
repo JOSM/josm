@@ -92,38 +92,57 @@ public class FilterMatcher {
     private final List<FilterInfo> hiddenFilters = new ArrayList<>();
     private final List<FilterInfo> disabledFilters = new ArrayList<>();
 
+    /**
+     * Clears the current filters, and adds the given filters
+     * @param filters the filters to add
+     * @throws ParseError if the search expression in one of the filters cannot be parsed
+     */
     public void update(Collection<Filter> filters) throws ParseError {
+        reset();
+        for (Filter filter : filters) {
+            add(filter);
+        }
+    }
+
+    /**
+     * Clears the filters in use.
+     */
+    public void reset() {
         hiddenFilters.clear();
         disabledFilters.clear();
+    }
 
-        for (Filter filter: filters) {
+    /**
+     * Adds a filter to the currently used filters
+     * @param filter the filter to add
+     * @throws ParseError if the search expression in the filter cannot be parsed
+     */
+    public void add(final Filter filter) throws ParseError {
+        if (!filter.enable) {
+            return;
+        }
 
-            if (!filter.enable) {
-                continue;
+        FilterInfo fi = new FilterInfo(filter);
+        if (fi.isDelete) {
+            if (filter.hiding) {
+                // Remove only hide flag
+                hiddenFilters.add(fi);
+            } else {
+                // Remove both flags
+                disabledFilters.add(fi);
+                hiddenFilters.add(fi);
+            }
+        } else {
+            if (filter.mode == SearchMode.replace) {
+                if (filter.hiding) {
+                    hiddenFilters.clear();
+                    disabledFilters.clear();
+                }
             }
 
-            FilterInfo fi = new FilterInfo(filter);
-            if (fi.isDelete) {
-                if (filter.hiding) {
-                    // Remove only hide flag
-                    hiddenFilters.add(fi);
-                } else {
-                    // Remove both flags
-                    disabledFilters.add(fi);
-                    hiddenFilters.add(fi);
-                }
-            } else {
-                if (filter.mode == SearchMode.replace) {
-                    if (filter.hiding) {
-                        hiddenFilters.clear();
-                        disabledFilters.clear();
-                    }
-                }
-
-                disabledFilters.add(fi);
-                if (filter.hiding) {
-                    hiddenFilters.add(fi);
-                }
+            disabledFilters.add(fi);
+            if (filter.hiding) {
+                hiddenFilters.add(fi);
             }
         }
     }

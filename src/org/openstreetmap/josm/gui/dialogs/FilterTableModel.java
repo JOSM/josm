@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.FilterMatcher;
 import org.openstreetmap.josm.data.osm.FilterWorker;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  *
@@ -57,16 +58,21 @@ public class FilterTableModel extends AbstractTableModel {
     private final transient FilterMatcher filterMatcher = new FilterMatcher();
 
     private void updateFilters() {
-        try {
-            filterMatcher.update(filters);
-            executeFilters();
-        } catch (ParseError e) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    e.getMessage(),
-                    tr("Error in filter"),
-                    JOptionPane.ERROR_MESSAGE);
+        filterMatcher.reset();
+        for (Filter filter : filters) {
+            try {
+                filterMatcher.add(filter);
+            } catch (ParseError e) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("<html>Error in filter <code>{0}</code>:<br>{1}", Utils.shortenString(filter.text, 80), e.getMessage()),
+                        tr("Error in filter"),
+                        JOptionPane.ERROR_MESSAGE);
+                filter.enable = false;
+                savePrefs();
+            }
         }
+        executeFilters();
     }
 
     public void executeFilters() {
