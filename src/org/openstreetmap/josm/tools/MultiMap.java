@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -213,21 +214,19 @@ public class MultiMap<A, B> {
 
     @Override
     public int hashCode() {
-        return map.hashCode();
+        return Objects.hash(map);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof MultiMap))
-            return false;
-        return map.equals(((MultiMap<?, ?>) obj).map);
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        MultiMap<?, ?> multiMap = (MultiMap<?, ?>) obj;
+        return Objects.equals(map, multiMap.map);
     }
 
     @Override
+
     public String toString() {
         List<String> entries = new ArrayList<>(map.size());
         for (Entry<A, Set<B>> entry : map.entrySet()) {

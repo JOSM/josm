@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.Icon;
 
@@ -245,55 +246,21 @@ public class MoveCommand extends Command {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        long temp;
-        temp = Double.doubleToLongBits(backupX);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(backupY);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + ((nodes == null) ? 0 : nodes.hashCode());
-        result = prime * result + ((oldState == null) ? 0 : oldState.hashCode());
-        result = prime * result + ((startEN == null) ? 0 : startEN.hashCode());
-        temp = Double.doubleToLongBits(x);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(y);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return Objects.hash(super.hashCode(), nodes, startEN, x, y, backupX, backupY, oldState);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        MoveCommand other = (MoveCommand) obj;
-        if (Double.doubleToLongBits(backupX) != Double.doubleToLongBits(other.backupX))
-            return false;
-        if (Double.doubleToLongBits(backupY) != Double.doubleToLongBits(other.backupY))
-            return false;
-        if (nodes == null) {
-            if (other.nodes != null)
-                return false;
-        } else if (!nodes.equals(other.nodes))
-            return false;
-        if (oldState == null) {
-            if (other.oldState != null)
-                return false;
-        } else if (!oldState.equals(other.oldState))
-            return false;
-        if (startEN == null) {
-            if (other.startEN != null)
-                return false;
-        } else if (!startEN.equals(other.startEN))
-            return false;
-        if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
-            return false;
-        if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        MoveCommand that = (MoveCommand) obj;
+        return Double.compare(that.x, x) == 0 &&
+                Double.compare(that.y, y) == 0 &&
+                Double.compare(that.backupX, backupX) == 0 &&
+                Double.compare(that.backupY, backupY) == 0 &&
+                Objects.equals(nodes, that.nodes) &&
+                Objects.equals(startEN, that.startEN) &&
+                Objects.equals(oldState, that.oldState);
     }
 }

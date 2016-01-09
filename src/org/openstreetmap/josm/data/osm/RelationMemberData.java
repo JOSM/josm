@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.Objects;
+
 public class RelationMemberData implements PrimitiveId {
 
     private final String role;
@@ -61,33 +63,16 @@ public class RelationMemberData implements PrimitiveId {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (memberId ^ (memberId >>> 32));
-        result = prime * result
-                + ((memberType == null) ? 0 : memberType.hashCode());
-        result = prime * result + ((role == null) ? 0 : role.hashCode());
-        return result;
+        return Objects.hash(role, memberId, memberType);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        RelationMemberData other = (RelationMemberData) obj;
-        if (memberId != other.memberId)
-            return false;
-        if (memberType != other.memberType)
-            return false;
-        if (role == null) {
-            if (other.role != null)
-                return false;
-        } else if (!role.equals(other.role))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        RelationMemberData that = (RelationMemberData) obj;
+        return memberId == that.memberId &&
+                Objects.equals(role, that.role) &&
+                memberType == that.memberType;
     }
 }

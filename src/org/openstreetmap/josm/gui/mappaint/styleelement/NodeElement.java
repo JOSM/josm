@@ -67,13 +67,7 @@ public class NodeElement extends StyleElement {
 
         @Override
         public int hashCode() {
-            int hash = 7;
-            hash = 67 * hash + symbol.hashCode();
-            hash = 67 * hash + size;
-            hash = 67 * hash + (stroke != null ? stroke.hashCode() : 0);
-            hash = 67 * hash + (strokeColor != null ? strokeColor.hashCode() : 0);
-            hash = 67 * hash + (fillColor != null ? fillColor.hashCode() : 0);
-            return hash;
+            return Objects.hash(symbol, size, stroke, strokeColor, fillColor);
         }
 
         @Override
@@ -363,32 +357,22 @@ public class NodeElement extends StyleElement {
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        hash = 17 * hash + (mapImage != null ? mapImage.hashCode() : 0);
-        hash = 17 * hash + (symbol != null ? symbol.hashCode() : 0);
-        hash = 17 * hash + (mapImageAngle != null ? mapImageAngle.hashCode() : 0);
-        return hash;
+        return Objects.hash(super.hashCode(), mapImage, mapImageAngle, symbol);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (!super.equals(obj))
-            return false;
-
-        final NodeElement other = (NodeElement) obj;
-        // we should get the same image object due to caching
-        if (!Objects.equals(mapImage, other.mapImage))
-            return false;
-        if (!Objects.equals(symbol, other.symbol))
-            return false;
-        if (!Objects.equals(mapImageAngle, other.mapImageAngle))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        NodeElement that = (NodeElement) obj;
+        return Objects.equals(mapImage, that.mapImage) &&
+                Objects.equals(mapImageAngle, that.mapImageAngle) &&
+                Objects.equals(symbol, that.symbol);
     }
 
     @Override
+
     public String toString() {
         StringBuilder s = new StringBuilder("NodeElemStyle{");
         s.append(super.toString());

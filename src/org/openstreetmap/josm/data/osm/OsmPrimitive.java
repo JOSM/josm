@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -1319,9 +1320,10 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof OsmPrimitive)
-            return ((OsmPrimitive) obj).id == id && obj.getClass() == getClass();
-        return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        OsmPrimitive that = (OsmPrimitive) obj;
+        return Objects.equals(id, that.id);
     }
 
     /**
@@ -1330,8 +1332,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * An primitive has the same hashcode as its incomplete counterpart.
      */
     @Override
-    public final int hashCode() {
-        return (int) id;
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     /**

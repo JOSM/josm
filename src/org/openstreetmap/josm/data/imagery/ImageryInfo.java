@@ -133,27 +133,16 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + ((shapes == null) ? 0 : shapes.hashCode());
-            return result;
+            return Objects.hash(super.hashCode(), shapes);
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (!super.equals(obj))
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            ImageryBounds other = (ImageryBounds) obj;
-            if (shapes == null) {
-                if (other.shapes != null)
-                    return false;
-            } else if (!shapes.equals(other.shapes))
-                return false;
-            return true;
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            if (!super.equals(o)) return false;
+            ImageryBounds that = (ImageryBounds) o;
+            return Objects.equals(shapes, that.shapes);
         }
     }
 
@@ -456,17 +445,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ImageryInfo that = (ImageryInfo) o;
-
-        if (imageryType != that.imageryType) return false;
-        if (url != null ? !url.equals(that.url) : that.url != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-
-        return true;
+    public int hashCode() {
+        return Objects.hash(url, imageryType);
     }
 
     /**
@@ -508,10 +488,11 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     @Override
-    public int hashCode() {
-        int result = url != null ? url.hashCode() : 0;
-        result = 31 * result + (imageryType != null ? imageryType.hashCode() : 0);
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ImageryInfo that = (ImageryInfo) o;
+        return imageryType == that.imageryType && Objects.equals(url, that.url);
     }
 
     @Override

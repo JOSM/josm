@@ -4,6 +4,7 @@ package org.openstreetmap.josm.command;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -53,32 +54,16 @@ public class SelectCommand extends Command {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((newSelection == null) ? 0 : newSelection.hashCode());
-        result = prime * result + ((oldSelection == null) ? 0 : oldSelection.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), newSelection, oldSelection);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        SelectCommand other = (SelectCommand) obj;
-        if (newSelection == null) {
-            if (other.newSelection != null)
-                return false;
-        } else if (!newSelection.equals(other.newSelection))
-            return false;
-        if (oldSelection == null) {
-            if (other.oldSelection != null)
-                return false;
-        } else if (!oldSelection.equals(other.oldSelection))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        SelectCommand that = (SelectCommand) obj;
+        return Objects.equals(newSelection, that.newSelection) &&
+                Objects.equals(oldSelection, that.oldSelection);
     }
 }

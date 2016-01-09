@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -48,15 +49,16 @@ public class DuplicateWay extends Test {
 
         @Override
         public int hashCode() {
-            return coor.hashCode() + keys.hashCode();
+            return Objects.hash(coor, keys);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof WayPair))
-                return false;
-            WayPair wp = (WayPair) obj;
-            return wp.coor.equals(coor) && wp.keys.equals(keys);
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            WayPair wayPair = (WayPair) obj;
+            return Objects.equals(coor, wayPair.coor) &&
+                    Objects.equals(keys, wayPair.keys);
         }
     }
 
@@ -73,14 +75,15 @@ public class DuplicateWay extends Test {
 
         @Override
         public int hashCode() {
-            return coor.hashCode();
+            return Objects.hash(coor);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof WayPairNoTags)) return false;
-            WayPairNoTags wp = (WayPairNoTags) obj;
-            return wp.coor.equals(coor);
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            WayPairNoTags that = (WayPairNoTags) obj;
+            return Objects.equals(coor, that.coor);
         }
     }
 

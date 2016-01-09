@@ -200,28 +200,20 @@ public class TextLabel implements StyleKeys {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 79 * hash + (labelCompositionStrategy != null ? labelCompositionStrategy.hashCode() : 0);
-        hash = 79 * hash + font.hashCode();
-        hash = 79 * hash + xOffset;
-        hash = 79 * hash + yOffset;
-        hash = 79 * hash + color.hashCode();
-        hash = 79 * hash + (haloRadius != null ? Float.floatToIntBits(haloRadius) : 0);
-        hash = 79 * hash + (haloColor != null ? haloColor.hashCode() : 0);
-        return hash;
+        return Objects.hash(labelCompositionStrategy, font, xOffset, yOffset, color, haloRadius, haloColor);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        final TextLabel other = (TextLabel) obj;
-        return Objects.equals(labelCompositionStrategy, other.labelCompositionStrategy) &&
-        Objects.equals(font, other.font) &&
-        xOffset == other.xOffset &&
-        yOffset == other.yOffset &&
-        Objects.equals(color, other.color) &&
-        Objects.equals(haloRadius, other.haloRadius) &&
-        Objects.equals(haloColor, other.haloColor);
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        TextLabel textLabel = (TextLabel) obj;
+        return xOffset == textLabel.xOffset &&
+                yOffset == textLabel.yOffset &&
+                Objects.equals(labelCompositionStrategy, textLabel.labelCompositionStrategy) &&
+                Objects.equals(font, textLabel.font) &&
+                Objects.equals(color, textLabel.color) &&
+                Objects.equals(haloRadius, textLabel.haloRadius) &&
+                Objects.equals(haloColor, textLabel.haloColor);
     }
 }

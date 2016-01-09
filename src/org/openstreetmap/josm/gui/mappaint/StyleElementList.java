@@ -56,16 +56,14 @@ public class StyleElementList implements Iterable<StyleElement> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        final StyleElementList other = (StyleElementList) obj;
-        return Objects.equals(lst, other.lst);
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        StyleElementList that = (StyleElementList) obj;
+        return Objects.equals(lst, that.lst);
     }
 
     @Override
     public int hashCode() {
-        return lst.hashCode();
+        return Objects.hash(lst);
     }
-
 }

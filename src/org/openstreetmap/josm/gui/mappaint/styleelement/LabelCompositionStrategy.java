@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
@@ -69,27 +70,15 @@ public abstract class LabelCompositionStrategy {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((defaultLabel == null) ? 0 : defaultLabel.hashCode());
-            return result;
+            return Objects.hash(defaultLabel);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            StaticLabelCompositionStrategy other = (StaticLabelCompositionStrategy) obj;
-            if (defaultLabel == null) {
-                if (other.defaultLabel != null)
-                    return false;
-            } else if (!defaultLabel.equals(other.defaultLabel))
-                return false;
-            return true;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            StaticLabelCompositionStrategy that = (StaticLabelCompositionStrategy) obj;
+            return Objects.equals(defaultLabel, that.defaultLabel);
         }
     }
 
@@ -125,27 +114,15 @@ public abstract class LabelCompositionStrategy {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((defaultLabelTag == null) ? 0 : defaultLabelTag.hashCode());
-            return result;
+            return Objects.hash(defaultLabelTag);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            TagLookupCompositionStrategy other = (TagLookupCompositionStrategy) obj;
-            if (defaultLabelTag == null) {
-                if (other.defaultLabelTag != null)
-                    return false;
-            } else if (!defaultLabelTag.equals(other.defaultLabelTag))
-                return false;
-            return true;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            TagLookupCompositionStrategy that = (TagLookupCompositionStrategy) obj;
+            return Objects.equals(defaultLabelTag, that.defaultLabelTag);
         }
     }
 

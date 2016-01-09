@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.swing.Icon;
 
@@ -66,26 +67,15 @@ public class ModifiedConflictResolveCommand extends ConflictResolveCommand {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((conflict == null) ? 0 : conflict.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), conflict);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ModifiedConflictResolveCommand other = (ModifiedConflictResolveCommand) obj;
-        if (conflict == null) {
-            if (other.conflict != null)
-                return false;
-        } else if (!conflict.equals(other.conflict))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        ModifiedConflictResolveCommand that = (ModifiedConflictResolveCommand) obj;
+        return Objects.equals(conflict, that.conflict);
     }
 }

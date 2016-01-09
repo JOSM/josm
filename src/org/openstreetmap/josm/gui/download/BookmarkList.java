@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
@@ -78,33 +79,16 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((area == null) ? 0 : area.hashCode());
-            result = prime * result + ((name == null) ? 0 : name.hashCode());
-            return result;
+            return Objects.hash(name, area);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            Bookmark other = (Bookmark) obj;
-            if (area == null) {
-                if (other.area != null)
-                    return false;
-            } else if (!area.equals(other.area))
-                return false;
-            if (name == null) {
-                if (other.name != null)
-                    return false;
-            } else if (!name.equals(other.name))
-                return false;
-            return true;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            Bookmark bookmark = (Bookmark) obj;
+            return Objects.equals(name, bookmark.name) &&
+                    Objects.equals(area, bookmark.area);
         }
 
         /**

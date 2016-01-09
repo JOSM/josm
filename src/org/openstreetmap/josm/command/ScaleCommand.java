@@ -4,6 +4,7 @@ package org.openstreetmap.josm.command;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
@@ -82,37 +83,17 @@ public class ScaleCommand extends TransformNodesCommand {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((pivot == null) ? 0 : pivot.hashCode());
-        long temp;
-        temp = Double.doubleToLongBits(scalingFactor);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + ((startEN == null) ? 0 : startEN.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), pivot, scalingFactor, startEN);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ScaleCommand other = (ScaleCommand) obj;
-        if (pivot == null) {
-            if (other.pivot != null)
-                return false;
-        } else if (!pivot.equals(other.pivot))
-            return false;
-        if (Double.doubleToLongBits(scalingFactor) != Double.doubleToLongBits(other.scalingFactor))
-            return false;
-        if (startEN == null) {
-            if (other.startEN != null)
-                return false;
-        } else if (!startEN.equals(other.startEN))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        ScaleCommand that = (ScaleCommand) obj;
+        return Double.compare(that.scalingFactor, scalingFactor) == 0 &&
+                Objects.equals(pivot, that.pivot) &&
+                Objects.equals(startEN, that.startEN);
     }
 }

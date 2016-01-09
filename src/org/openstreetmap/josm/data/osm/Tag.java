@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -83,20 +85,16 @@ public class Tag {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + key.hashCode();
-        result = prime * result + value.hashCode();
-        return result;
+        return Objects.hash(key, value);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Tag) {
-            Tag other = (Tag) obj;
-            return key.equals(other.getKey()) && value.equals(other.getValue());
-        } else
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Tag tag = (Tag) obj;
+        return Objects.equals(key, tag.key) &&
+                Objects.equals(value, tag.value);
     }
 
     /**

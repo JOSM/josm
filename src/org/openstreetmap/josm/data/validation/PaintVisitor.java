@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -57,27 +58,16 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + p1.hashCode();
-            result = prime * result + color.hashCode();
-            return result;
+            return Objects.hash(p1, color);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            PaintedPoint other = (PaintedPoint) obj;
-            if (!p1.equals(other.p1))
-                return false;
-            if (!color.equals(other.color))
-                return false;
-            return true;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            PaintedPoint that = (PaintedPoint) obj;
+            return Objects.equals(p1, that.p1) &&
+                    Objects.equals(color, that.color);
         }
     }
 
@@ -91,21 +81,16 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + p2.hashCode();
-            return result;
+            return Objects.hash(super.hashCode(), p2);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (!super.equals(obj)) {
-                return false;
-            }
-            PaintedSegment other = (PaintedSegment) obj;
-            if (!p2.equals(other.p2))
-                return false;
-            return true;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            if (!super.equals(obj)) return false;
+            PaintedSegment that = (PaintedSegment) obj;
+            return Objects.equals(p2, that.p2);
         }
     }
 

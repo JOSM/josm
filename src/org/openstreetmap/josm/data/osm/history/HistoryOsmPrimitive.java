@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Node;
@@ -248,27 +249,16 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (id ^ (id >>> 32));
-        result = prime * result + (int) (version ^ (version >>> 32));
-        return result;
+        return Objects.hash(id, version);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof HistoryOsmPrimitive))
-            return false;
-        // equal semantics is valid for subclasses like {@link HistoryOsmNode} etc. too.
-        // So, don't enforce equality of class.
-        HistoryOsmPrimitive other = (HistoryOsmPrimitive) obj;
-        if (id != other.id)
-            return false;
-        if (version != other.version)
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        HistoryOsmPrimitive that = (HistoryOsmPrimitive) obj;
+        return id == that.id &&
+                version == that.version;
     }
 
     @Override

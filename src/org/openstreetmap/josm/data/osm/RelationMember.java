@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -164,20 +165,16 @@ public class RelationMember implements PrimitiveId {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + member.hashCode();
-        result = prime * result + role.hashCode();
-        return result;
+        return Objects.hash(role, member);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof RelationMember) {
-            RelationMember other = (RelationMember) obj;
-            return member.equals(other.getMember()) && role.equals(other.getRole());
-        } else
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        RelationMember that = (RelationMember) obj;
+        return Objects.equals(role, that.role) &&
+                Objects.equals(member, that.member);
     }
 
     /**

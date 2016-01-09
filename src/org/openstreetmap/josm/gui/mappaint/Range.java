@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.util.Objects;
+
 /**
  * An interval of the form "lower &lt; x &lt;= upper" where 0 &lt;= lower &lt; upper.
  * (upper can be Double.POSITIVE_INFINITY)
@@ -90,23 +92,13 @@ public class Range {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Range range = (Range) o;
-
-        if (Double.compare(range.lower, lower) != 0) return false;
-        if (Double.compare(range.upper, upper) != 0) return false;
-
-        return true;
+        return Double.compare(range.lower, lower) == 0 &&
+                Double.compare(range.upper, upper) == 0;
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(lower);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(upper);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return Objects.hash(lower, upper);
     }
 }

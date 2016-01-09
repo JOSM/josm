@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.conflict.tags;
 import static org.openstreetmap.josm.gui.conflict.tags.RelationMemberConflictDecisionType.UNDECIDED;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -71,48 +73,19 @@ public class RelationMemberConflictDecision {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((decision == null) ? 0 : decision.hashCode());
-        result = prime * result + ((originalPrimitive == null) ? 0 : originalPrimitive.hashCode());
-        result = prime * result + pos;
-        result = prime * result + ((relation == null) ? 0 : relation.hashCode());
-        result = prime * result + ((role == null) ? 0 : role.hashCode());
-        return result;
+        return Objects.hash(relation, pos, originalPrimitive, role, decision);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        RelationMemberConflictDecision other = (RelationMemberConflictDecision) obj;
-        if (decision == null) {
-            if (other.decision != null)
-                return false;
-        } else if (!decision.equals(other.decision))
-            return false;
-        if (originalPrimitive == null) {
-            if (other.originalPrimitive != null)
-                return false;
-        } else if (!originalPrimitive.equals(other.originalPrimitive))
-            return false;
-        if (pos != other.pos)
-            return false;
-        if (relation == null) {
-            if (other.relation != null)
-                return false;
-        } else if (!relation.equals(other.relation))
-            return false;
-        if (role == null) {
-            if (other.role != null)
-                return false;
-        } else if (!role.equals(other.role))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        RelationMemberConflictDecision that = (RelationMemberConflictDecision) obj;
+        return pos == that.pos &&
+                Objects.equals(relation, that.relation) &&
+                Objects.equals(originalPrimitive, that.originalPrimitive) &&
+                Objects.equals(role, that.role) &&
+                decision == that.decision;
     }
 
     @Override

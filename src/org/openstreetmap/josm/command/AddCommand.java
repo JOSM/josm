@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 import javax.swing.Icon;
 
@@ -98,26 +99,15 @@ public class AddCommand extends Command {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((osm == null) ? 0 : osm.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), osm);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        AddCommand other = (AddCommand) obj;
-        if (osm == null) {
-            if (other.osm != null)
-                return false;
-        } else if (!osm.equals(other.osm))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        AddCommand that = (AddCommand) obj;
+        return Objects.equals(osm, that.osm);
     }
 }

@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -91,14 +92,16 @@ public class JoinAreasAction extends JosmAction {
 
         @Override
         public int hashCode() {
-            return rel.hashCode();
+            return Objects.hash(rel, role);
         }
 
         @Override
         public boolean equals(Object other) {
-            if (!(other instanceof RelationRole)) return false;
-            RelationRole otherMember = (RelationRole) other;
-            return otherMember.role.equals(role) && otherMember.rel.equals(rel);
+            if (this == other) return true;
+            if (other == null || getClass() != other.getClass()) return false;
+            RelationRole that = (RelationRole) other;
+            return Objects.equals(rel, that.rel) &&
+                    Objects.equals(role, that.role);
         }
     }
 
@@ -119,14 +122,16 @@ public class JoinAreasAction extends JosmAction {
 
         @Override
         public int hashCode() {
-            return way.hashCode();
+            return Objects.hash(way, insideToTheRight);
         }
 
         @Override
         public boolean equals(Object other) {
-            if (!(other instanceof WayInPolygon)) return false;
-            WayInPolygon otherMember = (WayInPolygon) other;
-            return otherMember.way.equals(this.way) && otherMember.insideToTheRight == this.insideToTheRight;
+            if (this == other) return true;
+            if (other == null || getClass() != other.getClass()) return false;
+            WayInPolygon that = (WayInPolygon) other;
+            return insideToTheRight == that.insideToTheRight &&
+                    Objects.equals(way, that.way);
         }
     }
 

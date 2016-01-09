@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,33 +95,16 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((declaration == null) ? 0 : declaration.hashCode());
-            result = prime * result + ((selectors == null) ? 0 : selectors.hashCode());
-            return result;
+            return Objects.hash(selectors, declaration);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (!(obj instanceof GroupedMapCSSRule))
-                return false;
-            GroupedMapCSSRule other = (GroupedMapCSSRule) obj;
-            if (declaration == null) {
-                if (other.declaration != null)
-                    return false;
-            } else if (!declaration.equals(other.declaration))
-                return false;
-            if (selectors == null) {
-                if (other.selectors != null)
-                    return false;
-            } else if (!selectors.equals(other.selectors))
-                return false;
-            return true;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            GroupedMapCSSRule that = (GroupedMapCSSRule) obj;
+            return Objects.equals(selectors, that.selectors) &&
+                    Objects.equals(declaration, that.declaration);
         }
 
         @Override
@@ -659,10 +643,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + ((rule == null) ? 0 : rule.hashCode());
-            return result;
+            return Objects.hash(super.hashCode(), rule);
         }
 
         @Override
@@ -824,26 +805,15 @@ public class MapCSSTagChecker extends Test.TagTest {
 
     @Override
     public synchronized int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((checks == null) ? 0 : checks.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), checks);
     }
 
     @Override
     public synchronized boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (!(obj instanceof MapCSSTagChecker))
-            return false;
-        MapCSSTagChecker other = (MapCSSTagChecker) obj;
-        if (checks == null) {
-            if (other.checks != null)
-                return false;
-        } else if (!checks.equals(other.checks))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        MapCSSTagChecker that = (MapCSSTagChecker) obj;
+        return Objects.equals(checks, that.checks);
     }
 }

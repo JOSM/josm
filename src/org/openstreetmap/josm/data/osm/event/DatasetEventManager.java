@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm.event;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -114,12 +115,15 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
 
         @Override
         public int hashCode() {
-            return listener.hashCode();
+            return Objects.hash(listener);
         }
 
         @Override
         public boolean equals(Object o) {
-            return o instanceof ListenerInfo && ((ListenerInfo) o).listener == listener;
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ListenerInfo that = (ListenerInfo) o;
+            return Objects.equals(listener, that.listener);
         }
     }
 

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.styleelement;
 import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -146,33 +147,17 @@ public abstract class StyleElement implements StyleKeys {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((name == null) ? 0 : name.hashCode());
-            result = prime * result + size;
-            result = prime * result + style;
-            return result;
+            return Objects.hash(name, style, size);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            FontDescriptor other = (FontDescriptor) obj;
-            if (name == null) {
-                if (other.name != null)
-                    return false;
-            } else if (!name.equals(other.name))
-                return false;
-            if (size != other.size)
-                return false;
-            if (style != other.style)
-                return false;
-            return true;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            FontDescriptor that = (FontDescriptor) obj;
+            return style == that.style &&
+                    size == that.size &&
+                    Objects.equals(name, that.name);
         }
     }
 
@@ -213,23 +198,18 @@ public abstract class StyleElement implements StyleKeys {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof StyleElement))
-            return false;
-        StyleElement s = (StyleElement) o;
-        return isModifier == s.isModifier &&
-                majorZIndex == s.majorZIndex &&
-                zIndex == s.zIndex &&
-                objectZIndex == s.objectZIndex;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StyleElement that = (StyleElement) o;
+        return Float.compare(that.majorZIndex, majorZIndex) == 0 &&
+                Float.compare(that.zIndex, zIndex) == 0 &&
+                Float.compare(that.objectZIndex, objectZIndex) == 0 &&
+                isModifier == that.isModifier;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 41 * hash + Float.floatToIntBits(this.majorZIndex);
-        hash = 41 * hash + Float.floatToIntBits(this.zIndex);
-        hash = 41 * hash + Float.floatToIntBits(this.objectZIndex);
-        hash = 41 * hash + (isModifier ? 1 : 0);
-        return hash;
+        return Objects.hash(majorZIndex, zIndex, objectZIndex, isModifier);
     }
 
     @Override

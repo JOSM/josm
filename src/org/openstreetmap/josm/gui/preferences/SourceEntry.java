@@ -108,27 +108,20 @@ public class SourceEntry {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        final SourceEntry other = (SourceEntry) obj;
-        return Objects.equals(other.url, url) &&
-                other.isZip == isZip &&
-                Objects.equals(other.zipEntryPath, zipEntryPath) &&
-                Objects.equals(other.name, name) &&
-                Objects.equals(other.title, title) &&
-                other.active == active;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        SourceEntry that = (SourceEntry) obj;
+        return isZip == that.isZip &&
+                active == that.active &&
+                Objects.equals(url, that.url) &&
+                Objects.equals(zipEntryPath, that.zipEntryPath) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(title, that.title);
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 89 * hash + (this.url != null ? this.url.hashCode() : 0);
-        hash = 89 * hash + (this.isZip ? 1 : 0);
-        hash = 89 * hash + (this.zipEntryPath != null ? this.zipEntryPath.hashCode() : 0);
-        hash = 89 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 89 * hash + (this.title != null ? this.title.hashCode() : 0);
-        hash = 89 * hash + (this.active ? 1 : 0);
-        return hash;
+        return Objects.hash(url, isZip, zipEntryPath, name, title, active);
     }
 
     @Override

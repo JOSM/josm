@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -64,32 +65,16 @@ public class RemoveNodesCommand extends Command {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((rmNodes == null) ? 0 : rmNodes.hashCode());
-        result = prime * result + ((way == null) ? 0 : way.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), way, rmNodes);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        RemoveNodesCommand other = (RemoveNodesCommand) obj;
-        if (rmNodes == null) {
-            if (other.rmNodes != null)
-                return false;
-        } else if (!rmNodes.equals(other.rmNodes))
-            return false;
-        if (way == null) {
-            if (other.way != null)
-                return false;
-        } else if (!way.equals(other.way))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        RemoveNodesCommand that = (RemoveNodesCommand) obj;
+        return Objects.equals(way, that.way) &&
+                Objects.equals(rmNodes, that.rmNodes);
     }
 }

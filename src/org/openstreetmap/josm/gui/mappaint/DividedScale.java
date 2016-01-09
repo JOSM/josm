@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.tools.Pair;
@@ -175,18 +176,16 @@ public class DividedScale<T> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        final DividedScale other = (DividedScale) obj;
-        return bd.equals(other.bd) && data.equals(other.data);
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        DividedScale<?> that = (DividedScale<?>) obj;
+        return Objects.equals(bd, that.bd) &&
+                Objects.equals(data, that.data);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 23 * hash + bd.hashCode();
-        hash = 23 * hash + data.hashCode();
-        return hash;
+        return Objects.hash(bd, data);
     }
 
     @Override

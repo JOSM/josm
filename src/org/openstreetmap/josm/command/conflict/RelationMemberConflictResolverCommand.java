@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.Icon;
 
@@ -97,38 +98,17 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((mergedMembers == null) ? 0 : mergedMembers.hashCode());
-        result = prime * result + ((my == null) ? 0 : my.hashCode());
-        result = prime * result + ((their == null) ? 0 : their.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), my, their, mergedMembers);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        RelationMemberConflictResolverCommand other = (RelationMemberConflictResolverCommand) obj;
-        if (mergedMembers == null) {
-            if (other.mergedMembers != null)
-                return false;
-        } else if (!mergedMembers.equals(other.mergedMembers))
-            return false;
-        if (my == null) {
-            if (other.my != null)
-                return false;
-        } else if (!my.equals(other.my))
-            return false;
-        if (their == null) {
-            if (other.their != null)
-                return false;
-        } else if (!their.equals(other.their))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        RelationMemberConflictResolverCommand that = (RelationMemberConflictResolverCommand) obj;
+        return Objects.equals(my, that.my) &&
+                Objects.equals(their, that.their) &&
+                Objects.equals(mergedMembers, that.mergedMembers);
     }
 }

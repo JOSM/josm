@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -385,32 +386,15 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((conflicts == null) ? 0 : conflicts.hashCode());
-        result = prime * result + ((listeners == null) ? 0 : listeners.hashCode());
-        return result;
+        return Objects.hash(conflicts, listeners);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ConflictCollection other = (ConflictCollection) obj;
-        if (conflicts == null) {
-            if (other.conflicts != null)
-                return false;
-        } else if (!conflicts.equals(other.conflicts))
-            return false;
-        if (listeners == null) {
-            if (other.listeners != null)
-                return false;
-        } else if (!listeners.equals(other.listeners))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        ConflictCollection conflicts1 = (ConflictCollection) obj;
+        return Objects.equals(conflicts, conflicts1.conflicts) &&
+                Objects.equals(listeners, conflicts1.listeners);
     }
 }

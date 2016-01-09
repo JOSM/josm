@@ -3,6 +3,8 @@ package org.openstreetmap.josm.command.conflict;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -83,26 +85,15 @@ public abstract class ConflictResolveCommand extends Command {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((resolvedConflicts == null) ? 0 : resolvedConflicts.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), resolvedConflicts);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ConflictResolveCommand other = (ConflictResolveCommand) obj;
-        if (resolvedConflicts == null) {
-            if (other.resolvedConflicts != null)
-                return false;
-        } else if (!resolvedConflicts.equals(other.resolvedConflicts))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        ConflictResolveCommand that = (ConflictResolveCommand) obj;
+        return Objects.equals(resolvedConflicts, that.resolvedConflicts);
     }
 }

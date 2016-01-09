@@ -5,6 +5,7 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -39,33 +40,16 @@ public class DataSource {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((bounds == null) ? 0 : bounds.hashCode());
-        result = prime * result + ((origin == null) ? 0 : origin.hashCode());
-        return result;
+        return Objects.hash(bounds, origin);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        DataSource other = (DataSource) obj;
-        if (bounds == null) {
-            if (other.bounds != null)
-                return false;
-        } else if (!bounds.equals(other.bounds))
-            return false;
-        if (origin == null) {
-            if (other.origin != null)
-                return false;
-        } else if (!origin.equals(other.origin))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        DataSource that = (DataSource) obj;
+        return Objects.equals(bounds, that.bounds) &&
+                Objects.equals(origin, that.origin);
     }
 
     @Override

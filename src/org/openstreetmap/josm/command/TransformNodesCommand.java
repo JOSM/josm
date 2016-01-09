@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.Icon;
 
@@ -144,32 +145,16 @@ public abstract class TransformNodesCommand extends Command {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((nodes == null) ? 0 : nodes.hashCode());
-        result = prime * result + ((oldStates == null) ? 0 : oldStates.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), nodes, oldStates);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        TransformNodesCommand other = (TransformNodesCommand) obj;
-        if (nodes == null) {
-            if (other.nodes != null)
-                return false;
-        } else if (!nodes.equals(other.nodes))
-            return false;
-        if (oldStates == null) {
-            if (other.oldStates != null)
-                return false;
-        } else if (!oldStates.equals(other.oldStates))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        TransformNodesCommand that = (TransformNodesCommand) obj;
+        return Objects.equals(nodes, that.nodes) &&
+                Objects.equals(oldStates, that.oldStates);
     }
 }

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -277,24 +278,15 @@ public final class Changeset implements Tagged {
 
     @Override
     public int hashCode() {
-        if (id > 0)
-            return id;
-        else
-            return super.hashCode();
+        return Objects.hash(id);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Changeset other = (Changeset) obj;
-        if (this.id > 0 && other.id == this.id)
-            return true;
-        return this == obj;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Changeset changeset = (Changeset) obj;
+        return id == changeset.id;
     }
 
     @Override
