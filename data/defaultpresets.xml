@@ -4214,7 +4214,7 @@
             <key key="religion" value="christian" />
             <text key="name" text="Name" />
             <combo key="building" text="Building type" values="basilica,cathedral,chapel,church,temple" values_searchable="true" />
-            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,greek_catholic,greek_orthodox,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,orthodox,pentecostal,presbyterian,protestant,quaker,roman_catholic,russian_orthodox,seventh_day_adventist" values_context="christian" values_searchable="true" />
+            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,greek_catholic,greek_orthodox,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,orthodox,pentecostal,presbyterian,protestant,quaker,roman_catholic,russian_orthodox,seventh_day_adventist,spiritist" values_context="christian" values_searchable="true" />
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
