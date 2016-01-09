@@ -386,7 +386,7 @@ public class SearchCompilerTest {
             SearchCompiler.compile("foo type bar");
             throw new RuntimeException();
         } catch (ParseError parseError) {
-            assertEquals("<html>Expecting <code>:</code> after <i>type<i>", parseError.getMessage());
+            assertEquals("<html>Expecting <code>:</code> after <i>type</i>", parseError.getMessage());
         }
     }
 }
