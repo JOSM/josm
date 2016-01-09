@@ -446,6 +446,14 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         fireMakeMemberVisible(index);
     }
 
+    void addMembersAtIndex(final Iterable<RelationMember> newMembers, final int index) {
+        int idx = index;
+        for (RelationMember member : newMembers) {
+            members.add(idx++, member);
+        }
+        fireTableRowsInserted(index, idx - 1);
+    }
+
     public void addMembersAtBeginning(List<? extends OsmPrimitive> primitives) {
         addMembersAtIndex(primitives, 0);
     }
