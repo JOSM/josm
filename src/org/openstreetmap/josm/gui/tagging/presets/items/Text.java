@@ -166,8 +166,11 @@ public class Text extends KeyedItem {
             pnl.add(releasebutton, GBC.eol());
             value = pnl;
         }
-        p.add(new JLabel(locale_text+':'), GBC.std().insets(0, 0, 10, 0));
+        final JLabel label = new JLabel(locale_text + ':');
+        label.setToolTipText(getKeyTooltipText());
+        p.add(label, GBC.std().insets(0, 0, 10, 0));
         p.add(value, GBC.eol().fill(GBC.HORIZONTAL));
+        value.setToolTipText(getKeyTooltipText());
         return true;
     }
 
