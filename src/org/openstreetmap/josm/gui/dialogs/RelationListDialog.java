@@ -24,6 +24,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.FocusManager;
 import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -33,6 +34,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.relation.AddSelectionToRelations;
 import org.openstreetmap.josm.actions.relation.DeleteRelationsAction;
 import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
@@ -85,7 +87,8 @@ import org.openstreetmap.josm.tools.Utils;
  * We don't have such dialogs for nodes, segments, and ways, because those
  * objects are visible on the map and can be selected there. Relations are not.
  */
-public class RelationListDialog extends ToggleDialog implements DataSetListener, NavigatableComponent.ZoomChangeListener {
+public class RelationListDialog extends ToggleDialog
+        implements DataSetListener, NavigatableComponent.ZoomChangeListener, ExpertToggleAction.ExpertModeChangeListener {
     /** The display list. */
     private final JList<Relation> displaylist;
     /** the list model used */
@@ -115,6 +118,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener,
     private final SelectRelationAction addRelationToSelectionAction = new SelectRelationAction(true);
     /** add all selected primitives to the given relations */
     private final AddSelectionToRelations addSelectionToRelations = new AddSelectionToRelations();
+    private transient JMenuItem addSelectionToRelationMenuItem;
 
     private final transient HighlightHelper highlightHelper = new HighlightHelper();
     private final boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
@@ -211,6 +215,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener,
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
         DataSet.addSelectionListener(addSelectionToRelations);
         dataChanged(null);
+        ExpertToggleAction.addExpertModeChangeListener(this);
+        expertChanged(ExpertToggleAction.isExpert());
     }
 
     @Override
@@ -219,6 +225,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener,
         MapView.removeZoomChangeListener(this);
         DatasetEventManager.getInstance().removeDatasetListener(this);
         DataSet.removeSelectionListener(addSelectionToRelations);
+        ExpertToggleAction.removeExpertModeChangeListener(this);
     }
 
     private void resetFilter() {
@@ -594,7 +601,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener,
         popupMenuHandler.addAction(duplicateAction).setVisible(false);
         popupMenuHandler.addAction(deleteRelationsAction).setVisible(false);
 
-        popupMenuHandler.addAction(addSelectionToRelations);
+        addSelectionToRelationMenuItem = popupMenuHandler.addAction(addSelectionToRelations);
     }
 
     /* ---------------------------------------------------------------------------------- */
@@ -680,5 +687,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener,
         if (model.filter != null) {
             model.setFilter(model.filter);
         }
+    }
+
+    @Override
+    public void expertChanged(boolean isExpert) {
+        addSelectionToRelationMenuItem.setVisible(isExpert);
     }
 }
