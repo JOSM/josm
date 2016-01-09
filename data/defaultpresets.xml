@@ -6138,6 +6138,7 @@
             <space />
             <key key="military" value="bunker" />
             <combo key="bunker_type" text="Type" values="pillbox,munitions,hardened_aircraft_shelter" match="key" />
+            <combo key="location" text="Location" values="underground,overground" values_context="bunker" />
             <text key="name" text="Name" />
             <check key="historic" text="Historic" />
             <check key="ruins" text="Ruins" />
