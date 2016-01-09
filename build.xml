@@ -647,19 +647,20 @@ Build-Date: ${build.tstamp}
     <!-- compile build script for generating projection list -->
     <target name="epsg-compile" depends="compile">
         <mkdir dir="build2"/>
-        <javac sourcepath="" srcdir="scripts"
+        <javac sourcepath="" srcdir="scripts" failonerror="true"
             destdir="build2" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8" classpath="build">
         </javac>
     </target>
     <!-- generate projection list -->
     <target name="epsg" depends="epsg-compile">
         <touch file="${epsg.output}"/>
-        <java classname="BuildProjectionDefinitions">
+        <java classname="BuildProjectionDefinitions" failonerror="true">
             <classpath>
                 <pathelement path="."/>
                 <pathelement path="build"/>
                 <pathelement path="build2"/>
             </classpath>
+            <arg value="${basedir}"/>
         </java>
     </target>
 </project>
