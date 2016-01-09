@@ -35,6 +35,7 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLEditorKit;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.CustomConfigurator;
@@ -47,6 +48,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -151,6 +153,26 @@ public class OAuthAuthorizationWizard extends JDialog {
         pnl.add(cbAuthorisationProcedure = new AuthorizationProcedureComboBox(), gc);
         cbAuthorisationProcedure.addItemListener(new AuthorisationProcedureChangeListener());
         lbl.setLabelFor(cbAuthorisationProcedure);
+
+        if (!OsmApi.DEFAULT_API_URL.equals(apiUrl)) {
+            gc.gridy = 3;
+            gc.gridwidth = 2;
+            gc.gridx = 0;
+            final HtmlPanel pnlWarning = new HtmlPanel();
+            final HTMLEditorKit kit = (HTMLEditorKit) pnlWarning.getEditorPane().getEditorKit();
+            kit.getStyleSheet().addRule(".warning-body {"
+                    + "background-color:rgb(253,255,221);padding: 10pt; "
+                    + "border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
+            kit.getStyleSheet().addRule("ol {margin-left: 1cm}");
+            pnlWarning.setText("<html><body>"
+                    + "<p class=\"warning-body\">"
+                    + tr("<strong>Warning:</strong> Since you are using not the default OSM API, " +
+                    "make sure to set an OAuth consumer key and secret in the <i>Advanced OAuth parameters</i>.")
+                    + "</p>"
+                    + "</body></html>");
+            pnl.add(pnlWarning, gc);
+        }
+
         return pnl;
     }
 
