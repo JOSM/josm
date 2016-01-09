@@ -94,7 +94,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         HtmlPanel pnlMessage = new HtmlPanel();
         HTMLEditorKit kit = (HTMLEditorKit) pnlMessage.getEditorPane().getEditorKit();
         kit.getStyleSheet().addRule(
-                ".warning-body {background-color:rgb(253,255,221);padding: 10pt; " +
+                ".warning-body {background-color:#DDFFDD; padding: 10pt; " +
                 "border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
         kit.getStyleSheet().addRule("ol {margin-left: 1cm}");
         pnlMessage.setText("<html><body><p class=\"warning-body\">"
@@ -135,25 +135,6 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         SelectAllOnFocusGainedDecorator.decorate(tfPassword);
         valPassword = new PasswordValidator(tfPassword);
         valPassword.validate();
-
-        gc.gridy = 3;
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        gc.gridwidth = 2;
-        pnlMessage = new HtmlPanel();
-        kit = (HTMLEditorKit) pnlMessage.getEditorPane().getEditorKit();
-        kit.getStyleSheet().addRule(
-                ".warning-body {background-color:rgb(253,255,221);padding: 10pt; " +
-                "border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
-        kit.getStyleSheet().addRule("ol {margin-left: 1cm}");
-        pnlMessage.setText("<html><body>"
-                + "<p class=\"warning-body\">"
-                + tr("<strong>Warning:</strong> JOSM does login <strong>once</strong> using a secure connection.")
-                + "</p>"
-                + "</body></html>");
-        pnl.add(pnlMessage, gc);
 
         // filler - grab remaining space
         gc.gridy = 4;

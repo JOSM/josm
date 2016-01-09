@@ -6,32 +6,21 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
-import java.awt.DefaultFocusTraversalPolicy;
-import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.swing.Action;
-import javax.swing.Box;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.MenuElement;
-import javax.swing.MenuSelectionManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -124,6 +113,7 @@ import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.gui.dialogs.MenuItemSearchDialog;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
@@ -131,7 +121,6 @@ import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchAction;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchPrimitiveDialog;
-import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -403,11 +392,6 @@ public class MainMenu extends JMenuBar {
     public final DialogsToggleAction dialogsToggleAction = new DialogsToggleAction();
     public FullscreenToggleAction fullscreenToggleAction;
 
-    /**
-     * Popup menu to display menu items search result.
-     */
-    private final JPopupMenu searchResultsMenu = new JPopupMenu();
-
     /** this menu listener hides unnecessary JSeparators in a menu list but does not remove them.
      * If at a later time the separators are required, they will be made visible again. Intended
      * usage is make menus not look broken if separators are used to group the menu and some of
@@ -440,7 +424,7 @@ public class MainMenu extends JMenuBar {
     };
 
     /**
-     * @return the default position of tnew top-level menus
+     * @return the default position of new top-level menus
      * @since 6088
      */
     public int getDefaultMenuPos() {
@@ -817,24 +801,14 @@ public class MainMenu extends JMenuBar {
             }
         });
 
+        add(helpMenu, new MenuItemSearchDialog.Action());
+        helpMenu.addSeparator();
         add(helpMenu, statusreport);
         add(helpMenu, reportbug);
         helpMenu.addSeparator();
 
         add(helpMenu, help);
         add(helpMenu, about);
-        add(Box.createHorizontalGlue());
-        final DisableShortcutsOnFocusGainedTextField searchField = createSearchField();
-        add(searchField);
-
-        // Do not let search field take the focus automatically
-        setFocusTraversalPolicyProvider(true);
-        setFocusTraversalPolicy(new DefaultFocusTraversalPolicy() {
-            @Override
-            protected boolean accept(Component aComponent) {
-                return super.accept(aComponent) && !searchField.equals(aComponent);
-            }
-        });
 
         windowMenu.addMenuListener(menuSeparatorHandler);
 
@@ -853,51 +827,19 @@ public class MainMenu extends JMenuBar {
     }
 
     /**
-     * Create search field.
-     * @return the search field
-     */
-    private DisableShortcutsOnFocusGainedTextField createSearchField() {
-        DisableShortcutsOnFocusGainedTextField searchField = new DisableShortcutsOnFocusGainedTextField() {
-            @Override
-            public Dimension getPreferredSize() {
-                // JMenuBar uses a BoxLayout and it doesn't seem possible to specify a size factor,
-                // so compute the preferred size dynamically
-                return new Dimension(Math.min(200, Math.max(25, getMaximumAvailableWidth())),
-                        helpMenu.getPreferredSize().height);
-            }
-        };
-        Shortcut searchFieldShortcut = Shortcut.registerShortcut("menu:search-field", tr("Search menu items"), KeyEvent.VK_R, Shortcut.MNEMONIC);
-        searchFieldShortcut.setFocusAccelerator(searchField);
-        searchField.setEditable(true);
-        searchField.setMaximumSize(new Dimension(200, helpMenu.getPreferredSize().height));
-        searchField.setHint(tr("Search menu items"));
-        searchField.setToolTipText(Main.platform.makeTooltip(tr("Search menu items"), searchFieldShortcut));
-        searchField.addKeyListener(new SearchFieldKeyListener());
-        searchField.getDocument().addDocumentListener(new SearchFieldTextListener(this, searchField));
-        return searchField;
-    }
-
-    /**
      * Search main menu for items with {@code textToFind} in title.
      * @param textToFind The text to find
+     * @param skipPresets whether to skip the {@link #presetsMenu} in the search
      * @return not null list of found menu items.
      */
-    private List<JMenuItem> findMenuItems(String textToFind) {
-        // Explicitely use default locale in this case, because we're looking for translated strings
+    public List<JMenuItem> findMenuItems(String textToFind, boolean skipPresets) {
+        // Explicitly use default locale in this case, because we're looking for translated strings
         textToFind = textToFind.toLowerCase(Locale.getDefault());
         List<JMenuItem> result = new ArrayList<>();
-
-        // Iterate over main menus
-        for (MenuElement menuElement : getSubElements()) {
-            if (!(menuElement instanceof JMenu)) continue;
-
-            JMenu mainMenuItem = (JMenu) menuElement;
-            if (mainMenuItem.getAction() != null && mainMenuItem.getText().toLowerCase(Locale.getDefault()).contains(textToFind)) {
-                result.add(mainMenuItem);
+        for (int i = 0; i < getMenuCount(); i++) {
+            if (getMenu(i) != null && (!skipPresets || presetsMenu != getMenu(i))) {
+                findMenuItems(getMenu(i), textToFind, result);
             }
-
-            //Search recursively
-            findMenuItems(mainMenuItem, textToFind, result);
         }
         return result;
     }
@@ -907,14 +849,14 @@ public class MainMenu extends JMenuBar {
      * contains {@code textToFind} it's appended to result.
      * @param menu menu in which search will be performed
      * @param textToFind The text to find
-     * @param result resulting list ofmenu items
+     * @param result resulting list of menu items
      */
     private static void findMenuItems(final JMenu menu, final String textToFind, final List<JMenuItem> result) {
         for (int i = 0; i < menu.getItemCount(); i++) {
             JMenuItem menuItem = menu.getItem(i);
             if (menuItem == null) continue;
 
-            // Explicitely use default locale in this case, because we're looking for translated strings
+            // Explicitly use default locale in this case, because we're looking for translated strings
             if (menuItem.getAction() != null && menuItem.getText().toLowerCase(Locale.getDefault()).contains(textToFind)) {
                 result.add(menuItem);
             }
@@ -976,110 +918,4 @@ public class MainMenu extends JMenuBar {
         }
     }
 
-    /**
-     * This listener is designed to handle ENTER key pressed in menu search field.
-     * When user presses Enter key then selected item of "searchResultsMenu" is triggered.
-     */
-    private static class SearchFieldKeyListener implements KeyListener {
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                // On ENTER selected menu item must be triggered
-                MenuElement[] selection = MenuSelectionManager.defaultManager().getSelectedPath();
-                if (selection.length > 1) {
-                    MenuElement selectedElement = selection[selection.length-1];
-                    if (selectedElement instanceof JMenuItem) {
-                        JMenuItem selectedItem = (JMenuItem) selectedElement;
-                        Action menuAction = selectedItem.getAction();
-                        menuAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
-                        if (Main.isDebugEnabled()) {
-                            Main.debug(getClass().getName()+" consuming event "+e);
-                        }
-                        e.consume();
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void keyTyped(KeyEvent e) {
-            // Not used
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-            // Not used
-        }
-    }
-
-    private class SearchFieldTextListener implements DocumentListener {
-        private final JTextField searchField;
-        private final MainMenu mainMenu;
-        private String currentSearchText;
-
-        SearchFieldTextListener(MainMenu mainMenu, JTextField searchField) {
-            this.mainMenu = mainMenu;
-            this.searchField = searchField;
-        }
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            doSearch(searchField.getText());
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            doSearch(searchField.getText());
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            doSearch(searchField.getText());
-        }
-
-        //TODO: perform some delay (maybe 200 ms) before actual searching.
-        void doSearch(String searchTerm) {
-            // Explicitely use default locale in this case, because we're looking for translated strings
-            searchTerm = searchTerm.trim().toLowerCase(Locale.getDefault());
-
-            if (searchTerm.equals(currentSearchText)) {
-                return;
-            }
-            currentSearchText = searchTerm;
-            if (searchTerm.isEmpty()) {
-                // No text to search
-                hideMenu();
-                return;
-            }
-
-            List<JMenuItem> searchResult = mainMenu.findMenuItems(currentSearchText);
-            if (searchResult.isEmpty()) {
-                // Nothing found
-                hideMenu();
-                return;
-            }
-
-            if (searchResult.size() > 20) {
-                // Too many items found...
-                searchResult = searchResult.subList(0, 20);
-            }
-
-            // Update Popup menu
-            searchResultsMenu.removeAll();
-            for (JMenuItem foundItem : searchResult) {
-                searchResultsMenu.add(foundItem.getText()).setAction(foundItem.getAction());
-            }
-            // Put menu right under search field
-            searchResultsMenu.pack();
-            searchResultsMenu.show(mainMenu, searchField.getX(), searchField.getY() + searchField.getHeight());
-
-            // This is tricky. User still is able to edit search text. While Up and Down keys are handled by Popup Menu.
-            searchField.requestFocusInWindow();
-        }
-
-        private void hideMenu() {
-            searchResultsMenu.setVisible(false);
-        }
-    }
 }

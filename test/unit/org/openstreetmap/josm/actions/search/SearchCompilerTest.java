@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.search;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -377,5 +378,15 @@ public class SearchCompilerTest {
         anonymous.n1.setUser(User.createLocalUser("foobar"));
         anonymous.match(anonymous.n1, false);
         anonymous.match(anonymous.n2, true);
+    }
+
+    @Test
+    public void testFooTypeBar() throws Exception {
+        try {
+            SearchCompiler.compile("foo type bar");
+            throw new RuntimeException();
+        } catch (ParseError parseError) {
+            assertEquals("<html>Expecting <code>:</code> after <i>type<i>", parseError.getMessage());
+        }
     }
 }

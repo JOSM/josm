@@ -182,13 +182,14 @@ public class SearchCompiler {
                             long maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime();
                             return new TimestampRange(minDate, maxDate);
                         } else {
-                            // I18n: Don't translate timestamp keyword
-                            throw new ParseError(tr("Expecting <i>min</i>/<i>max</i> after ''timestamp''"));
+                            throw new ParseError("<html>" + tr("Expecting {0} after {1}", "<i>min</i>/<i>max</i>", "<i>timestamp</i>"));
                         }
                     }
+                } else {
+                    throw new ParseError("<html>" + tr("Expecting {0} after {1}", "<code>:</code>", "<i>" + keyword + "</i>"));
                 }
             }
-            return null;
+            throw new IllegalStateException("Not expecting keyword " + keyword);
         }
 
         @Override
