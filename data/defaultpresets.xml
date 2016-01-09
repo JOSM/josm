@@ -4194,7 +4194,7 @@
             <key key="amenity" value="studio" />
             <reference ref="name_operator" />
             <reference ref="wheelchair" />
-            <combo key="type" text="Type" values="audio,video" />
+            <combo key="studio" text="Type" values="audio,radio,television,video" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Recording Studio -->
     </group> <!-- Culture -->
