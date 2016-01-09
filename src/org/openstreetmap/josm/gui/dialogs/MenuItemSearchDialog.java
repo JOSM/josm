@@ -1,6 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.ListCellRenderer;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -8,15 +23,7 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.widgets.SearchTextResultListPanel;
 import org.openstreetmap.josm.tools.Shortcut;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-public class MenuItemSearchDialog extends ExtendedDialog {
+public final class MenuItemSearchDialog extends ExtendedDialog {
 
     private final Selector selector;
     private static final MenuItemSearchDialog INSTANCE = new MenuItemSearchDialog(Main.main.menu);
@@ -63,7 +70,7 @@ public class MenuItemSearchDialog extends ExtendedDialog {
 
         private final MainMenu menu;
 
-        public Selector(MainMenu menu) {
+        Selector(MainMenu menu) {
             super();
             this.menu = menu;
             lsResult.setCellRenderer(new CellRenderer());
@@ -94,7 +101,8 @@ public class MenuItemSearchDialog extends ExtendedDialog {
         private final DefaultListCellRenderer def = new DefaultListCellRenderer();
 
         @Override
-        public Component getListCellRendererComponent(JList<? extends JMenuItem> list, JMenuItem value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<? extends JMenuItem> list, JMenuItem value, int index,
+                                                      boolean isSelected, boolean cellHasFocus) {
             final JLabel label = (JLabel) def.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             label.setText(value.getText());
             label.setIcon(value.getIcon());

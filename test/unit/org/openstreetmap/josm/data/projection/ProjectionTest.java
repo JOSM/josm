@@ -86,7 +86,7 @@ public class ProjectionTest {
     }
 
     private LatLon random(Bounds b) {
-        for (int i=0; i<20; i++) {
+        for (int i = 0; i < 20; i++) {
             double lat = rand.nextDouble() * (b.getMax().lat() - b.getMin().lat()) + b.getMin().lat();
             double lon = rand.nextDouble() * (b.getMax().lon() - b.getMin().lon()) + b.getMin().lon();
             LatLon result = new LatLon(lat, lon);
@@ -133,7 +133,7 @@ public class ProjectionTest {
             throw new RuntimeException(ex);
         }
         Bounds b = p.getWorldBoundsLatLon();
-        for (int i=0; i<NUM_IT; i++) {
+        for (int i = 0; i < NUM_IT; i++) {
             LatLon ll1 = random(b);
             EastNorth en = p.latlon2eastNorth(ll1);
             LatLon ll2 = p.eastNorth2latlon(en);
