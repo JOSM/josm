@@ -4194,7 +4194,7 @@
             <key key="amenity" value="studio" />
             <reference ref="name_operator" />
             <reference ref="wheelchair" />
-            <combo key="type" text="Type" values="audio,video" />
+            <combo key="studio" text="Type" values="audio,radio,television,video" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Recording Studio -->
     </group> <!-- Culture -->
@@ -6138,6 +6138,7 @@
             <space />
             <key key="military" value="bunker" />
             <combo key="bunker_type" text="Type" values="pillbox,munitions,hardened_aircraft_shelter" match="key" />
+            <combo key="location" text="Location" values="underground,overground" values_context="bunker" />
             <text key="name" text="Name" />
             <check key="historic" text="Historic" />
             <check key="ruins" text="Ruins" />
@@ -8585,6 +8586,7 @@
             <space />
             <key key="landuse" value="orchard" />
             <text key="name" text="Name" />
+            <combo key="trees" text="trees" values="olive_trees,apple_trees,oil_palms,orange_trees,almond_trees,banana_plants,coconut_palms,hazel_plants,cherry_trees,persimmon_trees,walnut_trees,plum_trees,peach_trees,tea_plants" />
         </item> <!-- Orchard -->
         <item name="Vineyard" icon="presets/fruits.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=vineyard"
