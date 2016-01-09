@@ -337,7 +337,7 @@ public class RelationChecker extends Test {
 
     @Override
     public Command fixError(TestError testError) {
-        if (isFixable(testError)) {
+        if (isFixable(testError) && !testError.getPrimitives().iterator().next().isDeleted()) {
             return new DeleteCommand(testError.getPrimitives());
         }
         return null;
