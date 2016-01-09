@@ -52,7 +52,7 @@ public final class ExceptionUtil {
         return tr(
                 "<html>Failed to initialize communication with the OSM server {0}.<br>"
                 + "Check the server URL in your preferences and your internet connection.",
-                Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
+                OsmApi.getOsmApi().getServerUrl());
     }
 
     public static String explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
@@ -63,7 +63,7 @@ public final class ExceptionUtil {
                 + "OAuth Access Token configured.<br>"
                 + "Please open the Preferences Dialog and generate or enter an Access Token."
                 + "</html>",
-                Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL)
+                OsmApi.getOsmApi().getServerUrl()
         );
     }
 

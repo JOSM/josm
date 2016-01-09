@@ -161,7 +161,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      * Initializes the panel from preferences
      */
     public void initFromPreferences() {
-        setApiUrl(Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL).trim());
+        setApiUrl(OsmApi.getOsmApi().getServerUrl().trim());
         refreshView();
     }
 

@@ -112,7 +112,7 @@ public abstract class OsmServerReader extends OsmConnection {
             boolean uncompressAccordingToContentDisposition) throws OsmTransferException {
         try {
             OnlineResource.JOSM_WEBSITE.checkOfflineAccess(urlStr, Main.getJOSMWebsite());
-            OnlineResource.OSM_API.checkOfflineAccess(urlStr, Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
+            OnlineResource.OSM_API.checkOfflineAccess(urlStr, OsmApi.getOsmApi().getServerUrl());
 
             URL url = null;
             try {

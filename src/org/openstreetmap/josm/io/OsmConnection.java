@@ -126,7 +126,7 @@ public class OsmConnection {
      */
     protected void obtainAccessToken(final HttpClient connection) throws MissingOAuthAccessTokenException {
         try {
-            final URL apiUrl = new URL(Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
+            final URL apiUrl = new URL(OsmApi.getOsmApi().getServerUrl());
             if (!Objects.equals(apiUrl.getHost(), connection.getURL().getHost())) {
                 throw new MissingOAuthAccessTokenException();
             }
