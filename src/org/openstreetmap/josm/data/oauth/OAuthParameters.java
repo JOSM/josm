@@ -3,10 +3,10 @@ package org.openstreetmap.josm.data.oauth;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.io.OsmApi;
@@ -26,18 +26,6 @@ public class OAuthParameters {
      * The default JOSM OAuth consumer secret (created by user josmeditor).
      */
     public static final String DEFAULT_JOSM_CONSUMER_SECRET = "rIkjpPcBNkMQxrqzcOvOC4RRuYupYr7k8mfP13H5";
-    /**
-     * The default OSM OAuth request token URL.
-     */
-    public static final String DEFAULT_REQUEST_TOKEN_URL = Main.getOSMWebsite() + "/oauth/request_token";
-    /**
-     * The default OSM OAuth access token URL.
-     */
-    public static final String DEFAULT_ACCESS_TOKEN_URL = Main.getOSMWebsite() + "/oauth/access_token";
-    /**
-     * The default OSM OAuth authorize URL.
-     */
-    public static final String DEFAULT_AUTHORISE_URL = Main.getOSMWebsite() + "/oauth/authorize";
 
     /**
      * Replies a set of default parameters for a consumer accessing the standard OSM server
@@ -59,24 +47,37 @@ public class OAuthParameters {
      * @since 5422
      */
     public static OAuthParameters createDefault(String apiUrl) {
-        String host = "";
-        if (!OsmApi.DEFAULT_API_URL.equals(apiUrl)) {
+        final String consumerKey;
+        final String consumerSecret;
+        final String serverUrl;
+
+        if (apiUrl != null) {
+            // validate URL syntax
             try {
-                host = new URL(apiUrl).getHost();
+                new URL(apiUrl);
             } catch (MalformedURLException e) {
-                // Ignored
-                if (Main.isTraceEnabled()) {
-                    Main.trace(e.getMessage());
-                }
+                apiUrl = null;
             }
         }
-        boolean osmDevServer = host.endsWith("dev.openstreetmap.org");
+
+        if (apiUrl != null && !OsmApi.DEFAULT_API_URL.equals(apiUrl)) {
+            consumerKey = ""; // a custom consumer key is required
+            consumerSecret = ""; // a custom consumer secret is requireds
+            serverUrl = apiUrl.replaceAll("/api$", "");
+        } else {
+            consumerKey = DEFAULT_JOSM_CONSUMER_KEY;
+            consumerSecret = DEFAULT_JOSM_CONSUMER_SECRET;
+            serverUrl = Main.getOSMWebsite();
+        }
+
         return new OAuthParameters(
-            DEFAULT_JOSM_CONSUMER_KEY,
-            DEFAULT_JOSM_CONSUMER_SECRET,
-            osmDevServer ? DEFAULT_REQUEST_TOKEN_URL.replace("www.openstreetmap.org", host) : DEFAULT_REQUEST_TOKEN_URL,
-            osmDevServer ? DEFAULT_ACCESS_TOKEN_URL.replace("www.openstreetmap.org", host) : DEFAULT_ACCESS_TOKEN_URL,
-            osmDevServer ? DEFAULT_AUTHORISE_URL.replace("www.openstreetmap.org", host) : DEFAULT_AUTHORISE_URL);
+                consumerKey,
+                consumerSecret,
+                serverUrl + "/oauth/request_token",
+                serverUrl + "/oauth/access_token",
+                serverUrl + "/oauth/authorize",
+                serverUrl + "/login",
+                serverUrl + "/logout");
     }
 
     /**
@@ -92,8 +93,26 @@ public class OAuthParameters {
                 pref.get("oauth.settings.consumer-secret", parameters.getConsumerSecret()),
                 pref.get("oauth.settings.request-token-url", parameters.getRequestTokenUrl()),
                 pref.get("oauth.settings.access-token-url", parameters.getAccessTokenUrl()),
-                pref.get("oauth.settings.authorise-url", parameters.getAuthoriseUrl())
-                );
+                pref.get("oauth.settings.authorise-url", parameters.getAuthoriseUrl()),
+                pref.get("oauth.settings.osm-login-url", parameters.getOsmLoginUrl()),
+                pref.get("oauth.settings.osm-logout-url", parameters.getOsmLogoutUrl()));
+    }
+
+    /**
+     * Remembers the current values in the preferences <code>pref</code>.
+     *
+     * @param pref the preferences. Must not be null.
+     * @throws IllegalArgumentException if pref is null.
+     */
+    public void rememberPreferences(Preferences pref) {
+        CheckParameterUtil.ensureParameterNotNull(pref, "pref");
+        pref.put("oauth.settings.consumer-key", getConsumerKey());
+        pref.put("oauth.settings.consumer-secret", getConsumerSecret());
+        pref.put("oauth.settings.request-token-url", getRequestTokenUrl());
+        pref.put("oauth.settings.access-token-url", getAccessTokenUrl());
+        pref.put("oauth.settings.authorise-url", getAuthoriseUrl());
+        pref.put("oauth.settings.osm-login-url", getOsmLoginUrl());
+        pref.put("oauth.settings.osm-logout-url", getOsmLogoutUrl());
     }
 
     private final String consumerKey;
@@ -101,6 +120,8 @@ public class OAuthParameters {
     private final String requestTokenUrl;
     private final String accessTokenUrl;
     private final String authoriseUrl;
+    private final String osmLoginUrl;
+    private final String osmLogoutUrl;
 
     /**
      * Constructs a new {@code OAuthParameters}.
@@ -109,18 +130,21 @@ public class OAuthParameters {
      * @param requestTokenUrl request token URL
      * @param accessTokenUrl access token URL
      * @param authoriseUrl authorise URL
-     *
+     * @param osmLoginUrl the OSM login URL (for automatic mode)
+     * @param osmLogoutUrl the OSM logout URL (for automatic mode)
      * @see #createDefault
      * @see #createFromPreferences
      * @since 9220
      */
     public OAuthParameters(String consumerKey, String consumerSecret,
-            String requestTokenUrl, String accessTokenUrl, String authoriseUrl) {
+                           String requestTokenUrl, String accessTokenUrl, String authoriseUrl, String osmLoginUrl, String osmLogoutUrl) {
         this.consumerKey = consumerKey;
         this.consumerSecret = consumerSecret;
         this.requestTokenUrl = requestTokenUrl;
         this.accessTokenUrl = accessTokenUrl;
         this.authoriseUrl = authoriseUrl;
+        this.osmLoginUrl = osmLoginUrl;
+        this.osmLogoutUrl = osmLogoutUrl;
     }
 
     /**
@@ -136,6 +160,8 @@ public class OAuthParameters {
         this.accessTokenUrl = other.accessTokenUrl;
         this.requestTokenUrl = other.requestTokenUrl;
         this.authoriseUrl = other.authoriseUrl;
+        this.osmLoginUrl = other.osmLoginUrl;
+        this.osmLogoutUrl = other.osmLogoutUrl;
     }
 
     /**
@@ -179,6 +205,22 @@ public class OAuthParameters {
     }
 
     /**
+     * Gets the URL used to login users on the website (for automatic mode).
+     * @return The URL used to login users
+     */
+    public String getOsmLoginUrl() {
+        return osmLoginUrl;
+    }
+
+    /**
+     * Gets the URL used to logout users on the website (for automatic mode).
+     * @return The URL used to logout users
+     */
+    public String getOsmLogoutUrl() {
+        return osmLogoutUrl;
+    }
+
+    /**
      * Builds an {@link OAuthConsumer} based on these parameters.
      *
      * @return the consumer
@@ -204,51 +246,21 @@ public class OAuthParameters {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((accessTokenUrl == null) ? 0 : accessTokenUrl.hashCode());
-        result = prime * result + ((authoriseUrl == null) ? 0 : authoriseUrl.hashCode());
-        result = prime * result + ((consumerKey == null) ? 0 : consumerKey.hashCode());
-        result = prime * result + ((consumerSecret == null) ? 0 : consumerSecret.hashCode());
-        result = prime * result + ((requestTokenUrl == null) ? 0 : requestTokenUrl.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OAuthParameters that = (OAuthParameters) o;
+        return Objects.equals(consumerKey, that.consumerKey) &&
+                Objects.equals(consumerSecret, that.consumerSecret) &&
+                Objects.equals(requestTokenUrl, that.requestTokenUrl) &&
+                Objects.equals(accessTokenUrl, that.accessTokenUrl) &&
+                Objects.equals(authoriseUrl, that.authoriseUrl) &&
+                Objects.equals(osmLoginUrl, that.osmLoginUrl) &&
+                Objects.equals(osmLogoutUrl, that.osmLogoutUrl);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        OAuthParameters other = (OAuthParameters) obj;
-        if (accessTokenUrl == null) {
-            if (other.accessTokenUrl != null)
-                return false;
-        } else if (!accessTokenUrl.equals(other.accessTokenUrl))
-            return false;
-        if (authoriseUrl == null) {
-            if (other.authoriseUrl != null)
-                return false;
-        } else if (!authoriseUrl.equals(other.authoriseUrl))
-            return false;
-        if (consumerKey == null) {
-            if (other.consumerKey != null)
-                return false;
-        } else if (!consumerKey.equals(other.consumerKey))
-            return false;
-        if (consumerSecret == null) {
-            if (other.consumerSecret != null)
-                return false;
-        } else if (!consumerSecret.equals(other.consumerSecret))
-            return false;
-        if (requestTokenUrl == null) {
-            if (other.requestTokenUrl != null)
-                return false;
-        } else if (!requestTokenUrl.equals(other.requestTokenUrl))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(consumerKey, consumerSecret, requestTokenUrl, accessTokenUrl, authoriseUrl, osmLoginUrl, osmLogoutUrl);
     }
 }
