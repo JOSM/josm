@@ -382,6 +382,7 @@ way[barrier=retaining_wall],
 way[barrier=block],
 way[barrier=chain],
 way[barrier=ditch],
+way[barrier=jersey_barrier],
 way[barrier=kerb] {
     width: 2;
     color: barrier#F0F050;
@@ -480,6 +481,7 @@ node[barrier=bump_gate],
 node[barrier=portcullis],
 node[barrier=bus_trap],
 node[barrier=drawbridge],
+node[barrier=jersey_barrier],
 node[barrier=hampshire_gate] {
     icon-image: "misc/no_icon.png";
     set icon_z17;

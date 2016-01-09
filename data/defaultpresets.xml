@@ -1589,6 +1589,11 @@
             <key key="barrier" value="retaining_wall" />
             <reference ref="optional_height" />
         </item> <!-- Retaining Wall -->
+        <item name="Jersey Barrier" type="node,way,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=jersey_barrier" />
+            <key key="barrier" value="jersey_barrier" />
+            <combo key="material" text="Material" values="concrete,plastic" />
+        </item> <!-- Jersey Barrier -->
         <item name="Ditch" name_context="Barrier" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=ditch"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=ditch"
