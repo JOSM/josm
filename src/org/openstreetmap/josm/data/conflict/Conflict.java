@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.conflict;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -83,28 +84,16 @@ public class Conflict<T extends OsmPrimitive> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((my == null) ? 0 : my.hashCode());
-        result = prime * result + ((their == null) ? 0 : their.hashCode());
-        return result;
+        return Objects.hash(my, their);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Conflict<T> other = (Conflict<T>) obj;
-        if (my != other.my)
-            return false;
-        if (their != other.their)
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Conflict<?> conflict = (Conflict<?>) obj;
+        return Objects.equals(my, conflict.my) &&
+                Objects.equals(their, conflict.their);
     }
 
     /**

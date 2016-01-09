@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.notes;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 
@@ -103,24 +104,14 @@ public class Note {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (id ^ (id >>> 32));
-        return result;
+        return Objects.hash(id);
     }
 
-    /** Compares notes by OSM ID */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Note other = (Note) obj;
-        if (id != other.id)
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Note note = (Note) obj;
+        return id == note.id;
     }
 }

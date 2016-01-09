@@ -227,27 +227,15 @@ public class Preferences {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((value == null) ? 0 : value.hashCode());
-            return result;
+            return Objects.hash(value);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (!(obj instanceof AbstractSetting))
-                return false;
-            AbstractSetting<?> other = (AbstractSetting<?>) obj;
-            if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
-            return true;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            AbstractSetting<?> that = (AbstractSetting<?>) obj;
+            return Objects.equals(value, that.value);
         }
     }
 

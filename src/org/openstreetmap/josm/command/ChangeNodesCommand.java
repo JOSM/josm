@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.Icon;
 
@@ -63,32 +64,16 @@ public class ChangeNodesCommand extends Command {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((newNodes == null) ? 0 : newNodes.hashCode());
-        result = prime * result + ((way == null) ? 0 : way.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), way, newNodes);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ChangeNodesCommand other = (ChangeNodesCommand) obj;
-        if (newNodes == null) {
-            if (other.newNodes != null)
-                return false;
-        } else if (!newNodes.equals(other.newNodes))
-            return false;
-        if (way == null) {
-            if (other.way != null)
-                return false;
-        } else if (!way.equals(other.way))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        ChangeNodesCommand that = (ChangeNodesCommand) obj;
+        return Objects.equals(way, that.way) &&
+                Objects.equals(newNodes, that.newNodes);
     }
 }

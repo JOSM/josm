@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
+import java.util.Objects;
+
 /**
  * An UploadStrategySpecification consists of the parameter describing the strategy
  * for uploading a collection of {@link org.openstreetmap.josm.data.osm.OsmPrimitive}.
@@ -106,38 +108,17 @@ public class UploadStrategySpecification  {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + chunkSize;
-        result = prime * result + (closeChangesetAfterUpload ? 1231 : 1237);
-        result = prime * result + ((policy == null) ? 0 : policy.hashCode());
-        result = prime * result + ((strategy == null) ? 0 : strategy.hashCode());
-        return result;
+        return Objects.hash(strategy, chunkSize, policy, closeChangesetAfterUpload);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        UploadStrategySpecification other = (UploadStrategySpecification) obj;
-        if (chunkSize != other.chunkSize)
-            return false;
-        if (closeChangesetAfterUpload != other.closeChangesetAfterUpload)
-            return false;
-        if (policy == null) {
-            if (other.policy != null)
-                return false;
-        } else if (!policy.equals(other.policy))
-            return false;
-        if (strategy == null) {
-            if (other.strategy != null)
-                return false;
-        } else if (!strategy.equals(other.strategy))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        UploadStrategySpecification that = (UploadStrategySpecification) obj;
+        return chunkSize == that.chunkSize &&
+                closeChangesetAfterUpload == that.closeChangesetAfterUpload &&
+                strategy == that.strategy &&
+                policy == that.policy;
     }
 }

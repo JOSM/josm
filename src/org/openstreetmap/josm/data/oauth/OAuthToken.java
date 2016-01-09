@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.oauth;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 import oauth.signpost.OAuthConsumer;
@@ -63,32 +65,15 @@ public class OAuthToken {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((key == null) ? 0 : key.hashCode());
-        result = prime * result + ((secret == null) ? 0 : secret.hashCode());
-        return result;
+        return Objects.hash(key, secret);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        OAuthToken other = (OAuthToken) obj;
-        if (key == null) {
-            if (other.key != null)
-                return false;
-        } else if (!key.equals(other.key))
-            return false;
-        if (secret == null) {
-            if (other.secret != null)
-                return false;
-        } else if (!secret.equals(other.secret))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        OAuthToken that = (OAuthToken) obj;
+        return Objects.equals(key, that.key) &&
+                Objects.equals(secret, that.secret);
     }
 }

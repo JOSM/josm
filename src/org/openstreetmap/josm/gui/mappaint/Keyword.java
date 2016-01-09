@@ -18,14 +18,15 @@ public class Keyword {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        return Objects.equals(val, ((Keyword) obj).val);
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Keyword keyword = (Keyword) obj;
+        return Objects.equals(val, keyword.val);
     }
 
     @Override
     public int hashCode() {
-        return val.hashCode();
+        return Objects.hash(val);
     }
 
     public static final Keyword AUTO = new Keyword("auto");

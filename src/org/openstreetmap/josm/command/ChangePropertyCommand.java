@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.Icon;
 
@@ -248,32 +249,16 @@ public class ChangePropertyCommand extends Command {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((objects == null) ? 0 : objects.hashCode());
-        result = prime * result + ((tags == null) ? 0 : tags.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), objects, tags);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ChangePropertyCommand other = (ChangePropertyCommand) obj;
-        if (objects == null) {
-            if (other.objects != null)
-                return false;
-        } else if (!objects.equals(other.objects))
-            return false;
-        if (tags == null) {
-            if (other.tags != null)
-                return false;
-        } else if (!tags.equals(other.tags))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        ChangePropertyCommand that = (ChangePropertyCommand) obj;
+        return Objects.equals(objects, that.objects) &&
+                Objects.equals(tags, that.tags);
     }
 }

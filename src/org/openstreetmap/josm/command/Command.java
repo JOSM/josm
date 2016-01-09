@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -104,36 +105,17 @@ public abstract class Command extends PseudoCommand {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((eastNorth == null) ? 0 : eastNorth.hashCode());
-            result = prime * result + ((latlon == null) ? 0 : latlon.hashCode());
-            result = prime * result + (modified ? 1231 : 1237);
-            return result;
+            return Objects.hash(latlon, eastNorth, modified);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            OldNodeState other = (OldNodeState) obj;
-            if (eastNorth == null) {
-                if (other.eastNorth != null)
-                    return false;
-            } else if (!eastNorth.equals(other.eastNorth))
-                return false;
-            if (latlon == null) {
-                if (other.latlon != null)
-                    return false;
-            } else if (!latlon.equals(other.latlon))
-                return false;
-            if (modified != other.modified)
-                return false;
-            return true;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            OldNodeState that = (OldNodeState) obj;
+            return modified == that.modified &&
+                    Objects.equals(latlon, that.latlon) &&
+                    Objects.equals(eastNorth, that.eastNorth);
         }
     }
 
@@ -305,32 +287,15 @@ public abstract class Command extends PseudoCommand {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((cloneMap == null) ? 0 : cloneMap.hashCode());
-        result = prime * result + ((layer == null) ? 0 : layer.hashCode());
-        return result;
+        return Objects.hash(cloneMap, layer);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Command other = (Command) obj;
-        if (cloneMap == null) {
-            if (other.cloneMap != null)
-                return false;
-        } else if (!cloneMap.equals(other.cloneMap))
-            return false;
-        if (layer == null) {
-            if (other.layer != null)
-                return false;
-        } else if (!layer.equals(other.layer))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Command command = (Command) obj;
+        return Objects.equals(cloneMap, command.cloneMap) &&
+                Objects.equals(layer, command.layer);
     }
 }

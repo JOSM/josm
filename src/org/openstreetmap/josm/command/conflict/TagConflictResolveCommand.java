@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.Icon;
 
@@ -102,32 +103,16 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((conflict == null) ? 0 : conflict.hashCode());
-        result = prime * result + ((mergeItems == null) ? 0 : mergeItems.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), conflict, mergeItems);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        TagConflictResolveCommand other = (TagConflictResolveCommand) obj;
-        if (conflict == null) {
-            if (other.conflict != null)
-                return false;
-        } else if (!conflict.equals(other.conflict))
-            return false;
-        if (mergeItems == null) {
-            if (other.mergeItems != null)
-                return false;
-        } else if (!mergeItems.equals(other.mergeItems))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        TagConflictResolveCommand that = (TagConflictResolveCommand) obj;
+        return Objects.equals(conflict, that.conflict) &&
+                Objects.equals(mergeItems, that.mergeItems);
     }
 }

@@ -83,11 +83,7 @@ public class AutoCompletionManager implements DataSetListener {
 
         @Override
         public int hashCode() {
-            int hash = 7;
-            hash = 59 * hash + Objects.hashCode(this.key);
-            hash = 59 * hash + Objects.hashCode(this.value);
-            hash = 59 * hash + (this.defaultKey ? 1 : 0);
-            return hash;
+            return Objects.hash(key, value, defaultKey);
         }
 
         @Override

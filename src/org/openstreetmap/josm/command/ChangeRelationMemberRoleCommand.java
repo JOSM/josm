@@ -4,6 +4,7 @@ package org.openstreetmap.josm.command;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.swing.Icon;
 
@@ -83,47 +84,19 @@ public class ChangeRelationMemberRoleCommand extends Command {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((newRole == null) ? 0 : newRole.hashCode());
-        result = prime * result + ((oldModified == null) ? 0 : oldModified.hashCode());
-        result = prime * result + ((oldRole == null) ? 0 : oldRole.hashCode());
-        result = prime * result + position;
-        result = prime * result + ((relation == null) ? 0 : relation.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), relation, position, newRole, oldRole, oldModified);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ChangeRelationMemberRoleCommand other = (ChangeRelationMemberRoleCommand) obj;
-        if (newRole == null) {
-            if (other.newRole != null)
-                return false;
-        } else if (!newRole.equals(other.newRole))
-            return false;
-        if (oldModified == null) {
-            if (other.oldModified != null)
-                return false;
-        } else if (!oldModified.equals(other.oldModified))
-            return false;
-        if (oldRole == null) {
-            if (other.oldRole != null)
-                return false;
-        } else if (!oldRole.equals(other.oldRole))
-            return false;
-        if (position != other.position)
-            return false;
-        if (relation == null) {
-            if (other.relation != null)
-                return false;
-        } else if (!relation.equals(other.relation))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        ChangeRelationMemberRoleCommand that = (ChangeRelationMemberRoleCommand) obj;
+        return position == that.position &&
+                Objects.equals(relation, that.relation) &&
+                Objects.equals(newRole, that.newRole) &&
+                Objects.equals(oldRole, that.oldRole) &&
+                Objects.equals(oldModified, that.oldModified);
     }
 }

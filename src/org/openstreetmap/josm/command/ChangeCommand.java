@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.swing.Icon;
 
@@ -90,32 +91,16 @@ public class ChangeCommand extends Command {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((newOsm == null) ? 0 : newOsm.hashCode());
-        result = prime * result + ((osm == null) ? 0 : osm.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), osm, newOsm);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ChangeCommand other = (ChangeCommand) obj;
-        if (newOsm == null) {
-            if (other.newOsm != null)
-                return false;
-        } else if (!newOsm.equals(other.newOsm))
-            return false;
-        if (osm == null) {
-            if (other.osm != null)
-                return false;
-        } else if (!osm.equals(other.osm))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        ChangeCommand that = (ChangeCommand) obj;
+        return Objects.equals(osm, that.osm) &&
+                Objects.equals(newOsm, that.newOsm);
     }
 }

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -72,17 +73,15 @@ public class BoxTextElement extends StyleElement {
 
         @Override
         public int hashCode() {
-            return box.hashCode();
+            return Objects.hash(box);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof BoxProvider))
-                return false;
-            final BoxProvider other = (BoxProvider) obj;
-            BoxProviderResult resultOther = other.get();
-            if (resultOther.isTemporary()) return false;
-            return box.equals(resultOther.getBox());
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            SimpleBoxProvider that = (SimpleBoxProvider) obj;
+            return Objects.equals(box, that.box);
         }
     }
 
@@ -206,36 +205,20 @@ public class BoxTextElement extends StyleElement {
 
     @Override
     public boolean equals(Object obj) {
-        if (!super.equals(obj))
-            return false;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        final BoxTextElement other = (BoxTextElement) obj;
-        if (!text.equals(other.text)) return false;
-        if (boxProvider != null) {
-            if (!boxProvider.equals(other.boxProvider)) return false;
-        } else if (other.boxProvider != null)
-            return false;
-        else {
-            if (!box.equals(other.box)) return false;
-        }
-        if (hAlign != other.hAlign) return false;
-        if (vAlign != other.vAlign) return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        BoxTextElement that = (BoxTextElement) obj;
+        return Objects.equals(text, that.text) &&
+                Objects.equals(boxProvider, that.boxProvider) &&
+                Objects.equals(box, that.box) &&
+                hAlign == that.hAlign &&
+                vAlign == that.vAlign;
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        hash = 97 * hash + text.hashCode();
-        if (boxProvider != null) {
-            hash = 97 * hash + boxProvider.hashCode();
-        } else {
-            hash = 97 * hash + box.hashCode();
-        }
-        hash = 97 * hash + hAlign.hashCode();
-        hash = 97 * hash + vAlign.hashCode();
-        return hash;
+        return Objects.hash(super.hashCode(), text, boxProvider, box, hAlign, vAlign);
     }
 
     @Override

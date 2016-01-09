@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
@@ -442,37 +443,17 @@ public class Bounds {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(maxLat);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(maxLon);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(minLat);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(minLon);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return Objects.hash(minLat, minLon, maxLat, maxLon);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Bounds other = (Bounds) obj;
-        if (Double.doubleToLongBits(maxLat) != Double.doubleToLongBits(other.maxLat))
-            return false;
-        if (Double.doubleToLongBits(maxLon) != Double.doubleToLongBits(other.maxLon))
-            return false;
-        if (Double.doubleToLongBits(minLat) != Double.doubleToLongBits(other.minLat))
-            return false;
-        if (Double.doubleToLongBits(minLon) != Double.doubleToLongBits(other.minLon))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Bounds bounds = (Bounds) obj;
+        return Double.compare(bounds.minLat, minLat) == 0 &&
+                Double.compare(bounds.minLon, minLon) == 0 &&
+                Double.compare(bounds.maxLat, maxLat) == 0 &&
+                Double.compare(bounds.maxLon, maxLon) == 0;
     }
 }

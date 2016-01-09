@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 
@@ -342,33 +343,16 @@ public class CombineWayAction extends JosmAction {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((a == null) ? 0 : a.hashCode());
-            result = prime * result + ((b == null) ? 0 : b.hashCode());
-            return result;
+            return Objects.hash(a, b);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            NodePair other = (NodePair) obj;
-            if (a == null) {
-                if (other.a != null)
-                    return false;
-            } else if (!a.equals(other.a))
-                return false;
-            if (b == null) {
-                if (other.b != null)
-                    return false;
-            } else if (!b.equals(other.b))
-                return false;
-            return true;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            NodePair nodePair = (NodePair) obj;
+            return Objects.equals(a, nodePair.a) &&
+                    Objects.equals(b, nodePair.b);
         }
     }
 

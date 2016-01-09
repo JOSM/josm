@@ -4,6 +4,7 @@ package org.openstreetmap.josm.command.conflict;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -90,29 +91,16 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((conflict == null) ? 0 : conflict.hashCode());
-        result = prime * result + ((decision == null) ? 0 : decision.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), conflict, decision);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        DeletedStateConflictResolveCommand other = (DeletedStateConflictResolveCommand) obj;
-        if (conflict == null) {
-            if (other.conflict != null)
-                return false;
-        } else if (!conflict.equals(other.conflict))
-            return false;
-        if (decision != other.decision)
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        DeletedStateConflictResolveCommand that = (DeletedStateConflictResolveCommand) obj;
+        return Objects.equals(conflict, that.conflict) &&
+                decision == that.decision;
     }
 }

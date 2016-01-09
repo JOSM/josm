@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -54,14 +55,19 @@ public class DuplicateRelation extends Test {
 
         @Override
         public int hashCode() {
-            return role.hashCode()+(int) relId+tags.hashCode()+type.hashCode()+coor.hashCode();
+            return Objects.hash(role, type, tags, coor, relId);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof RelMember)) return false;
-            RelMember rm = (RelMember) obj;
-            return rm.role.equals(role) && rm.type.equals(type) && rm.relId == relId && rm.tags.equals(tags) && rm.coor.equals(coor);
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            RelMember relMember = (RelMember) obj;
+            return relId == relMember.relId &&
+                    Objects.equals(role, relMember.role) &&
+                    type == relMember.type &&
+                    Objects.equals(tags, relMember.tags) &&
+                    Objects.equals(coor, relMember.coor);
         }
 
         /** Extract and store relation information based on the relation member
@@ -116,14 +122,15 @@ public class DuplicateRelation extends Test {
 
         @Override
         public int hashCode() {
-            return members.hashCode();
+            return Objects.hash(members);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof RelationMembers)) return false;
-            RelationMembers rm = (RelationMembers) obj;
-            return rm.members.equals(members);
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            RelationMembers that = (RelationMembers) obj;
+            return Objects.equals(members, that.members);
         }
     }
 
@@ -147,14 +154,16 @@ public class DuplicateRelation extends Test {
 
         @Override
         public int hashCode() {
-            return members.hashCode()+keys.hashCode();
+            return Objects.hash(members, keys);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof RelationPair)) return false;
-            RelationPair rp = (RelationPair) obj;
-            return rp.members.equals(members) && rp.keys.equals(keys);
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            RelationPair that = (RelationPair) obj;
+            return Objects.equals(members, that.members) &&
+                    Objects.equals(keys, that.keys);
         }
     }
 

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.Utils;
@@ -41,30 +42,16 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + idx;
-            result = prime * result + ((instructions == null) ? 0 : instructions.hashCode());
-            return result;
+            return Objects.hash(instructions, idx);
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (!(obj instanceof Declaration))
-                return false;
-            Declaration other = (Declaration) obj;
-            if (idx != other.idx)
-                return false;
-            if (instructions == null) {
-                if (other.instructions != null)
-                    return false;
-            } else if (!instructions.equals(other.instructions))
-                return false;
-            return true;
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            Declaration that = (Declaration) obj;
+            return idx == that.idx &&
+                    Objects.equals(instructions, that.instructions);
         }
 
         @Override

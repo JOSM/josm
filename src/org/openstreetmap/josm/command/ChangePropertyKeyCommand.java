@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.Icon;
 
@@ -128,38 +129,17 @@ public class ChangePropertyKeyCommand extends Command {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((key == null) ? 0 : key.hashCode());
-        result = prime * result + ((newKey == null) ? 0 : newKey.hashCode());
-        result = prime * result + ((objects == null) ? 0 : objects.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), objects, key, newKey);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ChangePropertyKeyCommand other = (ChangePropertyKeyCommand) obj;
-        if (key == null) {
-            if (other.key != null)
-                return false;
-        } else if (!key.equals(other.key))
-            return false;
-        if (newKey == null) {
-            if (other.newKey != null)
-                return false;
-        } else if (!newKey.equals(other.newKey))
-            return false;
-        if (objects == null) {
-            if (other.objects != null)
-                return false;
-        } else if (!objects.equals(other.objects))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        ChangePropertyKeyCommand that = (ChangePropertyKeyCommand) obj;
+        return Objects.equals(objects, that.objects) &&
+                Objects.equals(key, that.key) &&
+                Objects.equals(newKey, that.newKey);
     }
 }

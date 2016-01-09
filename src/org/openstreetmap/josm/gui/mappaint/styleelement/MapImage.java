@@ -216,28 +216,20 @@ public class MapImage {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        final MapImage other = (MapImage) obj;
-        // img changes when image is fully loaded and can't be used for equality check.
-        return  alpha == other.alpha &&
-                Objects.equals(name, other.name) &&
-                Objects.equals(source, other.source) &&
-                autoRescale == other.autoRescale &&
-                width == other.width &&
-                height == other.height;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        MapImage mapImage = (MapImage) obj;
+        return alpha == mapImage.alpha &&
+                autoRescale == mapImage.autoRescale &&
+                width == mapImage.width &&
+                height == mapImage.height &&
+                Objects.equals(name, mapImage.name) &&
+                Objects.equals(source, mapImage.source);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + alpha;
-        hash = 67 * hash + name.hashCode();
-        hash = 67 * hash + source.hashCode();
-        hash = 67 * hash + (autoRescale ? 1 : 0);
-        hash = 67 * hash + width;
-        hash = 67 * hash + height;
-        return hash;
+        return Objects.hash(alpha, name, source, autoRescale, width, height);
     }
 
     @Override

@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.styleelement;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
@@ -65,28 +67,20 @@ public class RepeatImageElement extends StyleElement {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (!super.equals(obj))
-            return false;
-        final RepeatImageElement other = (RepeatImageElement) obj;
-        if (!this.pattern.equals(other.pattern)) return false;
-        if (this.offset != other.offset) return false;
-        if (this.spacing != other.spacing) return false;
-        if (this.phase != other.phase) return false;
-        if (this.align != other.align) return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        RepeatImageElement that = (RepeatImageElement) obj;
+        return Float.compare(that.offset, offset) == 0 &&
+                Float.compare(that.spacing, spacing) == 0 &&
+                Float.compare(that.phase, phase) == 0 &&
+                Objects.equals(pattern, that.pattern) &&
+                align == that.align;
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        hash = 83 * hash + this.pattern.hashCode();
-        hash = 83 * hash + Float.floatToIntBits(this.offset);
-        hash = 83 * hash + Float.floatToIntBits(this.spacing);
-        hash = 83 * hash + Float.floatToIntBits(this.phase);
-        hash = 83 * hash + this.align.hashCode();
-        return hash;
+        return Objects.hash(super.hashCode(), pattern, offset, spacing, phase, align);
     }
 
     @Override

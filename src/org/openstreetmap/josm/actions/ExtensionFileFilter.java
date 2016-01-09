@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ServiceConfigurationError;
 
 import javax.swing.filechooser.FileFilter;
@@ -349,38 +350,16 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((defaultExtension == null) ? 0 : defaultExtension.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((extensions == null) ? 0 : extensions.hashCode());
-        return result;
+        return Objects.hash(extensions, description, defaultExtension);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ExtensionFileFilter other = (ExtensionFileFilter) obj;
-        if (defaultExtension == null) {
-            if (other.defaultExtension != null)
-                return false;
-        } else if (!defaultExtension.equals(other.defaultExtension))
-            return false;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (extensions == null) {
-            if (other.extensions != null)
-                return false;
-        } else if (!extensions.equals(other.extensions))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        ExtensionFileFilter that = (ExtensionFileFilter) obj;
+        return Objects.equals(extensions, that.extensions) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(defaultExtension, that.defaultExtension);
     }
 }

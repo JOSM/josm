@@ -43,19 +43,16 @@ public class LineTextElement extends StyleElement {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (!super.equals(obj))
-            return false;
-        final LineTextElement other = (LineTextElement) obj;
-        return Objects.equals(text, other.text);
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        LineTextElement that = (LineTextElement) obj;
+        return Objects.equals(text, that.text);
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        hash = 43 * hash + text.hashCode();
-        return hash;
+        return Objects.hash(super.hashCode(), text);
     }
 
     @Override

@@ -358,15 +358,7 @@ public class LineElement extends StyleElement {
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        hash = 29 * hash + line.hashCode();
-        hash = 29 * hash + color.hashCode();
-        hash = 29 * hash + (dashesLine != null ? dashesLine.hashCode() : 0);
-        hash = 29 * hash + (dashesBackground != null ? dashesBackground.hashCode() : 0);
-        hash = 29 * hash + Float.floatToIntBits(offset);
-        hash = 29 * hash + Float.floatToIntBits(realWidth);
-        hash = 29 * hash + (this.wayDirectionArrows ? 1 : 0);
-        return hash;
+        return Objects.hash(super.hashCode(), line, color, dashesBackground, offset, realWidth, wayDirectionArrows, dashesLine);
     }
 
     @Override

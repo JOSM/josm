@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.ButtonGroup;
@@ -676,20 +677,20 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
         @Override
         public boolean equals(Object other) {
-            if (!(other instanceof SearchSetting))
-                return false;
-            SearchSetting o = (SearchSetting) other;
-            return o.caseSensitive == this.caseSensitive
-                    && o.regexSearch == this.regexSearch
-                    && o.mapCSSSearch == this.mapCSSSearch
-                    && o.allElements == this.allElements
-                    && o.mode.equals(this.mode)
-                    && o.text.equals(this.text);
+            if (this == other) return true;
+            if (other == null || getClass() != other.getClass()) return false;
+            SearchSetting that = (SearchSetting) other;
+            return caseSensitive == that.caseSensitive &&
+                    regexSearch == that.regexSearch &&
+                    mapCSSSearch == that.mapCSSSearch &&
+                    allElements == that.allElements &&
+                    Objects.equals(text, that.text) &&
+                    mode == that.mode;
         }
 
         @Override
         public int hashCode() {
-            return text.hashCode();
+            return Objects.hash(text, mode, caseSensitive, regexSearch, mapCSSSearch, allElements);
         }
 
         public static SearchSetting readFromString(String s) {

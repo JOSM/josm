@@ -116,34 +116,20 @@ public class AreaElement extends StyleElement {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        if (!super.equals(obj))
-            return false;
-        AreaElement other = (AreaElement) obj;
-        // we should get the same image object due to caching
-        if (!Objects.equals(fillImage, other.fillImage))
-            return false;
-        if (!Objects.equals(color, other.color))
-            return false;
-        if (!Objects.equals(extent, other.extent))
-            return false;
-        if (!Objects.equals(extentThreshold, other.extentThreshold))
-            return false;
-        if (!Objects.equals(text, other.text))
-            return false;
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!super.equals(obj)) return false;
+        AreaElement that = (AreaElement) obj;
+        return Objects.equals(color, that.color) &&
+                Objects.equals(fillImage, that.fillImage) &&
+                Objects.equals(text, that.text) &&
+                Objects.equals(extent, that.extent) &&
+                Objects.equals(extentThreshold, that.extentThreshold);
     }
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        hash = 61 * hash + color.hashCode();
-        hash = 61 * hash + (extent != null ? Float.floatToIntBits(extent) : 0);
-        hash = 61 * hash + (extentThreshold != null ? Float.floatToIntBits(extentThreshold) : 0);
-        hash = 61 * hash + (fillImage != null ? fillImage.hashCode() : 0);
-        hash = 61 * hash + (text != null ? text.hashCode() : 0);
-        return hash;
+        return Objects.hash(super.hashCode(), color, fillImage, text, extent, extentThreshold);
     }
 
     @Override

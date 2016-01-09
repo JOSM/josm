@@ -92,23 +92,14 @@ public class Shape {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 47 * hash + Objects.hashCode(this.coords);
-        return hash;
+        return Objects.hash(coords);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Shape other = (Shape) obj;
-        if (!Objects.equals(this.coords, other.coords)) {
-            return false;
-        }
-        return true;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Shape shape = (Shape) obj;
+        return Objects.equals(coords, shape.coords);
     }
 }
