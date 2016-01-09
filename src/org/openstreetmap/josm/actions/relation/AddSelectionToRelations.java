@@ -8,12 +8,15 @@ import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import javax.swing.JOptionPane;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -42,6 +45,10 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
         }
         if (!cmds.isEmpty()) {
             Main.main.undoRedo.add(new SequenceCommand(tr("Add selection to relation"), cmds));
+            new Notification(
+                    tr("<html><strong>Add selection to relation</strong>: Control every single relation to avoid damage!"))
+                    .setIcon(JOptionPane.WARNING_MESSAGE)
+                    .show();;
         }
     }
 
