@@ -50,6 +50,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
@@ -1410,18 +1412,24 @@ public final class Utils {
     }
 
     /**
-     * Returns a pair containing the number of threads (n), and a thread pool (if n &gt; 1) to perform
-     * multi-thread computation in the context of the given preference key.
-     * @param pref The preference key
+     * Returns a {@link ForkJoinPool} with the parallelism given by the preference key.
+     * @param pref The preference key to determine parallelism
      * @param nameFormat see {@link #newThreadFactory(String, int)}
      * @param threadPriority see {@link #newThreadFactory(String, int)}
-     * @return a pair containing the number of threads (n), and a thread pool (if n &gt; 1, null otherwise)
-     * @since 7423
+     * @return a {@link ForkJoinPool}
      */
-    public static Pair<Integer, ExecutorService> newThreadPool(String pref, String nameFormat, int threadPriority) {
+    public static ForkJoinPool newForkJoinPool(String pref, final String nameFormat, final int threadPriority) {
         int noThreads = Main.pref.getInteger(pref, Runtime.getRuntime().availableProcessors());
-        ExecutorService pool = noThreads <= 1 ? null : Executors.newFixedThreadPool(noThreads, newThreadFactory(nameFormat, threadPriority));
-        return new Pair<>(noThreads, pool);
+        return new ForkJoinPool(noThreads, new ForkJoinPool.ForkJoinWorkerThreadFactory() {
+            final AtomicLong count = new AtomicLong(0);
+            @Override
+            public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+                final ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+                thread.setName(String.format(Locale.ENGLISH, nameFormat, count.getAndIncrement()));
+                thread.setPriority(threadPriority);
+                return thread;
+            }
+        }, null, true);
     }
 
     /**
