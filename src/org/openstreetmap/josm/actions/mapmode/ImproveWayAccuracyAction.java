@@ -81,6 +81,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     private Color guideColor;
     private transient Stroke selectTargetWayStroke;
     private transient Stroke moveNodeStroke;
+    private transient Stroke moveNodeIntersectingStroke;
     private transient Stroke addNodeStroke;
     private transient Stroke deleteNodeStroke;
     private int dotSize;
@@ -146,6 +147,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
 
         selectTargetWayStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.select-target", "2"));
         moveNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.move-node", "1 6"));
+        moveNodeIntersectingStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.move-node-intersecting", "1 2 6"));
         addNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.add-node", "1"));
         deleteNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.delete-node", "1"));
         dotSize = Main.pref.getInteger("improvewayaccuracy.dot-size", 6);
@@ -307,6 +309,37 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                 g.fillRect(p1.x - dotSize/2, p1.y - dotSize/2, dotSize, dotSize);
             }
 
+            if (!alt && !ctrl && candidateNode != null) {
+                b.reset();
+                drawIntersectingWayHelperLines(mv, b);
+                g.setStroke(moveNodeIntersectingStroke);
+                g.draw(b);
+            }
+
+        }
+    }
+
+    protected void drawIntersectingWayHelperLines(MapView mv, GeneralPath b) {
+        for (final OsmPrimitive referrer : candidateNode.getReferrers()) {
+            if (!(referrer instanceof Way) || targetWay.equals(referrer)) {
+                continue;
+            }
+            final List<Node> nodes = ((Way) referrer).getNodes();
+            for (int i = 0; i < nodes.size(); i++) {
+                if (!candidateNode.equals(nodes.get(i))) {
+                    continue;
+                }
+                if (i > 0) {
+                    final Point p = mv.getPoint(nodes.get(i - 1));
+                    b.moveTo(mousePos.x, mousePos.y);
+                    b.lineTo(p.x, p.y);
+                }
+                if (i < nodes.size() - 1) {
+                    final Point p = mv.getPoint(nodes.get(i + 1));
+                    b.moveTo(mousePos.x, mousePos.y);
+                    b.lineTo(p.x, p.y);
+                }
+            }
         }
     }
 
