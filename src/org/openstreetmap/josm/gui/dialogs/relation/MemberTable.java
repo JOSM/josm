@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.DropMode;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
@@ -82,6 +83,11 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         //
         getActionMap().put("selectNextColumnCell", new SelectNextColumnCellAction());
         getActionMap().put("selectPreviousColumnCell", new SelectPreviousColumnCellAction());
+
+        setTransferHandler(new MemberTransferHandler());
+        setFillsViewportHeight(true); // allow drop on empty table
+        setDragEnabled(true);
+        setDropMode(DropMode.INSERT_ROWS);
     }
 
     @Override
