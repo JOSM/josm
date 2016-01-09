@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -181,10 +182,12 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
     }
 
+    /** The {@link CoordinateFormat} set in the previous update */
+    private transient CoordinateFormat previousCoordinateFormat = null;
     private final ImageLabel latText = new ImageLabel("lat",
-            tr("The geographic latitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
+            null, 11, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel lonText = new ImageLabel("lon",
-            tr("The geographic longitude at the mouse pointer."), 11, PROP_BACKGROUND_COLOR.get());
+            null, 11, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel headingText = new ImageLabel("heading",
             tr("The (compass) heading of the line segment being drawn."),
             ONE_DECIMAL_PLACE.format(360).length() + 1, PROP_BACKGROUND_COLOR.get());
@@ -870,6 +873,21 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
                     LatLon p = mv.getLatLon(e.getX(), e.getY());
                     latText.setText(p.latToString(mCord));
                     lonText.setText(p.lonToString(mCord));
+                    if (Objects.equals(previousCoordinateFormat, mCord)) {
+                        // do nothing
+                    } else if (CoordinateFormat.EAST_NORTH.equals(mCord)) {
+                        latText.setIcon("northing");
+                        lonText.setIcon("easting");
+                        latText.setToolTipText(tr("The northing at the mouse pointer."));
+                        lonText.setToolTipText(tr("The easting at the mouse pointer."));
+                        previousCoordinateFormat = mCord;
+                    } else {
+                        latText.setIcon("lat");
+                        lonText.setIcon("lon");
+                        latText.setToolTipText(tr("The geographic latitude at the mouse pointer."));
+                        lonText.setToolTipText(tr("The geographic longitude at the mouse pointer."));
+                        previousCoordinateFormat = mCord;
+                    }
                 }
             }
         });
