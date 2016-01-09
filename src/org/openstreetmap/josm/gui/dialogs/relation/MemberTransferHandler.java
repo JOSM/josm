@@ -15,9 +15,12 @@ import javax.swing.TransferHandler;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
+import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
 import org.openstreetmap.josm.gui.datatransfer.RelationMemberTransferable;
+import org.openstreetmap.josm.tools.Utils.Function;
 
 class MemberTransferHandler extends TransferHandler {
 
@@ -35,39 +38,73 @@ class MemberTransferHandler extends TransferHandler {
     @Override
     public boolean canImport(TransferSupport support) {
         support.setShowDropLocation(true);
-        return support.isDataFlavorSupported(RelationMemberTransferable.RELATION_MEMBER_DATA);
+        return support.isDataFlavorSupported(RelationMemberTransferable.RELATION_MEMBER_DATA)
+                || support.isDataFlavorSupported(PrimitiveTransferable.PRIMITIVE_DATA);
     }
 
     @Override
     public boolean importData(TransferSupport support) {
+        final MemberTable destination = (MemberTable) support.getComponent();
         final int insertRow = ((JTable.DropLocation) support.getDropLocation()).getRow();
-        final Collection<RelationMemberData> memberData;
+
         try {
-            //noinspection unchecked
-            memberData = (Collection<RelationMemberData>) support.getTransferable().getTransferData(RelationMemberTransferable.RELATION_MEMBER_DATA);
-        } catch (UnsupportedFlavorException | IOException e) {
+            if (support.isDataFlavorSupported(RelationMemberTransferable.RELATION_MEMBER_DATA)) {
+                importRelationMemberData(support, destination, insertRow);
+            } else if (support.isDataFlavorSupported(PrimitiveTransferable.PRIMITIVE_DATA)) {
+                importPrimitiveData(support, destination, insertRow);
+            }
+        } catch (Exception e) {
             Main.warn(e);
             return false;
         }
-        final MemberTable destination = (MemberTable) support.getComponent();
 
-        try {
-            importRelationMemberData(memberData, destination, insertRow);
-        } catch (Exception e) {
-            Main.warn(e);
-            throw e;
-        }
         return true;
     }
 
-    protected void importRelationMemberData(Collection<RelationMemberData> memberData, MemberTable destination, int insertRow) {
+    protected void importRelationMemberData(TransferSupport support, final MemberTable destination, int insertRow)
+            throws UnsupportedFlavorException, IOException {
+        //noinspection unchecked
+        final Collection<RelationMemberData> memberData = (Collection<RelationMemberData>)
+                support.getTransferable().getTransferData(RelationMemberTransferable.RELATION_MEMBER_DATA);
+        importData(destination, insertRow, memberData, new Function<RelationMemberData, RelationMember>() {
+            @Override
+            public RelationMember apply(RelationMemberData member) {
+                final OsmPrimitive p = destination.getLayer().data.getPrimitiveById(member.getUniqueId(), member.getType());
+                if (p == null) {
+                    Main.warn(tr("Cannot add {0} since it is not part of dataset", member));
+                    return null;
+                } else {
+                    return new RelationMember(member.getRole(), p);
+                }
+            }
+        });
+    }
+
+    protected void importPrimitiveData(TransferSupport support, final MemberTable destination, int insertRow)
+            throws UnsupportedFlavorException, IOException {
+        //noinspection unchecked
+        final Collection<PrimitiveData> data = (Collection<PrimitiveData>)
+                support.getTransferable().getTransferData(PrimitiveTransferable.PRIMITIVE_DATA);
+        importData(destination, insertRow, data, new Function<PrimitiveData, RelationMember>() {
+            @Override
+            public RelationMember apply(PrimitiveData data) {
+                final OsmPrimitive p = destination.getLayer().data.getPrimitiveById(data);
+                if (p == null) {
+                    Main.warn(tr("Cannot add {0} since it is not part of dataset", data));
+                    return null;
+                } else {
+                    return destination.getMemberTableModel().getRelationMemberForPrimitive(p);
+                }
+            }
+        });
+    }
+
+    protected <T> void importData(MemberTable destination, int insertRow, Collection<T> memberData, Function<T, RelationMember> toMemberFunction) {
         final Collection<RelationMember> membersToAdd = new ArrayList<>(memberData.size());
-        for (RelationMemberData member : memberData) {
-            final OsmPrimitive p = destination.getLayer().data.getPrimitiveById(member.getUniqueId(), member.getType());
-            if (p != null) {
-                membersToAdd.add(new RelationMember(member.getRole(), p));
-            } else {
-                Main.warn(tr("Cannot add {0} since it is not part of dataset", member));
+        for (T i : memberData) {
+            final RelationMember member = toMemberFunction.apply(i);
+            if (member != null) {
+                membersToAdd.add(member);
             }
         }
         destination.getMemberTableModel().addMembersAtIndex(membersToAdd, insertRow);

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Rectangle;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -23,10 +24,12 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
@@ -65,6 +68,7 @@ import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -107,8 +111,8 @@ public class SelectionListDialog extends ToggleDialog  {
         lstPrimitives.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstPrimitives.setSelectionModel(selectionModel);
         lstPrimitives.setCellRenderer(new OsmPrimitivRenderer());
-        // Fix #6290. Drag & Drop is not supported anyway and Copy/Paste is better propagated to main window
-        lstPrimitives.setTransferHandler(null);
+        lstPrimitives.setTransferHandler(new SelectionTransferHandler());
+        lstPrimitives.setDragEnabled(true);
 
         lstPrimitives.getSelectionModel().addListSelectionListener(actSelect);
         lstPrimitives.getSelectionModel().addListSelectionListener(actShowHistory);
@@ -852,6 +856,22 @@ public class SelectionListDialog extends ToggleDialog  {
             for (Collection<? extends OsmPrimitive> sel : history) {
                 add(new SelectionMenuItem(sel));
             }
+        }
+    }
+
+    /**
+     * A transfer handler class for drag-and-drop support.
+     */
+    protected class SelectionTransferHandler extends TransferHandler {
+
+        @Override
+        public int getSourceActions(JComponent c) {
+            return COPY;
+        }
+
+        @Override
+        protected Transferable createTransferable(JComponent c) {
+            return new PrimitiveTransferable(getSelectedPrimitives());
         }
     }
 }
