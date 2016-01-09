@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.UserCancelException;
 
 /**
  * The preferences panel for the OAuth preferences. This just a summary panel
@@ -324,13 +325,14 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         public void actionPerformed(ActionEvent arg0) {
             OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
                     OAuthAuthenticationPreferencesPanel.this,
-                    apiUrl
-            );
-            wizard.setVisible(true);
-            if (wizard.isCanceled()) return;
-            OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
-            holder.setAccessToken(wizard.getAccessToken());
-            holder.setSaveToPreferences(wizard.isSaveAccessTokenToPreferences());
+                    apiUrl,
+                    Main.worker);
+            try {
+                wizard.showDialog();
+            } catch (UserCancelException ignore) {
+                Main.trace(ignore.toString());
+                return;
+            }
             pnlAdvancedProperties.setAdvancedParameters(wizard.getOAuthParameters());
             refreshView();
         }
@@ -339,7 +341,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     /**
      * Launches the OAuthAuthorisationWizard to generate a new Access Token
      */
-    private class RenewAuthorisationAction extends AbstractAction {
+    private class RenewAuthorisationAction extends AuthoriseNowAction {
         /**
          * Constructs a new {@code RenewAuthorisationAction}.
          */
@@ -347,22 +349,6 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             putValue(NAME, tr("New Access Token"));
             putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process and generate a new Access Token"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
-
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
-                    OAuthAuthenticationPreferencesPanel.this,
-                    apiUrl
-            );
-            wizard.setVisible(true);
-            if (wizard.isCanceled()) return;
-            OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
-            holder.setAccessToken(wizard.getAccessToken());
-            holder.setSaveToPreferences(wizard.isSaveAccessTokenToPreferences());
-            pnlAdvancedProperties.setAdvancedParameters(wizard.getOAuthParameters());
-            refreshView();
         }
     }
 

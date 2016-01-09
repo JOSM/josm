@@ -3,15 +3,22 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.Authenticator.RequestorType;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
+import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
@@ -21,6 +28,9 @@ import org.openstreetmap.josm.tools.HttpClient;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.exception.OAuthException;
+import org.openstreetmap.josm.tools.Utils;
+
+import javax.swing.SwingUtilities;
 
 /**
  * Base class that handles common things like authentication for the reader and writer
@@ -95,8 +105,12 @@ public class OsmConnection {
         }
         OAuthConsumer consumer = oauthParameters.buildConsumer();
         OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
-        if (!holder.containsAccessToken())
+        if (!holder.containsAccessToken()) {
+            obtainAccessToken(connection);
+        }
+        if (!holder.containsAccessToken()) { // check if wizard completed
             throw new MissingOAuthAccessTokenException();
+        }
         consumer.setTokenWithSecret(holder.getAccessTokenKey(), holder.getAccessTokenSecret());
         try {
             consumer.sign(connection);
@@ -105,8 +119,43 @@ public class OsmConnection {
         }
     }
 
+    /**
+     * Obtains an OAuth access token for the connection. Afterwards, the token is accessible via {@link OAuthAccessTokenHolder}.
+     * @param connection connection for which the access token should be obtained
+     * @throws MissingOAuthAccessTokenException if the process cannot be completec successfully
+     */
+    protected void obtainAccessToken(final HttpClient connection) throws MissingOAuthAccessTokenException {
+        try {
+            final URL apiUrl = new URL(Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
+            if (!Objects.equals(apiUrl.getHost(), connection.getURL().getHost())) {
+                throw new MissingOAuthAccessTokenException();
+            }
+            final Runnable authTask = new FutureTask<>(new Callable<OAuthAuthorizationWizard>() {
+                @Override
+                public OAuthAuthorizationWizard call() throws Exception {
+                    // Concerning Utils.newDirectExecutor: Main.worker cannot be used since this connection is already
+                    // executed via Main.worker. The OAuth connections would block otherwise.
+                    final OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
+                            Main.parent, apiUrl.toExternalForm(), Utils.newDirectExecutor());
+                    wizard.showDialog();
+                    OAuthAccessTokenHolder.getInstance().setSaveToPreferences(true);
+                    OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManager.getInstance());
+                    return wizard;
+                }
+            });
+            // exception handling differs from implementation at GuiHelper.runInEDTAndWait()
+            if (SwingUtilities.isEventDispatchThread()) {
+                authTask.run();
+            } else {
+                SwingUtilities.invokeAndWait(authTask);
+            }
+        } catch (MalformedURLException | InterruptedException | InvocationTargetException e) {
+            throw new MissingOAuthAccessTokenException();
+        }
+    }
+
     protected void addAuth(HttpClient connection) throws OsmTransferException {
-        String authMethod = Main.pref.get("osm-server.auth-method", "basic");
+        final String authMethod = OsmApi.getAuthMethod();
         if ("basic".equals(authMethod)) {
             addBasicAuthorizationHeader(connection);
         } else if ("oauth".equals(authMethod)) {

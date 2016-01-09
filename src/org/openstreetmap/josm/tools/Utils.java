@@ -48,8 +48,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.ThreadFactory;
@@ -1430,6 +1429,19 @@ public final class Utils {
                 return thread;
             }
         }, null, true);
+    }
+
+    /**
+     * Returns an executor which executes commands in the calling thread
+     * @return an executor
+     */
+    public static Executor newDirectExecutor() {
+        return new Executor() {
+            @Override
+            public void execute(Runnable command) {
+                command.run();
+            }
+        };
     }
 
     /**

@@ -20,6 +20,7 @@ import javax.swing.JSeparator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 
 /**
@@ -56,7 +57,8 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         // -- radio button for basic authentication
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
+        gc.gridx = 1;
+        gc.weightx = 1.0;
         gc.insets = new Insets(0, 0, 0, 3);
         add(rbBasicAuthentication = new JRadioButton(), gc);
         rbBasicAuthentication.setText(tr("Use Basic Authentication"));
@@ -64,8 +66,8 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         rbBasicAuthentication.addItemListener(authChangeListener);
 
         //-- radio button for OAuth
-        gc.gridx = 1;
-        gc.weightx = 1.0;
+        gc.gridx = 0;
+        gc.weightx = 0.0;
         add(rbOAuth = new JRadioButton(), gc);
         rbOAuth.setText(tr("Use OAuth"));
         rbOAuth.setToolTipText(tr("Select to use OAuth as authentication mechanism"));
@@ -117,7 +119,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
      * Initializes the panel from preferences
      */
     public final void initFromPreferences() {
-        String authMethod = Main.pref.get("osm-server.auth-method", "basic");
+        final String authMethod = OsmApi.getAuthMethod();
         if ("basic".equals(authMethod)) {
             rbBasicAuthentication.setSelected(true);
         } else if ("oauth".equals(authMethod)) {

@@ -21,6 +21,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.concurrent.Executor;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -43,11 +44,13 @@ import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -64,6 +67,22 @@ public class OAuthAuthorizationWizard extends JDialog {
     private SemiAutomaticAuthorizationUI pnlSemiAutomaticAuthorisationUI;
     private ManualAuthorizationUI pnlManualAuthorisationUI;
     private JScrollPane spAuthorisationProcedureUI;
+    private final Executor executor;
+
+    /**
+     * Launches the wizard, {@link OAuthAccessTokenHolder#setAccessToken(OAuthToken) sets the token}
+     * and {@link OAuthAccessTokenHolder#setSaveToPreferences(boolean) saves to preferences}.
+     * @throws UserCancelException if user cancels the operation
+     */
+    public void showDialog() throws UserCancelException {
+        setVisible(true);
+        if (isCanceled()) {
+            throw new UserCancelException();
+        }
+        OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
+        holder.setAccessToken(getAccessToken());
+        holder.setSaveToPreferences(isSaveAccessTokenToPreferences());
+    }
 
     /**
      * Builds the row with the action buttons
@@ -169,9 +188,9 @@ public class OAuthAuthorizationWizard extends JDialog {
         setTitle(tr("Get an Access Token for ''{0}''", apiUrl));
         this.setMinimumSize(new Dimension(600, 420));
 
-        pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorizationUI(apiUrl);
-        pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorizationUI(apiUrl);
-        pnlManualAuthorisationUI = new ManualAuthorizationUI(apiUrl);
+        pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorizationUI(apiUrl, executor);
+        pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorizationUI(apiUrl, executor);
+        pnlManualAuthorisationUI = new ManualAuthorizationUI(apiUrl, executor);
 
         spAuthorisationProcedureUI = GuiHelper.embedInVerticalScrollPane(new JPanel());
         spAuthorisationProcedureUI.getVerticalScrollBar().addComponentListener(
@@ -208,24 +227,16 @@ public class OAuthAuthorizationWizard extends JDialog {
     /**
      * Creates the wizard.
      *
-     * @param apiUrl the API URL. Must not be null.
-     * @throws IllegalArgumentException if apiUrl is null
-     */
-    public OAuthAuthorizationWizard(String apiUrl) {
-        this(Main.parent, apiUrl);
-    }
-
-    /**
-     * Creates the wizard.
-     *
      * @param parent the component relative to which the dialog is displayed
      * @param apiUrl the API URL. Must not be null.
+     * @param executor the executor used for running the HTTP requests for the authorization
      * @throws IllegalArgumentException if apiUrl is null
      */
-    public OAuthAuthorizationWizard(Component parent, String apiUrl) {
+    public OAuthAuthorizationWizard(Component parent, String apiUrl, Executor executor) {
         super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
         this.apiUrl = apiUrl;
+        this.executor = executor;
         build();
     }
 
