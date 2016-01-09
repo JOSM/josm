@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -246,40 +245,6 @@ public class OsmOAuthAuthorizationClient {
     }
 
     /**
-     * Derives the OSM login URL from the OAuth Authorization Website URL
-     *
-     * @return the OSM login URL
-     * @throws OsmOAuthAuthorizationException if something went wrong, in particular if the
-     * URLs are malformed
-     */
-    public String buildOsmLoginUrl() throws OsmOAuthAuthorizationException {
-        try {
-            URL autUrl = new URL(oauthProviderParameters.getAuthoriseUrl());
-            URL url = new URL(Main.pref.get("oauth.protocol", "https"), autUrl.getHost(), autUrl.getPort(), "/login");
-            return url.toString();
-        } catch (MalformedURLException e) {
-            throw new OsmOAuthAuthorizationException(e);
-        }
-    }
-
-    /**
-     * Derives the OSM logout URL from the OAuth Authorization Website URL
-     *
-     * @return the OSM logout URL
-     * @throws OsmOAuthAuthorizationException if something went wrong, in particular if the
-     * URLs are malformed
-     */
-    protected String buildOsmLogoutUrl() throws OsmOAuthAuthorizationException {
-        try {
-            URL autUrl = new URL(oauthProviderParameters.getAuthoriseUrl());
-            URL url = new URL(Main.pref.get("oauth.protocol", "https"), autUrl.getHost(), autUrl.getPort(), "/logout");
-            return url.toString();
-        } catch (MalformedURLException e) {
-            throw new OsmOAuthAuthorizationException(e);
-        }
-    }
-
-    /**
      * Submits a request to the OSM website for a login form. The OSM website replies a session ID in
      * a cookie.
      *
@@ -288,9 +253,7 @@ public class OsmOAuthAuthorizationClient {
      */
     protected SessionId fetchOsmWebsiteSessionId() throws OsmOAuthAuthorizationException {
         try {
-            StringBuilder sb = new StringBuilder();
-            sb.append(buildOsmLoginUrl()).append("?cookie_test=true");
-            URL url = new URL(sb.toString());
+            final URL url = new URL(oauthProviderParameters.getOsmLoginUrl() + "?cookie_test=true");
             synchronized (this) {
                 connection = HttpClient.create(url);
                 connection.connect();
@@ -340,7 +303,7 @@ public class OsmOAuthAuthorizationClient {
 
     protected void authenticateOsmSession(SessionId sessionId, String userName, String password) throws OsmLoginFailedException {
         try {
-            URL url = new URL(buildOsmLoginUrl());
+            final URL url = new URL(oauthProviderParameters.getOsmLoginUrl());
             final HttpClient client = HttpClient.create(url, "POST").useCache(false);
 
             Map<String, String> parameters = new HashMap<>();
@@ -382,7 +345,7 @@ public class OsmOAuthAuthorizationClient {
 
     protected void logoutOsmSession(SessionId sessionId) throws OsmOAuthAuthorizationException {
         try {
-            URL url = new URL(buildOsmLogoutUrl());
+            URL url = new URL(oauthProviderParameters.getOsmLogoutUrl());
             synchronized (this) {
                 connection = HttpClient.create(url).setMaxRedirects(-1);
                 connection.connect();

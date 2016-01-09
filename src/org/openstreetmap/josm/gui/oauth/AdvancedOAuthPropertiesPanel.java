@@ -34,6 +34,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * <li>Request token URL</li>
  * <li>Access token URL</li>
  * <li>Authorize URL</li>
+ * <li>OSM login URL</li>
+ * <li>OSM logout URL</li>
  * </ul>
  *
  * @see OAuthParameters
@@ -47,6 +49,8 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     private JosmTextField tfRequestTokenURL;
     private JosmTextField tfAccessTokenURL;
     private JosmTextField tfAuthoriseURL;
+    private JosmTextField tfOsmLoginURL;
+    private JosmTextField tfOsmLogoutURL;
     private transient UseDefaultItemListener ilUseDefault;
     private String apiUrl;
 
@@ -119,17 +123,36 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         add(tfAuthoriseURL = new JosmTextField(), gc);
         SelectAllOnFocusGainedDecorator.decorate(tfAuthoriseURL);
 
+
+        // -- OSM login URL
+        gc.gridy = 6;
+        gc.gridx = 0;
+        gc.weightx = 0.0;
+        add(new JLabel(tr("OSM login URL:")), gc);
+
+        gc.gridx = 1;
+        gc.weightx = 1.0;
+        add(tfOsmLoginURL = new JosmTextField(), gc);
+        SelectAllOnFocusGainedDecorator.decorate(tfOsmLoginURL);
+
+
+        // -- OSM logout URL
+        gc.gridy = 7;
+        gc.gridx = 0;
+        gc.weightx = 0.0;
+        add(new JLabel(tr("OSM logout URL:")), gc);
+
+        gc.gridx = 1;
+        gc.weightx = 1.0;
+        add(tfOsmLogoutURL = new JosmTextField(), gc);
+        SelectAllOnFocusGainedDecorator.decorate(tfOsmLogoutURL);
+
         cbUseDefaults.addItemListener(ilUseDefault = new UseDefaultItemListener());
     }
 
     protected boolean hasCustomSettings() {
         OAuthParameters params = OAuthParameters.createDefault(apiUrl);
-        return
-           !tfConsumerKey.getText().equals(params.getConsumerKey())
-        || !tfConsumerSecret.getText().equals(params.getConsumerSecret())
-        || !tfRequestTokenURL.getText().equals(params.getRequestTokenUrl())
-        || !tfAccessTokenURL.getText().equals(params.getAccessTokenUrl())
-        || !tfAuthoriseURL.getText().equals(params.getAuthoriseUrl());
+        return !params.equals(getAdvancedParameters());
     }
 
     protected boolean confirmOverwriteCustomSettings() {
@@ -172,6 +195,8 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         tfRequestTokenURL.setText(params.getRequestTokenUrl());
         tfAccessTokenURL.setText(params.getAccessTokenUrl());
         tfAuthoriseURL.setText(params.getAuthoriseUrl());
+        tfOsmLoginURL.setText(params.getOsmLoginUrl());
+        tfOsmLogoutURL.setText(params.getOsmLogoutUrl());
 
         setChildComponentsEnabled(false);
     }
@@ -197,7 +222,9 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
             tfConsumerSecret.getText(),
             tfRequestTokenURL.getText(),
             tfAccessTokenURL.getText(),
-            tfAuthoriseURL.getText());
+            tfAuthoriseURL.getText(),
+            tfOsmLoginURL.getText(),
+            tfOsmLogoutURL.getText());
     }
 
     /**
@@ -219,6 +246,8 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
             tfRequestTokenURL.setText(parameters.getRequestTokenUrl() == null ? "" : parameters.getRequestTokenUrl());
             tfAccessTokenURL.setText(parameters.getAccessTokenUrl() == null ? "" : parameters.getAccessTokenUrl());
             tfAuthoriseURL.setText(parameters.getAuthoriseUrl() == null ? "" : parameters.getAuthoriseUrl());
+            tfOsmLoginURL.setText(parameters.getOsmLoginUrl() == null ? "" : parameters.getOsmLoginUrl());
+            tfOsmLogoutURL.setText(parameters.getOsmLogoutUrl() == null ? "" : parameters.getOsmLogoutUrl());
         }
     }
 
@@ -243,13 +272,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         if (useDefault) {
             resetToDefaultSettings();
         } else {
-            cbUseDefaults.setSelected(false);
-            tfConsumerKey.setText(pref.get("oauth.settings.consumer-key", OAuthParameters.DEFAULT_JOSM_CONSUMER_KEY));
-            tfConsumerSecret.setText(pref.get("oauth.settings.consumer-secret", OAuthParameters.DEFAULT_JOSM_CONSUMER_SECRET));
-            tfRequestTokenURL.setText(pref.get("oauth.settings.request-token-url", OAuthParameters.DEFAULT_REQUEST_TOKEN_URL));
-            tfAccessTokenURL.setText(pref.get("oauth.settings.access-token-url", OAuthParameters.DEFAULT_ACCESS_TOKEN_URL));
-            tfAuthoriseURL.setText(pref.get("oauth.settings.authorise-url", OAuthParameters.DEFAULT_AUTHORISE_URL));
-            setChildComponentsEnabled(true);
+            setAdvancedParameters(OAuthParameters.createFromPreferences(pref));
         }
         ilUseDefault.setEnabled(true);
     }
@@ -264,17 +287,9 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
         pref.put("oauth.settings.use-default", cbUseDefaults.isSelected());
         if (cbUseDefaults.isSelected()) {
-            pref.put("oauth.settings.consumer-key", null);
-            pref.put("oauth.settings.consumer-secret", null);
-            pref.put("oauth.settings.request-token-url", null);
-            pref.put("oauth.settings.access-token-url", null);
-            pref.put("oauth.settings.authorise-url", null);
+            new OAuthParameters(null, null, null, null, null, null, null).rememberPreferences(pref);
         } else {
-            pref.put("oauth.settings.consumer-key", tfConsumerKey.getText().trim());
-            pref.put("oauth.settings.consumer-secret", tfConsumerSecret.getText().trim());
-            pref.put("oauth.settings.request-token-url", tfRequestTokenURL.getText().trim());
-            pref.put("oauth.settings.access-token-url", tfAccessTokenURL.getText().trim());
-            pref.put("oauth.settings.authorise-url", tfAuthoriseURL.getText().trim());
+            getAdvancedParameters().rememberPreferences(pref);
         }
     }
 

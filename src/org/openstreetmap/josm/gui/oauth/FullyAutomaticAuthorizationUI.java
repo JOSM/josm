@@ -478,13 +478,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         }
 
         protected void alertLoginFailed(OsmLoginFailedException e) {
-            String loginUrl = null;
-            try {
-                loginUrl = authClient.buildOsmLoginUrl();
-            } catch (OsmOAuthAuthorizationException e1) {
-                alertInvalidLoginUrl();
-                return;
-            }
+            final String loginUrl = getAdvancedPropertiesPanel().getAdvancedParameters().getOsmLoginUrl();
             HelpAwareOptionPane.showOptionDialog(
                     FullyAutomaticAuthorizationUI.this,
                     tr("<html>"
