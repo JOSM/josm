@@ -118,7 +118,7 @@ public class OsmApiUrlInputPanel extends JPanel {
      * Initializes the configuration panel with values from the preferences
      */
     public void initFromPreferences() {
-        String url =  Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
+        String url =  OsmApi.getOsmApi().getServerUrl();
         if (OsmApi.DEFAULT_API_URL.equals(url.trim())) {
             cbUseDefaultServerUrl.setSelected(true);
             propagator.propagate(OsmApi.DEFAULT_API_URL);
@@ -133,7 +133,7 @@ public class OsmApiUrlInputPanel extends JPanel {
      * Saves the values to the preferences
      */
     public void saveToPreferences() {
-        String oldUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
+        String oldUrl = OsmApi.getOsmApi().getServerUrl();
         String hmiUrl = getStrippedApiUrl();
         if (cbUseDefaultServerUrl.isSelected()) {
             Main.pref.put("osm-server.url", null);
@@ -142,7 +142,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         } else {
             Main.pref.put("osm-server.url", hmiUrl);
         }
-        String newUrl = Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL);
+        String newUrl = OsmApi.getOsmApi().getServerUrl();
 
         // When API URL changes, re-initialize API connection so we may adjust
         // server-dependent settings.

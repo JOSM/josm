@@ -452,7 +452,7 @@ public class CachedFile {
 
     private static void checkOfflineAccess(String urlString) {
         OnlineResource.JOSM_WEBSITE.checkOfflineAccess(urlString, Main.getJOSMWebsite());
-        OnlineResource.OSM_API.checkOfflineAccess(urlString, Main.pref.get("osm-server.url", OsmApi.DEFAULT_API_URL));
+        OnlineResource.OSM_API.checkOfflineAccess(urlString, OsmApi.getOsmApi().getServerUrl());
     }
 
 }

@@ -339,6 +339,15 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
+     * Returns the server URL
+     * @return the server URL
+     * @since 9353
+     */
+    public String getServerUrl() {
+        return serverUrl;
+    }
+
+    /**
      * Creates an OSM primitive on the server. The OsmPrimitive object passed in
      * is modified by giving it the server-assigned id.
      *
