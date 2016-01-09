@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -112,7 +113,9 @@ public class SelectionListDialog extends ToggleDialog  {
         lstPrimitives.setSelectionModel(selectionModel);
         lstPrimitives.setCellRenderer(new OsmPrimitivRenderer());
         lstPrimitives.setTransferHandler(new SelectionTransferHandler());
-        lstPrimitives.setDragEnabled(true);
+        if (!GraphicsEnvironment.isHeadless()) {
+            lstPrimitives.setDragEnabled(true);
+        }
 
         lstPrimitives.getSelectionModel().addListSelectionListener(actSelect);
         lstPrimitives.getSelectionModel().addListSelectionListener(actShowHistory);

@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -84,10 +85,12 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         getActionMap().put("selectNextColumnCell", new SelectNextColumnCellAction());
         getActionMap().put("selectPreviousColumnCell", new SelectPreviousColumnCellAction());
 
-        setTransferHandler(new MemberTransferHandler());
-        setFillsViewportHeight(true); // allow drop on empty table
-        setDragEnabled(true);
-        setDropMode(DropMode.INSERT_ROWS);
+        if (!GraphicsEnvironment.isHeadless()) {
+            setTransferHandler(new MemberTransferHandler());
+            setFillsViewportHeight(true); // allow drop on empty table
+            setDragEnabled(true);
+            setDropMode(DropMode.INSERT_ROWS);
+        }
     }
 
     @Override
