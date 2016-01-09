@@ -32,10 +32,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.RecursiveTask;
 
 import javax.swing.AbstractButton;
 import javax.swing.FocusManager;
@@ -77,7 +76,6 @@ import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -86,8 +84,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class StyledMapRenderer extends AbstractMapRenderer {
 
-    private static final Pair<Integer, ExecutorService> THREAD_POOL =
-            Utils.newThreadPool("mappaint.StyledMapRenderer.style_creation.numberOfThreads", "styled-map-renderer-%d", Thread.NORM_PRIORITY);
+    private static final ForkJoinPool THREAD_POOL =
+            Utils.newForkJoinPool("mappaint.StyledMapRenderer.style_creation.numberOfThreads", "styled-map-renderer-%d", Thread.NORM_PRIORITY);
 
     /**
      * Iterates over a list of Way Nodes and returns screen coordinates that
@@ -1760,13 +1758,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private class ComputeStyleListWorker implements Callable<List<StyleRecord>>, Visitor {
+    private class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> implements Visitor {
         private final List<? extends OsmPrimitive> input;
-        private final int from;
-        private final int to;
         private final List<StyleRecord> output;
 
         private final ElemStyles styles = MapPaintStyles.getStyles();
+        private final int directExecutionTaskSize;
 
         private final boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000);
         private final boolean drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
@@ -1775,24 +1772,38 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         /**
          * Constructs a new {@code ComputeStyleListWorker}.
          * @param input the primitives to process
-         * @param from first index of <code>input</code> to use
-         * @param to last index + 1
          * @param output the list of styles to which styles will be added
+         * @param directExecutionTaskSize the threshold deciding whether to subdivide the tasks
          */
-        ComputeStyleListWorker(final List<? extends OsmPrimitive> input, int from, int to, List<StyleRecord> output) {
+        ComputeStyleListWorker(final List<? extends OsmPrimitive> input, List<StyleRecord> output, int directExecutionTaskSize) {
             this.input = input;
-            this.from = from;
-            this.to = to;
             this.output = output;
+            this.directExecutionTaskSize = directExecutionTaskSize;
             this.styles.setDrawMultipolygon(drawMultipolygon);
         }
 
         @Override
-        public List<StyleRecord> call() throws Exception {
+        protected List<StyleRecord> compute() {
+            if (input.size() <= directExecutionTaskSize) {
+                return computeDirectly();
+            } else {
+                final Collection<ForkJoinTask<List<StyleRecord>>> tasks = new ArrayList<>();
+                for (int fromIndex = 0; fromIndex < input.size(); fromIndex += directExecutionTaskSize) {
+                    final int toIndex = Math.min(fromIndex + directExecutionTaskSize, input.size());
+                    final List<StyleRecord> output = new ArrayList<>(directExecutionTaskSize);
+                    tasks.add(new ComputeStyleListWorker(input.subList(fromIndex, toIndex), output, directExecutionTaskSize).fork());
+                }
+                for (ForkJoinTask<List<StyleRecord>> task : tasks) {
+                    output.addAll(task.join());
+                }
+                return output;
+            }
+        }
+
+        public List<StyleRecord> computeDirectly() {
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
             try {
-                for (int i = from; i < to; i++) {
-                    OsmPrimitive osm = input.get(i);
+                for (final OsmPrimitive osm : input) {
                     if (osm.isDrawable()) {
                         osm.accept(this);
                     }
@@ -1852,45 +1863,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private class ConcurrentTasksHelper {
-
-        private final List<StyleRecord> allStyleElems;
-
-        ConcurrentTasksHelper(List<StyleRecord> allStyleElems) {
-            this.allStyleElems = allStyleElems;
-        }
-
-        void process(List<? extends OsmPrimitive> prims) {
-            final List<ComputeStyleListWorker> tasks = new ArrayList<>();
-            final int bucketsize = Math.max(100, prims.size()/THREAD_POOL.a/3);
-            final int noBuckets = (prims.size() + bucketsize - 1) / bucketsize;
-            final boolean singleThread = THREAD_POOL.a == 1 || noBuckets == 1;
-            for (int i = 0; i < noBuckets; i++) {
-                int from = i*bucketsize;
-                int to = Math.min((i+1)*bucketsize, prims.size());
-                List<StyleRecord> target = singleThread ? allStyleElems : new ArrayList<StyleRecord>(to - from);
-                tasks.add(new ComputeStyleListWorker(prims, from, to, target));
-            }
-            if (singleThread) {
-                try {
-                    for (ComputeStyleListWorker task : tasks) {
-                        task.call();
-                    }
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-            } else if (!tasks.isEmpty()) {
-                try {
-                    for (Future<List<StyleRecord>> future : THREAD_POOL.b.invokeAll(tasks)) {
-                        allStyleElems.addAll(future.get());
-                    }
-                } catch (InterruptedException | ExecutionException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        }
-    }
-
     @Override
     public void render(final DataSet data, boolean renderVirtualNodes, Bounds bounds) {
         BBox bbox = bounds.toBBox();
@@ -1913,15 +1885,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
             final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
 
-            ConcurrentTasksHelper helper = new ConcurrentTasksHelper(allStyleElems);
-
             // Need to process all relations first.
             // Reason: Make sure, ElemStyles.getStyleCacheWithRange is
             // not called for the same primitive in parallel threads.
             // (Could be synchronized, but try to avoid this for
             // performance reasons.)
-            helper.process(relations);
-            helper.process(new CompositeList<>(nodes, ways));
+            THREAD_POOL.invoke(new ComputeStyleListWorker(relations, allStyleElems,
+                    Math.max(20, relations.size() / THREAD_POOL.getParallelism() / 3)));
+            THREAD_POOL.invoke(new ComputeStyleListWorker(new CompositeList<>(nodes, ways), allStyleElems,
+                    Math.max(100, (nodes.size() + ways.size()) / THREAD_POOL.getParallelism() / 3)));
 
             if (benchmark) {
                 timePhase1 = System.currentTimeMillis();

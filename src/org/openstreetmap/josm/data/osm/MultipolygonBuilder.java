@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.Future;
+import java.util.concurrent.RecursiveTask;
 
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
@@ -30,8 +32,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class MultipolygonBuilder {
 
-    private static final Pair<Integer, ExecutorService> THREAD_POOL =
-            Utils.newThreadPool("multipolygon_creation.numberOfThreads", "multipolygon-builder-%d", Thread.NORM_PRIORITY);
+    private static final ForkJoinPool THREAD_POOL =
+            Utils.newForkJoinPool("multipolygon_creation.numberOfThreads", "multipolygon-builder-%d", Thread.NORM_PRIORITY);
 
     /**
      * Represents one polygon that consists of multiple ways.
@@ -302,55 +304,24 @@ public class MultipolygonBuilder {
      * @return the outermostWay, or {@code null} if intersection found.
      */
     private static List<PolygonLevel> findOuterWaysMultiThread(List<JoinedPolygon> boundaryWays) {
-        final List<PolygonLevel> result = new ArrayList<>();
-        final List<Worker> tasks = new ArrayList<>();
-        final int bucketsize = Math.max(32, boundaryWays.size()/THREAD_POOL.a/3);
-        final int noBuckets = (boundaryWays.size() + bucketsize - 1) / bucketsize;
-        final boolean singleThread = THREAD_POOL.a == 1 || noBuckets == 1;
-        for (int i = 0; i < noBuckets; i++) {
-            int from = i*bucketsize;
-            int to = Math.min((i+1)*bucketsize, boundaryWays.size());
-            List<PolygonLevel> target = singleThread ? result : new ArrayList<PolygonLevel>(to - from);
-            tasks.add(new Worker(boundaryWays, from, to, target));
-        }
-        if (singleThread) {
-            try {
-                for (Worker task : tasks) {
-                    if (task.call() == null) {
-                        return null;
-                    }
-                }
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        } else if (!tasks.isEmpty()) {
-            try {
-                for (Future<List<PolygonLevel>> future : THREAD_POOL.b.invokeAll(tasks)) {
-                    List<PolygonLevel> res = future.get();
-                    if (res == null) {
-                        return null;
-                    }
-                    result.addAll(res);
-                }
-            } catch (InterruptedException | ExecutionException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        return result;
+        return THREAD_POOL.invoke(new Worker(boundaryWays, 0, boundaryWays.size(), new ArrayList<PolygonLevel>(),
+                Math.max(32, boundaryWays.size() / THREAD_POOL.getParallelism() / 3)));
     }
 
-    private static class Worker implements Callable<List<PolygonLevel>> {
+    private static class Worker extends RecursiveTask<List<PolygonLevel>> {
 
         private final List<JoinedPolygon> input;
         private final int from;
         private final int to;
         private final List<PolygonLevel> output;
+        private final int directExecutionTaskSize;
 
-        Worker(List<JoinedPolygon> input, int from, int to, List<PolygonLevel> output) {
+        Worker(List<JoinedPolygon> input, int from, int to, List<PolygonLevel> output, int directExecutionTaskSize) {
             this.input = input;
             this.from = from;
             this.to = to;
             this.output = output;
+            this.directExecutionTaskSize = directExecutionTaskSize;
         }
 
         /**
@@ -406,7 +377,23 @@ public class MultipolygonBuilder {
         }
 
         @Override
-        public List<PolygonLevel> call() throws Exception {
+        protected List<PolygonLevel> compute() {
+            if (to - from < directExecutionTaskSize) {
+                return computeDirectly();
+            } else {
+                final Collection<ForkJoinTask<List<PolygonLevel>>> tasks = new ArrayList<>();
+                for (int fromIndex = from; fromIndex < to; fromIndex += directExecutionTaskSize) {
+                    final List<PolygonLevel> output = new ArrayList<>();
+                    tasks.add(new Worker(input, fromIndex, Math.min(fromIndex + directExecutionTaskSize, to), output, directExecutionTaskSize));
+                }
+                for (ForkJoinTask<List<PolygonLevel>> task : tasks) {
+                    output.addAll(task.join());
+                }
+                return output;
+            }
+        }
+
+        List<PolygonLevel> computeDirectly() {
             for (int i = from; i < to; i++) {
                 if (processOuterWay(0, input, output, input.get(i)) == null) {
                     return null;
