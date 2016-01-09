@@ -581,8 +581,16 @@ public class OsmApi extends OsmConnection {
      * @return {@code true} if JOSM is configured to access OSM API via OAuth, {@code false} otherwise
      * @since 6349
      */
-    public static final boolean isUsingOAuth() {
-        return "oauth".equals(Main.pref.get("osm-server.auth-method", "basic"));
+    public static boolean isUsingOAuth() {
+        return "oauth".equals(getAuthMethod());
+    }
+
+    /**
+     * Returns the authentication method set in the preferences
+     * @return the authentication method
+     */
+    public static String getAuthMethod() {
+        return Main.pref.get("osm-server.auth-method", "oauth");
     }
 
     protected final String sendRequest(String requestMethod, String urlSuffix, String requestBody, ProgressMonitor monitor)

@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
+import java.util.concurrent.Executor;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -66,6 +67,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     private JPanel pnlPropertiesPanel;
     private JPanel pnlActionButtonsPanel;
     private JPanel pnlResult;
+    private final Executor executor;
 
     /**
      * Builds the panel with the three privileges the user can grant JOSM
@@ -295,10 +297,12 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * Constructs a new {@code FullyAutomaticAuthorizationUI} for the given API URL.
      * @param apiUrl The OSM API URL
+     * @param executor the executor used for running the HTTP requests for the authorization
      * @since 5422
      */
-    public FullyAutomaticAuthorizationUI(String apiUrl) {
+    public FullyAutomaticAuthorizationUI(String apiUrl, Executor executor) {
         super(apiUrl);
+        this.executor = executor;
         build();
     }
 
@@ -326,7 +330,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            Main.worker.submit(new FullyAutomaticAuthorisationTask(FullyAutomaticAuthorizationUI.this));
+            executor.execute(new FullyAutomaticAuthorisationTask(FullyAutomaticAuthorizationUI.this));
         }
 
         protected final void updateEnabledState() {
@@ -376,7 +380,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            Main.worker.submit(new TestAccessTokenTask(
+            executor.execute(new TestAccessTokenTask(
                     FullyAutomaticAuthorizationUI.this,
                     getApiUrl(),
                     getAdvancedPropertiesPanel().getAdvancedParameters(),

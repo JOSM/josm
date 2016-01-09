@@ -11,6 +11,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.concurrent.Executor;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -22,7 +23,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
@@ -46,6 +46,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
     private transient AccessTokenSecretValidator valAccessTokenSecret;
     private JCheckBox cbSaveToPreferences;
     private HtmlPanel pnlMessage;
+    private final Executor executor;
 
     protected JPanel buildAccessTokenPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -162,10 +163,12 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * Constructs a new {@code ManualAuthorizationUI} for the given API URL.
      * @param apiUrl The OSM API URL
+     * @param executor the executor used for running the HTTP requests for the authorization
      * @since 5422
      */
-    public ManualAuthorizationUI(String apiUrl) {
+    public ManualAuthorizationUI(String apiUrl, Executor executor) {
         super(apiUrl);
+        this.executor = executor;
         build();
     }
 
@@ -260,7 +263,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
                     getAdvancedPropertiesPanel().getAdvancedParameters(),
                     getAccessToken()
             );
-            Main.worker.submit(task);
+            executor.execute(task);
         }
 
         protected final void updateEnabledState() {
