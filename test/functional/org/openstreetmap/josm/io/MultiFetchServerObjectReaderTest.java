@@ -133,6 +133,8 @@ public class MultiFetchServerObjectReaderTest {
         logger.info("initializing ...");
         JOSMFixture.createFunctionalTestFixture().init();
 
+        Main.pref.put("osm-server.auth-method", "basic");
+
         // don't use atomic upload, the test API server can't cope with large diff uploads
         Main.pref.put("osm-server.atomic-upload", false);
 
