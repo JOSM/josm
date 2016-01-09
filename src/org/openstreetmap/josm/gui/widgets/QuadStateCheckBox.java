@@ -94,6 +94,14 @@ public class QuadStateCheckBox extends JCheckBox {
     public void addMouseListener(MouseListener l) { }
 
     /**
+     * Sets a text describing this property in the tooltip text
+     * @param propertyText a description for the modelled property
+     */
+    public final void setPropertyText(final String propertyText) {
+        model.setPropertyText(propertyText);
+    }
+
+    /**
      * Set the new state.
      * @param state The new state
      */
@@ -120,6 +128,7 @@ public class QuadStateCheckBox extends JCheckBox {
 
     private final class QuadStateDecorator implements ButtonModel {
         private final ButtonModel other;
+        private String propertyText = null;
 
         private QuadStateDecorator(ButtonModel other) {
             this.other = other;
@@ -130,23 +139,35 @@ public class QuadStateCheckBox extends JCheckBox {
                 other.setArmed(false);
                 other.setPressed(false);
                 other.setSelected(false);
-                setToolTipText(tr("false: the property is explicitly switched off"));
+                setToolTipText(propertyText == null
+                        ? tr("false: the property is explicitly switched off")
+                        : tr("false: the property ''{0}'' is explicitly switched off", propertyText));
             } else if (state == State.SELECTED) {
                 other.setArmed(false);
                 other.setPressed(false);
                 other.setSelected(true);
-                setToolTipText(tr("true: the property is explicitly switched on"));
+                setToolTipText(propertyText == null
+                        ? tr("true: the property is explicitly switched on")
+                        : tr("true: the property ''{0}'' is explicitly switched on", propertyText));
             } else if (state == State.PARTIAL) {
                 other.setArmed(true);
                 other.setPressed(true);
                 other.setSelected(true);
-                setToolTipText(tr("partial: different selected objects have different values, do not change"));
+                setToolTipText(propertyText == null
+                        ? tr("partial: different selected objects have different values, do not change")
+                        : tr("partial: different selected objects have different values for ''{0}'', do not change", propertyText));
             } else {
                 other.setArmed(true);
                 other.setPressed(true);
                 other.setSelected(false);
-                setToolTipText(tr("unset: do not set this property on the selected objects"));
+                setToolTipText(propertyText == null
+                        ? tr("unset: do not set this property on the selected objects")
+                        : tr("unset: do not set the property ''{0}'' on the selected objects", propertyText));
             }
+        }
+
+        protected void setPropertyText(String propertyText) {
+            this.propertyText = propertyText;
         }
 
         /**

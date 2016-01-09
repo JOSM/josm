@@ -135,6 +135,10 @@ public abstract class KeyedItem extends TaggingPresetItem {
 
     public abstract Collection<String> getValues();
 
+    protected String getKeyTooltipText() {
+        return tr("This corresponds to the key ''{0}''", key);
+    }
+
     @Override
     protected Boolean matches(Map<String, String> tags) {
         switch (MatchType.ofString(match)) {
