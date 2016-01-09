@@ -472,7 +472,6 @@ public class MainApplication extends Main {
                 splash.setVisible(false);
                 splash.dispose();
                 mainFrame.setVisible(true);
-                main.gettingStarted.requestFocusInWindow();
             }
         });
 
