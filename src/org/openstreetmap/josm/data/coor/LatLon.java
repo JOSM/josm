@@ -428,14 +428,16 @@ public class LatLon extends Coordinate {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode());
+        return Objects.hash(x, y);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        return super.equals(obj);
+        LatLon that = (LatLon) obj;
+        return Double.compare(that.x, x) == 0 &&
+                Double.compare(that.y, y) == 0;
     }
 
     public ICoordinate toCoordinate() {
