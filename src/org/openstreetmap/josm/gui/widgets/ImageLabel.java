@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -17,12 +18,13 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 5965
  */
 public class ImageLabel extends JPanel {
+    private final JLabel imgLabel;
     private final JLabel tf;
     private final int charCount;
 
     /**
      * Constructs a new {@code ImageLabel}.
-     * @param img Image name (without .png extension) to find in {@code statusline} directory
+     * @param img Image name (without extension) to find in {@code statusline} directory
      * @param tooltip Tooltip text to display
      * @param charCount Character count used to compute min/preferred size
      * @param background The background color
@@ -30,7 +32,8 @@ public class ImageLabel extends JPanel {
     public ImageLabel(String img, String tooltip, int charCount, Color background) {
         setLayout(new GridBagLayout());
         setBackground(background);
-        add(new JLabel(ImageProvider.get("statusline/"+img+".png")), GBC.std().anchor(GBC.WEST).insets(0, 1, 1, 0));
+        add(imgLabel = new JLabel(), GBC.std().anchor(GBC.WEST).insets(0, 1, 1, 0));
+        setIcon(img);
         add(tf = new JLabel(), GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2, 1, 1, 0));
         setToolTipText(tooltip);
         this.charCount = charCount;
@@ -42,6 +45,14 @@ public class ImageLabel extends JPanel {
      */
     public void setText(String t) {
         tf.setText(t);
+    }
+
+    /**
+     * Sets the image to display.
+     * @param img Image name (without extension) to find in {@code statusline} directory
+     */
+    public void setIcon(String img) {
+        imgLabel.setIcon(ImageProvider.get("statusline/" + img));
     }
 
     @Override
