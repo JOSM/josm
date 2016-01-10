@@ -531,15 +531,6 @@ public class MapCSSStyleSource extends StyleSource {
     private void loadCanvas() {
         Cascade c = constructSpecial("canvas");
         backgroundColorOverride = c.get("fill-color", null, Color.class);
-        if (backgroundColorOverride == null) {
-            backgroundColorOverride = c.get("background-color", null, Color.class);
-            if (backgroundColorOverride != null) {
-                String msg = tr("Detected deprecated ''{0}'' in ''{1}'' which will be removed shortly. Use ''{2}'' instead.",
-                        "canvas{background-color}", url, "fill-color");
-                logWarning(msg);
-                Main.warn(msg);
-            }
-        }
     }
 
     private void loadSettings() {

@@ -9,7 +9,7 @@ meta {
 }
 
 canvas {
-    background-color: #000000;
+    fill-color: #000000;
 }
 
 node {
