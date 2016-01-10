@@ -16,7 +16,9 @@ import javax.xml.datatype.DatatypeFactory;
  * instance must be created per thread.
  *
  * @author Brett Henderson
+ * @deprecated Use {@link DateUtils} instead!
  */
+@Deprecated
 public class PrimaryDateParser {
     private DatatypeFactory datatypeFactory;
     private final FallbackDateParser fallbackDateParser;

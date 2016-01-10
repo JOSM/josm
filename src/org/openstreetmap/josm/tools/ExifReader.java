@@ -4,12 +4,11 @@ package org.openstreetmap.josm.tools;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Date;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.tools.date.PrimaryDateParser;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -37,9 +36,8 @@ public final class ExifReader {
      * Returns the date/time from the given JPEG file.
      * @param filename The JPEG file to read
      * @return The date/time read in the EXIF section, or {@code null} if not found
-     * @throws ParseException if {@link PrimaryDateParser#parse} fails to parse date/time
      */
-    public static Date readTime(File filename) throws ParseException {
+    public static Date readTime(File filename) {
         try {
             Metadata metadata = JpegMetadataReader.readMetadata(filename);
             String dateStr = null;
@@ -59,10 +57,8 @@ public final class ExifReader {
             }
             if (dateStr != null) {
                 dateStr = dateStr.replace('/', ':'); // workaround for HTC Sensation bug, see #7228
-                return new PrimaryDateParser().parse(dateStr);
+                return DateUtils.fromString(dateStr);
             }
-        } catch (ParseException e) {
-            throw e;
         } catch (Exception e) {
             Main.error(e);
         }
