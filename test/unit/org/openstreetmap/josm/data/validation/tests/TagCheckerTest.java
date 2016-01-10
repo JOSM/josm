@@ -44,11 +44,12 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testInvalidKey() throws IOException {
+    public void testMisspelledKey1() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node Name=Main"));
         assertEquals(1, errors.size());
         assertEquals("Misspelled property key", errors.get(0).getMessage());
         assertEquals("Key 'Name' looks like 'name'.", errors.get(0).getDescription());
+        assertEquals(true, errors.get(0).isFixable());
     }
 
     /**
@@ -56,11 +57,26 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testMisspelledKey() throws IOException {
+    public void testMisspelledKey2() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node landuse;=forest"));
         assertEquals(1, errors.size());
         assertEquals("Misspelled property key", errors.get(0).getMessage());
         assertEquals("Key 'landuse;' looks like 'landuse'.", errors.get(0).getDescription());
+        assertEquals(true, errors.get(0).isFixable());
+    }
+
+    /**
+     * Check for mispelled key where the suggested alternative is in use. The error should not be fixable.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testMisspelledKeyButAlternativeInUse() throws IOException {
+        // ticket 12329
+        final List<TestError> errors = test(OsmUtils.createPrimitive("node amenity=fuel brand=bah Brand=foo"));
+        assertEquals(1, errors.size());
+        assertEquals("Misspelled property key", errors.get(0).getMessage());
+        assertEquals("Key 'Brand' looks like 'brand'.", errors.get(0).getDescription());
+        assertEquals(false, errors.get(0).isFixable());
     }
 
     /**
