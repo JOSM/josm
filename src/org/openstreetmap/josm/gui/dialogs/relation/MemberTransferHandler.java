@@ -64,6 +64,7 @@ class MemberTransferHandler extends TransferHandler {
     protected void importRelationMemberData(TransferSupport support, final MemberTable destination, int insertRow)
             throws UnsupportedFlavorException, IOException {
         //noinspection unchecked
+        @SuppressWarnings("unchecked")
         final Collection<RelationMemberData> memberData = (Collection<RelationMemberData>)
                 support.getTransferable().getTransferData(RelationMemberTransferable.RELATION_MEMBER_DATA);
         importData(destination, insertRow, memberData, new Function<RelationMemberData, RelationMember>() {
@@ -83,6 +84,7 @@ class MemberTransferHandler extends TransferHandler {
     protected void importPrimitiveData(TransferSupport support, final MemberTable destination, int insertRow)
             throws UnsupportedFlavorException, IOException {
         //noinspection unchecked
+        @SuppressWarnings("unchecked")
         final Collection<PrimitiveData> data = (Collection<PrimitiveData>)
                 support.getTransferable().getTransferData(PrimitiveTransferable.PRIMITIVE_DATA);
         importData(destination, insertRow, data, new Function<PrimitiveData, RelationMember>() {

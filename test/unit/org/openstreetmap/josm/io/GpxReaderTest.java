@@ -4,11 +4,12 @@ package org.openstreetmap.josm.io;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.apache.tools.ant.filters.StringInputStream;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -41,8 +42,12 @@ public class GpxReaderTest {
         assertEquals(new LatLon(48.183956146240234, 11.43463134765625), tenthWayPoint.getCoor());
     }
 
+    /**
+     * Tests invalid data.
+     * @throws Exception always SAXException
+     */
     @Test(expected = SAXException.class)
     public void testException() throws Exception {
-        new GpxReader(new StringInputStream("--foo--bar--")).parse(true);
+        new GpxReader(new ByteArrayInputStream("--foo--bar--".getBytes(StandardCharsets.UTF_8))).parse(true);
     }
 }
