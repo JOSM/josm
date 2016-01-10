@@ -36,6 +36,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
@@ -77,16 +78,23 @@ public class UnGlueAction extends JosmAction {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+        try {
+            unglue(e);
+        } catch (UserCancelException ignore) {
+            Main.debug(ignore.getMessage());
+        } finally {
+            cleanup();
+        }
+    }
+
+    protected void unglue(ActionEvent e) throws UserCancelException {
 
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
         String errMsg = null;
         int errorTime = Notification.TIME_DEFAULT;
         if (checkSelectionOneNodeAtMostOneWay(selection)) {
-            if (!checkAndConfirmOutlyingUnglue()) {
-                // FIXME: Leaving action without clearing selectedNode, selectedWay, selectedNodes
-                return;
-            }
+            checkAndConfirmOutlyingUnglue();
             int count = 0;
             for (Way w : OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class)) {
                 if (!w.isUsable() || w.getNodesCount() < 1) {
@@ -114,10 +122,7 @@ public class UnGlueAction extends JosmAction {
                 unglueWays();
             }
         } else if (checkSelectionOneWayAnyNodes(selection)) {
-            if (!checkAndConfirmOutlyingUnglue()) {
-                // FIXME: Leaving action without clearing selectedNode, selectedWay, selectedNodes
-                return;
-            }
+            checkAndConfirmOutlyingUnglue();
             Set<Node> tmpNodes = new HashSet<>();
             for (Node n : selectedNodes) {
                 int count = 0;
@@ -166,7 +171,9 @@ public class UnGlueAction extends JosmAction {
                     .setDuration(errorTime)
                     .show();
         }
+    }
 
+    private void cleanup() {
         selectedNode = null;
         selectedWay = null;
         selectedNodes = null;
@@ -534,8 +541,10 @@ public class UnGlueAction extends JosmAction {
             for (Way w : parentWays) {
                 cmds.add(new ChangeCommand(w, modifyWay(selectedNode, w, cmds, newNodes)));
             }
+            notifyWayPartOfRelation(parentWays);
         } else {
             cmds.add(new ChangeCommand(selectedWay, modifyWay(selectedNode, selectedWay, cmds, newNodes)));
+            notifyWayPartOfRelation(Collections.singleton(selectedWay));
         }
 
         if (dialog != null) {
@@ -598,6 +607,7 @@ public class UnGlueAction extends JosmAction {
             return false;
         }
         cmds.add(new ChangeNodesCommand(way, newNodes));
+        notifyWayPartOfRelation(Collections.singleton(way));
         try {
             final PropertiesMembershipDialog dialog = PropertiesMembershipDialog.showIfNecessary(Collections.singleton(selectedNode), false);
             if (dialog != null) {
@@ -636,6 +646,7 @@ public class UnGlueAction extends JosmAction {
             allNewNodes.addAll(newNodes);
         }
         cmds.add(new ChangeCommand(selectedWay, tmpWay)); // only one changeCommand for a way, else garbage will happen
+        notifyWayPartOfRelation(Collections.singleton(selectedWay));
 
         Main.main.undoRedo.add(new SequenceCommand(
                 trn("Dupe {0} node into {1} nodes", "Dupe {0} nodes into {1} nodes",
@@ -657,13 +668,13 @@ public class UnGlueAction extends JosmAction {
         setEnabled(selection != null && !selection.isEmpty());
     }
 
-    protected boolean checkAndConfirmOutlyingUnglue() {
+    protected void checkAndConfirmOutlyingUnglue() throws UserCancelException {
         List<OsmPrimitive> primitives = new ArrayList<>(2 + (selectedNodes == null ? 0 : selectedNodes.size()));
         if (selectedNodes != null)
             primitives.addAll(selectedNodes);
         if (selectedNode != null)
             primitives.add(selectedNode);
-        return Command.checkAndConfirmOutlyingOperation("unglue",
+        final boolean ok = Command.checkAndConfirmOutlyingOperation("unglue",
                 tr("Unglue confirmation"),
                 tr("You are about to unglue nodes outside of the area you have downloaded."
                         + "<br>"
@@ -675,5 +686,24 @@ public class UnGlueAction extends JosmAction {
                         + "This will cause problems because you don''t see the real object."
                         + "<br>" + "Do you really want to unglue?"),
                 primitives, null);
+        if (!ok) {
+            throw new UserCancelException();
+        }
+    }
+
+    protected void notifyWayPartOfRelation(final Iterable<Way> ways) {
+        final Set<String> affectedRelations = new HashSet<>();
+        for (Way way : ways) {
+            for (OsmPrimitive ref : way.getReferrers()) {
+                if (ref instanceof Relation && ref.isUsable()) {
+                    affectedRelations.add((ref.getDisplayName(DefaultNameFormatter.getInstance())));
+                }
+            }
+        }
+        final String msg1 = trn("Unglueing affected {0} relation: {1}", "Unglueing affected {0} relations: {1}",
+                affectedRelations.size(), affectedRelations.size(), Utils.joinAsHtmlUnorderedList(affectedRelations));
+        final String msg2 = trn("Ensure that the relation has not been broken!", "Ensure that the relations have not been broken!",
+                affectedRelations.size());
+        new Notification("<html>" + msg1 + msg2).setIcon(JOptionPane.WARNING_MESSAGE).show();
     }
 }
