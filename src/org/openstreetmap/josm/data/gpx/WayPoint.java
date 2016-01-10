@@ -11,16 +11,10 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.tools.date.PrimaryDateParser;
+import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 public class WayPoint extends WithAttributes implements Comparable<WayPoint>, TemplateEngineDataProvider {
-
-    private static ThreadLocal<PrimaryDateParser> dateParser = new ThreadLocal<PrimaryDateParser>() {
-        @Override protected PrimaryDateParser initialValue() {
-            return new PrimaryDateParser();
-        }
-    };
 
     public double time;
     public Color customColoring;
@@ -98,16 +92,40 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     }
 
     /**
+     * Sets the {@link #time} field as well as the {@link #PT_TIME} attribute to the specified time
+     *
+     * @param time the time to set
+     * @since 9383
+     */
+    public void setTime(Date time) {
+        this.time = time.getTime() / 1000.;
+        this.attr.put(PT_TIME, DateUtils.fromDate(time));
+    }
+
+    /**
      * Convert the time stamp of the waypoint into seconds from the epoch
      */
     public void setTime() {
+        setTimeFromAttribute();
+    }
+
+    /**
+     * Convert the time stamp of the waypoint into seconds from the epoch
+     * @return The parsed time if successful, or {@code null}
+     * @since 9383
+     */
+    public Date setTimeFromAttribute() {
         if (attr.containsKey(PT_TIME)) {
             try {
-                time = dateParser.get().parse(get(PT_TIME).toString()).getTime() / 1000.; /* ms => seconds */
+                final Date time = DateUtils.fromString(get(PT_TIME).toString());
+                setTime(time);
+                return time;
             } catch (Exception e) {
+                Main.warn(e);
                 time = 0;
             }
         }
+        return null;
     }
 
     @Override

@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -448,7 +447,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         // of person having time that couldn't be parsed, but valid GPS info
         try {
             setExifTime(ExifReader.readTime(file));
-        } catch (ParseException ex) {
+        } catch (RuntimeException ex) {
             setExifTime(null);
         }
 
