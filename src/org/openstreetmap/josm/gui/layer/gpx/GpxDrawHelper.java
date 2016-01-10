@@ -11,6 +11,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -105,7 +106,15 @@ public class GpxDrawHelper {
      * Different color modes
      */
     public enum ColorMode {
-        NONE, VELOCITY, HDOP, DIRECTION, TIME
+        NONE, VELOCITY, HDOP, DIRECTION, TIME;
+
+        static ColorMode fromIndex(final int index) {
+            return values()[index];
+        }
+
+        int toIndex() {
+            return Arrays.asList(values()).indexOf(this);
+        }
     }
 
     /**
@@ -140,7 +149,7 @@ public class GpxDrawHelper {
     public ColorMode getColorMode(String layerName) {
         try {
             int i = Main.pref.getInteger("draw.rawgps.colors", specName(layerName), 0);
-            return ColorMode.values()[i];
+            return ColorMode.fromIndex(i);
         } catch (Exception e) {
             Main.warn(e);
         }
