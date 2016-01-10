@@ -28,6 +28,7 @@ import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.ProgressInputStream;
 import org.openstreetmap.josm.io.ProgressOutputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 
 /**
  * Provides a uniform access for a HTTP/HTTPS server. This class should be used in favour of {@link HttpURLConnection}.
@@ -121,6 +122,9 @@ public final class HttpClient {
                 );
                 if (Main.isDebugEnabled()) {
                     Main.debug("RESPONSE: " + connection.getHeaderFields());
+                }
+                if (DefaultAuthenticator.getInstance().isEnabled() && connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    DefaultAuthenticator.getInstance().addFailedCredentialHost(url.getHost());
                 }
             } catch (IOException e) {
                 Main.info("{0} {1} -> !!!", requestMethod, url);
