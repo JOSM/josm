@@ -14,6 +14,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionListener;
@@ -79,6 +80,7 @@ public abstract class SearchTextResultListPanel<T> extends JPanel {
         add(edSearchText, BorderLayout.NORTH);
 
         lsResult = new JList<>(lsResultModel);
+        lsResult.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         lsResult.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

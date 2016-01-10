@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -74,9 +73,6 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
             super();
             this.menu = menu;
             lsResult.setCellRenderer(new CellRenderer());
-            lsResult.setSelectionModel(new DefaultListSelectionModel() {
-
-            });
         }
 
         public JMenuItem getSelectedItem() {
