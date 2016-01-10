@@ -434,7 +434,7 @@ public class LatLon extends Coordinate {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (!(obj instanceof LatLon)) return false;
         LatLon that = (LatLon) obj;
         return Double.compare(that.x, x) == 0 &&
                 Double.compare(that.y, y) == 0;

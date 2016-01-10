@@ -1145,7 +1145,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
      * @param offset offset
      * @return number of matched points
      */
-    private int matchGpxTrack(List<ImageEntry> images, GpxData selectedGpx, long offset) {
+    static int matchGpxTrack(List<ImageEntry> images, GpxData selectedGpx, long offset) {
         int ret = 0;
 
         for (GpxTrack trk : selectedGpx.tracks) {
@@ -1188,7 +1188,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         return null;
     }
 
-    private int matchPoints(List<ImageEntry> images, WayPoint prevWp, long prevWpTime,
+    static int matchPoints(List<ImageEntry> images, WayPoint prevWp, long prevWpTime,
             WayPoint curWp, long curWpTime, long offset) {
         // Time between the track point and the previous one, 5 sec if first point, i.e. photos take
         // 5 sec before the first track point can be assumed to be take at the starting position
