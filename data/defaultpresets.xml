@@ -5624,7 +5624,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,cowshed,construction" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,cowshed,construction,basilica,cathedral,chapel,church,temple,mosque,synagogue" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <text key="height" text="Height (meters)" />
@@ -5645,7 +5645,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="residential,apartments,house,hotel,hut,dormitory,terrace,detached,farm,roof" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,residential,apartments,house,hotel,hut,dormitory,terrace,detached,farm,roof" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <text key="height" text="Height (meters)" />
@@ -8586,7 +8586,7 @@
             <space />
             <key key="landuse" value="orchard" />
             <text key="name" text="Name" />
-            <combo key="trees" text="trees" values="olive_trees,apple_trees,oil_palms,orange_trees,almond_trees,banana_plants,coconut_palms,hazel_plants,cherry_trees,persimmon_trees,walnut_trees,plum_trees,peach_trees,tea_plants" />
+            <combo key="Trees" text="trees" values="olive_trees,apple_trees,oil_palms,orange_trees,almond_trees,banana_plants,coconut_palms,hazel_plants,cherry_trees,persimmon_trees,walnut_trees,plum_trees,peach_trees,tea_plants" />
         </item> <!-- Orchard -->
         <item name="Vineyard" icon="presets/fruits.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=vineyard"
