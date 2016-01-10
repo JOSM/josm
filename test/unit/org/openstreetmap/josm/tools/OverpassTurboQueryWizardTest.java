@@ -45,7 +45,7 @@ public class OverpassTurboQueryWizardTest {
     /**
      * Test erroneous value.
      */
-    @Test(expected = OverpassTurboQueryWizard.ParseException.class)
+    @Test(expected = UncheckedParseException.class)
     public void testErroneous() {
         OverpassTurboQueryWizard.getInstance().constructQuery("foo");
     }

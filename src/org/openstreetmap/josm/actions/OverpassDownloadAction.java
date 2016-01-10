@@ -49,6 +49,7 @@ import org.openstreetmap.josm.io.OverpassDownloadReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -156,7 +157,7 @@ public class OverpassDownloadAction extends JosmAction {
                     final String overpassWizardText = overpassWizard.getText();
                     try {
                         overpassQuery.setText(OverpassTurboQueryWizard.getInstance().constructQuery(overpassWizardText));
-                    } catch (OverpassTurboQueryWizard.ParseException ex) {
+                    } catch (UncheckedParseException ex) {
                         HelpAwareOptionPane.showOptionDialog(
                                 Main.parent,
                                 tr("<html>The Overpass wizard could not parse the following query:"
