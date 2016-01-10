@@ -25,12 +25,6 @@ public final class OverpassTurboQueryWizard {
     private final ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
 
     /**
-     * An exception to indicate a failed parse.
-     */
-    public static class ParseException extends RuntimeException {
-    }
-
-    /**
      * Replies the unique instance of this class.
      *
      * @return the unique instance of this class
@@ -59,13 +53,13 @@ public final class OverpassTurboQueryWizard {
      * Builds an Overpass QL from a {@link org.openstreetmap.josm.actions.search.SearchAction} like query.
      * @param search the {@link org.openstreetmap.josm.actions.search.SearchAction} like query
      * @return an Overpass QL query
-     * @throws ParseException when the parsing fails
+     * @throws UncheckedParseException when the parsing fails
      */
-    public String constructQuery(String search) throws ParseException {
+    public String constructQuery(String search) throws UncheckedParseException {
         try {
             final Object result = ((Invocable) engine).invokeFunction("construct_query", search);
             if (result == Boolean.FALSE) {
-                throw new ParseException();
+                throw new UncheckedParseException();
             }
             String query = (String) result;
             query = Pattern.compile("^.*\\[out:json\\]", Pattern.DOTALL).matcher(query).replaceFirst("");

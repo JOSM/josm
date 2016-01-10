@@ -3,10 +3,12 @@ package org.openstreetmap.josm.tools.date;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Date;
 import java.util.TimeZone;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 
 /**
  * Unit tests of {@link DateUtils} class.
@@ -63,5 +65,13 @@ public class DateUtilsTest {
         assertEquals(482196050520L, DateUtils.fromString("1985-04-12T23:20:50.52Z").getTime());
         assertEquals(851042397000L, DateUtils.fromString("1996-12-19T16:39:57-08:00").getTime());
         assertEquals(-1041337172130L, DateUtils.fromString("1937-01-01T12:00:27.87+00:20").getTime());
+    }
+
+    /**
+     * Verifies that parsing an illegal date throws a {@link UncheckedParseException}
+     */
+    @Test(expected = UncheckedParseException.class)
+    public void testIllegalDate() {
+        DateUtils.fromString("2014-");
     }
 }

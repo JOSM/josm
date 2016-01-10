@@ -17,6 +17,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 
 /**
  * A static utility class dealing with:
@@ -65,8 +66,9 @@ public final class DateUtils {
      * Parses XML date quickly, regardless of current locale.
      * @param str The XML date as string
      * @return The date
+     * @throws UncheckedParseException if the date does not match any of the supported date formats
      */
-    public static synchronized Date fromString(String str) {
+    public static synchronized Date fromString(String str) throws UncheckedParseException {
         return new Date(tsFromString(str));
     }
 
@@ -74,8 +76,9 @@ public final class DateUtils {
      * Parses XML date quickly, regardless of current locale.
      * @param str The XML date as string
      * @return The date in milliseconds since epoch
+     * @throws UncheckedParseException if the date does not match any of the supported date formats
      */
-    public static synchronized long tsFromString(String str) {
+    public static synchronized long tsFromString(String str) throws UncheckedParseException {
         // "2007-07-25T09:26:24{Z|{+|-}01:00}"
         if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx") ||
@@ -129,7 +132,7 @@ public final class DateUtils {
         try {
             return XML_DATE.newXMLGregorianCalendar(str).toGregorianCalendar().getTimeInMillis();
         } catch (Exception ex) {
-            return System.currentTimeMillis();
+            throw new UncheckedParseException("The date string (" + str + ") could not be parsed.");
         }
     }
 
