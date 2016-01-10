@@ -13,7 +13,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.search.SearchCompiler.InDataSourceArea;
+import org.openstreetmap.josm.actions.search.SearchCompiler.NotOutsideDataSourceArea;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.Node;
@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class Test extends AbstractVisitor {
 
-    protected static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new InDataSourceArea(false);
+    protected static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new NotOutsideDataSourceArea();
 
     /** Name of the test */
     protected final String name;

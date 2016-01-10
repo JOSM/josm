@@ -1467,13 +1467,38 @@ public class SearchCompiler {
 
         @Override
         protected Collection<Bounds> getBounds() {
-            return Main.main.getCurrentDataSet() == null || Main.main.getCurrentDataSet().getDataSourceArea() == null
+            return Main.main == null || Main.main.getCurrentDataSet() == null || Main.main.getCurrentDataSet().getDataSourceArea() == null
                     ? null : Main.main.getCurrentDataSet().getDataSourceBounds();
         }
 
         @Override
         public String toString() {
             return all ? "allindownloadedarea" : "indownloadedarea";
+        }
+    }
+
+    /**
+     * Matches objects which are not outside the source area ("downloaded area").
+     * Unlink {@link InDataSourceArea} this matches also if no source area is set (e.g., for new layers).
+     */
+    public static class NotOutsideDataSourceArea extends InDataSourceArea {
+
+        /**
+         * Constructs a new {@code NotOutsideDataSourceArea}.
+         */
+        public NotOutsideDataSourceArea() {
+            super(false);
+        }
+
+        @Override
+        protected Collection<Bounds> getBounds() {
+            final Collection<Bounds> bounds = super.getBounds();
+            return bounds == null || bounds.isEmpty() ? Collections.singleton(Main.getProjection().getWorldBoundsLatLon()) : bounds;
+        }
+
+        @Override
+        public String toString() {
+            return "NotOutsideDataSourceArea";
         }
     }
 
