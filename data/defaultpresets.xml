@@ -8586,7 +8586,7 @@
             <space />
             <key key="landuse" value="orchard" />
             <text key="name" text="Name" />
-            <combo key="Trees" text="trees" values="olive_trees,apple_trees,oil_palms,orange_trees,almond_trees,banana_plants,coconut_palms,hazel_plants,cherry_trees,persimmon_trees,walnut_trees,plum_trees,peach_trees,tea_plants" />
+            <combo key="trees" text="Trees" values="olive_trees,apple_trees,oil_palms,orange_trees,almond_trees,banana_plants,coconut_palms,hazel_plants,cherry_trees,persimmon_trees,walnut_trees,plum_trees,peach_trees,tea_plants" />
         </item> <!-- Orchard -->
         <item name="Vineyard" icon="presets/fruits.png" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=vineyard"
