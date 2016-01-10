@@ -302,4 +302,12 @@ public final class DateUtils {
         CheckParameterUtil.ensureParameterNotNull(datetime, "datetime");
         return getDateTimeFormat(dateStyle, timeStyle).format(datetime);
     }
+
+    /**
+     * Allows to override the timezone for unit tests.
+     * @param zone the timezone to use
+     */
+    protected static void setTimeZone(TimeZone zone) {
+        calendarLocale.setTimeZone(zone);
+    }
 }
