@@ -455,6 +455,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         for (RelationMember member : newMembers) {
             members.add(idx++, member);
         }
+        invalidateConnectionType();
         fireTableRowsInserted(index, idx - 1);
     }
 
@@ -754,6 +755,10 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
 
     @Override
     public void tableChanged(TableModelEvent e) {
+        invalidateConnectionType();
+    }
+
+    private void invalidateConnectionType() {
         connectionType = null;
     }
 
