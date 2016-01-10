@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -21,6 +20,7 @@ import javax.swing.border.EtchedBorder;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -39,10 +39,9 @@ public class AlignImageryPanel extends JPanel {
      */
     public AlignImageryPanel(boolean oneLine, final BooleanProperty showAgain, ImageryInfo infoToAdd) {
         Font font = getFont().deriveFont(Font.PLAIN, 14.0f);
-        JLabel nagLabel = new JLabel(
+        JMultilineLabel nagLabel = new JMultilineLabel(
                 tr("Aerial imagery \"{0}\" might be misaligned. Please check its offset using GPS tracks!", infoToAdd.getName()));
         UrlLabel detailsList = new UrlLabel(tr("http://wiki.openstreetmap.org/wiki/Using_Imagery"), tr("Details..."));
-        nagLabel.setLabelFor(detailsList);
         nagLabel.setFont(font);
         nagLabel.setForeground(Color.BLACK);
         detailsList.setFont(font);
