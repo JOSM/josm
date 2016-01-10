@@ -126,7 +126,7 @@ public class SequenceCommand extends Command {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), sequence, sequenceComplete, name, continueOnError);
+        return Objects.hash(super.hashCode(), Arrays.hashCode(sequence), sequenceComplete, name, continueOnError);
     }
 
     @Override
