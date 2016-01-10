@@ -153,7 +153,8 @@ public class Highways extends Test {
 
     public static boolean isHighwayLinkOkay(final Way way) {
         final String highway = way.get("highway");
-        if (highway == null || !highway.endsWith("_link")) {
+        if (highway == null || !highway.endsWith("_link")
+                || !IN_DOWNLOADED_AREA.evaluate(way.getNode(0)) || !IN_DOWNLOADED_AREA.evaluate(way.getNode(way.getNodesCount()-1))) {
             return true;
         }
 

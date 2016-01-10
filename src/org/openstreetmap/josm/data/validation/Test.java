@@ -13,6 +13,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.search.SearchCompiler.InDataSourceArea;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.Node;
@@ -23,6 +24,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -35,6 +37,8 @@ import org.openstreetmap.josm.tools.Utils;
  * @author frsantos
  */
 public class Test extends AbstractVisitor {
+
+    protected static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new InDataSourceArea(false);
 
     /** Name of the test */
     protected final String name;

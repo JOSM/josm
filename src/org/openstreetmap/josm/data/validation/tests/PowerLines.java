@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.search.SearchCompiler.InDataSourceArea;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
@@ -27,7 +26,6 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Geometry;
-import org.openstreetmap.josm.tools.Predicate;
 
 /**
  * Checks for nodes in power lines/minor_lines that do not have a power=tower/pole tag.<br>
@@ -45,8 +43,6 @@ public class PowerLines extends Test {
     protected static final Collection<String> POWER_STATION_TAGS = Arrays.asList("station", "sub_station", "substation", "plant", "generator");
     /** Values for {@code power} key interpreted as allowed power items */
     protected static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator", "switchgear");
-
-    protected static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new InDataSourceArea(false);
 
     private final Map<Way, String> towerPoleTagMap = new HashMap<>();
 
