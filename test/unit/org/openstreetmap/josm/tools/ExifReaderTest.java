@@ -10,10 +10,12 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.date.DateUtilsTest;
 
 /**
  * EXIF metadata extraction test
@@ -30,6 +32,7 @@ public class ExifReaderTest {
     public void setUp() {
         directionSampleFile = new File("data_nodist/exif-example_direction.jpg");
         orientationSampleFile = new File("data_nodist/exif-example_orientation=6.jpg");
+        DateUtilsTest.setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
     }
 
     /**

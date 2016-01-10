@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.tools.date.DateUtils;
+import org.openstreetmap.josm.tools.date.DateUtilsTest;
 
 /**
  * Unit tests of {@link CorrelateGpxWithImagesTest} class.
@@ -23,7 +24,7 @@ public class CorrelateGpxWithImagesTest {
      */
     @BeforeClass
     public static void setUp() {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        DateUtilsTest.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     /**

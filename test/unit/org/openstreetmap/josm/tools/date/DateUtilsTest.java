@@ -3,7 +3,6 @@ package org.openstreetmap.josm.tools.date;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Date;
 import java.util.TimeZone;
 
 import org.junit.BeforeClass;
@@ -16,11 +15,11 @@ import org.openstreetmap.josm.tools.UncheckedParseException;
 public class DateUtilsTest {
 
     /**
-     * Setup test.
+     * Allows to override the timezone used in {@link DateUtils} for unit tests.
+     * @param zone the timezone to use
      */
-    @BeforeClass
-    public static void setUp() {
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT+8:00"));
+    public static void setTimeZone(TimeZone zone) {
+        DateUtils.setTimeZone(zone);
     }
 
     /**
@@ -44,6 +43,7 @@ public class DateUtilsTest {
      */
     @Test
     public void testExifDate() {
+        setTimeZone(TimeZone.getTimeZone("GMT+8:00")); // parsing is timezone aware
         assertEquals(1443038712000L - 8 * 3600 * 1000, DateUtils.fromString("2015:09:23 20:05:12").getTime());
         assertEquals(1443038712888L - 8 * 3600 * 1000, DateUtils.fromString("2015:09:23 20:05:12.888").getTime());
     }
