@@ -37,7 +37,7 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
                 buttonAction(0, null);
             }
         });
-        setContent(selector);
+        setContent(selector, false);
         setPreferredSize(new Dimension(600, 300));
     }
 

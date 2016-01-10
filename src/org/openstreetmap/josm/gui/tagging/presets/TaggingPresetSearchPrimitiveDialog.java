@@ -64,7 +64,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
     TaggingPresetSearchPrimitiveDialog() {
         super(Main.parent, tr("Presets"), new String[] {tr("Search"), tr("Cancel")});
         selector = new TaggingPresetSelector(false, false);
-        setContent(selector);
+        setContent(selector, false);
         selector.setDblClickListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
