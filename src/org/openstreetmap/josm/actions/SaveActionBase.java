@@ -34,7 +34,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        boolean saved = doSave();
+        doSave();
     }
 
     public boolean doSave() {
