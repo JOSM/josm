@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.TimeZone;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 
