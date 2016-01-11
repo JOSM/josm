@@ -1788,5 +1788,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 snapHelper.toggleSnapping();
             }
         }
+
+        @Override
+        protected void updateEnabledState() {
+            setEnabled(Main.main != null && Main.main.hasEditLayer());
+        }
     }
 }
