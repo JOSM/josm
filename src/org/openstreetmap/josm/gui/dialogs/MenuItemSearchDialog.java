@@ -120,7 +120,8 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
 
         public Action() {
             super(tr("Search menu items"), "dialogs/search", null,
-                    Shortcut.registerShortcut("help:search-items", "Search menu items", KeyEvent.VK_SPACE, Shortcut.CTRL), false);
+                    Shortcut.registerShortcut("help:search-items", "Search menu items", KeyEvent.VK_SPACE, Shortcut.CTRL),
+                    true, "dialogs/search-items", false);
         }
 
         @Override
