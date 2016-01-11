@@ -438,7 +438,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         // don't zoom in too much, minimum: 100 px = 1 cm
         LatLon ll1 = getLatLon(width / 2 - 50, height / 2);
         LatLon ll2 = getLatLon(width / 2 + 50, height / 2);
-        if (ll1.isValid() && ll1.isValid() && b.contains(ll1) && b.contains(ll2)) {
+        if (ll1.isValid() && ll2.isValid() && b.contains(ll1) && b.contains(ll2)) {
             double d_m = ll1.greatCircleDistance(ll2);
             double d_en = 100 * scale;
             double scaleMin = 0.01 * d_en / d_m / 100;
