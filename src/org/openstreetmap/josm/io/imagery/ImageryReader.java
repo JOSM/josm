@@ -326,10 +326,10 @@ public class ImageryReader {
                     }
                     break;
                 case "valid-georeference":
-                    entry.setGeoreferenceValid(new Boolean(accumulator.toString()));
+                    entry.setGeoreferenceValid(Boolean.valueOf(accumulator.toString()));
                     break;
                 case "epsg4326to3857Supported":
-                    entry.setEpsg4326To3857Supported(new Boolean(accumulator.toString()));
+                    entry.setEpsg4326To3857Supported(Boolean.valueOf(accumulator.toString()));
                     break;
                 }
                 break;
