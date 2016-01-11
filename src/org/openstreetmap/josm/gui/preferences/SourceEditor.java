@@ -1318,8 +1318,8 @@ public abstract class SourceEditor extends JPanel {
     class SourceLoader extends PleaseWaitRunnable {
         private final String url;
         private final List<SourceProvider> sourceProviders;
-        private BufferedReader reader;
-        private boolean canceled;
+        private transient CachedFile cachedFile;
+        private transient boolean canceled;
         private final List<ExtendedSourceEntry> sources = new ArrayList<>();
 
         SourceLoader(String url, List<SourceProvider> sourceProviders) {
@@ -1331,7 +1331,7 @@ public abstract class SourceEditor extends JPanel {
         @Override
         protected void cancel() {
             canceled = true;
-            Utils.close(reader);
+            Utils.close(cachedFile);
         }
 
         protected void warn(Exception e) {
@@ -1355,7 +1355,6 @@ public abstract class SourceEditor extends JPanel {
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            String lang = LanguageInfo.getLanguageCodeXML();
             try {
                 sources.addAll(getDefault());
 
@@ -1366,9 +1365,21 @@ public abstract class SourceEditor extends JPanel {
                         }
                     }
                 }
+                readFile();
+            } catch (IOException e) {
+                if (canceled)
+                    // ignore the exception and return
+                    return;
+                OsmTransferException ex = new OsmTransferException(e);
+                ex.setUrl(url);
+                warn(ex);
+            }
+        }
 
-                InputStream stream = new CachedFile(url).getInputStream();
-                reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+        protected void readFile() throws IOException {
+            final String lang = LanguageInfo.getLanguageCodeXML();
+            cachedFile = new CachedFile(url);
+            try (final BufferedReader reader = cachedFile.getContentReader()) {
 
                 String line;
                 ExtendedSourceEntry last = null;
@@ -1433,14 +1444,6 @@ public abstract class SourceEditor extends JPanel {
                         }
                     }
                 }
-            } catch (IOException e) {
-                if (canceled)
-                    // ignore the exception and return
-                    return;
-                OsmTransferException ex = new OsmTransferException(e);
-                ex.setUrl(url);
-                warn(ex);
-                return;
             }
         }
 

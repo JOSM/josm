@@ -4,6 +4,8 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,7 +42,7 @@ import org.openstreetmap.josm.tools.Utils;
  * The file content is normally accessed with {@link #getInputStream()}, but
  * you can also get the mirrored copy with {@link #getFile()}.
  */
-public class CachedFile {
+public class CachedFile implements Closeable {
 
     /**
      * Caching strategy.
@@ -66,6 +68,7 @@ public class CachedFile {
     protected String httpAccept;
     protected CachingStrategy cachingStrategy;
 
+    private transient HttpClient activeConnection;
     protected File cacheFile;
     protected boolean initialized;
 
@@ -196,6 +199,19 @@ public class CachedFile {
             }
         }
         return new FileInputStream(file);
+    }
+
+    /**
+     * Returns {@link #getInputStream()} wrapped in a buffered reader.
+     * <p/>
+     * Detects Unicode charset in use utilizing {@link UTFInputStreamReader}.
+     *
+     * @return buffered reader
+     * @throws IOException if any I/O error occurs
+     * @since 9411
+     */
+    public BufferedReader getContentReader() throws IOException {
+        return new BufferedReader(UTFInputStreamReader.create(getInputStream()));
     }
 
     /**
@@ -412,11 +428,11 @@ public class CachedFile {
         String localPath = "mirror_" + a;
         destDirFile = new File(destDir, localPath + ".tmp");
         try {
-            final HttpClient.Response con = HttpClient.create(url)
+            activeConnection = HttpClient.create(url)
                     .setAccept(httpAccept)
                     .setIfModifiedSince(ifModifiedSince == null ? 0L : ifModifiedSince)
-                    .setHeaders(httpHeaders)
-                    .connect();
+                    .setHeaders(httpHeaders);
+            final HttpClient.Response con = activeConnection.connect();
             if (ifModifiedSince != null && con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
                 if (Main.isDebugEnabled()) {
                     Main.debug("304 Not Modified ("+urlStr+')');
@@ -430,6 +446,7 @@ public class CachedFile {
             try (InputStream bis = new BufferedInputStream(con.getContent())) {
                 Files.copy(bis, destDirFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
+            activeConnection = null;
             localFile = new File(destDir, localPath);
             if (Main.platform.rename(destDirFile, localFile)) {
                 Main.pref.putCollection(prefKey,
@@ -455,4 +472,15 @@ public class CachedFile {
         OnlineResource.OSM_API.checkOfflineAccess(urlString, OsmApi.getOsmApi().getServerUrl());
     }
 
+    /**
+     * Attempts to disconnect an URL connection.
+     * @see HttpClient#disconnect()
+     * @since 9411
+     */
+    @Override
+    public void close() {
+        if (activeConnection != null) {
+            activeConnection.disconnect();
+        }
+    }
 }
