@@ -1,8 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.imagery;
 
+import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,9 +28,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class ImageryReader {
+public class ImageryReader implements Closeable {
 
     private final String source;
+    private transient CachedFile cachedFile;
 
     private enum State {
         INIT,               // initial state, should always be at the bottom of the stack
@@ -52,11 +54,12 @@ public class ImageryReader {
     public List<ImageryInfo> parse() throws SAXException, IOException {
         Parser parser = new Parser();
         try {
-            try (InputStream in = new CachedFile(source)
-                    .setMaxAge(1*CachedFile.DAYS)
+            cachedFile = new CachedFile(source);
+            try (BufferedReader in = cachedFile
+                    .setMaxAge(CachedFile.DAYS)
                     .setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince)
-                    .getInputStream()) {
-                InputSource is = new InputSource(UTFInputStreamReader.create(in));
+                    .getContentReader()) {
+                InputSource is = new InputSource(in);
                 Utils.parseSafeSAX(is, parser);
                 return parser.entries;
             }
@@ -353,5 +356,10 @@ public class ImageryReader {
 
             }
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        Utils.close(cachedFile);
     }
 }
