@@ -401,6 +401,15 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         return getInstance().currentLayer;
     }
 
+    /**
+     * Returns whether the center view is currently active.
+     * @return {@code true} if the center view is active, {@code false} otherwise
+     * @since 9416
+     */
+    public static boolean isCenterView() {
+        return getInstance().centerView;
+    }
+
     @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
         if (currentLayer == null && newLayer instanceof GeoImageLayer) {
