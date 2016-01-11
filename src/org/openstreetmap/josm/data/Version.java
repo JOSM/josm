@@ -57,7 +57,6 @@ public class Version {
         Properties properties = new Properties();
         try {
             properties.load(revisionInfo);
-            revisionInfo.close();
         } catch (IOException e) {
             Main.warn(tr("Error reading revision info from revision file: {0}", e.getMessage()));
         }
@@ -110,14 +109,17 @@ public class Version {
      * Initializes version info
      */
     public void init() {
-        InputStream stream = Main.class.getResourceAsStream("/REVISION");
-        if (stream == null) {
-            Main.warn(tr("The revision file ''/REVISION'' is missing."));
-            version = 0;
-            releaseDescription = "";
-            return;
+        try (InputStream stream = Main.class.getResourceAsStream("/REVISION")) {
+            if (stream == null) {
+                Main.warn(tr("The revision file ''/REVISION'' is missing."));
+                version = 0;
+                releaseDescription = "";
+                return;
+            }
+            initFromRevisionInfo(stream);
+        } catch (IOException e) {
+            Main.warn(e);
         }
-        initFromRevisionInfo(stream);
     }
 
     /**
