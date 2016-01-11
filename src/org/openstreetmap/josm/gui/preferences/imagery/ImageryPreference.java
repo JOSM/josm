@@ -635,13 +635,13 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
              * Constructs a new {@code ReloadAction}.
              */
             ReloadAction() {
-                putValue(SHORT_DESCRIPTION, tr("reload defaults"));
+                putValue(SHORT_DESCRIPTION, tr("Update default entries"));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
             }
 
             @Override
             public void actionPerformed(ActionEvent evt) {
-                layerInfo.loadDefaults(true);
+                layerInfo.loadDefaults(true, false);
                 defaultModel.fireTableDataChanged();
                 defaultTable.getSelectionModel().clearSelection();
                 defaultTableListener.clearMap();
