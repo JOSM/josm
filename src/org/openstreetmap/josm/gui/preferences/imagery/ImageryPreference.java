@@ -155,7 +155,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     public boolean ok() {
         layerInfo.save();
         ImageryLayerInfo.instance.clear();
-        ImageryLayerInfo.instance.load();
+        ImageryLayerInfo.instance.load(false);
         Main.main.menu.imageryMenu.refreshOffsetMenu();
         OffsetBookmark.saveBookmarks();
 
@@ -641,7 +641,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             @Override
             public void actionPerformed(ActionEvent evt) {
-                layerInfo.loadDefaults(true, false);
+                layerInfo.loadDefaults(true, false, false);
                 defaultModel.fireTableDataChanged();
                 defaultTable.getSelectionModel().clearSelection();
                 defaultTableListener.clearMap();
@@ -945,7 +945,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
      * Initializes imagery preferences.
      */
     public static void initialize() {
-        ImageryLayerInfo.instance.load();
+        ImageryLayerInfo.instance.load(true);
         OffsetBookmark.loadBookmarks();
         Main.main.menu.imageryMenu.refreshImageryMenu();
         Main.main.menu.imageryMenu.refreshOffsetMenu();

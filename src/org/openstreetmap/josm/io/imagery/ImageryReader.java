@@ -20,7 +20,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.io.CachedFile;
-import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
@@ -32,6 +32,7 @@ public class ImageryReader implements Closeable {
 
     private final String source;
     private transient CachedFile cachedFile;
+    private transient boolean fastFail;
 
     private enum State {
         INIT,               // initial state, should always be at the bottom of the stack
@@ -55,6 +56,7 @@ public class ImageryReader implements Closeable {
         Parser parser = new Parser();
         try {
             cachedFile = new CachedFile(source);
+            cachedFile.setFastFail(fastFail);
             try (BufferedReader in = cachedFile
                     .setMaxAge(CachedFile.DAYS)
                     .setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince)
@@ -356,6 +358,16 @@ public class ImageryReader implements Closeable {
 
             }
         }
+    }
+
+    /**
+     * Sets whether opening HTTP connections should fail fast, i.e., whether a
+     * {@link HttpClient#setConnectTimeout(int) low connect timeout} should be used.
+     * @param fastFail whether opening HTTP connections should fail fast
+     * @see CachedFile#setFastFail(boolean)
+     */
+    public void setFastFail(boolean fastFail) {
+        this.fastFail = fastFail;
     }
 
     @Override

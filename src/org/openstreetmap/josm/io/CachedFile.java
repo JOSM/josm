@@ -68,6 +68,7 @@ public class CachedFile implements Closeable {
     protected String httpAccept;
     protected CachingStrategy cachingStrategy;
 
+    private transient boolean fastFail;
     private transient HttpClient activeConnection;
     protected File cacheFile;
     protected boolean initialized;
@@ -158,6 +159,15 @@ public class CachedFile implements Closeable {
     public CachedFile setHttpHeaders(Map<String, String> headers) {
         this.httpHeaders.putAll(headers);
         return this;
+    }
+
+    /**
+     * Sets whether opening HTTP connections should fail fast, i.e., whether a
+     * {@link HttpClient#setConnectTimeout(int) low connect timeout} should be used.
+     * @param fastFail whether opening HTTP connections should fail fast
+     */
+    public void setFastFail(boolean fastFail) {
+        this.fastFail = fastFail;
     }
 
     public String getName() {
@@ -432,6 +442,9 @@ public class CachedFile implements Closeable {
                     .setAccept(httpAccept)
                     .setIfModifiedSince(ifModifiedSince == null ? 0L : ifModifiedSince)
                     .setHeaders(httpHeaders);
+            if (fastFail) {
+                activeConnection.setReadTimeout(1000);
+            }
             final HttpClient.Response con = activeConnection.connect();
             if (ifModifiedSince != null && con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
                 if (Main.isDebugEnabled()) {

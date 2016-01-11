@@ -62,7 +62,11 @@ public class ImageryLayerInfo {
         layerIds.clear();
     }
 
-    public void load() {
+    /**
+     * Loads the custom as well as default imagery entries.
+     * @param fastFail whether opening HTTP connections should fail fast, see {@link ImageryReader#setFastFail(boolean)}
+     */
+     public void load(boolean fastFail) {
         clear();
         List<ImageryPreferenceEntry> entries = Main.pref.getListOfStructs("imagery.entries", null, ImageryPreferenceEntry.class);
         if (entries != null) {
@@ -76,7 +80,7 @@ public class ImageryLayerInfo {
             }
             Collections.sort(layers);
         }
-        loadDefaults(false, true);
+        loadDefaults(false, true, fastFail);
     }
 
     /**
@@ -88,14 +92,15 @@ public class ImageryLayerInfo {
      *
      * @param clearCache if true, clear the cache and start a fresh download.
      * @param quiet whether not the loading should be performed using a {@link PleaseWaitRunnable} in the background
+     * @param fastFail whether opening HTTP connections should fail fast, see {@link ImageryReader#setFastFail(boolean)}
      */
-    public void loadDefaults(boolean clearCache, boolean quiet) {
-        final DefaultEntryLoader loader = new DefaultEntryLoader(clearCache);
+    public void loadDefaults(boolean clearCache, boolean quiet, boolean fastFail) {
+        final DefaultEntryLoader loader = new DefaultEntryLoader(clearCache, fastFail);
         if (quiet) {
             loader.realRun();
             loader.finish();
         } else {
-            Main.worker.execute(new DefaultEntryLoader(clearCache));
+            Main.worker.execute(new DefaultEntryLoader(clearCache, fastFail));
         }
     }
 
@@ -105,13 +110,15 @@ public class ImageryLayerInfo {
     class DefaultEntryLoader extends PleaseWaitRunnable {
 
         private final boolean clearCache;
+        private final boolean fastFail;
         private final List<ImageryInfo> newLayers = new ArrayList<>();
         private transient ImageryReader reader;
         private transient boolean canceled;
 
-        DefaultEntryLoader(boolean clearCache) {
+        DefaultEntryLoader(boolean clearCache, boolean fastFail) {
             super(tr("Update default entries"));
             this.clearCache = clearCache;
+            this.fastFail = fastFail;
         }
 
         @Override
@@ -143,6 +150,7 @@ public class ImageryLayerInfo {
             }
             try {
                 reader = new ImageryReader(source);
+                reader.setFastFail(fastFail);
                 Collection<ImageryInfo> result = reader.parse();
                 newLayers.addAll(result);
             } catch (IOException ex) {

@@ -1141,7 +1141,6 @@ public class LayerListDialog extends ToggleDialog {
     class PopupMenuHandler extends PopupMenuLauncher {
         @Override
         public void showMenu(MouseEvent evt) {
-            Layer layer = getModel().getLayer(layerList.getSelectedRow());
             menu = new LayerListPopup(getModel().getSelectedLayers());
             super.showMenu(evt);
         }
