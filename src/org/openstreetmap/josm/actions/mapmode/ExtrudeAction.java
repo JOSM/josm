@@ -198,6 +198,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         public void actionPerformed(ActionEvent e) {
             toggleDualAlign();
         }
+
+        @Override
+        protected void updateEnabledState() {
+            setEnabled(Main.main != null && Main.main.hasEditLayer());
+        }
     }
 
     /**
