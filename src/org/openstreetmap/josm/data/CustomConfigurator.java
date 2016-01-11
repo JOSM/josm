@@ -585,7 +585,7 @@ public final class CustomConfigurator {
          private void processDeleteElement(Element item) {
             String path = evalVars(item.getAttribute("path"));
             String base = evalVars(item.getAttribute("base"));
-            deleteFile(base, path);
+            deleteFile(path, base);
         }
 
         private void processDownloadElement(Element item) {

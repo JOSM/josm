@@ -536,7 +536,7 @@ public class TagChecker extends TagTest {
 
         checkComplex = Main.pref.getBoolean(PREF_CHECK_COMPLEX, true);
         if (isBeforeUpload) {
-            checkComplex = checkValues && Main.pref.getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true);
+            checkComplex = checkComplex && Main.pref.getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true);
         }
 
         checkFixmes = Main.pref.getBoolean(PREF_CHECK_FIXMES, true);
