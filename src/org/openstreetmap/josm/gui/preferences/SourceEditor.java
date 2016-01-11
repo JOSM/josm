@@ -22,11 +22,8 @@ import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -451,6 +448,10 @@ public abstract class SourceEditor extends JPanel {
         ILLEGAL_FORMAT_OF_ENTRY
     }
 
+    /**
+     * Determines whether the list of active sources has changed.
+     * @return {@code true} if the list of active sources has changed, {@code false} otherwise
+     */
     public boolean hasActiveSourcesChanged() {
         Collection<? extends SourceEntry> prev = getInitialSourcesList();
         List<SourceEntry> cur = activeSourcesModel.getSources();
@@ -467,6 +468,10 @@ public abstract class SourceEditor extends JPanel {
         return false;
     }
 
+    /**
+     * Returns the list of active sources.
+     * @return the list of active sources
+     */
     public Collection<SourceEntry> getActiveSources() {
         return activeSourcesModel.getSources();
     }
@@ -485,6 +490,10 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
+    /**
+     * Remove sources associated with given indexes from active list.
+     * @param idxs indexes of sources to remove
+     */
     public void removeSources(Collection<Integer> idxs) {
         activeSourcesModel.removeIdxs(idxs);
     }
@@ -695,15 +704,26 @@ public abstract class SourceEditor extends JPanel {
     }
 
     public static class ExtendedSourceEntry extends SourceEntry implements Comparable<ExtendedSourceEntry> {
+        /** file name used for display */
         public String simpleFileName;
+        /** version used for display */
         public String version;
+        /** author name used for display */
         public String author;
+        /** webpage link used for display */
         public String link;
+        /** short description used for display */
         public String description;
         /** Style type: can only have one value: "xml". Used to filter out old XML styles. For MapCSS styles, the value is not set. */
         public String styleType;
+        /** minimum JOSM version required to enable this source entry */
         public Integer minJosmVersion;
 
+        /**
+         * Constructs a new {@code ExtendedSourceEntry}.
+         * @param simpleFileName file name used for display
+         * @param url URL that {@link org.openstreetmap.josm.io.CachedFile} understands
+         */
         public ExtendedSourceEntry(String simpleFileName, String url) {
             super(url, null, null, true);
             this.simpleFileName = simpleFileName;
@@ -720,6 +740,10 @@ public abstract class SourceEditor extends JPanel {
             s.append("<tr><th>").append(th).append("</th><td>").append(td).append("</td</tr>");
         }
 
+        /**
+         * Returns a tooltip containing available metadata.
+         * @return a tooltip containing available metadata
+         */
         public String getTooltip() {
             StringBuilder s = new StringBuilder();
             appendRow(s, tr("Short Description:"), getDisplayName());
@@ -1629,8 +1653,18 @@ public abstract class SourceEditor extends JPanel {
          */
         public abstract Collection<ExtendedSourceEntry> getDefault();
 
+        /**
+         * Serializes the given source entry as a map.
+         * @param entry source entry to serialize
+         * @return map (key=value)
+         */
         public abstract Map<String, String> serialize(SourceEntry entry);
 
+        /**
+         * Deserializes the given map as a source entry.
+         * @param entryStr map (key=value)
+         * @return source entry
+         */
         public abstract SourceEntry deserialize(Map<String, String> entryStr);
 
         /**
@@ -1653,6 +1687,11 @@ public abstract class SourceEditor extends JPanel {
             return entries;
         }
 
+        /**
+         * Saves a list of sources to JOSM preferences.
+         * @param entries list of sources
+         * @return {@code true}, if something has changed (i.e. value is different than before)
+         */
         public boolean put(Collection<? extends SourceEntry> entries) {
             Collection<Map<String, String>> setting = new ArrayList<>(entries.size());
             for (SourceEntry e : entries) {
