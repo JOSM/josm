@@ -599,16 +599,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     private class ZoomData {
-        private final LatLon center;
+        private final EastNorth center;
         private final double scale;
 
         ZoomData(EastNorth center, double scale) {
-            this.center = Projections.inverseProject(center);
+            this.center = center;
             this.scale = scale;
         }
 
         public EastNorth getCenterEastNorth() {
-            return getProjection().latlon2eastNorth(center);
+            return center;
         }
 
         public double getScale() {
