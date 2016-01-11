@@ -623,7 +623,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
                 this.current = history.getLatest();
             }
             if (this.reference == this.latest) {
-                this.current = history.getLatest();
+                this.reference = history.getLatest();
             }
             this.latest = null;
         } else {
