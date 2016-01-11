@@ -13,7 +13,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
+import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.AssignmentInstruction;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 
@@ -47,6 +53,23 @@ public class MapPaintPreferenceTest {
             if (!"xml".equalsIgnoreCase(source.styleType)) {
                 System.out.println(source.url);
                 StyleSource style = MapPaintStyles.addStyle(source);
+                if (style instanceof MapCSSStyleSource) {
+                    // Force loading of all icons to detect missing ones
+                    for (MapCSSRule rule : ((MapCSSStyleSource) style).rules) {
+                        for (Instruction instruction : rule.declaration.instructions) {
+                            if (instruction instanceof AssignmentInstruction) {
+                                AssignmentInstruction ai = (AssignmentInstruction) instruction;
+                                if (StyleKeys.ICON_IMAGE.equals(ai.key)
+                                 || StyleKeys.FILL_IMAGE.equals(ai.key)
+                                 || StyleKeys.REPEAT_IMAGE.equals(ai.key)) {
+                                    if (ai.val instanceof String) {
+                                        MapPaintStyles.getIconProvider(new IconReference((String) ai.val, style), true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 System.out.println(style.isValid() ? " => OK" : " => KO");
                 Collection<Throwable> errors = style.getErrors();
                 Collection<String> warnings = style.getWarnings();
