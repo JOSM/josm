@@ -82,11 +82,9 @@ public final class MapPaintStyles {
     }
 
     /**
-     * IconReference is used to remember the associated style source for
-     * each icon URL.
+     * IconReference is used to remember the associated style source for each icon URL.
      * This is necessary because image URLs can be paths relative
-     * to the source file and we have cascading of properties from different
-     * source files.
+     * to the source file and we have cascading of properties from different source files.
      */
     public static class IconReference {
 
@@ -105,8 +103,7 @@ public final class MapPaintStyles {
     }
 
     /**
-     * Image provider for icon. Note that this is a provider only. A @link{ImageProvider#get()} call may still
-     * fail!
+     * Image provider for icon. Note that this is a provider only. A @link{ImageProvider#get()} call may still fail!
      *
      * @param ref reference to the requested icon
      * @param test if <code>true</code> than the icon is request is tested
@@ -123,7 +120,9 @@ public final class MapPaintStyles {
                 .setInArchiveDir(ref.source.getZipEntryDirName())
                 .setOptional(true);
         if (test && i.get() == null) {
-            Main.warn("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
+            String msg = "Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.";
+            ref.source.logWarning(msg);
+            Main.warn(msg);
             return null;
         }
         return i;
