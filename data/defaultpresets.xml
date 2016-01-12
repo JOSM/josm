@@ -4184,7 +4184,7 @@
             <text key="name" text="Name" />
             <text key="artist_name" text="Artist Name" />
         </item> <!-- Artwork -->
-        <item name="Recording Studio" icon="presets/studio.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Studio" icon="presets/studio.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=studio"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=studio"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=studio"
@@ -4196,7 +4196,7 @@
             <reference ref="wheelchair" />
             <combo key="studio" text="Type" values="audio,radio,television,video" />
             <reference ref="link_contact_address_payment" />
-        </item> <!-- Recording Studio -->
+        </item> <!-- Studio -->
     </group> <!-- Culture -->
     <group name="Place of Worship" icon="styles/standard/religion.png">
         <item name="Church" icon="styles/standard/religion/church.png" type="node,closedway,relation" preset_name_label="true">
