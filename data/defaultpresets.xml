@@ -327,7 +327,8 @@
     </chunk>
     <chunk id="waterway">
         <reference ref="name_layer" />
-        <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
+        <check key="intermittent" text="Intermittent" disable_off="true" />
+        <check key="seasonal" text="Seasonal" disable_off="true" />
         <check key="tidal" text="In the tidal range" disable_off="true" />
         <combo key="tunnel" text="Tunnel" values="culvert,yes" />
         <text key="width" text="Width (meters)" />
@@ -2118,6 +2119,7 @@
             <key key="natural" value="wetland" />
             <text key="name" text="Name" />
             <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" values_searchable="true" />
+            <check key="seasonal" text="Seasonal" disable_off="true" />
         </item> <!-- Wetland -->
         <item name="Mud" icon="styles/standard/misc/landuse/mud.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=mud"
