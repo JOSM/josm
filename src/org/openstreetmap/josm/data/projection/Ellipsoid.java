@@ -113,17 +113,20 @@ public final class Ellipsoid {
     public final double b;
 
     /**
-     * first eccentricity
+     * first eccentricity:
+     * sqrt(a*a - b*b) / a
      */
     public final double e;
 
     /**
-     * first eccentricity squared
+     * first eccentricity squared:
+     * (a*a - b*b) / (a*a)
      */
     public final double e2;
 
     /**
-     * square of the second eccentricity
+     * square of the second eccentricity:
+     * (a*a - b*b) / (b*b)
      */
     public final double eb2;
 
@@ -330,7 +333,7 @@ public final class Ellipsoid {
         }
         return new LatLon(Math.toDegrees(lt), Math.toDegrees(lg));
     }
-
+    
     /**
      * convert ellipsoidal coordinates to cartesian coordinates
      *

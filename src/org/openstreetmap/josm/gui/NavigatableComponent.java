@@ -310,32 +310,20 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return getLatLon((int) x, (int) y);
     }
 
+    public ProjectionBounds getProjectionBounds(Rectangle r) {
+        EastNorth p1 = getEastNorth(r.x, r.y);
+        EastNorth p2 = getEastNorth(r.x + r.width, r.y + r.height);
+        ProjectionBounds pb = new ProjectionBounds(p1);
+        pb.extend(p2);
+        return pb;
+    }
+    
     /**
      * @param r rectangle
      * @return Minimum bounds that will cover rectangle
      */
     public Bounds getLatLonBounds(Rectangle r) {
-        // TODO Maybe this should be (optional) method of Projection implementation
-        EastNorth p1 = getEastNorth(r.x, r.y);
-        EastNorth p2 = getEastNorth(r.x + r.width, r.y + r.height);
-
-        Bounds result = new Bounds(Main.getProjection().eastNorth2latlon(p1));
-
-        double eastMin = Math.min(p1.east(), p2.east());
-        double eastMax = Math.max(p1.east(), p2.east());
-        double northMin = Math.min(p1.north(), p2.north());
-        double northMax = Math.max(p1.north(), p2.north());
-        double deltaEast = (eastMax - eastMin) / 10;
-        double deltaNorth = (northMax - northMin) / 10;
-
-        for (int i = 0; i < 10; i++) {
-            result.extend(Main.getProjection().eastNorth2latlon(new EastNorth(eastMin + i * deltaEast, northMin)));
-            result.extend(Main.getProjection().eastNorth2latlon(new EastNorth(eastMin + i * deltaEast, northMax)));
-            result.extend(Main.getProjection().eastNorth2latlon(new EastNorth(eastMin, northMin  + i * deltaNorth)));
-            result.extend(Main.getProjection().eastNorth2latlon(new EastNorth(eastMax, northMin  + i * deltaNorth)));
-        }
-
-        return result;
+        return Main.getProjection().getLatLonBoundsBox(getProjectionBounds(r));
     }
 
     public AffineTransform getAffineTransform() {

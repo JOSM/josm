@@ -28,11 +28,13 @@ import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
+import org.openstreetmap.josm.data.projection.proj.AlbersEqualArea;
 import org.openstreetmap.josm.data.projection.proj.ClassProjFactory;
 import org.openstreetmap.josm.data.projection.proj.DoubleStereographic;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
 import org.openstreetmap.josm.data.projection.proj.LonLat;
 import org.openstreetmap.josm.data.projection.proj.Mercator;
+import org.openstreetmap.josm.data.projection.proj.PolarStereographic;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjFactory;
 import org.openstreetmap.josm.data.projection.proj.SwissObliqueMercator;
@@ -81,12 +83,14 @@ public final class Projections {
     static final Map<String, ProjectionDefinition> inits;
 
     static {
-        registerBaseProjection("lonlat", LonLat.class, "core");
+        registerBaseProjection("aea", AlbersEqualArea.class, "core");
         registerBaseProjection("josm:smerc", Mercator.class, "core");
         registerBaseProjection("lcc", LambertConformalConic.class, "core");
+        registerBaseProjection("lonlat", LonLat.class, "core");
         registerBaseProjection("somerc", SwissObliqueMercator.class, "core");
-        registerBaseProjection("tmerc", TransverseMercator.class, "core");
+        registerBaseProjection("stere", PolarStereographic.class, "core");
         registerBaseProjection("sterea", DoubleStereographic.class, "core");
+        registerBaseProjection("tmerc", TransverseMercator.class, "core");
 
         ellipsoids.put("airy", Ellipsoid.Airy);
         ellipsoids.put("mod_airy", Ellipsoid.AiryMod);

@@ -55,6 +55,12 @@ public class LatLon extends Coordinate {
      */
     public static final LatLon ZERO = new LatLon(0, 0);
 
+    /**
+     * North and south pole.
+     */
+    public static final LatLon NORTH_POLE = new LatLon(90, 0);
+    public static final LatLon SOUTH_POLE = new LatLon(-90, 0);
+
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
     private static DecimalFormat cDmMinuteFormatter = new DecimalFormat("00.000");
