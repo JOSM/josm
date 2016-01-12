@@ -13,20 +13,20 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * Stereographic projection, depending on the latitude of natural origin
  * (parameter lat_0).
  * <p>
- * 
+ *
  * In this file, only the polar case is implemented. This corresponds to
  * EPSG:9810 (Polar Stereographic Variant A) and EPSG:9829 (Polar Stereographic
  * Variant B).
  * <p>
- * 
+ *
  * It is required, that the latitude of natural origin has the value +/-90 degrees.
  * <p>
- * 
+ *
  * This class has been derived from the implementation of the Geotools project;
  * git 8cbf52d, org.geotools.referencing.operation.projection.PolarStereographic
  * at the time of migration.
  * <p>
- * 
+ *
  * <b>References:</b>
  * <ul>
  *   <li>John P. Snyder (Map Projections - A Working Manual,<br>
@@ -43,17 +43,18 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  *       Geodesy and Geomatics Engineereng, UNB. Technical Report No. 46.</li>
  * </ul>
  *
+ * @author André Gosselin
+ * @author Martin Desruisseaux (PMO, IRD)
+ * @author Rueben Schulz
+ *
  * @see <A HREF="http://mathworld.wolfram.com/StereographicProjection.html">Stereographic projection on MathWorld</A>
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/polar_stereographic.html">Polar_Stereographic</A>
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/oblique_stereographic.html">Oblique_Stereographic</A>
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/stereographic.html">Stereographic</A>
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/random_issues.html#stereographic">Some Random Stereographic Issues</A>
- * 
+ *
  * @see DoubleStereographic
- * 
- * @author André Gosselin
- * @author Martin Desruisseaux (PMO, IRD)
- * @author Rueben Schulz
+ * @since 9419
  */
 public class PolarStereographic extends AbstractProj implements IPolar {
     /**
@@ -87,12 +88,12 @@ public class PolarStereographic extends AbstractProj implements IPolar {
      * if it is for the north pole.
      */
     boolean southPole;
-    
+
     @Override
     public String getName() {
         return tr("Polar Stereographic");
     }
-    
+
     @Override
     public String getProj4Id() {
         return "stere";
@@ -127,7 +128,7 @@ public class PolarStereographic extends AbstractProj implements IPolar {
                             Math.pow(1-e, 1-e));
         }
     }
-    
+
     @Override
     public double[] project(double y, double x) {
         final double sinlat = Math.sin(y);
@@ -157,7 +158,7 @@ public class PolarStereographic extends AbstractProj implements IPolar {
         final double t = rho/k0;
         final double halfe = e/2.0;
         double phi0 = 0;
-        for (int i=MAXIMUM_ITERATIONS;;) {
+        for (int i = MAXIMUM_ITERATIONS;;) {
             final double esinphi = e * Math.sin(phi0);
             final double phi = (Math.PI/2) - 2.0*Math.atan(t*Math.pow((1-esinphi)/(1+esinphi), halfe));
             if (Math.abs(phi-phi0) < ITERATION_TOLERANCE) {

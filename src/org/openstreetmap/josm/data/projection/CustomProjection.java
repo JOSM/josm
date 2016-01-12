@@ -714,7 +714,7 @@ public class CustomProjection extends AbstractProjection {
         }
         // if the box contains one of the poles, the above method did not get
         // correct min/max latitude value
-        if (proj instanceof IPolar) {;
+        if (proj instanceof IPolar) {
             IPolar polarProj = (IPolar) proj;
             if (polarProj.hasPole(false)) {
                 EastNorth enNorthPole = latlon2eastNorth(LatLon.NORTH_POLE);
