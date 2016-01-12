@@ -1130,12 +1130,17 @@ node[piste:type=snow_park] {
 /**************/
 
 node[power=tower] {
-    icon-image: "misc/landmark/power/tower_small.png";
+    icon-image: "power/tower.svg";
     set icon_z17;
     text: auto;
 }
 node[power=pole] {
-    icon-image: "misc/landmark/power/pole.png";
+    icon-image: "power/pole.svg";
+    set icon_z17;
+    text: auto;
+}
+node[power=pole][transformer=distribution] {
+    icon-image: "power/pole_transformer.svg";
     set icon_z17;
     text: auto;
 }
@@ -1166,23 +1171,48 @@ area[power=converter],
 area[power=generator] {
     fill-color: power#eeeeee;
 }
-node[power=cable_distribution_cabinet],
+node[power=cable_distribution_cabinet] {
+    icon-image: "power/cable_distribution_cabinet.svg";
+    set icon_z17;
+    text: auto;
+}
 node[power=generator] {
-    icon-image: "misc/landmark/power.png";
+    icon-image: "power/generator.svg";
     set icon_z17;
     text: auto;
 }
 node[power=substation] {
-    icon-image: "icons/power_substation.n.16.png";
+    icon-image: "power/substation.svg";
     set icon_z17;
     text: auto;
 }
 node[power=transformer] {
-    icon-image: "misc/landmark/power/transformer.png";
-    icon-width: 16;
+    icon-image: "power/transformer.svg";
     set icon_z17;
     text: auto;
 }
+
+node[power=switchgear] {
+    icon-image: "power/switchgear.svg";
+    set icon_z17;
+    text: auto;
+}
+node[power=switch] {
+    icon-image: "power/switch.svg";
+    set icon_z17;
+    text: auto;
+}
+node[power=converter] {
+    icon-image: "power/converter.svg";
+    set icon_z17;
+    text: auto;
+}
+node[power=compensator] {
+    icon-image: "power/compensator.svg";
+    set icon_z17;
+    text: auto;
+}
+
 
 /*************************/
 /* generator:source tags */
