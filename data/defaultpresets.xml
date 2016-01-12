@@ -7345,6 +7345,13 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Chemist -->
+        <item name="Tobacco" icon="styles/standard/shop/tobacco.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=tobacco" />
+            <space />
+            <key key="shop" value="tobacco" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Tobacco -->
         <item name="Hairdresser/Barber" icon="styles/standard/shop/hairdresser.png" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hairdresser"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=hairdresser"
