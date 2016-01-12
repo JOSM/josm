@@ -91,7 +91,7 @@ public final class Utils {
 
     public static final String URL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
 
-    private static char[] DEFAULT_STRIP = {'\u200B', '\uFEFF'};
+    private static final char[] DEFAULT_STRIP = {'\u200B', '\uFEFF'};
 
     /**
      * Tests whether {@code predicate} applies to at least one element from {@code collection}.
@@ -999,7 +999,8 @@ public final class Utils {
     }
 
     /**
-     * An alternative to {@link String#trim()} to effectively remove all leading and trailing white characters, including Unicode ones.
+     * An alternative to {@link String#trim()} to effectively remove all leading
+     * and trailing white characters, including Unicode ones.
      * @param str The string to strip
      * @return <code>str</code>, without leading and trailing characters, according to
      *         {@link Character#isWhitespace(char)} and {@link Character#isSpaceChar(char)}.
@@ -1016,7 +1017,8 @@ public final class Utils {
     }
 
     /**
-     * An alternative to {@link String#trim()} to effectively remove all leading and trailing white characters, including Unicode ones.
+     * An alternative to {@link String#trim()} to effectively remove all leading
+     * and trailing white characters, including Unicode ones.
      * @param str The string to strip
      * @param skipChars additional characters to skip
      * @return <code>str</code>, without leading and trailing characters, according to

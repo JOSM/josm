@@ -122,6 +122,16 @@ public class ProjectionBounds {
     }
 
     /**
+     * Check, if a point is within the bounds.
+     * @param en the point
+     * @return true, if <code>en</code> is within the bounds
+     */
+    public boolean contains(EastNorth en) {
+        return minEast <= en.east() && en.east() <= maxEast &&
+                minNorth <= en.north() && en.north() <= maxNorth;
+    }
+
+    /**
      * Returns the min east/north.
      * @return the min east/north
      */

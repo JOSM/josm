@@ -13,4 +13,5 @@ public class ProjParameters {
     public Double lat0;
     public Double lat1;
     public Double lat2;
+    public Double lat_ts;
 }

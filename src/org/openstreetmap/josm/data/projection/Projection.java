@@ -82,6 +82,17 @@ public interface Projection {
     ProjectionBounds getWorldBoundsBoxEastNorth();
 
     /**
+     * Find lat/lon-box containing all the area of a given rectangle in
+     * east/north space.
+     *
+     * This is an approximate method. Points outside of the world should be ignored.
+     *
+     * @param pb the rectangle in projected space
+     * @return minimum lat/lon box, that when projected, covers <code>pb</code>
+     */
+    Bounds getLatLonBoundsBox(ProjectionBounds pb);
+
+    /**
      * Get the number of meters per unit of this projection. This more
      * defines the scale of the map, than real conversion of unit to meters
      * as this value is more less correct only along great circles.

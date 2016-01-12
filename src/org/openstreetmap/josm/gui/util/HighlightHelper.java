@@ -13,8 +13,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 
 /**
- * This class stores the set of highlited primitives and
- * allows easy and fast change of highlighting
+ * This class stores the set of highlighted primitives and
+ * allows easy and fast change of highlighting.
  */
 public class HighlightHelper {
     private final Set<OsmPrimitive> highlightedPrimitives = new HashSet<>();
