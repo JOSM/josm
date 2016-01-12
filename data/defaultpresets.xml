@@ -6151,8 +6151,8 @@
             <key key="military" value="range" />
         </item>
     </group> <!-- Military -->
-    <group name="Power" icon="presets/power.png">
-        <item name="Power Plant" icon="icons/power_station.png" type="closedway,relation" preset_name_label="true">
+    <group name="Power" icon="styles/standard/power/power.svg">
+        <item name="Power Plant" icon="styles/standard/power/plant.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=plant"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=plant"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=plant"
@@ -6176,7 +6176,7 @@
                 <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
             </optional>
         </item> <!-- Power Plant -->
-        <group name="Power Generator" icon="presets/power.png">
+        <group name="Power Generator" icon="styles/standard/power/generator.svg">
             <item name="Biofuel Power Generator" icon="presets/power_source-biofuel.svg" type="node,closedway,relation" preset_name_label="true">
                 <key key="generator:source" value="biofuel" />
                 <reference ref="power_generator" />
@@ -6335,7 +6335,7 @@
             </item> <!-- Wind Turbine -->
         </group> <!-- Power Generator -->
         <separator/>
-        <item name="Power Substation" icon="icons/power_substation.n.16.png" type="node,closedway" preset_name_label="true">
+        <item name="Power Substation" icon="styles/standard/power/substation.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=substation"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
@@ -6352,7 +6352,7 @@
                 <check key="gas_insulated" text="Gas insulated" />
             </optional>
         </item> <!-- Power Substation -->
-        <item name="Power Transformer" icon="styles/standard/misc/landmark/power/transformer.png" type="node,closedway" preset_name_label="true">
+        <item name="Power Transformer" icon="styles/standard/power/transformer.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=transformer"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=transformer"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=transformer"
@@ -6368,7 +6368,7 @@
                 <combo key="phases" text="Phases" values="1,3" length="1" />
             </optional>
         </item> <!-- Power Transformer -->
-        <item name="Power Switchgear" icon="presets/power.png" type="closedway" preset_name_label="true">
+        <item name="Power Switchgear" icon="styles/standard/power/switchgear.svg" type="closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switch"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
@@ -6384,7 +6384,7 @@
                 <check key="gas_insulated" text="Gas insulated" />
             </optional>
         </item> <!-- Power Switchgear -->
-        <item name="Power Busbar" icon="presets/power.png" type="way" preset_name_label="true">
+        <item name="Power Busbar" icon="styles/standard/power/busbar.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:line=busbar"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
@@ -6395,7 +6395,7 @@
             <key key="line" value="busbar" />
             <reference ref="power_line_extra" />
         </item> <!-- Power Busbar -->
-        <item name="Power Bay" icon="presets/power.png" type="way" preset_name_label="true">
+        <item name="Power Bay" icon="styles/standard/power/bay.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:line=bay"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
@@ -6406,13 +6406,13 @@
             <key key="line" value="bay" />
             <reference ref="power_line_extra" />
         </item> <!-- Power Bay -->
-        <item name="Power Switch" icon="presets/power.png" type="node" preset_name_label="true">
+        <item name="Power Switch" icon="styles/standard/power/switch.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switch" />
             <space />
             <key key="power" value="switch" />
         </item> <!-- Power Switch -->
         <separator/>
-        <item name="Power Converter" icon="presets/power.png" type="node,closedway" preset_name_label="true">
+        <item name="Power Converter" icon="styles/standard/power/converter.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=converter"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
@@ -6428,7 +6428,7 @@
                 <combo key="rating" text="Power rating (MVA)" values="15 MVA,50 MVA,100 MVA" />
             </optional>
         </item> <!-- Power Converter -->
-        <item name="Power Compensator" icon="presets/power.png" type="node,closedway" preset_name_label="true">
+        <item name="Power Compensator" icon="styles/standard/power/compensator.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=compensator"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=substation"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=substation"
@@ -6444,17 +6444,17 @@
             </optional>
         </item> <!-- Power Compensator -->
         <separator/>
-        <item name="Cable Distribution Cabinet" icon="presets/power.png" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=cable"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=cable"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=cable" />
+        <item name="Cable Distribution Cabinet" icon="styles/standard/power/cable_distribution_cabinet.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=cable_distribution_cabinet"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=cable_distribution_cabinet"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=cable_distribution_cabinet" />
             <space />
             <key key="power" value="cable_distribution_cabinet" />
             <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110,low" /> <!-- Recheck values -->
             <reference ref="ref_operator_branch" />
         </item> <!-- Cable Distribution Cabinet -->
         <separator/>
-        <item name="Power Tower" icon="styles/standard/misc/landmark/power/tower_small.png" type="node" preset_name_label="true">
+        <item name="Power Tower" icon="styles/standard/power/tower.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=tower"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=tower"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:power=tower"
@@ -6481,7 +6481,7 @@
                 <check key="tower" text="Location transition" value_on="transition" disable_off="true" />
             </optional>
         </item> <!-- Power Tower -->
-        <item name="Pole" icon="styles/standard/misc/landmark/power/pole.png" type="node" preset_name_label="true">
+        <item name="Pole" icon="styles/standard/power/pole.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=pole"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=pole"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:power=pole"
@@ -6499,7 +6499,7 @@
             <check key="pole" text="Location transition" value_on="transition" disable_off="true" />
             <reference ref="ref_operator_branch" />
         </item> <!-- Pole -->
-        <item name="Pole with Transformer" icon="styles/standard/misc/landmark/power/pole.png" type="node" preset_name_label="true">
+        <item name="Pole with Transformer" icon="styles/standard/power/pole_transformer.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=pole"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=pole"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:power=pole"
@@ -6524,7 +6524,7 @@
                 <combo key="phases" text="Phases" values="1,3" length="1" />
             </optional>
         </item> <!-- Pole with Transformer-->
-        <item name="Power Line" icon="presets/power.png" type="way" preset_name_label="true">
+        <item name="Power Line" icon="styles/standard/power/line.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:power=line"
@@ -6544,7 +6544,7 @@
                 <check key="communication" text="Used for data communications" value_on="line" value_off="" default="off" />
             </optional>
         </item> <!-- Power Line -->
-        <item name="Power Cable" icon="presets/power.png" type="way" preset_name_label="true">
+        <item name="Power Cable" icon="styles/standard/power/cable.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=cable"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=cable"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=cable" />
