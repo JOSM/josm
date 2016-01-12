@@ -1835,6 +1835,7 @@ area[shop=car_dealer],
 area[shop=car_repair],
 area[shop=tyres],
 area[shop=chemist],
+area[shop=tobacco],
 area[shop=clothes],
 area[shop=computer],
 area[shop=confectionery],
@@ -1984,6 +1985,11 @@ node[shop=tyres] {
 }
 node[shop=chemist] {
     icon-image: "shop/chemist.png";
+    set icon_z17;
+    text: auto;
+}
+node[shop=tobacco] {
+    icon-image: "shop/tobacco.svg";
     set icon_z17;
     text: auto;
 }
