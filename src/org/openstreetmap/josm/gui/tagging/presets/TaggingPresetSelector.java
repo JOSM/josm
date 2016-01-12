@@ -221,7 +221,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         popupMenu.add(new AbstractAction(tr("Add toolbar button")) {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                final TaggingPreset preset = lsResult.getSelectedValue();
+                final TaggingPreset preset = getSelectedPreset();
                 if (preset != null) {
                     Main.toolbar.addCustomButton(preset.getToolbarString(), -1, false);
                 }
@@ -245,14 +245,14 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         final List<PresetClassification> result = classifications.getMatchingPresets(
                 text, onlyApplicable, inTags, getTypesInSelection(), selected);
 
-        final TaggingPreset oldPreset = lsResult.getSelectedValue();
+        final TaggingPreset oldPreset = getSelectedPreset();
         lsResultModel.setItems(Utils.transform(result, new Utils.Function<PresetClassification, TaggingPreset>() {
             @Override
             public TaggingPreset apply(PresetClassification x) {
                 return x.preset;
             }
         }));
-        final TaggingPreset newPreset = lsResult.getSelectedValue();
+        final TaggingPreset newPreset = getSelectedPreset();
         if (!Objects.equals(oldPreset, newPreset)) {
             int[] indices = lsResult.getSelectedIndices();
             for (ListSelectionListener listener : listSelectionListeners) {
@@ -413,7 +413,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
     }
 
     /**
-     * Determines, which preset is selected at the moment. Updates {@link PresetClassification#favoriteIndex}!
+     * Determines, which preset is selected at the moment.
      * @return selected preset (as action)
      */
     public synchronized TaggingPreset getSelectedPreset() {
@@ -422,7 +422,15 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         if (idx < 0 || idx >= lsResultModel.getSize()) {
             idx = 0;
         }
-        TaggingPreset preset = lsResultModel.getElementAt(idx);
+        return lsResultModel.getElementAt(idx);
+    }
+
+    /**
+     * Determines, which preset is selected at the moment. Updates {@link PresetClassification#favoriteIndex}!
+     * @return selected preset (as action)
+     */
+    public synchronized TaggingPreset getSelectedPresetAndUpdateClassification() {
+        final TaggingPreset preset = getSelectedPreset();
         for (PresetClassification pc: classifications) {
             if (pc.preset == preset) {
                 pc.favoriteIndex = CLASSIFICATION_IN_FAVORITES;
