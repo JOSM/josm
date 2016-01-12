@@ -85,7 +85,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
     protected void buttonAction(int buttonIndex, ActionEvent evt) {
         super.buttonAction(buttonIndex, evt);
         if (buttonIndex == 0) {
-            TaggingPreset preset = selector.getSelectedPreset();
+            TaggingPreset preset = selector.getSelectedPresetAndUpdateClassification();
             if (preset != null) {
                 final Set<OsmPrimitive> matching = new HashSet<>(Utils.filter(Main.main.getCurrentDataSet().allPrimitives(), preset));
                 Main.main.getCurrentDataSet().setSelected(matching);
