@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -45,10 +46,12 @@ public class PluginHandlerTest {
         assertFalse(info.getClass().getName().isEmpty());
 
         // Filter deprecated and unmaintained ones
+        List<String> uncooperatingPlugins = Arrays.asList("ebdirigo");
         Set<String> deprecatedPlugins = PluginHandler.getDeprecatedAndUnmaintainedPlugins();
         for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
             PluginInformation pi = it.next();
-            if (deprecatedPlugins.contains(pi.name)) {
+            if (deprecatedPlugins.contains(pi.name) || uncooperatingPlugins.contains(pi.name)) {
+                System.out.println("Ignoring " + pi.name + " (deprecated, unmaintained, or uncooperative)");
                 it.remove();
             }
         }
