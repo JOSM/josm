@@ -345,6 +345,7 @@
 *[barrier=yes],
 *[aerialway=yes][!public_transport],
 *[amenity=yes],
+*[shop="*"],
 *[place=yes] {
   throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by a specific value.", "{0.key}", "{0.value}");
 }
@@ -599,7 +600,9 @@ relation[/^..$/][!to] {
 }
 *[shop=fish] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
-  suggestAlternative: "shop=seafood, shop=pet or shop=fishing";
+  suggestAlternative: "shop=seafood";
+  suggestAlternative: "shop=pet";
+  suggestAlternative: "shop=fishing";
 }
 *[shop=betting] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
@@ -649,4 +652,91 @@ relation[/^..$/][!to] {
   fixAdd: "man_made=street_cabinet";
   fixAdd: "street_cabinet=power";
   fixRemove: "power";
+}
+
+/* #12276 */
+*[man_made=well] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "man_made=water_well";
+  suggestAlternative: "man_made=petroleum_well";
+}
+*[amenity=dog_bin],
+*[amenity=dog_waste_bin] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=waste_basket + waste=dog_excrement + vending=excrement_bags";
+  fixAdd: "amenity=waste_basket";
+  fixAdd: "waste=dog_excrement";
+  fixAdd: "vending=excrement_bags";
+}
+*[amenity=artwork] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "tourism=artwork";
+  fixAdd: "tourism=artwork";
+  fixRemove: "amenity";
+}
+*[amenity=community_center] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=community_centre";
+  fixAdd: "amenity=community_centre";
+}
+*[man_made=cut_line] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "man_made=cutline";
+  fixAdd: "man_made=cutline";
+}
+*[amenity=park] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leisure=park";
+  fixAdd: "leisure=park";
+  fixRemove: "amenity";
+}
+*[amenity=hotel] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "tourism=hotel";
+  fixAdd: "tourism=hotel";
+  fixRemove: "amenity";
+}
+*[shop=window],
+*[shop=windows] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "craft=window_construction";
+  fixAdd: "craft=window_construction";
+  fixRemove: "shop";
+}
+*[amenity=education] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=college";
+  suggestAlternative: "amenity=school";
+  suggestAlternative: "amenity=university";
+}
+*[shop=gallery] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=art";
+  fixAdd: "shop=art";
+}
+*[shop=gambling],
+*[leisure=gambling] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=bookmaker";
+  suggestAlternative: "shop=lottery";
+  suggestAlternative: "amenity=casino";
+  suggestAlternative: "leisure=amusement_arcade";
+  suggestAlternative: "amenity=gambling";
+}
+*[office=real_estate_agent] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "office=estate_agent ";
+  fixAdd: "office=estate_agent ";
+}
+*[shop=glass] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=glaziery";
+  suggestAlternative: "craft=glaziery";
+}
+*[amenity=proposed],
+*[amenity=proposed],
+*[amenity=disused],
+*[shop=disused],
+*[historic=abandoned] {
+  throwWarning: tr("{0} is deprecated. Use the {1}: key prefix instead.", "{0.tag}", "{0.value}");
 }
