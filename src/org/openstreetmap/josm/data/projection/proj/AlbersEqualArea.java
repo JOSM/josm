@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data.projection.proj;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
-
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
@@ -34,12 +33,14 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  *        EPSG Guidence Note Number 7, Version 19.</li>
  * </ul>
  *
+ * @author Gerald I. Evenden (for original code in Proj4)
+ * @author Rueben Schulz
+ *
  * @see <A HREF="http://mathworld.wolfram.com/AlbersEqual-AreaConicProjection.html">Albers Equal-Area Conic Projection on MathWorld</A>
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/albers_equal_area_conic.html">"Albers_Conic_Equal_Area" on RemoteSensing.org</A>
  * @see <A HREF="http://srmwww.gov.bc.ca/gis/bceprojection.html">British Columbia Albers Standard Projection</A>
  *
- * @author Gerald I. Evenden (for original code in Proj4)
- * @author Rueben Schulz
+ * @since 9419
  */
 public class AlbersEqualArea extends AbstractProj {
 
@@ -163,7 +164,7 @@ public class AlbersEqualArea extends AbstractProj {
             }
         } else {
             x = 0.0;
-            y = n > 0.0 ? Math.PI/2.0 : - Math.PI/2.0;
+            y = n > 0.0 ? Math.PI/2.0 : -Math.PI/2.0;
         }
         return new double[] {y, x};
     }
@@ -180,7 +181,7 @@ public class AlbersEqualArea extends AbstractProj {
         if (e < EPSILON) {
             return phi;
         }
-        for (int i=0; i<MAXIMUM_ITERATIONS; i++) {
+        for (int i = 0; i < MAXIMUM_ITERATIONS; i++) {
             final double sinpi = Math.sin(phi);
             final double cospi = Math.cos(phi);
             final double con   = e * sinpi;
