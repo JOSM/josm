@@ -5626,7 +5626,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,cowshed,construction,basilica,cathedral,chapel,church,temple,mosque,synagogue" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,cowshed,construction,basilica,cathedral,chapel,church,temple,mosque,synagogue,transformer_tower" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <text key="height" text="Height (meters)" />
@@ -6456,6 +6456,26 @@
             <reference ref="ref_operator_branch" />
         </item> <!-- Cable Distribution Cabinet -->
         <separator/>
+        <item name="Transformer Tower" icon="styles/standard/power/transformer_tower.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:building=transformer_tower" />
+            <space />
+            <key key="building" value="transformer_tower" />
+            <text key="height" text="Height (meters)" />
+            <reference ref="ref_operator_branch" />
+            <preset_link preset_name="Power Substation" />
+        </item> <!-- Transformer Tower -->
+        <item name="Power Portal" icon="styles/standard/power/portal.svg" type="node,way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=portal"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=portal" />
+            <space />
+            <key key="power" value="portal" />
+            <text key="height" text="Height (meters)" />
+            <combo key="structure" text="Type of construction" values="lattice,tubular,solid" />
+            <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
+            <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
+            <reference ref="ref_operator_branch" />
+            <combo key="design" text="Portal design" values="portal,portal_two-level,portal_three-level" values_context="power" />
+        </item> <!-- Power Portal -->
         <item name="Power Tower" icon="styles/standard/power/tower.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=tower"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=tower"
@@ -6526,6 +6546,12 @@
                 <combo key="phases" text="Phases" values="1,3" length="1" />
             </optional>
         </item> <!-- Pole with Transformer-->
+        <item name="Insulator" icon="styles/standard/power/insulator.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=insulator" />
+            <space />
+            <key key="power" value="insulator" />
+            <reference ref="ref_operator_branch" />
+        </item> <!-- Insulator -->
         <item name="Power Line" icon="styles/standard/power/line.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line"

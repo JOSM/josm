@@ -320,6 +320,10 @@ node[building=garages] {
     set icon_z17;
     text: auto;
 }
+node[building=transformer_tower] {
+    icon-image: "power/transformer_tower.svg";
+    text: auto;
+}
 node[entrance=yes],
 node[entrance=staircase] {
     icon-image: "misc/entrance-yes.png";
@@ -1129,6 +1133,11 @@ node[piste:type=snow_park] {
 /* power tags */
 /**************/
 
+node[power=portal] {
+    icon-image: "power/portal.svg";
+    set icon_z17;
+    text: auto;
+}
 node[power=tower] {
     icon-image: "power/tower.svg";
     set icon_z17;
@@ -1144,6 +1153,12 @@ node[power=pole][transformer=distribution] {
     set icon_z17;
     text: auto;
 }
+node[power=insulator] {
+    icon-image: "power/insulator.svg";
+    set icon_z17;
+    text: auto;
+}
+way[power=portal],
 way[power=line],
 way[power=minor_line] {
     width: 1;
