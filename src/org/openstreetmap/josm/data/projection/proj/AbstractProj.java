@@ -131,6 +131,12 @@ public abstract class AbstractProj implements Proj {
         }
     }
 
+    /**
+     * Make sure longitude value is within <code>[-PI, PI]</code> range.
+     * @param lon the longitude in radians
+     * @return lon plus/minus multiples of <code>2*PI</code>, as needed to get
+     * in <code>[-PI, PI]</code> range
+     */
     public static double normalizeLon(double lon) {
         if (lon >= -Math.PI && lon <= Math.PI)
             return lon;
@@ -160,6 +166,9 @@ public abstract class AbstractProj implements Proj {
     /**
      * Computes function (15-9) and (9-13) from Snyder.
      * Equivalent to negative of function (7-7).
+     * @param lat the latitude
+     * @param sinlat sine of the latitude
+     * @return auxiliary value computed from <code>lat</code> and <code>sinlat</code>
      */
     final double tsfn(final double lat, double sinlat) {
         sinlat *= e;
