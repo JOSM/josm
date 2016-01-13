@@ -1186,7 +1186,7 @@ area[power=converter],
 area[power=generator] {
     fill-color: power#eeeeee;
 }
-node[power=cable_distribution_cabinet] {
+node[man_made=street_cabinet][street_cabinet=power] {
     icon-image: "power/cable_distribution_cabinet.svg";
     set icon_z17;
     text: auto;

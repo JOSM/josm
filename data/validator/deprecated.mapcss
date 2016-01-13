@@ -641,3 +641,12 @@ relation[/^..$/][!to] {
   suggestAlternative: "studio";
   fixChangeKey: "type => studio";
 }
+
+/* #11507, #12297 */
+*[power=cable_distribution_cabinet] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "man_made=street_cabinet + street_cabinet=power";
+  fixAdd: "man_made=street_cabinet";
+  fixAdd: "street_cabinet=power";
+  fixRemove: "power";
+}
