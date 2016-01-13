@@ -6446,15 +6446,14 @@
             </optional>
         </item> <!-- Power Compensator -->
         <separator/>
-        <item name="Cable Distribution Cabinet" icon="styles/standard/power/cable_distribution_cabinet.svg" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=cable_distribution_cabinet"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=cable_distribution_cabinet"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=cable_distribution_cabinet" />
+        <item name="Power Street Cabinet" icon="styles/standard/power/cable_distribution_cabinet.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=street_cabinet" />
             <space />
-            <key key="power" value="cable_distribution_cabinet" />
+            <key key="man_made" value="street_cabinet" />
+            <key key="street_cabinet" value="power" />
             <combo key="voltage" text="Voltage in Volts (V)" values="600,400,220,110,low" /> <!-- Recheck values -->
             <reference ref="ref_operator_branch" />
-        </item> <!-- Cable Distribution Cabinet -->
+        </item> <!-- Power Street Cabinet -->
         <separator/>
         <item name="Transformer Tower" icon="styles/standard/power/transformer_tower.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:building=transformer_tower" />
