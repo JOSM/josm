@@ -71,12 +71,12 @@ public class AlbersEqualArea extends AbstractProj {
     private double ec;
 
     /**
-     * Standards parallel 1 in radians, for {@link #getParameterValues} implementation.
+     * Standards parallel 1 in radians.
      */
     private double phi1;
 
     /**
-     * Standards parallel 2 in radians, for {@link #getParameterValues} implementation.
+     * Standards parallel 2 in radians.
      */
     private double phi2;
 

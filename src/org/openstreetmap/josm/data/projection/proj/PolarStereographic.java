@@ -7,7 +7,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
- * The polar case of the {@linkplain Stereographic stereographic} projection.
+ * The polar case of the stereographic projection.
  * <p>
  * In the proj.4 library, the code "stere" covers several variants of the
  * Stereographic projection, depending on the latitude of natural origin
@@ -74,7 +74,6 @@ public class PolarStereographic extends AbstractProj implements IPolar {
 
     /**
      * A constant used in the transformations.
-     * This is <strong>not</strong> equal to the {@link #scaleFactor}.
      */
     private double k0;
 
@@ -114,9 +113,7 @@ public class PolarStereographic extends AbstractProj implements IPolar {
         }
         southPole = latitudeTrueScale < 0;
 
-        /*
-         * Computes coefficients.
-         */
+        // Computes coefficients.
         double latitudeTrueScaleAbs = Math.abs(latitudeTrueScale);
         if (Math.abs(latitudeTrueScaleAbs - Math.PI/2) >= EPSILON) {
             final double t = Math.sin(latitudeTrueScaleAbs);
@@ -125,7 +122,7 @@ public class PolarStereographic extends AbstractProj implements IPolar {
         } else {
             // True scale at pole (part of (21-33))
             k0 = 2.0 / Math.sqrt(Math.pow(1+e, 1+e)*
-                            Math.pow(1-e, 1-e));
+                                 Math.pow(1-e, 1-e));
         }
     }
 
