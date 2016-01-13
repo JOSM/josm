@@ -26,7 +26,7 @@ public class WMTSLayerTest {
      * Unit test of {@link WMTSLayer#WMTSLayer}.
      */
     @Test
-    public void testTMSLayer() {
+    public void testWMTSLayer() {
         WMTSLayer wmts = new WMTSLayer(new ImageryInfo("test wmts", "http://localhost", "wmts", null, null));
         assertEquals(ImageryType.WMTS, wmts.getInfo().getImageryType());
     }

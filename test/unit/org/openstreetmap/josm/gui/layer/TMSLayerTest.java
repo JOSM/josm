@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 
@@ -19,7 +20,36 @@ public class TMSLayerTest {
      */
     @BeforeClass
     public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
+        JOSMFixture.createUnitTestFixture().init(true);
+    }
+
+    /**
+     * Creates a new TMS layer.
+     * @return a new TMS layer
+     */
+    public static TMSLayer createTmsLayer() {
+        return new TMSLayer(new ImageryInfo("test tms", "http://localhost", "tms", null, null));
+    }
+
+    /**
+     * Creates a new Bing layer.
+     * @return a new Bing layer
+     */
+    public static TMSLayer createBingLayer() {
+        return new TMSLayer(new ImageryInfo("test bing", "http://localhost", "bing", null, null));
+    }
+
+    /**
+     * Creates a new Scanex layer.
+     * @return a new Scanex layer
+     */
+    public static TMSLayer createScanexLayer() {
+        return new TMSLayer(new ImageryInfo("test scanex", "http://localhost", "scanex", null, null));
+    }
+
+    private static void test(ImageryType expected, TMSLayer layer) {
+        Main.main.addLayer(layer);
+        assertEquals(expected, layer.getInfo().getImageryType());
     }
 
     /**
@@ -27,13 +57,8 @@ public class TMSLayerTest {
      */
     @Test
     public void testTMSLayer() {
-        TMSLayer tms = new TMSLayer(new ImageryInfo("test tms", "http://localhost", "tms", null, null));
-        assertEquals(ImageryType.TMS, tms.getInfo().getImageryType());
-
-        TMSLayer bing = new TMSLayer(new ImageryInfo("test bing", "http://localhost", "bing", null, null));
-        assertEquals(ImageryType.BING, bing.getInfo().getImageryType());
-
-        TMSLayer scanex = new TMSLayer(new ImageryInfo("test scanex", "http://localhost", "scanex", null, null));
-        assertEquals(ImageryType.SCANEX, scanex.getInfo().getImageryType());
+        test(ImageryType.TMS, createTmsLayer());
+        test(ImageryType.BING, createBingLayer());
+        test(ImageryType.SCANEX, createScanexLayer());
     }
 }
