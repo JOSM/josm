@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 
@@ -19,7 +20,7 @@ public class WMSLayerTest {
      */
     @BeforeClass
     public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
+        JOSMFixture.createUnitTestFixture().init(true);
     }
 
     /**
@@ -28,6 +29,7 @@ public class WMSLayerTest {
     @Test
     public void testWMSLayer() {
         WMSLayer wms = new WMSLayer(new ImageryInfo("test wms", "http://localhost"));
+        Main.main.addLayer(wms);
         assertEquals(ImageryType.WMS, wms.getInfo().getImageryType());
     }
 }
