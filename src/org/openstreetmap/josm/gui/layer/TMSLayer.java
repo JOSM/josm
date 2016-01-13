@@ -51,7 +51,6 @@ public class TMSLayer extends AbstractCachedTileSourceLayer {
         super(info);
     }
 
-
     /**
      * Creates and returns a new TileSource instance depending on the {@link ImageryType}
      * of the passed ImageryInfo object.
@@ -75,10 +74,6 @@ public class TMSLayer extends AbstractCachedTileSourceLayer {
             }
         });
     }
-
-    /**
-     * Adds a context menu to the mapView.
-     */
 
     @Override
     public final boolean isProjectionSupported(Projection proj) {
@@ -125,9 +120,9 @@ public class TMSLayer extends AbstractCachedTileSourceLayer {
             TMSTileSource t = new TemplatedTMSTileSource(info);
             info.setAttribution(t);
             return t;
-        } else if (info.getImageryType() == ImageryType.BING)
+        } else if (info.getImageryType() == ImageryType.BING) {
             return new CachedAttributionBingAerialTileSource(info, attributionLoadedTask);
-        else if (info.getImageryType() == ImageryType.SCANEX) {
+        } else if (info.getImageryType() == ImageryType.SCANEX) {
             return new ScanexTileSource(info);
         }
         return null;
@@ -149,5 +144,4 @@ public class TMSLayer extends AbstractCachedTileSourceLayer {
     public static CacheAccess<String, BufferedImageCacheEntry> getCache() {
         return AbstractCachedTileSourceLayer.getCache(CACHE_REGION_NAME);
     }
-
 }

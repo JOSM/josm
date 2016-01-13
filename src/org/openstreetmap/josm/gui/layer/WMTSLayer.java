@@ -37,7 +37,6 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer {
     public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty("imagery.wmts.default_autozoom", true);
     private static final String CACHE_REGION_NAME = "WMTS";
 
-
     /**
      * Creates WMTS layer from ImageryInfo
      * @param info Imagery Info describing the layer

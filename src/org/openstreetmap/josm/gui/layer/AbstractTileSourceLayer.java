@@ -88,7 +88,7 @@ import org.openstreetmap.josm.tools.GBC;
 /**
  * Base abstract class that supports displaying images provided by TileSource. It might be TMS source, WMS or WMTS
  *
- * It implements all standard functions of tilesource based layers: autozoom,  tile reloads, layer saving, loading,etc.
+ * It implements all standard functions of tilesource based layers: autozoom, tile reloads, layer saving, loading,etc.
  *
  * @author Upliner
  * @author Wiktor Niesiobędzki
@@ -96,7 +96,7 @@ import org.openstreetmap.josm.tools.GBC;
  * @since 8526 (copied from TMSLayer)
  */
 public abstract class AbstractTileSourceLayer extends ImageryLayer implements ImageObserver, TileLoaderListener, ZoomChangeListener {
-    private static final String PREFERENCE_PREFIX   = "imagery.generic";
+    private static final String PREFERENCE_PREFIX = "imagery.generic";
 
     /** maximum zoom level supported */
     public static final int MAX_ZOOM = 30;

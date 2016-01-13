@@ -60,7 +60,6 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
         super(info);
         this.supportedProjections = new TreeSet<>(info.getServerProjections());
         this.autoZoom = PROP_DEFAULT_AUTOZOOM.get();
-
     }
 
     @Override
