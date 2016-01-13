@@ -699,18 +699,49 @@ public class CustomProjection extends AbstractProjection {
         return ret;
     }
 
-    @Override
-    public Bounds getLatLonBoundsBox(ProjectionBounds r) {
-        Bounds result = new Bounds(eastNorth2latlon(r.getMin()));
-        result.extend(eastNorth2latlon(r.getMax()));
-        final int N = 40;
+    private EastNorth getPointAlong(int i, int N, ProjectionBounds r) {
         double dEast = (r.maxEast - r.minEast) / N;
         double dNorth = (r.maxNorth - r.minNorth) / N;
-        for (int i = 0; i <= N; i++) {
-            result.extend(eastNorth2latlon(new EastNorth(r.minEast + i * dEast, r.minNorth)));
-            result.extend(eastNorth2latlon(new EastNorth(r.minEast + i * dEast, r.maxNorth)));
-            result.extend(eastNorth2latlon(new EastNorth(r.minEast, r.minNorth  + i * dNorth)));
-            result.extend(eastNorth2latlon(new EastNorth(r.maxEast, r.minNorth  + i * dNorth)));
+        if (i < N) {
+            return new EastNorth(r.minEast + i * dEast, r.minNorth);
+        } else if (i < 2*N) {
+            i -= N;
+            return new EastNorth(r.maxEast, r.minNorth + i * dNorth);
+        } else if (i < 3*N) {
+            i -= 2*N;
+            return new EastNorth(r.maxEast - i * dEast, r.maxNorth);
+        } else if (i < 4*N) {
+            i -= 3*N;
+            return new EastNorth(r.minEast, r.maxNorth - i * dNorth);
+        } else {
+            throw new AssertionError();
+        }
+    }
+
+    @Override
+    public Bounds getLatLonBoundsBox(ProjectionBounds r) {
+        final int N = 10;
+        Bounds result = new Bounds(eastNorth2latlon(r.getMin()));
+        result.extend(eastNorth2latlon(r.getMax()));
+        LatLon llPrev = null;
+        for (int i = 0; i < 4*N; i++) {
+            LatLon llNow = eastNorth2latlon(getPointAlong(i, N, r));
+            result.extend(llNow);
+            // check if segment crosses 180th meridian and if so, make sure
+            // to extend bounds to +/-180 degrees longitude
+            if (llPrev != null) {
+                double lon1 = llPrev.lon();
+                double lon2 = llNow.lon();
+                if (90 < lon1 && lon1 < 180 && -180 < lon2 && lon2 < -90) {
+                    result.extend(new LatLon(llPrev.lat(), 180));
+                    result.extend(new LatLon(llNow.lat(), -180));
+                }
+                if (90 < lon2 && lon2 < 180 && -180 < lon1 && lon1 < -90) {
+                    result.extend(new LatLon(llNow.lat(), 180));
+                    result.extend(new LatLon(llPrev.lat(), -180));
+                }
+            }
+            llPrev = llNow;
         }
         // if the box contains one of the poles, the above method did not get
         // correct min/max latitude value
