@@ -181,11 +181,19 @@ public class CoordinateInfoViewer extends JPanel {
         }
     }
 
+    /**
+     * Pans the map to the old+new coordinate
+     * @see JMapViewer#setDisplayToFitMapMarkers()
+     */
+    public void setDisplayToFitMapMarkers() {
+        mapViewer.setDisplayToFitMapMarkers();
+    }
+
     private static class Updater {
         private final transient HistoryBrowserModel model;
         private final PointInTimeType role;
 
-        public Updater(HistoryBrowserModel model, PointInTimeType role) {
+        protected Updater(HistoryBrowserModel model, PointInTimeType role) {
             this.model = model;
             this.role = role;
         }
