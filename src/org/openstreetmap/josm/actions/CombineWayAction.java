@@ -123,6 +123,7 @@ public class CombineWayAction extends JosmAction {
         //
         TagCollection wayTags = TagCollection.unionOfAllPrimitives(ways);
 
+        final List<Command> reverseWayTagCommands = new LinkedList<>();
         List<Way> reversedWays = new LinkedList<>();
         List<Way> unreversedWays = new LinkedList<>();
         for (Way w: ways) {
@@ -157,16 +158,14 @@ public class CombineWayAction extends JosmAction {
                 unreversedTagWays.removeAll(reversedWays);
                 ReverseWayTagCorrector reverseWayTagCorrector = new ReverseWayTagCorrector();
                 List<Way> reversedTagWays = new ArrayList<>(reversedWays.size());
-                Collection<Command> changePropertyCommands =  null;
                 for (Way w : reversedWays) {
                     Way wnew = new Way(w);
                     reversedTagWays.add(wnew);
-                    changePropertyCommands = reverseWayTagCorrector.execute(w, wnew);
+                    reverseWayTagCommands.addAll(reverseWayTagCorrector.execute(w, wnew));
                 }
-                if ((changePropertyCommands != null) && !changePropertyCommands.isEmpty()) {
-                    for (Command c : changePropertyCommands) {
-                        c.executeCommand();
-                    }
+                if (!reverseWayTagCommands.isEmpty()) {
+                    // commands need to be executed for CombinePrimitiveResolverDialog
+                    Main.main.undoRedo.add(new SequenceCommand(tr("Reverse Ways"), reverseWayTagCommands));
                 }
                 wayTags = TagCollection.unionOfAllPrimitives(reversedTagWays);
                 wayTags.add(TagCollection.unionOfAllPrimitives(unreversedTagWays));
@@ -179,13 +178,22 @@ public class CombineWayAction extends JosmAction {
         Way modifiedTargetWay = new Way(targetWay);
         modifiedTargetWay.setNodes(path);
 
-        List<Command> resolution = CombinePrimitiveResolverDialog.launchIfNecessary(wayTags, ways, Collections.singleton(targetWay));
+        final List<Command> resolution;
+        try {
+            resolution = CombinePrimitiveResolverDialog.launchIfNecessary(wayTags, ways, Collections.singleton(targetWay));
+        } finally {
+            if (!reverseWayTagCommands.isEmpty()) {
+                // undo reverseWayTagCorrector and merge into SequenceCommand below
+                Main.main.undoRedo.undo();
+            }
+        }
 
         List<Command> cmds = new LinkedList<>();
         List<Way> deletedWays = new LinkedList<>(ways);
         deletedWays.remove(targetWay);
 
         cmds.add(new ChangeCommand(targetWay, modifiedTargetWay));
+        cmds.addAll(reverseWayTagCommands);
         cmds.addAll(resolution);
         cmds.add(new DeleteCommand(deletedWays));
         final Command sequenceCommand = new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
