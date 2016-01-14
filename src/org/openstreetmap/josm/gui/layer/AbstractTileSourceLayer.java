@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Point;
@@ -667,8 +668,13 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     }
 
     protected int estimateTileCacheSize() {
-        int height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        int width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+        // Default screen size in headless mode, for unit tests
+        int height = 800;
+        int width = 600;
+        if (!GraphicsEnvironment.isHeadless()) {
+            height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+            width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+        }
         int tileSize = 256; // default tile size
         if (tileSource != null) {
             tileSize = tileSource.getTileSize();
