@@ -22,7 +22,8 @@ public final class DeleteLayerAction extends JosmAction {
      */
     public DeleteLayerAction() {
         super(tr("Delete Layer"), "dialogs/delete", tr("Delete the active layer. Does not delete the associated file."),
-                Shortcut.registerShortcut("system:deletelayer", tr("File: {0}", tr("Delete Layer")), KeyEvent.VK_F4, Shortcut.CTRL), true);
+                Shortcut.registerShortcut("system:deletelayer", tr("File: {0}", tr("Delete Layer")), KeyEvent.VK_F4, Shortcut.CTRL),
+                true, "delete-layer", true);
         putValue("help", ht("/Action/DeleteLayer"));
     }
 
