@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.Pair;
 /**
  * An UI widget for displaying differences in the coordinates of two
  * {@link HistoryNode}s.
- *
+ * @since 2243
  */
 public class CoordinateInfoViewer extends JPanel {
 
@@ -326,7 +326,7 @@ public class CoordinateInfoViewer extends JPanel {
 
         private final Updater updater;
 
-        public MapViewer(HistoryBrowserModel model) {
+        MapViewer(HistoryBrowserModel model) {
             this.updater = new Updater(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
         }

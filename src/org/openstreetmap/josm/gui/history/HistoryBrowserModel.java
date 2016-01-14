@@ -104,9 +104,11 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         currentRelationMemberTableModel = new DiffTableModel();
         referenceRelationMemberTableModel = new DiffTableModel();
 
-        OsmDataLayer editLayer = Main.main.getEditLayer();
-        if (editLayer != null) {
-            editLayer.data.addDataSetListener(this);
+        if (Main.main != null) {
+            OsmDataLayer editLayer = Main.main.getEditLayer();
+            if (editLayer != null) {
+                editLayer.data.addDataSetListener(this);
+            }
         }
         MapView.addLayerChangeListener(this);
     }
