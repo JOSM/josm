@@ -25,7 +25,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         setOpaque(true);
     }
 
-    protected void setBackgroundReadable(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected) {
+    protected void setBackgroundReadable(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected, boolean isValue) {
         Color bgColor = UIManager.getColor("Table.background");
         if (!model.hasTag(key) && model.isCurrentPointInTime()
                 || !model.oppositeHasTag(key) && model.isReferencePointInTime()) {
@@ -33,7 +33,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         } else if (!model.oppositeHasTag(key) && model.isCurrentPointInTime()
                 || !model.hasTag(key) && model.isReferencePointInTime()) {
             bgColor = TwoColumnDiff.Item.DiffItemType.INSERTED.getColor();
-        } else if (model.hasTag(key) && model.oppositeHasTag(key) && !model.hasSameValueAsOpposite(key)) {
+        } else if (isValue && model.hasTag(key) && model.oppositeHasTag(key) && !model.hasSameValueAsOpposite(key)) {
             bgColor = TwoColumnDiff.Item.DiffItemType.CHANGED.getColor();
         }
         if (isSelected) {
@@ -58,13 +58,13 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
             // the name column
             setText(model.hasTag(key) ? key : "");
             setToolTipText(getText());
-            setBackgroundReadable(key, model, isSelected);
+            setBackgroundReadable(key, model, isSelected, false);
             break;
         case 1:
             // the value column
             setText(model.hasTag(key) ? model.getValue(key) : "");
             setToolTipText(getText());
-            setBackgroundReadable(key, model, isSelected);
+            setBackgroundReadable(key, model, isSelected, true);
             break;
         }
 
