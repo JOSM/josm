@@ -539,14 +539,14 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     }
 
     class ResolveTpMyVersionAction extends ResolveToAction {
-        public ResolveTpMyVersionAction() {
+        ResolveTpMyVersionAction() {
             super(tr("Resolve to my versions"), tr("Resolves all unresolved conflicts to ''my'' version"),
                     MergeDecisionType.KEEP_MINE);
         }
     }
 
     class ResolveToTheirVersionAction extends ResolveToAction {
-        public ResolveToTheirVersionAction() {
+        ResolveToTheirVersionAction() {
             super(tr("Resolve to their versions"), tr("Resolves all unresolved conflicts to ''their'' version"),
                     MergeDecisionType.KEEP_THEIR);
         }
