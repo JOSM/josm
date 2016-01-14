@@ -507,4 +507,14 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
         model.populate(conflict);
     }
+
+    @Override
+    public void decideRemaining(MergeDecisionType decision) {
+        if (!model.isDecidedCoord()) {
+            model.decideDeletedStateConflict(decision);
+        }
+        if (!model.isDecidedCoord()) {
+            model.decideCoordsConflict(decision);
+        }
+    }
 }

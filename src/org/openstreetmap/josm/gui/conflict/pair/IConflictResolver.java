@@ -9,4 +9,6 @@ public interface IConflictResolver {
     void deletePrimitive(boolean deleted);
 
     void populate(Conflict<? extends OsmPrimitive> conflict);
+
+    void decideRemaining(MergeDecisionType decision);
 }

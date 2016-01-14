@@ -442,4 +442,9 @@ public class TagMerger extends JPanel implements IConflictResolver {
             table.getSelectionModel().setSelectionInterval(index, index);
         }
     }
+
+    @Override
+    public void decideRemaining(MergeDecisionType decision) {
+        model.decideRemaining(decision);
+    }
 }
