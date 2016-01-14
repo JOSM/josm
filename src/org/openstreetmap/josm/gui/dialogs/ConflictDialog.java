@@ -128,11 +128,11 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
         popupMenuHandler.addAction(Main.main.menu.autoScaleActions.get("conflict"));
 
-        final ResolveTpMyVersionAction resolveTpMyVersionAction = new ResolveTpMyVersionAction();
+        final ResolveToMyVersionAction resolveToMyVersionAction = new ResolveToMyVersionAction();
         final ResolveToTheirVersionAction resolveToTheirVersionAction = new ResolveToTheirVersionAction();
-        addListSelectionListener(resolveTpMyVersionAction);
+        addListSelectionListener(resolveToMyVersionAction);
         addListSelectionListener(resolveToTheirVersionAction);
-        final JMenuItem btnResolveMy = popupMenuHandler.addAction(resolveTpMyVersionAction);
+        final JMenuItem btnResolveMy = popupMenuHandler.addAction(resolveToMyVersionAction);
         final JMenuItem btnResolveTheir = popupMenuHandler.addAction(resolveToTheirVersionAction);
 
         popupMenuHandler.addListener(new PopupMenuListener() {
@@ -538,8 +538,8 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         }
     }
 
-    class ResolveTpMyVersionAction extends ResolveToAction {
-        ResolveTpMyVersionAction() {
+    class ResolveToMyVersionAction extends ResolveToAction {
+        ResolveToMyVersionAction() {
             super(tr("Resolve to my versions"), tr("Resolves all unresolved conflicts to ''my'' version"),
                     MergeDecisionType.KEEP_MINE);
         }
