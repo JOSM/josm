@@ -8,6 +8,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -769,7 +770,9 @@ public class GenericRelationEditor extends RelationEditor  {
             boolean modified = false;
             for (OsmPrimitive p : primitivesToAdd) {
                 if (p instanceof Relation && orig.equals(p)) {
-                    warnOfCircularReferences(p);
+                    if (!GraphicsEnvironment.isHeadless()) {
+                        warnOfCircularReferences(p);
+                    }
                     continue;
                 } else if (MemberTableModel.hasMembersReferringTo(relation.getMembers(), Collections.singleton(p))
                         && !confirmAddingPrimitive(p)) {
