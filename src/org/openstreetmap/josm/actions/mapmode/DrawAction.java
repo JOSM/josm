@@ -1791,7 +1791,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         @Override
         protected void updateEnabledState() {
-            setEnabled(Main.main != null && Main.main.hasEditLayer());
+            setEnabled(Main.map != null && Main.map.mapMode instanceof DrawAction);
         }
     }
 }

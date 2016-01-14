@@ -32,6 +32,7 @@ import org.openstreetmap.josm.actions.AlignInLineAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ChangesetManagerToggleAction;
 import org.openstreetmap.josm.actions.CloseChangesetAction;
+import org.openstreetmap.josm.actions.DeleteLayerAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.actions.CopyCoordinatesAction;
@@ -144,6 +145,8 @@ public class MainMenu extends JMenuBar {
     public final RecentlyOpenedFilesMenu recentlyOpened = new RecentlyOpenedFilesMenu();
     /** File / Open Location... **/
     public final OpenLocationAction openLocation = new OpenLocationAction();
+    /** File / Delete Layer **/
+    public final DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
     /** File / Save **/
     public final SaveAction save = SaveAction.getInstance();
     /** File / Save As... **/
@@ -636,6 +639,7 @@ public class MainMenu extends JMenuBar {
         add(fileMenu, openFile);
         fileMenu.add(recentlyOpened);
         add(fileMenu, openLocation);
+        add(fileMenu, deleteLayerAction);
         fileMenu.addSeparator();
         add(fileMenu, save);
         add(fileMenu, saveAs);

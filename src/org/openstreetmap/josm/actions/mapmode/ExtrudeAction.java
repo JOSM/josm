@@ -201,7 +201,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
         @Override
         protected void updateEnabledState() {
-            setEnabled(Main.main != null && Main.main.hasEditLayer());
+            setEnabled(Main.map != null && Main.map.mapMode instanceof ExtrudeAction);
         }
     }
 

@@ -220,6 +220,9 @@ public class AutoScaleAction extends JosmAction {
      * @return the first selected layer in the layer list dialog
      */
     protected Layer getFirstSelectedLayer() {
+        if (Main.main.getActiveLayer() == null) {
+            return null;
+        }
         List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();
         if (layers.isEmpty())
             return null;
@@ -245,8 +248,6 @@ public class AutoScaleAction extends JosmAction {
             }
             break;
         case "layer":
-            if (Main.main.getActiveLayer() == null)
-                return null;
             // try to zoom to the first selected layer
             Layer l = getFirstSelectedLayer();
             if (l == null)
@@ -289,7 +290,7 @@ public class AutoScaleAction extends JosmAction {
             if (lastZoomTime > 0 && System.currentTimeMillis() - lastZoomTime > Main.pref.getLong("zoom.bounds.reset.time", 10*1000)) {
                 lastZoomTime = -1;
             }
-            DataSet dataset = Main.main.getCurrentDataSet();
+            final DataSet dataset = getCurrentDataSet();
             if (dataset != null) {
                 List<DataSource> dataSources = new ArrayList<>(dataset.getDataSources());
                 int s = dataSources.size();
@@ -322,15 +323,13 @@ public class AutoScaleAction extends JosmAction {
             setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
             break;
         case "layer":
-            if (!Main.isDisplayingMapView() || Main.map.mapView.getAllLayersAsList().isEmpty()) {
-                setEnabled(false);
-            } else {
-                // FIXME: should also check for whether a layer is selected in the layer list dialog
-                setEnabled(true);
-            }
+            setEnabled(getFirstSelectedLayer() != null);
             break;
         case "conflict":
             setEnabled(Main.map != null && Main.map.conflictDialog.getSelectedConflict() != null);
+            break;
+        case "download":
+            setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getDataSources().isEmpty());
             break;
         case "problem":
             setEnabled(Main.map != null && Main.map.validatorDialog.getSelectedError() != null);
@@ -413,6 +412,7 @@ public class AutoScaleAction extends JosmAction {
                     oldFrame.validatorDialog.removeTreeSelectionListener(validatorSelectionListener);
                 }
             }
+            updateEnabledState();
         }
     }
 }
