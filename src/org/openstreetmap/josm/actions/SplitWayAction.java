@@ -609,13 +609,14 @@ public class SplitWayAction extends JosmAction {
             for (RelationMember rm: relationMembers) {
                 if (rm.isWay() && rm.getMember() == way) {
                     boolean insert = true;
-                    if ("restriction".equals(type)) {
+                    if ("restriction".equals(type) || "destination_sign".equals(type)) {
                         /* this code assumes the restriction is correct. No real error checking done */
                         String role = rm.getRole();
                         if ("from".equals(role) || "to".equals(role)) {
                             OsmPrimitive via = null;
                             for (RelationMember rmv : r.getMembers()) {
-                                if ("via".equals(rmv.getRole())) {
+                                if ("restriction".equals(type) && "via".equals(rmv.getRole())
+                                        || "destination_sign".equals(type) && "sign".equals(rmv.getRole())) {
                                     via = rmv.getMember();
                                 }
                             }
