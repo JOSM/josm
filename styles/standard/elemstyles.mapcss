@@ -4903,6 +4903,13 @@ node[!setting("shrink_nodes")]                  { symbol-size: 4; }
 way > node[!setting("shrink_nodes")]            { symbol-size: 4; }
 node[!setting("shrink_nodes")]:connection       { symbol-size: 6; }
 
+node:selected {
+    symbol-shape: square;
+    symbol-size: 6;
+    symbol-fill-color: node_selected#ff0000;
+    symbol-stroke-color: node_selected#ff0000;
+}
+
 node|z-16[setting("hide_icons")].icon_z17!.icon_z0,
 relation|z-16[type=restriction][setting("hide_icons")] {
     icon-image: none;
