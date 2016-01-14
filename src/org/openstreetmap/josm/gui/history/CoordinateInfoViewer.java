@@ -13,6 +13,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
@@ -20,6 +22,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * An UI widget for displaying differences in the coordinates of two
@@ -27,9 +30,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  */
 public class CoordinateInfoViewer extends JPanel {
-
-    /** background color used when the coordinates are different */
-    public static final Color BGCOLOR_DIFFERENCE = new Color(255, 197, 197);
 
     /** the model */
     private transient HistoryBrowserModel model;
@@ -43,6 +43,8 @@ public class CoordinateInfoViewer extends JPanel {
     private LatLonViewer currentLatLonViewer;
     /** the info panel for distance between the two coordinates */
     private DistanceViewer distanceViewer;
+    /** the map panel showing the old+new coordinate */
+    private MapViewer mapViewer;
 
     protected void build() {
         setLayout(new GridBagLayout());
@@ -75,16 +77,16 @@ public class CoordinateInfoViewer extends JPanel {
         gc.gridx = 0;
         gc.gridy = 1;
         gc.weightx = 0.5;
-        gc.weighty = 1.0;
-        gc.fill = GridBagConstraints.BOTH;
+        gc.weighty = 0.0;
+        gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.NORTHWEST;
         add(referenceLatLonViewer = new LatLonViewer(model, PointInTimeType.REFERENCE_POINT_IN_TIME), gc);
 
         gc.gridx = 1;
         gc.gridy = 1;
         gc.weightx = 0.5;
-        gc.weighty = 1.0;
-        gc.fill = GridBagConstraints.BOTH;
+        gc.weighty = 0.0;
+        gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.NORTHWEST;
         add(currentLatLonViewer = new LatLonViewer(model, PointInTimeType.CURRENT_POINT_IN_TIME), gc);
 
@@ -97,6 +99,17 @@ public class CoordinateInfoViewer extends JPanel {
         gc.weightx = 1.0;
         gc.weighty = 0.0;
         add(distanceViewer = new DistanceViewer(model), gc);
+
+        // the map panel
+        gc.gridx = 0;
+        gc.gridy = 3;
+        gc.gridwidth = 2;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.weightx = 1.0;
+        gc.weighty = 1.0;
+        gc.insets = new Insets(5, 5, 5, 5);
+        add(mapViewer = new MapViewer(model), gc);
+        mapViewer.setZoomContolsVisible(false);
     }
 
     /**
@@ -127,6 +140,9 @@ public class CoordinateInfoViewer extends JPanel {
         if (distanceViewer != null) {
             model.deleteObserver(distanceViewer);
         }
+        if (mapViewer != null) {
+            model.deleteObserver(mapViewer);
+        }
     }
 
     protected void registerAsObserver(HistoryBrowserModel model) {
@@ -145,6 +161,9 @@ public class CoordinateInfoViewer extends JPanel {
         if (distanceViewer != null) {
             model.addObserver(distanceViewer);
         }
+        if (mapViewer != null) {
+            model.addObserver(mapViewer);
+        }
     }
 
     /**
@@ -162,20 +181,14 @@ public class CoordinateInfoViewer extends JPanel {
         }
     }
 
-    /**
-     * A UI widgets which displays the Lan/Lon-coordinates of a
-     * {@link HistoryNode}.
-     *
-     */
-    private static class LatLonViewer extends JPanel implements Observer {
-
-        private JLabel lblLat;
-        private JLabel lblLon;
+    private static class Updater {
         private final transient HistoryBrowserModel model;
         private final PointInTimeType role;
 
-        protected LatLon coord;
-        protected LatLon oppositeCoord;
+        public Updater(HistoryBrowserModel model, PointInTimeType role) {
+            this.model = model;
+            this.role = role;
+        }
 
         protected HistoryOsmPrimitive getPrimitive() {
             if (model == null || role == null)
@@ -188,6 +201,31 @@ public class CoordinateInfoViewer extends JPanel {
                 return null;
             return model.getPointInTime(role.opposite());
         }
+
+        protected final Pair<LatLon, LatLon> getCoordinates() {
+            HistoryOsmPrimitive p = getPrimitive();
+            HistoryOsmPrimitive opposite = getOppositePrimitive();
+            if (!(p instanceof HistoryNode)) return null;
+            if (!(opposite instanceof HistoryNode)) return null;
+            HistoryNode node = (HistoryNode) p;
+            HistoryNode oppositeNode = (HistoryNode) opposite;
+
+            return Pair.create(node.getCoords(), oppositeNode.getCoords());
+        }
+
+    }
+
+    /**
+     * A UI widgets which displays the Lan/Lon-coordinates of a
+     * {@link HistoryNode}.
+     *
+     */
+    private static class LatLonViewer extends JPanel implements Observer {
+
+        private JLabel lblLat;
+        private JLabel lblLon;
+        private final Updater updater;
+        private final Color modifiedColor;
 
         protected void build() {
             setLayout(new GridBagLayout());
@@ -230,15 +268,6 @@ public class CoordinateInfoViewer extends JPanel {
             GuiHelper.setBackgroundReadable(lblLon, Color.WHITE);
             lblLon.setOpaque(true);
             lblLon.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-
-            // fill the remaining space
-            gc.gridx = 0;
-            gc.gridy = 2;
-            gc.gridwidth = 2;
-            gc.fill = GridBagConstraints.BOTH;
-            gc.weightx = 1.0;
-            gc.weighty = 1.0;
-            add(new JPanel(), gc);
         }
 
         /**
@@ -247,26 +276,18 @@ public class CoordinateInfoViewer extends JPanel {
          * @param role the role for this viewer.
          */
         LatLonViewer(HistoryBrowserModel model, PointInTimeType role) {
+            this.updater = new Updater(model, role);
+            this.modifiedColor = PointInTimeType.CURRENT_POINT_IN_TIME.equals(role)
+                    ? TwoColumnDiff.Item.DiffItemType.INSERTED.getColor()
+                    : TwoColumnDiff.Item.DiffItemType.DELETED.getColor();
             build();
-            this.model = model;
-            this.role = role;
-        }
-
-        protected final boolean prepareRefresh() {
-            HistoryOsmPrimitive p = getPrimitive();
-            HistoryOsmPrimitive  opposite = getOppositePrimitive();
-            if (!(p instanceof HistoryNode)) return false;
-            if (!(opposite instanceof HistoryNode)) return false;
-            HistoryNode node = (HistoryNode) p;
-            HistoryNode oppositeNode = (HistoryNode) opposite;
-
-            coord = node.getCoords();
-            oppositeCoord = oppositeNode.getCoords();
-            return true;
         }
 
         protected void refresh() {
-            if (!prepareRefresh()) return;
+            final Pair<LatLon, LatLon> coordinates = updater.getCoordinates();
+            if (coordinates == null) return;
+            final LatLon coord = coordinates.a;
+            final LatLon oppositeCoord = coordinates.b;
 
             // display the coordinates
             lblLat.setText(coord != null ? coord.latToString(CoordinateFormat.DECIMAL_DEGREES) : tr("(none)"));
@@ -277,13 +298,13 @@ public class CoordinateInfoViewer extends JPanel {
                     (coord != null && oppositeCoord != null && coord.lat() == oppositeCoord.lat())) {
                 GuiHelper.setBackgroundReadable(lblLat, Color.WHITE);
             } else {
-                GuiHelper.setBackgroundReadable(lblLat, BGCOLOR_DIFFERENCE);
+                GuiHelper.setBackgroundReadable(lblLat, modifiedColor);
             }
             if (coord == oppositeCoord ||
                     (coord != null && oppositeCoord != null && coord.lon() == oppositeCoord.lon())) {
                 GuiHelper.setBackgroundReadable(lblLon, Color.WHITE);
             } else {
-                GuiHelper.setBackgroundReadable(lblLon, BGCOLOR_DIFFERENCE);
+                GuiHelper.setBackgroundReadable(lblLon, modifiedColor);
             }
         }
 
@@ -293,15 +314,44 @@ public class CoordinateInfoViewer extends JPanel {
         }
     }
 
-    private static class DistanceViewer extends LatLonViewer {
+    private static class MapViewer extends JMapViewer implements Observer {
 
-        private JLabel lblDistance;
+        private final Updater updater;
 
-        DistanceViewer(HistoryBrowserModel model) {
-            super(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
+        public MapViewer(HistoryBrowserModel model) {
+            this.updater = new Updater(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
+            setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
         }
 
         @Override
+        public void update(Observable o, Object arg) {
+            final Pair<LatLon, LatLon> coordinates = updater.getCoordinates();
+            if (coordinates == null) {
+                return;
+            }
+
+            final MapMarkerDot oldMarker = new MapMarkerDot(coordinates.a.lat(), coordinates.a.lon());
+            final MapMarkerDot newMarker = new MapMarkerDot(coordinates.b.lat(), coordinates.b.lon());
+            oldMarker.setBackColor(TwoColumnDiff.Item.DiffItemType.DELETED.getColor());
+            newMarker.setBackColor(TwoColumnDiff.Item.DiffItemType.INSERTED.getColor());
+
+            removeAllMapMarkers();
+            addMapMarker(oldMarker);
+            addMapMarker(newMarker);
+            setDisplayToFitMapMarkers();
+        }
+    }
+
+    private static class DistanceViewer extends JPanel implements Observer {
+
+        private JLabel lblDistance;
+        private final Updater updater;
+
+        DistanceViewer(HistoryBrowserModel model) {
+            this.updater = new Updater(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
+            build();
+        }
+
         protected void build() {
             setLayout(new GridBagLayout());
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
@@ -327,20 +377,31 @@ public class CoordinateInfoViewer extends JPanel {
             lblDistance.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         }
 
-        @Override
         protected void refresh() {
-            if (!prepareRefresh()) return;
+            final Pair<LatLon, LatLon> coordinates = updater.getCoordinates();
+            if (coordinates == null) return;
+            final LatLon coord = coordinates.a;
+            final LatLon oppositeCoord = coordinates.b;
 
             // update distance
             //
             if (coord != null && oppositeCoord != null) {
                 double distance = coord.greatCircleDistance(oppositeCoord);
-                GuiHelper.setBackgroundReadable(lblDistance, distance > 0 ? BGCOLOR_DIFFERENCE : Color.WHITE);
+                GuiHelper.setBackgroundReadable(lblDistance, distance > 0
+                        ? TwoColumnDiff.Item.DiffItemType.CHANGED.getColor()
+                        : Color.WHITE);
                 lblDistance.setText(NavigatableComponent.getDistText(distance));
             } else {
-                GuiHelper.setBackgroundReadable(lblDistance, coord != oppositeCoord ? BGCOLOR_DIFFERENCE : Color.WHITE);
+                GuiHelper.setBackgroundReadable(lblDistance, coord != oppositeCoord
+                        ? TwoColumnDiff.Item.DiffItemType.CHANGED.getColor()
+                        : Color.WHITE);
                 lblDistance.setText(tr("(none)"));
             }
+        }
+
+        @Override
+        public void update(Observable o, Object arg) {
+            refresh();
         }
     }
 }
