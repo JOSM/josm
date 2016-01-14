@@ -62,6 +62,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleElementList;
 import org.openstreetmap.josm.gui.mappaint.styleelement.MapImage;
+import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
@@ -80,7 +81,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGUniverse;
-import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
 
 /**
  * Helper class to support the application with images.
@@ -1056,15 +1056,17 @@ public class ImageProvider {
             }
         }
         // Try user-data directory
-        String dir = new File(Main.pref.getUserDataDirectory(), "images").getAbsolutePath();
-        try {
-            u = getImageUrl(dir, imageName, additionalClassLoaders);
-            if (u != null)
-                return u;
-        } catch (SecurityException e) {
-            Main.warn(tr(
-                    "Failed to access directory ''{0}'' for security reasons. Exception was: {1}", dir, e
-                    .toString()));
+        if (Main.pref != null) {
+            String dir = new File(Main.pref.getUserDataDirectory(), "images").getAbsolutePath();
+            try {
+                u = getImageUrl(dir, imageName, additionalClassLoaders);
+                if (u != null)
+                    return u;
+            } catch (SecurityException e) {
+                Main.warn(tr(
+                        "Failed to access directory ''{0}'' for security reasons. Exception was: {1}", dir, e
+                        .toString()));
+            }
         }
 
         // Absolute path?
@@ -1078,13 +1080,15 @@ public class ImageProvider {
             return u;
 
         // Try all other resource directories
-        for (String location : Main.pref.getAllPossiblePreferenceDirs()) {
-            u = getImageUrl(location + "images", imageName, additionalClassLoaders);
-            if (u != null)
-                return u;
-            u = getImageUrl(location, imageName, additionalClassLoaders);
-            if (u != null)
-                return u;
+        if (Main.pref != null) {
+            for (String location : Main.pref.getAllPossiblePreferenceDirs()) {
+                u = getImageUrl(location + "images", imageName, additionalClassLoaders);
+                if (u != null)
+                    return u;
+                u = getImageUrl(location, imageName, additionalClassLoaders);
+                if (u != null)
+                    return u;
+            }
         }
 
         return null;
