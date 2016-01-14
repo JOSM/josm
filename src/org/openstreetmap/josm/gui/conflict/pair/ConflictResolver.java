@@ -346,4 +346,18 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         nodeListMerger.unlinkAsListener();
         relationMemberMerger.unlinkAsListener();
     }
+
+    public void decideRemaining(MergeDecisionType decision) {
+        propertiesMerger.decideRemaining(decision);
+        tagMerger.decideRemaining(decision);
+        if (my instanceof Way) {
+            nodeListMerger.decideRemaining(decision);
+        } else if (my instanceof Relation) {
+            relationMemberMerger.decideRemaining(decision);
+        }
+        updateResolvedCompletely();
+        if (!isResolvedCompletely()) {
+            throw new AssertionError();
+        }
+    }
 }

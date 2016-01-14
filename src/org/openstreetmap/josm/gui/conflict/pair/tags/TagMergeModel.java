@@ -201,6 +201,13 @@ public class TagMergeModel extends DefaultTableModel {
         return true;
     }
 
+    public void decideRemaining(MergeDecisionType decision) {
+        for (TagMergeItem item: tagMergeItems) {
+            if (item.getMergeDecision().equals(MergeDecisionType.UNDECIDED))
+                item.decide(decision);
+        }
+    }
+
     public int getNumResolvedConflicts() {
         int n = 0;
         for (TagMergeItem item: tagMergeItems) {

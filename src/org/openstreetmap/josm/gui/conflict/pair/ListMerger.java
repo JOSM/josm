@@ -916,4 +916,10 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         }
         return null;
     }
+
+    public void decideRemaining(MergeDecisionType decision) {
+        if (!model.isFrozen()) {
+            model.copyAll(MergeDecisionType.KEEP_MINE.equals(decision) ? ListRole.MY_ENTRIES : ListRole.THEIR_ENTRIES);
+        }
+    }
 }

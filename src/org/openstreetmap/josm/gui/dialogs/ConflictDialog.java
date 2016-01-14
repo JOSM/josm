@@ -12,15 +12,18 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.ListModel;
@@ -29,9 +32,14 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractSelectAction;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
@@ -51,6 +59,8 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
+import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -117,6 +127,31 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         }));
 
         popupMenuHandler.addAction(Main.main.menu.autoScaleActions.get("conflict"));
+
+        final ResolveTpMyVersionAction resolveTpMyVersionAction = new ResolveTpMyVersionAction();
+        final ResolveToTheirVersionAction resolveToTheirVersionAction = new ResolveToTheirVersionAction();
+        addListSelectionListener(resolveTpMyVersionAction);
+        addListSelectionListener(resolveToTheirVersionAction);
+        final JMenuItem btnResolveMy = popupMenuHandler.addAction(resolveTpMyVersionAction);
+        final JMenuItem btnResolveTheir = popupMenuHandler.addAction(resolveToTheirVersionAction);
+
+        popupMenuHandler.addListener(new PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                btnResolveMy.setVisible(ExpertToggleAction.isExpert());
+                btnResolveTheir.setVisible(ExpertToggleAction.isExpert());
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                // Do nothing
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+                // Do nothing
+            }
+        });
     }
 
     /**
@@ -318,6 +353,11 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         return conflicts.get(index);
     }
 
+    private boolean isConflictSelected() {
+        final ListSelectionModel model = lstConflicts.getSelectionModel();
+        return model.getMinSelectionIndex() >= 0 && model.getMaxSelectionIndex() >= model.getMinSelectionIndex();
+    }
+
     @Override
     public void onConflictsAdded(ConflictCollection conflicts) {
         refreshView();
@@ -444,10 +484,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            ListSelectionModel model = (ListSelectionModel) e.getSource();
-            boolean enabled = model.getMinSelectionIndex() >= 0
-            && model.getMaxSelectionIndex() >= model.getMinSelectionIndex();
-            setEnabled(enabled);
+            setEnabled(isConflictSelected());
         }
     }
 
@@ -470,10 +507,48 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            ListSelectionModel model = (ListSelectionModel) e.getSource();
-            boolean enabled = model.getMinSelectionIndex() >= 0
-            && model.getMaxSelectionIndex() >= model.getMinSelectionIndex();
-            setEnabled(enabled);
+            setEnabled(isConflictSelected());
+        }
+    }
+
+    abstract class ResolveToAction extends ResolveAction {
+        private final String name;
+        private final MergeDecisionType type;
+
+        ResolveToAction(String name, String description, MergeDecisionType type) {
+            this.name = name;
+            this.type = type;
+            putValue(NAME, name);
+            putValue(SHORT_DESCRIPTION,  description);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final ConflictResolver resolver = new ConflictResolver();
+            final List<Command> commands = new ArrayList<>();
+            for (OsmPrimitive osmPrimitive : lstConflicts.getSelectedValuesList()) {
+                Conflict<? extends OsmPrimitive> c = conflicts.getConflictForMy(osmPrimitive);
+                resolver.populate(c);
+                resolver.decideRemaining(type);
+                commands.add(resolver.buildResolveCommand());
+            }
+            Main.main.undoRedo.add(new SequenceCommand(name, commands));
+            refreshView();
+            Main.map.mapView.repaint();
+        }
+    }
+
+    class ResolveTpMyVersionAction extends ResolveToAction {
+        public ResolveTpMyVersionAction() {
+            super(tr("Resolve to my versions"), tr("Resolves all unresolved conflicts to ''my'' version"),
+                    MergeDecisionType.KEEP_MINE);
+        }
+    }
+
+    class ResolveToTheirVersionAction extends ResolveToAction {
+        public ResolveToTheirVersionAction() {
+            super(tr("Resolve to their versions"), tr("Resolves all unresolved conflicts to ''their'' version"),
+                    MergeDecisionType.KEEP_THEIR);
         }
     }
 
