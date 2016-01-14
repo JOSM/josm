@@ -598,12 +598,13 @@ public final class OrthogonalizeAction extends JosmAction {
         }
     }
 
-    /**
-     * Don't check, if the current selection is suited for orthogonalization.
-     * Instead, show a usage dialog, that explains, why it cannot be done.
-     */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getCurrentDataSet() != null);
+        setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
+    }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(selection != null && !selection.isEmpty());
     }
 }
