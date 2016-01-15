@@ -226,6 +226,13 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
             if (extension.equals(exporter.filter.getDefaultExtension()))
                 return exporter.filter;
         }
+        // if extension did not match defaultExtension of any exporter,
+        // scan all supported extensions
+        File file = new File("file." + extension);
+        for (FileExporter exporter : exporters) {
+            if (exporter.filter.accept(file))
+                return exporter.filter;
+        }
         return new AllFormatsImporter().filter;
     }
 
@@ -241,6 +248,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static void applyChoosableImportFileFilters(AbstractFileChooser fileChooser, String extension, boolean allTypes) {
         for (ExtensionFileFilter filter: getImportExtensionFileFilters()) {
+
             if (allTypes || filter.acceptName("file."+extension)) {
                 fileChooser.addChoosableFileFilter(filter);
             }
