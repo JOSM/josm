@@ -25,6 +25,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,6 +48,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import org.openstreetmap.gui.jmapviewer.AttributionSupport;
@@ -85,6 +87,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.WMSLayerImporter;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 
 /**
  * Base abstract class that supports displaying images provided by TileSource. It might be TMS source, WMS or WMTS
@@ -125,6 +128,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     private boolean needRedraw;
 
     private final AttributionSupport attribution = new AttributionSupport();
+    private final TileHolder clickedTileHolder = new TileHolder();
 
     // needed public access for session exporter
     /** if layers changes automatically, when user zooms in */
@@ -245,7 +249,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      */
     protected void redraw() {
         needRedraw = true;
-        Main.map.repaint();
+        if (isVisible()) Main.map.repaint();
     }
 
     @Override
@@ -308,11 +312,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     }
 
     private final class ShowTileInfoAction extends AbstractAction {
-        private final transient TileHolder clickedTileHolder;
 
-        private ShowTileInfoAction(TileHolder clickedTileHolder) {
-            super(tr("Show Tile Info"));
-            this.clickedTileHolder = clickedTileHolder;
+        private ShowTileInfoAction() {
+            super(tr("Show tile info"));
         }
 
         private String getSizeString(int size) {
@@ -374,14 +376,34 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
     }
 
+    private class LoadTileAction extends AbstractAction {
+
+        private LoadTileAction() {
+            super(tr("Load tile"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            Tile clickedTile = clickedTileHolder.getTile();
+            if (clickedTile != null) {
+                loadTile(clickedTile, true);
+                redraw();
+            }
+        }
+    }
+
     private class AutoZoomAction extends AbstractAction implements LayerAction {
         AutoZoomAction() {
-            super(tr("Auto Zoom"));
+            super(tr("Auto zoom"));
         }
 
         @Override
         public void actionPerformed(ActionEvent ae) {
             autoZoom = !autoZoom;
+            if (autoZoom && getBestZoom() != currentZoomLevel) {
+                setZoomLevel(getBestZoom());
+                redraw();
+            }
         }
 
         @Override
@@ -405,6 +427,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         @Override
         public void actionPerformed(ActionEvent ae) {
             autoLoad = !autoLoad;
+            if (autoLoad) redraw();
         }
 
         public Component createMenuComponent() {
@@ -419,9 +442,32 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
     }
 
+    private class ShowErrorsAction extends AbstractAction implements LayerAction {
+        ShowErrorsAction() {
+            super(tr("Show errors"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            showErrors = !showErrors;
+            redraw();
+        }
+
+        public Component createMenuComponent() {
+            JCheckBoxMenuItem item = new JCheckBoxMenuItem(this);
+            item.setSelected(showErrors);
+            return item;
+        }
+
+        @Override
+        public boolean supportLayers(List<Layer> layers) {
+            return actionSupportLayers(layers);
+        }
+    }
+
     private class LoadAllTilesAction extends AbstractAction {
         LoadAllTilesAction() {
-            super(tr("Load All Tiles"));
+            super(tr("Load all tiles"));
         }
 
         @Override
@@ -433,7 +479,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
     private class LoadErroneusTilesAction extends AbstractAction {
         LoadErroneusTilesAction() {
-            super(tr("Load All Error Tiles"));
+            super(tr("Load all error tiles"));
         }
 
         @Override
@@ -459,11 +505,66 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     private class ZoomToBestAction extends AbstractAction {
         ZoomToBestAction() {
             super(tr("Change resolution"));
+            setEnabled(!autoZoom && getBestZoom() != currentZoomLevel);
         }
 
         @Override
         public void actionPerformed(ActionEvent ae) {
             setZoomLevel(getBestZoom());
+            redraw();
+        }
+    }
+
+    private class IncreaseZoomAction extends AbstractAction {
+        IncreaseZoomAction() {
+            super(tr("Increase zoom"));
+            setEnabled(!autoZoom && zoomIncreaseAllowed());
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            increaseZoomLevel();
+            redraw();
+        }
+    }
+
+    private class DecreaseZoomAction extends AbstractAction {
+        DecreaseZoomAction() {
+            super(tr("Decrease zoom"));
+            setEnabled(!autoZoom && zoomDecreaseAllowed());
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            decreaseZoomLevel();
+            redraw();
+        }
+    }
+
+    private class FlushTileCacheAction extends AbstractAction {
+        FlushTileCacheAction() {
+            super(tr("Flush tile cache"));
+            setEnabled(tileLoader instanceof CachedTileLoader);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            new PleaseWaitRunnable(tr("Flush tile cache")) {
+                @Override
+                protected void realRun() {
+                    clearTileCache(getProgressMonitor());
+                }
+
+                @Override
+                protected void finish() {
+                    // empty - flush is instaneus
+                }
+
+                @Override
+                protected void cancel() {
+                    // empty - flush is instaneus
+                }
+            }.run();
         }
     }
 
@@ -516,111 +617,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         projectionChanged(null, Main.getProjection()); // check if projection is supported
         initTileSource(this.tileSource);
 
-        // keep them final here, so we avoid namespace clutter in the class
-        final JPopupMenu tileOptionMenu = new JPopupMenu();
-        final TileHolder clickedTileHolder = new TileHolder();
-        Field autoZoomField;
-        Field autoLoadField;
-        Field showErrorsField;
-        try {
-            autoZoomField = AbstractTileSourceLayer.class.getField("autoZoom");
-            autoLoadField = AbstractTileSourceLayer.class.getDeclaredField("autoLoad");
-            showErrorsField = AbstractTileSourceLayer.class.getDeclaredField("showErrors");
-        } catch (NoSuchFieldException | SecurityException e) {
-            // shoud not happen
-            throw new RuntimeException(e);
-        }
-
-        autoZoom = PROP_DEFAULT_AUTOZOOM.get();
-        JCheckBoxMenuItem autoZoomPopup = new JCheckBoxMenuItem();
-        autoZoomPopup.setModel(new BooleanButtonModel(autoZoomField));
-        autoZoomPopup.setAction(new AutoZoomAction());
-        tileOptionMenu.add(autoZoomPopup);
-
         autoLoad = PROP_DEFAULT_AUTOLOAD.get();
-        JCheckBoxMenuItem autoLoadPopup = new JCheckBoxMenuItem();
-        autoLoadPopup.setAction(new AutoLoadTilesAction());
-        autoLoadPopup.setModel(new BooleanButtonModel(autoLoadField));
-        tileOptionMenu.add(autoLoadPopup);
-
+        autoZoom = PROP_DEFAULT_AUTOZOOM.get();
         showErrors = PROP_DEFAULT_SHOWERRORS.get();
-        JCheckBoxMenuItem showErrorsPopup = new JCheckBoxMenuItem();
-        showErrorsPopup.setAction(new AbstractAction(tr("Show Errors")) {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                showErrors = !showErrors;
-            }
-        });
-        showErrorsPopup.setModel(new BooleanButtonModel(showErrorsField));
-        tileOptionMenu.add(showErrorsPopup);
-
-        tileOptionMenu.add(new JMenuItem(new AbstractAction(tr("Load Tile")) {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                Tile clickedTile = clickedTileHolder.getTile();
-                if (clickedTile != null) {
-                    loadTile(clickedTile, true);
-                    redraw();
-                }
-            }
-        }));
-
-        tileOptionMenu.add(new JMenuItem(new ShowTileInfoAction(clickedTileHolder)));
-
-        tileOptionMenu.add(new JMenuItem(new LoadAllTilesAction()));
-        tileOptionMenu.add(new JMenuItem(new LoadErroneusTilesAction()));
-
-        // increase and decrease commands
-        tileOptionMenu.add(new JMenuItem(new AbstractAction(
-                tr("Increase zoom")) {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                increaseZoomLevel();
-                redraw();
-            }
-        }));
-
-        tileOptionMenu.add(new JMenuItem(new AbstractAction(
-                tr("Decrease zoom")) {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                decreaseZoomLevel();
-                redraw();
-            }
-        }));
-
-        tileOptionMenu.add(new JMenuItem(new AbstractAction(
-                tr("Snap to tile size")) {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                double newFactor = Math.sqrt(getScaleFactor(currentZoomLevel));
-                Main.map.mapView.zoomToFactor(newFactor);
-                redraw();
-            }
-        }));
-
-        tileOptionMenu.add(new JMenuItem(new AbstractAction(
-                tr("Flush Tile Cache")) {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                new PleaseWaitRunnable(tr("Flush Tile Cache")) {
-                    @Override
-                    protected void realRun() {
-                        clearTileCache(getProgressMonitor());
-                    }
-
-                    @Override
-                    protected void finish() {
-                        // empty - flush is instaneus
-                    }
-
-                    @Override
-                    protected void cancel() {
-                        // empty - flush is instaneus
-                    }
-                }.run();
-            }
-        }));
 
         final MouseAdapter adapter = new MouseAdapter() {
             @Override
@@ -628,7 +627,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 if (!isVisible()) return;
                 if (e.getButton() == MouseEvent.BUTTON3) {
                     clickedTileHolder.setTile(getTileForPixelpos(e.getX(), e.getY()));
-                    tileOptionMenu.show(e.getComponent(), e.getX(), e.getY());
+                    new TileSourceLayerPopup().show(e.getComponent(), e.getX(), e.getY());
                 } else if (e.getButton() == MouseEvent.BUTTON1) {
                     attribution.handleAttribution(e.getPoint(), true);
                 }
@@ -660,6 +659,22 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         // FIXME: why do we need this? Without this, if you add a WMS layer and do not move the mouse, sometimes, tiles do not
         // start loading.
         Main.map.repaint(500);
+    }
+
+    public class TileSourceLayerPopup extends JPopupMenu {
+        public TileSourceLayerPopup() {
+
+            for (Action a : getCommonEntries()) {
+                if (a instanceof LayerAction) {
+                    add(((LayerAction) a).createMenuComponent());
+                } else {
+                    add(new JMenuItem(a));
+                }
+            }
+            add(new JSeparator());
+            add(new JMenuItem(new LoadTileAction()));
+            add(new JMenuItem(new ShowTileInfoAction()));
+        }
     }
 
     @Override
@@ -780,7 +795,10 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     }
 
     protected int getMinZoomLvl() {
-        return getMinZoomLvl(tileSource);
+        if (info.getMinZoom() != 0)
+            return checkMinZoomLvl(info.getMinZoom(), tileSource);
+        else
+            return getMinZoomLvl(tileSource);
     }
 
     /**
@@ -835,7 +853,11 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      * @return    true, if zooming out is allowed (currentZoomLevel &gt; minZoomLevel)
      */
     public boolean zoomDecreaseAllowed() {
-        return currentZoomLevel > this.getMinZoomLvl();
+        boolean zda = currentZoomLevel > this.getMinZoomLvl();
+        if (Main.isDebugEnabled()) {
+            Main.debug("zoomDecreaseAllowed(): " + zda + ' ' + currentZoomLevel + " vs. " + this.getMinZoomLvl());
+        }
+        return zda;
     }
 
     /**
@@ -1606,22 +1628,39 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
     @Override
     public Action[] getMenuEntries() {
+        ArrayList<Action> actions = new ArrayList<Action>();
+        actions.addAll(Arrays.asList(getLayerListEntries()));
+        actions.addAll(Arrays.asList(getCommonEntries()));
+        actions.add(SeparatorLayerAction.INSTANCE);
+        actions.add(new LayerListPopup.InfoAction(this));
+        return actions.toArray(new Action[actions.size()]);
+    }
+
+    public Action[] getLayerListEntries() {
         return new Action[] {
-                LayerListDialog.getInstance().createActivateLayerAction(this),
-                LayerListDialog.getInstance().createShowHideLayerAction(),
-                LayerListDialog.getInstance().createDeleteLayerAction(),
-                SeparatorLayerAction.INSTANCE,
-                // color,
-                new OffsetAction(),
-                new RenameLayerAction(this.getAssociatedFile(), this),
-                SeparatorLayerAction.INSTANCE,
-                new AutoLoadTilesAction(),
-                new AutoZoomAction(),
-                new ZoomToBestAction(),
-                new ZoomToNativeLevelAction(),
-                new LoadErroneusTilesAction(),
-                new LoadAllTilesAction(),
-                new LayerListPopup.InfoAction(this)
+            LayerListDialog.getInstance().createActivateLayerAction(this),
+            LayerListDialog.getInstance().createShowHideLayerAction(),
+            LayerListDialog.getInstance().createDeleteLayerAction(),
+            SeparatorLayerAction.INSTANCE,
+            // color,
+            new OffsetAction(),
+            new RenameLayerAction(this.getAssociatedFile(), this),
+            SeparatorLayerAction.INSTANCE
+        };
+    }
+
+    public Action[] getCommonEntries() {
+        return new Action[] {
+            new AutoLoadTilesAction(),
+            new AutoZoomAction(),
+            new ShowErrorsAction(),
+            new IncreaseZoomAction(),
+            new DecreaseZoomAction(),
+            new ZoomToBestAction(),
+            new ZoomToNativeLevelAction(),
+            new FlushTileCacheAction(),
+            new LoadErroneusTilesAction(),
+            new LoadAllTilesAction()
         };
     }
 
