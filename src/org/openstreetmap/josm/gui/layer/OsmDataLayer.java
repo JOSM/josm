@@ -964,7 +964,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     @Override
     public File createAndOpenSaveFileChooser() {
-        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save OSM file"), "osm");
+        String extension = Main.pref.get("save.extension.osm", "osm");
+        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save OSM file"), extension);
     }
 
     @Override
