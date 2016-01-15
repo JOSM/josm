@@ -66,9 +66,6 @@ public final class Relation extends OsmPrimitive implements IRelation {
         }
     }
 
-    /**
-     * @return number of members
-     */
     @Override
     public int getMembersCount() {
         return members.length;

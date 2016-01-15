@@ -144,22 +144,11 @@ public abstract class AbstractPrimitive implements IPrimitive {
         }
     }
 
-    /**
-     * Replies the version number as returned by the API. The version is 0 if the id is 0 or
-     * if this primitive is incomplete.
-     *
-     * @see PrimitiveData#setVersion(int)
-     */
     @Override
     public int getVersion() {
         return version;
     }
 
-    /**
-     * Replies the id of this primitive.
-     *
-     * @return the id of this primitive.
-     */
     @Override
     public long getId() {
         long id = this.id;
@@ -177,37 +166,19 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     /**
-     *
-     * @return True if primitive is new (not yet uploaded the server, id &lt;= 0)
+     * Determines if this primitive is new.
+     * @return {@code true} if this primitive is new (not yet uploaded the server, id &lt;= 0)
      */
     @Override
     public boolean isNew() {
         return id <= 0;
     }
 
-    /**
-     *
-     * @return True if primitive is new or undeleted
-     * @see #isNew()
-     * @see #isUndeleted()
-     */
     @Override
     public boolean isNewOrUndeleted() {
         return (id <= 0) || ((flags & (FLAG_VISIBLE + FLAG_DELETED)) == 0);
     }
 
-    /**
-     * Sets the id and the version of this primitive if it is known to the OSM API.
-     *
-     * Since we know the id and its version it can't be incomplete anymore. incomplete
-     * is set to false.
-     *
-     * @param id the id. &gt; 0 required
-     * @param version the version &gt; 0 required
-     * @throws IllegalArgumentException if id &lt;= 0
-     * @throws IllegalArgumentException if version &lt;= 0
-     * @throws DataIntegrityProblemException if id is changed and primitive was already added to the dataset
-     */
     @Override
     public void setOsmId(long id, int version) {
         if (id <= 0)
@@ -238,46 +209,21 @@ public abstract class AbstractPrimitive implements IPrimitive {
         this.setVisible(true);
     }
 
-    /**
-     * Replies the user who has last touched this object. May be null.
-     *
-     * @return the user who has last touched this object. May be null.
-     */
     @Override
     public User getUser() {
         return user;
     }
 
-    /**
-     * Sets the user who has last touched this object.
-     *
-     * @param user the user
-     */
     @Override
     public void setUser(User user) {
         this.user = user;
     }
 
-    /**
-     * Replies the id of the changeset this primitive was last uploaded to.
-     * 0 if this primitive wasn't uploaded to a changeset yet or if the
-     * changeset isn't known.
-     *
-     * @return the id of the changeset this primitive was last uploaded to.
-     */
     @Override
     public int getChangesetId() {
         return changesetId;
     }
 
-    /**
-     * Sets the changeset id of this primitive. Can't be set on a new
-     * primitive.
-     *
-     * @param changesetId the id. &gt;= 0 required.
-     * @throws IllegalStateException if this primitive is new.
-     * @throws IllegalArgumentException if id &lt; 0
-     */
     @Override
     public void setChangesetId(int changesetId) {
         if (this.changesetId == changesetId)
@@ -290,11 +236,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
         this.changesetId = changesetId;
     }
 
-    /**
-     * Replies the unique primitive id for this primitive
-     *
-     * @return the unique primitive id for this primitive
-     */
     @Override
     public PrimitiveId getPrimitiveId() {
         return new SimplePrimitiveId(getUniqueId(), getType());
@@ -314,13 +255,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
         this.timestamp = timestamp;
     }
 
-    /**
-     * Time of last modification to this object. This is not set by JOSM but
-     * read from the server and delivered back to the server unmodified. It is
-     * used to check against edit conflicts.
-     *
-     * @return date of last modification
-     */
     @Override
     public Date getTimestamp() {
         return new Date(timestamp * 1000L);
@@ -348,83 +282,36 @@ public abstract class AbstractPrimitive implements IPrimitive {
         }
     }
 
-    /**
-     * Marks this primitive as being modified.
-     *
-     * @param modified true, if this primitive is to be modified
-     */
     @Override
     public void setModified(boolean modified) {
         updateFlags(FLAG_MODIFIED, modified);
     }
 
-    /**
-     * Replies <code>true</code> if the object has been modified since it was loaded from
-     * the server. In this case, on next upload, this object will be updated.
-     *
-     * Deleted objects are deleted from the server. If the objects are added (id=0),
-     * the modified is ignored and the object is added to the server.
-     *
-     * @return <code>true</code> if the object has been modified since it was loaded from
-     * the server
-     */
     @Override
     public boolean isModified() {
         return (flags & FLAG_MODIFIED) != 0;
     }
 
-    /**
-     * Replies <code>true</code>, if the object has been deleted.
-     *
-     * @return <code>true</code>, if the object has been deleted.
-     * @see #setDeleted(boolean)
-     */
     @Override
     public boolean isDeleted() {
         return (flags & FLAG_DELETED) != 0;
     }
 
-    /**
-     * Replies <code>true</code> if the object has been deleted on the server and was undeleted by the user.
-     * @return <code>true</code> if the object has been undeleted
-     */
+    @Override
     public boolean isUndeleted() {
         return (flags & (FLAG_VISIBLE + FLAG_DELETED)) == 0;
     }
 
-    /**
-     * Replies <code>true</code>, if the object is usable
-     * (i.e. complete and not deleted).
-     *
-     * @return <code>true</code>, if the object is usable.
-     * @see #setDeleted(boolean)
-     */
+    @Override
     public boolean isUsable() {
         return (flags & (FLAG_DELETED + FLAG_INCOMPLETE)) == 0;
     }
 
-    /**
-     * Checks if object is known to the server.
-     * Replies true if this primitive is either unknown to the server (i.e. its id
-     * is 0) or it is known to the server and it hasn't be deleted on the server.
-     * Replies false, if this primitive is known on the server and has been deleted
-     * on the server.
-     *
-     * @return <code>true</code>, if the object is visible on server.
-     * @see #setVisible(boolean)
-     */
     @Override
     public boolean isVisible() {
         return (flags & FLAG_VISIBLE) != 0;
     }
 
-    /**
-     * Sets whether this primitive is visible, i.e. whether it is known on the server
-     * and not deleted on the server.
-     *
-     * @see #isVisible()
-     * @throws IllegalStateException if visible is set to false on an primitive with id==0
-     */
     @Override
     public void setVisible(boolean visible) {
         if (isNew() && !visible)
@@ -432,13 +319,6 @@ public abstract class AbstractPrimitive implements IPrimitive {
         updateFlags(FLAG_VISIBLE, visible);
     }
 
-    /**
-     * Sets whether this primitive is deleted or not.
-     *
-     * Also marks this primitive as modified if deleted is true.
-     *
-     * @param deleted  true, if this primitive is deleted; false, otherwise
-     */
     @Override
     public void setDeleted(boolean deleted) {
         updateFlags(FLAG_DELETED, deleted);
@@ -773,24 +653,11 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     protected abstract void keysChangedImpl(Map<String, String> originalKeys);
 
-    /**
-     * Replies the name of this primitive. The default implementation replies the value
-     * of the tag <tt>name</tt> or null, if this tag is not present.
-     *
-     * @return the name of this primitive
-     */
     @Override
     public String getName() {
         return get("name");
     }
 
-    /**
-     * Replies a localized name for this primitive given by the value of the name tags
-     * accessed from very specific (language variant) to more generic (default name).
-     *
-     * @see LanguageInfo#getLanguageCodes
-     * @return the name of this primitive, <code>null</code> if no name exists
-     */
     @Override
     public String getLocalName() {
         for (String s : LanguageInfo.getLanguageCodes(null)) {
