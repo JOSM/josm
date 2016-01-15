@@ -700,6 +700,10 @@ public class UnGlueAction extends JosmAction {
                 }
             }
         }
+        if (affectedRelations.isEmpty()) {
+            return;
+        }
+
         final String msg1 = trn("Unglueing affected {0} relation: {1}", "Unglueing affected {0} relations: {1}",
                 affectedRelations.size(), affectedRelations.size(), Utils.joinAsHtmlUnorderedList(affectedRelations));
         final String msg2 = trn("Ensure that the relation has not been broken!", "Ensure that the relations have not been broken!",

@@ -9,7 +9,7 @@ import javax.swing.JCheckBox;
 import org.openstreetmap.josm.gui.layer.Layer;
 
 /**
- * Generic superclass of all session layer exporters.
+ * Abstract superclass of all session layer exporters.
  * @param <T> Type of exported layer
  * @since 9455
  */
