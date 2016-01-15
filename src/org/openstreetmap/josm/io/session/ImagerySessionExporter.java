@@ -4,12 +4,9 @@ package org.openstreetmap.josm.io.session;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -18,7 +15,6 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.layer.WMTSLayer;
@@ -27,38 +23,46 @@ import org.openstreetmap.josm.tools.GBC;
 import org.w3c.dom.Element;
 
 /**
- * Session exporter for TMSLayer and WMSLayer.
+ * Session exporter for {@link TMSLayer}, {@link WMSLayer} and {@link WMTSLayer}.
+ * @since 5391
  */
-public class ImagerySessionExporter implements SessionLayerExporter {
+public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer> {
 
-    private ImageryLayer layer;
-    private JCheckBox export;
-
+    /**
+     * Constructs a new {@code ImagerySessionExporter}.
+     * @param layer imagery layer to export
+     */
     public ImagerySessionExporter(ImageryLayer layer) {
-        this.layer = layer;
+        super(layer);
     }
 
+    /**
+     * Constructs a new {@code ImagerySessionExporter}.
+     * @param layer TMS layer to export
+     */
     public ImagerySessionExporter(TMSLayer layer) {
-        this((ImageryLayer) layer);
+        super(layer);
     }
 
+    /**
+     * Constructs a new {@code ImagerySessionExporter}.
+     * @param layer WMS layer to export
+     */
     public ImagerySessionExporter(WMSLayer layer) {
-        this((ImageryLayer) layer);
+        super(layer);
     }
 
+    /**
+     * Constructs a new {@code ImagerySessionExporter}.
+     * @param layer WMTS layer to export
+     */
     public ImagerySessionExporter(WMTSLayer layer) {
-        this((ImageryLayer) layer);
-    }
-
-    @Override
-    public Collection<Layer> getDependencies() {
-        return Collections.emptySet();
+        super(layer);
     }
 
     @Override
     public Component getExportPanel() {
         final JPanel p = new JPanel(new GridBagLayout());
-        export = new JCheckBox();
         export.setSelected(true);
         final JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEFT);
         lbl.setToolTipText(layer.getToolTipText());
@@ -67,16 +71,6 @@ public class ImagerySessionExporter implements SessionLayerExporter {
         p.add(lbl, GBC.std());
         p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
         return p;
-    }
-
-    @Override
-    public boolean shallExport() {
-        return export.isSelected();
-    }
-
-    @Override
-    public boolean requiresZip() {
-        return false;
     }
 
     @Override
@@ -101,5 +95,4 @@ public class ImagerySessionExporter implements SessionLayerExporter {
         }
         return layerElem;
     }
-
 }

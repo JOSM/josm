@@ -21,20 +21,16 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.actions.SaveAction;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -45,24 +41,21 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.w3c.dom.Element;
 
-public class OsmDataSessionExporter implements SessionLayerExporter {
+/**
+ * Session exporter for {@link OsmDataLayer}.
+ * @since 4685
+ */
+public class OsmDataSessionExporter extends AbstractSessionExporter<OsmDataLayer> {
 
-    private final OsmDataLayer layer;
     private JRadioButton link;
     private JRadioButton include;
-    private JCheckBox export;
 
     /**
      * Constructs a new {@code OsmDataSessionExporter}.
      * @param layer Data layer to export
      */
     public OsmDataSessionExporter(OsmDataLayer layer) {
-        this.layer = layer;
-    }
-
-    @Override
-    public Collection<Layer> getDependencies() {
-        return Collections.emptySet();
+        super(layer);
     }
 
     private class LayerSaveAction extends AbstractAction {
@@ -92,7 +85,6 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
     public JPanel getExportPanel() {
         final JPanel p = new JPanel(new GridBagLayout());
         JPanel topRow = new JPanel(new GridBagLayout());
-        export = new JCheckBox();
         export.setSelected(true);
         final JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEFT);
         lbl.setToolTipText(layer.getToolTipText());
@@ -178,11 +170,6 @@ public class OsmDataSessionExporter implements SessionLayerExporter {
             }
         });
         return p;
-    }
-
-    @Override
-    public boolean shallExport() {
-        return export.isSelected();
     }
 
     @Override

@@ -46,9 +46,21 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+/**
+ * Writes a .jos session file from current supported layers.
+ * @since 4685
+ */
 public class SessionWriter {
 
     private static Map<Class<? extends Layer>, Class<? extends SessionLayerExporter>> sessionLayerExporters = new HashMap<>();
+
+    private final List<Layer> layers;
+    private final int active;
+    private final Map<Layer, SessionLayerExporter> exporters;
+    private final MultiMap<Layer, Layer> dependencies;
+    private final boolean zip;
+
+    private ZipOutputStream zipOut;
 
     static {
         registerSessionLayerExporter(OsmDataLayer.class, OsmDataSessionExporter.class);
@@ -71,10 +83,16 @@ public class SessionWriter {
         sessionLayerExporters.put(layerClass, exporter);
     }
 
+    /**
+     * Returns the session layer exporter for the given layer.
+     * @param layer layer to export
+     * @return session layer exporter for the given layer
+     */
     public static SessionLayerExporter getSessionLayerExporter(Layer layer) {
         Class<? extends Layer> layerClass = layer.getClass();
         Class<? extends SessionLayerExporter> exporterClass = sessionLayerExporters.get(layerClass);
-        if (exporterClass == null) return null;
+        if (exporterClass == null)
+            return null;
         try {
             Constructor<? extends SessionLayerExporter> constructor = exporterClass.getConstructor(layerClass);
             return constructor.newInstance(layer);
@@ -82,14 +100,6 @@ public class SessionWriter {
             throw new RuntimeException(e);
         }
     }
-
-    private final List<Layer> layers;
-    private final int active;
-    private final Map<Layer, SessionLayerExporter> exporters;
-    private final MultiMap<Layer, Layer> dependencies;
-    private final boolean zip;
-
-    private ZipOutputStream zipOut;
 
     /**
      * Constructs a new {@code SessionWriter}.
@@ -117,15 +127,32 @@ public class SessionWriter {
         private final Document doc;
         private final int layerIndex;
 
+        /**
+         * Constructs a new {@code ExportSupport}.
+         * @param doc XML document
+         * @param layerIndex layer index
+         */
         public ExportSupport(Document doc, int layerIndex) {
             this.doc = doc;
             this.layerIndex = layerIndex;
         }
 
+        /**
+         * Creates an element of the type specified.
+         * @param name The name of the element type to instantiate
+         * @return A new {@code Element} object
+         * @see Document#createElement
+         */
         public Element createElement(String name) {
             return doc.createElement(name);
         }
 
+        /**
+         * Creates a text node given the specified string.
+         * @param text The data for the node.
+         * @return The new {@code Text} object.
+         * @see Document#createTextNode
+         */
         public Text createTextNode(String text) {
             return doc.createTextNode(text);
         }
@@ -167,6 +194,11 @@ public class SessionWriter {
         }
     }
 
+    /**
+     * Creates XML (.jos) session document.
+     * @return new document
+     * @throws IOException if any I/O error occurs
+     */
     public Document createJosDocument() throws IOException {
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         builderFactory.setValidating(false);
@@ -218,7 +250,8 @@ public class SessionWriter {
                 List<Integer> depsInt = new ArrayList<>();
                 for (Layer depLayer : deps) {
                     int depIndex = layers.indexOf(depLayer);
-                    if (depIndex == -1) throw new AssertionError();
+                    if (depIndex == -1)
+                        throw new AssertionError();
                     depsInt.add(depIndex+1);
                 }
                 el.setAttribute("depends", Utils.join(",", depsInt));
@@ -228,6 +261,12 @@ public class SessionWriter {
         return doc;
     }
 
+    /**
+     * Writes given .jos document to an output stream.
+     * @param doc session document
+     * @param out output stream
+     * @throws IOException if any I/O error occurs
+     */
     public void writeJos(Document doc, OutputStream out) throws IOException {
         try {
             OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
@@ -245,6 +284,11 @@ public class SessionWriter {
         }
     }
 
+    /**
+     * Writes session to given file.
+     * @param f output file
+     * @throws IOException if any I/O error occurs
+     */
     public void write(File f) throws IOException {
         try (OutputStream out = new FileOutputStream(f)) {
             write(out);
@@ -253,6 +297,11 @@ public class SessionWriter {
         }
     }
 
+    /**
+     * Writes session to given output stream.
+     * @param out output stream
+     * @throws IOException if any I/O error occurs
+     */
     public void write(OutputStream out) throws IOException {
         if (zip) {
             zipOut = new ZipOutputStream(new BufferedOutputStream(out), StandardCharsets.UTF_8);

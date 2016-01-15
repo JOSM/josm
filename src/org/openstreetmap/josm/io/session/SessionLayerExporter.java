@@ -9,6 +9,10 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.w3c.dom.Element;
 
+/**
+ * Session layer exporter.
+ * @since 4685
+ */
 public interface SessionLayerExporter {
 
     /**

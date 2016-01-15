@@ -53,11 +53,19 @@ import org.xml.sax.SAXException;
 
 /**
  * Reads a .jos session file and loads the layers in the process.
- *
+ * @since 4668
  */
 public class SessionReader {
 
     private static final Map<String, Class<? extends SessionLayerImporter>> sessionLayerImporters = new HashMap<>();
+
+    private URI sessionFileURI;
+    private boolean zip; // true, if session file is a .joz file; false if it is a .jos file
+    private ZipFile zipFile;
+    private List<Layer> layers = new ArrayList<>();
+    private int active = -1;
+    private final List<Runnable> postLoadTasks = new ArrayList<>();
+    private ViewportData viewport;
 
     static {
         registerSessionLayerImporter("osm-data", OsmDataSessionImporter.class);
@@ -67,10 +75,21 @@ public class SessionReader {
         registerSessionLayerImporter("markers", MarkerSessionImporter.class);
     }
 
+    /**
+     * Register a session layer importer.
+     *
+     * @param layerType layer type
+     * @param importer importer for this layer class
+     */
     public static void registerSessionLayerImporter(String layerType, Class<? extends SessionLayerImporter> importer) {
         sessionLayerImporters.put(layerType, importer);
     }
 
+    /**
+     * Returns the session layer importer for the given layer type.
+     * @param layerType layer type to import
+     * @return session layer importer for the given layer
+     */
     public static SessionLayerImporter getSessionLayerImporter(String layerType) {
         Class<? extends SessionLayerImporter> importerClass = sessionLayerImporters.get(layerType);
         if (importerClass == null)
@@ -83,14 +102,6 @@ public class SessionReader {
         }
         return importer;
     }
-
-    private URI sessionFileURI;
-    private boolean zip; // true, if session file is a .joz file; false if it is a .jos file
-    private ZipFile zipFile;
-    private List<Layer> layers = new ArrayList<>();
-    private int active = -1;
-    private final List<Runnable> postLoadTasks = new ArrayList<>();
-    private ViewportData viewport;
 
     /**
      * @return list of layers that are later added to the mapview
@@ -123,23 +134,33 @@ public class SessionReader {
         return viewport;
     }
 
+    /**
+     * A class that provides some context for the individual {@link SessionLayerImporter}
+     * when doing the import.
+     */
     public class ImportSupport {
 
         private final String layerName;
         private final int layerIndex;
         private final List<LayerDependency> layerDependencies;
 
-        public ImportSupport(String layerName, int layerIndex, List<LayerDependency> layerDependencies) {
-            this.layerName = layerName;
-            this.layerIndex = layerIndex;
-            this.layerDependencies = layerDependencies;
-        }
-
         /**
          * Path of the file inside the zip archive.
          * Used as alternative return value for getFile method.
          */
         private String inZipPath;
+
+        /**
+         * Constructs a new {@code ImportSupport}.
+         * @param layerName layer name
+         * @param layerIndex layer index
+         * @param layerDependencies layer dependencies
+         */
+        public ImportSupport(String layerName, int layerIndex, List<LayerDependency> layerDependencies) {
+            this.layerName = layerName;
+            this.layerIndex = layerIndex;
+            this.layerDependencies = layerDependencies;
+        }
 
         /**
          * Add a task, e.g. a message dialog, that should
@@ -555,13 +576,17 @@ public class SessionReader {
         }
     }
 
+    /**
+     * Loads session from the given file.
+     * @param sessionFile session file to load
+     * @param zip {@code true} if it's a zipped session (.joz)
+     * @param progressMonitor progress monitor
+     * @throws IllegalDataException if invalid data is detected
+     * @throws IOException if any I/O error occurs
+     */
     public void loadSession(File sessionFile, boolean zip, ProgressMonitor progressMonitor) throws IllegalDataException, IOException {
-        if (progressMonitor == null) {
-            progressMonitor = NullProgressMonitor.INSTANCE;
-        }
-
         try (InputStream josIS = createInputStream(sessionFile, zip)) {
-            loadSession(josIS, sessionFile.toURI(), zip, progressMonitor);
+            loadSession(josIS, sessionFile.toURI(), zip, progressMonitor != null ? progressMonitor : NullProgressMonitor.INSTANCE);
         }
     }
 
@@ -620,7 +645,6 @@ public class SessionReader {
 
     private static Element getElementByTagName(Element root, String name) {
         NodeList els = root.getElementsByTagName(name);
-        if (els.getLength() == 0) return null;
-        return (Element) els.item(0);
+        return els.getLength() > 0 ? (Element) els.item(0) : null;
     }
 }
