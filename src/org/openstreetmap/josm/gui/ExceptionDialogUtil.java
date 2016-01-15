@@ -353,8 +353,7 @@ public final class ExceptionDialogUtil {
     }
 
     /**
-     * Explains a {@link OsmApiException} with a generic error
-     * message.
+     * Explains a {@link OsmApiException} with a generic error message.
      *
      * @param e the exception
      */
@@ -391,7 +390,6 @@ public final class ExceptionDialogUtil {
      *
      * @param e the exception
      */
-
     public static void explainNestedUnkonwnHostException(OsmTransferException e) {
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
