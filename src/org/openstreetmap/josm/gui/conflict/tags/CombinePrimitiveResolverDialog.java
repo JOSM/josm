@@ -550,7 +550,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 + "If you want to continue, you are shown a dialog to decide how to adapt the relations.<br/><br/>"
                 + "Do you want to continue?",
                 parentRelations.size(), parentRelations.size(), primitives.size(),
-                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(parentRelations));
+                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(parentRelations, 20));
 
         if (!ConditionalOptionPaneUtil.showConfirmationDialog(
                 "combine_tags",

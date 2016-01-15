@@ -504,7 +504,7 @@ public class DeleteCommand extends Command {
                 + "This step is rarely necessary and cannot be undone easily after being uploaded to the server."
                 + "<br/>"
                 + "Do you really want to delete?",
-                relations.size(), relations.size(), DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(relations))
+                relations.size(), relations.size(), DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(relations, 20))
                 + "</html>"));
         return ConditionalOptionPaneUtil.showConfirmationDialog(
                 "delete_relations",
