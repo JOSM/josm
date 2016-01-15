@@ -38,7 +38,9 @@ public class Combo extends ComboMultiSelect {
         if (def != null && !lhm.containsKey(def)) {
             lhm.put(def, new PresetListEntry(def));
         }
-        lhm.put("", new PresetListEntry(""));
+        if (!lhm.containsKey("")) {
+            lhm.put("", new PresetListEntry(""));
+        }
 
         combo = new JosmComboBox<>(lhm.values().toArray(new PresetListEntry[0]));
         component = combo;

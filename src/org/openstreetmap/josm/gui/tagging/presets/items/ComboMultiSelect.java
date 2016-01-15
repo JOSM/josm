@@ -200,13 +200,10 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
         public String getListDisplay() {
             if (value.equals(DIFFERENT))
-                return "<b>"+DIFFERENT.replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</b>";
-
-            if (value.isEmpty())
-                return "&nbsp;";
+                return "<b>" + Utils.escapeReservedCharactersHTML(DIFFERENT) + "</b>";
 
             final StringBuilder res = new StringBuilder("<b>");
-            res.append(getDisplayValue(true).replaceAll("<", "&lt;").replaceAll(">", "&gt;"))
+            res.append(Utils.escapeReservedCharactersHTML(getDisplayValue(true)))
                .append("</b>");
             if (getShortDescription(true) != null) {
                 // wrap in table to restrict the text width
