@@ -96,7 +96,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * The types as preparsed collection.
      */
     public Set<TaggingPresetType> types;
-    public transient List<TaggingPresetItem> data = new LinkedList<>();
+    public final List<TaggingPresetItem> data = new LinkedList<>();
     public transient Roles roles;
     public transient TemplateEntry nameTemplate;
     public transient Match nameTemplateFilter;
@@ -237,19 +237,48 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
     }
 
+    /**
+     * Returns the tags being directly applied (without UI element) by {@link Key} items
+     *
+     * @return a list of tags
+     */
+    private List<Tag> getDirectlyAppliedTags() {
+        List<Tag> tags = new ArrayList<>();
+        for (TaggingPresetItem item : data) {
+            if (item instanceof Key) {
+                tags.add(((Key) item).asTag());
+            }
+        }
+        return tags;
+    }
+
+    /**
+     * Creates a panel for this preset. This includes general information such as name and supported {@link TaggingPresetType types}.
+     * This includes the elements from the individual {@link TaggingPresetItem items}.
+     *
+     * @param selected the selected primitives
+     * @return the newly created panel
+     */
     public PresetPanel createPanel(Collection<OsmPrimitive> selected) {
-        if (data == null)
-            return null;
         PresetPanel p = new PresetPanel();
         List<Link> l = new LinkedList<>();
         List<PresetLink> presetLink = new LinkedList<>();
+
+        final JPanel pp = new JPanel();
         if (types != null) {
-            JPanel pp = new JPanel();
             for (TaggingPresetType t : types) {
                 JLabel la = new JLabel(ImageProvider.get(t.getIconName()));
                 la.setToolTipText(tr("Elements of type {0} are supported.", tr(t.getName())));
                 pp.add(la);
             }
+        }
+        final List<Tag> directlyAppliedTags = getDirectlyAppliedTags();
+        if (!directlyAppliedTags.isEmpty()) {
+            final JLabel label = new JLabel(ImageProvider.get("pastetags"));
+            label.setToolTipText("<html>" + tr("This preset also sets: {0}", Utils.joinAsHtmlUnorderedList(directlyAppliedTags)));
+            pp.add(label);
+        }
+        if (pp.getComponentCount() > 0) {
             p.add(pp, GBC.eol());
         }
         if (preset_name_label) {
