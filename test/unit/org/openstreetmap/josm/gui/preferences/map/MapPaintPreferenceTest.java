@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
@@ -29,6 +31,12 @@ import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 public class MapPaintPreferenceTest {
 
     /**
+     * Global timeout applied to all test methods.
+     */
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(10*60);
+
+    /**
      * Setup test.
      */
     @BeforeClass
@@ -41,7 +49,7 @@ public class MapPaintPreferenceTest {
      * @throws IOException if any I/O error occurs
      * @throws ParseException if the config file does not match MapCSS syntax
      */
-    @Test(timeout = 10*60*1000)
+    @Test
     public void testValidityOfAvailableStyles() throws ParseException, IOException {
         Collection<ExtendedSourceEntry> sources = new MapPaintPreference.MapPaintSourceEditor()
                 .loadAndGetAvailableSources();

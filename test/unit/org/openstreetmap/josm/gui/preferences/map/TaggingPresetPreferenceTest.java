@@ -11,7 +11,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
@@ -25,6 +27,12 @@ import org.xml.sax.SAXException;
 public class TaggingPresetPreferenceTest {
 
     /**
+     * Global timeout applied to all test methods.
+     */
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(10*60);
+
+    /**
      * Setup test.
      */
     @BeforeClass
@@ -35,7 +43,7 @@ public class TaggingPresetPreferenceTest {
     /**
      * Test that available tagging presets are valid.
      */
-    @Test(timeout = 10*60*1000)
+    @Test
     public void testValidityOfAvailablePresets() {
         Collection<ExtendedSourceEntry> sources = new TaggingPresetPreference.TaggingPresetSourceEditor()
                 .loadAndGetAvailableSources();

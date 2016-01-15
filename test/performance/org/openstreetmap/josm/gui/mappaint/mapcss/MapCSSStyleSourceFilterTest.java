@@ -2,7 +2,9 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
@@ -77,6 +79,12 @@ public class MapCSSStyleSourceFilterTest {
     private static final int APPLY_CALLS = 100000;
 
     /**
+     * Global timeout applied to all test methods.
+     */
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(15*60);
+
+    /**
      * Prepare the test.
      */
     @BeforeClass
@@ -141,5 +149,4 @@ public class MapCSSStyleSourceFilterTest {
         }
         timer.done();
     }
-
 }
