@@ -9,12 +9,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -121,5 +123,21 @@ public class DefaultNameFormatterTest {
     static String getFormattedWayName(String tagsString) {
         return DefaultNameFormatter.getInstance().format((Way) OsmUtils.createPrimitive("way " + tagsString))
                 .replace("\u200E", "").replace("\u200F", "");
+    }
+
+    /**
+     * Test of {@link DefaultNameFormatter#formatAsHtmlUnorderedList} methods.
+     */
+    @Test
+    public void testFormatAsHtmlUnorderedList() {
+        assertEquals("<ul><li>incomplete</li></ul>",
+                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(new Node(1)));
+
+        List<Node> nodes = new ArrayList<>(10);
+        for (int i = 1; i <= 10; i++) {
+            nodes.add(new Node(i, 1));
+        }
+        assertEquals("<ul><li>1</li><li>2</li><li>3</li><li>4</li><li>...</li></ul>",
+                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(nodes, 5));
     }
 }
