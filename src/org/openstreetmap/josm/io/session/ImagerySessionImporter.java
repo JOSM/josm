@@ -13,6 +13,9 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.gui.layer.WMTSLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
@@ -21,7 +24,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Session importer for both TMSLayer and WMSLayer.
+ * Session importer for {@link TMSLayer}, {@link WMSLayer} and {@link WMTSLayer}.
+ * @since 5391
  */
 public class ImagerySessionImporter implements SessionLayerImporter {
 

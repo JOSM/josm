@@ -21,6 +21,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * Session importer for {@link GeoImageLayer}.
+ * @since 5505
+ */
 public class GeoImageSessionImporter implements SessionLayerImporter {
 
     @Override
@@ -113,5 +117,4 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
 
         return new GeoImageLayer(entries, gpxLayer, useThumbs);
     }
-
 }

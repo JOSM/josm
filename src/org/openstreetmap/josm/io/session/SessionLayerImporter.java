@@ -9,6 +9,10 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
 import org.w3c.dom.Element;
 
+/**
+ * Session layer importer.
+ * @since 4668
+ */
 public interface SessionLayerImporter {
 
     /**

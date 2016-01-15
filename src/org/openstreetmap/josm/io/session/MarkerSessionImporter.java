@@ -22,6 +22,10 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
 import org.w3c.dom.Element;
 
+/**
+ * Session importer for {@link MarkerLayer}.
+ * @since 5684
+ */
 public class MarkerSessionImporter implements SessionLayerImporter {
 
     @Override

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -19,15 +18,19 @@ import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
 import org.openstreetmap.josm.tools.GBC;
 import org.w3c.dom.Element;
 
-public class GeoImageSessionExporter implements SessionLayerExporter {
+/**
+ * Session exporter for {@link GeoImageLayer}.
+ * @since 5505
+ */
+public class GeoImageSessionExporter extends AbstractSessionExporter<GeoImageLayer> {
 
-    private final GeoImageLayer layer;
-
+    /**
+     * Constructs a new {@code GeoImageSessionExporter}.
+     * @param layer GeoImage layer to export
+     */
     public GeoImageSessionExporter(GeoImageLayer layer) {
-        this.layer = layer;
+        super(layer);
     }
-
-    private JCheckBox export;
 
     @Override
     public Collection<Layer> getDependencies() {
@@ -40,7 +43,6 @@ public class GeoImageSessionExporter implements SessionLayerExporter {
     @Override
     public Component getExportPanel() {
         final JPanel p = new JPanel(new GridBagLayout());
-        export = new JCheckBox();
         export.setSelected(true);
         final JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEFT);
         lbl.setToolTipText(layer.getToolTipText());
@@ -49,16 +51,6 @@ public class GeoImageSessionExporter implements SessionLayerExporter {
         p.add(lbl, GBC.std());
         p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
         return p;
-    }
-
-    @Override
-    public boolean shallExport() {
-        return export.isSelected();
-    }
-
-    @Override
-    public boolean requiresZip() {
-        return false;
     }
 
     @Override

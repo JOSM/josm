@@ -21,18 +21,14 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Collections;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.gui.layer.GpxLayer;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.GpxWriter;
@@ -40,31 +36,27 @@ import org.openstreetmap.josm.io.session.SessionWriter.ExportSupport;
 import org.openstreetmap.josm.tools.GBC;
 import org.w3c.dom.Element;
 
-public class GpxTracksSessionExporter implements SessionLayerExporter {
+/**
+ * Session exporter for {@link GpxLayer}.
+ * @since 5501
+ */
+public class GpxTracksSessionExporter extends AbstractSessionExporter<GpxLayer> {
 
-    private final GpxLayer layer;
     private JRadioButton link;
     private JRadioButton include;
-    private JCheckBox export;
 
     /**
      * Constructs a new {@code GpxTracksSessionExporter}.
      * @param layer GPX layer to export
      */
     public GpxTracksSessionExporter(GpxLayer layer) {
-        this.layer = layer;
-    }
-
-    @Override
-    public Collection<Layer> getDependencies() {
-        return Collections.emptySet();
+        super(layer);
     }
 
     @Override
     public Component getExportPanel() {
         final JPanel p = new JPanel(new GridBagLayout());
         JPanel topRow = new JPanel(new GridBagLayout());
-        export = new JCheckBox();
         export.setSelected(true);
         final JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEFT);
         lbl.setToolTipText(layer.getToolTipText());
@@ -145,11 +137,6 @@ public class GpxTracksSessionExporter implements SessionLayerExporter {
             }
         });
         return p;
-    }
-
-    @Override
-    public boolean shallExport() {
-        return export.isSelected();
     }
 
     @Override

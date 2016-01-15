@@ -13,12 +13,17 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmImporter;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
 import org.w3c.dom.Element;
 
+/**
+ * Session importer for {@link OsmDataLayer}.
+ * @since 4685
+ */
 public class OsmDataSessionImporter implements SessionLayerImporter {
 
     @Override
@@ -49,4 +54,3 @@ public class OsmDataSessionImporter implements SessionLayerImporter {
         }
     }
 }
-

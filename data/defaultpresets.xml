@@ -2165,20 +2165,6 @@
             <key key="natural" value="bay" />
             <text key="name" text="Name" />
         </item> <!-- Bay -->
-        <item name="Cliff" icon="styles/standard/misc/cliff.svg" type="node,way,closedway,relation" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cliff"
-                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=cliff"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=cliff"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=cliff"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=cliff"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=cliff"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=cliff" />
-            <label text="A steep rock face exposure, with a significant vertical, or near vertical (leave the lower face to the right of the way)." />
-            <space />
-            <key key="natural" value="cliff" />
-            <text key="name" text="Name" />
-            <text key="height" text="Height (meters)" />
-        </item> <!-- Cliff -->
     </group> <!-- Water -->
     <group name="Shipping" icon="presets/ferry.png">
         <item name="Ferry Terminal" icon="presets/ferry.png" type="node,closedway" preset_name_label="true">
@@ -8293,6 +8279,20 @@
             <key key="natural" value="valley" />
             <reference ref="name_wikipedia" />
         </item> <!-- Valley -->
+        <item name="Cliff" icon="styles/standard/misc/cliff.svg" type="node,way,closedway,relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cliff"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=cliff"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=cliff"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=cliff"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=cliff"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:natural=cliff"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=cliff" />
+            <label text="A steep rock face exposure, with a significant vertical, or near vertical (leave the lower face to the right of the way)." />
+            <space />
+            <key key="natural" value="cliff" />
+            <text key="name" text="Name" />
+            <text key="height" text="Height (meters)" />
+        </item> <!-- Cliff -->
         <item name="Cave Entrance" icon="presets/cave_entrance.png" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cave_entrance"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=cave_entrance"

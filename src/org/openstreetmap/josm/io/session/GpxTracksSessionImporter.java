@@ -12,6 +12,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.GpxImporter;
@@ -19,6 +20,10 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.NMEAImporter;
 import org.w3c.dom.Element;
 
+/**
+ * Session exporter for {@link GpxLayer}.
+ * @since 5501
+ */
 public class GpxTracksSessionImporter implements SessionLayerImporter {
 
     @Override
@@ -38,7 +43,7 @@ public class GpxTracksSessionImporter implements SessionLayerImporter {
             }
 
             try (InputStream in = support.getInputStream(fileStr)) {
-                GpxImporter.GpxImporterData importData = null;
+                GpxImporter.GpxImporterData importData;
 
                 if (NMEAImporter.FILE_FILTER.acceptName(fileStr)) {
                     importData = NMEAImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null);
