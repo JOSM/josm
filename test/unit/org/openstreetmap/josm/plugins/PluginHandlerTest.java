@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -20,6 +22,12 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
  * Unit tests of {@link PluginHandler} class.
  */
 public class PluginHandlerTest {
+
+    /**
+     * Global timeout applied to all test methods.
+     */
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(10*60);
 
     /**
      * Setup test.
@@ -32,7 +40,7 @@ public class PluginHandlerTest {
     /**
      * Test that available plugins rules can be loaded.
      */
-    @Test(timeout = 10*60*1000)
+    @Test
     public void testValidityOfAvailablePlugins() {
         // Download complete list of plugins
         ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(

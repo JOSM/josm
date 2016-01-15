@@ -10,7 +10,9 @@ import java.util.Random;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
@@ -28,6 +30,12 @@ public class KeyValuePerformanceTest {
     private static final double[] TAG_NODE_RATIOS = new double[] {.05, .3, 3, 20, 200};
     private ArrayList<String> testStrings = new ArrayList<>();
     private Random random;
+
+    /**
+     * Global timeout applied to all test methods.
+     */
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(15*60);
 
     /**
      * Prepare the test.

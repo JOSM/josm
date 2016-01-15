@@ -1,9 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
@@ -31,12 +30,12 @@ public class OsmPrimitiveKeyHandlingTest {
     @Test
     public void emptyNode() {
         Node n = new Node();
-        assertSame(n.getKeys().size(), 0);
-        assertFalse(n.hasKeys());
-        assertFalse(n.hasKey("nosuchkey"));
-        assertTrue(n.keySet().isEmpty());
+        testKeysSize(n, 0);
+        testGetKey(n, "nosuchkey", null);
 
         n.remove("nosuchkey"); // should work
+        testKeysSize(n, 0);
+        testGetKey(n, "nosuchkey", null);
     }
 
     /**
@@ -46,11 +45,9 @@ public class OsmPrimitiveKeyHandlingTest {
     public void put() {
         Node n = new Node();
         n.put("akey", "avalue");
-        assertTrue(n.get("akey").equals("avalue"));
-        assertSame(n.getKeys().size(), 1);
+        testKeysSize(n, 1);
 
-        assertSame(n.keySet().size(), 1);
-        assertTrue(n.keySet().contains("akey"));
+        testGetKey(n, "akey", "avalue");
     }
 
     /**
@@ -63,7 +60,7 @@ public class OsmPrimitiveKeyHandlingTest {
         n.put("key.2", "value.2");
         assertTrue(n.get("key.1").equals("value.1"));
         assertTrue(n.get("key.2").equals("value.2"));
-        assertSame(n.getKeys().size(), 2);
+        testKeysSize(n, 2);
         assertTrue(n.hasKeys());
         assertTrue(n.hasKey("key.1"));
         assertTrue(n.hasKey("key.2"));
@@ -77,24 +74,29 @@ public class OsmPrimitiveKeyHandlingTest {
     public void remove() {
         Node n = new Node();
         n.put("key.1", "value.1");
-        n.put("key.2", "value.2");
+        n.put(new String("key.2"), new String("value.2")); // Test that equals is used and not ==
+
+        testGetKey(n, "key.1", "value.1");
+        testGetKey(n, "key.2", "value.2");
 
         n.remove("nosuchkey");             // should work
-        assertSame(n.getKeys().size(), 2); // still 2 tags ?
+        testKeysSize(n, 2);                // still 2 tags ?
+
+        testGetKey(n, "key.1", "value.1");
+        testGetKey(n, "key.2", "value.2");
 
         n.remove("key.1");
-        assertSame(n.getKeys().size(), 1);
-        assertFalse(n.hasKey("key.1"));
-        assertNull(n.get("key.1"));
-        assertTrue(n.hasKey("key.2"));
-        assertTrue(n.get("key.2").equals("value.2"));
+        testKeysSize(n, 1);
+        assertTrue(n.hasKeys());
+
+        testGetKey(n, "key.1", null);
+        testGetKey(n, "key.2", "value.2");
 
         n.remove("key.2");
-        assertSame(n.getKeys().size(), 0);
-        assertFalse(n.hasKey("key.1"));
-        assertNull(n.get("key.1"));
-        assertFalse(n.hasKey("key.2"));
-        assertNull(n.get("key.2"));
+        testKeysSize(n, 0);
+        assertFalse(n.hasKeys());
+        testGetKey(n, "key.1", null);
+        testGetKey(n, "key.2", null);
     }
 
     /**
@@ -108,7 +110,7 @@ public class OsmPrimitiveKeyHandlingTest {
         n.put("key.2", "value.2");
 
         n.removeAll();
-        assertSame(n.getKeys().size(), 0);
+        testKeysSize(n, 0);
     }
 
     /**
@@ -147,4 +149,42 @@ public class OsmPrimitiveKeyHandlingTest {
 
         assertFalse(n1.hasEqualSemanticAttributes(n2));
     }
+
+    /**
+     * Tests if the size of the keys map is right.
+     * @author Michael Zangl
+     * @param p The primitive (node) to test
+     * @param expectedSize The expected size.
+     * @throws AssertionError on failure.
+     */
+    private void testKeysSize(OsmPrimitive p, int expectedSize) {
+        assertEquals(expectedSize, p.getKeys().size());
+        assertEquals(expectedSize, p.keySet().size());
+        assertEquals(expectedSize, p.getKeys().entrySet().size());
+        assertEquals(expectedSize, p.getKeys().keySet().size());
+        assertEquals(expectedSize, p.getNumKeys());
+        boolean empty = expectedSize == 0;
+        assertEquals(empty, p.getKeys().isEmpty());
+        assertEquals(empty, p.keySet().isEmpty());
+        assertEquals(empty, p.getKeys().entrySet().isEmpty());
+        assertEquals(empty, p.getKeys().keySet().isEmpty());
+        assertEquals(!empty, p.hasKeys());
+    }
+
+    /**
+     * Tests all key get methods for that node.
+     * @author Michael Zangl
+     * @param p The primitive (node)
+     * @param key The key to test
+     * @param value The value the key should have.
+     * @throws AssertionError on failure.
+     */
+    private void testGetKey(OsmPrimitive p, String key, String value) {
+        assertEquals(value != null, p.hasKey(key));
+        assertEquals(value != null, p.getKeys().containsKey(key));
+        assertEquals(value != null, p.getKeys().keySet().contains(key));
+        assertEquals(value, p.get(key));
+        assertEquals(value, p.getKeys().get(key));
+    }
+
 }

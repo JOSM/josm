@@ -8,7 +8,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -29,6 +31,12 @@ public class StyledMapRendererPerformanceTest {
     private static DataSet dsRestriction;
     private static DataSet dsMultipolygon;
     private static DataSet dsCity;
+
+    /**
+     * Global timeout applied to all test methods.
+     */
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(15*60);
 
     @BeforeClass
     public static void load() throws Exception {

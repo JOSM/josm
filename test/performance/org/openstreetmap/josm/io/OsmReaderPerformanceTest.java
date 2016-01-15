@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
@@ -28,6 +30,12 @@ import sun.misc.IOUtils;
 public class OsmReaderPerformanceTest {
     private static final int TIMES = 4;
     private static String DATA_FILE = "data_nodist/neubrandenburg.osm.bz2";
+
+    /**
+     * Global timeout applied to all test methods.
+     */
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(15*60);
 
     /**
      * Prepare the test.
