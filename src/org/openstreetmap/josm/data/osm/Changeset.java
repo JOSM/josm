@@ -88,6 +88,20 @@ public final class Changeset implements Tagged {
         }
     }
 
+    /**
+     * Creates a changeset with the data obtained from the given preset, i.e.,
+     * the {@link AbstractPrimitive#getChangesetId() changeset id}, {@link AbstractPrimitive#getUser() user}, and
+     * {@link AbstractPrimitive#getTimestamp() timestamp}.
+     * @param primitive the primitive to use
+     * @return the created changeset
+     */
+    public static Changeset fromPrimitive(final OsmPrimitive primitive) {
+        final Changeset changeset = new Changeset(primitive.getChangesetId());
+        changeset.setUser(primitive.getUser());
+        changeset.setCreatedAt(primitive.getTimestamp()); // not accurate in all cases
+        return changeset;
+    }
+
     public void visit(Visitor v) {
         v.visit(this);
     }

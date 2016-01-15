@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
+import org.openstreetmap.josm.gui.history.VersionInfoPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -47,6 +48,8 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     private JLabel lblTheirReferrers;
 
     private final transient PropertiesMergeModel model;
+    private final VersionInfoPanel mineVersionInfo = new VersionInfoPanel();
+    private final VersionInfoPanel theirVersionInfo = new VersionInfoPanel();
 
     /**
      * Constructs a new {@code PropertiesMerger}.
@@ -77,30 +80,39 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
-        gc.insets = new Insets(10, 0, 10, 0);
+        gc.insets = new Insets(10, 0, 0, 0);
         JLabel lblMyVersion = new JLabel(tr("My version"));
         lblMyVersion.setToolTipText(tr("Properties in my dataset, i.e. the local dataset"));
         add(lblMyVersion, gc);
 
         gc.gridx = 3;
-        gc.gridy = 0;
         JLabel lblMergedVersion = new JLabel(tr("Merged version"));
         lblMergedVersion.setToolTipText(
                 tr("Properties in the merged element. They will replace properties in my elements when merge decisions are applied."));
         add(lblMergedVersion, gc);
 
         gc.gridx = 5;
-        gc.gridy = 0;
         JLabel lblTheirVersion = new JLabel(tr("Their version"));
         lblTheirVersion.setToolTipText(tr("Properties in their dataset, i.e. the server dataset"));
         add(lblTheirVersion, gc);
+
+        gc.gridx = 1;
+        gc.gridy = 1;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.LINE_START;
+        gc.insets = new Insets(0, 0, 20, 0);
+        add(mineVersionInfo, gc);
+
+        gc.gridx = 5;
+        add(theirVersionInfo, gc);
+
     }
 
     protected void buildCoordinateConflictRows() {
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.gridx = 0;
-        gc.gridy = 1;
+        gc.gridy = 2;
         gc.gridwidth = 1;
         gc.gridheight = 1;
         gc.fill = GridBagConstraints.HORIZONTAL;
@@ -111,7 +123,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(new JLabel(tr("Coordinates:")), gc);
 
         gc.gridx = 1;
-        gc.gridy = 1;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
@@ -119,7 +130,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(lblMyCoordinates = buildValueLabel("label.mycoordinates"), gc);
 
         gc.gridx = 2;
-        gc.gridy = 1;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
@@ -131,7 +141,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(btnKeepMyCoordinates, gc);
 
         gc.gridx = 3;
-        gc.gridy = 1;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
@@ -139,7 +148,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(lblMergedCoordinates = buildValueLabel("label.mergedcoordinates"), gc);
 
         gc.gridx = 4;
-        gc.gridy = 1;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
@@ -150,7 +158,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(btnKeepTheirCoordinates, gc);
 
         gc.gridx = 5;
-        gc.gridy = 1;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
@@ -159,7 +166,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
 
         // ---------------------------------------------------
         gc.gridx = 3;
-        gc.gridy = 2;
+        gc.gridy = 3;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
@@ -174,7 +181,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.gridx = 0;
-        gc.gridy = 3;
+        gc.gridy = 4;
         gc.gridwidth = 1;
         gc.gridheight = 1;
         gc.fill = GridBagConstraints.BOTH;
@@ -185,7 +192,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(new JLabel(tr("Deleted State:")), gc);
 
         gc.gridx = 1;
-        gc.gridy = 3;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
@@ -193,7 +199,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(lblMyDeletedState = buildValueLabel("label.mydeletedstate"), gc);
 
         gc.gridx = 2;
-        gc.gridy = 3;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
@@ -205,7 +210,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(btnKeepMyDeletedState, gc);
 
         gc.gridx = 3;
-        gc.gridy = 3;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
@@ -213,7 +217,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(lblMergedDeletedState = buildValueLabel("label.mergeddeletedstate"), gc);
 
         gc.gridx = 4;
-        gc.gridy = 3;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
@@ -225,7 +228,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(btnKeepTheirDeletedState, gc);
 
         gc.gridx = 5;
-        gc.gridy = 3;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
@@ -234,7 +236,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
 
         // ---------------------------------------------------
         gc.gridx = 3;
-        gc.gridy = 4;
+        gc.gridy = 5;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
@@ -506,6 +508,8 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     @Override
     public void populate(Conflict<? extends OsmPrimitive> conflict) {
         model.populate(conflict);
+        mineVersionInfo.update(conflict.getMy(), true);
+        theirVersionInfo.update(conflict.getTheir(), false);
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.text.DateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -133,25 +134,22 @@ public class VersionInfoPanel extends JPanel implements Observer {
         return model.getPointInTime(pointInTimeType);
     }
 
-    protected String getInfoText() {
-        HistoryOsmPrimitive primitive = getPrimitive();
-        if (primitive == null)
-            return "";
+    protected String getInfoText(final Date timestamp, final long version, final boolean isLatest) {
         String text;
-        if (model.isLatest(primitive)) {
+        if (isLatest) {
             OsmDataLayer editLayer = Main.main.getEditLayer();
             text = tr("<html>Version <strong>{0}</strong> currently edited in layer ''{1}''</html>",
-                    Long.toString(primitive.getVersion()),
+                    Long.toString(version),
                     editLayer == null ? tr("unknown") : editLayer.getName()
                     );
         } else {
             String date = "?";
-            if (primitive.getTimestamp() != null) {
-                date = DateUtils.formatDateTime(primitive.getTimestamp(), DateFormat.SHORT, DateFormat.SHORT);
+            if (timestamp != null) {
+                date = DateUtils.formatDateTime(timestamp, DateFormat.SHORT, DateFormat.SHORT);
             }
             text = tr(
                     "<html>Version <strong>{0}</strong> created on <strong>{1}</strong></html>",
-                    Long.toString(primitive.getVersion()), date);
+                    Long.toString(version), date);
         }
         return text;
     }
@@ -189,17 +187,24 @@ public class VersionInfoPanel extends JPanel implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        lblInfo.setText(getInfoText());
-
         HistoryOsmPrimitive primitive = getPrimitive();
         Changeset cs = primitive.getChangeset();
+        update(cs, model.isLatest(primitive), primitive.getTimestamp(), primitive.getVersion());
+    }
 
-        if (!model.isLatest(primitive)) {
-            User user = primitive.getUser();
-            String url = Main.getBaseBrowseUrl() + "/changeset/" + primitive.getChangesetId();
+    public void update(final OsmPrimitive primitive, final boolean isLatest) {
+        update(Changeset.fromPrimitive(primitive), isLatest, primitive.getTimestamp(), primitive.getVersion());
+    }
+
+    public void update(final Changeset cs, final boolean isLatest, final Date timestamp, final long version) {
+        lblInfo.setText(getInfoText(timestamp, version, isLatest));
+
+        if (!isLatest) {
+            User user = cs.getUser();
+            String url = Main.getBaseBrowseUrl() + "/changeset/" + cs.getId();
             lblChangeset.setUrl(url);
-            lblChangeset.setDescription(Long.toString(primitive.getChangesetId()));
-            changesetDialogAction.setId((int) primitive.getChangesetId());
+            lblChangeset.setDescription(Long.toString(cs.getId()));
+            changesetDialogAction.setId(cs.getId());
             changesetButton.setEnabled(true);
 
             String username = "";
@@ -227,7 +232,7 @@ public class VersionInfoPanel extends JPanel implements Observer {
             changesetButton.setEnabled(false);
         }
 
-        final Changeset oppCs = model.getPointInTime(pointInTimeType.opposite()).getChangeset();
+        final Changeset oppCs = model != null ? model.getPointInTime(pointInTimeType.opposite()).getChangeset() : null;
         updateText(cs, "comment", texChangesetComment, null, oppCs, texChangesetComment);
         updateText(cs, "source", texChangesetSource, lblSource, oppCs, pnlChangesetSource);
         updateText(cs, "imagery_used", texChangesetImageryUsed, lblImageryUsed, oppCs, pnlChangesetImageryUsed);
