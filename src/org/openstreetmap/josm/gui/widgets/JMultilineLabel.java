@@ -50,6 +50,7 @@ public class JMultilineLabel extends JEditorPane {
         if (!html.startsWith("<html>")) {
             html = "<html>" + html + "</html>";
         }
+        setFocusable(false);
         super.setText(html);
     }
 
