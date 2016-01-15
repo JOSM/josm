@@ -35,6 +35,10 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
+/**
+ * Utilities for exception handling.
+ * @since 2097
+ */
 public final class ExceptionUtil {
 
     private ExceptionUtil() {
@@ -42,7 +46,7 @@ public final class ExceptionUtil {
     }
 
     /**
-     * handles an exception caught during OSM API initialization
+     * Explains an exception caught during OSM API initialization.
      *
      * @param e the exception
      * @return The HTML formatted error message to display
@@ -52,9 +56,16 @@ public final class ExceptionUtil {
         return tr(
                 "<html>Failed to initialize communication with the OSM server {0}.<br>"
                 + "Check the server URL in your preferences and your internet connection.",
-                OsmApi.getOsmApi().getServerUrl());
+                OsmApi.getOsmApi().getServerUrl())+"</html>";
     }
 
+    /**
+     * Explains a {@link OsmApiException} which was thrown because accessing a protected
+     * resource was forbidden.
+     *
+     * @param e the exception
+     * @return The HTML formatted error message to display
+     */
     public static String explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
         Main.error(e);
         return tr(
@@ -68,10 +79,12 @@ public final class ExceptionUtil {
     }
 
     public static Pair<OsmPrimitive, Collection<OsmPrimitive>> parsePreconditionFailed(String msg) {
+        if (msg == null)
+            return null;
         final String ids = "(\\d+(?:,\\d+)*)";
         final Collection<OsmPrimitive> refs = new TreeSet<>(); // error message can contain several times the same way
         Matcher m;
-        m = Pattern.compile(".*Node (\\d+) is still used by relations " + ids + ".*").matcher(msg);
+        m = Pattern.compile(".*Node (\\d+) is still used by relations? " + ids + ".*").matcher(msg);
         if (m.matches()) {
             OsmPrimitive n = new Node(Long.parseLong(m.group(1)));
             for (String s : m.group(2).split(",")) {
@@ -79,7 +92,7 @@ public final class ExceptionUtil {
             }
             return Pair.create(n, refs);
         }
-        m = Pattern.compile(".*Node (\\d+) is still used by ways " + ids + ".*").matcher(msg);
+        m = Pattern.compile(".*Node (\\d+) is still used by ways? " + ids + ".*").matcher(msg);
         if (m.matches()) {
             OsmPrimitive n = new Node(Long.parseLong(m.group(1)));
             for (String s : m.group(2).split(",")) {
@@ -95,7 +108,7 @@ public final class ExceptionUtil {
             }
             return Pair.create(n, refs);
         }
-        m = Pattern.compile(".*Way (\\d+) is still used by relations " + ids + ".*").matcher(msg);
+        m = Pattern.compile(".*Way (\\d+) is still used by relations? " + ids + ".*").matcher(msg);
         if (m.matches()) {
             OsmPrimitive n = new Way(Long.parseLong(m.group(1)));
             for (String s : m.group(2).split(",")) {
@@ -239,6 +252,13 @@ public final class ExceptionUtil {
         }
     }
 
+    /**
+     * Explains a {@link OsmApiException} which was thrown because the authentication at
+     * the OSM server failed, with basic authentication.
+     *
+     * @param e the exception
+     * @return The HTML formatted error message to display
+     */
     public static String explainFailedBasicAuthentication(OsmApiException e) {
         Main.error(e);
         return tr("<html>"
@@ -249,6 +269,13 @@ public final class ExceptionUtil {
         );
     }
 
+    /**
+     * Explains a {@link OsmApiException} which was thrown because the authentication at
+     * the OSM server failed, with OAuth authentication.
+     *
+     * @param e the exception
+     * @return The HTML formatted error message to display
+     */
     public static String explainFailedOAuthAuthentication(OsmApiException e) {
         Main.error(e);
         return tr("<html>"
@@ -259,11 +286,18 @@ public final class ExceptionUtil {
         );
     }
 
+    /**
+     * Explains a {@link OsmApiException} which was thrown because accessing a protected
+     * resource was forbidden (HTTP 403), without OAuth authentication.
+     *
+     * @param e the exception
+     * @return The HTML formatted error message to display
+     */
     public static String explainFailedAuthorisation(OsmApiException e) {
         Main.error(e);
         String header = e.getErrorHeader();
         String body = e.getErrorBody();
-        String msg = null;
+        String msg;
         if (header != null) {
             if (body != null && !header.equals(body)) {
                 msg = header + " (" + body + ')';
@@ -290,6 +324,13 @@ public final class ExceptionUtil {
         }
     }
 
+    /**
+     * Explains a {@link OsmApiException} which was thrown because accessing a protected
+     * resource was forbidden (HTTP 403), with OAuth authentication.
+     *
+     * @param e the exception
+     * @return The HTML formatted error message to display
+     */
     public static String explainFailedOAuthAuthorisation(OsmApiException e) {
         Main.error(e);
         return tr("<html>"
@@ -355,9 +396,7 @@ public final class ExceptionUtil {
         Main.error(e);
         String msg = e.getErrorHeader();
         if (msg != null) {
-            String pattern = "The changeset (\\d+) was closed at (.*)";
-            Pattern p = Pattern.compile(pattern);
-            Matcher m = p.matcher(msg);
+            Matcher m = Pattern.compile("The changeset (\\d+) was closed at (.*)").matcher(msg);
             if (m.matches()) {
                 long changesetId = Long.parseLong(m.group(1));
                 Date closeDate = null;
@@ -391,7 +430,7 @@ public final class ExceptionUtil {
             msg = tr(
                     "<html>The server reported that it has detected a conflict.");
         }
-        return msg;
+        return msg.endsWith("</html>") ? msg : (msg + "</html>");
     }
 
     /**
@@ -448,7 +487,7 @@ public final class ExceptionUtil {
 
         return tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''<br>"
                 + "for security reasons. This is most likely because you are running<br>"
-                + "in an applet and because you did not load your applet from ''{1}''.", apiUrl, host);
+                + "in an applet and because you did not load your applet from ''{1}''.", apiUrl, host)+"</html>";
     }
 
     /**
@@ -462,7 +501,7 @@ public final class ExceptionUtil {
     public static String explainNestedSocketException(OsmTransferException e) {
         Main.error(e);
         return tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
-                + "Please check your internet connection.", e.getUrl());
+                + "Please check your internet connection.", e.getUrl())+"</html>";
     }
 
     /**
@@ -478,8 +517,8 @@ public final class ExceptionUtil {
         Main.error(e);
         return tr("<html>Failed to upload data to or download data from<br>" + "''{0}''<br>"
                 + "due to a problem with transferring data.<br>"
-                + "Details (untranslated): {1}</html>", e.getUrl(), ioe
-                .getMessage());
+                + "Details (untranslated): {1}</html>", e.getUrl(),
+                ioe != null ? ioe.getMessage() : "null");
     }
 
     /**
@@ -494,7 +533,7 @@ public final class ExceptionUtil {
         Main.error(e);
         return tr("<html>Failed to download data. "
                 + "Its format is either unsupported, ill-formed, and/or inconsistent.<br>"
-                + "<br>Details (untranslated): {0}</html>", ide.getMessage());
+                + "<br>Details (untranslated): {0}</html>", ide != null ? ide.getMessage() : "null");
     }
 
     /**
@@ -509,12 +548,12 @@ public final class ExceptionUtil {
         OfflineAccessException oae = getNestedException(e, OfflineAccessException.class);
         Main.error(e);
         return tr("<html>Failed to download data.<br>"
-                + "<br>Details: {0}</html>", oae.getMessage());
+                + "<br>Details: {0}</html>", oae != null ? oae.getMessage() : "null");
     }
 
     /**
      * Explains a {@link OsmApiException} which was thrown because of an internal server
-     * error in the OSM API server..
+     * error in the OSM API server.
      *
      * @param e the exception
      * @return The HTML formatted error message to display
@@ -522,7 +561,7 @@ public final class ExceptionUtil {
     public static String explainInternalServerError(OsmTransferException e) {
         Main.error(e);
         return tr("<html>The OSM server<br>" + "''{0}''<br>" + "reported an internal server error.<br>"
-                + "This is most likely a temporary problem. Please try again later.", e.getUrl());
+                + "This is most likely a temporary problem. Please try again later.", e.getUrl())+"</html>";
     }
 
     /**
@@ -612,7 +651,7 @@ public final class ExceptionUtil {
         Main.error(e);
         return tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
                 + "Host name ''{1}'' could not be resolved. <br>"
-                + "Please check the API URL in your preferences and your internet connection.", apiUrl, host);
+                + "Please check the API URL in your preferences and your internet connection.", apiUrl, host)+"</html>";
     }
 
     /**
@@ -707,5 +746,4 @@ public final class ExceptionUtil {
             return explainGeneric(e);
         }
     }
-
 }
