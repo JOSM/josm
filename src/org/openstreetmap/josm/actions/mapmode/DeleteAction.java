@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -317,22 +318,36 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * Deletes the relation in the context of the given layer.
      *
      * @param layer the layer in whose context the relation is deleted. Must not be null.
-     * @param toDelete  the relation to be deleted. Must  not be null.
+     * @param toDelete  the relation to be deleted. Must not be null.
      * @throws IllegalArgumentException if layer is null
-     * @throws IllegalArgumentException if toDelete is nul
+     * @throws IllegalArgumentException if toDelete is null
      */
     public static void deleteRelation(OsmDataLayer layer, Relation toDelete) {
+        deleteRelations(layer, Collections.singleton(toDelete));
+    }
+
+    /**
+     * Deletes the relations in the context of the given layer.
+     *
+     * @param layer the layer in whose context the relations are deleted. Must not be null.
+     * @param toDelete  the relations to be deleted. Must not be null.
+     * @throws IllegalArgumentException if layer is null
+     * @throws IllegalArgumentException if toDelete is null
+     */
+    public static void deleteRelations(OsmDataLayer layer, Collection<Relation> toDelete) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         CheckParameterUtil.ensureParameterNotNull(toDelete, "toDelete");
 
-        Command cmd = DeleteCommand.delete(layer, Collections.singleton(toDelete));
+        final Command cmd = DeleteCommand.delete(layer, toDelete);
         if (cmd != null) {
             // cmd can be null if the user cancels dialogs DialogCommand displays
             Main.main.undoRedo.add(cmd);
-            if (getCurrentDataSet().getSelectedRelations().contains(toDelete)) {
-                getCurrentDataSet().toggleSelected(toDelete);
+            for (Relation relation : toDelete) {
+                if (getCurrentDataSet().getSelectedRelations().contains(relation)) {
+                    getCurrentDataSet().toggleSelected(relation);
+                }
+                RelationDialogManager.getRelationDialogManager().close(layer, relation);
             }
-            RelationDialogManager.getRelationDialogManager().close(layer, toDelete);
         }
     }
 

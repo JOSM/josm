@@ -4,8 +4,10 @@ package org.openstreetmap.josm.actions.relation;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.util.Collection;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -14,7 +16,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 5799
  */
 public class DeleteRelationsAction extends AbstractRelationAction {
-    static class AbortException extends Exception {}
 
     /**
      * Constructs a new <code>DeleteRelationsAction</code>.
@@ -25,11 +26,10 @@ public class DeleteRelationsAction extends AbstractRelationAction {
         putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
     }
 
-    protected void deleteRelation(Relation toDelete) {
+    protected void deleteRelation(Collection<Relation> toDelete) {
         if (toDelete == null)
             return;
-        org.openstreetmap.josm.actions.mapmode.DeleteAction
-                .deleteRelation(Main.main.getEditLayer(), toDelete);
+        DeleteAction.deleteRelations(Main.main.getEditLayer(), toDelete);
         // clear selection after deletion
         if (Main.map.relationListDialog != null)
                 Main.map.relationListDialog.selectRelations(null);
@@ -39,9 +39,6 @@ public class DeleteRelationsAction extends AbstractRelationAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || !Main.main.hasEditLayer())
             return;
-        for (Relation r : relations) {
-            deleteRelation(r);
-        }
+        deleteRelation(relations);
     }
 }
-
