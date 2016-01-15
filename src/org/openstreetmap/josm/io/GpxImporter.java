@@ -25,12 +25,6 @@ import org.xml.sax.SAXException;
 public class GpxImporter extends FileImporter {
 
     /**
-     * The GPX file filter (*.gpx and *.gpx.gz files).
-     */
-    public static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
-            "gpx", "gpx", tr("GPX Files"), true);
-
-    /**
      * Utility class containing imported GPX and marker layers, and a task to run after they are added to MapView.
      */
     public static class GpxImporterData {
@@ -70,7 +64,15 @@ public class GpxImporter extends FileImporter {
      * Constructs a new {@code GpxImporter}.
      */
     public GpxImporter() {
-        super(FILE_FILTER);
+        super(getFileFilter());
+    }
+
+    /**
+     * Returns a GPX file filter (*.gpx and *.gpx.gz files).
+     */
+    public static ExtensionFileFilter getFileFilter() {
+        return ExtensionFileFilter.newFilterWithArchiveExtensions(
+            "gpx", Main.pref.get("save.extension.gpx", "gpx"), tr("GPX Files"), true);
     }
 
     @Override

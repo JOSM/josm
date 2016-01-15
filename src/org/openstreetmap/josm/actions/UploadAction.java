@@ -253,9 +253,9 @@ public class UploadAction extends JosmAction {
         });
         dialog.setUploadedPrimitives(apiData);
         dialog.setVisible(true);
+        dialog.rememberUserInput();
         if (dialog.isCanceled())
             return;
-        dialog.rememberUserInput();
 
         for (UploadHook hook : lateUploadHooks) {
             if (!hook.checkUpload(apiData))

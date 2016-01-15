@@ -362,7 +362,7 @@ public class GpxLayer extends Layer {
 
     @Override
     public File createAndOpenSaveFileChooser() {
-        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save GPX file"), GpxImporter.FILE_FILTER);
+        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save GPX file"), GpxImporter.getFileFilter());
     }
 
 }

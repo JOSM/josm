@@ -62,7 +62,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
      * Constructs a new {@code GpxExporter}.
      */
     public GpxExporter() {
-        super(GpxImporter.FILE_FILTER);
+        super(GpxImporter.getFileFilter());
     }
 
     @Override
