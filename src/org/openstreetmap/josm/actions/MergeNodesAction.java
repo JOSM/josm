@@ -224,7 +224,7 @@ public class MergeNodesAction extends JosmAction {
                             Main.parent,
                             tr("Cannot merge nodes: Would have to delete way {0} which is still used by {1}",
                                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(w),
-                                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(w.getReferrers())),
+                                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(w.getReferrers(), 20)),
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE,
                             null, /* no icon */

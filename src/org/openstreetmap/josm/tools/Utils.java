@@ -1306,11 +1306,32 @@ public final class Utils {
         if (s == null) {
             return null;
         } else {
-            final List<String> lines = Arrays.asList(s.split("\\n"));
-            if (lines.size() > maxLines) {
-                return join("\n", lines.subList(0, maxLines - 1)) + "\n...";
+            return join("\n", limit(Arrays.asList(s.split("\\n")), maxLines, "..."));
+        }
+    }
+
+    /**
+     * If the collection {@code elements} is larger than {@code maxElements} elements,
+     * the collection is shortened and the {@code overflowIndicator} is appended.
+     * @param elements collection to shorten
+     * @param maxElements maximum number of elements to keep (including including the {@code overflowIndicator})
+     * @param overflowIndicator the element used to indicate that the collection has been shortened
+     * @return the shortened collection
+     */
+    public static <T> Collection<T> limit(Collection<T> elements, int maxElements, T overflowIndicator) {
+        if (elements == null) {
+            return null;
+        } else {
+            if (elements.size() > maxElements) {
+                final Collection<T> r = new ArrayList<>(maxElements);
+                final Iterator<T> it = elements.iterator();
+                while (r.size() < maxElements - 1) {
+                    r.add(it.next());
+                }
+                r.add(overflowIndicator);
+                return r;
             } else {
-                return s;
+                return elements;
             }
         }
     }
