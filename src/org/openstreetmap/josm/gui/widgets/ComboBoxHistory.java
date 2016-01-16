@@ -9,22 +9,34 @@ import javax.swing.DefaultComboBoxModel;
 
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 
-public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> implements Iterable<AutoCompletionListItem> {
+/**
+ * A data model for {@link HistoryComboBox}
+ */
+class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> implements Iterable<AutoCompletionListItem> {
 
     private final int maxSize;
 
     private final transient List<HistoryChangedListener> listeners = new ArrayList<>();
 
-    public ComboBoxHistory(int size) {
+    /**
+     * Constructs a {@code ComboBoxHistory} keeping track of {@code maxSize} items
+     * @param size the history size
+     */
+    ComboBoxHistory(int size) {
         maxSize = size;
     }
 
+    /**
+     * Adds or moves an element to the top of the history
+     * @param s the element to add
+     */
     public void addElement(String s) {
         addElement(new AutoCompletionListItem(s));
     }
 
     /**
      * Adds or moves an element to the top of the history
+     * @param o the element to add
      */
     @Override
     public void addElement(AutoCompletionListItem o) {
@@ -79,13 +91,22 @@ public class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem
         };
     }
 
+    /**
+     * {@link javax.swing.DefaultComboBoxModel#removeAllElements() Removes all items}
+     * and {@link ComboBoxHistory#addElement(String) adds} the given items.
+     * @param items the items to set
+     */
     public void setItemsAsString(List<String> items) {
         removeAllElements();
         for (int i = items.size()-1; i >= 0; i--) {
-            addElement(new AutoCompletionListItem(items.get(i)));
+            addElement(items.get(i));
         }
     }
 
+    /**
+     * Returns the {@link AutoCompletionListItem} items as strings
+     * @return a list of strings
+     */
     public List<String> asStringList() {
         List<String> list = new ArrayList<>(maxSize);
         for (AutoCompletionListItem item : this) {

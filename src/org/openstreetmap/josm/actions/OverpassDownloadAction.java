@@ -149,7 +149,7 @@ public class OverpassDownloadAction extends JosmAction {
             final String tooltip = tr("Builds an Overpass query using the Overpass Turbo query wizard");
             overpassWizard = new HistoryComboBox();
             overpassWizard.setToolTipText(tooltip);
-            overpassWizard.getEditor().getEditorComponent().addFocusListener(disableActionsFocusListener);
+            overpassWizard.getEditorComponent().addFocusListener(disableActionsFocusListener);
             final JButton buildQuery = new JButton(tr("Build query"));
             buildQuery.addActionListener(new AbstractAction() {
                 @Override

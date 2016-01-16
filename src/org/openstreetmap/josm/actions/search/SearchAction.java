@@ -208,7 +208,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         try {
-                            JTextComponent tf = (JTextComponent) hcb.getEditor().getEditorComponent();
+                            JTextComponent tf = hcb.getEditorComponent();
                             tf.getDocument().insertString(tf.getCaretPosition(), ' ' + insertText, null);
                         } catch (BadLocationException ex) {
                             throw new RuntimeException(ex.getMessage(), ex);
@@ -282,7 +282,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         right = new JPanel(new GridBagLayout());
         buildHints(right, hcbSearchString);
 
-        final JTextComponent editorComponent = (JTextComponent) hcbSearchString.getEditor().getEditorComponent();
+        final JTextComponent editorComponent = hcbSearchString.getEditorComponent();
         editorComponent.getDocument().addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
 
             @Override

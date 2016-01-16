@@ -8,6 +8,9 @@ import javax.swing.text.JTextComponent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 
+/**
+ * An {@link AutoCompletingComboBox} which keeps a history
+ */
 public class HistoryComboBox extends AutoCompletingComboBox {
     private final ComboBoxHistory model;
 
@@ -22,24 +25,48 @@ public class HistoryComboBox extends AutoCompletingComboBox {
         setEditable(true);
     }
 
+    /**
+     * Returns the text contained in this component
+     * @return the text
+     * @see JTextComponent#getText()
+     */
     public String getText() {
-        return ((JTextComponent) getEditor().getEditorComponent()).getText();
+        return getEditorComponent().getText();
     }
 
+    /**
+     * Sets the text of this component to the specified text
+     * @param value the text to set
+     * @see JTextComponent#setText(java.lang.String)
+     */
     public void setText(String value) {
         setAutocompleteEnabled(false);
-        ((JTextComponent) getEditor().getEditorComponent()).setText(value);
+        getEditorComponent().setText(value);
         setAutocompleteEnabled(true);
     }
 
+    /**
+     * Adds or moves the current element to the top of the history
+     * @see ComboBoxHistory#addElement(java.lang.String)
+     */
     public void addCurrentItemToHistory() {
         model.addElement((String) getEditor().getItem());
     }
 
+    /**
+     * Sets the elements of the ComboBox to the given items
+     * @param history the items to set
+     * @see ComboBoxHistory#setItemsAsString(java.util.List)
+     */
     public void setHistory(List<String> history) {
         model.setItemsAsString(history);
     }
 
+    /**
+     * Returns the items as strings
+     * @return the items as strings
+     * @see ComboBoxHistory#asStringList()
+     */
     public List<String> getHistory() {
         return model.asStringList();
     }

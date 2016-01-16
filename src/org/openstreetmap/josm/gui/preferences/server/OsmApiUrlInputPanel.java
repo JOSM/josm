@@ -15,6 +15,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
@@ -27,10 +28,11 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
-import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -48,11 +50,13 @@ public class OsmApiUrlInputPanel extends JPanel {
 
     private JLabel lblValid;
     private JLabel lblApiUrl;
-    private JosmTextField tfOsmServerUrl;
+    private HistoryComboBox tfOsmServerUrl;
     private transient ApiUrlValidator valOsmServerUrl;
     private SideButton btnTest;
     /** indicates whether to use the default OSM URL or not */
     private JCheckBox cbUseDefaultServerUrl;
+    private final CollectionProperty SERVER_URL_HISTORY = new CollectionProperty("osm-server.url-history", Arrays.asList(
+            "http://api06.dev.openstreetmap.org/api", "http://master.apis.dev.openstreetmap.org/api"));
 
     private transient ApiUrlPropagator propagator;
 
@@ -86,10 +90,10 @@ public class OsmApiUrlInputPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfOsmServerUrl = new JosmTextField(), gc);
+        add(tfOsmServerUrl = new HistoryComboBox(), gc);
         lblApiUrl.setLabelFor(tfOsmServerUrl);
-        SelectAllOnFocusGainedDecorator.decorate(tfOsmServerUrl);
-        valOsmServerUrl = new ApiUrlValidator(tfOsmServerUrl);
+        SelectAllOnFocusGainedDecorator.decorate(tfOsmServerUrl.getEditorComponent());
+        valOsmServerUrl = new ApiUrlValidator(tfOsmServerUrl.getEditorComponent());
         valOsmServerUrl.validate();
         propagator = new ApiUrlPropagator();
         tfOsmServerUrl.addActionListener(propagator);
@@ -102,7 +106,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         gc.gridx = 3;
         gc.weightx = 0.0;
         ValidateApiUrlAction actTest = new ValidateApiUrlAction();
-        tfOsmServerUrl.getDocument().addDocumentListener(actTest);
+        tfOsmServerUrl.getEditorComponent().getDocument().addDocumentListener(actTest);
         add(btnTest = new SideButton(actTest), gc);
     }
 
@@ -127,6 +131,7 @@ public class OsmApiUrlInputPanel extends JPanel {
             tfOsmServerUrl.setText(url);
             propagator.propagate(url);
         }
+        tfOsmServerUrl.setPossibleItems(SERVER_URL_HISTORY.get());
     }
 
     /**
@@ -141,6 +146,8 @@ public class OsmApiUrlInputPanel extends JPanel {
             Main.pref.put("osm-server.url", null);
         } else {
             Main.pref.put("osm-server.url", hmiUrl);
+            tfOsmServerUrl.addCurrentItemToHistory();
+            SERVER_URL_HISTORY.put(tfOsmServerUrl.getHistory());
         }
         String newUrl = OsmApi.getOsmApi().getServerUrl();
 

@@ -129,7 +129,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
                     end = getLength();
                 }
             }
-            JTextComponent editorComponent = (JTextComponent) comboBox.getEditor().getEditorComponent();
+            final JTextComponent editorComponent = comboBox.getEditorComponent();
             // save unix system selection (middle mouse paste)
             Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
             if (sysSel != null) {
@@ -179,7 +179,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
     public AutoCompletingComboBox(String prototype) {
         super(new AutoCompletionListItem(prototype));
         setRenderer(new AutoCompleteListCellRenderer());
-        final JTextComponent editorComponent = (JTextComponent) this.getEditor().getEditorComponent();
+        final JTextComponent editorComponent = this.getEditorComponent();
         editorComponent.setDocument(new AutoCompletingComboBoxDocument(this));
         editorComponent.addFocusListener(
                 new FocusListener() {

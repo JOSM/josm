@@ -30,7 +30,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
@@ -120,8 +119,8 @@ public class PlaceSelection implements DownloadSelection {
         panel.add(lpanel, GBC.std().fill(GBC.HORIZONTAL).insets(5, 5, 0, 5));
         SearchAction searchAction = new SearchAction();
         JButton btnSearch = new JButton(searchAction);
-        ((JTextField) cbSearchExpression.getEditor().getEditorComponent()).getDocument().addDocumentListener(searchAction);
-        ((JTextField) cbSearchExpression.getEditor().getEditorComponent()).addActionListener(searchAction);
+        cbSearchExpression.getEditorComponent().getDocument().addDocumentListener(searchAction);
+        cbSearchExpression.getEditorComponent().addActionListener(searchAction);
 
         panel.add(btnSearch, GBC.eol().insets(5, 5, 0, 5));
 
