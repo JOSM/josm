@@ -119,6 +119,7 @@ way[junction                   ][!highway][junction!=yes],
 }
 
 /* {0.tag} without {1.key} (info level) */
+way[power=cable                ][!location],
 *[amenity=parking              ][!parking],
 *[amenity=parking_entrance     ][!parking] {
   throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
