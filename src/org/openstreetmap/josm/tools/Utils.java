@@ -1313,6 +1313,7 @@ public final class Utils {
     /**
      * If the collection {@code elements} is larger than {@code maxElements} elements,
      * the collection is shortened and the {@code overflowIndicator} is appended.
+     * @param <T> type of elements
      * @param elements collection to shorten
      * @param maxElements maximum number of elements to keep (including including the {@code overflowIndicator})
      * @param overflowIndicator the element used to indicate that the collection has been shortened
