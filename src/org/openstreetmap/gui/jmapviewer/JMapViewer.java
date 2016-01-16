@@ -43,6 +43,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  */
 public class JMapViewer extends JPanel implements TileLoaderListener {
 
+    /** whether debug mode is enabled or not */
     public static boolean debug;
 
     /**
@@ -50,7 +51,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      */
     private static final Point[] move = {new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(0, -1)};
 
+    /** Maximum zoom level */
     public static final int MAX_ZOOM = 22;
+    /** Minimum zoom level */
     public static final int MIN_ZOOM = 0;
 
     protected transient List<MapMarker> mapMarkerList;
@@ -81,8 +84,13 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     protected JButton zoomInButton;
     protected JButton zoomOutButton;
 
+    /**
+     * Apparence of zoom controls.
+     */
     public enum ZOOM_BUTTON_STYLE {
+        /** Zoom buttons are displayed horizontally (default) */
         HORIZONTAL,
+        /** Zoom buttons are displayed vertically */
         VERTICAL
     }
 
@@ -228,10 +236,23 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         setDisplayPosition(mapPoint, p.x, p.y, zoom);
     }
 
+    /**
+     * Sets the display position.
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param zoom zoom level, between {@link #MIN_ZOOM} and {@link #MAX_ZOOM}
+     */
     public void setDisplayPosition(int x, int y, int zoom) {
         setDisplayPosition(new Point(getWidth() / 2, getHeight() / 2), x, y, zoom);
     }
 
+    /**
+     * Sets the display position.
+     * @param mapPoint map point
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param zoom zoom level, between {@link #MIN_ZOOM} and {@link #MAX_ZOOM}
+     */
     public void setDisplayPosition(Point mapPoint, int x, int y, int zoom) {
         if (zoom > tileController.getTileSource().getMaxZoom() || zoom < MIN_ZOOM)
             return;
@@ -864,8 +885,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * derived implementations for adapting zoom dependent values. The new zoom
      * level can be obtained via {@link #getZoom()}.
      *
-     * @param oldZoom
-     *            the previous zoom level
+     * @param oldZoom the previous zoom level
      */
     protected void zoomChanged(int oldZoom) {
         zoomSlider.setToolTipText("Zoom level " + zoom);
@@ -875,15 +895,27 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         zoomInButton.setEnabled(zoom < tileController.getTileSource().getMaxZoom());
     }
 
+    /**
+     * Determines whether the tile grid is visible or not.
+     * @return {@code true} if the tile grid is visible, {@code false} otherwise
+     */
     public boolean isTileGridVisible() {
         return tileGridVisible;
     }
 
+    /**
+     * Sets whether the tile grid is visible or not.
+     * @param tileGridVisible {@code true} if the tile grid is visible, {@code false} otherwise
+     */
     public void setTileGridVisible(boolean tileGridVisible) {
         this.tileGridVisible = tileGridVisible;
         repaint();
     }
 
+    /**
+     * Determines whether {@link MapMarker}s are painted or not.
+     * @return {@code true} if {@link MapMarker}s are painted, {@code false} otherwise
+     */
     public boolean getMapMarkersVisible() {
         return mapMarkersVisible;
     }
@@ -900,88 +932,157 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
 
+    /**
+     * Sets the list of {@link MapMarker}s.
+     * @param mapMarkerList list of {@link MapMarker}s
+     */
     public void setMapMarkerList(List<MapMarker> mapMarkerList) {
         this.mapMarkerList = mapMarkerList;
         repaint();
     }
 
+    /**
+     * Returns the list of {@link MapMarker}s.
+     * @return list of {@link MapMarker}s
+     */
     public List<MapMarker> getMapMarkerList() {
         return mapMarkerList;
     }
 
+    /**
+     * Sets the list of {@link MapRectangle}s.
+     * @param mapRectangleList list of {@link MapRectangle}s
+     */
     public void setMapRectangleList(List<MapRectangle> mapRectangleList) {
         this.mapRectangleList = mapRectangleList;
         repaint();
     }
 
+    /**
+     * Returns the list of {@link MapRectangle}s.
+     * @return list of {@link MapRectangle}s
+     */
     public List<MapRectangle> getMapRectangleList() {
         return mapRectangleList;
     }
 
+    /**
+     * Sets the list of {@link MapPolygon}s.
+     * @param mapPolygonList list of {@link MapPolygon}s
+     */
     public void setMapPolygonList(List<MapPolygon> mapPolygonList) {
         this.mapPolygonList = mapPolygonList;
         repaint();
     }
 
+    /**
+     * Returns the list of {@link MapPolygon}s.
+     * @return list of {@link MapPolygon}s
+     */
     public List<MapPolygon> getMapPolygonList() {
         return mapPolygonList;
     }
 
+    /**
+     * Add a {@link MapMarker}.
+     * @param marker map marker to add
+     */
     public void addMapMarker(MapMarker marker) {
         mapMarkerList.add(marker);
         repaint();
     }
 
+    /**
+     * Remove a {@link MapMarker}.
+     * @param marker map marker to remove
+     */
     public void removeMapMarker(MapMarker marker) {
         mapMarkerList.remove(marker);
         repaint();
     }
 
+    /**
+     * Remove all {@link MapMarker}s.
+     */
     public void removeAllMapMarkers() {
         mapMarkerList.clear();
         repaint();
     }
 
+    /**
+     * Add a {@link MapRectangle}.
+     * @param rectangle map rectangle to add
+     */
     public void addMapRectangle(MapRectangle rectangle) {
         mapRectangleList.add(rectangle);
         repaint();
     }
 
+    /**
+     * Remove a {@link MapRectangle}.
+     * @param rectangle map rectangle to remove
+     */
     public void removeMapRectangle(MapRectangle rectangle) {
         mapRectangleList.remove(rectangle);
         repaint();
     }
 
+    /**
+     * Remove all {@link MapRectangle}s.
+     */
     public void removeAllMapRectangles() {
         mapRectangleList.clear();
         repaint();
     }
 
+    /**
+     * Add a {@link MapPolygon}.
+     * @param polygon map polygon to add
+     */
     public void addMapPolygon(MapPolygon polygon) {
         mapPolygonList.add(polygon);
         repaint();
     }
 
+    /**
+     * Remove a {@link MapPolygon}.
+     * @param polygon map polygon to remove
+     */
     public void removeMapPolygon(MapPolygon polygon) {
         mapPolygonList.remove(polygon);
         repaint();
     }
 
+    /**
+     * Remove all {@link MapPolygon}s.
+     */
     public void removeAllMapPolygons() {
         mapPolygonList.clear();
         repaint();
     }
 
+    /**
+     * Sets whether zoom controls are displayed or not. 
+     * @param visible {@code true} if zoom controls are displayed, {@code false} otherwise
+     */
     public void setZoomContolsVisible(boolean visible) {
         zoomSlider.setVisible(visible);
         zoomInButton.setVisible(visible);
         zoomOutButton.setVisible(visible);
     }
 
+    /**
+     * Determines whether zoom controls are displayed or not. 
+     * @return {@code true} if zoom controls are displayed, {@code false} otherwise
+     */
     public boolean getZoomControlsVisible() {
         return zoomSlider.isVisible();
     }
 
+    /**
+     * Sets the tile source.
+     * @param tileSource tile source
+     */
     public void setTileSource(TileSource tileSource) {
         if (tileSource.getMaxZoom() > MAX_ZOOM)
             throw new RuntimeException("Maximum zoom level too high");
@@ -1007,12 +1108,16 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
 
+    /**
+     * Determines whether the {@link MapRectangle}s are painted or not.
+     * @return {@code true} if the {@link MapRectangle}s are painted, {@code false} otherwise
+     */
     public boolean isMapRectanglesVisible() {
         return mapRectanglesVisible;
     }
 
     /**
-     * Enables or disables painting of the {@link MapRectangle}
+     * Enables or disables painting of the {@link MapRectangle}s.
      *
      * @param mapRectanglesVisible {@code true} to enable painting of rectangles
      * @see #addMapRectangle(MapRectangle)
@@ -1023,12 +1128,16 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
 
+    /**
+     * Determines whether the {@link MapPolygon}s are painted or not.
+     * @return {@code true} if the {@link MapPolygon}s are painted, {@code false} otherwise
+     */
     public boolean isMapPolygonsVisible() {
         return mapPolygonsVisible;
     }
 
     /**
-     * Enables or disables painting of the {@link MapPolygon}
+     * Enables or disables painting of the {@link MapPolygon}s.
      *
      * @param mapPolygonsVisible {@code true} to enable painting of polygons
      * @see #addMapPolygon(MapPolygon)
@@ -1039,35 +1148,47 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
 
+    /**
+     * Determines whether scroll wrap is enabled or not. 
+     * @return {@code true} if scroll wrap is enabled, {@code false} otherwise
+     */
     public boolean isScrollWrapEnabled() {
         return scrollWrapEnabled;
     }
 
+    /**
+     * Sets whether scroll wrap is enabled or not. 
+     * @param scrollWrapEnabled {@code true} if scroll wrap is enabled, {@code false} otherwise
+     */
     public void setScrollWrapEnabled(boolean scrollWrapEnabled) {
         this.scrollWrapEnabled = scrollWrapEnabled;
         repaint();
     }
 
+    /**
+     * Returns the zoom controls apparence style (horizontal/vertical).
+     * @return {@link ZOOM_BUTTON_STYLE#VERTICAL} or {@link ZOOM_BUTTON_STYLE#HORIZONTAL}
+     */
     public ZOOM_BUTTON_STYLE getZoomButtonStyle() {
         return zoomButtonStyle;
     }
 
+    /**
+     * Sets the zoom controls apparence style (horizontal/vertical).
+     * @param style {@link ZOOM_BUTTON_STYLE#VERTICAL} or {@link ZOOM_BUTTON_STYLE#HORIZONTAL}
+     */
     public void setZoomButtonStyle(ZOOM_BUTTON_STYLE style) {
         zoomButtonStyle = style;
         if (zoomSlider == null || zoomInButton == null || zoomOutButton == null) {
             return;
         }
         switch (style) {
-        case HORIZONTAL:
-            zoomSlider.setBounds(10, 10, 30, 150);
-            zoomInButton.setBounds(4, 155, 18, 18);
-            zoomOutButton.setBounds(26, 155, 18, 18);
-            break;
         case VERTICAL:
             zoomSlider.setBounds(10, 27, 30, 150);
             zoomInButton.setBounds(14, 8, 20, 20);
             zoomOutButton.setBounds(14, 176, 20, 20);
             break;
+        case HORIZONTAL:
         default:
             zoomSlider.setBounds(10, 10, 30, 150);
             zoomInButton.setBounds(4, 155, 18, 18);
@@ -1077,6 +1198,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
 
+    /**
+     * Returns the tile controller.
+     * @return the tile controller
+     */
     public TileController getTileController() {
         return tileController;
     }
@@ -1090,10 +1215,18 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         return tileController.getTileCache();
     }
 
+    /**
+     * Sets the tile loader.
+     * @param loader tile loader
+     */
     public void setTileLoader(TileLoader loader) {
         tileController.setTileLoader(loader);
     }
 
+    /**
+     * Returns attribution.
+     * @return attribution
+     */
     public AttributionSupport getAttribution() {
         return attribution;
     }
