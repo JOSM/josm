@@ -380,7 +380,8 @@ public class MultipolygonBuilder {
             } else {
                 final Collection<ForkJoinTask<List<PolygonLevel>>> tasks = new ArrayList<>();
                 for (int fromIndex = from; fromIndex < to; fromIndex += directExecutionTaskSize) {
-                    tasks.add(new Worker(input, fromIndex, Math.min(fromIndex + directExecutionTaskSize, to), new ArrayList<PolygonLevel>(), directExecutionTaskSize));
+                    tasks.add(new Worker(input, fromIndex, Math.min(fromIndex + directExecutionTaskSize, to),
+                            new ArrayList<PolygonLevel>(), directExecutionTaskSize));
                 }
                 for (ForkJoinTask<List<PolygonLevel>> task : ForkJoinTask.invokeAll(tasks)) {
                     List<PolygonLevel> res = task.join();
