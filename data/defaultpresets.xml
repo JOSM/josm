@@ -6531,7 +6531,7 @@
                 <combo key="phases" text="Phases" values="1,3" length="1" />
             </optional>
         </item> <!-- Pole with Transformer-->
-        <item name="Insulator" icon="styles/standard/power/insulator.svg" type="node" preset_name_label="true">
+        <item name="Insulator" icon="styles/standard/power/insulator.svg" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=insulator" />
             <space />
             <key key="power" value="insulator" />
