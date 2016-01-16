@@ -23,7 +23,7 @@ public class CheckGroup extends TaggingPresetItem {
     /**
      * Number of columns (positive integer)
      */
-    public String columns;
+    public String columns; // NOSONAR
 
     /**
      * List of checkboxes

@@ -28,12 +28,24 @@ public abstract class KeyedItem extends TaggingPresetItem {
     /** Last value of each key used in presets, used for prefilling corresponding fields */
     protected static final Map<String, String> LAST_VALUES = new HashMap<>();
 
-    public String key;
+    /** This specifies the property key that will be modified by the item. */
+    public String key; // NOSONAR
     /** The text to display */
-    public String text;
+    public String text; // NOSONAR
     /** The context used for translating {@link #text} */
-    public String text_context;
-    public String match = getDefaultMatch().getValue();
+    public String text_context; // NOSONAR
+    /**
+     * Allows to change the matching process, i.e., determining whether the tags of an OSM object fit into this preset.
+     * If a preset fits then it is linked in the Tags/Membership dialog.<ul>
+     * <li>none: neutral, i.e., do not consider this item for matching</li>
+     * <li>key: positive if key matches, neutral otherwise</li>
+     * <li>key!: positive if key matches, negative otherwise</li>
+     * <li>keyvalue: positive if key and value matches, neutral otherwise</li>
+     * <li>keyvalue!: positive if key and value matches, negative otherwise</li></ul>
+     * Note that for a match, at least one positive and no negative is required.
+     * Default is "keyvalue!" for {@link Key} and "none" for {@link Text}, {@link Combo}, {@link MultiSelect} and {@link Check}.
+     */
+    public String match = getDefaultMatch().getValue(); // NOSONAR
 
     /**
      * Enum denoting how a match (see {@link TaggingPresetItem#matches}) is performed.
@@ -80,7 +92,7 @@ public abstract class KeyedItem extends TaggingPresetItem {
     }
 
     protected static class Usage {
-        public SortedSet<String> values;
+        public SortedSet<String> values; // NOSONAR
         private boolean hadKeys;
         private boolean hadEmpty;
 
@@ -131,8 +143,16 @@ public abstract class KeyedItem extends TaggingPresetItem {
         return returnValue;
     }
 
+    /**
+     * Returns the default match.
+     * @return the default match
+     */
     public abstract MatchType getDefaultMatch();
 
+    /**
+     * Returns the list of values.
+     * @return the list of values
+     */
     public abstract Collection<String> getValues();
 
     protected String getKeyTooltipText() {

@@ -19,9 +19,14 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Adds a link to an other preset.
+ * @since 8863
+ */
 public class PresetLink extends TaggingPresetItem {
 
-    public String preset_name = "";
+    /** The exact name of the preset to link to. Required. */
+    public String preset_name = ""; // NOSONAR
 
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
@@ -32,7 +37,8 @@ public class PresetLink extends TaggingPresetItem {
                 return presetName.equals(object.name);
             }
         }).iterator().next();
-        if (t == null) return false;
+        if (t == null)
+            return false;
         JLabel lbl = new TaggingPresetLabel(t);
         lbl.addMouseListener(new MouseAdapter() {
             @Override
@@ -46,5 +52,6 @@ public class PresetLink extends TaggingPresetItem {
 
     @Override
     public void addCommands(List<Tag> changedTags) {
+        // Do nothing
     }
 }

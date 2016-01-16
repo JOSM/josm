@@ -37,16 +37,26 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class Text extends KeyedItem {
 
-    private static int auto_increment_selected;
+    private static int auto_increment_selected; // NOSONAR
 
     /** The localized version of {@link #text}. */
-    public String locale_text;
-    public String default_;
-    public String originalValue;
-    public String use_last_as_default = "false";
-    public String auto_increment;
-    public String length;
-    public String alternative_autocomplete_keys;
+    public String locale_text; // NOSONAR
+    /** The default value for the item. If not specified, the current value of the key is chosen as default (if applicable). Defaults to "". */
+    public String default_; // NOSONAR
+    public String originalValue; // NOSONAR
+    /** whether the last value is used as default. Using "force" enforces this behaviour also for already tagged objects. Default is "false".*/
+    public String use_last_as_default = "false"; // NOSONAR
+    /**
+     * May contain a comma separated list of integer increments or decrements, e.g. "-2,-1,+1,+2".
+     * A button will be shown next to the text field for each value, allowing the user to select auto-increment with the given stepping.
+     * Auto-increment only happens if the user selects it. There is also a button to deselect auto-increment.
+     * Default is no auto-increment. Mutually exclusive with {@link use_last_as_default}.
+     */
+    public String auto_increment; // NOSONAR
+    /** The length of the text box (number of characters allowed). */
+    public String length; // NOSONAR
+    /** A comma separated list of alternative keys to use for autocompletion. */
+    public String alternative_autocomplete_keys; // NOSONAR
 
     private JComponent value;
 

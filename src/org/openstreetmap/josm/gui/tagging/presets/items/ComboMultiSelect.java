@@ -43,7 +43,66 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class ComboMultiSelect extends KeyedItem {
 
-    private static final ListCellRenderer<PresetListEntry> RENDERER = new ListCellRenderer<PresetListEntry>() {
+    private static final Renderer RENDERER = new Renderer();
+
+    /** The localized version of {@link #text}. */
+    public String locale_text; // NOSONAR
+    /**
+     * A list of entries.
+     * The list has to be separated by commas (for the {@link Combo} box) or by the specified delimiter (for the {@link MultiSelect}).
+     * If a value contains the delimiter, the delimiter may be escaped with a backslash.
+     * If a value contains a backslash, it must also be escaped with a backslash. */
+    public String values; // NOSONAR
+    /**
+     * To use instead of {@link #values} if the list of values has to be obtained with a Java method of this form:
+     * <p>{@code public static String[] getValues();}<p>
+     * The value must be: {@code full.package.name.ClassName#methodName}.
+     */
+    public String values_from; // NOSONAR
+    /** The context used for translating {@link #values} */
+    public String values_context; // NOSONAR
+    /** Disabled internationalisation for value to avoid mistakes, see #11696 */
+    public boolean values_no_i18n; // NOSONAR
+    /** Whether to sort the values, defaults to true. */
+    public boolean values_sort = true; // NOSONAR
+    /**
+     * A list of entries that is displayed to the user.
+     * Must be the same number and order of entries as {@link #values} and editable must be false or not specified.
+     * For the delimiter character and escaping, see the remarks at {@link #values}.
+     */
+    public String display_values; // NOSONAR
+    /** The localized version of {@link #display_values}. */
+    public String locale_display_values; // NOSONAR
+    /**
+     * A delimiter-separated list of texts to be displayed below each {@code display_value}.
+     * (Only if it is not possible to describe the entry in 2-3 words.)
+     * Instead of comma separated list instead using {@link #values}, {@link #display_values} and {@link #short_descriptions},
+     * the following form is also supported:<p>
+     * {@code <list_entry value="" display_value="" short_description="" icon="" icon_size="" />}
+     */
+    public String short_descriptions; // NOSONAR
+    /** The localized version of {@link #short_descriptions}. */
+    public String locale_short_descriptions; // NOSONAR
+    /** The default value for the item. If not specified, the current value of the key is chosen as default (if applicable).*/
+    public String default_; // NOSONAR
+    /**
+     * The character that separates values.
+     * In case of {@link Combo} the default is comma.
+     * In case of {@link MultiSelect} the default is semicolon and this will also be used to separate selected values in the tag.
+     */
+    public String delimiter = ";"; // NOSONAR
+    /** whether the last value is used as default. Using "force" enforces this behaviour also for already tagged objects. Default is "false".*/
+    public String use_last_as_default = "false"; // NOSONAR
+    /** whether to use values for search via {@link TaggingPresetSelector} */
+    public String values_searchable = "false"; // NOSONAR
+
+    protected JComponent component;
+    protected final Map<String, PresetListEntry> lhm = new LinkedHashMap<>();
+    private boolean initialized;
+    protected Usage usage;
+    protected Object originalValue;
+
+    private static final class Renderer implements ListCellRenderer<PresetListEntry> {
 
         private final JLabel lbl = new JLabel();
 
@@ -88,35 +147,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
             }
             return lbl;
         }
-    };
-
-    /** The localized version of {@link #text}. */
-    public String locale_text;
-    public String values;
-    public String values_from;
-    /** The context used for translating {@link #values} */
-    public String values_context;
-    /** Disabled internationalisation for value to avoid mistakes, see #11696 */
-    public boolean values_no_i18n;
-    /** Whether to sort the values, defaults to true. */
-    public boolean values_sort = true;
-    public String display_values;
-    /** The localized version of {@link #display_values}. */
-    public String locale_display_values;
-    public String short_descriptions;
-    /** The localized version of {@link #short_descriptions}. */
-    public String locale_short_descriptions;
-    public String default_;
-    public String delimiter = ";";
-    public String use_last_as_default = "false";
-    /** whether to use values for search via {@link TaggingPresetSelector} */
-    public String values_searchable = "false";
-
-    protected JComponent component;
-    protected final Map<String, PresetListEntry> lhm = new LinkedHashMap<>();
-    private boolean initialized;
-    protected Usage usage;
-    protected Object originalValue;
+    }
 
     /**
      * Class that allows list values to be assigned and retrieved as a comma-delimited
@@ -168,36 +199,52 @@ public abstract class ComboMultiSelect extends KeyedItem {
         }
     }
 
+    /**
+     * Preset list entry.
+     */
     public static class PresetListEntry implements Comparable<PresetListEntry> {
-        public String value;
+        /** Entry value */
+        public String value; // NOSONAR
         /** The context used for translating {@link #value} */
-        public String value_context;
-        public String display_value;
-        public String short_description;
+        public String value_context; // NOSONAR
+        /** Value displayed to the user */
+        public String display_value; // NOSONAR
+        /** Text to be displayed below {@code display_value}. */
+        public String short_description; // NOSONAR
         /** The location of icon file to display */
-        public String icon;
+        public String icon; // NOSONAR
         /** The size of displayed icon. If not set, default is size from icon file */
-        public String icon_size;
+        public String icon_size; // NOSONAR
         /** The localized version of {@link #display_value}. */
-        public String locale_display_value;
+        public String locale_display_value; // NOSONAR
         /** The localized version of {@link #short_description}. */
-        public String locale_short_description;
+        public String locale_short_description; // NOSONAR
         private final File zipIcons = TaggingPresetReader.getZipIcons();
 
-        // Cached size (currently only for Combo) to speed up preset dialog initialization
-        public int prefferedWidth = -1;
-        public int prefferedHeight = -1;
+        /** Cached width (currently only for Combo) to speed up preset dialog initialization */
+        public int prefferedWidth = -1; // NOSONAR
+        /** Cached height (currently only for Combo) to speed up preset dialog initialization */
+        public int prefferedHeight = -1; // NOSONAR
 
         /**
          * Constructs a new {@code PresetListEntry}, uninitialized.
          */
         public PresetListEntry() {
+            // Public default constructor is needed
         }
 
+        /**
+         * Constructs a new {@code PresetListEntry}, initialized with a value.
+         * @param value value
+         */
         public PresetListEntry(String value) {
             this.value = value;
         }
 
+        /**
+         * Returns HTML formatted contents.
+         * @return HTML formatted contents
+         */
         public String getListDisplay() {
             if (value.equals(DIFFERENT))
                 return "<b>" + Utils.escapeReservedCharactersHTML(DIFFERENT) + "</b>";
@@ -222,12 +269,22 @@ public abstract class ComboMultiSelect extends KeyedItem {
             return icon == null ? null : loadImageIcon(icon, zipIcons, parseInteger(icon_size));
         }
 
+        /**
+         * Returns the value to display.
+         * @param translated whether the text must be translated
+         * @return the value to display
+         */
         public String getDisplayValue(boolean translated) {
             return translated
                     ? Utils.firstNonNull(locale_display_value, tr(display_value), trc(value_context, value))
                             : Utils.firstNonNull(display_value, value);
         }
 
+        /**
+         * Returns the short description to display.
+         * @param translated whether the text must be translated
+         * @return the short description to display
+         */
         public String getShortDescription(boolean translated) {
             return translated
                     ? Utils.firstNonNull(locale_short_description, tr(short_description))
@@ -296,6 +353,10 @@ public abstract class ComboMultiSelect extends KeyedItem {
         return lhm.keySet();
     }
 
+    /**
+     * Returns the values to display.
+     * @return the values to display
+     */
     public Collection<String> getDisplayValues() {
         initListEntries();
         return Utils.transform(lhm.values(), new Utils.Function<PresetListEntry, String>() {
@@ -364,18 +425,18 @@ public abstract class ComboMultiSelect extends KeyedItem {
     private void initListEntriesFromAttributes() {
         char delChar = getDelChar();
 
-        String[] value_array = null;
+        String[] valueArray = null;
 
         if (values_from != null) {
-            String[] class_method = values_from.split("#");
-            if (class_method != null && class_method.length == 2) {
+            String[] classMethod = values_from.split("#");
+            if (classMethod != null && classMethod.length == 2) {
                 try {
-                    Method method = Class.forName(class_method[0]).getMethod(class_method[1]);
+                    Method method = Class.forName(classMethod[0]).getMethod(classMethod[1]);
                     // Check method is public static String[] methodName()
                     int mod = method.getModifiers();
                     if (Modifier.isPublic(mod) && Modifier.isStatic(mod)
                             && method.getReturnType().equals(String[].class) && method.getParameterTypes().length == 0) {
-                        value_array = (String[]) method.invoke(null);
+                        valueArray = (String[]) method.invoke(null);
                     } else {
                         Main.error(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' is not \"{2}\"", key, text,
                                 "public static String[] methodName()"));
@@ -387,43 +448,43 @@ public abstract class ComboMultiSelect extends KeyedItem {
             }
         }
 
-        if (value_array == null) {
-            value_array = splitEscaped(delChar, values);
+        if (valueArray == null) {
+            valueArray = splitEscaped(delChar, values);
         }
 
-        String[] display_array = value_array;
+        String[] displayArray = valueArray;
         if (!values_no_i18n) {
             final String displ = Utils.firstNonNull(locale_display_values, display_values);
-            display_array = displ == null ? value_array : splitEscaped(delChar, displ);
+            displayArray = displ == null ? valueArray : splitEscaped(delChar, displ);
         }
 
         final String descr = Utils.firstNonNull(locale_short_descriptions, short_descriptions);
-        String[] short_descriptions_array = descr == null ? null : splitEscaped(delChar, descr);
+        String[] shortDescriptionsArray = descr == null ? null : splitEscaped(delChar, descr);
 
-        if (display_array.length != value_array.length) {
+        if (displayArray.length != valueArray.length) {
             Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''",
                             key, text));
-            Main.error(tr("Detailed information: {0} <> {1}", Arrays.toString(display_array), Arrays.toString(value_array)));
-            display_array = value_array;
+            Main.error(tr("Detailed information: {0} <> {1}", Arrays.toString(displayArray), Arrays.toString(valueArray)));
+            displayArray = valueArray;
         }
 
-        if (short_descriptions_array != null && short_descriptions_array.length != value_array.length) {
+        if (shortDescriptionsArray != null && shortDescriptionsArray.length != valueArray.length) {
             Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''short_descriptions'' must be the same as in ''values''",
                             key, text));
-            Main.error(tr("Detailed information: {0} <> {1}", Arrays.toString(short_descriptions_array), Arrays.toString(value_array)));
-            short_descriptions_array = null;
+            Main.error(tr("Detailed information: {0} <> {1}", Arrays.toString(shortDescriptionsArray), Arrays.toString(valueArray)));
+            shortDescriptionsArray = null;
         }
 
-        final List<PresetListEntry> entries = new ArrayList<>(value_array.length);
-        for (int i = 0; i < value_array.length; i++) {
-            final PresetListEntry e = new PresetListEntry(value_array[i]);
+        final List<PresetListEntry> entries = new ArrayList<>(valueArray.length);
+        for (int i = 0; i < valueArray.length; i++) {
+            final PresetListEntry e = new PresetListEntry(valueArray[i]);
             e.locale_display_value = locale_display_values != null || values_no_i18n
-                    ? display_array[i]
-                    : trc(values_context, fixPresetString(display_array[i]));
-            if (short_descriptions_array != null) {
+                    ? displayArray[i]
+                    : trc(values_context, fixPresetString(displayArray[i]));
+            if (shortDescriptionsArray != null) {
                 e.locale_short_description = locale_short_descriptions != null
-                        ? short_descriptions_array[i]
-                        : tr(fixPresetString(short_descriptions_array[i]));
+                        ? shortDescriptionsArray[i]
+                        : tr(fixPresetString(shortDescriptionsArray[i]));
             }
 
             entries.add(e);
@@ -480,10 +541,18 @@ public abstract class ComboMultiSelect extends KeyedItem {
         changedTags.add(new Tag(key, value));
     }
 
+    /**
+     * Adds a preset list entry.
+     * @param e list entry to add
+     */
     public void addListEntry(PresetListEntry e) {
         lhm.put(e.value, e);
     }
 
+    /**
+     * Adds a collection of preset list entries.
+     * @param e list entries to add
+     */
     public void addListEntries(Collection<PresetListEntry> e) {
         for (PresetListEntry i : e) {
             addListEntry(i);

@@ -15,9 +15,15 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class Combo extends ComboMultiSelect {
 
-    public boolean editable = true;
-    protected JosmComboBox<PresetListEntry> combo;
-    public String length;
+    /**
+     * Whether the combo box is editable, which means that the user can add other values as text.
+     * Default is {@code true}. If {@code false} it is readonly, which means that the user can only select an item in the list.
+     */
+    public boolean editable = true; // NOSONAR
+    /** The length of the combo box (number of characters allowed). */
+    public String length; // NOSONAR
+
+    protected JosmComboBox<PresetListEntry> combobox;
 
     /**
      * Constructs a new {@code Combo}.
@@ -42,11 +48,11 @@ public class Combo extends ComboMultiSelect {
             lhm.put("", new PresetListEntry(""));
         }
 
-        combo = new JosmComboBox<>(lhm.values().toArray(new PresetListEntry[0]));
-        component = combo;
-        combo.setRenderer(getListCellRenderer());
-        combo.setEditable(editable);
-        combo.reinitialize(lhm.values());
+        combobox = new JosmComboBox<>(lhm.values().toArray(new PresetListEntry[0]));
+        component = combobox;
+        combobox.setRenderer(getListCellRenderer());
+        combobox.setEditable(editable);
+        combobox.reinitialize(lhm.values());
         AutoCompletingTextField tf = new AutoCompletingTextField();
         initAutoCompletionField(tf, key);
         if (Main.pref.getBoolean("taggingpreset.display-keys-as-hint", true)) {
@@ -59,47 +65,46 @@ public class Combo extends ComboMultiSelect {
         if (acList != null) {
             acList.add(getDisplayValues(), AutoCompletionItemPriority.IS_IN_STANDARD);
         }
-        combo.setEditor(tf);
+        combobox.setEditor(tf);
 
         if (usage.hasUniqueValue()) {
             // all items have the same value (and there were no unset items)
             originalValue = lhm.get(usage.getFirst());
-            combo.setSelectedItem(originalValue);
+            combobox.setSelectedItem(originalValue);
         } else if (def != null && usage.unused()) {
             // default is set and all items were unset
             if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                 // selected osm primitives are untagged or filling default feature is enabled
-                combo.setSelectedItem(lhm.get(def).getDisplayValue(true));
+                combobox.setSelectedItem(lhm.get(def).getDisplayValue(true));
             } else {
                 // selected osm primitives are tagged and filling default feature is disabled
-                combo.setSelectedItem("");
+                combobox.setSelectedItem("");
             }
             originalValue = lhm.get(DIFFERENT);
         } else if (usage.unused()) {
             // all items were unset (and so is default)
             originalValue = lhm.get("");
             if ("force".equals(use_last_as_default) && LAST_VALUES.containsKey(key) && !presetInitiallyMatches) {
-                combo.setSelectedItem(lhm.get(LAST_VALUES.get(key)));
+                combobox.setSelectedItem(lhm.get(LAST_VALUES.get(key)));
             } else {
-                combo.setSelectedItem(originalValue);
+                combobox.setSelectedItem(originalValue);
             }
         } else {
             originalValue = lhm.get(DIFFERENT);
-            combo.setSelectedItem(originalValue);
+            combobox.setSelectedItem(originalValue);
         }
-        p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(combobox, GBC.eol().fill(GBC.HORIZONTAL));
     }
 
     @Override
     protected Object getSelectedItem() {
-        return combo.getSelectedItem();
-
+        return combobox.getSelectedItem();
     }
 
     @Override
     protected String getDisplayIfNull() {
-        if (combo.isEditable())
-            return combo.getEditor().getItem().toString();
+        if (combobox.isEditable())
+            return combobox.getEditor().getItem().toString();
         else
             return null;
     }

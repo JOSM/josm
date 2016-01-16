@@ -19,7 +19,8 @@ public class MultiSelect extends ComboMultiSelect {
     /**
      * Number of rows to display (positive integer, optional).
      */
-    public String rows;
+    public String rows; // NOSONAR
+
     protected ConcatenatingJList list;
 
     @Override

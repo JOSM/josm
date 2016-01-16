@@ -20,15 +20,15 @@ import org.openstreetmap.josm.tools.GBC;
 public class Check extends KeyedItem {
 
     /** The localized version of {@link #text}. */
-    public String locale_text;
+    public String locale_text; // NOSONAR
     /** the value to set when checked (default is "yes") */
-    public String value_on = OsmUtils.trueval;
+    public String value_on = OsmUtils.trueval; // NOSONAR
     /** the value to set when unchecked (default is "no") */
-    public String value_off = OsmUtils.falseval;
+    public String value_off = OsmUtils.falseval; // NOSONAR
     /** whether the off value is disabled in the dialog, i.e., only unset or yes are provided */
-    public boolean disable_off;
+    public boolean disable_off; // NOSONAR
     /** "on" or "off" or unset (default is unset) */
-    public String default_; // only used for tagless objects
+    public String default_; // only used for tagless objects // NOSONAR
 
     private QuadStateCheckBox check;
     private QuadStateCheckBox.State initialState;

@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 public class Key extends KeyedItem {
 
     /** The hardcoded value for key */
-    public String value;
+    public String value; // NOSONAR
 
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {

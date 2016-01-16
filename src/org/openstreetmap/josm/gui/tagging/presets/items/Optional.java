@@ -11,6 +11,10 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Used to group optional attributes.
+ * @since 8863
+ */
 public class Optional extends TextItem {
 
     // TODO: Draw a box around optional stuff
