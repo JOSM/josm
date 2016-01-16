@@ -13,13 +13,13 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 public abstract class TextItem extends TaggingPresetItem {
 
     /** The text to display */
-    public String text;
+    public String text; // NOSONAR
 
     /** The context used for translating {@link #text} */
-    public String text_context;
+    public String text_context; // NOSONAR
 
     /** The localized version of {@link #text} */
-    public String locale_text;
+    public String locale_text; // NOSONAR
 
     protected final void initializeLocaleText(String defaultText) {
         if (locale_text == null) {
@@ -29,6 +29,7 @@ public abstract class TextItem extends TaggingPresetItem {
 
     @Override
     public void addCommands(List<Tag> changedTags) {
+        // Do nothing
     }
 
     protected String fieldsToString() {

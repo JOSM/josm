@@ -25,6 +25,7 @@ public class Space extends TaggingPresetItem {
 
     @Override
     public void addCommands(List<Tag> changedTags) {
+        // Do nothing
     }
 
     @Override

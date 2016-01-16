@@ -25,17 +25,19 @@ import org.xml.sax.SAXException;
 public class Roles extends TaggingPresetItem {
 
     public static class Role {
-        public Set<TaggingPresetType> types;
-        public String key;
+        public Set<TaggingPresetType> types; // NOSONAR
+        /** Role name used in a relation */
+        public String key; // NOSONAR
         /** The text to display */
-        public String text;
+        public String text; // NOSONAR
         /** The context used for translating {@link #text} */
-        public String text_context;
+        public String text_context; // NOSONAR
         /** The localized version of {@link #text}. */
-        public String locale_text;
-        public SearchCompiler.Match memberExpression;
+        public String locale_text; // NOSONAR
+        /** An expression (cf. search dialog) for objects of this role */
+        public SearchCompiler.Match memberExpression; // NOSONAR
 
-        public boolean required;
+        public boolean required; // NOSONAR
         private long count;
 
         public void setType(String types) throws SAXException {

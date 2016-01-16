@@ -18,9 +18,9 @@ import org.openstreetmap.josm.tools.GBC;
 public class Label extends TextItem {
 
     /** The location of icon file to display (optional) */
-    public String icon;
+    public String icon; // NOSONAR
     /** The size of displayed icon. If not set, default is 16px */
-    public String icon_size;
+    public String icon_size; // NOSONAR
 
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {

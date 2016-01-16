@@ -17,10 +17,10 @@ import org.openstreetmap.josm.tools.GBC;
 public class Link extends TextItem {
 
     /** The link to display. */
-    public String href;
+    public String href; // NOSONAR
 
     /** The localized version of {@link #href}. */
-    public String locale_href;
+    public String locale_href; // NOSONAR
 
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
