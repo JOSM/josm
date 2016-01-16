@@ -35,14 +35,22 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class RelationChecker extends Test {
 
-    protected static final int ROLE_UNKNOWN      = 1701;
-    protected static final int ROLE_EMPTY        = 1702;
-    protected static final int WRONG_TYPE        = 1703;
-    protected static final int HIGH_COUNT        = 1704;
-    protected static final int LOW_COUNT         = 1705;
-    protected static final int ROLE_MISSING      = 1706;
-    protected static final int RELATION_UNKNOWN  = 1707;
-    protected static final int RELATION_EMPTY    = 1708;
+    /** Role {0} unknown in templates {1} */
+    public static final int ROLE_UNKNOWN      = 1701;
+    /** Empty role type found when expecting one of {0} */
+    public static final int ROLE_EMPTY        = 1702;
+    /** Role member does not match expression {0} in template {1} */
+    public static final int WRONG_TYPE        = 1703;
+    /** Number of {0} roles too high ({1}) */
+    public static final int HIGH_COUNT        = 1704;
+    /** Number of {0} roles too low ({1}) */
+    public static final int LOW_COUNT         = 1705;
+    /** Role {0} missing */
+    public static final int ROLE_MISSING      = 1706;
+    /** Relation type is unknown */
+    public static final int RELATION_UNKNOWN  = 1707;
+    /** Relation is empty */
+    public static final int RELATION_EMPTY    = 1708;
 
     /**
      * Error message used to group errors related to role problems.
@@ -255,6 +263,7 @@ public class RelationChecker extends Test {
 
             // convert in localization friendly way to string of accepted types
             String typesStr = Utils.join("/", Utils.transform(types, new Utils.Function<TaggingPresetType, Object>() {
+                @Override
                 public Object apply(TaggingPresetType x) {
                     return tr(x.getName());
                 }
@@ -296,6 +305,7 @@ public class RelationChecker extends Test {
         for (String key : map.keySet()) {
             if (!allroles.containsKey(key)) {
                 String templates = Utils.join("/", Utils.transform(allroles.keySet(), new Utils.Function<String, Object>() {
+                    @Override
                     public Object apply(String x) {
                         return tr(x);
                     }
