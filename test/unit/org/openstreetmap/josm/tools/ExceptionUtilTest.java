@@ -36,7 +36,7 @@ public class ExceptionUtilTest {
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init();
         url = new OsmApiException("").getUrl();
-        host = url.replace("http://", "").replace("/api/", "");
+        host = url.replace("http://", "").replace("/api/", "").replace("0.6/", "");
         user = CredentialsManager.getInstance().getUsername();
     }
 
