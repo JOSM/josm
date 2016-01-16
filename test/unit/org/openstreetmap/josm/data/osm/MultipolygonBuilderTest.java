@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.Assert.assertNull;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -41,7 +43,7 @@ public class MultipolygonBuilderTest {
         try (InputStream is = new FileInputStream(TestUtils.getRegressionDataFile(12376, "multipolygon_hang.osm.bz2"))) {
             DataSet ds = OsmReader.parseDataSet(Compression.BZIP2.getUncompressedInputStream(is), null);
             for (Relation r : ds.getRelations()) {
-                new MultipolygonBuilder().makeFromWays(r.getMemberPrimitives(Way.class));
+                assertNull(new MultipolygonBuilder().makeFromWays(r.getMemberPrimitives(Way.class)));
             }
         }
     }

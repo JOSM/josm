@@ -375,16 +375,19 @@ public class MultipolygonBuilder {
 
         @Override
         protected List<PolygonLevel> compute() {
-            if (to - from < directExecutionTaskSize) {
+            if (to - from <= directExecutionTaskSize) {
                 return computeDirectly();
             } else {
                 final Collection<ForkJoinTask<List<PolygonLevel>>> tasks = new ArrayList<>();
                 for (int fromIndex = from; fromIndex < to; fromIndex += directExecutionTaskSize) {
-                    final List<PolygonLevel> output = new ArrayList<>();
-                    tasks.add(new Worker(input, fromIndex, Math.min(fromIndex + directExecutionTaskSize, to), output, directExecutionTaskSize));
+                    tasks.add(new Worker(input, fromIndex, Math.min(fromIndex + directExecutionTaskSize, to), new ArrayList<PolygonLevel>(), directExecutionTaskSize));
                 }
-                for (ForkJoinTask<List<PolygonLevel>> task : tasks) {
-                    output.addAll(task.join());
+                for (ForkJoinTask<List<PolygonLevel>> task : ForkJoinTask.invokeAll(tasks)) {
+                    List<PolygonLevel> res = task.join();
+                    if (res == null) {
+                        return null;
+                    }
+                    output.addAll(res);
                 }
                 return output;
             }
