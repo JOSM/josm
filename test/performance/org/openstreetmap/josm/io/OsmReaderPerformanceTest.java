@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,8 +18,6 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.DataSet;
-
-import sun.misc.IOUtils;
 
 /**
  * This test tests how fast we are at reading an OSM file.
@@ -80,7 +79,14 @@ public class OsmReaderPerformanceTest {
     private InputStream loadFile(boolean decompressBeforeRead) throws IOException {
         File file = new File(DATA_FILE);
         try (InputStream is = decompressBeforeRead ? Compression.getUncompressedFileInputStream(file) : new FileInputStream(file)) {
-            return new ByteArrayInputStream(IOUtils.readFully(is, -1, false));
+            ByteArrayOutputStream temporary = new ByteArrayOutputStream();
+            byte[] readBuffer = new byte[4096];
+            int readBytes = 0;
+            while (readBytes != -1) {
+                temporary.write(readBuffer, 0, readBytes);
+                readBytes = is.read(readBuffer);
+            }
+            return new ByteArrayInputStream(temporary.toByteArray());
         }
     }
 }
