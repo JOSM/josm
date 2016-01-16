@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
-import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.xml.sax.SAXException;
@@ -54,8 +52,8 @@ public class DefaultNameFormatterTest {
 
         Comparator<Relation> comparator = DefaultNameFormatter.getInstance().getRelationComparator();
 
-        try (InputStream is = new FileInputStream(TestUtils.getRegressionDataFile(9632, "data.osm.zip"))) {
-            DataSet ds = OsmReader.parseDataSet(Compression.ZIP.getUncompressedInputStream(is), null);
+        try (InputStream is = TestUtils.getRegressionDataStream(9632, "data.osm.zip")) {
+            DataSet ds = OsmReader.parseDataSet(is, null);
 
             // Test with 3 known primitives causing the problem. Correct order is p1, p3, p2 with this preset
             Relation p1 = (Relation) ds.getPrimitiveById(2983382, OsmPrimitiveType.RELATION);

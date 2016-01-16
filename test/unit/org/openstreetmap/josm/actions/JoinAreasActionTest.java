@@ -3,7 +3,6 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -38,7 +37,7 @@ public class JoinAreasActionTest {
      */
     @Test
     public void testTicket10511() throws IOException, IllegalDataException {
-        try (InputStream is = new FileInputStream(TestUtils.getRegressionDataFile(10511, "10511_mini.osm"))) {
+        try (InputStream is = TestUtils.getRegressionDataStream(10511, "10511_mini.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             Main.map.mapView.addLayer(new OsmDataLayer(ds, null, null));
             // FIXME enable this test after we fix the bug. Test disabled for now
@@ -53,7 +52,7 @@ public class JoinAreasActionTest {
      */
     @Test
     public void testTicket11992() throws IOException, IllegalDataException {
-        try (InputStream is = new FileInputStream(TestUtils.getRegressionDataFile(11992, "shapes.osm"))) {
+        try (InputStream is = TestUtils.getRegressionDataStream(11992, "shapes.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             assertEquals(10, ds.getWays().size());
             Main.map.mapView.addLayer(new OsmDataLayer(ds, null, null));

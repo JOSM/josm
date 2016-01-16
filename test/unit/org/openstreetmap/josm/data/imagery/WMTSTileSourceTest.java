@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -23,14 +24,14 @@ import org.openstreetmap.josm.data.projection.Projections;
 public class WMTSTileSourceTest {
 
     private ImageryInfo testImageryTMS =  new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
-    private ImageryInfo testImageryPSEUDO_MERCATOR = getImagery("test/data/wmts/getcapabilities-pseudo-mercator.xml");
-    private ImageryInfo testImageryTOPO_PL = getImagery("test/data/wmts/getcapabilities-TOPO.xml");
-    private ImageryInfo testImageryORTO_PL = getImagery("test/data/wmts/getcapabilities-ORTO.xml");
-    private ImageryInfo testImageryWIEN = getImagery("test/data/wmts/getCapabilities-wien.xml");
-    private ImageryInfo testImageryWALLONIE = getImagery("test/data/wmts/WMTSCapabilities-Wallonie.xml");
-    private ImageryInfo testImageryOntario = getImagery("test/data/wmts/WMTSCapabilities-Ontario.xml");
-    private ImageryInfo testImagery12168 = getImagery("test/data/wmts/bug12168-WMTSCapabilities.xml");
-    private ImageryInfo testLotsOfLayers = getImagery("test/data/wmts/getCapabilities-lots-of-layers.xml");
+    private ImageryInfo testImageryPSEUDO_MERCATOR = getImagery(TestUtils.getTestDataRoot() + "wmts/getcapabilities-pseudo-mercator.xml");
+    private ImageryInfo testImageryTOPO_PL = getImagery(TestUtils.getTestDataRoot() + "wmts/getcapabilities-TOPO.xml");
+    private ImageryInfo testImageryORTO_PL = getImagery(TestUtils.getTestDataRoot() + "wmts/getcapabilities-ORTO.xml");
+    private ImageryInfo testImageryWIEN = getImagery(TestUtils.getTestDataRoot() + "wmts/getCapabilities-wien.xml");
+    private ImageryInfo testImageryWALLONIE = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Wallonie.xml");
+    private ImageryInfo testImageryOntario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
+    private ImageryInfo testImagery12168 = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12168-WMTSCapabilities.xml");
+    private ImageryInfo testLotsOfLayers = getImagery(TestUtils.getTestDataRoot() + "wmts/getCapabilities-lots-of-layers.xml");
 
     /**
      * Setup test.

@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +40,7 @@ public class PurgeActionTest {
      */
     @Test
     public void testCopyStringWayRelation() throws FileNotFoundException, IOException, IllegalDataException {
-        try (InputStream is = new FileInputStream(TestUtils.getRegressionDataFile(12038, "data.osm"))) {
+        try (InputStream is = TestUtils.getRegressionDataStream(12038, "data.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             Main.map.mapView.addLayer(new OsmDataLayer(ds, null, null));
             for (Way w : ds.getWays()) {
