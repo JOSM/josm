@@ -41,20 +41,38 @@ public class GpxImporter extends FileImporter {
          */
         private final Runnable postLayerTask;
 
+        /**
+         * Constructs a new {@code GpxImporterData}.
+         * @param gpxLayer The imported GPX layer. May be null if no GPX data.
+         * @param markerLayer The imported marker layer. May be null if no marker.
+         * @param postLayerTask The task to run after GPX and/or marker layer has been added to MapView.
+         */
         public GpxImporterData(GpxLayer gpxLayer, MarkerLayer markerLayer, Runnable postLayerTask) {
             this.gpxLayer = gpxLayer;
             this.markerLayer = markerLayer;
             this.postLayerTask = postLayerTask;
         }
 
+        /**
+         * Returns the imported GPX layer. May be null if no GPX data.
+         * @return the imported GPX layer. May be null if no GPX data.
+         */
         public GpxLayer getGpxLayer() {
             return gpxLayer;
         }
 
+        /**
+         * Returns the imported marker layer. May be null if no marker.
+         * @return the imported marker layer. May be null if no marker.
+         */
         public MarkerLayer getMarkerLayer() {
             return markerLayer;
         }
 
+        /**
+         * Returns the task to run after GPX and/or marker layer has been added to MapView.
+         * @return the task to run after GPX and/or marker layer has been added to MapView.
+         */
         public Runnable getPostLayerTask() {
             return postLayerTask;
         }
@@ -69,6 +87,7 @@ public class GpxImporter extends FileImporter {
 
     /**
      * Returns a GPX file filter (*.gpx and *.gpx.gz files).
+     * @return a GPX file filter
      */
     public static ExtensionFileFilter getFileFilter() {
         return ExtensionFileFilter.newFilterWithArchiveExtensions(

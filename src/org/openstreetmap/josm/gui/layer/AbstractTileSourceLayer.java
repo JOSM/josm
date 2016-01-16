@@ -21,12 +21,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -41,7 +40,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultButtonModel;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -87,7 +85,6 @@ import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.WMSLayerImporter;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 
 /**
  * Base abstract class that supports displaying images provided by TileSource. It might be TMS source, WMS or WMTS
@@ -376,7 +373,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
     }
 
-    private class LoadTileAction extends AbstractAction {
+    private final class LoadTileAction extends AbstractAction {
 
         private LoadTileAction() {
             super(tr("Load tile"));
@@ -430,6 +427,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             if (autoLoad) redraw();
         }
 
+        @Override
         public Component createMenuComponent() {
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(this);
             item.setSelected(autoLoad);
@@ -453,6 +451,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
             redraw();
         }
 
+        @Override
         public Component createMenuComponent() {
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(this);
             item.setSelected(showErrors);
@@ -583,24 +582,6 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         }
     }
 
-    private class BooleanButtonModel extends DefaultButtonModel {
-        private final Field field;
-
-        BooleanButtonModel(Field field) {
-            this.field = field;
-        }
-
-        @Override
-        public boolean isSelected() {
-            try {
-                return field.getBoolean(AbstractTileSourceLayer.this);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-    }
-
     /**
      * Creates popup menu items and binds to mouse actions
      */
@@ -661,9 +642,14 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         Main.map.repaint(500);
     }
 
+    /**
+     * Tile source layer popup menu.
+     */
     public class TileSourceLayerPopup extends JPopupMenu {
+        /**
+         * Constructs a new {@code TileSourceLayerPopup}.
+         */
         public TileSourceLayerPopup() {
-
             for (Action a : getCommonEntries()) {
                 if (a instanceof LayerAction) {
                     add(((LayerAction) a).createMenuComponent());
@@ -1649,6 +1635,10 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         };
     }
 
+    /**
+     * Returns the common menu entries.
+     * @return the common menu entries
+     */
     public Action[] getCommonEntries() {
         return new Action[] {
             new AutoLoadTilesAction(),
@@ -1758,6 +1748,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      */
     public void downloadAreaToCache(final PrecacheTask precacheTask, List<LatLon> points, double bufferX, double bufferY) {
         final Set<Tile> requestedTiles = new ConcurrentSkipListSet<>(new Comparator<Tile>() {
+            @Override
             public int compare(Tile o1, Tile o2) {
                 return String.CASE_INSENSITIVE_ORDER.compare(o1.getKey(), o2.getKey());
             }
