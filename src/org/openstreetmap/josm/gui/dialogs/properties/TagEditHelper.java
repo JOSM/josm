@@ -507,7 +507,7 @@ class TagEditHelper {
         */
         protected FocusAdapter addFocusAdapter(final AutoCompletionManager autocomplete, final Comparator<AutoCompletionListItem> comparator) {
            // get the combo box' editor component
-           JTextComponent editor = (JTextComponent) values.getEditor().getEditorComponent();
+           final JTextComponent editor = values.getEditorComponent();
            // Refresh the values model when focus is gained
            FocusAdapter focus = new FocusAdapter() {
                @Override

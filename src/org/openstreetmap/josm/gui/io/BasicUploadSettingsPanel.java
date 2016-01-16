@@ -64,7 +64,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadComment.setPossibleItems(cmtHistory);
         CommentModelListener commentModelListener = new CommentModelListener(hcbUploadComment, changesetCommentModel);
         hcbUploadComment.getEditor().addActionListener(commentModelListener);
-        hcbUploadComment.getEditor().getEditorComponent().addFocusListener(commentModelListener);
+        hcbUploadComment.getEditorComponent().addFocusListener(commentModelListener);
         pnl.add(hcbUploadComment, GBC.eol().fill(GBC.HORIZONTAL));
 
         JEditorPane sourceLabel = new JMultilineLabel("<html><b>" + tr("Specify the data source for the changes")
@@ -89,7 +89,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadSource.setPossibleItems(sourceHistory);
         CommentModelListener sourceModelListener = new CommentModelListener(hcbUploadSource, changesetSourceModel);
         hcbUploadSource.getEditor().addActionListener(sourceModelListener);
-        hcbUploadSource.getEditor().getEditorComponent().addFocusListener(sourceModelListener);
+        hcbUploadSource.getEditorComponent().addFocusListener(sourceModelListener);
         pnl.add(hcbUploadSource, GBC.eol().fill(GBC.HORIZONTAL));
         return pnl;
     }
@@ -129,7 +129,7 @@ public class BasicUploadSettingsPanel extends JPanel {
 
     public void setHistoryComboBoxDownFocusTraversalHandler(final Action handler, final HistoryComboBox hcb) {
         hcb.getEditor().addActionListener(handler);
-        hcb.getEditor().getEditorComponent().addKeyListener(
+        hcb.getEditorComponent().addKeyListener(
                 new KeyListener() {
                     @Override
                     public void keyTyped(KeyEvent e) {
@@ -165,7 +165,7 @@ public class BasicUploadSettingsPanel extends JPanel {
      */
     public void startUserInput() {
         hcbUploadComment.requestFocusInWindow();
-        hcbUploadComment.getEditor().getEditorComponent().requestFocusInWindow();
+        hcbUploadComment.getEditorComponent().requestFocusInWindow();
     }
 
     public void initEditingOfUploadComment() {

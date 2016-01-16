@@ -14,10 +14,12 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.accessibility.Accessible;
+import javax.swing.ComboBoxEditor;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JList;
+import javax.swing.JTextField;
 import javax.swing.plaf.basic.ComboPopup;
 import javax.swing.text.JTextComponent;
 
@@ -92,6 +94,16 @@ public class JosmComboBox<E> extends JComboBox<E> {
     public JosmComboBox(E[] items) {
         super(items);
         init(findPrototypeDisplayValue(Arrays.asList(items)));
+    }
+
+    /**
+     * Returns the editor component
+     * @return the editor component
+     * @see ComboBoxEditor#getEditorComponent()
+     * @since 9484
+     */
+    public JTextField getEditorComponent() {
+        return (JTextField) getEditor().getEditorComponent();
     }
 
     /**
