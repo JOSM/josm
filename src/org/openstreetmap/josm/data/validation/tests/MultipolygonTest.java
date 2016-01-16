@@ -30,9 +30,9 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Pair;
 
@@ -42,18 +42,30 @@ import org.openstreetmap.josm.tools.Pair;
  */
 public class MultipolygonTest extends Test {
 
-    protected static final int WRONG_MEMBER_TYPE = 1601;
-    protected static final int WRONG_MEMBER_ROLE = 1602;
-    protected static final int NON_CLOSED_WAY = 1603;
-    protected static final int MISSING_OUTER_WAY = 1604;
-    protected static final int INNER_WAY_OUTSIDE = 1605;
-    protected static final int CROSSING_WAYS = 1606;
-    protected static final int OUTER_STYLE_MISMATCH = 1607;
-    protected static final int INNER_STYLE_MISMATCH = 1608;
-    protected static final int NOT_CLOSED = 1609;
-    protected static final int NO_STYLE = 1610;
-    protected static final int NO_STYLE_POLYGON = 1611;
-    protected static final int OUTER_STYLE = 1613;
+    /** Non-Way in multipolygon */
+    public static final int WRONG_MEMBER_TYPE = 1601;
+    /** No useful role for multipolygon member */
+    public static final int WRONG_MEMBER_ROLE = 1602;
+    /** Multipolygon is not closed */
+    public static final int NON_CLOSED_WAY = 1603;
+    /** No outer way for multipolygon */
+    public static final int MISSING_OUTER_WAY = 1604;
+    /** Multipolygon inner way is outside */
+    public static final int INNER_WAY_OUTSIDE = 1605;
+    /** Intersection between multipolygon ways */
+    public static final int CROSSING_WAYS = 1606;
+    /** Style for outer way mismatches / With the currently used mappaint style(s) the style for outer way mismatches polygon */
+    public static final int OUTER_STYLE_MISMATCH = 1607;
+    /** With the currently used mappaint style the style for inner way equals the multipolygon style */
+    public static final int INNER_STYLE_MISMATCH = 1608;
+    /** Area style way is not closed */
+    public static final int NOT_CLOSED = 1609;
+    /** No area style for multipolygon */
+    public static final int NO_STYLE = 1610;
+    /** Multipolygon relation should be tagged with area tags and not the outer way(s) */
+    public static final int NO_STYLE_POLYGON = 1611;
+    /** Area style on outer way */
+    public static final int OUTER_STYLE = 1613;
 
     private static volatile ElemStyles styles;
 
@@ -302,6 +314,7 @@ public class MultipolygonTest extends Test {
                 }
             }
             // Diamond operator does not work with Java 9 here
+            @SuppressWarnings("unused")
             List<OsmPrimitive> newPrimitives = new ArrayList<OsmPrimitive>(primitives);
             newPrimitives.add(0, r);
             error.setPrimitives(newPrimitives);
