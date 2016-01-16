@@ -338,14 +338,19 @@ public class CoordinateInfoViewer extends JPanel {
                 return;
             }
 
-            final MapMarkerDot oldMarker = new MapMarkerDot(coordinates.a.lat(), coordinates.a.lon());
-            final MapMarkerDot newMarker = new MapMarkerDot(coordinates.b.lat(), coordinates.b.lon());
-            oldMarker.setBackColor(TwoColumnDiff.Item.DiffItemType.DELETED.getColor());
-            newMarker.setBackColor(TwoColumnDiff.Item.DiffItemType.INSERTED.getColor());
-
             removeAllMapMarkers();
-            addMapMarker(oldMarker);
-            addMapMarker(newMarker);
+
+            if (coordinates.a != null) {
+                final MapMarkerDot oldMarker = new MapMarkerDot(coordinates.a.lat(), coordinates.a.lon());
+                oldMarker.setBackColor(TwoColumnDiff.Item.DiffItemType.DELETED.getColor());
+                addMapMarker(oldMarker);
+            }
+            if (coordinates.b != null) {
+                final MapMarkerDot newMarker = new MapMarkerDot(coordinates.b.lat(), coordinates.b.lon());
+                newMarker.setBackColor(TwoColumnDiff.Item.DiffItemType.INSERTED.getColor());
+                addMapMarker(newMarker);
+            }
+
             setDisplayToFitMapMarkers();
         }
     }
