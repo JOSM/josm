@@ -13,6 +13,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.osm.NoteData;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
@@ -117,6 +118,7 @@ public class UploadNotesTask {
                 updatedNotes.put(note, newNote);
             } catch (Exception e) {
                 Main.error("Failed to upload note to server: " + note.getId());
+                Main.error(e);
                 failedNotes.put(note, e);
             }
         }
@@ -129,7 +131,6 @@ public class UploadNotesTask {
             }
             noteData.updateNotes(updatedNotes);
             if (!failedNotes.isEmpty()) {
-                Main.error("Some notes failed to upload");
                 StringBuilder sb = new StringBuilder();
                 for (Map.Entry<Note, Exception> entry : failedNotes.entrySet()) {
                     sb.append(tr("Note {0} failed: {1}", entry.getKey().getId(), entry.getValue().getMessage()));
@@ -137,6 +138,7 @@ public class UploadNotesTask {
                 }
                 Main.error("Notes failed to upload: " + sb.toString());
                 JOptionPane.showMessageDialog(Main.map, sb.toString(), tr("Notes failed to upload"), JOptionPane.ERROR_MESSAGE);
+                ExceptionDialogUtil.explainException(failedNotes.values().iterator().next());
             }
         }
     }
