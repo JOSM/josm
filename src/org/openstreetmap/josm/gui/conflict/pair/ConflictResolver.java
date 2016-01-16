@@ -260,6 +260,9 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         selectFirstTabWithConflicts();
     }
 
+    /**
+     * {@link JTabbedPane#setSelectedIndex(int) Selects} the first tab with conflicts
+     */
     public void selectFirstTabWithConflicts() {
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
             if (tabbedPane.isEnabledAt(i) && mergeIncomplete.equals(tabbedPane.getIconAt(i))) {
@@ -342,11 +345,19 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         return resolvedCompletely;
     }
 
+    /**
+     * Removes all registered listeners by this conflict resolver
+     */
     public void unregisterListeners() {
         nodeListMerger.unlinkAsListener();
         relationMemberMerger.unlinkAsListener();
     }
 
+    /**
+     * {@link PropertiesMerger#decideRemaining(MergeDecisionType) Decides/resolves} undecided conflicts to the given decision type
+     * @param decision the decision to take for undecided conflicts
+     * @throws AssertionError if {@link #isResolvedCompletely()} does not hold after applying the decision
+     */
     public void decideRemaining(MergeDecisionType decision) {
         propertiesMerger.decideRemaining(decision);
         tagMerger.decideRemaining(decision);
@@ -357,7 +368,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         }
         updateResolvedCompletely();
         if (!isResolvedCompletely()) {
-            throw new AssertionError();
+            throw new AssertionError("The conflict could not be resolved completely!");
         }
     }
 }
