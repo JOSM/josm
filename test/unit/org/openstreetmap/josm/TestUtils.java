@@ -3,8 +3,13 @@ package org.openstreetmap.josm;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Comparator;
+
+import org.openstreetmap.josm.io.Compression;
 
 /**
  * Various utils, useful for unit tests.
@@ -45,6 +50,17 @@ public final class TestUtils {
      */
     public static String getRegressionDataFile(int ticketid, String filename) {
         return getRegressionDataDir(ticketid) + '/' + filename;
+    }
+
+    /**
+     * Gets input stream to given file in test data directory for given ticket id.
+     * @param ticketid Ticket numeric identifier
+     * @param filename File name
+     * @return path to given file in test data directory for given ticket id
+     * @throws IOException if any I/O error occurs
+     */
+    public static InputStream getRegressionDataStream(int ticketid, String filename) throws IOException {
+        return Compression.getUncompressedFileInputStream(new File(getRegressionDataDir(ticketid) + '/' + filename));
     }
 
     /**

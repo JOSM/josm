@@ -9,10 +9,16 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 
+/**
+ * Unit tests of the {@code WaySegment} class.
+ */
 public class WaySegmentTest {
 
+    /**
+     * Setup test.
+     */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         JOSMFixture.createUnitTestFixture().init();
     }
 

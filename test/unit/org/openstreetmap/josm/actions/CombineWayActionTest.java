@@ -3,14 +3,11 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,6 +19,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 /**
  * Unit tests for class {@link CombineWayAction}.
@@ -43,7 +42,7 @@ public class CombineWayActionTest {
      */
     @Test
     public void testTicket11957() throws IOException, IllegalDataException {
-        try (InputStream is = new FileInputStream(TestUtils.getRegressionDataFile(11957, "data.osm"))) {
+        try (InputStream is = TestUtils.getRegressionDataStream(11957, "data.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             NodeGraph graph = NodeGraph.createNearlyUndirectedGraphFromNodeWays(ds.getWays());
             List<Node> path = graph.buildSpanningPath();

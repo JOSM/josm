@@ -12,6 +12,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
 
+/**
+ * Unit tests of the {@code OsmPrimitive} class.
+ */
 public class OsmPrimitiveTest {
 
     /**
