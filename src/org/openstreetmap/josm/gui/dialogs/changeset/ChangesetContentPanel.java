@@ -58,7 +58,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * and updates its view accordingly.
  *
  */
-public class ChangesetContentPanel extends JPanel implements PropertyChangeListener {
+public class ChangesetContentPanel extends JPanel implements PropertyChangeListener, ChangesetAware {
 
     private ChangesetContentTableModel model;
     private transient Changeset currentChangeset;
@@ -73,8 +73,8 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
     protected void buildModels() {
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         model = new ChangesetContentTableModel(selectionModel);
-        actDownloadContentAction = new DownloadChangesetContentAction();
-        actDownloadContentAction.initProperties(currentChangeset);
+        actDownloadContentAction = new DownloadChangesetContentAction(this);
+        actDownloadContentAction.initProperties();
         actShowHistory = new ShowHistoryAction();
         model.getSelectionModel().addListSelectionListener(actShowHistory);
 
@@ -157,7 +157,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         } else {
             model.populate(cs.getContent());
         }
-        actDownloadContentAction.initProperties(cs);
+        actDownloadContentAction.initProperties();
         pnlHeader.setChangeset(cs);
     }
 
@@ -184,43 +184,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 ),
                 title, JOptionPane.WARNING_MESSAGE, helpTopic
         );
-    }
-
-    /**
-     * Downloads/Updates the content of the changeset
-     *
-     */
-    class DownloadChangesetContentAction extends AbstractAction {
-        DownloadChangesetContentAction() {
-            putValue(NAME, tr("Download content"));
-            putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
-            putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            if (currentChangeset == null) return;
-            ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetContentPanel.this, currentChangeset.getId());
-            ChangesetCacheManager.getInstance().runDownloadTask(task);
-        }
-
-        public void initProperties(Changeset cs) {
-            if (cs == null) {
-                setEnabled(false);
-                return;
-            } else {
-                setEnabled(true);
-            }
-            if (cs.getContent() == null) {
-                putValue(NAME, tr("Download content"));
-                putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
-                putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
-            } else {
-                putValue(NAME, tr("Update content"));
-                putValue(SMALL_ICON, ChangesetCacheManager.UPDATE_CONTENT_ICON);
-                putValue(SHORT_DESCRIPTION, tr("Update the changeset content from the OSM server"));
-            }
-        }
     }
 
     class ChangesetContentTablePopupMenu extends JPopupMenu {
@@ -455,5 +418,10 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 ChangesetCacheManager.getInstance().runDownloadTask(task);
             }
         }
+    }
+
+    @Override
+    public Changeset getCurrentChangeset() {
+        return currentChangeset;
     }
 }

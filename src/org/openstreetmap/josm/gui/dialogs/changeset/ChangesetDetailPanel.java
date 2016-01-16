@@ -47,7 +47,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * {@link ChangesetCacheManager}.
  *
  */
-public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener {
+public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener, ChangesetAware {
 
     private final JosmTextField tfID        = new JosmTextField(10);
     private final JosmTextArea  taComment   = new JosmTextArea(5, 40);
@@ -56,13 +56,13 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     private final JosmTextField tfCreatedOn = new JosmTextField(20);
     private final JosmTextField tfClosedOn  = new JosmTextField(20);
 
-    private final DownloadChangesetContentAction actDownloadChangesetContent = new DownloadChangesetContentAction();
+    private final DownloadChangesetContentAction actDownloadChangesetContent = new DownloadChangesetContentAction(this);
     private final UpdateChangesetAction          actUpdateChangesets         = new UpdateChangesetAction();
     private final RemoveFromCacheAction          actRemoveFromCache          = new RemoveFromCacheAction();
     private final SelectInCurrentLayerAction     actSelectInCurrentLayer     = new SelectInCurrentLayerAction();
     private final ZoomInCurrentLayerAction       actZoomInCurrentLayerAction = new ZoomInCurrentLayerAction();
 
-    private transient Changeset current;
+    private transient Changeset currentChangeset;
 
     protected JPanel buildActionButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -72,15 +72,15 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         // -- remove from cache action
         tb.add(actRemoveFromCache);
-        actRemoveFromCache.initProperties(current);
+        actRemoveFromCache.initProperties(currentChangeset);
 
         // -- changeset update
         tb.add(actUpdateChangesets);
-        actUpdateChangesets.initProperties(current);
+        actUpdateChangesets.initProperties(currentChangeset);
 
         // -- changeset content download
         tb.add(actDownloadChangesetContent);
-        actDownloadChangesetContent.initProperties(current);
+        actDownloadChangesetContent.initProperties();
 
         tb.add(actSelectInCurrentLayer);
         MapView.addEditLayerChangeListener(actSelectInCurrentLayer);
@@ -239,15 +239,15 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     }
 
     protected void setCurrentChangeset(Changeset cs) {
-        current = cs;
+        currentChangeset = cs;
         if (cs == null) {
             clearView();
         } else {
             updateView(cs);
         }
-        actDownloadChangesetContent.initProperties(current);
-        actUpdateChangesets.initProperties(current);
-        actRemoveFromCache.initProperties(current);
+        actDownloadChangesetContent.initProperties();
+        actUpdateChangesets.initProperties(currentChangeset);
+        actRemoveFromCache.initProperties(currentChangeset);
         actSelectInCurrentLayer.updateEnabledState();
         actZoomInCurrentLayerAction.updateEnabledState();
     }
@@ -274,50 +274,13 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            if (current == null)
+            if (currentChangeset == null)
                 return;
-            ChangesetCache.getInstance().remove(current);
+            ChangesetCache.getInstance().remove(currentChangeset);
         }
 
         public void initProperties(Changeset cs) {
             setEnabled(cs != null);
-        }
-    }
-
-    /**
-     * Removes the selected changesets from the local changeset cache
-     *
-     */
-    class DownloadChangesetContentAction extends AbstractAction {
-        DownloadChangesetContentAction() {
-            putValue(NAME, tr("Download content"));
-            putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
-            putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            if (current == null) return;
-            ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetDetailPanel.this, current.getId());
-            ChangesetCacheManager.getInstance().runDownloadTask(task);
-        }
-
-        public void initProperties(Changeset cs) {
-            if (cs == null) {
-                setEnabled(false);
-                return;
-            } else {
-                setEnabled(true);
-            }
-            if (cs.getContent() == null) {
-                putValue(NAME, tr("Download content"));
-                putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
-                putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
-            } else {
-                putValue(NAME, tr("Update content"));
-                putValue(SMALL_ICON, ChangesetCacheManager.UPDATE_CONTENT_ICON);
-                putValue(SHORT_DESCRIPTION, tr("Update the changeset content from the OSM server"));
-            }
         }
     }
 
@@ -334,11 +297,11 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            if (current == null) return;
+            if (currentChangeset == null) return;
             Main.worker.submit(
                     new ChangesetHeaderDownloadTask(
                             ChangesetDetailPanel.this,
-                            Collections.singleton(current.getId())
+                            Collections.singleton(currentChangeset.getId())
                     )
             );
         }
@@ -367,7 +330,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
                     ChangesetDetailPanel.this,
                     tr("<html>None of the objects in the content of changeset {0} is available in the current<br>"
                             + "edit layer ''{1}''.</html>",
-                            current.getId(),
+                            currentChangeset.getId(),
                             Main.main.getEditLayer().getName()
                     ),
                     tr("Nothing to select"),
@@ -384,7 +347,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             OsmDataLayer layer = Main.main.getEditLayer();
             Set<OsmPrimitive> target = new HashSet<>();
             for (OsmPrimitive p: layer.data.allPrimitives()) {
-                if (p.isUsable() && p.getChangesetId() == current.getId()) {
+                if (p.isUsable() && p.getChangesetId() == currentChangeset.getId()) {
                     target.add(p);
                 }
             }
@@ -400,7 +363,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
                 setEnabled(false);
                 return;
             }
-            setEnabled(current != null);
+            setEnabled(currentChangeset != null);
         }
 
         @Override
@@ -428,7 +391,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
                     ChangesetDetailPanel.this,
                     tr("<html>None of the objects in the content of changeset {0} is available in the current<br>"
                             + "edit layer ''{1}''.</html>",
-                            current.getId(),
+                            currentChangeset.getId(),
                             Main.main.getEditLayer().getName()
                     ),
                     tr("Nothing to zoom to"),
@@ -445,7 +408,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             OsmDataLayer layer = Main.main.getEditLayer();
             Set<OsmPrimitive> target = new HashSet<>();
             for (OsmPrimitive p: layer.data.allPrimitives()) {
-                if (p.isUsable() && p.getChangesetId() == current.getId()) {
+                if (p.isUsable() && p.getChangesetId() == currentChangeset.getId()) {
                     target.add(p);
                 }
             }
@@ -462,12 +425,17 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
                 setEnabled(false);
                 return;
             }
-            setEnabled(current != null);
+            setEnabled(currentChangeset != null);
         }
 
         @Override
         public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
             updateEnabledState();
         }
+    }
+
+    @Override
+    public Changeset getCurrentChangeset() {
+        return currentChangeset;
     }
 }
