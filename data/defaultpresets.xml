@@ -1169,7 +1169,7 @@
             </optional>
         </item> <!-- Steps -->
     </group> <!-- Ways -->
-    <group name="Waypoints" icon="presets/waypoints.png">
+    <group name="Waypoints" icon="styles/standard/vehicle/waypoints.svg">
         <item name="Motorway Junction" icon="styles/standard/vehicle/motorway_junction.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=motorway_junction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=motorway_junction"
@@ -1184,7 +1184,7 @@
             <text key="ref" text="Number" />
             <text key="exit_to" text="Exit to" />
         </item> <!-- Motorway Junction -->
-        <item name="Services" icon="styles/standard/vehicle/services.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Services" icon="styles/standard/vehicle/services.svg" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=services"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=services"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=services"
@@ -1199,7 +1199,7 @@
                 <check key="toilets" text="Toilets" />
             </optional>
         </item> <!-- Services -->
-        <item name="Rest Area" icon="presets/parking.png" type="node,closedway" preset_name_label="true">
+        <item name="Rest Area" icon="styles/standard/vehicle/rest_area.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=rest_area"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=rest_area"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=rest_area"
@@ -1239,7 +1239,7 @@
                 <text key="name" text="Name" />
             </optional>
             </item> <!-- Traffic Signal -->
-        <item name="Stop" icon="presets/Stop.png" type="node" preset_name_label="true">
+        <item name="Stop" icon="styles/standard/vehicle/restriction/stop.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=stop"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=stop"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=stop"
@@ -1248,7 +1248,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=stop" />
             <key key="highway" value="stop" />
         </item> <!-- Stop -->
-        <item name="Give Way" icon="styles/standard/vehicle/restriction/right_of_way.png" type="node" preset_name_label="true">
+        <item name="Give Way" icon="styles/standard/vehicle/restriction/give_way.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=give_way"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=give_way"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=give_way"
@@ -1291,7 +1291,7 @@
             <check key="button_operated" text="Button operated" />
             <check key="traffic_signals:sound" text="Sound signals" />
         </item> <!-- Pedestrian Crossing -->
-        <item name="Traffic Calming" icon="styles/standard/vehicle/traffic_calming_blue.png" type="node,way" preset_name_label="true">
+        <item name="Traffic Calming" icon="styles/standard/vehicle/choker.svg" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:traffic_calming"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_calming"
@@ -1305,16 +1305,26 @@
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
             <space />
-            <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,island,rumble_strip,table" match="key" values_searchable="true" />
+            <combo key="traffic_calming" text="Type" match="key" values_searchable="true">
+                <list_entry value="yes" display_value="yes - choose a specific value instead if possible" icon="styles/standard/vehicle/traffic_calming.svg" />
+                <list_entry value="bump" icon="styles/standard/vehicle/bump.svg" />
+                <list_entry value="chicane" icon="styles/standard/vehicle/chicane.svg" />
+                <list_entry value="choker" icon="styles/standard/vehicle/choker.svg" />
+                <list_entry value="cushion" icon="styles/standard/vehicle/cushion.svg" />
+                <list_entry value="hump" icon="styles/standard/vehicle/hump.svg" />
+                <list_entry value="island" icon="styles/standard/vehicle/island.svg" />
+                <list_entry value="rumble_strip" icon="styles/standard/vehicle/rumble_strip.svg" />
+                <list_entry value="table" icon="styles/standard/vehicle/table.svg" />
+            </combo>
         </item> <!-- Traffic Calming -->
-        <item name="Passing Place" icon="presets/passingplace.png" type="node" preset_name_label="true">
+        <item name="Passing Place" icon="styles/standard/vehicle/passing_place.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=passing_place"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=passing_place"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:highway=passing_place"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=passing_place" />
             <key key="highway" value="passing_place" />
         </item> <!-- Passing Place -->
-        <item name="Turning Circle" icon="styles/standard/vehicle/turning_circle.png" type="node" preset_name_label="true">
+        <item name="Turning Circle" icon="styles/standard/vehicle/turning_circle.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=turning_circle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=turning_circle"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=turning_circle"
@@ -1324,13 +1334,13 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=turning_circle" />
             <key key="highway" value="turning_circle" />
         </item> <!-- Turning Circle -->
-        <item name="Turning Loop" icon="styles/standard/vehicle/turning_loop.png" type="node" preset_name_label="true">
+        <item name="Turning Loop" icon="styles/standard/vehicle/turning_loop.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=turning_loop"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=turning_loop"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=turning_loop" />
             <key key="highway" value="turning_loop" />
         </item> <!-- Turning Loop -->
-        <item name="City Limit Sign" icon="presets/citylimit.png" type="node" preset_name_label="true">
+        <item name="City Limit Sign" icon="styles/standard/vehicle/restriction/city_limit.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_sign"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_sign"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_sign"
@@ -1343,7 +1353,7 @@
             <text key="name" text="Name" />
             <text key="alt_name" text="Second Name" />
         </item> <!-- City Limit -->
-        <item name="Speed Limit Sign" icon="styles/standard/vehicle/restriction/speed.png" type="node" preset_name_label="true">
+        <item name="Speed Limit Sign" icon="styles/standard/vehicle/restriction/maxspeed.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_sign"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_sign"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_sign"
@@ -1355,7 +1365,7 @@
             <key key="traffic_sign" value="maxspeed" />
             <text key="maxspeed" text="Max. speed (km/h)" />
         </item> <!-- Speed Limit -->
-        <item name="Speed Camera" icon="presets/speed_camera.png" type="node" preset_name_label="true">
+        <item name="Speed Camera" icon="styles/standard/vehicle/restriction/speed_camera.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=speed_camera"
                   az.href="http://wiki.openstreetmap.org/wiki/Az:Tag:highway=speed_camera"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=speed_camera"
@@ -1383,7 +1393,7 @@
             <text key="distance" text="Distance (kilometers)" />
             <text key="ref" text="Reference" />
         </item> <!-- Highway Milestone -->
-        <item name="Named Junction" name_context="junction=yes" type="node,closedway" preset_name_label="true">
+        <item name="Named Junction" name_context="junction=yes" icon="styles/standard/vehicle/junction.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:junction=yes"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:junction=yes" />
             <key key="junction" value="yes" />
@@ -1391,7 +1401,7 @@
             <text key="name" text="Name" />
         </item> <!-- Named Junction -->
         <separator/>
-        <item name="Elevator" icon="styles/standard/service/elevator.png" type="node,way,closedway" preset_name_label="true">
+        <item name="Elevator" icon="styles/standard/service/elevator.svg" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=elevator"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=elevator"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=elevator"
@@ -1400,7 +1410,7 @@
             <key key="highway" value="elevator" />
         </item> <!-- Elevator -->
         <separator/>
-        <item name="Grit Bin" icon="styles/standard/misc/grit_bin.png" type="node" preset_name_label="true">
+        <item name="Grit Bin" icon="styles/standard/misc/grit_bin.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=grit_bin"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=grit_bin"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=grit_bin"
@@ -1408,7 +1418,7 @@
             <key key="amenity" value="grit_bin" />
         </item> <!-- Grit Bin -->
         <separator/>
-        <item name="Mountain Pass" icon="presets/mountain_pass.png" type="node" preset_name_label="true">
+        <item name="Mountain Pass" icon="styles/standard/misc/landmark/mountain_pass.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:mountain_pass"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:mountain_pass"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:mountain_pass"
@@ -1925,7 +1935,7 @@
             <reference ref="water_access" />
         </item> <!-- Canal -->
         <separator/>
-        <item name="Spring" icon="presets/spring.png" type="node,closedway" preset_name_label="true">
+        <item name="Spring" icon="styles/standard/misc/landmark/spring.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=spring"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=spring"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=spring"
@@ -1940,7 +1950,7 @@
             <text key="name" text="Name" />
             <check key="drinking_water" text="Drinking Water" />
         </item> <!-- Spring -->
-        <item name="Waterfall" icon="presets/waterfall.png" type="node,way" preset_name_label="true">
+        <item name="Waterfall" icon="styles/standard/nautical/waterfall.svg" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=waterfall"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:waterway=waterfall"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=waterfall"
@@ -1950,7 +1960,7 @@
             <key key="waterway" value="waterfall" />
             <reference ref="name_wikipedia" />
         </item> <!-- Waterfall -->
-        <item name="Weir" icon="presets/weir.png" type="node,way" preset_name_label="true">
+        <item name="Weir" icon="styles/standard/nautical/weir.svg" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=weir"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:waterway=weir"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=weir"
@@ -1963,7 +1973,7 @@
             <key key="waterway" value="weir" />
             <text key="name" text="Name" />
         </item> <!-- Weir -->
-        <item name="Dam" icon="presets/dam.png" type="node,way,closedway" preset_name_label="true">
+        <item name="Dam" icon="styles/standard/nautical/dam.svg" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dam"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:waterway=dam"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=dam"
@@ -2048,7 +2058,7 @@
             <text key="name" text="Name" />
         </item> <!-- Covered Reservoir -->
         <separator/>
-        <item name="Water" name_context="natural" icon="presets/water.png" type="closedway,relation" preset_name_label="true">
+        <item name="Water" name_context="natural" icon="styles/standard/nautical/water.svg" type="closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=water"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=water"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=water"
