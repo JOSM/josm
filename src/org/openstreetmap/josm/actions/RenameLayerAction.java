@@ -85,7 +85,9 @@ public class RenameLayerAction extends AbstractAction {
                 File newFile = new File(newname);
                 if (Main.platform.rename(file, newFile)) {
                     layer.setAssociatedFile(newFile);
-                    nameText = newFile.getName();
+                    if (!layer.isRenamed()) {
+                        nameText = newFile.getName();
+                    }
                 } else {
                     JOptionPane.showMessageDialog(
                             Main.parent,
@@ -97,7 +99,7 @@ public class RenameLayerAction extends AbstractAction {
                 }
             }
         }
-        layer.setName(nameText);
+        layer.rename(nameText);
         Main.parent.repaint();
     }
 }
