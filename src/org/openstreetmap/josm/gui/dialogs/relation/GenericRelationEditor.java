@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -20,8 +19,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,41 +42,51 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.conflict.ConflictAddCommand;
-import org.openstreetmap.josm.data.conflict.Conflict;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAfterSelection;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAtEndAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAtStartAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedBeforeSelection;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.ApplyAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.CancelAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.CopyMembersAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.DeleteCurrentRelationAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.DownloadIncompleteMembersAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.DownloadSelectedIncompleteMembersAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.DuplicateRelationAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.EditAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.MoveDownAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.MoveUpAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.OKAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.PasteMembersAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.RemoveAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.RemoveSelectedAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.ReverseAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.SelectPrimitivesForSelectedMembersAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.SelectedMembersForSelectionAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.SetRoleAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.SortAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.SortBelowAction;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
@@ -87,9 +94,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
-import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -118,7 +123,7 @@ public class GenericRelationEditor extends RelationEditor  {
      */
     private JMenuItem windowMenuItem;
     /**
-     * Button for performing the {@link org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.SortBelowAction}.
+     * Button for performing the {@link org.openstreetmap.josm.gui.dialogs.relation.actions.SortBelowAction}.
      */
     private JButton sortBelowButton;
 
@@ -133,7 +138,7 @@ public class GenericRelationEditor extends RelationEditor  {
      * @param selectedMembers a collection of members which shall be selected initially
      */
     public GenericRelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers) {
-        super(layer, relation, selectedMembers);
+        super(layer, relation);
 
         setRememberWindowGeometry(getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(Main.parent, new Dimension(700, 650)));
@@ -226,8 +231,17 @@ public class GenericRelationEditor extends RelationEditor  {
                 // CHECKSTYLE.OFF: LineLength
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.CTRL_SHIFT).getKeyStroke());
                 // CHECKSTYLE.ON: LineLength
-        registerCopyPasteAction(new PasteMembersAction(), "PASTE_MEMBERS", Shortcut.getPasteKeyStroke());
-        registerCopyPasteAction(new CopyMembersAction(), "COPY_MEMBERS", Shortcut.getCopyKeyStroke());
+
+        registerCopyPasteAction(new PasteMembersAction(memberTableModel, getLayer(), this) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                super.actionPerformed(e);
+                tfRole.requestFocusInWindow();
+            }
+        }, "PASTE_MEMBERS", Shortcut.getPasteKeyStroke());
+
+        registerCopyPasteAction(new CopyMembersAction(memberTableModel, getLayer(), this),
+                "COPY_MEMBERS", Shortcut.getCopyKeyStroke());
 
         tagEditorPanel.setNextFocusComponent(memberTable);
         selectionTable.setFocusable(false);
@@ -243,9 +257,9 @@ public class GenericRelationEditor extends RelationEditor  {
     protected JToolBar buildToolBar() {
         JToolBar tb  = new JToolBar();
         tb.setFloatable(false);
-        tb.add(new ApplyAction());
-        tb.add(new DuplicateRelationAction());
-        DeleteCurrentRelationAction deleteAction = new DeleteCurrentRelationAction();
+        tb.add(new ApplyAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this));
+        tb.add(new DuplicateRelationAction(memberTableModel, tagEditorPanel.getModel(), getLayer()));
+        DeleteCurrentRelationAction deleteAction = new DeleteCurrentRelationAction(getLayer(), this);
         addPropertyChangeListener(deleteAction);
         tb.add(deleteAction);
         return tb;
@@ -257,11 +271,9 @@ public class GenericRelationEditor extends RelationEditor  {
      * @return the panel with the OK and the Cancel button
      */
     protected JPanel buildOkCancelButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
-
-        pnl.add(new SideButton(new OKAction()));
-        pnl.add(new SideButton(new CancelAction()));
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        pnl.add(new SideButton(new OKAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this, tfRole)));
+        pnl.add(new SideButton(new CancelAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this, tfRole)));
         pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/RelationEditor"))));
         return pnl;
     }
@@ -272,8 +284,7 @@ public class GenericRelationEditor extends RelationEditor  {
      * @return the panel with the tag editor
      */
     protected JPanel buildTagEditorPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
 
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
@@ -365,7 +376,7 @@ public class GenericRelationEditor extends RelationEditor  {
         );
         tfRole.setText(Main.pref.get("relation.editor.generic.lastrole", ""));
         p3.add(tfRole);
-        SetRoleAction setRoleAction = new SetRoleAction();
+        SetRoleAction setRoleAction = new SetRoleAction(memberTable, memberTableModel, tfRole);
         memberTableModel.getSelectionModel().addListSelectionListener(setRoleAction);
         tfRole.getDocument().addDocumentListener(setRoleAction);
         tfRole.addActionListener(setRoleAction);
@@ -487,55 +498,53 @@ public class GenericRelationEditor extends RelationEditor  {
         tb.setFloatable(false);
 
         // -- move up action
-        MoveUpAction moveUpAction = new MoveUpAction();
+        MoveUpAction moveUpAction = new MoveUpAction(memberTable, memberTableModel, "moveUp");
         memberTableModel.getSelectionModel().addListSelectionListener(moveUpAction);
         tb.add(moveUpAction);
-        memberTable.getActionMap().put("moveUp", moveUpAction);
 
         // -- move down action
-        MoveDownAction moveDownAction = new MoveDownAction();
+        MoveDownAction moveDownAction = new MoveDownAction(memberTable, memberTableModel, "moveDown");
         memberTableModel.getSelectionModel().addListSelectionListener(moveDownAction);
         tb.add(moveDownAction);
-        memberTable.getActionMap().put("moveDown", moveDownAction);
 
         tb.addSeparator();
 
         // -- edit action
-        EditAction editAction = new EditAction();
+        EditAction editAction = new EditAction(memberTable, memberTableModel, getLayer());
         memberTableModel.getSelectionModel().addListSelectionListener(editAction);
         tb.add(editAction);
 
         // -- delete action
-        RemoveAction removeSelectedAction = new RemoveAction();
+        RemoveAction removeSelectedAction = new RemoveAction(memberTable, memberTableModel, "removeSelected");
         memberTable.getSelectionModel().addListSelectionListener(removeSelectedAction);
         tb.add(removeSelectedAction);
-        memberTable.getActionMap().put("removeSelected", removeSelectedAction);
 
         tb.addSeparator();
         // -- sort action
-        SortAction sortAction = new SortAction();
+        SortAction sortAction = new SortAction(memberTable, memberTableModel);
         memberTableModel.addTableModelListener(sortAction);
         tb.add(sortAction);
-        final SortBelowAction sortBelowAction = new SortBelowAction();
+        final SortBelowAction sortBelowAction = new SortBelowAction(memberTable, memberTableModel);
         memberTableModel.addTableModelListener(sortBelowAction);
         memberTableModel.getSelectionModel().addListSelectionListener(sortBelowAction);
         sortBelowButton = tb.add(sortBelowAction);
 
         // -- reverse action
-        ReverseAction reverseAction = new ReverseAction();
+        ReverseAction reverseAction = new ReverseAction(memberTable, memberTableModel);
         memberTableModel.addTableModelListener(reverseAction);
         tb.add(reverseAction);
 
         tb.addSeparator();
 
         // -- download action
-        DownloadIncompleteMembersAction downloadIncompleteMembersAction = new DownloadIncompleteMembersAction();
+        DownloadIncompleteMembersAction downloadIncompleteMembersAction = new DownloadIncompleteMembersAction(
+                memberTable, memberTableModel, "downloadIncomplete", getLayer(), this);
         memberTable.getModel().addTableModelListener(downloadIncompleteMembersAction);
         tb.add(downloadIncompleteMembersAction);
-        memberTable.getActionMap().put("downloadIncomplete", downloadIncompleteMembersAction);
 
         // -- download selected action
-        DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction();
+        DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction(
+                memberTable, memberTableModel, null, getLayer(), this);
         memberTable.getModel().addTableModelListener(downloadSelectedIncompleteMembersAction);
         memberTable.getSelectionModel().addListSelectionListener(downloadSelectedIncompleteMembersAction);
         tb.add(downloadSelectedIncompleteMembersAction);
@@ -559,44 +568,50 @@ public class GenericRelationEditor extends RelationEditor  {
         tb.setFloatable(false);
 
         // -- add at start action
-        AddSelectedAtStartAction addSelectionAction = new AddSelectedAtStartAction();
+        AddSelectedAtStartAction addSelectionAction = new AddSelectedAtStartAction(
+                memberTableModel, selectionTableModel, this);
         selectionTableModel.addTableModelListener(addSelectionAction);
         tb.add(addSelectionAction);
 
         // -- add before selected action
-        AddSelectedBeforeSelection addSelectedBeforeSelectionAction = new AddSelectedBeforeSelection();
+        AddSelectedBeforeSelection addSelectedBeforeSelectionAction = new AddSelectedBeforeSelection(
+                memberTableModel, selectionTableModel, this);
         selectionTableModel.addTableModelListener(addSelectedBeforeSelectionAction);
         memberTableModel.getSelectionModel().addListSelectionListener(addSelectedBeforeSelectionAction);
         tb.add(addSelectedBeforeSelectionAction);
 
         // -- add after selected action
-        AddSelectedAfterSelection addSelectedAfterSelectionAction = new AddSelectedAfterSelection();
+        AddSelectedAfterSelection addSelectedAfterSelectionAction = new AddSelectedAfterSelection(
+                memberTableModel, selectionTableModel, this);
         selectionTableModel.addTableModelListener(addSelectedAfterSelectionAction);
         memberTableModel.getSelectionModel().addListSelectionListener(addSelectedAfterSelectionAction);
         tb.add(addSelectedAfterSelectionAction);
 
         // -- add at end action
-        AddSelectedAtEndAction addSelectedAtEndAction = new AddSelectedAtEndAction();
+        AddSelectedAtEndAction addSelectedAtEndAction = new AddSelectedAtEndAction(
+                memberTableModel, selectionTableModel, this);
         selectionTableModel.addTableModelListener(addSelectedAtEndAction);
         tb.add(addSelectedAtEndAction);
 
         tb.addSeparator();
 
         // -- select members action
-        SelectedMembersForSelectionAction selectMembersForSelectionAction = new SelectedMembersForSelectionAction();
+        SelectedMembersForSelectionAction selectMembersForSelectionAction = new SelectedMembersForSelectionAction(
+                memberTableModel, selectionTableModel, getLayer());
         selectionTableModel.addTableModelListener(selectMembersForSelectionAction);
         memberTableModel.addTableModelListener(selectMembersForSelectionAction);
         tb.add(selectMembersForSelectionAction);
 
         // -- select action
-        SelectPrimitivesForSelectedMembersAction selectAction = new SelectPrimitivesForSelectedMembersAction();
+        SelectPrimitivesForSelectedMembersAction selectAction = new SelectPrimitivesForSelectedMembersAction(
+                memberTable, memberTableModel, getLayer());
         memberTable.getSelectionModel().addListSelectionListener(selectAction);
         tb.add(selectAction);
 
         tb.addSeparator();
 
         // -- remove selected action
-        RemoveSelectedAction removeSelectedAction = new RemoveSelectedAction();
+        RemoveSelectedAction removeSelectedAction = new RemoveSelectedAction(memberTableModel, selectionTableModel, getLayer());
         selectionTableModel.addTableModelListener(removeSelectedAction);
         tb.add(removeSelectedAction);
 
@@ -707,10 +722,19 @@ public class GenericRelationEditor extends RelationEditor  {
         selectionTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
     }
 
-    static class AddAbortException extends Exception {
+    /**
+     * Exception thrown when user aborts add operation.
+     */
+    public static class AddAbortException extends Exception {
     }
 
-    static boolean confirmAddingPrimitive(OsmPrimitive primitive) throws AddAbortException {
+    /**
+     * Asks confirmationbefore adding a primitive.
+     * @param primitive primitive to add
+     * @return {@code true} is user confirms the operation, {@code false} otherwise
+     * @throws AddAbortException if user aborts operation
+     */
+    public static boolean confirmAddingPrimitive(OsmPrimitive primitive) throws AddAbortException {
         String msg = tr("<html>This relation already has one or more members referring to<br>"
                 + "the object ''{0}''<br>"
                 + "<br>"
@@ -735,13 +759,16 @@ public class GenericRelationEditor extends RelationEditor  {
         case JOptionPane.CLOSED_OPTION:
             return false;
         case JOptionPane.CANCEL_OPTION:
+        default:
             throw new AddAbortException();
         }
-        // should not happen
-        return false;
     }
 
-    static void warnOfCircularReferences(OsmPrimitive primitive) {
+    /**
+     * Warn about circular references.
+     * @param primitive the concerned primitive
+     */
+    public static void warnOfCircularReferences(OsmPrimitive primitive) {
         String msg = tr("<html>You are trying to add a relation to itself.<br>"
                 + "<br>"
                 + "This creates circular references and is therefore discouraged.<br>"
@@ -799,1029 +826,11 @@ public class GenericRelationEditor extends RelationEditor  {
         return roles;
     }
 
-    abstract class AddFromSelectionAction extends AbstractAction {
-        protected boolean isPotentialDuplicate(OsmPrimitive primitive) {
-            return memberTableModel.hasMembersReferringTo(Collections.singleton(primitive));
-        }
-
-        protected List<OsmPrimitive> filterConfirmedPrimitives(List<OsmPrimitive> primitives) throws AddAbortException {
-            if (primitives == null || primitives.isEmpty())
-                return primitives;
-            List<OsmPrimitive> ret = new ArrayList<>();
-            ConditionalOptionPaneUtil.startBulkOperation("add_primitive_to_relation");
-            for (OsmPrimitive primitive : primitives) {
-                if (primitive instanceof Relation && getRelation() != null && getRelation().equals(primitive)) {
-                    warnOfCircularReferences(primitive);
-                    continue;
-                }
-                if (isPotentialDuplicate(primitive)) {
-                    if (confirmAddingPrimitive(primitive)) {
-                        ret.add(primitive);
-                    }
-                    continue;
-                } else {
-                    ret.add(primitive);
-                }
-            }
-            ConditionalOptionPaneUtil.endBulkOperation("add_primitive_to_relation");
-            return ret;
-        }
-    }
-
-    class AddSelectedAtStartAction extends AddFromSelectionAction implements TableModelListener {
-        AddSelectedAtStartAction() {
-            putValue(SHORT_DESCRIPTION,
-                    tr("Add all objects selected in the current dataset before the first member"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copystartright"));
-            refreshEnabled();
-        }
-
-        protected void refreshEnabled() {
-            setEnabled(selectionTableModel.getRowCount() > 0);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
-                memberTableModel.addMembersAtBeginning(toAdd);
-            } catch (AddAbortException ex) {
-                // do nothing
-                if (Main.isTraceEnabled()) {
-                    Main.trace(ex.getMessage());
-                }
-            }
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            refreshEnabled();
-        }
-    }
-
-    class AddSelectedAtEndAction extends AddFromSelectionAction implements TableModelListener {
-        AddSelectedAtEndAction() {
-            putValue(SHORT_DESCRIPTION, tr("Add all objects selected in the current dataset after the last member"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyendright"));
-            refreshEnabled();
-        }
-
-        protected void refreshEnabled() {
-            setEnabled(selectionTableModel.getRowCount() > 0);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
-                memberTableModel.addMembersAtEnd(toAdd);
-            } catch (AddAbortException ex) {
-                // do nothing
-                if (Main.isTraceEnabled()) {
-                    Main.trace(ex.getMessage());
-                }
-            }
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            refreshEnabled();
-        }
-    }
-
-    class AddSelectedBeforeSelection extends AddFromSelectionAction implements TableModelListener, ListSelectionListener {
-        /**
-         * Constructs a new {@code AddSelectedBeforeSelection}.
-         */
-        AddSelectedBeforeSelection() {
-            putValue(SHORT_DESCRIPTION,
-                    tr("Add all objects selected in the current dataset before the first selected member"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copybeforecurrentright"));
-            refreshEnabled();
-        }
-
-        protected void refreshEnabled() {
-            setEnabled(selectionTableModel.getRowCount() > 0
-                    && memberTableModel.getSelectionModel().getMinSelectionIndex() >= 0);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
-                memberTableModel.addMembersBeforeIdx(toAdd, memberTableModel
-                        .getSelectionModel().getMinSelectionIndex());
-            } catch (AddAbortException ex) {
-                // do nothing
-                if (Main.isTraceEnabled()) {
-                    Main.trace(ex.getMessage());
-                }
-            }
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            refreshEnabled();
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            refreshEnabled();
-        }
-    }
-
-    class AddSelectedAfterSelection extends AddFromSelectionAction implements TableModelListener, ListSelectionListener {
-        AddSelectedAfterSelection() {
-            putValue(SHORT_DESCRIPTION,
-                    tr("Add all objects selected in the current dataset after the last selected member"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyaftercurrentright"));
-            refreshEnabled();
-        }
-
-        protected void refreshEnabled() {
-            setEnabled(selectionTableModel.getRowCount() > 0
-                    && memberTableModel.getSelectionModel().getMinSelectionIndex() >= 0);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                List<OsmPrimitive> toAdd = filterConfirmedPrimitives(selectionTableModel.getSelection());
-                memberTableModel.addMembersAfterIdx(toAdd, memberTableModel
-                        .getSelectionModel().getMaxSelectionIndex());
-            } catch (AddAbortException ex) {
-                // do nothing
-                if (Main.isTraceEnabled()) {
-                    Main.trace(ex.getMessage());
-                }
-            }
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            refreshEnabled();
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            refreshEnabled();
-        }
-    }
-
-    class RemoveSelectedAction extends AbstractAction implements TableModelListener {
-        /**
-         * Constructs a new {@code RemoveSelectedAction}.
-         */
-        RemoveSelectedAction() {
-            putValue(SHORT_DESCRIPTION, tr("Remove all members referring to one of the selected objects"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "deletemembers"));
-            updateEnabledState();
-        }
-
-        protected void updateEnabledState() {
-            DataSet ds = getLayer().data;
-            if (ds == null || ds.getSelected().isEmpty()) {
-                setEnabled(false);
-                return;
-            }
-            // only enable the action if we have members referring to the
-            // selected primitives
-            //
-            setEnabled(memberTableModel.hasMembersReferringTo(ds.getSelected()));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            memberTableModel.removeMembersReferringTo(selectionTableModel.getSelection());
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    /**
-     * Selects  members in the relation editor which refer to primitives in the current
-     * selection of the context layer.
-     *
-     */
-    class SelectedMembersForSelectionAction extends AbstractAction implements TableModelListener {
-        SelectedMembersForSelectionAction() {
-            putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to objects in the current selection"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "selectmembers"));
-            updateEnabledState();
-        }
-
-        protected void updateEnabledState() {
-            boolean enabled = selectionTableModel.getRowCount() > 0
-            &&  !memberTableModel.getChildPrimitives(getLayer().data.getSelected()).isEmpty();
-
-            if (enabled) {
-                putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to {0} objects in the current selection",
-                        memberTableModel.getChildPrimitives(getLayer().data.getSelected()).size()));
-            } else {
-                putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to objects in the current selection"));
-            }
-            setEnabled(enabled);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            memberTableModel.selectMembersReferringTo(getLayer().data.getSelected());
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    /**
-     * Selects primitives in the layer this editor belongs to. The selected primitives are
-     * equal to the set of primitives the currently selected relation members refer to.
-     *
-     */
-    class SelectPrimitivesForSelectedMembersAction extends AbstractAction implements ListSelectionListener {
-        SelectPrimitivesForSelectedMembersAction() {
-            putValue(SHORT_DESCRIPTION, tr("Select objects for selected relation members"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "selectprimitives"));
-            updateEnabledState();
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(memberTable.getSelectedRowCount() > 0);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            getLayer().data.setSelected(memberTableModel.getSelectedChildPrimitives());
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    class SortAction extends AbstractAction implements TableModelListener {
-        SortAction() {
-            String tooltip = tr("Sort the relation members");
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));
-            putValue(NAME, tr("Sort"));
-            Shortcut sc = Shortcut.registerShortcut("relationeditor:sort", tr("Relation Editor: Sort"),
-                KeyEvent.VK_END, Shortcut.ALT);
-            sc.setAccelerator(this);
-            putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
-            updateEnabledState();
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            memberTableModel.sort();
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(memberTableModel.getRowCount() > 0);
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    class SortBelowAction extends AbstractAction implements TableModelListener, ListSelectionListener {
-        SortBelowAction() {
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort_below"));
-            putValue(NAME, tr("Sort below"));
-            putValue(SHORT_DESCRIPTION, tr("Sort the selected relation members and all members below"));
-            updateEnabledState();
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            memberTableModel.sortBelow();
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(memberTableModel.getRowCount() > 0 && !memberTableModel.getSelectionModel().isSelectionEmpty());
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            updateEnabledState();
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    class ReverseAction extends AbstractAction implements TableModelListener {
-        ReverseAction() {
-            putValue(SHORT_DESCRIPTION, tr("Reverse the order of the relation members"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "reverse"));
-            putValue(NAME, tr("Reverse"));
-        //  Shortcut.register Shortcut("relationeditor:reverse", tr("Relation Editor: Reverse"), KeyEvent.VK_END, Shortcut.ALT)
-            updateEnabledState();
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            memberTableModel.reverse();
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(memberTableModel.getRowCount() > 0);
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    class MoveUpAction extends AbstractAction implements ListSelectionListener {
-        MoveUpAction() {
-            String tooltip = tr("Move the currently selected members up");
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "moveup"));
-            Shortcut sc = Shortcut.registerShortcut("relationeditor:moveup", tr("Relation Editor: Move Up"),
-                KeyEvent.VK_UP, Shortcut.ALT);
-            sc.setAccelerator(this);
-            putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
-            setEnabled(false);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            memberTableModel.moveUp(memberTable.getSelectedRows());
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            setEnabled(memberTableModel.canMoveUp(memberTable.getSelectedRows()));
-        }
-    }
-
-    class MoveDownAction extends AbstractAction implements ListSelectionListener {
-        MoveDownAction() {
-            String tooltip = tr("Move the currently selected members down");
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "movedown"));
-            Shortcut sc = Shortcut.registerShortcut("relationeditor:movedown", tr("Relation Editor: Move Down"),
-                KeyEvent.VK_DOWN, Shortcut.ALT);
-            sc.setAccelerator(this);
-            putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
-            setEnabled(false);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            memberTableModel.moveDown(memberTable.getSelectedRows());
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            setEnabled(memberTableModel.canMoveDown(memberTable.getSelectedRows()));
-        }
-    }
-
-    class RemoveAction extends AbstractAction implements ListSelectionListener {
-        RemoveAction() {
-            String tooltip = tr("Remove the currently selected members from this relation");
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
-            putValue(NAME, tr("Remove"));
-            Shortcut sc = Shortcut.registerShortcut("relationeditor:remove", tr("Relation Editor: Remove"),
-                KeyEvent.VK_DELETE, Shortcut.ALT);
-            sc.setAccelerator(this);
-            putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
-            setEnabled(false);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            memberTableModel.remove(memberTable.getSelectedRows());
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            setEnabled(memberTableModel.canRemove(memberTable.getSelectedRows()));
-        }
-    }
-
-    class DeleteCurrentRelationAction extends AbstractAction implements PropertyChangeListener {
-        DeleteCurrentRelationAction() {
-            putValue(SHORT_DESCRIPTION, tr("Delete the currently edited relation"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
-            putValue(NAME, tr("Delete"));
-            updateEnabledState();
-        }
-
-        public void run() {
-            Relation toDelete = getRelation();
-            if (toDelete == null)
-                return;
-            org.openstreetmap.josm.actions.mapmode.DeleteAction.deleteRelation(
-                    getLayer(),
-                    toDelete
-            );
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            run();
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(getRelationSnapshot() != null);
-        }
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals(RELATION_SNAPSHOT_PROP)) {
-                updateEnabledState();
-            }
-        }
-    }
-
-    abstract class SavingAction extends AbstractAction {
-        /**
-         * apply updates to a new relation
-         */
-        protected void applyNewRelation() {
-            final Relation newRelation = new Relation();
-            tagEditorPanel.getModel().applyToPrimitive(newRelation);
-            memberTableModel.applyToRelation(newRelation);
-            List<RelationMember> newMembers = new ArrayList<>();
-            for (RelationMember rm: newRelation.getMembers()) {
-                if (!rm.getMember().isDeleted()) {
-                    newMembers.add(rm);
-                }
-            }
-            if (newRelation.getMembersCount() != newMembers.size()) {
-                newRelation.setMembers(newMembers);
-                String msg = tr("One or more members of this new relation have been deleted while the relation editor\n" +
-                "was open. They have been removed from the relation members list.");
-                JOptionPane.showMessageDialog(Main.parent, msg, tr("Warning"), JOptionPane.WARNING_MESSAGE);
-            }
-            // If the user wanted to create a new relation, but hasn't added any members or
-            // tags, don't add an empty relation
-            if (newRelation.getMembersCount() == 0 && !newRelation.hasKeys())
-                return;
-            Main.main.undoRedo.add(new AddCommand(getLayer(), newRelation));
-
-            // make sure everybody is notified about the changes
-            //
-            getLayer().data.fireSelectionChanged();
-            GenericRelationEditor.this.setRelation(newRelation);
-            RelationDialogManager.getRelationDialogManager().updateContext(
-                    getLayer(),
-                    getRelation(),
-                    GenericRelationEditor.this
-            );
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    // Relation list gets update in EDT so selecting my be postponed to following EDT run
-                    Main.map.relationListDialog.selectRelation(newRelation);
-                }
-            });
-        }
-
-        /**
-         * Apply the updates for an existing relation which has been changed
-         * outside of the relation editor.
-         *
-         */
-        protected void applyExistingConflictingRelation() {
-            Relation editedRelation = new Relation(getRelation());
-            tagEditorPanel.getModel().applyToPrimitive(editedRelation);
-            memberTableModel.applyToRelation(editedRelation);
-            Conflict<Relation> conflict = new Conflict<>(getRelation(), editedRelation);
-            Main.main.undoRedo.add(new ConflictAddCommand(getLayer(), conflict));
-        }
-
-        /**
-         * Apply the updates for an existing relation which has not been changed
-         * outside of the relation editor.
-         *
-         */
-        protected void applyExistingNonConflictingRelation() {
-            Relation editedRelation = new Relation(getRelation());
-            tagEditorPanel.getModel().applyToPrimitive(editedRelation);
-            memberTableModel.applyToRelation(editedRelation);
-            Main.main.undoRedo.add(new ChangeCommand(getRelation(), editedRelation));
-            getLayer().data.fireSelectionChanged();
-            // this will refresh the snapshot and update the dialog title
-            //
-            setRelation(getRelation());
-        }
-
-        protected boolean confirmClosingBecauseOfDirtyState() {
-            ButtonSpec[] options = new ButtonSpec[] {
-                    new ButtonSpec(
-                            tr("Yes, create a conflict and close"),
-                            ImageProvider.get("ok"),
-                            tr("Click to create a conflict and close this relation editor"),
-                            null /* no specific help topic */
-                    ),
-                    new ButtonSpec(
-                            tr("No, continue editing"),
-                            ImageProvider.get("cancel"),
-                            tr("Click to return to the relation editor and to resume relation editing"),
-                            null /* no specific help topic */
-                    )
-            };
-
-            int ret = HelpAwareOptionPane.showOptionDialog(
-                    Main.parent,
-                    tr("<html>This relation has been changed outside of the editor.<br>"
-                            + "You cannot apply your changes and continue editing.<br>"
-                            + "<br>"
-                            + "Do you want to create a conflict and close the editor?</html>"),
-                            tr("Conflict in data"),
-                            JOptionPane.WARNING_MESSAGE,
-                            null,
-                            options,
-                            options[0], // OK is default
-                            "/Dialog/RelationEditor#RelationChangedOutsideOfEditor"
-            );
-            return ret == 0;
-        }
-
-        protected void warnDoubleConflict() {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>Layer ''{0}'' already has a conflict for object<br>"
-                            + "''{1}''.<br>"
-                            + "Please resolve this conflict first, then try again.</html>",
-                            getLayer().getName(),
-                            getRelation().getDisplayName(DefaultNameFormatter.getInstance())
-                    ),
-                    tr("Double conflict"),
-                    JOptionPane.WARNING_MESSAGE
-            );
-        }
-    }
-
-    class ApplyAction extends SavingAction {
-        ApplyAction() {
-            putValue(SHORT_DESCRIPTION, tr("Apply the current updates"));
-            putValue(SMALL_ICON, ImageProvider.get("save"));
-            putValue(NAME, tr("Apply"));
-            setEnabled(true);
-        }
-
-        public void run() {
-            if (getRelation() == null) {
-                applyNewRelation();
-            } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
-                    || tagEditorPanel.getModel().isDirty()) {
-                if (isDirtyRelation()) {
-                    if (confirmClosingBecauseOfDirtyState()) {
-                        if (getLayer().getConflicts().hasConflictForMy(getRelation())) {
-                            warnDoubleConflict();
-                            return;
-                        }
-                        applyExistingConflictingRelation();
-                        setVisible(false);
-                    }
-                } else {
-                    applyExistingNonConflictingRelation();
-                }
-            }
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            run();
-        }
-    }
-
-    class OKAction extends SavingAction {
-        OKAction() {
-            putValue(SHORT_DESCRIPTION, tr("Apply the updates and close the dialog"));
-            putValue(SMALL_ICON, ImageProvider.get("ok"));
-            putValue(NAME, tr("OK"));
-            setEnabled(true);
-        }
-
-        public void run() {
-            Main.pref.put("relation.editor.generic.lastrole", tfRole.getText());
-            memberTable.stopHighlighting();
-            if (getRelation() == null) {
-                applyNewRelation();
-            } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
-                    || tagEditorPanel.getModel().isDirty()) {
-                if (isDirtyRelation()) {
-                    if (confirmClosingBecauseOfDirtyState()) {
-                        if (getLayer().getConflicts().hasConflictForMy(getRelation())) {
-                            warnDoubleConflict();
-                            return;
-                        }
-                        applyExistingConflictingRelation();
-                    } else
-                        return;
-                } else {
-                    applyExistingNonConflictingRelation();
-                }
-            }
-            setVisible(false);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            run();
-        }
-    }
-
-    class CancelAction extends SavingAction {
-        CancelAction() {
-            putValue(SHORT_DESCRIPTION, tr("Cancel the updates and close the dialog"));
-            putValue(SMALL_ICON, ImageProvider.get("cancel"));
-            putValue(NAME, tr("Cancel"));
-
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-            .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
-            getRootPane().getActionMap().put("ESCAPE", this);
-            setEnabled(true);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            memberTable.stopHighlighting();
-            TagEditorModel tagModel = tagEditorPanel.getModel();
-            Relation snapshot = getRelationSnapshot();
-            if ((!memberTableModel.hasSameMembersAs(snapshot) || tagModel.isDirty())
-             && !(snapshot == null && tagModel.getTags().isEmpty())) {
-                //give the user a chance to save the changes
-                int ret = confirmClosingByCancel();
-                if (ret == 0) { //Yes, save the changes
-                    //copied from OKAction.run()
-                    Main.pref.put("relation.editor.generic.lastrole", tfRole.getText());
-                    if (getRelation() == null) {
-                        applyNewRelation();
-                    } else if (!memberTableModel.hasSameMembersAs(snapshot) || tagModel.isDirty()) {
-                        if (isDirtyRelation()) {
-                            if (confirmClosingBecauseOfDirtyState()) {
-                                if (getLayer().getConflicts().hasConflictForMy(getRelation())) {
-                                    warnDoubleConflict();
-                                    return;
-                                }
-                                applyExistingConflictingRelation();
-                            } else
-                                return;
-                        } else {
-                            applyExistingNonConflictingRelation();
-                        }
-                    }
-                } else if (ret == 2) //Cancel, continue editing
-                    return;
-                //in case of "No, discard", there is no extra action to be performed here.
-            }
-            setVisible(false);
-        }
-
-        protected int confirmClosingByCancel() {
-            ButtonSpec[] options = new ButtonSpec[] {
-                    new ButtonSpec(
-                            tr("Yes, save the changes and close"),
-                            ImageProvider.get("ok"),
-                            tr("Click to save the changes and close this relation editor"),
-                            null /* no specific help topic */
-                    ),
-                    new ButtonSpec(
-                            tr("No, discard the changes and close"),
-                            ImageProvider.get("cancel"),
-                            tr("Click to discard the changes and close this relation editor"),
-                            null /* no specific help topic */
-                    ),
-                    new ButtonSpec(
-                            tr("Cancel, continue editing"),
-                            ImageProvider.get("cancel"),
-                            tr("Click to return to the relation editor and to resume relation editing"),
-                            null /* no specific help topic */
-                    )
-            };
-
-            return HelpAwareOptionPane.showOptionDialog(
-                    Main.parent,
-                    tr("<html>The relation has been changed.<br>"
-                            + "<br>"
-                            + "Do you want to save your changes?</html>"),
-                            tr("Unsaved changes"),
-                            JOptionPane.WARNING_MESSAGE,
-                            null,
-                            options,
-                            options[0], // OK is default,
-                            "/Dialog/RelationEditor#DiscardChanges"
-            );
-        }
-    }
-
-    class AddTagAction extends AbstractAction {
-        AddTagAction() {
-            putValue(SHORT_DESCRIPTION, tr("Add an empty tag"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
-            setEnabled(true);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            tagEditorPanel.getModel().appendNewTag();
-        }
-    }
-
-    class DownloadIncompleteMembersAction extends AbstractAction implements TableModelListener {
-        DownloadIncompleteMembersAction() {
-            String tooltip = tr("Download all incomplete members");
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincomplete"));
-            putValue(NAME, tr("Download Members"));
-            Shortcut sc = Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
-                KeyEvent.VK_HOME, Shortcut.ALT);
-            sc.setAccelerator(this);
-            putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
-            updateEnabledState();
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (!isEnabled())
-                return;
-            Main.worker.submit(new DownloadRelationMemberTask(
-                    getRelation(),
-                    memberTableModel.getIncompleteMemberPrimitives(),
-                    getLayer(),
-                    GenericRelationEditor.this)
-            );
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(memberTableModel.hasIncompleteMembers() && !Main.isOffline(OnlineResource.OSM_API));
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener, TableModelListener {
-        DownloadSelectedIncompleteMembersAction() {
-            putValue(SHORT_DESCRIPTION, tr("Download selected incomplete members"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
-            putValue(NAME, tr("Download Members"));
-        //  Shortcut.register Shortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"), KeyEvent.VK_K, Shortcut.ALT)
-            updateEnabledState();
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (!isEnabled())
-                return;
-            Main.worker.submit(new DownloadRelationMemberTask(
-                    getRelation(),
-                    memberTableModel.getSelectedIncompleteMemberPrimitives(),
-                    getLayer(),
-                    GenericRelationEditor.this)
-            );
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(memberTableModel.hasIncompleteSelectedMembers() && !Main.isOffline(OnlineResource.OSM_API));
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            updateEnabledState();
-        }
-    }
-
-    class SetRoleAction extends AbstractAction implements ListSelectionListener, DocumentListener {
-        SetRoleAction() {
-            putValue(SHORT_DESCRIPTION, tr("Sets a role for the selected members"));
-            putValue(SMALL_ICON, ImageProvider.get("apply"));
-            putValue(NAME, tr("Apply Role"));
-            refreshEnabled();
-        }
-
-        protected void refreshEnabled() {
-            setEnabled(memberTable.getSelectedRowCount() > 0);
-        }
-
-        protected boolean isEmptyRole() {
-            return tfRole.getText() == null || tfRole.getText().trim().isEmpty();
-        }
-
-        protected boolean confirmSettingEmptyRole(int onNumMembers) {
-            String message = "<html>"
-                + trn("You are setting an empty role on {0} object.",
-                        "You are setting an empty role on {0} objects.", onNumMembers, onNumMembers)
-                        + "<br>"
-                        + tr("This is equal to deleting the roles of these objects.") +
-                        "<br>"
-                        + tr("Do you really want to apply the new role?") + "</html>";
-            String[] options = new String[] {
-                    tr("Yes, apply it"),
-                    tr("No, do not apply")
-            };
-            int ret = ConditionalOptionPaneUtil.showOptionDialog(
-                    "relation_editor.confirm_applying_empty_role",
-                    Main.parent,
-                    message,
-                    tr("Confirm empty role"),
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE,
-                    options,
-                    options[0]
-            );
-            switch(ret) {
-            case JOptionPane.YES_OPTION:
-            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION:
-                return true;
-            default:
-                return false;
-            }
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (isEmptyRole()) {
-                if (!confirmSettingEmptyRole(memberTable.getSelectedRowCount()))
-                    return;
-            }
-            memberTableModel.updateRole(memberTable.getSelectedRows(), tfRole.getText());
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            refreshEnabled();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            refreshEnabled();
-        }
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            refreshEnabled();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            refreshEnabled();
-        }
-    }
-
-    /**
-     * Creates a new relation with a copy of the current editor state.
-     */
-    class DuplicateRelationAction extends AbstractAction {
-        DuplicateRelationAction() {
-            putValue(SHORT_DESCRIPTION, tr("Create a copy of this relation and open it in another editor window"));
-            // FIXME provide an icon
-            putValue(SMALL_ICON, ImageProvider.get("duplicate"));
-            putValue(NAME, tr("Duplicate"));
-            setEnabled(true);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Relation copy = new Relation();
-            tagEditorPanel.getModel().applyToPrimitive(copy);
-            memberTableModel.applyToRelation(copy);
-            RelationEditor editor = RelationEditor.getEditor(getLayer(), copy, memberTableModel.getSelectedMembers());
-            editor.setVisible(true);
-        }
-    }
-
-    /**
-     * Action for editing the currently selected relation.
-     */
-    class EditAction extends AbstractAction implements ListSelectionListener {
-        EditAction() {
-            putValue(SHORT_DESCRIPTION, tr("Edit the relation the currently selected relation member refers to"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
-            refreshEnabled();
-        }
-
-        protected void refreshEnabled() {
-            setEnabled(memberTable.getSelectedRowCount() == 1
-                    && memberTableModel.isEditableRelation(memberTable.getSelectedRow()));
-        }
-
-        protected Collection<RelationMember> getMembersForCurrentSelection(Relation r) {
-            Collection<RelationMember> members = new HashSet<>();
-            Collection<OsmPrimitive> selection = getLayer().data.getSelected();
-            for (RelationMember member: r.getMembers()) {
-                if (selection.contains(member.getMember())) {
-                    members.add(member);
-                }
-            }
-            return members;
-        }
-
-        public void run() {
-            int idx = memberTable.getSelectedRow();
-            if (idx < 0)
-                return;
-            OsmPrimitive primitive = memberTableModel.getReferredPrimitive(idx);
-            if (!(primitive instanceof Relation))
-                return;
-            Relation r = (Relation) primitive;
-            if (r.isIncomplete())
-                return;
-
-            RelationEditor editor = RelationEditor.getEditor(getLayer(), r, getMembersForCurrentSelection(r));
-            editor.setVisible(true);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (!isEnabled())
-                return;
-            run();
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            refreshEnabled();
-        }
-    }
-
-    class PasteMembersAction extends AddFromSelectionAction {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                List<PrimitiveData> primitives = Main.pasteBuffer.getDirectlyAdded();
-                DataSet ds = getLayer().data;
-                List<OsmPrimitive> toAdd = new ArrayList<>();
-                boolean hasNewInOtherLayer = false;
-
-                for (PrimitiveData primitive: primitives) {
-                    OsmPrimitive primitiveInDs = ds.getPrimitiveById(primitive);
-                    if (primitiveInDs != null) {
-                        toAdd.add(primitiveInDs);
-                    } else if (!primitive.isNew()) {
-                        OsmPrimitive p = primitive.getType().newInstance(primitive.getUniqueId(), true);
-                        ds.addPrimitive(p);
-                        toAdd.add(p);
-                    } else {
-                        hasNewInOtherLayer = true;
-                        break;
-                    }
-                }
-
-                if (hasNewInOtherLayer) {
-                    JOptionPane.showMessageDialog(Main.parent,
-                            tr("Members from paste buffer cannot be added because they are not included in current layer"));
-                    return;
-                }
-
-                toAdd = filterConfirmedPrimitives(toAdd);
-                int index = memberTableModel.getSelectionModel().getMaxSelectionIndex();
-                if (index == -1) {
-                    index = memberTableModel.getRowCount() - 1;
-                }
-                memberTableModel.addMembersAfterIdx(toAdd, index);
-
-                tfRole.requestFocusInWindow();
-
-            } catch (AddAbortException ex) {
-                // Do nothing
-                if (Main.isTraceEnabled()) {
-                    Main.trace(ex.getMessage());
-                }
-            }
-        }
-    }
-
-    class CopyMembersAction extends AbstractAction {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Set<OsmPrimitive> primitives = new HashSet<>();
-            for (RelationMember rm: memberTableModel.getSelectedMembers()) {
-                primitives.add(rm.getMember());
-            }
-            if (!primitives.isEmpty()) {
-                CopyAction.copy(getLayer(), primitives);
-            }
-        }
-    }
-
     class MemberTableDblClickAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-                new EditAction().run();
+                new EditAction(memberTable, memberTableModel, getLayer()).actionPerformed(null);
             }
         }
     }

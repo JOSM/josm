@@ -330,7 +330,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * Deletes the relations in the context of the given layer.
      *
      * @param layer the layer in whose context the relations are deleted. Must not be null.
-     * @param toDelete  the relations to be deleted. Must not be null.
+     * @param toDelete the relations to be deleted. Must not be null.
      * @throws IllegalArgumentException if layer is null
      * @throws IllegalArgumentException if toDelete is null
      */
@@ -343,8 +343,8 @@ public class DeleteAction extends MapMode implements ModifierListener {
             // cmd can be null if the user cancels dialogs DialogCommand displays
             Main.main.undoRedo.add(cmd);
             for (Relation relation : toDelete) {
-                if (getCurrentDataSet().getSelectedRelations().contains(relation)) {
-                    getCurrentDataSet().toggleSelected(relation);
+                if (layer.data.getSelectedRelations().contains(relation)) {
+                    layer.data.toggleSelected(relation);
                 }
                 RelationDialogManager.getRelationDialogManager().close(layer, relation);
             }
