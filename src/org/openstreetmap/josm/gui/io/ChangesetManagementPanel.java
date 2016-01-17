@@ -289,7 +289,6 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
                 }
                 Changeset cs = (Changeset) cbOpenChangesets.getSelectedItem();
                 if (cs == null) return;
-                changesetCommentModel.setComment(cs.get("comment"));
                 firePropertyChange(SELECTED_CHANGESET_PROP, null, cs);
             }
         }

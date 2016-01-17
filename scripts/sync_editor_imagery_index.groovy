@@ -98,6 +98,15 @@ class sync_editor_imagery_index {
         if (options.noskip)
             return;
         skipEntries["+++ EII-URL is not unique: http://geolittoral.application.equipement.gouv.fr/wms/metropole?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=ortholittorale&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["  Streets NRW Geofabrik.de - http://tools.geofabrik.de/osmi/view/strassennrw/wxs?REQUEST=GetMap&SERVICE=wms&VERSION=1.1.1&FORMAT=image/png&SRS={proj}&STYLES=&LAYERS=unzugeordnete_strassen,kreisstrassen_ast,kreisstrassen,landesstrassen_ast,landesstrassen,bundesstrassen_ast,bundesstrassen,autobahnen_ast,autobahnen,endpunkte&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["  Czech UHUL:ORTOFOTO - http://geoportal2.uhul.cz/cgi-bin/oprl.asp?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&SRS={proj}&LAYERS=Ortofoto_cb&STYLES=default&FORMAT=image/jpeg&TRANSPARENT=TRUE&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["  Czech ÚHUL:ORTOFOTO tiles proxy - http://osm-{switch:a,b,c}.zby.cz/tiles_uhul.php/{zoom}/{x}/{y}.jpg"] = 1
+        skipEntries["  [EE] Estonia Basemap (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=pohi_vr2&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["  [EE] Estonia Forestry (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=cir_ngr&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["  [EE] Estonia Hillshading (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=reljeef&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["  [EE] Estonia Ortho (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?VERSION=1.1.1&REQUEST=GetMap&LAYERS=of10000&SRS={proj}&FORMAT=image/jpeg&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["  Hamburg (DK5) - http://gateway.hamburg.de/OGCFassade/HH_WMS_Geobasisdaten.aspx?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=1&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["  Hamburg (40 cm) - http://gateway.hamburg.de/OGCFassade/HH_WMS_DOP40.aspx?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=0&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
         skipEntries["  name differs: http://wms.openstreetmap.fr/tms/1.0.0/tours_2013/{zoom}/{x}/{y}"] = 3
         skipEntries["  name differs: http://wms.openstreetmap.fr/tms/1.0.0/tours/{zoom}/{x}/{y}"] = 3
         skipEntries["  name differs: https://secure.erlangen.de/arcgiser/services/Luftbilder2011/MapServer/WmsServer?FORMAT=image/bmp&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Erlangen_ratio10_5cm_gk4.jp2&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
@@ -261,7 +270,13 @@ class sync_editor_imagery_index {
         myprintln "*** Same URL, but different quality: ***"
         for (def url : eiiUrls.keySet()) {
             def e = eiiUrls.get(url)
-            if (!josmUrls.containsKey(url)) continue
+            if (!josmUrls.containsKey(url)) {
+              def q = getQuality(e)
+              if("best".equals(q)) {
+                myprintln "  quality best entry not in JOSM for ${getDescription(e)}"
+              }
+              continue
+            }
             def j = josmUrls.get(url)
             if (!getQuality(e).equals(getQuality(j))) {
                 myprintln "  quality differs: ${getDescription(j)}"
