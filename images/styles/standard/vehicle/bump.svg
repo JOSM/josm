@@ -15,7 +15,7 @@
    id="svg4264"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="traffic_calming__chicane.svg">
+   sodipodi:docname="traffic_calming__bump.svg">
   <defs
      id="defs4266" />
   <sodipodi:namedview
@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="32"
-     inkscape:cx="-6.7882962"
-     inkscape:cy="6.7186021"
+     inkscape:cx="-10.539262"
+     inkscape:cy="6.141297"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -71,7 +71,7 @@
      transform="translate(0,-1036.3621)">
     <g
        id="g3382"
-       transform="matrix(1.3846066,0,0,1.1346381,-204.78331,616.43253)"
+       transform="matrix(1.3846066,0,0,1.1346381,-204.78325,616.43414)"
        style="fill:#808080;fill-opacity:1">
       <rect
          id="XMLID_61_"
@@ -87,38 +87,35 @@
        style="fill:#ffffff;fill-opacity:1"
        inkscape:connector-curvature="0"
        id="path3387-0"
-       d="m 5,1039.3621 -1,0 0,-2 1,0 z"
+       d="m 5,1039.3653 -1,0 0,-2 1,0 z"
+       class="st5" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       style="fill:#ffffff;fill-opacity:1"
+       inkscape:connector-curvature="0"
+       id="path3387-0-9"
+       d="m 5,1042.3653 -1,0 0,-2 1,0 z"
+       class="st5" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       style="fill:#ffffff;fill-opacity:1"
+       inkscape:connector-curvature="0"
+       id="path3387-0-9-7"
+       d="m 5,1048.3653 -1,0 0,-2 1,0 z"
        class="st5" />
     <path
        sodipodi:nodetypes="ccccc"
        style="fill:#ffffff;fill-opacity:1"
        inkscape:connector-curvature="0"
        id="path3387-0-9-4"
-       d="m 5,1051.3621 -1,0 0,-2 1,0 z"
+       d="m 5,1051.3653 -1,0 0,-2 1,0 z"
        class="st5" />
-    <path
-       class="st5"
-       d="m 5,1047.3621 -1,0 0,-2 1,0 z"
-       id="path4187"
-       inkscape:connector-curvature="0"
-       style="fill:#ffffff;fill-opacity:1"
-       sodipodi:nodetypes="ccccc" />
-    <path
-       sodipodi:nodetypes="ccccc"
-       style="fill:#ffffff;fill-opacity:1"
-       inkscape:connector-curvature="0"
-       id="path4189"
-       d="m 5,1043.3621 -1,0 0,-2 1,0 z"
-       class="st5" />
-    <path
-       style="fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 9,1036.3621 c 0,0 -2,2 -2,4 0,2 2,4 2,4 z"
-       id="path4195"
-       inkscape:connector-curvature="0" />
-    <path
-       inkscape:connector-curvature="0"
-       id="path4197"
-       d="m 3.0792093e-6,1044.3621 c 0,0 2,2 2,4 0,2 -2,4 -2,4 z"
-       style="fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <rect
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4154"
+       width="9"
+       height="2"
+       x="2.3607492e-006"
+       y="1043.3652" />
   </g>
 </svg>
