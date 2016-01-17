@@ -128,8 +128,6 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         @Override
         protected void finish() {
             rememberDownloadedData(rawData);
-            if (isCanceled() || isFailed())
-                return;
             if (rawData == null)
                 return;
             String name = newLayerName != null ? newLayerName : tr("Downloaded GPX Data");
