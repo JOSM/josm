@@ -61,7 +61,6 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
 
     /**
      * Special class that can be returned by getMenuEntries when JSeparator needs to be created
-     *
      */
     public static class SeparatorLayerAction extends AbstractAction implements LayerAction {
         public static final SeparatorLayerAction INSTANCE = new SeparatorLayerAction();
@@ -89,32 +88,35 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
 
     public static final int ICON_SIZE = 16;
 
-    /** keeps track of property change listeners */
+    /**
+     * keeps track of property change listeners
+     */
     protected PropertyChangeSupport propertyChangeSupport;
 
     /**
      * The visibility state of the layer.
-     *
      */
     private boolean visible = true;
 
     /**
      * The opacity of the layer.
-     *
      */
     private double opacity = 1;
 
     /**
      * The layer should be handled as a background layer in automatic handling
-     *
      */
     private boolean background;
 
     /**
      * The name of this layer.
-     *
      */
-    private  String name;
+    private String name;
+
+    /**
+     * This is set if user renamed this layer.
+     */
+    private boolean renamed = false;
 
     /**
      * If a file is associated with this layer, this variable should be set to it.
@@ -263,8 +265,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     /**
      * Sets the name of the layer
      *
-     *@param name the name. If null, the name is set to the empty string.
-     *
+     * @param name the name. If null, the name is set to the empty string.
      */
     public final void setName(String name) {
         if (name == null) {
@@ -275,6 +276,25 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
         if (!this.name.equals(oldValue)) {
             propertyChangeSupport.firePropertyChange(NAME_PROP, oldValue, this.name);
         }
+    }
+
+    /**
+     * Rename layer and set renamed flag to mark it as renamed (has user given name).
+     *
+     * @param name the name. If null, the name is set to the empty string.
+     */
+    public final void rename(String name) {
+        renamed = true;
+        setName(name);
+    }
+
+    /**
+     * Replies true if this layer was renamed by user
+     *
+     * @return true if this layer was renamed by user
+     */
+    public boolean isRenamed() {
+        return renamed;
     }
 
     /**
@@ -426,7 +446,6 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
 
     /**
      * The action to save a layer
-     *
      */
     public static class LayerSaveAction extends AbstractAction {
         private final transient Layer layer;

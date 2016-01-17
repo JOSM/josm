@@ -92,7 +92,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
             } else if (canceled) {
                 return false;
             }
-            layer.setName(file.getName());
+            if (!layer.isRenamed()) {
+                layer.setName(file.getName());
+            }
             layer.setAssociatedFile(file);
             if (layer instanceof OsmDataLayer) {
                 ((OsmDataLayer) layer).onPostSaveToFile();

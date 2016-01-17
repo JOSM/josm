@@ -1600,7 +1600,7 @@ public class LayerListDialog extends ToggleDialog {
                     l.setVisible((Boolean) value);
                     break;
                 case 2:
-                    l.setName((String) value);
+                    l.rename((String) value);
                     break;
                 default: throw new RuntimeException();
                 }
