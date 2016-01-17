@@ -150,7 +150,6 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
             addDefault(def, "highway",      tr("Highways"),            tr("Checks for errors on highways"));
             addDefault(def, "multiple",     tr("Multiple values"),     tr("Checks for wrong multiple values"));
             addDefault(def, "numeric",      tr("Numeric values"),      tr("Checks for wrong numeric values"));
-            addDefault(def, "power",        tr("Power"),               tr("Checks for errors on power infrastructures"));
             addDefault(def, "religion",     tr("Religion"),            tr("Checks for errors on religious objects"));
             addDefault(def, "relation",     tr("Relations"),           tr("Checks for errors on relations"));
             addDefault(def, "unnecessary",  tr("Unnecessary tags"),    tr("Checks for unnecessary tags"));

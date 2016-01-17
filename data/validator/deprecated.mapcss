@@ -341,6 +341,7 @@
 }
 
 /* see #10661, #10837, #11737 */
+*[traffic_calming=yes],
 *[access=restricted],
 *[barrier=yes],
 *[aerialway=yes][!public_transport],
