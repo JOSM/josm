@@ -9,6 +9,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.Preferences.StringSetting;
+import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -222,16 +223,30 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
     }
 
     /**
-     * Replies true if the user with name <code>username</code> is the current
-     * user
+     * Replies true if the user with name <code>username</code> is the current user
      *
      * @param username the user name
-     * @return true if the user with name <code>username</code> is the current
-     * user
+     * @return true if the user with name <code>username</code> is the current user
      */
     public boolean isCurrentUser(String username) {
-        if (username == null || this.userName == null) return false;
-        return this.userName.equals(username);
+        return username != null && this.userName != null && this.userName.equals(username);
+    }
+
+    /**
+     * Replies true if the current user is {@link #isFullyIdentified() fully identified} and the {@link #getUserId() user ids} match,
+     * or if the current user is not {@link #isFullyIdentified() fully identified} and the {@link #userName user names} match.
+     *
+     * @param user the user to test
+     * @return true if given user is the current user
+     */
+    public boolean isCurrentUser(User user) {
+        if (user == null) {
+            return false;
+        } else if (isFullyIdentified()) {
+            return getUserId() == user.getId();
+        } else {
+            return isCurrentUser(user.getName());
+        }
     }
 
     /* ------------------------------------------------------------------- */

@@ -54,7 +54,7 @@ public class CloseChangesetAction extends JosmAction {
     }
 
     protected void onPostDownloadOpenChangesets() {
-        List<Changeset> openChangesets = ChangesetCache.getInstance().getOpenChangesets();
+        List<Changeset> openChangesets = ChangesetCache.getInstance().getOpenChangesetsForCurrentUser();
         if (openChangesets.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,

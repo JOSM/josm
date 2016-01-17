@@ -13,7 +13,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * ChangesetCache is global in-memory cache for changesets downloaded from
@@ -189,6 +192,26 @@ public final class ChangesetCache implements PreferenceChangedListener {
             }
         }
         return ret;
+    }
+
+    /**
+     * If the current user {@link JosmUserIdentityManager#isAnonymous() is known}, the {@link #getOpenChangesets() open changesets}
+     * for the {@link JosmUserIdentityManager#isCurrentUser(User) current user} are returned. Otherwise,
+     * the unfiltered {@link #getOpenChangesets() open changesets} are returned.
+     *
+     * @return a list of changesets
+     */
+    public List<Changeset> getOpenChangesetsForCurrentUser() {
+        if (JosmUserIdentityManager.getInstance().isAnonymous()) {
+            return getOpenChangesets();
+        } else {
+            return new ArrayList<>(Utils.filter(getOpenChangesets(), new Predicate<Changeset>() {
+                @Override
+                public boolean evaluate(Changeset object) {
+                    return JosmUserIdentityManager.getInstance().isCurrentUser(object.getUser());
+                }
+            }));
+        }
     }
 
     /* ------------------------------------------------------------------------- */
