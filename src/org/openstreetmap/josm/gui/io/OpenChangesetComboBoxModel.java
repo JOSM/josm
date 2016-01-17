@@ -40,7 +40,7 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel<Changeset> 
      */
     public void refresh() {
         changesets.clear();
-        changesets.addAll(ChangesetCache.getInstance().getOpenChangesets());
+        changesets.addAll(ChangesetCache.getInstance().getOpenChangesetsForCurrentUser());
         fireContentsChanged(this, 0, getSize());
         int idx = changesets.indexOf(selectedChangeset);
         if (idx < 0) {
