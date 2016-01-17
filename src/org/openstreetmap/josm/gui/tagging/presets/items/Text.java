@@ -43,6 +43,7 @@ public class Text extends KeyedItem {
     public String locale_text; // NOSONAR
     /** The default value for the item. If not specified, the current value of the key is chosen as default (if applicable). Defaults to "". */
     public String default_; // NOSONAR
+    /** The original value */
     public String originalValue; // NOSONAR
     /** whether the last value is used as default. Using "force" enforces this behaviour also for already tagged objects. Default is "false".*/
     public String use_last_as_default = "false"; // NOSONAR
@@ -50,7 +51,7 @@ public class Text extends KeyedItem {
      * May contain a comma separated list of integer increments or decrements, e.g. "-2,-1,+1,+2".
      * A button will be shown next to the text field for each value, allowing the user to select auto-increment with the given stepping.
      * Auto-increment only happens if the user selects it. There is also a button to deselect auto-increment.
-     * Default is no auto-increment. Mutually exclusive with {@link use_last_as_default}.
+     * Default is no auto-increment. Mutually exclusive with {@link #use_last_as_default}.
      */
     public String auto_increment; // NOSONAR
     /** The length of the text box (number of characters allowed). */
