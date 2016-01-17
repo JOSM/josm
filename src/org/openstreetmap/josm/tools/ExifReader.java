@@ -41,23 +41,37 @@ public final class ExifReader {
         try {
             Metadata metadata = JpegMetadataReader.readMetadata(filename);
             String dateStr = null;
-            OUTER:
+            String subSeconds = null;
             for (Directory dirIt : metadata.getDirectories()) {
                 for (Tag tag : dirIt.getTags()) {
                     if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL /* 0x9003 */ &&
                             !tag.getDescription().matches("\\[[0-9]+ .+\\]")) {
                         dateStr = tag.getDescription();
-                        break OUTER; // prefer this tag if known
                     }
                     if (tag.getTagType() == ExifIFD0Directory.TAG_DATETIME /* 0x0132 */ ||
                         tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
-                        dateStr = tag.getDescription();
+                        if (dateStr != null) {
+                            // prefer TAG_DATETIME_ORIGINAL
+                            dateStr = tag.getDescription();
+                        }
+                    }
+                    if (tag.getTagType() == ExifIFD0Directory.TAG_SUBSECOND_TIME_ORIGINAL) {
+                        subSeconds = tag.getDescription();
                     }
                 }
             }
             if (dateStr != null) {
                 dateStr = dateStr.replace('/', ':'); // workaround for HTC Sensation bug, see #7228
-                return DateUtils.fromString(dateStr);
+                final Date date = DateUtils.fromString(dateStr);
+                if (subSeconds != null) {
+                    try {
+                        date.setTime(date.getTime() + Integer.parseInt(subSeconds));
+                    } catch (NumberFormatException e) {
+                        Main.warn("Failed parsing sub seconds from [{0}]", subSeconds);
+                        Main.warn(e);
+                    }
+                }
+                return date;
             }
         } catch (Exception e) {
             Main.error(e);
