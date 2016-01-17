@@ -92,6 +92,8 @@ way[junction                   ][!highway][junction!=yes],
 }
 
 /* {0.key} without {1.tag} */
+*[substation                   ][power!=substation],
+*[transformer                  ][!power],
 *[fence_type                   ][barrier!=fence],
 *[recycling_type               ][amenity!=recycling],
 *[information                  ][tourism!=information],
@@ -120,9 +122,26 @@ way[junction                   ][!highway][junction!=yes],
 
 /* {0.tag} without {1.key} (info level) */
 way[power=cable                ][!location],
+node[power=transformer         ][!voltage],
+way[power=line                 ][!voltage],
+way[power=minor_line           ][!voltage],
+way[power=cable                ][!voltage],
+*[power=generator              ][!voltage][generator:output:electricity],
+*[power=plant                  ][!voltage][plant:output:electricity],
+*[power=substation             ][!substation],
+*[power=transformer            ][!transformer],
 *[amenity=parking              ][!parking],
 *[amenity=parking_entrance     ][!parking] {
   throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
+  assertMatch: "way power=line";
+  assertNoMatch: "way power=line voltage=1";
+  assertNoMatch: "way power=switch";
+  assertMatch: "way power=substation";
+  assertMatch: "way power=substation transformer=foobar";
+  assertNoMatch: "way power=substation substation=foobar";
+  assertMatch: "way power=generator generator:output:electricity=yes";
+  assertNoMatch: "way power=generator";
+  assertNoMatch: "way power=generator generator:output:electricity=yes voltage=1";
 }
 
 /* {0.key} without {1.key} or {2.key} */

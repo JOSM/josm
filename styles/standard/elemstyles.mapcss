@@ -1180,7 +1180,6 @@ node[power=minor_line] {
 }
 area[power=plant],
 area[power=substation],
-area[power=transformer],
 area[power=compensator],
 area[power=converter],
 area[power=generator] {

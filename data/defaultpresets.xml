@@ -307,7 +307,7 @@
             <combo key="generator:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
             <combo key="generator:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
             <space />
-            <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+            <reference ref="voltage_frequency" />
         </optional>
     </chunk>
     <chunk id="optional_bridge">
@@ -6161,7 +6161,7 @@
                 <combo key="plant:output:steam" text="steam" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <combo key="plant:output:vacuum" text="vacuum" values="yes,2 W,3 kW,5 MW,7 GW" />
                 <space />
-                <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,50,60" length="5" />
+                <reference ref="voltage_frequency" />
             </optional>
         </item> <!-- Power Plant -->
         <group name="Power Generator" icon="styles/standard/power/generator.svg">
@@ -6340,7 +6340,7 @@
                 <check key="gas_insulated" text="Gas insulated" />
             </optional>
         </item> <!-- Power Substation -->
-        <item name="Power Transformer" icon="styles/standard/power/transformer.svg" type="node,closedway" preset_name_label="true">
+        <item name="Power Transformer" icon="styles/standard/power/transformer.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=transformer"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=transformer"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=transformer"
