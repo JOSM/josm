@@ -126,6 +126,10 @@ public class GenericRelationEditor extends RelationEditor  {
      * Button for performing the {@link org.openstreetmap.josm.gui.dialogs.relation.actions.SortBelowAction}.
      */
     private JButton sortBelowButton;
+    /**
+     * Action for performing the {@link CancelAction}
+     */
+    private CancelAction cancelAction;
 
     /**
      * Creates a new relation editor for the given relation. The relation will be saved if the user
@@ -218,11 +222,17 @@ public class GenericRelationEditor extends RelationEditor  {
 
         setSize(findMaxDialogSize());
 
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(
                 new WindowAdapter() {
                     @Override
                     public void windowOpened(WindowEvent e) {
                         cleanSelfReferences();
+                    }
+
+                    @Override
+                    public void windowClosing(WindowEvent e) {
+                        cancel();
                     }
                 }
         );
@@ -249,6 +259,10 @@ public class GenericRelationEditor extends RelationEditor  {
         HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/RelationEditor"));
     }
 
+    protected void cancel() {
+        cancelAction.actionPerformed(null);
+    }
+
     /**
      * Creates the toolbar
      *
@@ -273,7 +287,8 @@ public class GenericRelationEditor extends RelationEditor  {
     protected JPanel buildOkCancelButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
         pnl.add(new SideButton(new OKAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this, tfRole)));
-        pnl.add(new SideButton(new CancelAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this, tfRole)));
+        cancelAction = new CancelAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this, tfRole);
+        pnl.add(new SideButton(cancelAction));
         pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/RelationEditor"))));
         return pnl;
     }
