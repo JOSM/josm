@@ -25,9 +25,9 @@ import org.openstreetmap.josm.tools.HttpClient;
 import org.xml.sax.SAXException;
 
 /**
- * Various tests with Taginfo.
+ * Various integration tests with Taginfo.
  */
-public class TaginfoIntegrationTest {
+public class TaginfoTestIT {
 
     /**
      * Setup test.

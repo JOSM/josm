@@ -27,9 +27,9 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 
 /**
- * Unit tests of {@link MapPaintPreference} class.
+ * Integration tests of {@link MapPaintPreference} class.
  */
-public class MapPaintPreferenceTest {
+public class MapPaintPreferenceTestIT {
 
     /**
      * Global timeout applied to all test methods.
