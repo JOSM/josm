@@ -702,9 +702,9 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     /**
      * Sort the selected relation members by the way they are linked.
      */
-    void sort() {
+    public void sort() {
         List<RelationMember> selectedMembers = new ArrayList<>(getSelectedMembers());
-        List<RelationMember> sortedMembers = null;
+        List<RelationMember> sortedMembers;
         List<RelationMember> newMembers;
         if (selectedMembers.size() <= 1) {
             newMembers = relationSorter.sortMembers(members);
@@ -726,7 +726,8 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
             }
         }
 
-        if (members.size() != newMembers.size()) throw new AssertionError();
+        if (members.size() != newMembers.size())
+            throw new AssertionError();
 
         members.clear();
         members.addAll(newMembers);
@@ -737,8 +738,8 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     /**
      * Sort the selected relation members and all members below by the way they are linked.
      */
-    void sortBelow() {
-        final List<RelationMember> subList = members.subList(getSelectionModel().getMinSelectionIndex(), members.size());
+    public void sortBelow() {
+        final List<RelationMember> subList = members.subList(Math.max(0, getSelectionModel().getMinSelectionIndex()), members.size());
         final List<RelationMember> sorted = relationSorter.sortMembers(subList);
         subList.clear();
         subList.addAll(sorted);
@@ -765,7 +766,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     /**
      * Reverse the relation members.
      */
-    void reverse() {
+    public void reverse() {
         List<Integer> selectedIndices = getSelectedIndices();
         List<Integer> selectedIndicesReversed = getSelectedIndices();
 

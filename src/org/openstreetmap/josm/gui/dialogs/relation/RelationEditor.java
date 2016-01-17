@@ -18,7 +18,12 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-public abstract class RelationEditor extends ExtendedDialog {
+/**
+ * Abstract relation editor.
+ * @since 1599
+ */
+public abstract class RelationEditor extends ExtendedDialog implements RelationAware {
+
     /** the property name for the current relation.
      * @see #setRelation(Relation)
      * @see #getRelation()
@@ -33,6 +38,36 @@ public abstract class RelationEditor extends ExtendedDialog {
     /** the list of registered relation editor classes */
     private static List<Class<RelationEditor>> editors = new ArrayList<>();
 
+    /** The relation that this editor is working on. */
+    private transient Relation relation;
+
+    /** The version of the relation when editing is started. This is null if a new relation is created. */
+    private transient Relation relationSnapshot;
+
+    /** The data layer the relation belongs to */
+    private final transient OsmDataLayer layer;
+
+    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
+
+    /**
+     * Creates a new relation editor
+     *
+     * @param layer the {@link OsmDataLayer} in whose context a relation is edited. Must not be null.
+     * @param relation the relation. Can be null if a new relation is to be edited.
+     * @throws IllegalArgumentException if layer is null
+     */
+    protected RelationEditor(OsmDataLayer layer, Relation relation) {
+        super(Main.parent,
+                "",
+                new String[] {tr("Apply Changes"), tr("Cancel")},
+                false,
+                false
+        );
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
+        this.layer = layer;
+        setRelation(relation);
+    }
+
     /**
      * Registers a relation editor class. Depending on the type of relation to be edited
      * {@link #getEditor(OsmDataLayer, Relation, Collection)} will create an instance of
@@ -41,44 +76,25 @@ public abstract class RelationEditor extends ExtendedDialog {
      * @param clazz the class
      */
     public void registerRelationEditor(Class<RelationEditor> clazz) {
-        if (clazz == null) return;
-        if (!editors.contains(clazz)) {
+        if (clazz != null && !editors.contains(clazz)) {
             editors.add(clazz);
         }
     }
 
     /**
-     * The relation that this editor is working on.
-     */
-    private transient Relation relation;
-
-    /**
-     * The version of the relation when editing is started.  This is
-     * null if a new relation is created. */
-    private transient Relation relationSnapshot;
-
-    /** the data layer the relation belongs to */
-    private final transient OsmDataLayer layer;
-
-    /**
-     * This is a factory method that creates an appropriate RelationEditor
-     * instance suitable for editing the relation that was passed in as an
-     * argument.
+     * This is a factory method that creates an appropriate RelationEditor instance suitable for editing the relation
+     * that was passed in as an argument.
      *
-     * This method is guaranteed to return a working RelationEditor. If no
-     * specific editor has been registered for the type of relation, then
-     * a generic editor will be returned.
+     * This method is guaranteed to return a working RelationEditor. If no specific editor has been registered for the
+     * type of relation, then a generic editor will be returned.
      *
-     * Editors can be registered by adding their class to the static list "editors"
-     * in the RelationEditor class. When it comes to editing a relation, all
-     * registered editors are queried via their static "canEdit" method whether they
-     * feel responsible for that kind of relation, and if they return true
-     * then an instance of that class will be used.
+     * Editors can be registered by adding their class to the static list "editors" in the RelationEditor class.
+     * When it comes to editing a relation, all registered editors are queried via their static "canEdit" method whether
+     * they feel responsible for that kind of relation, and if they return true then an instance of that class will be used.
      *
      * @param layer the data layer the relation is a member of
      * @param r the relation to be edited
-     * @param selectedMembers a collection of relation members which shall be selected when the
-     * editor is first launched
+     * @param selectedMembers a collection of relation members which shall be selected when the editor is first launched
      * @return an instance of RelationEditor suitable for editing that kind of relation
      */
     public static RelationEditor getEditor(OsmDataLayer layer, Relation r, Collection<RelationMember> selectedMembers) {
@@ -105,27 +121,6 @@ public abstract class RelationEditor extends ExtendedDialog {
     }
 
     /**
-     * Creates a new relation editor
-     *
-     * @param layer  the {@link OsmDataLayer} in whose context a relation is edited. Must not be null.
-     * @param relation the relation. Can be null if a new relation is to be edited.
-     * @param selectedMembers  a collection of members in <code>relation</code> which the editor
-     * should display selected when the editor is first displayed on screen
-     * @throws IllegalArgumentException if layer is null
-     */
-    protected RelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers) {
-        super(Main.parent,
-                "",
-                new String[] {tr("Apply Changes"), tr("Cancel")},
-                false,
-                false
-        );
-        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-        this.layer = layer;
-        setRelation(relation);
-    }
-
-    /**
      * updates the title of the relation editor
      */
     protected void updateTitle() {
@@ -138,22 +133,13 @@ public abstract class RelationEditor extends ExtendedDialog {
         }
     }
 
-    /**
-     * Replies the currently edited relation
-     *
-     * @return the currently edited relation
-     */
-    protected Relation getRelation() {
+    @Override
+    public final Relation getRelation() {
         return relation;
     }
 
-    /**
-     * Sets the currently edited relation. Creates a snapshot of the current
-     * state of the relation. See {@link #getRelationSnapshot()}
-     *
-     * @param relation the relation
-     */
-    protected void setRelation(Relation relation) {
+    @Override
+    public final void setRelation(Relation relation) {
         setRelationSnapshot((relation == null) ? null : new Relation(relation));
         Relation oldValue = this.relation;
         this.relation = relation;
@@ -164,26 +150,20 @@ public abstract class RelationEditor extends ExtendedDialog {
     }
 
     /**
-     * Replies the {@link OsmDataLayer} in whose context this relation editor is
-     * open
+     * Replies the {@link OsmDataLayer} in whose context this relation editor is open
      *
-     * @return the {@link OsmDataLayer} in whose context this relation editor is
-     * open
+     * @return the {@link OsmDataLayer} in whose context this relation editor is open
      */
-    protected OsmDataLayer getLayer() {
+    protected final OsmDataLayer getLayer() {
         return layer;
     }
 
-    /**
-     * Replies the state of the edited relation when the editor has been launched
-     *
-     * @return the state of the edited relation when the editor has been launched
-     */
-    protected Relation getRelationSnapshot() {
+    @Override
+    public final Relation getRelationSnapshot() {
         return relationSnapshot;
     }
 
-    protected void setRelationSnapshot(Relation snapshot) {
+    protected final void setRelationSnapshot(Relation snapshot) {
         Relation oldValue = relationSnapshot;
         relationSnapshot = snapshot;
         if (relationSnapshot != oldValue) {
@@ -191,30 +171,22 @@ public abstract class RelationEditor extends ExtendedDialog {
         }
     }
 
-    /**
-     * Replies true if the currently edited relation has been changed elsewhere.
-     *
-     * In this case a relation editor can't apply updates to the relation directly. Rather,
-     * it has to create a conflict.
-     *
-     * @return true if the currently edited relation has been changed elsewhere.
-     */
-    protected boolean isDirtyRelation() {
+    @Override
+    public final boolean isDirtyRelation() {
         return !relation.hasEqualSemanticAttributes(relationSnapshot);
     }
 
     /* ----------------------------------------------------------------------- */
     /* property change support                                                 */
     /* ----------------------------------------------------------------------- */
-    private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    public final void addPropertyChangeListener(PropertyChangeListener listener) {
         this.support.addPropertyChangeListener(listener);
     }
 
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
+    public final void removePropertyChangeListener(PropertyChangeListener listener) {
         this.support.removePropertyChangeListener(listener);
     }
 }

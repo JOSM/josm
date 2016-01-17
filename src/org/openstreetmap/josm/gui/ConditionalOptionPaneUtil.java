@@ -4,8 +4,8 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -112,16 +112,22 @@ public final class ConditionalOptionPaneUtil {
      * @param options a list of options
      * @param defaultOption the default option; only meaningful if options is used; can be null
      *
-     * @return the option selected by user. {@link JOptionPane#CLOSED_OPTION} if the dialog was closed.
-     * @throws HeadlessException if <code>GraphicsEnvironment.isHeadless</code> returns <code>true</code>
+     * @return the option selected by user.
+     *         {@link JOptionPane#CLOSED_OPTION} if the dialog was closed.
+     *         {@link JOptionPane#YES_OPTION} if <code>GraphicsEnvironment.isHeadless</code> returns <code>true</code>
      */
     public static int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType,
-            int messageType, Object[] options, Object defaultOption) throws HeadlessException {
+            int messageType, Object[] options, Object defaultOption) {
         int ret = getDialogReturnValue(preferenceKey);
         if (isYesOrNo(ret))
             return ret;
         MessagePanel pnl = new MessagePanel(message, isInBulkOperation(preferenceKey));
-        ret = JOptionPane.showOptionDialog(parent, pnl, title, optionType, messageType, null, options, defaultOption);
+        if (GraphicsEnvironment.isHeadless()) {
+            // for unit tests
+            ret = JOptionPane.YES_OPTION;
+        } else {
+            ret = JOptionPane.showOptionDialog(parent, pnl, title, optionType, messageType, null, options, defaultOption);
+        }
         if (isYesOrNo(ret)) {
             pnl.getNotShowAgain().store(preferenceKey, ret);
         }
@@ -150,23 +156,28 @@ public final class ConditionalOptionPaneUtil {
      * @param title the title
      * @param optionType  the option type
      * @param messageType the message type
-     * @param trueOption  if this option is selected the method replies true
+     * @param trueOption if this option is selected the method replies true
      *
      *
      * @return true, if the selected option is equal to <code>trueOption</code>, otherwise false.
-     * @throws HeadlessException if <code>GraphicsEnvironment.isHeadless</code> returns <code>true</code>
+     *         {@code trueOption} if <code>GraphicsEnvironment.isHeadless</code> returns <code>true</code>
      *
      * @see JOptionPane#INFORMATION_MESSAGE
      * @see JOptionPane#WARNING_MESSAGE
      * @see JOptionPane#ERROR_MESSAGE
      */
     public static boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title,
-            int optionType, int messageType, int trueOption) throws HeadlessException {
+            int optionType, int messageType, int trueOption) {
         int ret = getDialogReturnValue(preferenceKey);
         if (isYesOrNo(ret))
             return ret == trueOption;
         MessagePanel pnl = new MessagePanel(message, isInBulkOperation(preferenceKey));
-        ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
+        if (GraphicsEnvironment.isHeadless()) {
+            // for unit tests
+            ret = trueOption;
+        } else {
+            ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
+        }
         if (isYesOrNo(ret)) {
             pnl.getNotShowAgain().store(preferenceKey, ret);
         }
