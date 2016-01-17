@@ -5,7 +5,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JPopupMenu;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumnModel;
@@ -15,7 +14,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-public abstract class OsmPrimitivesTable extends JTable {
+/**
+ * Table displaying OSM primitives.
+ * @since 5297
+ */
+public abstract class OsmPrimitivesTable extends JosmTable {
 
     /**
      * the data layer in whose context primitives are edited in this table
@@ -26,22 +29,40 @@ public abstract class OsmPrimitivesTable extends JTable {
     private JPopupMenu popupMenu;
     private ZoomToAction zoomToAction;
 
-    public final OsmDataLayer getLayer() {
-        return layer;
-    }
-
-    public final void setLayer(OsmDataLayer layer) {
-        this.layer = layer;
-    }
-
+    /**
+     * Constructs a new {@code OsmPrimitivesTable}.
+     * @param dm table model
+     * @param cm column model
+     * @param sm selection model
+     */
     public OsmPrimitivesTable(OsmPrimitivesTableModel dm, TableColumnModel cm, ListSelectionModel sm) {
         super(dm, cm, sm);
         addMouseListener(new PopupMenuLauncher(getPopUpMenu()));
         addMouseListener(new DblClickHandler());
     }
 
+    /**
+     * Returns the table model.
+     * @return the table model
+     */
     public OsmPrimitivesTableModel getOsmPrimitivesTableModel() {
         return (OsmPrimitivesTableModel) getModel();
+    }
+
+    /**
+     * Returns the data layer.
+     * @return the data layer
+     */
+    public final OsmDataLayer getLayer() {
+        return layer;
+    }
+
+    /**
+     * Sets the data layer.
+     * @param layer the data layer
+     */
+    public final void setLayer(OsmDataLayer layer) {
+        this.layer = layer;
     }
 
     /**
@@ -71,6 +92,12 @@ public abstract class OsmPrimitivesTable extends JTable {
         MapView.removeLayerChangeListener(zoomToAction);
     }
 
+    /**
+     * Returns primitive at the specified row.
+     * @param row table row
+     * @param layer unused in this implementation, can be useful for subclasses
+     * @return primitive at the specified row
+     */
     public OsmPrimitive getPrimitiveInLayer(int row, OsmDataLayer layer) {
         return getOsmPrimitivesTableModel().getReferredPrimitive(row);
     }
