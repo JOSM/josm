@@ -5,8 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketException;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -48,7 +50,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
         boolean done = false;
         GpxData result = null;
         String url = "trackpoints?bbox="+b.getMinLon()+','+b.getMinLat()+','+b.getMaxLon()+','+b.getMaxLat()+"&page=";
-        for (int i = 0; !done; ++i) {
+        for (int i = 0; !done && !isCanceled(); ++i) {
             progressMonitor.subTask(tr("Downloading points {0} to {1}...", i * 5000, (i + 1) * 5000));
             try (InputStream in = getInputStream(url+i, progressMonitor.createSubTaskMonitor(1, true))) {
                 if (in == null) {
@@ -64,6 +66,12 @@ public class BoundingBoxDownloader extends OsmServerReader {
                     result.mergeFrom(currentGpx);
                 } else {
                     done = true;
+                }
+            } catch (OsmTransferException | SocketException ex) {
+                if (isCanceled()) {
+                    final OsmTransferCanceledException canceledException = new OsmTransferCanceledException("Operation canceled");
+                    canceledException.initCause(ex);
+                    Main.warn(canceledException);
                 }
             }
             activeConnection = null;
@@ -208,9 +216,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 throw new MoreNotesException(notes, noteLimit);
             }
             return notes;
-        } catch (IOException e) {
-            throw new OsmTransferException(e);
-        } catch (SAXException e) {
+        } catch (IOException | SAXException e) {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
