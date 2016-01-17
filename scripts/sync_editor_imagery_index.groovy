@@ -195,7 +195,8 @@ class sync_editor_imagery_index {
         if (l1.isEmpty()) {
             myprintln "  -"
         } else {
-            myprintln Utils.join("\n", l1)
+            for (def l : l1)
+                myprintln l
         }
 
         if (options.nomissingeii)
@@ -205,7 +206,8 @@ class sync_editor_imagery_index {
         if (l2.isEmpty()) {
             myprintln "  -"
         } else {
-            myprintln Utils.join("\n", l2)
+            for (def l : l2)
+                myprintln l
         }
     }
     
