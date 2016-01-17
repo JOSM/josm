@@ -9222,7 +9222,7 @@
                 <role key="to" text="to way" requisite="required" count="1" type="way" />
             </roles>
         </item> <!-- Turn Restriction -->
-        <item name="Enforcement" icon="presets/speed_camera.png" type="relation" preset_name_label="true">
+        <item name="Enforcement" icon="styles/standard/vehicle/restriction/speed_camera.svg" type="relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:enforcement"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:enforcement"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Relation:enforcement"
