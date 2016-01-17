@@ -7,6 +7,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 
+/**
+ * Unit tests for class {@link Ellipsoid}.
+ */
 public class EllipsoidTest {
 
     private static final double EPSILON = 1e-8;

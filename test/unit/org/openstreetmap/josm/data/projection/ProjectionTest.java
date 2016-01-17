@@ -12,6 +12,9 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 
+/**
+ * Unit tests for class {@link Projection}.
+ */
 public class ProjectionTest {
 
     private static Random rand = new Random(System.currentTimeMillis());

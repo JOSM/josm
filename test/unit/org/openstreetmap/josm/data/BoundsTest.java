@@ -8,6 +8,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 
+/**
+ * Unit tests for class {@link Bounds}.
+ */
 public class BoundsTest {
 
     @Test
