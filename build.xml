@@ -615,6 +615,30 @@ Build-Date: ${build.tstamp}
         <_taginfo type="external_presets" output="taginfo_external_presets.json"/>
     </target>
 
+    <target name="imageryindex">
+        <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};tools/commons-cli-1.3.1.jar"/>
+        <echo message="Checking editor imagery difference"/>
+        <groovy src="scripts/sync_editor_imagery_index.groovy" classpath="dist/josm-custom.jar">
+            <arg value="-nomissingeii"/>
+        </groovy>
+    </target>
+
+    <target name="imageryindexdownload">
+        <exec append="false" executable="wget" failifexecutionfails="true">
+            <arg value="https://josm.openstreetmap.de/maps"/>
+            <arg value="-O"/>
+            <arg value="maps.xml"/>
+            <arg value="--unlink"/>
+        </exec>
+        <exec append="false" executable="wget" failifexecutionfails="true">
+            <arg value="https://raw.githubusercontent.com/osmlab/editor-imagery-index/gh-pages/imagery.json"/>
+            <arg value="-O"/>
+            <arg value="imagery.json"/>
+            <arg value="--unlink"/>
+        </exec>
+        <antcall target="imageryindex"/>
+    </target>
+
     <target name="checkstyle">
         <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties" 
              classpath="tools/checkstyle/checkstyle-6.14.1-all.jar"/>

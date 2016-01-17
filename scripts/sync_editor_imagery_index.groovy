@@ -32,16 +32,17 @@ class sync_editor_imagery_index {
 
     List<ImageryInfo> josmEntries;
     JsonArray eiiEntries;
-    
-    final static def EII_KNOWN_DUPLICATES = ["http://geolittoral.application.equipement.gouv.fr/wms/metropole?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=ortholittorale&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"]
-    final static def JOSM_KNOWN_DUPLICATES = ["http://geolittoral.application.equipement.gouv.fr/wms/metropole?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=ortholittorale&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"]
 
     def eiiUrls = new HashMap<String, JsonObject>()
     def josmUrls = new HashMap<String, ImageryInfo>()
     
     static String eiiInputFile = 'imagery.json'
     static String josmInputFile = 'maps.xml'
-    
+    static FileWriter outputFile = null
+    static BufferedWriter outputStream = null
+    static int skipCount = 0;
+    static def skipEntries = [:]
+
     static def options
     
     /**
@@ -50,12 +51,17 @@ class sync_editor_imagery_index {
     static main(def args) {
         parse_command_line_arguments(args)
         def script = new sync_editor_imagery_index()
+        script.loadSkip()
         script.loadJosmEntries()
-        println "*** Loaded ${script.josmEntries.size()} entries (JOSM). ***"
         script.loadEIIEntries()
-        println "*** Loaded ${script.eiiEntries.size()} entries (EII). ***"
         script.checkInOneButNotTheOther()
         script.checkCommonEntries()
+        if(outputStream != null) {
+            outputStream.close();
+        }
+        if(outputFile != null) {
+            outputFile.close();
+        }
     }
     
     /**
@@ -63,9 +69,12 @@ class sync_editor_imagery_index {
      */
     static void parse_command_line_arguments(args) {
         def cli = new CliBuilder()
-        cli._(longOpt:'eii_input', args:1, argName:"eii_input", "Input file for the editor imagery index (json). Default is $eiiInputFile (current directory).")
-        cli._(longOpt:'josm_input', args:1, argName:"josm_input", "Input file for the JOSM imagery list (xml). Default is $josmInputFile (current directory).")
+        cli.o(longOpt:'output', args:1, argName: "output", "Output file, - prints to stdout (default: -)")
+        cli.e(longOpt:'eii_input', args:1, argName:"eii_input", "Input file for the editor imagery index (json). Default is $eiiInputFile (current directory).")
+        cli.j(longOpt:'josm_input', args:1, argName:"josm_input", "Input file for the JOSM imagery list (xml). Default is $josmInputFile (current directory).")
         cli.s(longOpt:'shorten', "shorten the output, so it is easier to read in a console window")
+        cli.n(longOpt:'noskip', argName:"noskip", "don't skip known entries")
+        cli.m(longOpt:'nomissingeii', argName:"nomissingeii", "don't show missing editor imagery index entries")
         cli.h(longOpt:'help', "show this help")
         options = cli.parse(args)
 
@@ -79,8 +88,55 @@ class sync_editor_imagery_index {
         if (options.josm_input) {
             josmInputFile = options.josm_input
         }
+        if (options.output && options.output != "-") {
+            outputFile = new FileWriter(options.output)
+            outputStream = new BufferedWriter(outputFile)
+        }
     }
 
+    void loadSkip() {
+        if (options.noskip)
+            return;
+        skipEntries["+++ EII-URL is not unique: http://geolittoral.application.equipement.gouv.fr/wms/metropole?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=ortholittorale&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["  name differs: http://wms.openstreetmap.fr/tms/1.0.0/tours_2013/{zoom}/{x}/{y}"] = 3
+        skipEntries["  name differs: http://wms.openstreetmap.fr/tms/1.0.0/tours/{zoom}/{x}/{y}"] = 3
+        skipEntries["  name differs: https://secure.erlangen.de/arcgiser/services/Luftbilder2011/MapServer/WmsServer?FORMAT=image/bmp&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Erlangen_ratio10_5cm_gk4.jp2&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
+        skipEntries["  name differs: http://wms.openstreetmap.fr/tms/1.0.0/iomhaiti/{zoom}/{x}/{y}"] = 3
+        skipEntries["  name differs: http://{switch:a,b,c}.layers.openstreetmap.fr/bano/{zoom}/{x}/{y}.png"] = 3
+        skipEntries["  name differs: http://ooc.openstreetmap.org/os1/{zoom}/{x}/{y}.jpg"] = 3
+        skipEntries["  name differs: http://www.gisnet.lv/cgi-bin/osm_latvia?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=piekraste&SRS={proj}&WIDTH={width}&height={height}&BBOX={bbox}"] = 3
+        skipEntries["  name differs: http://tms.cadastre.openstreetmap.fr/*/tout/{z}/{x}/{y}.png"] = 3
+        skipEntries["  name differs: http://{switch:a,b,c}.tiles.mapbox.com/v4/enf.e0b8291e/{zoom}/{x}/{y}.png?access_token=pk.eyJ1Ijoib3BlbnN0cmVldG1hcCIsImEiOiJhNVlHd29ZIn0.ti6wATGDWOmCnCYen-Ip7Q"] = 3
+        skipEntries["  name differs: http://geo.nls.uk/mapdata2/os/25_inch/scotland_1/{zoom}/{x}/{y}.png"] = 3
+        skipEntries["  name differs: http://geo.nls.uk/mapdata3/os/6_inch_gb_1900/{zoom}/{x}/{y}.png"] = 3
+        skipEntries["  maxzoom differs: [DE] Bavaria (2 m) - http://geodaten.bayern.de/ogc/ogc_dop200_oa.cgi?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=adv_dop200c&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
+        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries County - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=County&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
+        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries NPWS Reserve - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=NPWSReserve&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
+        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries Parish - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=Parish&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
+        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries Suburb - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=Suburb&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
+        skipEntries["  minzoom differs: [AU] LPI NSW Imagery - http://maps.six.nsw.gov.au/arcgis/rest/services/public/NSW_Imagery/MapServer/tile/{zoom}/{y}/{x}"] = 3
+        skipEntries["  minzoom differs: [AU] LPI NSW Topographic Map - http://maps.six.nsw.gov.au/arcgis/rest/services/public/NSW_Topo_Map/MapServer/tile/{zoom}/{y}/{x}"] = 3
+        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries State Forest - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=StateForest&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
+        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries LGA - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=LocalGovernmentArea&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
+        skipEntries["  minzoom differs: [AU] LPI NSW Base Map - http://maps.six.nsw.gov.au/arcgis/rest/services/public/NSW_Base_Map/MapServer/tile/{zoom}/{y}/{x}"] = 3
+    }
+    
+    void myprintln(String s) {
+        if(skipEntries.containsKey(s)) {
+            skipCount = skipEntries.get(s)
+        }
+        if(skipCount) {
+            skipCount -= 1;
+            return
+        }
+        if(outputStream != null) {
+            outputStream.write(s);
+            outputStream.newLine();
+        } else {
+            println s;
+        }
+    }
+    
     void loadEIIEntries() {
         FileReader fr = new FileReader(eiiInputFile)
         JsonReader jr = Json.createReader(fr)
@@ -89,10 +145,13 @@ class sync_editor_imagery_index {
         
         for (def e : eiiEntries) {
             def url = getUrl(e)
-            if (eiiUrls.containsKey(url) && !EII_KNOWN_DUPLICATES.contains(url))
-                throw new Exception("URL is not unique: "+url)
-            eiiUrls.put(url, e)
+            if (eiiUrls.containsKey(url)) {
+                myprintln "+++ EII-URL is not unique: "+url
+            } else {
+                eiiUrls.put(url, e)
+            }
         }
+        myprintln "*** Loaded ${eiiEntries.size()} entries (EII). ***"
     }
 
     void loadJosmEntries() {
@@ -101,11 +160,13 @@ class sync_editor_imagery_index {
         
         for (def e : josmEntries) {
             def url = getUrl(e)
-            if (josmUrls.containsKey(url) && !JOSM_KNOWN_DUPLICATES.contains(url)) {
-                throw new Exception("URL is not unique: "+url)
+            if (josmUrls.containsKey(url)) {
+                myprintln "+++ JOSM-URL is not unique: "+url
+            } else {
+              josmUrls.put(url, e)
             }
-            josmUrls.put(url, e)
         }
+        myprintln "*** Loaded ${josmEntries.size()} entries (JOSM). ***"
     }
 
     List inOneButNotTheOther(Map m1, Map m2) {
@@ -121,48 +182,50 @@ class sync_editor_imagery_index {
     
     void checkInOneButNotTheOther() {
         def l1 = inOneButNotTheOther(eiiUrls, josmUrls)
-        println "*** URLs found in EII but not in JOSM (${l1.size()}): ***"
+        myprintln "*** URLs found in EII but not in JOSM (${l1.size()}): ***"
         if (l1.isEmpty()) {
-            println "  -"
+            myprintln "  -"
         } else {
-            println Utils.join("\n", l1)
+            myprintln Utils.join("\n", l1)
         }
 
+        if (options.nomissingeii)
+            return
         def l2 = inOneButNotTheOther(josmUrls, eiiUrls)
-        println "*** URLs found in JOSM but not in EII (${l2.size()}): ***"
+        myprintln "*** URLs found in JOSM but not in EII (${l2.size()}): ***"
         if (l2.isEmpty()) {
-            println "  -"
+            myprintln "  -"
         } else {
-            println Utils.join("\n", l2)
+            myprintln Utils.join("\n", l2)
         }
     }
     
     void checkCommonEntries() {
-        println "*** Same URL, but different name: ***"
+        myprintln "*** Same URL, but different name: ***"
         for (def url : eiiUrls.keySet()) {
             def e = eiiUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
             if (!getName(e).equals(getName(j))) {
-                println "  name differs: $url"
-                println "     (IEE):     ${getName(e)}"
-                println "     (JOSM):    ${getName(j)}"
+                myprintln "  name differs: $url"
+                myprintln "     (IEE):     ${getName(e)}"
+                myprintln "     (JOSM):    ${getName(j)}"
             }
         }
         
-        println "*** Same URL, but different type: ***"
+        myprintln "*** Same URL, but different type: ***"
         for (def url : eiiUrls.keySet()) {
             def e = eiiUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
             if (!getType(e).equals(getType(j))) {
-                println "  type differs: ${getName(j)} - $url"
-                println "     (IEE):     ${getType(e)}"
-                println "     (JOSM):    ${getType(j)}"
+                myprintln "  type differs: ${getName(j)} - $url"
+                myprintln "     (IEE):     ${getType(e)}"
+                myprintln "     (JOSM):    ${getType(j)}"
             }
         }
         
-        println "*** Same URL, but different zoom bounds: ***"
+        myprintln "*** Same URL, but different zoom bounds: ***"
         for (def url : eiiUrls.keySet()) {
             def e = eiiUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
@@ -171,28 +234,39 @@ class sync_editor_imagery_index {
             Integer eMinZoom = getMinZoom(e)
             Integer jMinZoom = getMinZoom(j)
             if (eMinZoom != jMinZoom) {
-                println "  minzoom differs: ${getDescription(j)}"
-                println "     (IEE):     ${eMinZoom}"
-                println "     (JOSM):    ${jMinZoom}"
+                myprintln "  minzoom differs: ${getDescription(j)}"
+                myprintln "     (IEE):     ${eMinZoom}"
+                myprintln "     (JOSM):    ${jMinZoom}"
             }
             Integer eMaxZoom = getMaxZoom(e)
             Integer jMaxZoom = getMaxZoom(j)
             if (eMaxZoom != jMaxZoom) {
-                println "  maxzoom differs: ${getDescription(j)}"
-                println "     (IEE):     ${eMaxZoom}"
-                println "     (JOSM):    ${jMaxZoom}"
+                myprintln "  maxzoom differs: ${getDescription(j)}"
+                myprintln "     (IEE):     ${eMaxZoom}"
+                myprintln "     (JOSM):    ${jMaxZoom}"
             }
         }
         
-        println "*** Same URL, but different country code: ***"
+        myprintln "*** Same URL, but different country code: ***"
         for (def url : eiiUrls.keySet()) {
             def e = eiiUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
             if (!getCountryCode(e).equals(getCountryCode(j))) {
-                println "  country code differs: ${getDescription(j)}"
-                println "     (IEE):     ${getCountryCode(e)}"
-                println "     (JOSM):    ${getCountryCode(j)}"
+                myprintln "  country code differs: ${getDescription(j)}"
+                myprintln "     (IEE):     ${getCountryCode(e)}"
+                myprintln "     (JOSM):    ${getCountryCode(j)}"
+            }
+        }
+        myprintln "*** Same URL, but different quality: ***"
+        for (def url : eiiUrls.keySet()) {
+            def e = eiiUrls.get(url)
+            if (!josmUrls.containsKey(url)) continue
+            def j = josmUrls.get(url)
+            if (!getQuality(e).equals(getQuality(j))) {
+                myprintln "  quality differs: ${getDescription(j)}"
+                myprintln "     (IEE):     ${getQuality(e)}"
+                myprintln "     (JOSM):    ${getQuality(j)}"
             }
         }
     }
@@ -239,6 +313,11 @@ class sync_editor_imagery_index {
     static String getCountryCode(Object e) {
         if (e instanceof ImageryInfo) return "".equals(e.getCountryCode()) ? null : e.getCountryCode()
         return e.getString("country_code", null)
+    }
+    static String getQuality(Object e) {
+        //if (e instanceof ImageryInfo) return "".equals(e.getQuality()) ? null : e.getQuality()
+        if (e instanceof ImageryInfo) return null
+        return e.get("best") ? "best" : null
     }
     String getDescription(Object o) {
         def url = getUrl(o)
