@@ -43,10 +43,16 @@ public class ValidatorTagCheckerRulesPreferenceTest {
         MapCSSTagChecker tagChecker = new MapCSSTagChecker();
         for (ExtendedSourceEntry source : sources) {
             System.out.print(source.url);
-            ParseResult result = tagChecker.addMapCSS(source.url);
-            assertFalse(result.parseChecks.isEmpty());
-            System.out.println(result.parseErrors.isEmpty() ? " => OK" : " => KO");
-            allErrors.addAll(result.parseErrors);
+            try {
+                ParseResult result = tagChecker.addMapCSS(source.url);
+                assertFalse(result.parseChecks.isEmpty());
+                System.out.println(result.parseErrors.isEmpty() ? " => OK" : " => KO");
+                allErrors.addAll(result.parseErrors);
+            } catch (IOException e) {
+                System.out.println(" => KO");
+                allErrors.add(e);
+                e.printStackTrace();
+            }
         }
         assertTrue(allErrors.isEmpty());
     }
