@@ -86,13 +86,14 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * Class that helps PropertiesDialog add and edit tag values.
  * @since 5633
  */
-class TagEditHelper {
+public class TagEditHelper {
+
     private final JTable tagTable;
     private final DefaultTableModel tagData;
     private final Map<String, Map<String, Integer>> valueCount;
 
     // Selection that we are editing by using both dialogs
-    private Collection<OsmPrimitive> sel;
+    protected Collection<OsmPrimitive> sel;
 
     private String changedKey;
     private String objKey;
@@ -107,8 +108,18 @@ class TagEditHelper {
     private String lastAddKey;
     private String lastAddValue;
 
+    /** Default number of recent tags */
     public static final int DEFAULT_LRU_TAGS_NUMBER = 5;
+    /** Maximum number of recent tags */
     public static final int MAX_LRU_TAGS_NUMBER = 30;
+
+    /** Use English language for tag by default */
+    public static final BooleanProperty PROPERTY_FIX_TAG_LOCALE = new BooleanProperty("properties.fix-tag-combobox-locale", false);
+    /** Whether recent tags must be remembered */
+    public static final BooleanProperty PROPERTY_REMEMBER_TAGS = new BooleanProperty("properties.remember-recently-added-tags", true);
+    /** Number of recent tags */
+    public static final IntegerProperty PROPERTY_RECENT_TAGS_NUMBER = new IntegerProperty("properties.recently-added-tags",
+            DEFAULT_LRU_TAGS_NUMBER);
 
     // LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
     private final Map<Tag, Void> recentTags = new LinkedHashMap<Tag, Void>(MAX_LRU_TAGS_NUMBER+1, 1.1f, true) {
@@ -118,7 +129,7 @@ class TagEditHelper {
         }
     };
 
-    TagEditHelper(JTable tagTable, DefaultTableModel propertyData, Map<String, Map<String, Integer>> valueCount) {
+    public TagEditHelper(JTable tagTable, DefaultTableModel propertyData, Map<String, Map<String, Integer>> valueCount) {
         this.tagTable = tagTable;
         this.tagData = propertyData;
         this.valueCount = valueCount;
@@ -140,9 +151,10 @@ class TagEditHelper {
     public void addTag() {
         changedKey = null;
         sel = Main.main.getInProgressSelection();
-        if (sel == null || sel.isEmpty()) return;
+        if (sel == null || sel.isEmpty())
+            return;
 
-        final AddTagsDialog addDialog = new AddTagsDialog();
+        final AddTagsDialog addDialog = getAddTagsDialog();
 
         addDialog.showDialog();
 
@@ -151,6 +163,10 @@ class TagEditHelper {
             addDialog.performTagAdding();
         else
             addDialog.undoAllTagsAdding();
+    }
+
+    protected AddTagsDialog getAddTagsDialog() {
+        return new AddTagsDialog();
     }
 
     /**
@@ -162,15 +178,29 @@ class TagEditHelper {
     public void editTag(final int row, boolean focusOnKey) {
         changedKey = null;
         sel = Main.main.getInProgressSelection();
-        if (sel == null || sel.isEmpty()) return;
+        if (sel == null || sel.isEmpty())
+            return;
 
         String key = getDataKey(row);
         objKey = key;
 
-        final EditTagDialog editDialog = new EditTagDialog(key, getDataValues(row), focusOnKey);
+        final IEditTagDialog editDialog = getEditTagDialog(row, focusOnKey, key);
         editDialog.showDialog();
-        if (editDialog.getValue() != 1) return;
+        if (editDialog.getValue() != 1)
+            return;
         editDialog.performTagEdit();
+    }
+
+    protected interface IEditTagDialog {
+        ExtendedDialog showDialog();
+
+        int getValue();
+
+        void performTagEdit();
+    }
+
+    protected IEditTagDialog getEditTagDialog(int row, boolean focusOnKey, String key) {
+        return new EditTagDialog(key, getDataValues(row), focusOnKey);
     }
 
     /**
@@ -250,7 +280,7 @@ class TagEditHelper {
         return ed.getValue() == 1;
     }
 
-    public final class EditTagDialog extends AbstractTagsDialog {
+    protected class EditTagDialog extends AbstractTagsDialog implements IEditTagDialog {
         private final String key;
         private final transient Map<String, Integer> m;
 
@@ -277,9 +307,9 @@ class TagEditHelper {
                 if (c instanceof JLabel) {
                     String str = value.getValue();
                     if (valueCount.containsKey(objKey)) {
-                        Map<String, Integer> m = valueCount.get(objKey);
-                        if (m.containsKey(str)) {
-                            str = tr("{0} ({1})", str, m.get(str));
+                        Map<String, Integer> map = valueCount.get(objKey);
+                        if (map.containsKey(str)) {
+                            str = tr("{0} ({1})", str, map.get(str));
                             c.setFont(c.getFont().deriveFont(Font.ITALIC + Font.BOLD));
                         }
                     }
@@ -289,7 +319,7 @@ class TagEditHelper {
             }
         };
 
-        private EditTagDialog(String key, Map<String, Integer> map, final boolean initialFocusOnKey) {
+        protected EditTagDialog(String key, Map<String, Integer> map, final boolean initialFocusOnKey) {
             super(Main.parent, trn("Change value?", "Change values?", map.size()), new String[] {tr("OK"), tr("Cancel")});
             setButtonIcons(new String[] {"ok", "cancel"});
             setCancelButton(2);
@@ -365,7 +395,8 @@ class TagEditHelper {
          * If value == "", tag will be deleted
          * Confirmations may be needed.
          */
-        private void performTagEdit() {
+        @Override
+        public void performTagEdit() {
             String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
             value = Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
             if (value.isEmpty()) {
@@ -424,12 +455,7 @@ class TagEditHelper {
         }
     }
 
-    public static final BooleanProperty PROPERTY_FIX_TAG_LOCALE = new BooleanProperty("properties.fix-tag-combobox-locale", false);
-    public static final BooleanProperty PROPERTY_REMEMBER_TAGS = new BooleanProperty("properties.remember-recently-added-tags", true);
-    public static final IntegerProperty PROPERTY_RECENT_TAGS_NUMBER = new IntegerProperty("properties.recently-added-tags",
-            DEFAULT_LRU_TAGS_NUMBER);
-
-    abstract class AbstractTagsDialog extends ExtendedDialog {
+    protected abstract class AbstractTagsDialog extends ExtendedDialog {
         protected AutoCompletingComboBox keys;
         protected AutoCompletingComboBox values;
         protected Component componentUnderMouse;
@@ -545,13 +571,14 @@ class TagEditHelper {
         };
     }
 
-    class AddTagsDialog extends AbstractTagsDialog {
+    protected class AddTagsDialog extends AbstractTagsDialog {
         private final List<JosmAction> recentTagsActions = new ArrayList<>();
+        protected final transient FocusAdapter focus;
 
         // Counter of added commands for possible undo
         private int commandCount;
 
-        AddTagsDialog() {
+        protected AddTagsDialog() {
             super(Main.parent, tr("Add value?"), new String[] {tr("OK"), tr("Cancel")});
             setButtonIcons(new String[] {"ok", "cancel"});
             setCancelButton(2);
@@ -603,14 +630,9 @@ class TagEditHelper {
                 }
             }
 
-            FocusAdapter focus = addFocusAdapter(autocomplete, defaultACItemComparator);
+            focus = addFocusAdapter(autocomplete, defaultACItemComparator);
             // fire focus event in advance or otherwise the popup list will be too small at first
             focus.focusGained(null);
-
-            int recentTagsToShow = PROPERTY_RECENT_TAGS_NUMBER.get();
-            if (recentTagsToShow > MAX_LRU_TAGS_NUMBER) {
-                recentTagsToShow = MAX_LRU_TAGS_NUMBER;
-            }
 
             // Add tag on Shift-Enter
             mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
@@ -623,7 +645,7 @@ class TagEditHelper {
                     }
                 });
 
-            suggestRecentlyAddedTags(mainPanel, recentTagsToShow, focus);
+            suggestRecentlyAddedTags(mainPanel, focus);
 
             mainPanel.add(Box.createVerticalGlue(), GBC.eop().fill());
             setContent(mainPanel, false);
@@ -640,9 +662,10 @@ class TagEditHelper {
                 new AbstractAction(tr("Remember last used tags after a restart")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                    PROPERTY_REMEMBER_TAGS.put(sel);
-                    if (sel) saveTagsIfNeeded();
+                    boolean state = ((JCheckBoxMenuItem) e.getSource()).getState();
+                    PROPERTY_REMEMBER_TAGS.put(state);
+                    if (state)
+                        saveTagsIfNeeded();
                 }
             });
             rememberLastTags.setState(PROPERTY_REMEMBER_TAGS.get());
@@ -673,7 +696,7 @@ class TagEditHelper {
             super.setContentPane(contentPane);
         }
 
-        private void selectNumberOfTags() {
+        protected void selectNumberOfTags() {
             String s = JOptionPane.showInputDialog(this, tr("Please enter the number of recently added tags to display"));
             if (s == null) {
                 return;
@@ -690,7 +713,8 @@ class TagEditHelper {
             JOptionPane.showMessageDialog(this, tr("Please enter integer number between 0 and {0}", MAX_LRU_TAGS_NUMBER));
         }
 
-        private void suggestRecentlyAddedTags(JPanel mainPanel, int tagsToShow, final FocusAdapter focus) {
+        protected void suggestRecentlyAddedTags(JPanel mainPanel, final FocusAdapter focus) {
+            final int tagsToShow = Math.max(PROPERTY_RECENT_TAGS_NUMBER.get(), MAX_LRU_TAGS_NUMBER);
             if (!(tagsToShow > 0 && !recentTags.isEmpty()))
                 return;
 
@@ -815,8 +839,9 @@ class TagEditHelper {
         public final void performTagAdding() {
             String key = Tag.removeWhiteSpaces(keys.getEditor().getItem().toString());
             String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
-            if (key.isEmpty() || value.isEmpty()) return;
-            for (OsmPrimitive osm: sel) {
+            if (key.isEmpty() || value.isEmpty())
+                return;
+            for (OsmPrimitive osm : sel) {
                 String val = osm.get(key);
                 if (val != null && !val.equals(value)) {
                     if (!warnOverwriteKey(tr("You changed the value of ''{0}'' from ''{1}'' to ''{2}''.", key, val, value),
@@ -832,6 +857,10 @@ class TagEditHelper {
             commandCount++;
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
             changedKey = key;
+            clearEntries();
+        }
+
+        protected void clearEntries() {
             keys.getEditor().setItem("");
             values.getEditor().setItem("");
         }
