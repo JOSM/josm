@@ -63,21 +63,35 @@ import org.w3c.dom.NodeList;
  */
 public final class CustomConfigurator {
 
+    private static StringBuilder summary = new StringBuilder();
+
     private CustomConfigurator() {
         // Hide default constructor for utils classes
     }
 
-    private static StringBuilder summary = new StringBuilder();
-
+    /**
+     * Log a formatted message.
+     * @param fmt format
+     * @param vars arguments
+     * @see String#format
+     */
     public static void log(String fmt, Object... vars) {
         summary.append(String.format(fmt, vars));
     }
 
+    /**
+     * Log a message.
+     * @param s message to log
+     */
     public static void log(String s) {
         summary.append(s);
         summary.append('\n');
     }
 
+    /**
+     * Returns the log.
+     * @return the log
+     */
     public static String getLog() {
         return summary.toString();
     }
@@ -121,7 +135,7 @@ public final class CustomConfigurator {
     }
 
     /**
-     * Downloads file to one of JOSM standard folders nad unpack it as ZIP/JAR file
+     * Downloads file to one of JOSM standard folders and unpack it as ZIP/JAR file
      * @param address - URL to download
      * @param path - file path relative to base where to put downloaded file
      * @param base - only "prefs", "cache" and "plugins" allowed for standard folders
@@ -222,7 +236,8 @@ public final class CustomConfigurator {
         List<String> keySet = new ArrayList<>();
         Map<String, Setting<?>> allSettings = Main.pref.getAllSettings();
         for (String key: allSettings.keySet()) {
-            if (key.matches(pattern)) keySet.add(key);
+            if (key.matches(pattern))
+                keySet.add(key);
         }
         exportPreferencesKeysToFile(fileName, append, keySet);
     }
@@ -252,9 +267,9 @@ public final class CustomConfigurator {
         } catch (Exception ex) {
             Main.warn("Error getting preferences to save:" +ex.getMessage());
         }
-        if (root == null) return;
+        if (root == null)
+            return;
         try {
-
             Element newRoot = exportDocument.createElement("config");
             exportDocument.appendChild(newRoot);
 
@@ -458,7 +473,7 @@ public final class CustomConfigurator {
         public XMLCommandProcessor(Preferences mainPrefs) {
             try {
                 this.mainPrefs = mainPrefs;
-                CustomConfigurator.summary = new StringBuilder();
+                summary = new StringBuilder();
                 engine = new ScriptEngineManager().getEngineByName("rhino");
                 engine.eval("API={}; API.pref={}; API.fragments={};");
 
@@ -481,8 +496,7 @@ public final class CustomConfigurator {
         }
 
         private void processXML(Document document) {
-            Element root = document.getDocumentElement();
-            processXmlFragment(root);
+            processXmlFragment(document.getDocumentElement());
         }
 
         private void processXmlFragment(Element root) {
@@ -1026,7 +1040,7 @@ public final class CustomConfigurator {
         }
 
         for (Entry<String, List<Collection<String>>> e : listlistMap.entrySet()) {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({ "unchecked", "rawtypes" })
             List<List<String>> value = (List) e.getValue();
             tmp.put(e.getKey(), new ListListSetting(value));
         }
@@ -1148,8 +1162,8 @@ public final class CustomConfigurator {
             whereToPutInJS+"[String(e.getKey())] = jslistmap;"+
             "}\n";
 
-        // Execute conversion script
-        engine.eval(init);
-    }
+            // Execute conversion script
+            engine.eval(init);
+        }
     }
 }
