@@ -116,6 +116,7 @@ public class RemoteCacheFactory
                         if (location != null)
                         {
                             failovers.add( location );
+                            rca.setRemoteLocation(location);
                             RemoteCacheManager rcm = getManager( rca, cacheMgr, cacheEventLogger, elementSerializer );
 
                             // add a listener if there are none, need to tell rca what

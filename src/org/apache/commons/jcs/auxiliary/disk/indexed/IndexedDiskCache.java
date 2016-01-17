@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
@@ -128,7 +129,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
     private int startupSize = 0;
 
     /** the number of bytes free on disk. */
-    private long bytesFree = 0;
+    private AtomicLong bytesFree = new AtomicLong(0);
 
     /** mode we are working on (size or count limited **/
     private DiskLimitType diskLimitType = DiskLimitType.COUNT;
@@ -1174,16 +1175,25 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
         // reuse the spot
         if (ded != null)
         {
-            this.adjustBytesFree(ded, true);
+            storageLock.readLock().lock();
 
-            if (doRecycle)
+            try
             {
-                recycle.add(ded);
-                if (log.isDebugEnabled())
-                {
-                    log.debug(logCacheName + "recycled ded" + ded);
-                }
+                this.adjustBytesFree(ded, true);
 
+                if (doRecycle)
+                {
+                    recycle.add(ded);
+                    if (log.isDebugEnabled())
+                    {
+                        log.debug(logCacheName + "recycled ded" + ded);
+                    }
+
+                }
+            }
+            finally
+            {
+                storageLock.readLock().unlock();
             }
         }
     }
@@ -1459,17 +1469,17 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
      *
      * @return The number bytes free on the disk file.
      */
-    protected synchronized long getBytesFree()
+    protected long getBytesFree()
     {
-        return this.bytesFree;
+        return this.bytesFree.get();
     }
 
     /**
      * Resets the number of bytes that are free.
      */
-    private synchronized void resetBytesFree()
+    private void resetBytesFree()
     {
-        this.bytesFree = 0;
+        this.bytesFree.set(0);
     }
 
     /**
@@ -1479,7 +1489,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
      * @param ded
      * @param add
      */
-    private synchronized void adjustBytesFree(IndexedDiskElementDescriptor ded, boolean add)
+    private void adjustBytesFree(IndexedDiskElementDescriptor ded, boolean add)
     {
         if (ded != null)
         {
@@ -1487,11 +1497,11 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
 
             if (add)
             {
-                this.bytesFree += amount;
+                this.bytesFree.addAndGet(amount);
             }
             else
             {
-                this.bytesFree -= amount;
+                this.bytesFree.addAndGet(-amount);
             }
         }
     }
@@ -1604,8 +1614,8 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
             log.error(e);
         }
         elems.add(new StatElement<Integer>("Max Key Size", this.maxKeySize));
-        elems.add(new StatElement<Integer>("Hit Count", Integer.valueOf(this.hitCount.get())));
-        elems.add(new StatElement<Long>("Bytes Free", Long.valueOf(this.bytesFree)));
+        elems.add(new StatElement<AtomicInteger>("Hit Count", this.hitCount));
+        elems.add(new StatElement<AtomicLong>("Bytes Free", this.bytesFree));
         elems.add(new StatElement<Integer>("Optimize Operation Count", Integer.valueOf(this.removeCount)));
         elems.add(new StatElement<Integer>("Times Optimized", Integer.valueOf(this.timesOptimized)));
         elems.add(new StatElement<Integer>("Recycle Count", Integer.valueOf(this.recycleCnt)));
