@@ -15,7 +15,7 @@
    id="svg4264"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="traffic_calming__chicane.svg">
+   sodipodi:docname="traffic_calming__choker.svg">
   <defs
      id="defs4266" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="-6.7882962"
-     inkscape:cy="6.7186021"
+     inkscape:zoom="16"
+     inkscape:cx="-20.613562"
+     inkscape:cy="6.7595663"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -112,13 +112,13 @@
        class="st5" />
     <path
        style="fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 9,1036.3621 c 0,0 -2,2 -2,4 0,2 2,4 2,4 z"
+       d="m 9,1040.3621 c 0,0 -2,2 -2,4 0,2 2,4 2,4 z"
        id="path4195"
        inkscape:connector-curvature="0" />
     <path
        inkscape:connector-curvature="0"
        id="path4197"
-       d="m 3.0792093e-6,1044.3621 c 0,0 2,2 2,4 0,2 -2,4 -2,4 z"
+       d="m 0,1040.3621 c 0,0 2,2 2,4 0,2 -2,4 -2,4 z"
        style="fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
   </g>
 </svg>

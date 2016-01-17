@@ -7,30 +7,17 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="14"
+   width="16"
    height="16"
-   viewBox="0 0 14 16"
+   viewBox="0 0 16 16"
    id="svg4264"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="traffic_sign__traffic_mirror.svg">
+   sodipodi:docname="highway__rest_area3.svg">
   <defs
      id="defs4266">
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient4321">
-      <stop
-         style="stop-color:#000000;stop-opacity:1"
-         offset="0"
-         id="stop4291" />
-      <stop
-         style="stop-color:#ffffff;stop-opacity:1"
-         offset="1"
-         id="stop4293" />
-    </linearGradient>
     <marker
        inkscape:stockid="EmptyTriangleInL"
        orient="auto"
@@ -153,17 +140,6 @@
          transform="matrix(0.8,0,0,0.8,10,0)"
          inkscape:connector-curvature="0" />
     </marker>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient4321"
-       id="radialGradient4665"
-       cx="3.6456184"
-       cy="1043.9417"
-       fx="3.6456184"
-       fy="1043.9417"
-       r="8"
-       gradientTransform="matrix(0.37498993,-0.74999645,1.5206994,0.76033289,-1585.8884,251.3531)"
-       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -173,13 +149,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="32"
-     inkscape:cx="8.1603866"
-     inkscape:cy="7.5582424"
+     inkscape:cx="10.860798"
+     inkscape:cy="7.7809326"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      units="px"
-     inkscape:snap-bbox="true"
+     inkscape:snap-bbox="false"
      inkscape:bbox-paths="true"
      inkscape:bbox-nodes="true"
      inkscape:snap-bbox-edge-midpoints="true"
@@ -190,11 +166,12 @@
      inkscape:object-nodes="true"
      inkscape:snap-smooth-nodes="true"
      inkscape:snap-midpoints="true"
-     inkscape:snap-object-midpoints="false"
-     inkscape:snap-center="false"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true"
      inkscape:snap-nodes="true"
-     inkscape:snap-others="true"
-     inkscape:snap-page="true">
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-grids="false">
     <inkscape:grid
        type="xygrid"
        id="grid4137" />
@@ -228,43 +205,43 @@
      id="layer1"
      transform="translate(0,-1036.3621)">
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4262"
-       width="4"
-       height="6"
-       x="5"
-       y="1046.3621"
-       rx="0"
-       ry="4.0764426e-005" />
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4254-5"
+       width="16"
+       height="16"
+       x="-5.2452083e-006"
+       y="1036.3621"
+       rx="2"
+       ry="2" />
     <rect
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:2.0000003;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4260"
-       width="12"
-       height="8"
-       x="1"
-       y="1037.3621"
-       rx="1.65728"
-       ry="1.65728" />
-    <rect
-       style="opacity:1;fill:url(#radialGradient4665);fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4360"
-       width="11"
-       height="7"
-       x="1.5"
-       y="1037.8621"
-       ry="1.6572816"
-       rx="1.6572815" />
+       style="opacity:1;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4322"
+       width="15"
+       height="15"
+       x="0.49176642"
+       y="1036.8539"
+       rx="1.6237757"
+       ry="1.6237757" />
     <g
-       id="g3382-9"
-       transform="matrix(0,0.15384648,-0.35461025,0,155.24126,1020.1082)"
-       style="fill:#000000;fill-opacity:1" />
-    <rect
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4263"
-       width="2"
-       height="8"
-       x="6"
-       y="1044.3621"
-       ry="0" />
+       id="g4330">
+      <path
+         style="fill:#ffffff;fill-opacity:1"
+         id="polyline3053"
+         d="m 6,1049.3621 2,0 0,1.4864 1,0 -1e-7,-1.4864 2,0 0,-1 -5,0 z"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccccc" />
+      <path
+         style="fill:#ffffff;fill-opacity:1"
+         id="path3055"
+         d="m 12,1047.3621 -2,0 1.500001,-2 -1,0 1.5,-2 -1,0 1.5,-2 1.5,2 -1,0 1.5,2 -1,0 1.5,2 -2,0 0,3.4864 -1,0 z"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccccccccccccccc" />
+      <path
+         inkscape:connector-curvature="0"
+         id="text5426"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:458.69091797px;line-height:100%;font-family:'DIN 1451 Mittelschrift';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 3.5321082,1039.7267 0,3.9634 2.7658333,0 c 0.6914515,0 1.2072343,-0.2081 1.5473488,-0.6243 0.3400995,-0.4159 0.5101528,-0.8683 0.5101609,-1.3575 -8.1e-6,-0.742 -0.2670341,-1.2873 -0.8010792,-1.6358 -0.3429254,-0.2305 -0.7842216,-0.3458 -1.3238898,-0.3458 z m -1.8635646,11.1218 0,-12.8841 4.4607497,0 c 0.4778305,0 0.9373973,0.05 1.3787005,0.1517 0.4412888,0.102 0.9008549,0.3373 1.3786994,0.7082 0.3710183,0.287 0.6858284,0.6818 0.9444307,1.185 0.2585851,0.5031 0.3878821,1.0864 0.3878911,1.7497 -9e-6,0.8769 -0.3274679,1.7116 -0.9823758,2.5043 -0.6549262,0.7928 -1.6120047,1.1891 -2.8712384,1.1891 l -2.8332926,0 0,5.3961 z"
+         sodipodi:nodetypes="ccscccscccscccccsccc" />
+    </g>
   </g>
 </svg>

@@ -15,7 +15,7 @@
    id="svg4264"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="traffic_calming__chicane.svg">
+   sodipodi:docname="traffic_calming__cushion.svg">
   <defs
      id="defs4266" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="-6.7882962"
-     inkscape:cy="6.7186021"
+     inkscape:zoom="11.313709"
+     inkscape:cx="-25.425035"
+     inkscape:cy="8.1568954"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -96,6 +96,13 @@
        id="path3387-0-9-4"
        d="m 5,1051.3621 -1,0 0,-2 1,0 z"
        class="st5" />
+    <rect
+       style="opacity:1;fill:#1a1a1a;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4156"
+       width="2"
+       height="4"
+       x="6"
+       y="1042.3621" />
     <path
        class="st5"
        d="m 5,1047.3621 -1,0 0,-2 1,0 z"
@@ -110,15 +117,12 @@
        id="path4189"
        d="m 5,1043.3621 -1,0 0,-2 1,0 z"
        class="st5" />
-    <path
-       style="fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 9,1036.3621 c 0,0 -2,2 -2,4 0,2 2,4 2,4 z"
-       id="path4195"
-       inkscape:connector-curvature="0" />
-    <path
-       inkscape:connector-curvature="0"
-       id="path4197"
-       d="m 3.0792093e-6,1044.3621 c 0,0 2,2 2,4 0,2 -2,4 -2,4 z"
-       style="fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <rect
+       y="1042.3621"
+       x="1"
+       height="4"
+       width="2"
+       id="rect4191"
+       style="opacity:1;fill:#1a1a1a;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>
