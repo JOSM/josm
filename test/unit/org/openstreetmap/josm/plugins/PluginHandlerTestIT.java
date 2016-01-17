@@ -19,9 +19,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
 /**
- * Unit tests of {@link PluginHandler} class.
+ * Integration tests of {@link PluginHandler} class.
  */
-public class PluginHandlerTest {
+public class PluginHandlerTestIT {
 
     /**
      * Global timeout applied to all test methods.

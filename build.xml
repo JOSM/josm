@@ -320,11 +320,13 @@ Build-Date: ${build.tstamp}
         <init-test-preferences testfamily="unit"/>
         <init-test-preferences testfamily="functional"/>
         <init-test-preferences testfamily="performance"/>
+        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="tools/jacocoant.jar" />
     </target>
     <target name="test-clean">
         <delete dir="${test.dir}/build"/>
         <delete dir="${test.dir}/report"/>
         <delete file="${test.dir}/jacoco.exec" />
+        <delete file="${test.dir}/jacocoIT.exec" />
         <delete file="${test.dir}/config/unit-josm.home/preferences.xml" />
         <delete file="${test.dir}/config/functional-josm.home/preferences.xml" />
         <delete file="${test.dir}/config/performance-josm.home/preferences.xml" />
@@ -369,9 +371,10 @@ Build-Date: ${build.tstamp}
     </target>
     <macrodef name="call-junit">
         <attribute name="testfamily"/>
+        <attribute name="testITsuffix" default=""/>
         <sequential>
-            <echo message="Running @{testfamily} tests with JUnit"/>
-            <jacoco:coverage destfile="${test.dir}/jacoco.exec">
+            <echo message="Running @{testfamily}@{testITsuffix} tests with JUnit"/>
+            <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec">
                 <junit printsummary="yes" fork="true" forkmode="once">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
                     <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
@@ -387,20 +390,25 @@ Build-Date: ${build.tstamp}
                     <formatter type="plain"/>
                     <formatter type="xml"/>
                     <batchtest fork="yes" todir="${test.dir}/report">
-                        <fileset dir="${test.dir}/build/@{testfamily}" includes="**/*Test.class"/>
+                        <fileset dir="${test.dir}/build/@{testfamily}" includes="**/*Test@{testITsuffix}.class"/>
                     </batchtest>
                 </junit>
             </jacoco:coverage>
         </sequential>
     </macrodef>
-    <target name="test" depends="test-compile" 
+    <target name="test" depends="test-compile" unless="test.notRequired"
         description="Run unit, functional and performance tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
-        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="tools/jacocoant.jar" />
         <call-junit testfamily="unit"/>
         <call-junit testfamily="functional"/>
         <call-junit testfamily="performance"/>
     </target>
-    <target name="test-html" depends="test" description="Generate HTML test reports">
+    <target name="test-it" depends="test-compile" unless="test-it.notRequired"
+        description="Run integration tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
+        <call-junit testfamily="unit" testITsuffix="IT"/>
+        <call-junit testfamily="functional" testITsuffix="IT"/>
+        <call-junit testfamily="performance" testITsuffix="IT"/>
+    </target>
+    <target name="test-html" depends="test, test-it" description="Generate HTML test reports">
         <!-- May require additional ant dependencies like ant-trax package -->
         <junitreport todir="${test.dir}/report">
             <fileset dir="${test.dir}/report">
@@ -411,6 +419,7 @@ Build-Date: ${build.tstamp}
         <jacoco:report>
             <executiondata>
                 <file file="${test.dir}/jacoco.exec"/>
+                <file file="${test.dir}/jacocoIT.exec"/>
             </executiondata>
             <structure name="JOSM Test Coverage">
                 <classfiles>

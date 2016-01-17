@@ -22,9 +22,9 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.xml.sax.SAXException;
 
 /**
- * Unit tests of {@link TaggingPresetPreference} class.
+ * Integration tests of {@link TaggingPresetPreference} class.
  */
-public class TaggingPresetPreferenceTest {
+public class TaggingPresetPreferenceTestIT {
 
     /**
      * Global timeout applied to all test methods.
