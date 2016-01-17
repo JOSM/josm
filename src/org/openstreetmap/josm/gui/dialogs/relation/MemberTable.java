@@ -6,9 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,11 +14,9 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.DropMode;
-import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JViewport;
-import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -60,30 +56,15 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         super(model, new MemberTableColumnModel(layer.data, relation), model.getSelectionModel());
         setLayer(layer);
         model.addMemberModelListener(this);
-        init();
-    }
 
-    /**
-     * initialize the table
-     */
-    protected void init() {
         MemberRoleCellEditor ce = (MemberRoleCellEditor) getColumnModel().getColumn(0).getCellEditor();
         setRowHeight(ce.getEditor().getPreferredSize().height);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
-        // make ENTER behave like TAB
-        //
-        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), "selectNextColumnCell");
-
+        installCustomNavigation(0);
         initHighlighting();
-
-        // install custom navigation actions
-        //
-        getActionMap().put("selectNextColumnCell", new SelectNextColumnCellAction());
-        getActionMap().put("selectPreviousColumnCell", new SelectPreviousColumnCellAction());
 
         if (!GraphicsEnvironment.isHeadless()) {
             setTransferHandler(new MemberTransferHandler());
@@ -160,64 +141,6 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         if (Main.isDisplayingMapView()) {
             HighlightHelper.clearAllHighlighted();
             Main.map.mapView.repaint();
-        }
-    }
-
-    /**
-     * Action to be run when the user navigates to the next cell in the table, for instance by
-     * pressing TAB or ENTER. The action alters the standard navigation path from cell to cell: <ul>
-     * <li>it jumps over cells in the first column</li> <li>it automatically add a new empty row
-     * when the user leaves the last cell in the table</li></ul>
-     */
-    class SelectNextColumnCellAction extends AbstractAction {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            run();
-        }
-
-        public void run() {
-            int col = getSelectedColumn();
-            int row = getSelectedRow();
-            if (getCellEditor() != null) {
-                getCellEditor().stopCellEditing();
-            }
-
-            if (col == 0 && row < getRowCount() - 1) {
-                row++;
-            } else if (row < getRowCount() - 1) {
-                col = 0;
-                row++;
-            } else {
-                // go to next component, no more rows in this table
-                KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-                manager.focusNextComponent();
-                return;
-            }
-            changeSelection(row, col, false, false);
-        }
-    }
-
-    /**
-     * Action to be run when the user navigates to the previous cell in the table, for instance by
-     * pressing Shift-TAB
-     */
-    private class SelectPreviousColumnCellAction extends AbstractAction {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int col = getSelectedColumn();
-            int row = getSelectedRow();
-            if (getCellEditor() != null) {
-                getCellEditor().stopCellEditing();
-            }
-
-            if (col <= 0 && row <= 0) {
-                // change nothing
-            } else if (row > 0) {
-                col = 0;
-                row--;
-            }
-            changeSelection(row, col, false, false);
         }
     }
 
