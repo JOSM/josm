@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.preferences.advanced;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,20 +16,18 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.data.Preferences.ListSetting;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Editor for List preference entries.
+ * @since 4634
  */
-public class ListEditor extends ExtendedDialog {
+public class ListEditor extends AbstractListEditor<String> {
 
-    private List<String> data;
-    private final transient PrefEntry entry;
+    private final List<String> data;
 
     /**
      * Constructs a new {@code ListEditor}.
@@ -39,23 +36,17 @@ public class ListEditor extends ExtendedDialog {
      * @param setting list setting
      */
     public ListEditor(final JComponent gui, PrefEntry entry, ListSetting setting) {
-        super(gui, tr("Change list setting"), new String[] {tr("OK"), tr("Cancel")});
-        this.entry = entry;
+        super(gui, tr("Change list setting"), entry);
         List<String> orig = setting.getValue();
         if (orig != null) {
             data = new ArrayList<>(orig);
         } else {
             data = new ArrayList<>();
         }
-        setButtonIcons(new String[] {"ok.png", "cancel.png"});
-        setRememberWindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(gui, new Dimension(300, 350)));
         setContent(build(), false);
     }
 
-    /**
-     * Returns the list of values.
-     * @return The list of values.
-     */
+    @Override
     public List<String> getData() {
         return new ArrayList<>(Utils.filter(data, new Predicate<String>() {
             @Override
@@ -65,6 +56,7 @@ public class ListEditor extends ExtendedDialog {
         }));
     }
 
+    @Override
     protected final JPanel build() {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.eol().insets(0, 0, 5, 0));
