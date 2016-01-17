@@ -81,7 +81,7 @@ public class CancelAction extends SavingAction {
                         applyExistingNonConflictingRelation(tagModel);
                     }
                 }
-            } else if (ret == 2) //Cancel, continue editing
+            } else if (ret == 2 || ret == JOptionPane.CLOSED_OPTION) //Cancel, continue editing
                 return;
             //in case of "No, discard", there is no extra action to be performed here.
         }
