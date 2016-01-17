@@ -279,7 +279,44 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
     }
 
-    class SelectInCurrentLayerAction extends AbstractAction implements ListSelectionListener, EditLayerChangeListener {
+    abstract class SelectionBasedAction extends AbstractAction implements ListSelectionListener, EditLayerChangeListener {
+
+        protected Set<OsmPrimitive> getTarget() {
+            if (!isEnabled() || Main.main == null || !Main.main.hasEditLayer()) {
+                return null;
+            }
+            OsmDataLayer layer = Main.main.getEditLayer();
+            Set<OsmPrimitive> target = new HashSet<>();
+            for (HistoryOsmPrimitive p : model.getSelectedPrimitives()) {
+                OsmPrimitive op = layer.data.getPrimitiveById(p.getPrimitiveId());
+                if (op != null) {
+                    target.add(op);
+                }
+            }
+            return target;
+        }
+
+        public final void updateEnabledState() {
+            if (Main.main == null || !Main.main.hasEditLayer()) {
+                setEnabled(false);
+                return;
+            }
+            setEnabled(model.hasSelectedPrimitives());
+        }
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+
+        @Override
+        public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+            updateEnabledState();
+        }
+
+    }
+
+    class SelectInCurrentLayerAction extends SelectionBasedAction {
 
         SelectInCurrentLayerAction() {
             putValue(NAME, tr("Select in layer"));
@@ -290,46 +327,19 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            if (!isEnabled())
+            final Set<OsmPrimitive> target = getTarget();
+            if (target == null) {
                 return;
-            if (Main.main == null || !Main.main.hasEditLayer()) return;
-            OsmDataLayer layer = Main.main.getEditLayer();
-            Set<HistoryOsmPrimitive> selected = model.getSelectedPrimitives();
-            Set<OsmPrimitive> target = new HashSet<>();
-            for (HistoryOsmPrimitive p : model.getSelectedPrimitives()) {
-                OsmPrimitive op = layer.data.getPrimitiveById(p.getPrimitiveId());
-                if (op != null) {
-                    target.add(op);
-                }
-            }
-            if (target.isEmpty()) {
-                alertNoPrimitivesTo(selected, tr("Nothing to select"),
+            } else if (target.isEmpty()) {
+                alertNoPrimitivesTo(model.getSelectedPrimitives(), tr("Nothing to select"),
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToSelectInLayer"));
                 return;
             }
-            layer.data.setSelected(target);
-        }
-
-        public final void updateEnabledState() {
-            if (Main.main == null || !Main.main.hasEditLayer()) {
-                setEnabled(false);
-                return;
-            }
-            setEnabled(model.hasSelectedPrimitives());
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-
-        @Override
-        public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
-            updateEnabledState();
+            Main.main.getEditLayer().data.setSelected(target);
         }
     }
 
-    class ZoomInCurrentLayerAction extends AbstractAction implements ListSelectionListener, EditLayerChangeListener {
+    class ZoomInCurrentLayerAction extends SelectionBasedAction {
 
         ZoomInCurrentLayerAction() {
             putValue(NAME, tr("Zoom to in layer"));
@@ -340,43 +350,16 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            if (!isEnabled())
+            final Set<OsmPrimitive> target = getTarget();
+            if (target == null) {
                 return;
-            if (Main.main == null || !Main.main.hasEditLayer()) return;
-            OsmDataLayer layer = Main.main.getEditLayer();
-            Set<HistoryOsmPrimitive> selected = model.getSelectedPrimitives();
-            Set<OsmPrimitive> target = new HashSet<>();
-            for (HistoryOsmPrimitive p : model.getSelectedPrimitives()) {
-                OsmPrimitive op = layer.data.getPrimitiveById(p.getPrimitiveId());
-                if (op != null) {
-                    target.add(op);
-                }
-            }
-            if (target.isEmpty()) {
-                alertNoPrimitivesTo(selected, tr("Nothing to zoom to"),
+            } else if (target.isEmpty()) {
+                alertNoPrimitivesTo(model.getSelectedPrimitives(), tr("Nothing to zoom to"),
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToZoomTo"));
                 return;
             }
-            layer.data.setSelected(target);
+            Main.main.getEditLayer().data.setSelected(target);
             AutoScaleAction.zoomToSelection();
-        }
-
-        public final void updateEnabledState() {
-            if (Main.main == null || !Main.main.hasEditLayer()) {
-                setEnabled(false);
-                return;
-            }
-            setEnabled(model.hasSelectedPrimitives());
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
-        }
-
-        @Override
-        public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
-            updateEnabledState();
         }
     }
 
