@@ -6,13 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.upload.ApiPreconditionCheckerHook;
@@ -233,24 +230,7 @@ public class UploadAction extends JosmAction {
             return;
 
         final UploadDialog dialog = UploadDialog.getUploadDialog();
-        // If we simply set the changeset comment here, it would be
-        // overridden by subsequent events in EDT that are caused by
-        // dialog creation. The current solution is to queue this operation
-        // after these events.
-        // TODO: find better way to initialize the comment field
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                final Map<String, String> tags = new HashMap<>(layer.data.getChangeSetTags());
-                if (!tags.containsKey("source")) {
-                    tags.put("source", dialog.getLastChangesetSourceFromHistory());
-                }
-                if (!tags.containsKey("comment")) {
-                    tags.put("comment", dialog.getLastChangesetCommentFromHistory());
-                }
-                dialog.setDefaultChangesetTags(tags);
-            }
-        });
+        dialog.setChangesetTags(layer.data);
         dialog.setUploadedPrimitives(apiData);
         dialog.setVisible(true);
         dialog.rememberUserInput();

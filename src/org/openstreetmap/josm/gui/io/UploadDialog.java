@@ -19,6 +19,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,7 +40,9 @@ import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.Preferences.Setting;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -99,6 +103,8 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     /** the changeset comment model keeping the state of the changeset comment */
     private final transient ChangesetCommentModel changesetCommentModel = new ChangesetCommentModel();
     private final transient ChangesetCommentModel changesetSourceModel = new ChangesetCommentModel();
+
+    private transient DataSet dataSet;
 
     /**
      * builds the content panel for the upload dialog
@@ -193,6 +199,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         // make sure the configuration panels listen to each other
         // changes
         //
+        pnlChangesetManagement.addPropertyChangeListener(this);
         pnlChangesetManagement.addPropertyChangeListener(
                 pnlBasicUploadSettings.getUploadParameterSummaryPanel()
         );
@@ -266,6 +273,57 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         );
     }
 
+    /**
+     * Sets the tags for this upload based on (later items overwrite earlier ones):
+     * <ul>
+     * <li>previous "source" and "comment" input</li>
+     * <li>the tags set in the dataset (see {@link DataSet#getChangeSetTags()})</li>
+     * <li>the tags from the selected open changeset</li>
+     * <li>the JOSM user agent (see {@link Version#getAgentString(boolean)})</li>
+     * </ul>
+     *
+     * @param dataSet to obtain the tags set in the dataset
+     */
+    public void setChangesetTags(DataSet dataSet) {
+        final Map<String, String> tags = new HashMap<>();
+
+        // obtain from previos input
+        tags.put("source", getLastChangesetSourceFromHistory());
+        tags.put("comment", getLastChangesetCommentFromHistory());
+
+        // obtain from dataset
+        if (dataSet != null) {
+            tags.putAll(dataSet.getChangeSetTags());
+        }
+        this.dataSet = dataSet;
+
+        // obtain from selected open changeset
+        if (pnlChangesetManagement.getSelectedChangeset() != null) {
+            tags.putAll(pnlChangesetManagement.getSelectedChangeset().getKeys());
+        }
+
+        // set/adapt created_by
+        final String agent = Version.getInstance().getAgentString(false);
+        final String created_by = tags.get("created_by");
+        if (created_by == null || created_by.isEmpty()) {
+            tags.put("created_by", agent);
+        } else if (!created_by.contains(agent)) {
+            tags.put("created_by", created_by + ';' + agent);
+        }
+
+        // remove empty values
+        final Iterator<String> it = tags.keySet().iterator();
+        while (it.hasNext()) {
+            final String v = tags.get(it.next());
+            if (v == null || v.isEmpty()) {
+                it.remove();
+            }
+        }
+
+        pnlTagSettings.initFromTags(tags);
+        pnlTagSettings.tableChanged(null);
+    }
+
     @Override
     public void rememberUserInput() {
         pnlBasicUploadSettings.rememberUserInput();
@@ -279,7 +337,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         tpConfigPanels.setSelectedIndex(0);
         pnlBasicUploadSettings.startUserInput();
         pnlTagSettings.startUserInput();
-        pnlTagSettings.initFromChangeset(pnlChangesetManagement.getSelectedChangeset());
         pnlUploadStrategySelectionPanel.initFromPreferences();
         UploadParameterSummaryPanel pnl = pnlBasicUploadSettings.getUploadParameterSummaryPanel();
         pnl.setUploadStrategySpecification(pnlUploadStrategySelectionPanel.getUploadStrategySpecification());
@@ -309,10 +366,11 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         return pnlTagSettings.getDefaultTags();
     }
 
+    /**
+     * @deprecated No longer supported, does nothing; use {@link #setChangesetTags(DataSet)} instead!
+     */
+    @Deprecated
     public void setDefaultChangesetTags(Map<String, String> tags) {
-        pnlTagSettings.setDefaultTags(tags);
-        changesetCommentModel.setComment(tags.get("comment"));
-        changesetSourceModel.setComment(tags.get("source"));
     }
 
     /**
@@ -542,6 +600,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(ChangesetManagementPanel.SELECTED_CHANGESET_PROP)) {
             Changeset cs = (Changeset) evt.getNewValue();
+            setChangesetTags(dataSet);
             if (cs == null) {
                 tpConfigPanels.setTitleAt(1, tr("Tags of new changeset"));
             } else {

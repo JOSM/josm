@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.io;
 
 import java.awt.BorderLayout;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -12,8 +12,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -25,8 +25,6 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     /** the model for the changeset comment */
     private final transient ChangesetCommentModel changesetCommentModel;
     private final transient ChangesetCommentModel changesetSourceModel;
-    /** tags that applied to uploaded changesets by default*/
-    private final transient Map<String, String> defaultTags = new HashMap<>();
 
     protected void build() {
         setLayout(new BorderLayout());
@@ -80,27 +78,10 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     }
 
     /**
-     * Initialize panel from changeset.
-     * @param cs changeset
+     * Initialize panel from the given tags.
+     * @param tags the tags used to initialize the panel
      */
-    public void initFromChangeset(Changeset cs) {
-        Map<String, String> tags = getDefaultTags();
-        if (cs != null) {
-            tags.putAll(cs.getKeys());
-        }
-        if (tags.get("comment") == null) {
-            tags.put("comment", getTagEditorValue("comment"));
-        }
-        if (tags.get("source") == null) {
-            tags.put("source", getTagEditorValue("source"));
-        }
-        String agent = Version.getInstance().getAgentString(false);
-        String created_by = tags.get("created_by");
-        if (created_by == null || created_by.isEmpty()) {
-            tags.put("created_by", agent);
-        } else if (!created_by.contains(agent)) {
-            tags.put("created_by", created_by + ';' + agent);
-        }
+    public void initFromTags(Map<String, String> tags) {
         pnlTagEditor.getModel().initFromTags(tags);
     }
 
@@ -114,23 +95,20 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     }
 
     /**
-     * Replies the map with the default tags.
-     * @return the map with the default tags
+     * @return an empty map
+     * @deprecated No longer supported, returns an empty map
      */
+    @Deprecated
     public Map<String, String> getDefaultTags() {
-        Map<String, String> tags = new HashMap<>();
-        tags.putAll(defaultTags);
-        return tags;
+        return Collections.emptyMap();
     }
 
     /**
-     * Sets the map with the default tags.
-     * @param tags the map with the default tags
+     * @param tags ignored
+     * @deprecated No longer supported, does nothing; use {@link UploadDialog#setChangesetTags(DataSet)} instead!
      */
+    @Deprecated
     public void setDefaultTags(Map<String, String> tags) {
-        defaultTags.clear();
-        defaultTags.putAll(tags);
-        tableChanged(null);
     }
 
     public void startUserInput() {
