@@ -244,7 +244,7 @@ class sync_editor_imagery_index {
 
             Integer eMinZoom = getMinZoom(e)
             Integer jMinZoom = getMinZoom(j)
-            if (eMinZoom != jMinZoom) {
+            if (eMinZoom != jMinZoom  && !(eMinZoom == 0 && jMinZoom == null)) {
                 myprintln "  minzoom differs: ${getDescription(j)}"
                 myprintln "     (IEE):     ${eMinZoom}"
                 myprintln "     (JOSM):    ${jMinZoom}"
