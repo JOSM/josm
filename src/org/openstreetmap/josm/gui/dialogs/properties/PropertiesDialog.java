@@ -528,7 +528,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
         // F1 button = custom help action
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "onHelp");
+                helpAction.getKeyStroke(), "onHelp");
         getActionMap().put("onHelp", helpAction);
     }
 
@@ -1122,9 +1122,14 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
     class HelpAction extends AbstractAction {
         HelpAction() {
-            putValue(NAME, tr("Go to OSM wiki for tag help (F1)"));
+            putValue(NAME, tr("Go to OSM wiki for tag help"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with wiki help for selected object"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
+            putValue(ACCELERATOR_KEY, getKeyStroke());
+        }
+
+        public KeyStroke getKeyStroke() {
+            return KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0);
         }
 
         @Override
