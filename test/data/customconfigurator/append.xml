@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<config>
+<preferences operation="append">
+<list key="test">
+    <entry value="11111111"/>
+    <entry value="2222222"/>
+    <entry value="333333333"/>
+  </list>
+</preferences>
+</config>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<config>
+<preferences operation="replace">
+<list key="lorem_ipsum">
+    <entry value="Lorem ipsum dolor sit amet, consectetur adipiscing elit."/>
+    <entry value="Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor."/>
+    <entry value="Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi."/>
+    <entry value="Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat."/>
+    <entry value="Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim."/>
+    <entry value="Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue."/>
+    <entry value="Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales."/>
+    <entry value="Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh."/>
+    <entry value="Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit."/>
+  </list>
+</preferences>
+</config>

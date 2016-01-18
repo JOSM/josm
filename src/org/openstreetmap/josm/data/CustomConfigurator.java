@@ -96,6 +96,18 @@ public final class CustomConfigurator {
         return summary.toString();
     }
 
+    /**
+     * Resets the log.
+     */
+    public static void resetLog() {
+        summary = new StringBuilder();
+    }
+
+    /**
+     * Read configuration script from XML file, modifying main preferences
+     * @param dir - directory
+     * @param fileName - XML file name
+     */
     public static void readXML(String dir, String fileName) {
         readXML(new File(dir, fileName));
     }
@@ -473,8 +485,8 @@ public final class CustomConfigurator {
         public XMLCommandProcessor(Preferences mainPrefs) {
             try {
                 this.mainPrefs = mainPrefs;
-                summary = new StringBuilder();
-                engine = new ScriptEngineManager().getEngineByName("rhino");
+                resetLog();
+                engine = new ScriptEngineManager().getEngineByName("JavaScript");
                 engine.eval("API={}; API.pref={}; API.fragments={};");
 
                 engine.eval("homeDir='"+normalizeDirName(Main.pref.getPreferencesDirectory().getAbsolutePath()) +"';");
@@ -492,6 +504,7 @@ public final class CustomConfigurator {
                 engine.eval("API.pluginDelete = function(names) { "+className+".pluginOperation('','',names);}");
             } catch (Exception ex) {
                 log("Error: initializing script engine: "+ex.getMessage());
+                Main.error(ex);
             }
         }
 
