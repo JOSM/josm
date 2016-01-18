@@ -156,9 +156,7 @@ public abstract class AbstractProj implements Proj {
         }
     }
 
-    /**
-     * Iteratively solve equation (7-9) from Snyder.
-     */
+    // Iteratively solve equation (7-9) from Snyder.
     final double cphi2(final double ts) {
         final double eccnth = 0.5 * e;
         double phi = (Math.PI/2) - 2.0 * Math.atan(ts);
