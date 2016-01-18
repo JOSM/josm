@@ -162,7 +162,7 @@ public abstract class AbstractProj implements Proj {
     final double cphi2(final double ts) {
         final double eccnth = 0.5 * e;
         double phi = (Math.PI/2) - 2.0 * Math.atan(ts);
-        for (int i=0; i<MAXIMUM_ITERATIONS; i++) {
+        for (int i = 0; i < MAXIMUM_ITERATIONS; i++) {
             final double con  = e * Math.sin(phi);
             final double dphi = (Math.PI/2) - 2.0*Math.atan(ts * Math.pow((1-con)/(1+con), eccnth)) - phi;
             phi += dphi;
