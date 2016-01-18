@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -30,6 +31,8 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.dialogs.ChangesetDialog;
+import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
+import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetDiscussionPanel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
@@ -50,7 +53,9 @@ public class VersionInfoPanel extends JPanel implements Observer {
     private JMultilineLabel lblInfo;
     private UrlLabel lblUser;
     private UrlLabel lblChangeset;
-    private final OpenChangesetDialogAction changesetDialogAction = new OpenChangesetDialogAction();
+    private final JButton lblChangesetComments = new JButton(ImageProvider.get("dialogs/notes/note_comment"));
+    private final OpenChangesetDialogAction changesetCommentsDialogAction = new OpenChangesetDialogAction(ChangesetDiscussionPanel.class);
+    private final OpenChangesetDialogAction changesetDialogAction = new OpenChangesetDialogAction(null);
     private final JButton changesetButton = new JButton(changesetDialogAction);
     private JPanel pnlChangesetSource;
     private JPanel pnlChangesetImageryUsed;
@@ -99,7 +104,13 @@ public class VersionInfoPanel extends JPanel implements Observer {
         changesetButton.setMargin(new Insets(0, 0, 0, 0));
         pnlUserAndChangeset.add(changesetButton);
         lblChangeset = new UrlLabel("", 2);
-        pnlUserAndChangeset.add(lblChangeset);
+        final JPanel pnlChangesetInfo = new JPanel(new BorderLayout());
+        pnlChangesetInfo.add(lblChangeset, BorderLayout.CENTER);
+        lblChangesetComments.setAction(changesetCommentsDialogAction);
+        lblChangesetComments.setMargin(new Insets(0, 0, 0, 0));
+        lblChangesetComments.setIcon(new ImageProvider("dialogs/notes/note_comment").setMaxSize(12).get());
+        pnlChangesetInfo.add(lblChangesetComments, BorderLayout.EAST);
+        pnlUserAndChangeset.add(pnlChangesetInfo);
 
         texChangesetComment = buildTextArea(tr("Changeset comment"));
         texChangesetSource = buildTextArea(tr("Changeset source"));
@@ -192,10 +203,22 @@ public class VersionInfoPanel extends JPanel implements Observer {
         update(cs, model.isLatest(primitive), primitive.getTimestamp(), primitive.getVersion());
     }
 
+    /**
+     * Updates the content of this panel based on the changeset information given by {@code primitive}.
+     * @param primitive the primitive to extract the changeset information from
+     * @param isLatest whether this relates to a not yet commited changeset
+     */
     public void update(final OsmPrimitive primitive, final boolean isLatest) {
         update(Changeset.fromPrimitive(primitive), isLatest, primitive.getTimestamp(), primitive.getVersion());
     }
 
+    /**
+     * Updates the content of this panel based on the changeset information given by {@code cs}.
+     * @param cs the changeset information
+     * @param isLatest whether this relates to a not yet commited changeset
+     * @param timestamp the timestamp
+     * @param version the version of the primitive
+     */
     public void update(final Changeset cs, final boolean isLatest, final Date timestamp, final long version) {
         lblInfo.setText(getInfoText(timestamp, version, isLatest));
 
@@ -204,6 +227,11 @@ public class VersionInfoPanel extends JPanel implements Observer {
             String url = Main.getBaseBrowseUrl() + "/changeset/" + cs.getId();
             lblChangeset.setUrl(url);
             lblChangeset.setDescription(Long.toString(cs.getId()));
+            changesetCommentsDialogAction.setId(cs.getId());
+            lblChangesetComments.setVisible(cs.getCommentsCount() > 0);
+            lblChangesetComments.setText(String.valueOf(cs.getCommentsCount()));
+            lblChangesetComments.setToolTipText(trn("This changeset has {0} comment", "This changeset has {0} comments",
+                    cs.getCommentsCount(), cs.getCommentsCount()));
             changesetDialogAction.setId(cs.getId());
             changesetButton.setEnabled(true);
 
@@ -228,6 +256,7 @@ public class VersionInfoPanel extends JPanel implements Observer {
             }
             lblChangeset.setDescription(tr("none"));
             lblChangeset.setUrl(null);
+            lblChangesetComments.setVisible(false);
             changesetDialogAction.setId(null);
             changesetButton.setEnabled(false);
         }
@@ -250,20 +279,25 @@ public class VersionInfoPanel extends JPanel implements Observer {
     }
 
     static class OpenChangesetDialogAction extends AbstractAction {
+        private final Class<? extends JComponent> componentToSelect;
         private Integer id;
 
-        OpenChangesetDialogAction() {
+        OpenChangesetDialogAction(Class<? extends JComponent> componentToSelect) {
             super(tr("Changeset"), new ImageProvider("dialogs/changeset", "changesetmanager").resetMaxSize(new Dimension(16, 16)).get());
             putValue(SHORT_DESCRIPTION, tr("Opens the Changeset Manager window for the selected changesets"));
+            this.componentToSelect = componentToSelect;
         }
 
-        public void setId(Integer id) {
+        void setId(Integer id) {
             this.id = id;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             ChangesetDialog.LaunchChangesetManager.displayChangesets(Collections.singleton(id));
+            if (componentToSelect != null) {
+                ChangesetCacheManager.getInstance().setSelectedComponentInDetailPanel(componentToSelect);
+            }
         }
     }
 }

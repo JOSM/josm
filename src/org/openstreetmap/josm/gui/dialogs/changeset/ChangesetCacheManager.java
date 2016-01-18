@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.changeset;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -69,6 +70,7 @@ public class ChangesetCacheManager extends JFrame {
 
     /** the unique instance of the cache manager  */
     private static volatile ChangesetCacheManager instance;
+    private JTabbedPane pnlChangesetDetailTabs;
 
     /**
      * Replies the unique instance of the changeset cache manager
@@ -163,7 +165,8 @@ public class ChangesetCacheManager extends JFrame {
      */
     protected JPanel buildChangesetDetailPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
-        JTabbedPane tp = new JTabbedPane();
+        JTabbedPane tp =  new JTabbedPane();
+        pnlChangesetDetailTabs = tp;
 
         // -- add the details panel
         ChangesetDetailPanel pnlChangesetDetail = new ChangesetDetailPanel();
@@ -643,6 +646,19 @@ public class ChangesetCacheManager extends JFrame {
             }
         }
         setSelectedChangesets(toSelect);
+    }
+
+    /**
+     * Selects the given component in the detail tabbed panel
+     * @param clazz the class of the component to select
+     */
+    public void setSelectedComponentInDetailPanel(Class<? extends JComponent> clazz) {
+        for (Component component : pnlChangesetDetailTabs.getComponents()) {
+            if (component.getClass().equals(clazz)) {
+                pnlChangesetDetailTabs.setSelectedComponent(component);
+                break;
+            }
+        }
     }
 
     /**
