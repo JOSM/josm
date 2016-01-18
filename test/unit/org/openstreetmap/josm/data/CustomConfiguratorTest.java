@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -9,11 +10,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -25,8 +29,16 @@ public class CustomConfiguratorTest {
      * Setup test.
      */
     @BeforeClass
-    public static void setUp() {
+    public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
+    }
+
+    /**
+     * Setup test.
+     */
+    @Before
+    public void setUp() {
+        CustomConfigurator.resetLog();
     }
 
     /**
@@ -77,5 +89,31 @@ public class CustomConfiguratorTest {
         }
 
         Utils.deleteFile(tmp);
+    }
+
+    /**
+     * Test method for {@link CustomConfigurator#readXML}.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testReadXML() throws IOException {
+        // Test 1 - read(dir, file) + append
+        Main.pref.putCollection("test", Collections.<String>emptyList());
+        assertTrue(Main.pref.getCollection("test").isEmpty());
+        CustomConfigurator.readXML(TestUtils.getTestDataRoot() + "customconfigurator", "append.xml");
+        String log = CustomConfigurator.getLog();
+        System.out.println(log);
+        assertFalse(log.contains("Error"));
+        assertFalse(Main.pref.getCollection("test").isEmpty());
+
+        // Test 1 - read(file, pref) + replace
+        Preferences pref = new Preferences();
+        pref.putCollection("lorem_ipsum", Arrays.asList("only 1 string"));
+        assertEquals(1, pref.getCollection("lorem_ipsum").size());
+        CustomConfigurator.readXML(new File(TestUtils.getTestDataRoot() + "customconfigurator", "replace.xml"), pref);
+        log = CustomConfigurator.getLog();
+        System.out.println(log);
+        assertFalse(log.contains("Error"));
+        assertEquals(9, pref.getCollection("lorem_ipsum").size());
     }
 }
