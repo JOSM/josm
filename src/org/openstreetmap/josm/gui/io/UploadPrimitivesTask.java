@@ -25,7 +25,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -294,10 +293,6 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                     }
                 }
             }
-            // update the user information
-            if (changeset.getUser() == null) {
-                changeset.setUser(JosmUserIdentityManager.getInstance().asUser());
-            }
             // if required close the changeset
             //
             if (strategy.isCloseChangesetAfterUpload() && changeset != null && !changeset.isNew() && changeset.isOpen()) {
@@ -315,8 +310,6 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
     }
 
     @Override protected void finish() {
-        if (uploadCanceled)
-            return;
 
         // depending on the success of the upload operation and on the policy for
         // multi changeset uploads this will sent the user back to the appropriate
@@ -334,6 +327,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                 if (changeset != null && changeset.isOpen()) {
                     UploadDialog.getUploadDialog().setSelectedChangesetForNextUpload(changeset);
                 }
+                if (uploadCanceled) return;
                 if (lastException == null) {
                     new Notification(
                             "<h3>" + tr("Upload successful!") + "</h3>")
