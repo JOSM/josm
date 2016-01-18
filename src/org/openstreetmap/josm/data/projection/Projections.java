@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.projection.proj.DoubleStereographic;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
 import org.openstreetmap.josm.data.projection.proj.LonLat;
 import org.openstreetmap.josm.data.projection.proj.Mercator;
+import org.openstreetmap.josm.data.projection.proj.ObliqueMercator;
 import org.openstreetmap.josm.data.projection.proj.PolarStereographic;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjFactory;
@@ -87,6 +88,7 @@ public final class Projections {
         registerBaseProjection("josm:smerc", Mercator.class, "core");
         registerBaseProjection("lcc", LambertConformalConic.class, "core");
         registerBaseProjection("lonlat", LonLat.class, "core");
+        registerBaseProjection("omerc", ObliqueMercator.class, "core");
         registerBaseProjection("somerc", SwissObliqueMercator.class, "core");
         registerBaseProjection("stere", PolarStereographic.class, "core");
         registerBaseProjection("sterea", DoubleStereographic.class, "core");

@@ -362,3 +362,42 @@
 <32759> +proj=utm +zone=59 +south +datum=WGS84 +units=m +bounds=166,-85,176,5  <>
 # UTM zone 60S
 <32760> +proj=utm +zone=60 +south +datum=WGS84 +units=m +bounds=172,-85,182,5  <>
+##
+## Following entries use Oblique Mercator projection.
+## There is no easy way to automatically generate reasonable bounds for this projection
+## so bounds have been added by hand. (Otherwise unchanged copy from epsg file.)
+##
+# NAD83(NSRS2007) / Michigan Oblique Mercator
+<3591> +proj=omerc +lat_0=45.30916666666666 +lonc=-86 +alpha=337.25556 +k=0.9996 +x_0=2546731.496 +y_0=-4354009.816 +no_uoff +gamma=337.25556 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +bounds=-91,41,-82,49 <>
+# GDBD2009 / Brunei BRSO
+<5247> +proj=omerc +lat_0=4 +lonc=115 +alpha=53.31580995 +k=0.99984 +x_0=0 +y_0=0 +no_uoff +gamma=53.13010236111111 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +bounds=112,4,116,7 <>
+# NAD83(NSRS2007) / Alaska zone 1
+<3468> +proj=omerc +lat_0=57 +lonc=-133.6666666666667 +alpha=323.1301023611111 +k=0.9999 +x_0=5000000 +y_0=-5000000 +no_uoff +gamma=323.1301023611111 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +bounds=-141,54,-129,61 <>
+# NAD83(2011) / Michigan Oblique Mercator
+<6497> +proj=omerc +lat_0=45.30916666666666 +lonc=-86 +alpha=337.25556 +k=0.9996 +x_0=2546731.496 +y_0=-4354009.816 +no_uoff +gamma=337.25556 +ellps=GRS80 +units=m +no_defs +bounds=-91,41,-82,49 <>
+# Rassadiran / Nakhl e Taqi
+<2057> +proj=omerc +lat_0=27.51882880555555 +lonc=52.60353916666667 +alpha=0.5716611944444444 +k=0.999895934 +x_0=658377.437 +y_0=3044969.194 +gamma=0.5716611944444444 +ellps=intl +towgs84=-133.63,-157.5,-158.62,0,0,0,0 +units=m +no_defs +bounds=52,27,53,28 <>
+# GDM2000 / East Malaysia BRSO
+<3376> +proj=omerc +lat_0=4 +lonc=115 +alpha=53.31580995 +k=0.99984 +x_0=0 +y_0=0 +no_uoff +gamma=53.13010236111111 +ellps=GRS80 +units=m +no_defs +bounds=109,0,120,8 <>
+# GDM2000 / Peninsula RSO
+<3375> +proj=omerc +lat_0=4 +lonc=102.25 +alpha=323.0257964666666 +k=0.99984 +x_0=804671 +y_0=0 +no_uoff +gamma=323.1301023611111 +ellps=GRS80 +units=m +no_defs +bounds=98,1,106,8 <>
+# NAD83(2011) / Alaska zone 1
+<6394> +proj=omerc +lat_0=57 +lonc=-133.6666666666667 +alpha=323.1301023611111 +k=0.9999 +x_0=5000000 +y_0=-5000000 +no_uoff +gamma=323.1301023611111 +ellps=GRS80 +units=m +no_defs +bounds=-141,54,-129,61 <>
+# NAD83 / Alaska zone 1
+<26931> +proj=omerc +lat_0=57 +lonc=-133.6666666666667 +alpha=323.1301023611111 +k=0.9999 +x_0=5000000 +y_0=-5000000 +no_uoff +gamma=323.1301023611111 +datum=NAD83 +units=m +no_defs +bounds=-141,54,-129,61 <>
+# Kertau (RSO) / RSO Malaya (ch)
+<3167> +proj=omerc +lat_0=4 +lonc=102.25 +alpha=323.0257905 +k=0.99984 +x_0=40000 +y_0=0 +no_uoff +gamma=323.1301023611111 +a=6377295.664 +b=6356094.667915204 +to_meter=20.116756 +no_defs +bounds=99,1,105,7 <>
+# Kertau (RSO) / RSO Malaya (m)
+<3168> +proj=omerc +lat_0=4 +lonc=102.25 +alpha=323.0257905 +k=0.99984 +x_0=804670.24 +y_0=0 +no_uoff +gamma=323.1301023611111 +a=6377295.664 +b=6356094.667915204 +units=m +no_defs +bounds=99,1,105,7 <>
+# NAD83(HARN) / Michigan Oblique Mercator
+<3079> +proj=omerc +lat_0=45.30916666666666 +lonc=-86 +alpha=337.25556 +k=0.9996 +x_0=2546731.496 +y_0=-4354009.816 +no_uoff +gamma=337.25556 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +bounds=-91,41,-82,49 <>
+# NAD83 / Michigan Oblique Mercator
+<3078> +proj=omerc +lat_0=45.30916666666666 +lonc=-86 +alpha=337.25556 +k=0.9996 +x_0=2546731.496 +y_0=-4354009.816 +no_uoff +gamma=337.25556 +datum=NAD83 +units=m +no_defs +bounds=-91,41,-82,49 <>
+# Timbalai 1948 / RSO Borneo (m)
+<29873> +proj=omerc +lat_0=4 +lonc=115 +alpha=53.31582047222222 +k=0.99984 +x_0=590476.87 +y_0=442857.65 +gamma=53.13010236111111 +ellps=evrstSS +towgs84=-679,669,-48,0,0,0,0 +units=m +no_defs +bounds=109,0,120,8 <>
+# Timbalai 1948 / RSO Borneo (ch)
+<29871> +proj=omerc +lat_0=4 +lonc=115 +alpha=53.31582047222222 +k=0.99984 +x_0=590476.8714630401 +y_0=442857.653094361 +gamma=53.13010236111111 +ellps=evrstSS +towgs84=-679,669,-48,0,0,0,0 +to_meter=20.11676512155263 +no_defs +bounds=109,0,120,8 <>
+# Timbalai 1948 / RSO Borneo (ft)
+<29872> +proj=omerc +lat_0=4 +lonc=115 +alpha=53.31582047222222 +k=0.99984 +x_0=590476.8727431979 +y_0=442857.6545573985 +gamma=53.13010236111111 +ellps=evrstSS +towgs84=-679,669,-48,0,0,0,0 +to_meter=0.3047994715386762 +no_defs +bounds=109,0,120,8 <>
+# Tananarive (Paris) / Laborde Grid approximation
+<29702> +proj=omerc +lat_0=-18.9 +lonc=44.10000000000001 +alpha=18.9 +k=0.9995000000000001 +x_0=400000 +y_0=800000 +gamma=18.9 +ellps=intl +towgs84=-189,-242,-91,0,0,0,0 +pm=paris +units=m +no_defs +bounds=43,-26,51,-11 <>

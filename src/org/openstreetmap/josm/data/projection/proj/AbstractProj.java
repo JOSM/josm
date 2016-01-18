@@ -24,6 +24,11 @@ public abstract class AbstractProj implements Proj {
     private static final int MAXIMUM_ITERATIONS = 15;
 
     /**
+     * Difference allowed in iterative computations.
+     */
+    private static final double ITERATION_TOLERANCE = 1E-10;
+
+    /**
      * Relative iteration precision used in the <code>mlfn</code> method
      */
     private static final double MLFN_TOL = 1E-11;
@@ -149,6 +154,23 @@ public abstract class AbstractProj implements Proj {
             }
             return lon;
         }
+    }
+
+    /**
+     * Iteratively solve equation (7-9) from Snyder.
+     */
+    final double cphi2(final double ts) {
+        final double eccnth = 0.5 * e;
+        double phi = (Math.PI/2) - 2.0 * Math.atan(ts);
+        for (int i=0; i<MAXIMUM_ITERATIONS; i++) {
+            final double con  = e * Math.sin(phi);
+            final double dphi = (Math.PI/2) - 2.0*Math.atan(ts * Math.pow((1-con)/(1+con), eccnth)) - phi;
+            phi += dphi;
+            if (Math.abs(dphi) <= ITERATION_TOLERANCE) {
+                return phi;
+            }
+        }
+        throw new RuntimeException("no convergence");
     }
 
     /**

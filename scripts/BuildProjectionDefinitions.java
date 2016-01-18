@@ -41,6 +41,7 @@ public class BuildProjectionDefinitions {
     private static int noDatumgrid = 0;
     private static int noJosm = 0;
     private static int noProj4 = 0;
+    private static int noOmercNoBounds = 0;
 
     /**
      * Program entry point
@@ -92,6 +93,9 @@ public class BuildProjectionDefinitions {
             System.out.println(String.format(" * unsupported base projection: %d entries", noBaseProjection));
             System.out.println("   in particular: " + baseProjectionMap);
             System.out.println(String.format(" * requires data file for datum conversion: %d entries", noDatumgrid));
+            if (noOmercNoBounds > 0) {
+                System.out.println(String.format(" * projection is Oblique Mercator (requires bounds), but no bounds specified: %d entries", noOmercNoBounds));
+            }
             System.out.println();
             System.out.println(String.format("written %d entries from %s", noJosm, JOSM_EPSG_FILE));
             System.out.println(String.format("written %d entries from %s", noProj4, PROJ4_EPSG_FILE));
@@ -162,6 +166,11 @@ public class BuildProjectionDefinitions {
         if (parameters.containsKey("geoidgrids")) {
             result = false;
             noDatumgrid++;
+        }
+        
+        if (result && "omerc".equals(proj) && !parameters.containsKey(CustomProjection.Param.bounds.key)) {
+            result = false;
+            noOmercNoBounds++;
         }
 
         return result;

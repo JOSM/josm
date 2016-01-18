@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.projection.datum.NullDatum;
 import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
+import org.openstreetmap.josm.data.projection.proj.ICentralMeridianProvider;
 import org.openstreetmap.josm.data.projection.proj.IPolar;
 import org.openstreetmap.josm.data.projection.proj.Mercator;
 import org.openstreetmap.josm.data.projection.proj.Proj;
@@ -97,8 +98,23 @@ public class CustomProjection extends AbstractProjection {
         lat_1("lat_1", true),
         /** Latitude of second standard parallel */
         lat_2("lat_2", true),
-        /** Latitude of true scale */
+        /** Latitude of true scale (Polar Stereographic) */
         lat_ts("lat_ts", true),
+        /** longitude of the center of the projection (Oblique Mercator) */
+        lonc("lonc", true),
+        /** azimuth (true) of the center line passing through the center of the
+         * projection (Oblique Mercator) */
+        alpha("alpha", true),
+        /** rectified bearing of the center line (Oblique Mercator) */
+        gamma("gamma", true),
+        /** select "Hotine" variant of Oblique Mercator */
+        no_off("no_off", false),
+        /** legacy alias for no_off */
+        no_uoff("no_uoff", false),
+        /** longitude of first point (Oblique Mercator) */
+        lon_1("lon_1", true),
+        /** longitude of second point (Oblique Mercator) */
+        lon_2("lon_2", true),
         /** the exact proj.4 string will be preserved in the WKT representation */
         wktext("wktext", false),  // ignored
         /** meters, US survey feet, etc. */
@@ -231,6 +247,9 @@ public class CustomProjection extends AbstractProjection {
             s = parameters.get(Param.lon_0.key);
             if (s != null) {
                 this.lon0 = parseAngle(s, Param.lon_0.key);
+            }
+            if (proj instanceof ICentralMeridianProvider) {
+                this.lon0 = ((ICentralMeridianProvider) proj).getCentralMeridian();
             }
             s = parameters.get(Param.pm.key);
             if (s != null) {
@@ -500,6 +519,29 @@ public class CustomProjection extends AbstractProjection {
         s = parameters.get(Param.lat_ts.key);
         if (s != null) {
             projParams.lat_ts = parseAngle(s, Param.lat_ts.key);
+        }
+        s = parameters.get(Param.lonc.key);
+        if (s != null) {
+            projParams.lonc = parseAngle(s, Param.lonc.key);
+        }
+        s = parameters.get(Param.alpha.key);
+        if (s != null) {
+            projParams.alpha = parseAngle(s, Param.alpha.key);
+        }
+        s = parameters.get(Param.gamma.key);
+        if (s != null) {
+            projParams.gamma = parseAngle(s, Param.gamma.key);
+        }
+        s = parameters.get(Param.lon_1.key);
+        if (s != null) {
+            projParams.lon1 = parseAngle(s, Param.lon_1.key);
+        }
+        s = parameters.get(Param.lon_2.key);
+        if (s != null) {
+            projParams.lon2 = parseAngle(s, Param.lon_2.key);
+        }
+        if (parameters.containsKey(Param.no_off.key) || parameters.containsKey(Param.no_uoff.key)) {
+            projParams.no_off = true;
         }
         proj.initialize(projParams);
         return proj;
