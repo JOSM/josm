@@ -114,12 +114,12 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  *       Documentation of revised Oblique Mercator</a></li>
  * </ul>
  *
+ * @author Gerald I. Evenden (for original code in Proj4)
+ * @author  Rueben Schulz
+ *
  * @see <A HREF="http://mathworld.wolfram.com/MercatorProjection.html">Oblique Mercator projection on MathWorld</A>
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/hotine_oblique_mercator.html">"hotine_oblique_mercator" on RemoteSensing.org</A>
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/oblique_mercator.html">"oblique_mercator" on RemoteSensing.org</A>
- *
- * @author Gerald I. Evenden (for original code in Proj4)
- * @author  Rueben Schulz
  */
 public class ObliqueMercator extends AbstractProj implements ICentralMeridianProvider {
 
@@ -306,9 +306,9 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
             lonCenter = Math.toRadians(params.lonc);
             azimuth = Math.toRadians(params.alpha);
             if ((azimuth > -1.5*Math.PI && azimuth < -0.5*Math.PI) ||
-                (azimuth >  0.5*Math.PI && azimuth <  1.5*Math.PI))
-            {
-                throw new ProjectionConfigurationException(tr("Illegal value for parameter ''{0}'': {1}", "alpha", Double.toString(params.alpha)));
+                (azimuth >  0.5*Math.PI && azimuth <  1.5*Math.PI)) {
+                throw new ProjectionConfigurationException(
+                        tr("Illegal value for parameter ''{0}'': {1}", "alpha", Double.toString(params.alpha)));
             }
             if (params.gamma != null) {
                 rectifiedGridAngle = Math.toRadians(params.gamma);
@@ -387,7 +387,7 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
         u -= u_c;
         x = v * cosrot + u * sinrot;
         y = u * cosrot - v * sinrot;
-        return new double[] {x,y};
+        return new double[] {x, y};
     }
 
     @Override
