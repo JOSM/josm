@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.io;
 
 import java.awt.BorderLayout;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -100,7 +100,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      */
     @Deprecated
     public Map<String, String> getDefaultTags() {
-        return Collections.emptyMap();
+        return new HashMap<>();
     }
 
     /**
