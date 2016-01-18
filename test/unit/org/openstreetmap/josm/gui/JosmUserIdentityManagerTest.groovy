@@ -1,5 +1,7 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui;
+package org.openstreetmap.josm.gui
+
+import org.openstreetmap.josm.data.osm.User;
 
 import static org.junit.Assert.*
 
@@ -49,6 +51,7 @@ class JosmUserIdentityManagerTest {
         assert im.getUserId() == 0
         assert im.getUserName() == null
         assert im.getUserInfo() == null
+        assert im.asUser() == User.anonymous
     }
 
     @Test
@@ -78,6 +81,7 @@ class JosmUserIdentityManagerTest {
         assert im.getUserId() == 0
         assert im.getUserName() == "test"
         assert im.getUserInfo() == null
+        assert im.asUser() == new User(0, "test")
     }
 
 
@@ -111,6 +115,7 @@ class JosmUserIdentityManagerTest {
         assert im.getUserId() == 1
         assert im.getUserName() == "test"
         assert im.getUserInfo() == userInfo
+        assert im.asUser() == new User(1, "test")
     }
 
     /**
@@ -284,6 +289,7 @@ class JosmUserIdentityManagerTest {
 
         Main.pref.put "osm-server.username", null
         assert im.isAnonymous()
+        assert im.asUser() == User.anonymous
 
         // reset it
         im.@userName = "test1"
@@ -292,6 +298,7 @@ class JosmUserIdentityManagerTest {
         Main.pref.put "osm-server.username", "test2"
         assert im.isPartiallyIdentified()
         assert im.getUserName() == "test2"
+        assert im.asUser() == new User(0, "test2")
 
         Main.pref.put "osm-server.username", null
         assert im.isAnonymous()
@@ -303,6 +310,7 @@ class JosmUserIdentityManagerTest {
         Main.pref.put "osm-server.username", "test2"
         assert im.isPartiallyIdentified()
         assert im.getUserName() == "test2"
+        assert im.asUser() == new User(0, "test2")
 
         // reset it
         im.@userName = "test1"

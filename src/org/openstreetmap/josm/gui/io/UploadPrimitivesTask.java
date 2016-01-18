@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -292,6 +293,10 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                         writer = null;
                     }
                 }
+            }
+            // update the user information
+            if (changeset.getUser() == null) {
+                changeset.setUser(JosmUserIdentityManager.getInstance().asUser());
             }
             // if required close the changeset
             //
