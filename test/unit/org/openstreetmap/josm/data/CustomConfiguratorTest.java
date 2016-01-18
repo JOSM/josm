@@ -102,18 +102,18 @@ public class CustomConfiguratorTest {
         assertTrue(Main.pref.getCollection("test").isEmpty());
         CustomConfigurator.readXML(TestUtils.getTestDataRoot() + "customconfigurator", "append.xml");
         String log = CustomConfigurator.getLog();
-        System.out.println(log);
-        assertFalse(log.contains("Error"));
+        assertFalse(log, log.contains("Error"));
         assertFalse(Main.pref.getCollection("test").isEmpty());
 
-        // Test 1 - read(file, pref) + replace
+        // Test 2 - read(file, pref) + replace
         Preferences pref = new Preferences();
+        // avoid messing up preferences file (that makes all following unit tests fail)
+        pref.enableSaveOnPut(false);
         pref.putCollection("lorem_ipsum", Arrays.asList("only 1 string"));
         assertEquals(1, pref.getCollection("lorem_ipsum").size());
         CustomConfigurator.readXML(new File(TestUtils.getTestDataRoot() + "customconfigurator", "replace.xml"), pref);
         log = CustomConfigurator.getLog();
-        System.out.println(log);
-        assertFalse(log.contains("Error"));
+        assertFalse(log, log.contains("Error"));
         assertEquals(9, pref.getCollection("lorem_ipsum").size());
     }
 }
