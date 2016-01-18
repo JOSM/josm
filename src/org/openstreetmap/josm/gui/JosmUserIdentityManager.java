@@ -188,6 +188,15 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
     }
 
     /**
+     * Returns the identity as a {@link User} object
+     *
+     * @return the identity as user, or {@link User#getAnonymous()} if {@link #isAnonymous()}
+     */
+    public User asUser() {
+        return isAnonymous() ? User.getAnonymous() : User.createOsmUser(userInfo != null ? userInfo.getId() : 0, userName);
+    }
+
+    /**
      * Initializes the user identity manager from Basic Authentication values in the {@link org.openstreetmap.josm.data.Preferences}
      * This method should be called if {@code osm-server.auth-method} is set to {@code basic}.
      * @see #initFromOAuth
