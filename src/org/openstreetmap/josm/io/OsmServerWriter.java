@@ -14,6 +14,7 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -203,6 +204,8 @@ public class OsmServerWriter {
             // check whether we can use diff upload
             if (changeset.getId() == 0) {
                 api.openChangeset(changeset, monitor.createSubTaskMonitor(0, false));
+                // update the user information
+                changeset.setUser(JosmUserIdentityManager.getInstance().asUser());
             } else {
                 api.updateChangeset(changeset, monitor.createSubTaskMonitor(0, false));
             }
