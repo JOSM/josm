@@ -218,7 +218,7 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
      * Ticks handling
     ==================*/
 
-    abstract void updateProgress(double value);
+    protected abstract void updateProgress(double value);
 
     @Override
     public synchronized void setTicks(int ticks) {

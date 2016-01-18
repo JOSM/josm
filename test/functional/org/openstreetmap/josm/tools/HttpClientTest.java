@@ -16,19 +16,29 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.spi.JsonProvider;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * Tests the {@link HttpClient} using the webservice <a href="https://httpbin.org/">https://httpbin.org/</a>.
  */
 public class HttpClientTest {
 
+    private ProgressMonitor progress;
+
     @BeforeClass
     public static void setUpBeforeClass() {
         JOSMFixture.createFunctionalTestFixture().init();
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        progress = TestUtils.newTestProgressMonitor();
     }
 
     @Test
@@ -50,7 +60,7 @@ public class HttpClientTest {
 
     @Test
     public void testGet() throws Exception {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/get?foo=bar")).connect();
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/get?foo=bar")).connect(progress);
         assertThat(response.getRequestMethod(), is("GET"));
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getResponseMessage(), is("OK"));
@@ -69,7 +79,7 @@ public class HttpClientTest {
 
     @Test
     public void testUserAgent() throws Exception {
-        try (final InputStream in = HttpClient.create(new URL("https://httpbin.org/user-agent")).connect().getContent();
+        try (final InputStream in = HttpClient.create(new URL("https://httpbin.org/user-agent")).connect(progress).getContent();
              final JsonReader json = JsonProvider.provider().createReader(in)) {
             assertThat(json.readObject().getString("user-agent"), is(Version.getInstance().getFullAgentString()));
         }
@@ -77,7 +87,7 @@ public class HttpClientTest {
 
     @Test
     public void testFetchUtf8Content() throws Exception {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/encoding/utf8")).connect();
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/encoding/utf8")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         final String content = response.fetchContent();
         assertThat(content, containsString("UTF-8 encoded sample plain-text file"));
@@ -90,7 +100,7 @@ public class HttpClientTest {
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/post"), "POST")
                 .setHeader("Content-Type", "text/plain")
                 .setRequestBody(text.getBytes(StandardCharsets.UTF_8))
-                .connect();
+                .connect(progress);
         assertThat(response.getResponseCode(), is(200));
         try (final InputStream in = response.getContent();
              final JsonReader json = JsonProvider.provider().createReader(in)) {
@@ -99,28 +109,41 @@ public class HttpClientTest {
     }
 
     @Test
+    public void testPostZero() throws Exception {
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/post"), "POST")
+                .setHeader("Content-Type", "text/plain")
+                .setRequestBody("".getBytes(StandardCharsets.UTF_8))
+                .connect(progress);
+        assertThat(response.getResponseCode(), is(200));
+        try (final InputStream in = response.getContent();
+             final JsonReader json = JsonProvider.provider().createReader(in)) {
+            assertThat(json.readObject().getString("data"), is(""));
+        }
+    }
+
+    @Test
     public void testRelativeRedirects() throws Exception {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/relative-redirect/5")).connect();
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/relative-redirect/5")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getContentLength() > 100, is(true));
     }
 
     @Test
     public void testAbsoluteRedirects() throws Exception {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/absolute-redirect/5")).connect();
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/absolute-redirect/5")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getContentLength() > 100, is(true));
     }
 
     @Test(expected = IOException.class)
     public void testTooMuchRedirects() throws Exception {
-        HttpClient.create(new URL("https://httpbin.org/redirect/5")).setMaxRedirects(4).connect();
+        HttpClient.create(new URL("https://httpbin.org/redirect/5")).setMaxRedirects(4).connect(progress);
     }
 
     @Test
     public void test418() throws Exception {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/418")).connect();
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/418")).connect(progress);
         assertThat(response.getResponseCode(), is(418));
         assertThat(response.getResponseMessage(), is("I'M A TEAPOT"));
         final String content = response.fetchContent();
@@ -129,12 +152,12 @@ public class HttpClientTest {
 
     @Test
     public void testRequestInTime() throws Exception {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/delay/3")).setReadTimeout(3500).connect();
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/delay/3")).setReadTimeout(3500).connect(progress);
         assertThat(response.getResponseCode(), is(200));
     }
 
     @Test(expected = IOException.class)
     public void testTakesTooLong() throws Exception {
-        HttpClient.create(new URL("https://httpbin.org/delay/3")).setReadTimeout(2500).connect();
+        HttpClient.create(new URL("https://httpbin.org/delay/3")).setReadTimeout(2500).connect(progress);
     }
 }

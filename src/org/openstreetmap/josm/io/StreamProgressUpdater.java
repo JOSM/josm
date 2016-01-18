@@ -26,8 +26,8 @@ final class StreamProgressUpdater {
     }
 
     private void initProgressMonitor() {
+        progressMonitor.beginTask(taskTitle);
         if (size > 0) {
-            progressMonitor.subTask(taskTitle);
             progressMonitor.setTicksCount((int) size);
         } else {
             progressMonitor.indeterminateSubTask(taskTitle);
