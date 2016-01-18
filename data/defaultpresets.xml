@@ -4684,6 +4684,120 @@
             <reference ref="link_contact_address_payment" />
         </item> <!-- Veterinary -->
     </group> <!-- Health -->
+    <group name="Emergency" icon="styles/standard/emergency/ambulance_station.svg">
+        <item name="Ambulance Station" icon="styles/standard/emergency/ambulance_station.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=ambulance_station"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=ambulance_station"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=ambulance_station"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:emergency=ambulance_station" />
+            <space />
+            <key key="emergency" value="ambulance_station" />
+            <reference ref="name_operator" />
+            <reference ref="link_contact_address" />
+        </item> <!-- Ambulance Station -->
+        <item name="Automated Defibrillator" icon="presets/aed.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=defibrillator"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=defibrillator"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:emergency=defibrillator"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=defibrillator"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:emergency=defibrillator"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:emergency=defibrillator" />
+            <space />
+            <key key="emergency" value="defibrillator" />
+            <reference ref="oh_wheelchair" />
+            <text  key="operator" text="Operator" />
+            <check key="indoor" text="Located inside a building?" />
+            <!-- lastcheck is in use for aed devices, but not yet well discussed or documented
+            <optional>
+                <text key="lastcheck"      text="Last check date (YYYY-MM-DD)" />
+                <text key="lastcheck:note" text="Last check note" />
+            </optional>
+            -->
+        </item> <!-- Automated Defibrillator -->
+        <separator />
+        <item name="Fire Extinguisher" icon="styles/standard/emergency/fire_extinguisher.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=fire_extinguisher"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:emergency=fire_extinguisher"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=fire_extinguisher"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:emergency=fire_extinguisher"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:emergency=fire_extinguisher" />
+            <space />
+            <key key="emergency" value="fire_extinguisher" />
+            <text key="ref" text="Reference" />
+            <text key="operator" text="Operator" />
+            <check key="indoor" text="Indoor" />
+        </item> <!-- Fire Extinguisher -->
+        <item name="Fire Hose" icon="styles/standard/emergency/fire_hose.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=fire_hose"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:emergency=fire_hose" />
+            <space />
+            <key key="emergency" value="fire_hose" />
+            <text key="ref" text="Reference" />
+            <text key="operator" text="Operator" />
+        </item> <!-- Fire Hose -->
+        <item name="Fire Hydrant" icon="presets/fire_hydrant.png" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=fire_hydrant"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=fire_hydrant"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=fire_hydrant"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:emergency=fire_hydrant"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:emergency=fire_hydrant"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=fire_hydrant"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:emergency=fire_hydrant"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:emergency=fire_hydrant" />
+            <space />
+            <key key="emergency" value="fire_hydrant" />
+            <combo key="fire_hydrant:type" text="Type" values="underground,pillar,wall,pond" values_context="pipeline" default="pillar" />
+            <combo key="fire_hydrant:diameter" text="Diameter (in mm)" values="50,80,100,150,200,250,300,400" />
+            <space />
+            <reference ref="name_ref" />
+            <text key="operator" text="Operator" />
+            <space />
+            <combo key="fire_hydrant:position" text="Hydrant Position" values="lane,parking_lot,sidewalk,green" values_context="hydrant position" />
+            <combo key="fire_hydrant:pressure" text="Pressure (in bar)" values="5,6,8,suction" />
+            <text key="fire_hydrant:count" text="Count" />
+        </item> <!-- Fire Hydrant -->
+        <item name="Water Tank" icon="styles/standard/emergency/water_tank.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=water_tank"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:emergency=fire_hose"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:emergency=fire_hose"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:emergency=fire_hose" />
+            <space />
+            <key key="emergency" value="water_tank" />
+            <reference ref="name_ref_operator" />
+            <space />
+            <text key="water_tank:volume" text="Volume (in liters)" />
+        </item> <!-- Water Tank -->
+        <separator />
+        <item name="Assembly Point" icon="styles/standard/emergency/assembly_point.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=assembly_point"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=assembly_point" />
+            <space />
+            <key key="emergency" value="assembly_point" />
+            <reference ref="name_ref_operator" />
+        </item> <!-- Assembly Point -->
+        <item name="Emergency Phone" icon="styles/standard/vehicle/emergency_phone.png" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=phone"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=phone"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=phone"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:emergency=phone"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=phone" />
+            <key key="emergency" value="phone" />
+            <text key="ref" text="Reference" />
+            <text key="operator" text="Operator" />
+        </item> <!-- Emergency Phone -->
+        <item name="Siren" icon="styles/standard/emergency/siren.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=siren"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=siren"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=siren" />
+            <key key="emergency" value="siren" />
+            <text key="ref" text="Reference" />
+            <text key="operator" text="Operator" />
+            <space />
+            <combo key="siren:type" text="Type" values="pneumatic,electronic,mechanical" />
+            <combo key="siren:purpose" text="Purpose" values="tornado,fire,air_raid,civil_defense" />
+            <text key="siren:range" text="Range (in meters)" />
+        </item> <!-- Emergency Phone -->
+    </group> <!-- Emergency -->
     <group name="Social Facility" icon="styles/standard/social_facility/outreach.svg">
         <item name="Nursing Home" icon="styles/standard/social_facility/nursing_home.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nursing_home"
@@ -4848,14 +4962,6 @@
             <check key="payment:telephone_cards" text="Telephone cards" />
             <preset_link preset_name="Payment Methods" />
         </item> <!-- Telephone -->
-        <item name="Emergency Phone" icon="styles/standard/vehicle/emergency_phone.png" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=phone"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=phone"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=phone"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:emergency=phone"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=phone" />
-            <key key="emergency" value="phone" />
-        </item> <!-- Emergency Phone -->
         <item name="Internet Access" icon="presets/network-wireless.svg" type="node,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:internet_access"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:internet_access"
@@ -4868,25 +4974,6 @@
             <space />
             <reference ref="internet" />
         </item> <!-- Internet Access -->
-        <item name="Automated Defibrillator" icon="presets/aed.svg" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=defibrillator"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=defibrillator"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:emergency=defibrillator"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=defibrillator"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:emergency=defibrillator"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:emergency=defibrillator" />
-            <space />
-            <key key="emergency" value="defibrillator" />
-            <reference ref="oh_wheelchair" />
-            <text  key="operator" text="Operator" />
-            <check key="indoor" text="Located inside a building?" />
-            <!-- lastcheck is in use for aed devices, but not yet well discussed or documented
-            <optional>
-                <text key="lastcheck"      text="Last check date (YYYY-MM-DD)" />
-                <text key="lastcheck:note" text="Last check note" />
-            </optional>
-            -->
-        </item> <!-- Automated Defibrillator -->
         <item name="Clock" icon="styles/standard/service/clock.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=clock"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=clock"
@@ -5081,27 +5168,6 @@
                 <text key="description" text="Description" />
             </optional>
         </item> <!-- Drinking Water -->
-        <item name="Fire Hydrant" icon="presets/fire_hydrant.png" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:emergency=fire_hydrant"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:emergency=fire_hydrant"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:emergency=fire_hydrant"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:emergency=fire_hydrant"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:emergency=fire_hydrant"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:emergency=fire_hydrant"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:emergency=fire_hydrant"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:emergency=fire_hydrant" />
-            <space />
-            <key key="emergency" value="fire_hydrant" />
-            <combo key="fire_hydrant:type" text="Type" values="underground,pillar,wall,pond" values_context="pipeline" default="pillar" />
-            <combo key="fire_hydrant:diameter" text="Diameter (in mm)" values="50,80,100,150,200,250,300,400" />
-            <space />
-            <reference ref="name_ref" />
-            <text key="operator" text="Operator" />
-            <space />
-            <combo key="fire_hydrant:position" text="Hydrant Position" values="lane,parking_lot,sidewalk,green" values_context="hydrant position" />
-            <combo key="fire_hydrant:pressure" text="Pressure (in bar)" values="5,6,8,suction" />
-            <text key="fire_hydrant:count" text="Count" />
-        </item> <!-- Fire Hydrant -->
         <item name="Compressed Air" icon="styles/standard/vehicle/compressed_air.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=compressed_air"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=compressed_air"

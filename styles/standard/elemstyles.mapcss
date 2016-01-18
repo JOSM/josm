@@ -2379,6 +2379,59 @@ node[shop=bag] {
     text: auto;
 }
 
+/******************/
+/* emergency tags */
+/******************/
+area[emergency=ambulance_station],
+area[emergency=water_tank] {
+    fill-color: emergency#eeeeee;
+}
+node[emergency=ambulance_station] {
+    icon-image: "emergency/ambulance_station.svg";
+    set icon_z17;
+    text: auto;
+}
+node[emergency=water_tank] {
+    icon-image: "emergency/water_tank.svg";
+    set icon_z17;
+    text: auto;
+}
+node[emergency=phone] {
+    icon-image: "vehicle/emergency_phone.png";
+    set icon_z17;
+    text: auto;
+}
+node[emergency=defibrillator] {
+    icon-image: "presets/aed.svg";
+    set icon_z17;
+    text: auto;
+}
+node[emergency=fire_hydrant] {
+    icon-image: "service/fire_hydrant.png";
+    set icon_z17;
+    text: auto;
+}
+node[emergency=fire_extinguisher] {
+    icon-image: "emergency/fire_extinguisher.svg";
+    set icon_z17;
+    text: auto;
+}
+node[emergency=fire_hose] {
+    icon-image: "emergency/fire_hose.svg";
+    set icon_z17;
+    text: auto;
+}
+node[emergency=assembly_point] {
+    icon-image: "emergency/assembly_point.svg";
+    set icon_z17;
+    text: auto;
+}
+node[emergency=siren] {
+    icon-image: "emergency/siren.svg";
+    set icon_z17;
+    text: auto;
+}
+
 /****************/
 /* amenity tags */
 /****************/
@@ -2583,16 +2636,6 @@ area[amenity=shower],
 area[amenity=recycling],
 area[amenity=sanitary_dump_station] {
     fill-color: amenity_light#f7efb7;
-}
-node[emergency=phone] {
-    icon-image: "vehicle/emergency_phone.png";
-    set icon_z17;
-    text: auto;
-}
-node[emergency=defibrillator] {
-    icon-image: "presets/aed.svg";
-    set icon_z17;
-    text: auto;
 }
 node[amenity=toilets] {
     icon-image: "service/toilets.png";
@@ -2982,11 +3025,6 @@ node[amenity=bench] {
 }
 node[amenity=bbq] {
     icon-image: "leisure/bbq.png";
-    set icon_z17;
-    text: auto;
-}
-node[emergency=fire_hydrant] {
-    icon-image: "service/fire_hydrant.png";
     set icon_z17;
     text: auto;
 }
