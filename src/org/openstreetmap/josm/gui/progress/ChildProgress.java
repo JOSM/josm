@@ -23,7 +23,7 @@ public class ChildProgress extends AbstractProgressMonitor {
     }
 
     @Override
-    void updateProgress(double value) {
+    protected void updateProgress(double value) {
         parent.childSetProgress(this, value);
     }
 
