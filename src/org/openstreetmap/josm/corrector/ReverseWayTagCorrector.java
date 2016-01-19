@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.UserCancelException;
 
@@ -201,10 +202,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         return sign + rest;
     }
 
-    @Override
-    public Collection<Command> execute(Way oldway, Way way) throws UserCancelException {
-        Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap = new HashMap<>();
-
+    static List<TagCorrection> getTagCorrections(Tagged way) {
         List<TagCorrection> tagCorrections = new ArrayList<>();
         for (String key : way.keySet()) {
             String value = way.get(key);
@@ -224,11 +222,10 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 tagCorrections.add(new TagCorrection(key, value, newKey, newValue));
             }
         }
-        if (!tagCorrections.isEmpty()) {
-            tagCorrectionsMap.put(way, tagCorrections);
-        }
+        return tagCorrections;
+    }
 
-        Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap = new HashMap<>();
+    static List<RoleCorrection> getRoleCorrections(Way oldway) {
         List<RoleCorrection> roleCorrections = new ArrayList<>();
 
         Collection<OsmPrimitive> referrers = oldway.getReferrers();
@@ -262,6 +259,19 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 position++;
             }
         }
+        return roleCorrections;
+    }
+
+    @Override
+    public Collection<Command> execute(Way oldway, Way way) throws UserCancelException {
+        Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap = new HashMap<>();
+        List<TagCorrection> tagCorrections = getTagCorrections(way);
+        if (!tagCorrections.isEmpty()) {
+            tagCorrectionsMap.put(way, tagCorrections);
+        }
+
+        Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap = new HashMap<>();
+        List<RoleCorrection> roleCorrections = getRoleCorrections(oldway);
         if (!roleCorrections.isEmpty()) {
             roleCorrectionMap.put(way, roleCorrections);
         }

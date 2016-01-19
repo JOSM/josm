@@ -240,6 +240,13 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
     };
 
+    public static final Predicate<Tag> directionalKeyPredicate = new Predicate<Tag>() {
+        @Override
+        public boolean evaluate(Tag tag) {
+            return directionKeys.match(tag);
+        }
+    };
+
     /**
      * Creates a new primitive for the given id.
      *
@@ -802,7 +809,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     static {
         String reversedDirectionDefault = "oneway=\"-1\"";
 
-        String directionDefault = "oneway? | (aerialway=* aerialway!=station) | "+
+        String directionDefault = "oneway? | (aerialway=* -aerialway=station) | "+
                 "waterway=stream | waterway=river | waterway=ditch | waterway=wadi | waterway=drain | "+
                 "\"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" | "+
                 "junction=roundabout | (highway=motorway & -oneway=no & -oneway=reversible) | "+
