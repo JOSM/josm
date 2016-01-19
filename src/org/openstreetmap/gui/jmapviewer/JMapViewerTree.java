@@ -43,8 +43,7 @@ public class JMapViewerTree extends JPanel {
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
         tree = new CheckBoxTree(name);
-        treePanel = new JPanel();
-        treePanel.setLayout(new BorderLayout());
+        treePanel = new JPanel(new BorderLayout());
         treePanel.add(tree, BorderLayout.CENTER);
         treePanel.add(new JLabel("<html><center>Use right mouse button to<br />show/hide texts</center></html>"), BorderLayout.SOUTH);
         map = new JMapViewer();
