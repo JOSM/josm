@@ -25,13 +25,12 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * the central line), but some cases allow a separate rotation parameter.
  * <p>
  * There are two forms of the oblique mercator, differing in the origin of their grid coordinates.
- * The {@linkplain HotineObliqueMercator Hotine Oblique Mercator} (EPSG code 9812) has grid
- * coordinates start at the intersection of the central line and the equator of the aposphere.
- * The {@linkplain ObliqueMercator Oblique Mercator} (EPSG code 9815) is the same, except the
- * grid coordinates begin at the central point (where the latitude of center and central line
- * intersect). ESRI separates these two case by appending {@code "Natural_Origin"} (for the
- * {@code "Hotine_Oblique_Mercator"}) and {@code "Center"} (for the {@code "Oblique_Mercator"})
- * to the projection names.
+ * The Hotine Oblique Mercator (EPSG code 9812) has grid coordinates start at the intersection of 
+ * the central line and the equator of the aposphere.
+ * The Oblique Mercator (EPSG code 9815) is the same, except the grid coordinates begin at the
+ * central point (where the latitude of center and central line intersect). ESRI separates these 
+ * two case by appending {@code "Natural_Origin"} (for the {@code "Hotine_Oblique_Mercator"}) and 
+ * {@code "Center"} (for the {@code "Oblique_Mercator"}) to the projection names.
  * <p>
  * Two different methods are used to specify the central line for the oblique mercator:
  * 1) a central point and an azimuth, east of north, describing the central line and
