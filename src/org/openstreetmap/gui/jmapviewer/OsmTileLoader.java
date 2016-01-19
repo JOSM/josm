@@ -9,8 +9,8 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
@@ -22,7 +22,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
  * @author Jan Peter Stotz
  */
 public class OsmTileLoader implements TileLoader {
-    private static final Executor jobDispatcher = Executors.newSingleThreadExecutor();
+    private static final ThreadPoolExecutor jobDispatcher = (ThreadPoolExecutor) Executors.newFixedThreadPool(3);
 
     private final class OsmTileJob implements TileJob {
         private final Tile tile;
@@ -183,6 +183,14 @@ public class OsmTileLoader implements TileLoader {
 
     @Override
     public void cancelOutstandingTasks() {
-        // intentionally left empty - OsmTileLoader doesn't maintain queue
+        jobDispatcher.getQueue().clear();
+    }
+
+    /**
+     * Sets the maximum number of concurrent connections the tile loader will do
+     * @param num number of conncurent connections
+     */
+    public static void setConcurrentConnections(int num) {
+        jobDispatcher.setMaximumPoolSize(num);
     }
 }
