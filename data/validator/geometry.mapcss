@@ -211,3 +211,8 @@ way[highway][bridge] > node {
 way[waterway] > node.node_in_bridge {
   throwWarning: tr("node connects waterway and bridge");
 }
+
+way[junction=roundabout]:righthandtraffic:clockwise,
+way[junction=roundabout]!:righthandtraffic:anticlockwise {
+  throwWarning: tr("suspicious roundabout direction");
+}

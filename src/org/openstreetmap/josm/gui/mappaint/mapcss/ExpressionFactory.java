@@ -868,6 +868,38 @@ public final class ExpressionFactory {
         }
 
         /**
+         * Determines whether the way is {@link Geometry#isClockwise closed and oriented clockwise},
+         * or non-closed and the {@link Geometry#angleIsClockwise 1st, 2nd and last node are in clockwise order}.
+         *
+         * @param env the environment
+         * @return true if the way is closed and oriented clockwise
+         */
+        public static boolean is_clockwise(Environment env) {
+            if (!(env.osm instanceof Way)) {
+                return false;
+            }
+            final Way way = (Way) env.osm;
+            return way.isClosed() && Geometry.isClockwise(way)
+                    || !way.isClosed() && way.getNodesCount() > 2 && Geometry.angleIsClockwise(way.getNode(0), way.getNode(1), way.lastNode());
+        }
+
+        /**
+         * Determines whether the way is {@link Geometry#isClockwise closed and oriented anticlockwise},
+         * or non-closed and the {@link Geometry#angleIsClockwise 1st, 2nd and last node are in anticlockwise order}.
+         *
+         * @param env the environment
+         * @return true if the way is closed and oriented clockwise
+         */
+        public static boolean is_anticlockwise(Environment env) {
+            if (!(env.osm instanceof Way)) {
+                return false;
+            }
+            final Way way = (Way) env.osm;
+            return way.isClosed() && !Geometry.isClockwise(way)
+                    || !way.isClosed() && way.getNodesCount() > 2 && !Geometry.angleIsClockwise(way.getNode(0), way.getNode(1), way.lastNode());
+        }
+
+        /**
          * Prints the object to the command line (for debugging purpose).
          * @param o the object
          * @return the same object, unchanged
