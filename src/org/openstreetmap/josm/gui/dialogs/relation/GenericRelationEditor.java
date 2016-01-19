@@ -191,8 +191,7 @@ public class GenericRelationEditor extends RelationEditor  {
         JSplitPane pane = buildSplitPane();
         pane.setPreferredSize(new Dimension(100, 100));
 
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
+        JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(pane, BorderLayout.CENTER);
         pnl.setBorder(BorderFactory.createRaisedBevelBorder());
 
@@ -417,8 +416,7 @@ public class GenericRelationEditor extends RelationEditor  {
         gc.weighty = 0.0;
         pnl.add(p3, gc);
 
-        JPanel pnl2 = new JPanel();
-        pnl2.setLayout(new GridBagLayout());
+        JPanel pnl2 = new JPanel(new GridBagLayout());
 
         gc.gridx = 0;
         gc.gridy = 0;
@@ -460,8 +458,7 @@ public class GenericRelationEditor extends RelationEditor  {
             }
         });
 
-        JPanel pnl3 = new JPanel();
-        pnl3.setLayout(new BorderLayout());
+        JPanel pnl3 = new JPanel(new BorderLayout());
         pnl3.add(splitPane, BorderLayout.CENTER);
 
         return pnl3;

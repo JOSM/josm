@@ -25,11 +25,11 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * the central line), but some cases allow a separate rotation parameter.
  * <p>
  * There are two forms of the oblique mercator, differing in the origin of their grid coordinates.
- * The Hotine Oblique Mercator (EPSG code 9812) has grid coordinates start at the intersection of 
+ * The Hotine Oblique Mercator (EPSG code 9812) has grid coordinates start at the intersection of
  * the central line and the equator of the aposphere.
  * The Oblique Mercator (EPSG code 9815) is the same, except the grid coordinates begin at the
- * central point (where the latitude of center and central line intersect). ESRI separates these 
- * two case by appending {@code "Natural_Origin"} (for the {@code "Hotine_Oblique_Mercator"}) and 
+ * central point (where the latitude of center and central line intersect). ESRI separates these
+ * two case by appending {@code "Natural_Origin"} (for the {@code "Hotine_Oblique_Mercator"}) and
  * {@code "Center"} (for the {@code "Oblique_Mercator"}) to the projection names.
  * <p>
  * Two different methods are used to specify the central line for the oblique mercator:
@@ -54,7 +54,7 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * <p>
  * Azimuth values of 0.0 and &plusmn;90.0 degrees are allowed (and used in Hungary
  * and Switzerland), though these cases would usually use a Mercator or
- * Transverse Mercator projection instead. Azimuth values > 90 degrees cause
+ * Transverse Mercator projection instead. Azimuth values &gt; 90 degrees cause
  * errors in the equations.
  * <p>
  * The oblique mercator is also called the "Rectified Skew Orthomorphic" (RSO). It appears

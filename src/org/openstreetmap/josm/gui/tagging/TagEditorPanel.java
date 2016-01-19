@@ -48,8 +48,7 @@ public class TagEditorPanel extends JPanel {
      * @return the panel
      */
     protected JPanel buildTagTableEditorPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
+        JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(new JScrollPane(tagTable), BorderLayout.CENTER);
         if (presetHandler != null) {
             presetListPanel = new PresetListPanel();

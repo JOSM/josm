@@ -52,8 +52,7 @@ public class ReferringRelationsBrowser extends JPanel {
         referrers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         referrers.addMouseListener(new DblClickMouseAdapter());
 
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         ReloadAction reloadAction = new ReloadAction();
         referrers.getModel().addListDataListener(reloadAction);

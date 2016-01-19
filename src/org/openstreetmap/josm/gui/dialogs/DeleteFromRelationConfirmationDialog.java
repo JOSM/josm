@@ -74,15 +74,13 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     protected JPanel buildRelationMemberTablePanel() {
         JTable table = new JTable(model, new RelationMemberTableColumnModel());
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
+        JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(new JScrollPane(table));
         return pnl;
     }
 
     protected JPanel buildButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout());
+        JPanel pnl = new JPanel(new FlowLayout());
         pnl.add(btnOK = new SideButton(new OKAction()));
         btnOK.setFocusable(true);
         pnl.add(new SideButton(new CancelAction()));

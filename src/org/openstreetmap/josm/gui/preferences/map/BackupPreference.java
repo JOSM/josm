@@ -51,8 +51,7 @@ public class BackupPreference implements SubPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        JPanel panel = new VerticallyScrollablePanel();
-        panel.setLayout(new GridBagLayout());
+        JPanel panel = new VerticallyScrollablePanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         autosave = new JCheckBox(tr("Auto save enabled"));

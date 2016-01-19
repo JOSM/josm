@@ -38,8 +38,7 @@ public class HistoryBrowser extends JPanel {
      * @return  the panel with the version table
      */
     protected JPanel createVersionTablePanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
+        JPanel pnl = new JPanel(new BorderLayout());
 
         VersionTable versionTable = new VersionTable(model);
         pnl.add(new JScrollPane(versionTable), BorderLayout.CENTER);
@@ -62,8 +61,7 @@ public class HistoryBrowser extends JPanel {
         nodeListViewer = new NodeListViewer(model);
         relationMemberListViewer = new RelationMemberListViewer(model);
         coordinateInfoViewer = new CoordinateInfoViewer(model);
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
+        JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(tpViewers, BorderLayout.CENTER);
 
         tpViewers.addChangeListener(new ChangeListener() {

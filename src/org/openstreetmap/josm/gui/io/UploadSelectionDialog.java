@@ -65,8 +65,7 @@ public class UploadSelectionDialog extends JDialog {
     }
 
     protected JPanel buildSelectedPrimitivesPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
+        JPanel pnl = new JPanel(new BorderLayout());
         JLabel lbl = new JLabel(
                 tr("<html>Mark modified objects <strong>from the current selection</strong> to be uploaded to the server.</html>"));
         lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -77,8 +76,7 @@ public class UploadSelectionDialog extends JDialog {
     }
 
     protected JPanel buildDeletedPrimitivesPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
+        JPanel pnl = new JPanel(new BorderLayout());
         JLabel lbl = new JLabel(tr("<html>Mark <strong>locally deleted objects</strong> to be deleted on the server.</html>"));
         lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pnl.add(lbl, BorderLayout.NORTH);
@@ -88,8 +86,7 @@ public class UploadSelectionDialog extends JDialog {
     }
 
     protected JPanel buildButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout());
+        JPanel pnl = new JPanel(new FlowLayout());
         ContinueAction continueAction = new ContinueAction();
         pnl.add(btnContinue = new SideButton(continueAction));
         btnContinue.setFocusable(true);

@@ -213,7 +213,7 @@ public class CachedFile implements Closeable {
 
     /**
      * Returns {@link #getInputStream()} wrapped in a buffered reader.
-     * <p/>
+     * <p>
      * Detects Unicode charset in use utilizing {@link UTFInputStreamReader}.
      *
      * @return buffered reader

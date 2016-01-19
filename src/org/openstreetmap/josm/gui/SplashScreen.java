@@ -64,10 +64,9 @@ public class SplashScreen extends JFrame implements ChangeListener {
         contentPane.setBorder(margin);
 
         // Add a margin from the border to the content
-        JPanel innerContentPane = new JPanel();
+        JPanel innerContentPane = new JPanel(new GridBagLayout());
         innerContentPane.setBorder(new EmptyBorder(10, 10, 2, 10));
         contentPane.add(innerContentPane);
-        innerContentPane.setLayout(new GridBagLayout());
 
         // Add the logo
         JLabel logo = new JLabel(new ImageIcon(ImageProvider.get("logo.svg").getImage().getScaledInstance(128, 129, Image.SCALE_SMOOTH)));

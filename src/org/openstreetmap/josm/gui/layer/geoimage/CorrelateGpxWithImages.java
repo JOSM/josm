@@ -345,8 +345,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         public void actionPerformed(ActionEvent arg0) {
             SimpleDateFormat dateFormat = (SimpleDateFormat) DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
 
-            panel = new JPanel();
-            panel.setLayout(new BorderLayout());
+            panel = new JPanel(new BorderLayout());
             panel.add(new JLabel(tr("<html>Take a photo of your GPS receiver while it displays the time.<br>"
                     + "Display that photo here.<br>"
                     + "And then, simply capture the time you read on the photo and select a timezone<hr></html>")),
@@ -356,8 +355,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             imgDisp.setPreferredSize(new Dimension(300, 225));
             panel.add(imgDisp, BorderLayout.CENTER);
 
-            JPanel panelTf = new JPanel();
-            panelTf.setLayout(new GridBagLayout());
+            JPanel panelTf = new JPanel(new GridBagLayout());
 
             GridBagConstraints gc = new GridBagConstraints();
             gc.gridx = gc.gridy = 0;
@@ -438,8 +436,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             panel.add(panelTf, BorderLayout.SOUTH);
 
-            JPanel panelLst = new JPanel();
-            panelLst.setLayout(new BorderLayout());
+            JPanel panelLst = new JPanel(new BorderLayout());
 
             imgList = new JList<>(new AbstractListModel<String>() {
                 @Override
@@ -602,8 +599,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         buttonOpen.addActionListener(new LoadGpxDataActionListener());
         panelCb.add(buttonOpen);
 
-        JPanel panelTf = new JPanel();
-        panelTf.setLayout(new GridBagLayout());
+        JPanel panelTf = new JPanel(new GridBagLayout());
 
         String prefTimezone = Main.pref.get("geoimage.timezone", "0:00");
         if (prefTimezone == null) {
@@ -734,8 +730,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         gbc.gridy = y++;
         panelTf.add(cbShowThumbs, gbc);
 
-        final JPanel statusBar = new JPanel();
-        statusBar.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        final JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         statusBar.setBorder(BorderFactory.createLoweredBevelBorder());
         statusBarText = new JLabel(" ");
         statusBarText.setFont(statusBarText.getFont().deriveFont(8));
@@ -751,8 +746,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         statusBarUpdater.updateStatusBar();
 
-        outerPanel = new JPanel();
-        outerPanel.setLayout(new BorderLayout());
+        outerPanel = new JPanel(new BorderLayout());
         outerPanel.add(statusBar, BorderLayout.PAGE_END);
 
         syncDialog = new ExtendedDialog(

@@ -81,8 +81,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         browser = new HistoryBrowser();
         add(browser, BorderLayout.CENTER);
 
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         SideButton btn = new SideButton(new ReloadAction());
         btn.setName("btn.reload");

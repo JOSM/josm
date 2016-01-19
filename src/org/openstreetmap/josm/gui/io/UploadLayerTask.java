@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *     }
  * </pre>
  */
-public class UploadLayerTask extends AbstractIOTask implements Runnable {
+public class UploadLayerTask extends AbstractIOTask {
     private OsmServerWriter writer;
     private final OsmDataLayer layer;
     private final ProgressMonitor monitor;

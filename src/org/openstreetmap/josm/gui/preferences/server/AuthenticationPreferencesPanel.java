@@ -85,9 +85,8 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        pnlAuthenticationParameteters = new JPanel();
+        pnlAuthenticationParameteters = new JPanel(new BorderLayout());
         add(pnlAuthenticationParameteters, gc);
-        pnlAuthenticationParameteters.setLayout(new BorderLayout());
 
         //-- the two panels for authentication parameters
         pnlBasicAuthPreferences = new BasicAuthenticationPreferencesPanel();

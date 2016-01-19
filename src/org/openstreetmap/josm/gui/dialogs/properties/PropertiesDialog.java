@@ -157,7 +157,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     private final JTable membershipTable = new JTable(membershipData);
 
     /** JPanel containing both previous tables */
-    private final JPanel bothTables = new JPanel();
+    private final JPanel bothTables = new JPanel(new GridBagLayout());
 
     // Popup menus
     private final JPopupMenu tagMenu = new JPopupMenu();
@@ -258,7 +258,6 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
         // combine both tables and wrap them in a scrollPane
         boolean top = Main.pref.getBoolean("properties.presets.top", true);
-        bothTables.setLayout(new GridBagLayout());
         if (top) {
             bothTables.add(presets, GBC.std().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2).anchor(GBC.NORTHWEST));
             double epsilon = Double.MIN_VALUE; // need to set a weight or else anchor value is ignored
