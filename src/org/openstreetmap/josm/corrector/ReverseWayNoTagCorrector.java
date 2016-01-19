@@ -5,12 +5,15 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
@@ -33,18 +36,13 @@ public final class ReverseWayNoTagCorrector {
     /**
      * Tags that imply a semantic meaning from the way direction and cannot be changed.
      */
-    public static final TagCollection directionalTags = new TagCollection(Arrays.asList(new Tag[]{
+    private static final TagCollection directionalTags = new TagCollection(Arrays.asList(new Tag[]{
             new Tag("natural", "coastline"),
             new Tag("natural", "cliff"),
             new Tag("barrier", "guard_rail"),
             new Tag("barrier", "kerb"),
             new Tag("barrier", "retaining_wall"),
             new Tag("man_made", "embankment"),
-            new Tag("waterway", "stream"),
-            new Tag("waterway", "river"),
-            new Tag("waterway", "ditch"),
-            new Tag("waterway", "drain"),
-            new Tag("waterway", "canal")
     }));
 
     /**
@@ -52,8 +50,19 @@ public final class ReverseWayNoTagCorrector {
      * @param way The way to look for
      * @return tags that imply a semantic meaning from <code>way</code> direction and cannot be changed
      */
-    public static TagCollection getDirectionalTags(Way way) {
-        return directionalTags.intersect(TagCollection.from(way));
+    public static TagCollection getDirectionalTags(Tagged way) {
+        final TagCollection collection = new TagCollection();
+        for (Map.Entry<String, String> entry : way.getKeys().entrySet()) {
+            final Tag tag = new Tag(entry.getKey(), entry.getValue());
+            final boolean isDirectional = directionalTags.contains(tag) || OsmPrimitive.directionalKeyPredicate.evaluate(tag);
+            if (isDirectional) {
+                final boolean cannotBeCorrected = ReverseWayTagCorrector.getTagCorrections(tag).isEmpty();
+                if (cannotBeCorrected) {
+                    collection.add(tag);
+                }
+            }
+        }
+        return collection;
     }
 
     /**
@@ -62,18 +71,8 @@ public final class ReverseWayNoTagCorrector {
      * @param way The way to check
      * @return false if the semantic meaning change if the way is reversed, true otherwise.
      */
-    public static boolean isReversible(Way way) {
+    public static boolean isReversible(Tagged way) {
         return getDirectionalTags(way).isEmpty();
-    }
-
-    protected static String getHTML(TagCollection tags) {
-        if (tags.size() == 1) {
-            return tags.iterator().next().toString();
-        } else if (tags.size() > 1) {
-            return Utils.joinAsHtmlUnorderedList(tags);
-        } else {
-            return "";
-        }
     }
 
     protected static boolean confirmReverseWay(Way way, TagCollection tags) {
@@ -88,7 +87,7 @@ public final class ReverseWayNoTagCorrector {
                 + "Do you really want to change the way direction, thus its semantic meaning?</html>",
                 tags.size(),
                 way.getDisplayName(DefaultNameFormatter.getInstance()),
-                getHTML(tags)
+                Utils.joinAsHtmlUnorderedList(tags)
             );
         int ret = ConditionalOptionPaneUtil.showOptionDialog(
                 "reverse_directional_way",
