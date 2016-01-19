@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -10,11 +13,14 @@ import org.openstreetmap.josm.tools.Utils;
  * Tag represents an immutable key/value-pair. Both the key and the value may
  * be empty, but not null.
  *
+ * <p/>
+ * It implements the {@link Tagged} interface. However, since instances of this class are immutable,
+ * the modifying methods throw an {@link UnsupportedOperationException}.
  */
-public class Tag {
+public class Tag implements Tagged {
 
-    private String key;
-    private String value;
+    private final String key;
+    private final String value;
 
     /**
      * Create an empty tag whose key and value are empty.
@@ -129,5 +135,65 @@ public class Tag {
             return s;
         }
         return Utils.strip(s).replaceAll("\\s+", " ");
+    }
+
+    /**
+     * Unsupported.
+     * @param keys ignored
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public void setKeys(Map<String, String> keys) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Map<String, String> getKeys() {
+        return Collections.singletonMap(key, value);
+    }
+
+    /**
+     * Unsupported.
+     * @param key ignored
+     * @param value ignored
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public void put(String key, String value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String get(String k) {
+        return key.equals(k) ? value : null;
+    }
+
+    /**
+     * Unsupported.
+     * @param key ignored
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public void remove(String key) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean hasKeys() {
+        return true;
+    }
+
+    @Override
+    public Collection<String> keySet() {
+        return Collections.singleton(key);
+    }
+
+    /**
+     * Unsupported.
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public void removeAll() {
+        throw new UnsupportedOperationException();
     }
 }
