@@ -46,6 +46,12 @@ public final class Pair<A, B> {
                 Objects.equals(b, pair.b);
     }
 
+    /**
+     * Converts a single-typed pair to a list.
+     * @param <T> type of both elements
+     * @param p pair
+     * @return list containing a and b
+     */
     public static <T> List<T> toList(Pair<T, T> p) {
         List<T> l = new ArrayList<>(2);
         l.add(p.a);
@@ -53,6 +59,12 @@ public final class Pair<A, B> {
         return l;
     }
 
+    /**
+     * Sorts a single-typed pair so {@code a <= b}.
+     * @param <T> type of both elements
+     * @param p pair
+     * @return {@code p}
+     */
     public static <T> Pair<T, T> sort(Pair<T, T> p) {
         if (p.b.hashCode() < p.a.hashCode()) {
             T tmp = p.a;
