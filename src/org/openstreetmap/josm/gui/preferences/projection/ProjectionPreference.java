@@ -319,7 +319,6 @@ public class ProjectionPreference implements SubPreferenceSetting {
         }
 
         projPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        projPanel.setLayout(new GridBagLayout());
         projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5, 5, 0, 5));
         projPanel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));

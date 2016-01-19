@@ -102,8 +102,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
      * @return the panel with the button row
      */
     protected JPanel buildButtonRow() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
 
         saveAndProceedAction = new SaveAndProceedAction();
         model.addPropertyChangeListener(saveAndProceedAction);
@@ -119,8 +118,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         cancelAction = new CancelAction();
         pnl.add(new JButton(cancelAction), GBC.std(1, 1).insets(5, 5, 5, 5).fill(GBC.HORIZONTAL));
 
-        JPanel pnl2 = new JPanel();
-        pnl2.setLayout(new BorderLayout());
+        JPanel pnl2 = new JPanel(new BorderLayout());
         pnl2.add(pnlUploadLayers = new UploadAndSaveProgressRenderer(), BorderLayout.CENTER);
         model.addPropertyChangeListener(pnlUploadLayers);
         pnl2.add(pnl, BorderLayout.SOUTH);

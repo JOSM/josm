@@ -99,8 +99,7 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
         enableRemoteControl = new JCheckBox(tr("Enable remote control"), RemoteControl.PROP_REMOTECONTROL_ENABLED.get());
         remote.add(enableRemoteControl, GBC.eol());
 
-        final JPanel wrapper = new JPanel();
-        wrapper.setLayout(new GridBagLayout());
+        final JPanel wrapper = new JPanel(new GridBagLayout());
         wrapper.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray)));
 
         remote.add(wrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 5));

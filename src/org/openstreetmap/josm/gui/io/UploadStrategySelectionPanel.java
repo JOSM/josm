@@ -70,8 +70,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     }
 
     protected JPanel buildUploadStrategyPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
         ButtonGroup bgStrategies = new ButtonGroup();
         rbStrategy = new EnumMap<>(UploadStrategy.class);
         lblStrategies = new EnumMap<>(UploadStrategy.class);
@@ -180,8 +179,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     }
 
     protected JPanel buildMultiChangesetPolicyPanel() {
-        pnlMultiChangesetPolicyPanel = new JPanel();
-        pnlMultiChangesetPolicyPanel.setLayout(new GridBagLayout());
+        pnlMultiChangesetPolicyPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
         gc.gridy = 0;

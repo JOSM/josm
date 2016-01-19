@@ -32,9 +32,8 @@ public class TagConflictResolver extends JPanel {
     private JCheckBox cbShowTagsWithMultiValuesOnly;
 
     protected JPanel buildInfoPanel() {
-        JPanel pnl = new JPanel();
+        JPanel pnl = new JPanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        pnl.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.fill = GridBagConstraints.BOTH;
         gc.weighty = 1.0;

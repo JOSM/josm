@@ -51,16 +51,14 @@ public class CloseChangesetDialog extends JDialog {
     private SideButton btnCloseChangesets;
 
     protected JPanel buildTopPanel() {
-        JPanel pnl = new JPanel();
+        JPanel pnl = new JPanel(new BorderLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        pnl.setLayout(new BorderLayout());
         pnl.add(new JLabel(tr("<html>Please select the changesets you want to close</html>")), BorderLayout.CENTER);
         return pnl;
     }
 
     protected JPanel buildCenterPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
+        JPanel pnl = new JPanel(new BorderLayout());
         model = new DefaultListModel<>();
         pnl.add(new JScrollPane(lstOpenChangesets = new JList<>(model)), BorderLayout.CENTER);
         lstOpenChangesets.setCellRenderer(new ChangesetCellRenderer());
@@ -68,8 +66,7 @@ public class CloseChangesetDialog extends JDialog {
     }
 
     protected JPanel buildSouthPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         // -- close action
         CloseAction closeAction = new CloseAction();

@@ -172,8 +172,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      * @return The panel with the OK and CANCEL buttons
      */
     protected JPanel buildActionPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // -- upload button

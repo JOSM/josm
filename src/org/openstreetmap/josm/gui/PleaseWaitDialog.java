@@ -47,8 +47,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
         pane.add(currentAction, GBC.eol().fill(GBC.HORIZONTAL));
         pane.add(customText, GBC.eol().fill(GBC.HORIZONTAL));
         pane.add(progressBar, GBC.eop().fill(GBC.HORIZONTAL));
-        JPanel buttons = new JPanel();
-        buttons.setLayout(new GridBagLayout());
+        JPanel buttons = new JPanel(new GridBagLayout());
         btnCancel = new JButton(tr("Cancel"));
         btnCancel.setIcon(ImageProvider.get("cancel"));
         btnCancel.setToolTipText(tr("Click to cancel the current operation"));

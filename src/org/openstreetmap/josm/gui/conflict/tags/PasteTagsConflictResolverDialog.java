@@ -102,7 +102,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        getContentPane().add(pnlTagResolver = new JPanel(), gc);
+        getContentPane().add(pnlTagResolver = new JPanel(new BorderLayout()), gc);
         gc.gridx = 0;
         gc.gridy = 2;
         gc.fill = GridBagConstraints.HORIZONTAL;
@@ -112,8 +112,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     }
 
     protected JPanel buildButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         // -- apply button
         ApplyAction applyAction = new ApplyAction();
@@ -131,8 +130,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     }
 
     protected JPanel buildSourceAndTargetInfoPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new BorderLayout());
+        JPanel pnl = new JPanel(new BorderLayout());
         statisticsModel = new StatisticsTableModel();
         pnl.add(new StatisticsInfoTable(statisticsModel), BorderLayout.CENTER);
         return pnl;
@@ -173,7 +171,6 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         allPrimitivesResolver.getModel().prepareDefaultTagDecisions();
 
         // prepare the dialog with one tag resolver
-        pnlTagResolver.setLayout(new BorderLayout());
         pnlTagResolver.removeAll();
         pnlTagResolver.add(allPrimitivesResolver, BorderLayout.CENTER);
 
@@ -217,7 +214,6 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         initResolver(OsmPrimitiveType.WAY, tagsForWays, targetStatistics);
         initResolver(OsmPrimitiveType.RELATION, tagsForRelations, targetStatistics);
 
-        pnlTagResolver.setLayout(new BorderLayout());
         pnlTagResolver.removeAll();
         pnlTagResolver.add(tpResolvers, BorderLayout.CENTER);
         mode = Mode.RESOLVING_TYPED_TAGCOLLECTIONS;

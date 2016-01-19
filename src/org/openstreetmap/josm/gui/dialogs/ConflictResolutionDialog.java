@@ -76,8 +76,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
      * @return the panel
      */
     protected JPanel buildButtonRow() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         applyResolutionAction = new ApplyResolutionAction();
         JButton btn = new JButton(applyResolutionAction);

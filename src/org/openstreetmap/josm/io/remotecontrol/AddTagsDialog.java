@@ -214,8 +214,7 @@ public class AddTagsDialog extends ExtendedDialog {
         });
 
         // set the content of this AddTagsDialog consisting of the tableHeader and the table itself.
-        JPanel tablePanel = new JPanel();
-        tablePanel.setLayout(new GridBagLayout());
+        JPanel tablePanel = new JPanel(new GridBagLayout());
         tablePanel.add(propertyTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         tablePanel.add(propertyTable, GBC.eol().fill(GBC.BOTH));
         if (!sender.isEmpty() && !trustedSenders.contains(sender)) {

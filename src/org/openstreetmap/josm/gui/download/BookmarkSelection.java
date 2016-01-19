@@ -57,8 +57,7 @@ public class BookmarkSelection implements DownloadSelection {
      * @return the panel with the action buttons on the left
      */
     protected JPanel buildButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridy = 0;
         RemoveAction removeAction = new RemoveAction();
@@ -79,8 +78,7 @@ public class BookmarkSelection implements DownloadSelection {
     }
 
     protected JPanel buildDownloadAreaAddPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
 
         GridBagConstraints  gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.NORTHWEST;

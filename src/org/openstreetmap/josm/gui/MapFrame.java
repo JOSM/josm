@@ -181,8 +181,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
 
-        leftPanel = new JPanel();
-        leftPanel.setLayout(new GridBagLayout());
+        leftPanel = new JPanel(new GridBagLayout());
         leftPanel.add(mapView, GBC.std().fill());
         splitPane.setLeftComponent(leftPanel);
 

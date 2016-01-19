@@ -117,8 +117,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         gc.weighty = 1.0;
         gc.weightx = 1.0;
         gc.insets = new Insets(10, 0, 0, 0);
-        add(pnlAuthorisationMessage = new JPanel(), gc);
-        pnlAuthorisationMessage.setLayout(new BorderLayout());
+        add(pnlAuthorisationMessage = new JPanel(new BorderLayout()), gc);
 
         // create these two panels, they are going to be used later in refreshView
         //

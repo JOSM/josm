@@ -94,10 +94,8 @@ public class PlaceSelection implements DownloadSelection {
     }
 
     protected JPanel buildSearchPanel() {
-        JPanel lpanel = new JPanel();
-        lpanel.setLayout(new GridLayout(2, 2));
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
+        JPanel lpanel = new JPanel(new GridLayout(2, 2));
+        JPanel panel = new JPanel(new GridBagLayout());
 
         lpanel.add(new JLabel(tr("Choose the server for searching:")));
         lpanel.add(server);
@@ -134,8 +132,7 @@ public class PlaceSelection implements DownloadSelection {
      */
     @Override
     public void addGui(final DownloadDialog gui) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout());
         panel.add(buildSearchPanel(), BorderLayout.NORTH);
 
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();

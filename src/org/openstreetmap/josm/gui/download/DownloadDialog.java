@@ -90,8 +90,7 @@ public class DownloadDialog extends JDialog  {
     }
 
     protected final JPanel buildMainPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
 
         final ChangeListener checkboxChangeListener = new ChangeListener() {
             @Override
@@ -186,8 +185,7 @@ public class DownloadDialog extends JDialog  {
     }
 
     protected final JPanel buildButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout());
+        JPanel pnl = new JPanel(new FlowLayout());
 
         // -- download button
         pnl.add(btnDownload = new SideButton(actDownload = new DownloadAction()));

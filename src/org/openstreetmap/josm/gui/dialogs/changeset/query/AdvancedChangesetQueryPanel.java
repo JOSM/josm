@@ -58,9 +58,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
     protected JPanel buildQueryPanel() {
         ItemListener stateChangeHandler = new RestrictionGroupStateChangeHandler();
-        JPanel pnl  = new VerticallyScrollablePanel();
+        JPanel pnl  = new VerticallyScrollablePanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        pnl.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 
         // -- select changesets by a specific user

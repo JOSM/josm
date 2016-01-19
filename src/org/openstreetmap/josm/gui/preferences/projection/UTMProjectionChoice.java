@@ -62,8 +62,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
             group.add(north);
             group.add(south);
 
-            JPanel bPanel = new JPanel();
-            bPanel.setLayout(new GridBagLayout());
+            JPanel bPanel = new JPanel(new GridBagLayout());
 
             bPanel.add(new JLabel(tr("North")), GBC.std().insets(5, 5, 0, 5));
             bPanel.add(north, GBC.std().fill(GBC.HORIZONTAL));

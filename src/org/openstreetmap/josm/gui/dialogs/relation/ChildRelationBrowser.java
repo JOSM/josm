@@ -89,8 +89,7 @@ public class ChildRelationBrowser extends JPanel {
      * @return the button panel
      */
     protected JPanel buildButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         // ---
         DownloadAllChildRelationsAction downloadAction = new DownloadAllChildRelationsAction();

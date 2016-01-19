@@ -79,8 +79,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     }
 
     protected void build() {
-        JPanel content = new JPanel();
-        content.setLayout(new BorderLayout());
+        JPanel content = new JPanel(new BorderLayout());
 
         content.add(imgDisplay, BorderLayout.CENTER);
 
@@ -175,8 +174,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         buttons.add(Box.createRigidArea(new Dimension(7, 0)));
         buttons.add(btnCopyPath);
 
-        JPanel bottomPane = new JPanel();
-        bottomPane.setLayout(new GridBagLayout());
+        JPanel bottomPane = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
         gc.gridy = 0;

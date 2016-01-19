@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -185,14 +186,13 @@ public class PrefJPanel extends JPanel {
     }
 
     private void initComponents() {
-        JPanel listPane = new JPanel();
+        JPanel listPane = new JPanel(new GridLayout());
         JScrollPane listScrollPane = new JScrollPane();
-        JPanel shortcutEditPane = new JPanel();
+        JPanel shortcutEditPane = new JPanel(new GridLayout(5, 2));
 
         CbAction action = new CbAction(this);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(buildFilterPanel());
-        listPane.setLayout(new java.awt.GridLayout());
 
         // This is the list of shortcuts:
         shortcutTable.setModel(model);
@@ -210,7 +210,6 @@ public class PrefJPanel extends JPanel {
         add(listPane);
 
         // and here follows the edit area. I won't object to someone re-designing it, it looks, um, "minimalistic" ;)
-        shortcutEditPane.setLayout(new java.awt.GridLayout(5, 2));
 
         cbDefault.setAction(action);
         cbDefault.setText(tr("Use default"));
