@@ -52,13 +52,10 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
 
         final List<Class<? extends FileImporter>> importerNames = Arrays.asList(
                 org.openstreetmap.josm.io.OsmImporter.class,
-                org.openstreetmap.josm.io.OsmGzipImporter.class,
-                org.openstreetmap.josm.io.OsmZipImporter.class,
                 org.openstreetmap.josm.io.OsmChangeImporter.class,
                 org.openstreetmap.josm.io.GpxImporter.class,
                 org.openstreetmap.josm.io.NMEAImporter.class,
                 org.openstreetmap.josm.io.NoteImporter.class,
-                org.openstreetmap.josm.io.OsmBzip2Importer.class,
                 org.openstreetmap.josm.io.JpgImporter.class,
                 org.openstreetmap.josm.io.WMSLayerImporter.class,
                 org.openstreetmap.josm.io.AllFormatsImporter.class,
@@ -140,6 +137,8 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 }
         );
     }
+
+    public enum AddArchiveExtension { NONE, BASE, ALL }
 
     /**
      * Updates the {@link AllFormatsImporter} that is contained in the importers list. If
@@ -295,25 +294,56 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @param extensions The comma-separated list of file extensions
      * @param defaultExtension The default extension
      * @param description A short textual description of the file type without supported extensions in parentheses
+     * @param addArchiveExtension Whether to also add the archive extensions to the description
+     * @param archiveExtensions List of extensions to be added
+     * @return The constructed filter
+     */
+    public static ExtensionFileFilter newFilterWithArchiveExtensions(
+            String extensions, String defaultExtension, String description, AddArchiveExtension addArchiveExtension, List<String> archiveExtensions) {
+        final Collection<String> extensionsPlusArchive = new LinkedHashSet<>();
+        final Collection<String> extensionsForDescription = new LinkedHashSet<>();
+        for (String e : extensions.split(",")) {
+            extensionsPlusArchive.add(e);
+            if (addArchiveExtension != AddArchiveExtension.NONE) {
+                extensionsForDescription.add("*." + e);
+            }
+            for (String extension : archiveExtensions) {
+                extensionsPlusArchive.add(e + '.' + extension);
+                if (addArchiveExtension == AddArchiveExtension.ALL) {
+                    extensionsForDescription.add("*." + e + '.' + extension);
+                }
+            }
+        }
+        return new ExtensionFileFilter(
+            Utils.join(",", extensionsPlusArchive),
+            defaultExtension,
+            description + (!extensionsForDescription.isEmpty()
+                ? " (" + Utils.join(", ", extensionsForDescription) + ")"
+                : "")
+            );
+    }
+
+    /**
+     * Construct an extension file filter with the extensions supported by {@link org.openstreetmap.josm.io.Compression}
+     * automatically added to the {@code extensions}. The specified {@code extensions} will be added to the description
+     * in the form {@code old-description (*.ext1, *.ext2)}.
+     * @param extensions The comma-separated list of file extensions
+     * @param defaultExtension The default extension
+     * @param description A short textual description of the file type without supported extensions in parentheses
      * @param addArchiveExtensionsToDescription Whether to also add the archive extensions to the description
      * @return The constructed filter
      */
     public static ExtensionFileFilter newFilterWithArchiveExtensions(
             String extensions, String defaultExtension, String description, boolean addArchiveExtensionsToDescription) {
-        final Collection<String> extensionsPlusArchive = new LinkedHashSet<>();
-        final Collection<String> extensionsForDescription = new LinkedHashSet<>();
-        for (String e : extensions.split(",")) {
-            extensionsPlusArchive.add(e);
-            extensionsPlusArchive.add(e + ".gz");
-            extensionsPlusArchive.add(e + ".bz2");
-            extensionsForDescription.add("*." + e);
-            if (addArchiveExtensionsToDescription) {
-                extensionsForDescription.add("*." + e + ".gz");
-                extensionsForDescription.add("*." + e + ".bz2");
-            }
-        }
-        return new ExtensionFileFilter(Utils.join(",", extensionsPlusArchive), defaultExtension,
-                description + " (" + Utils.join(", ", extensionsForDescription) + ")");
+
+        List<String> archiveExtensions = Arrays.asList("gz", "bz2");
+        return newFilterWithArchiveExtensions(
+            extensions,
+            defaultExtension,
+            description,
+            addArchiveExtensionsToDescription ? AddArchiveExtension.ALL : AddArchiveExtension.BASE,
+            archiveExtensions
+        );
     }
 
     /**

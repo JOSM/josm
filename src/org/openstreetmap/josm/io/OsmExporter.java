@@ -31,7 +31,8 @@ public class OsmExporter extends FileExporter {
      * Constructs a new {@code OsmExporter}.
      */
     public OsmExporter() {
-        super(OsmImporter.FILE_FILTER);
+        super(new ExtensionFileFilter(
+            "osm,xml", "osm", tr("OSM Server Files") + " (*.osm)"));
     }
 
     /**
