@@ -140,7 +140,7 @@ public class Tag implements Tagged {
     /**
      * Unsupported.
      * @param keys ignored
-     * @throws UnsupportedOperationException
+     * @throws UnsupportedOperationException always
      */
     @Override
     public void setKeys(Map<String, String> keys) {
@@ -156,7 +156,7 @@ public class Tag implements Tagged {
      * Unsupported.
      * @param key ignored
      * @param value ignored
-     * @throws UnsupportedOperationException
+     * @throws UnsupportedOperationException always
      */
     @Override
     public void put(String key, String value) {
@@ -171,7 +171,7 @@ public class Tag implements Tagged {
     /**
      * Unsupported.
      * @param key ignored
-     * @throws UnsupportedOperationException
+     * @throws UnsupportedOperationException always
      */
     @Override
     public void remove(String key) {
@@ -190,7 +190,7 @@ public class Tag implements Tagged {
 
     /**
      * Unsupported.
-     * @throws UnsupportedOperationException
+     * @throws UnsupportedOperationException always
      */
     @Override
     public void removeAll() {
