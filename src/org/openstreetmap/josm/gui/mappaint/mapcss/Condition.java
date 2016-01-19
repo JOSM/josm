@@ -611,6 +611,28 @@ public abstract class Condition {
         }
 
         /**
+         * {@code clockwise} whether the way is closed and oriented clockwise,
+         * or non-closed and the 1st, 2nd and last node are in clockwise order.
+         * @param e MapCSS environment
+         * @return {@code true} if the way clockwise
+         * @see ExpressionFactory.Functions#is_clockwise(Environment)
+         */
+        static boolean clockwise(Environment e) {
+            return ExpressionFactory.Functions.is_clockwise(e);
+        }
+
+        /**
+         * {@code anticlockwise} whether the way is closed and oriented anticlockwise,
+         * or non-closed and the 1st, 2nd and last node are in anticlockwise order.
+         * @param e MapCSS environment
+         * @return {@code true} if the way clockwise
+         * @see ExpressionFactory.Functions#is_anticlockwise(Environment)
+         */
+        static boolean anticlockwise(Environment e) {
+            return ExpressionFactory.Functions.is_anticlockwise(e);
+        }
+
+        /**
          * {@code unclosed-multipolygon} tests whether the object is an unclosed multipolygon.
          * @param e MapCSS environment
          * @return {@code true} if the object is an unclosed multipolygon
