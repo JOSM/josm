@@ -62,7 +62,7 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new BorderLayout());
         JPanel panelTop = new JPanel();
         JPanel panelBottom = new JPanel();
         JPanel helpPanel = new JPanel();
@@ -75,7 +75,6 @@ public class Demo extends JFrame implements JMapViewerEventListener  {
 
         add(panel, BorderLayout.NORTH);
         add(helpPanel, BorderLayout.SOUTH);
-        panel.setLayout(new BorderLayout());
         panel.add(panelTop, BorderLayout.NORTH);
         panel.add(panelBottom, BorderLayout.SOUTH);
         JLabel helpLabel = new JLabel("Use right mouse button to move,\n "
