@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
@@ -23,8 +24,8 @@ public class OsmImporter extends FileImporter {
     /**
      * The OSM file filter (*.osm and *.xml files).
      */
-    public static final ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(
-            "osm,xml", "osm", tr("OSM Server Files") + " (*.osm *.xml)");
+    public static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(
+            "osm,xml", "osm", tr("OSM Server Files") + " (*.osm, *.osm.gz, *.osm.bz2, *.osm.zip, *.xml)", ExtensionFileFilter.AddArchiveExtension.NONE, Arrays.asList("gz", "bz", "bz2", "zip"));
 
     /**
      * Utility class containing imported OSM layer, and a task to run after it is added to MapView.
