@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.jcs.utils.threadpool.PoolConfiguration.WhenBlockedPolicy;
 import org.apache.commons.logging.Log;
@@ -116,16 +115,12 @@ public class ThreadPoolManager
     /** Map of names to pools. */
     private ConcurrentHashMap<String, ThreadPoolExecutor> pools;
 
-    /** Lock for pools initialization. */
-    private ReentrantLock poolLock;
-
     /**
      * No instances please. This is a singleton.
      */
     private ThreadPoolManager()
     {
         this.pools = new ConcurrentHashMap<String, ThreadPoolExecutor>();
-        this.poolLock = new ReentrantLock();
         configure();
     }
 
@@ -244,33 +239,22 @@ public class ThreadPoolManager
 
         if ( pool == null )
         {
-            poolLock.lock();
-
-            try
+            if ( log.isDebugEnabled() )
             {
-                // double check
-                pool = pools.get( name );
-
-                if ( pool == null )
-                {
-                    if ( log.isDebugEnabled() )
-                    {
-                        log.debug( "Creating pool for name [" + name + "]" );
-                    }
-
-                    PoolConfiguration config = loadConfig( PROP_NAME_ROOT + "." + name );
-                    pool = createPool( config );
-                    pools.put( name, pool );
-
-                    if ( log.isDebugEnabled() )
-                    {
-                        log.debug( "PoolName = " + getPoolNames() );
-                    }
-                }
+                log.debug( "Creating pool for name [" + name + "]" );
             }
-            finally
+
+            PoolConfiguration config = loadConfig( PROP_NAME_ROOT + "." + name );
+            pool = createPool( config );
+            ThreadPoolExecutor _pool = pools.putIfAbsent( name, pool );
+            if (_pool != null)
             {
-                poolLock.unlock();
+                pool = _pool;
+            }
+
+            if ( log.isDebugEnabled() )
+            {
+                log.debug( "PoolName = " + getPoolNames() );
             }
         }
 
