@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.tags;
+package org.openstreetmap.josm.gui.conflict.pair.tags;
 
 import static org.fest.reflect.core.Reflection.field;
 import static org.junit.Assert.assertEquals;

@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.properties;
+package org.openstreetmap.josm.gui.conflict.pair.properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

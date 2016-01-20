@@ -3,10 +3,7 @@ package org.openstreetmap.josm.gui.dialogs.changeset;
 
 import javax.swing.JFrame;
 
-import org.junit.Ignore;
-
-@Ignore
-public class ChangesetCacheManagerTest extends JFrame {
+public class ChangesetCacheManagerTestFT extends JFrame {
 
     private ChangesetCacheManager manager;
 
@@ -16,6 +13,6 @@ public class ChangesetCacheManagerTest extends JFrame {
     }
 
     public static void main(String[] args) {
-        new ChangesetCacheManagerTest().start();
+        new ChangesetCacheManagerTestFT().start();
     }
 }

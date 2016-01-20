@@ -5,15 +5,12 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
-import org.junit.Ignore;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 
-@Ignore
-public class NodeListMergerTest extends JFrame {
-
+public class NodeListMergerTestFT extends JFrame {
 
     private NodeListMerger nodeListMerger;
 
@@ -64,13 +61,13 @@ public class NodeListMergerTest extends JFrame {
     /**
      * Constructs a new {@code NodeListMergerTest}.
      */
-    public NodeListMergerTest() {
+    public NodeListMergerTestFT() {
         build();
         populate();
     }
 
     public static void main(String[] args) {
-        NodeListMergerTest test = new NodeListMergerTest();
+        NodeListMergerTestFT test = new NodeListMergerTestFT();
         test.setSize(600, 600);
         test.setVisible(true);
     }

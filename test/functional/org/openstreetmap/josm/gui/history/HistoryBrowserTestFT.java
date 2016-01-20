@@ -17,8 +17,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 
-@Ignore
-public class HistoryBrowserTest extends JFrame {
+public class HistoryBrowserTestFT extends JFrame {
 
     @BeforeClass
     public static void init() {
@@ -50,7 +49,7 @@ public class HistoryBrowserTest extends JFrame {
     /**
      * Constructs a new {@code HistoryBrowserTest}.
      */
-    public HistoryBrowserTest() {
+    public HistoryBrowserTestFT() {
         build();
         //populate(OsmPrimitiveType.NODE,354117);
         //populate(OsmPrimitiveType.WAY,37951);
@@ -59,7 +58,7 @@ public class HistoryBrowserTest extends JFrame {
     }
 
     public static void main(String[] args) {
-        HistoryBrowserTest.init();
-        new HistoryBrowserTest().setVisible(true);
+        HistoryBrowserTestFT.init();
+        new HistoryBrowserTestFT().setVisible(true);
     }
 }

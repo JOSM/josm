@@ -5,10 +5,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
-import org.junit.Ignore;
-
-@Ignore
-public class TagMergerTest extends JFrame {
+public class TagMergerTestFT extends JFrame {
 
     private TagMerger tagMerger;
 
@@ -21,7 +18,7 @@ public class TagMergerTest extends JFrame {
     /**
      * Constructs a new {@code TagMergerTest}.
      */
-    public TagMergerTest() {
+    public TagMergerTestFT() {
         build();
         tagMerger.getModel().addItem(new TagMergeItem("key", "myvalue", "theirvalue"));
         tagMerger.getModel().addItem(new TagMergeItem("key", "myvalue", null));
@@ -34,7 +31,7 @@ public class TagMergerTest extends JFrame {
     }
 
     public static void main(String[] args) {
-        TagMergerTest test  = new TagMergerTest();
+        TagMergerTestFT test  = new TagMergerTestFT();
         test.setSize(600, 600);
         test.setVisible(true);
     }
