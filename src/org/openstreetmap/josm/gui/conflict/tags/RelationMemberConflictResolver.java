@@ -49,7 +49,7 @@ public class RelationMemberConflictResolver extends JPanel {
 
     protected final void build() {
         setLayout(new GridBagLayout());
-        JPanel pnl = new JPanel(new BorderLayout());
+        final JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(lblHeader = new JMultilineLabel(""));
         GridBagConstraints gc = new GridBagConstraints();
         gc.fill = GridBagConstraints.HORIZONTAL;
@@ -63,13 +63,15 @@ public class RelationMemberConflictResolver extends JPanel {
         gc.fill = GridBagConstraints.BOTH;
         gc.insets = new Insets(0, 0, 0, 0);
         add(new JScrollPane(tblResolver = new RelationMemberConflictResolverTable(model)), gc);
-        pnl = new JPanel(new BoxLayout(pnl, BoxLayout.Y_AXIS));
-        pnl.add(buildRoleEditingPanel());
-        pnl.add(buildTagRelationsPanel());
+
+        final JPanel pnl2 = new JPanel();
+        pnl2.setLayout(new BoxLayout(pnl2, BoxLayout.Y_AXIS));
+        pnl2.add(buildRoleEditingPanel());
+        pnl2.add(buildTagRelationsPanel());
         gc.gridy = 2;
         gc.weighty = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        add(pnl, gc);
+        add(pnl2, gc);
     }
 
     protected JPanel buildRoleEditingPanel() {
