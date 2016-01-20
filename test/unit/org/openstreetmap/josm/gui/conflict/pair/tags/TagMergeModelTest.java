@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
-import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeItem;
-import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeModel;
 
 /**
  * Unit tests of {@link TagMergeModel} class.

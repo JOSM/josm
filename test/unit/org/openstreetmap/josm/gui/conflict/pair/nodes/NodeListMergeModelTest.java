@@ -24,7 +24,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DatasetFactory;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListMergeModel;
 
 public class NodeListMergeModelTest {
 

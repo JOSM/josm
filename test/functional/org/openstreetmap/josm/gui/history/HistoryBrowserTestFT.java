@@ -6,7 +6,6 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;

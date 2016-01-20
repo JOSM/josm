@@ -298,8 +298,8 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @param archiveExtensions List of extensions to be added
      * @return The constructed filter
      */
-    public static ExtensionFileFilter newFilterWithArchiveExtensions(
-            String extensions, String defaultExtension, String description, AddArchiveExtension addArchiveExtension, List<String> archiveExtensions) {
+    public static ExtensionFileFilter newFilterWithArchiveExtensions(String extensions, String defaultExtension,
+            String description, AddArchiveExtension addArchiveExtension, List<String> archiveExtensions) {
         final Collection<String> extensionsPlusArchive = new LinkedHashSet<>();
         final Collection<String> extensionsForDescription = new LinkedHashSet<>();
         for (String e : extensions.split(",")) {
