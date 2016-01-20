@@ -175,7 +175,7 @@
   /* see #8962 - http://wiki.openstreetmap.org/wiki/Key:fence_type */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "barrier=chain";
-  suggestAlternative: "fence_type=chain_link";
+  suggestAlternative: "barrier=fence + fence_type=chain_link";
 }
 
 *[building=entrance] {
