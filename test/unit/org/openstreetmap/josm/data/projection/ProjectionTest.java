@@ -122,6 +122,7 @@ public class ProjectionTest {
         testProj("stere", 1e-5, "+lat_0=-90 +lat_ts=-70");
         testProj("stere", 1e-5, "+lat_0=90 +lat_ts=90");
         testProj("omerc", EPS, "+lat_0=4 +lonc=115 +alpha=53 +no_uoff +gamma=53.130 +bounds=112,4,116,7");
+        testProj("cass", 1e-3, "+lat_0=11 +bounds=-1.0,-89,1.0,89");
 
         if (error2) {
             System.err.println(text2);

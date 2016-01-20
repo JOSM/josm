@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
 import org.openstreetmap.josm.data.projection.proj.AlbersEqualArea;
+import org.openstreetmap.josm.data.projection.proj.CassiniSoldner;
 import org.openstreetmap.josm.data.projection.proj.ClassProjFactory;
 import org.openstreetmap.josm.data.projection.proj.DoubleStereographic;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
@@ -85,6 +86,7 @@ public final class Projections {
 
     static {
         registerBaseProjection("aea", AlbersEqualArea.class, "core");
+        registerBaseProjection("cass", CassiniSoldner.class, "core");
         registerBaseProjection("josm:smerc", Mercator.class, "core");
         registerBaseProjection("lcc", LambertConformalConic.class, "core");
         registerBaseProjection("lonlat", LonLat.class, "core");
