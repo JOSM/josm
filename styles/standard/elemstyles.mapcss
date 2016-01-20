@@ -1957,6 +1957,8 @@ area[shop=car_parts],
 area[shop=video_games],
 area[shop=bed],
 area[shop=beauty],
+area[shop=cosmetics],
+area[shop=perfumery],
 area[shop=tea],
 area[shop=coffee],
 area[shop=antiques],
@@ -2325,6 +2327,16 @@ node[shop=bed] {
 }
 node[shop=beauty] {
     icon-image: "shop/beauty.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=cosmetics] {
+    icon-image: "shop/cosmetics.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=perfumery] {
+    icon-image: "shop/perfumery.svg";
     set icon_z17;
     text: auto;
 }
