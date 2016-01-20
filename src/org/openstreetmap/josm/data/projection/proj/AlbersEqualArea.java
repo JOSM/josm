@@ -19,11 +19,11 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * formulae used below are from a port, to Java, of the {@code proj4}
  * package of the USGS survey. USGS work is acknowledged here.
  * <p>
-  * This class has been derived from the implementation of the Geotools project;
+ * This class has been derived from the implementation of the Geotools project;
  * git 8cbf52d, org.geotools.referencing.operation.projection.AlbersEqualArea
  * at the time of migration.
  * <p>
-* <b>References:</b>
+ * <b>References:</b>
  * <ul>
  *   <li> Proj-4.4.7 available at <A HREF="http://www.remotesensing.org/proj">www.remotesensing.org/proj</A><br>
  *        Relevent files are: PJ_aea.c, pj_fwd.c and pj_inv.c </li>
