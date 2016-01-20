@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.nodes;
+package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
 import static org.fest.reflect.core.Reflection.field;
 import static org.fest.reflect.core.Reflection.method;
@@ -24,7 +24,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DatasetFactory;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListMergeModel;
 
 public class NodeListMergeModelTest {
 

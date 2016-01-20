@@ -3,10 +3,7 @@ package org.openstreetmap.josm.gui.dialogs.changeset.query;
 
 import javax.swing.JFrame;
 
-import org.junit.Ignore;
-
-@Ignore
-public class ChangesetQueryDialogTest extends JFrame {
+public class ChangesetQueryDialogTestFT extends JFrame {
 
     private ChangesetQueryDialog dialog;
 
@@ -17,6 +14,6 @@ public class ChangesetQueryDialogTest extends JFrame {
     }
 
     public static void main(String[] args) {
-        new ChangesetQueryDialogTest().start();
+        new ChangesetQueryDialogTestFT().start();
     }
 }
