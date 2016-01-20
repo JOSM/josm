@@ -679,7 +679,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Residential -->
-        <item name="Bicycle Road" icon="styles/standard/transport/way/way_bicycle_road.svg" type="way" preset_name_label="true">
+        <item name="Bicycle Road" icon="styles/standard/transport/way/way_bicycle_road.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bicycle_road"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:bicycle_road"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:bicycle_road" />
@@ -1016,7 +1016,7 @@
             </optional>
         </item> <!-- Path -->
         <separator/>
-        <item name="Dedicated Bridleway" icon="styles/standard/transport/way/dedicated_bridleway.svg" type="way" preset_name_label="true">
+        <item name="Dedicated Bridleway" icon="styles/standard/transport/way/dedicated_bridleway.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=bridleway"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:highway=bridleway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=bridleway"
@@ -1032,7 +1032,7 @@
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Dedicated Bridleway -->
-        <item name="Cycle Lane/Track" icon="styles/standard/transport/way/cycle_lane_track.svg" type="way" preset_name_label="true">
+        <item name="Cycle Lane/Track" icon="styles/standard/transport/way/cycle_lane_track.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Bicycle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Bicycle"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Bicycle"
@@ -1056,7 +1056,7 @@
                 <check key="oneway" text="Oneway" />
             </optional>
         </item> <!-- Cycle Lane/Track -->
-        <item name="Dedicated Cycleway" icon="styles/standard/transport/way/dedicated_cycleway.svg" type="way" preset_name_label="true">
+        <item name="Dedicated Cycleway" icon="styles/standard/transport/way/dedicated_cycleway.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=cycleway"
@@ -1074,7 +1074,7 @@
                 <combo key="foot" text="Pedestrians" values="yes,no" />
             </optional>
         </item> <!-- Dedicated Cycleway -->
-        <item name="Segregated Foot- and Cycleway" icon="styles/standard/transport/way/segregated_foot_cycleway.svg" type="way" preset_name_label="true">
+        <item name="Segregated Foot- and Cycleway" icon="styles/standard/transport/way/segregated_foot_cycleway.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway" />
@@ -1088,7 +1088,7 @@
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
             </optional>
         </item> <!-- Segregated Foot- and Cycleway -->
-        <item name="Combined Foot- and Cycleway" icon="styles/standard/transport/way/combined_foot_cycleway.svg" type="way" preset_name_label="true">
+        <item name="Combined Foot- and Cycleway" icon="styles/standard/transport/way/combined_foot_cycleway.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway" />
@@ -1103,7 +1103,7 @@
                 <check key="passing_places" text="Passing Places" />
             </optional>
         </item> <!-- Combined Foot- and Cycleway -->
-        <item name="Dedicated Footway" icon="styles/standard/transport/way/dedicated_footway.svg" type="way" preset_name_label="true">
+        <item name="Dedicated Footway" icon="styles/standard/transport/way/dedicated_footway.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=footway"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:highway=footway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=footway"
