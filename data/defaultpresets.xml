@@ -7434,6 +7434,33 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Chemist -->
+        <item name="Cosmetics" icon="styles/standard/shop/cosmetics.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=cosmetics" />
+            <space />
+            <key key="shop" value="cosmetics" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Cosmetics -->
+        <item name="Perfumery" icon="styles/standard/shop/perfumery.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=perfumery" />
+            <space />
+            <key key="shop" value="perfumery" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Perfumery -->
+        <item name="Beauty" icon="styles/standard/shop/beauty.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=beauty"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=beauty"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=beauty"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=beauty"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=beauty"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=beauty"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=beauty" />
+            <space />
+            <key key="shop" value="beauty" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Beauty -->
         <item name="Tobacco" icon="styles/standard/shop/tobacco.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=tobacco" />
             <space />
@@ -7454,19 +7481,6 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Hairdresser/Barber -->
-        <item name="Beauty" icon="styles/standard/shop/beauty.svg" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=beauty"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=beauty"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=beauty"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=beauty"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=beauty"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:shop=beauty"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=beauty" />
-            <space />
-            <key key="shop" value="beauty" />
-            <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Beauty -->
         <item name="Tattoo" icon="styles/standard/shop/tattoo.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=tattoo"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=tattoo"
