@@ -181,12 +181,15 @@ public class MultipolygonTest extends Test {
                     if (memberInNewMP != null && !memberInNewMP.isEmpty()) {
                         final String roleInNewMP = memberInNewMP.iterator().next().getRole();
                         if (!member.getRole().equals(roleInNewMP)) {
+                            List<OsmPrimitive> l = new ArrayList<>();
+                            l.add(r);
+                            l.add(member.getMember());
                             addError(r, new TestError(this, Severity.WARNING, RelationChecker.ROLE_VERIF_PROBLEM_MSG,
                                     tr("Role for ''{0}'' should be ''{1}''",
                                             member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
                                     MessageFormat.format("Role for ''{0}'' should be ''{1}''",
                                             member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
-                                    WRONG_MEMBER_ROLE, Collections.singleton(r), Collections.singleton(member.getMember())));
+                                    WRONG_MEMBER_ROLE, l, Collections.singleton(member.getMember())));
                         }
                     }
                 }
