@@ -1,5 +1,5 @@
 *[barrier=wire_fence] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
   fixAdd: "barrier=fence";
   fixAdd: "fence_type=chain_link";
   assertMatch: "way barrier=wire_fence";
@@ -7,13 +7,15 @@
 }
   
 *[barrier=wood_fence] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "barrier=fence + fence_type=wood";
   fixAdd: "barrier=fence";
   fixAdd: "fence_type=wood";
 }
   
 *[highway=ford] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "ford=yes";
   fixRemove: "highway";
   fixAdd: "ford=yes";
 }
@@ -26,47 +28,50 @@
   
 *[highway=stile] {
   /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "barrier=stile";
   fixRemove: "highway";
   fixAdd: "barrier=stile";
 }
   
 *[highway=incline] {
   /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "incline";
 }
   
 *[highway=incline_steep] {
   /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "incline";
 }
   
 *[highway=unsurfaced] {
   /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "highway=* + surface=unpaved";
   fixAdd: "highway=road";
   fixAdd: "surface=unpaved";
 }
   
 *[landuse=wood] {
   /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "landuse=forest";
   suggestAlternative: "natural=wood";
 }
   
 *[natural=marsh] {
   /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "natural=wetland + wetland=marsh";
   fixAdd: "natural=wetland";
   fixAdd: "wetland=marsh";
 }
   
 *[highway=byway] {
   /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
 }
   
 *[power_source] {
@@ -82,134 +87,153 @@
 }
   
 *[shop=antique] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=antiques";
   fixAdd: "shop=antiques";
 }
 
 *[shop=bags] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=bag";
   fixAdd: "shop=bag";
 }
 
 *[shop=organic] {
   /* from http://wiki.openstreetmap.org/wiki/Tag:shop=organic */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=supermarket + organic=only";
   fixAdd: "shop=supermarket";
   fixAdd: "organic=only";
 }
 
 *[shop=pets] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=pet";
   fixAdd: "shop=pet";
 }
 
 *[shop=pharmacy] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=pharmacy";
   fixChangeKey: "shop => amenity";
 }
 
 *[bicycle_parking=sheffield] {
   /* from http://wiki.openstreetmap.org/wiki/Key:bicycle_parking */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "bicycle_parking=stands";
   fixAdd: "bicycle_parking=stands";
 }
   
 *[amenity=emergency_phone] {
   /* http://wiki.openstreetmap.org/wiki/Tag:emergency=phone */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "emergency=phone";
   fixRemove: "amenity";
   fixAdd: "emergency=phone";
 }
   
 *[sport=gaelic_football] {
   /* fix #8132 - http://wiki.openstreetmap.org/wiki/Tag:sport=gaelic_football */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "sport=gaelic_games";
   fixAdd: "sport=gaelic_games";
 }
   
 *[power=station] {
   /* see #8847 / #8961 - http://wiki.openstreetmap.org/wiki/Tag:power=station */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "power=plant";
   suggestAlternative: "power=substation";
 }
 
 *[power=sub_station] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "power=substation";
   fixAdd: "power=substation";
 }
   
 *[generator:method=dam] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "generator:method=water-storage";
   fixAdd: "generator:method=water-storage";
 }
   
 *[generator:method=pumped-storage] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "generator:method=water-pumped-storage";
   fixAdd: "generator:method=water-pumped-storage";
 }
   
 *[generator:method=pumping] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "generator:method=water-pumped-storage";
   fixAdd: "generator:method=water-pumped-storage";
 }
   
 *[fence_type=chain] {
   /* see #8962 - http://wiki.openstreetmap.org/wiki/Key:fence_type */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "barrier=chain";
   suggestAlternative: "fence_type=chain_link";
 }
 
 *[building=entrance] {
   /* see #9000 - http://wiki.openstreetmap.org/wiki/Key:entrance */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "entrance";
 }
   
 *[board_type=board] {
   /* see #9213 - Useless tag proposed in internal preset for years */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
   fixRemove: "board_type";
 }
   
 *[man_made=measurement_station] {
   /* see #8434 - http://wiki.openstreetmap.org/wiki/Proposed_features/monitoring_station */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "man_made=monitoring_station";
   fixAdd: "man_made=monitoring_station";
 }
   
 *[measurement=water_level] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "monitoring:water_level=yes";
   fixRemove: "measurement";
   fixAdd: "monitoring:water_level=yes";
 }
   
 *[measurement=weather] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "monitoring:weather=yes";
   fixRemove: "measurement";
   fixAdd: "monitoring:weather=yes";
 }
   
 *[measurement=seismic] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "monitoring:seismic_activity=yes";
   fixRemove: "measurement";
   fixAdd: "monitoring:seismic_activity=yes";
 }
 
 *[monitoring:river_level] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "monitoring:water_level";
   fixChangeKey: "monitoring:river_level => monitoring:water_level";
 }
 
 *[stay] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "maxstay";
   fixChangeKey: "stay => maxstay";
 }
 
 *[emergency=aed] {
   /* see #9554 - http://wiki.openstreetmap.org/wiki/Proposed_features/automated_external_defibrillator */
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "emergency=defibrillator";
   fixAdd: "emergency=defibrillator";
 }
 
@@ -254,60 +278,66 @@
 *[wood=deciduous],
 *[type=broad_leaved],
 *[type=broad_leafed] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leaf_type=broadleaved";
   fixRemove: "{0.key}";
   fixAdd: "leaf_type=broadleaved";
-}
+}<
 
 *[wood=coniferous],
 *[type=coniferous],
 *[type=conifer] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leaf_type=needleleaved";
   fixRemove: "{0.key}";
   fixAdd: "leaf_type=needleleaved";
 }
 
 *[wood=mixed] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leaf_type=mixed";
   fixRemove: "wood";
   fixAdd: "leaf_type=mixed";
 }
 
 *[wood=evergreen],
 *[type=evergreen] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leaf_cycle=evergreen";
   fixRemove: "{0.key}";
   fixAdd: "leaf_cycle=evergreen";
 }
 
 *[type=deciduous],
 *[type=deciduos] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leaf_cycle=deciduous";
   fixRemove: "type";
   fixAdd: "leaf_cycle=deciduous";
 }
 
 *[natural=land] {
-  throwWarning: tr("{0}={1} is deprecated. Please use instead a multipolygon.", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated. Please use instead a multipolygon.", "{0.tag}");
   assertMatch: "way natural=land";
 }
 
 /* see #10447 - https://wiki.openstreetmap.org/wiki/Proposed_features/Bridge_types#Deprecated_bridge_key_values */
 *[bridge=causeway] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "ford=yes";
   suggestAlternative: "bridge=low_water_crossing";
   suggestAlternative: "embankment=yes";
 }
 
 *[bridge=swing] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "bridge:movable=swing";
   suggestAlternative: "bridge:structure=simple-suspension";
 }
 
 *[bridge=suspension] {
-  throwWarning: tr("{0}={1} is deprecated", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "bridge=yes + bridge:structure=suspension";
   fixAdd: "bridge=yes";
   fixAdd: "bridge:structure=suspension";
 }
@@ -335,6 +365,7 @@
 /* see #8281 */
 *[parking=park_and_ride] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=parking + park_ride=yes";
   fixRemove: "parking";
   fixAdd: "amenity=parking";
   fixAdd: "park_ride=yes";
@@ -365,13 +396,19 @@ way[sidewalk=yes] {
   throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by ''left'', ''right'' or ''both''.", "{0.key}", "{0.value}");
 }
 
-*[waterway=water_point],
+*[waterway=water_point] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=water_point";
+  fixChangeKey: "waterway => amenity";
+}
 *[waterway=waste_disposal] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=waste_disposal";
   fixChangeKey: "waterway => amenity";
 }
 *[waterway=mooring] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "mooring=yes";
   fixRemove: "waterway";
   fixAdd: "mooring=yes";
 }
