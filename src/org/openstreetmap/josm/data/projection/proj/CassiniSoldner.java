@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * meridians and parallels are curved, and the scale distortion increases
  * rapidly with increasing distance from the central meridian.
  * <p>
- * 
+ *
  * This class has been derived from the implementation of the Geotools project;
  * git 8cbf52d, org.geotools.referencing.operation.projection.CassiniSoldner
  * at the time of migration.
@@ -34,11 +34,11 @@ public class CassiniSoldner extends AbstractProj {
      * Contants used for the forward and inverse transform for the eliptical
      * case of the Cassini-Soldner.
      */
-    private static final double  C1= 0.16666666666666666666,
-                                 C2= 0.008333333333333333333,
-                                 C3= 0.041666666666666666666,
-                                 C4= 0.33333333333333333333,
-                                 C5= 0.066666666666666666666;
+    private static final double C1 = 0.16666666666666666666;
+    private static final double C2 = 0.008333333333333333333;
+    private static final double C3 = 0.041666666666666666666;
+    private static final double C4 = 0.33333333333333333333;
+    private static final double C5 = 0.066666666666666666666;
 
     @Override
     public String getName() {
