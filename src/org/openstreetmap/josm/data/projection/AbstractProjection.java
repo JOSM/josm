@@ -70,14 +70,14 @@ public abstract class AbstractProjection implements Projection {
     @Override
     public EastNorth latlon2eastNorth(LatLon ll) {
         ll = datum.fromWGS84(ll);
-        double[] en = proj.project(Math.toRadians(ll.lat()), Math.toRadians(ll.lon() - lon0 - pm));
+        double[] en = proj.project(Math.toRadians(ll.lat()), Math.toRadians(LatLon.normalizeLon(ll.lon() - lon0 - pm)));
         return new EastNorth(ellps.a * k0 * en[0] + x0, ellps.a * k0 * en[1] + y0);
     }
 
     @Override
     public LatLon eastNorth2latlon(EastNorth en) {
         double[] latlon_rad = proj.invproject((en.east() - x0) / ellps.a / k0, (en.north() - y0) / ellps.a / k0);
-        LatLon ll = new LatLon(Math.toDegrees(latlon_rad[0]), Math.toDegrees(latlon_rad[1]) + lon0 + pm);
+        LatLon ll = new LatLon(Math.toDegrees(latlon_rad[0]), LatLon.normalizeLon(Math.toDegrees(latlon_rad[1]) + lon0 + pm));
         return datum.toWGS84(ll);
     }
 

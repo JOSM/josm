@@ -136,26 +136,6 @@ public abstract class AbstractProj implements Proj {
         }
     }
 
-    /**
-     * Make sure longitude value is within <code>[-PI, PI]</code> range.
-     * @param lon the longitude in radians
-     * @return lon plus/minus multiples of <code>2*PI</code>, as needed to get
-     * in <code>[-PI, PI]</code> range
-     */
-    public static double normalizeLon(double lon) {
-        if (lon >= -Math.PI && lon <= Math.PI)
-            return lon;
-        else {
-            lon = lon % (2 * Math.PI);
-            if (lon > Math.PI) {
-                return lon - 2 * Math.PI;
-            } else if (lon < -Math.PI) {
-                return lon + 2 * Math.PI;
-            }
-            return lon;
-        }
-    }
-
     // Iteratively solve equation (7-9) from Snyder.
     final double cphi2(final double ts) {
         final double eccnth = 0.5 * e;
