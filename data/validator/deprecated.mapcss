@@ -282,7 +282,7 @@
   suggestAlternative: "leaf_type=broadleaved";
   fixRemove: "{0.key}";
   fixAdd: "leaf_type=broadleaved";
-}<
+}
 
 *[wood=coniferous],
 *[type=coniferous],

@@ -122,9 +122,11 @@ public class SaveLayersModel extends DefaultTableModel {
 
     public List<SaveLayerInfo> getLayersWithoutFilesAndSaveRequest() {
         List<SaveLayerInfo> ret = new ArrayList<>();
-        for (SaveLayerInfo info: layerInfo) {
-            if (info.isDoSaveToFile() && info.getFile() == null) {
-                ret.add(info);
+        if (layerInfo != null) {
+            for (SaveLayerInfo info: layerInfo) {
+                if (info.isDoSaveToFile() && info.getFile() == null) {
+                    ret.add(info);
+                }
             }
         }
         return ret;
@@ -132,9 +134,11 @@ public class SaveLayersModel extends DefaultTableModel {
 
     public List<SaveLayerInfo> getLayersWithIllegalFilesAndSaveRequest() {
         List<SaveLayerInfo> ret = new ArrayList<>();
-        for (SaveLayerInfo info: layerInfo) {
-            if (info.isDoSaveToFile() && info.getFile() != null && info.getFile().exists() && !info.getFile().canWrite()) {
-                ret.add(info);
+        if (layerInfo != null) {
+            for (SaveLayerInfo info: layerInfo) {
+                if (info.isDoSaveToFile() && info.getFile() != null && info.getFile().exists() && !info.getFile().canWrite()) {
+                    ret.add(info);
+                }
             }
         }
         return ret;
@@ -142,10 +146,12 @@ public class SaveLayersModel extends DefaultTableModel {
 
     public List<SaveLayerInfo> getLayersWithConflictsAndUploadRequest() {
         List<SaveLayerInfo> ret = new ArrayList<>();
-        for (SaveLayerInfo info: layerInfo) {
-            AbstractModifiableLayer l = info.getLayer();
-            if (info.isDoUploadToServer() && l instanceof OsmDataLayer && !((OsmDataLayer) l).getConflicts().isEmpty()) {
-                ret.add(info);
+        if (layerInfo != null) {
+            for (SaveLayerInfo info: layerInfo) {
+                AbstractModifiableLayer l = info.getLayer();
+                if (info.isDoUploadToServer() && l instanceof OsmDataLayer && !((OsmDataLayer) l).getConflicts().isEmpty()) {
+                    ret.add(info);
+                }
             }
         }
         return ret;
@@ -153,9 +159,11 @@ public class SaveLayersModel extends DefaultTableModel {
 
     public List<SaveLayerInfo> getLayersToUpload() {
         List<SaveLayerInfo> ret = new ArrayList<>();
-        for (SaveLayerInfo info: layerInfo) {
-            if (info.isDoUploadToServer()) {
-                ret.add(info);
+        if (layerInfo != null) {
+            for (SaveLayerInfo info: layerInfo) {
+                if (info.isDoUploadToServer()) {
+                    ret.add(info);
+                }
             }
         }
         return ret;
@@ -163,9 +171,11 @@ public class SaveLayersModel extends DefaultTableModel {
 
     public List<SaveLayerInfo> getLayersToSave() {
         List<SaveLayerInfo> ret = new ArrayList<>();
-        for (SaveLayerInfo info: layerInfo) {
-            if (info.isDoSaveToFile()) {
-                ret.add(info);
+        if (layerInfo != null) {
+            for (SaveLayerInfo info: layerInfo) {
+                if (info.isDoSaveToFile()) {
+                    ret.add(info);
+                }
             }
         }
         return ret;

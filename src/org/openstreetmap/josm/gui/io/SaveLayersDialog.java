@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -164,9 +165,15 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         model.setMode(Mode.EDITING_DATA);
     }
 
-    private static class  LayerListWarningMessagePanel extends JPanel {
-        private JLabel lblMessage;
-        private JList<SaveLayerInfo> lstLayers;
+    private static class LayerListWarningMessagePanel extends JPanel {
+        private final JLabel lblMessage = new JLabel();
+        private final JList<SaveLayerInfo> lstLayers = new JList<>();
+
+        LayerListWarningMessagePanel(String msg, List<SaveLayerInfo> infos) {
+            build();
+            lblMessage.setText(msg);
+            lstLayers.setListData(infos.toArray(new SaveLayerInfo[0]));
+        }
 
         protected void build() {
             setLayout(new GridBagLayout());
@@ -176,9 +183,8 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             gc.weighty = 0.0;
-            add(lblMessage = new JLabel(), gc);
+            add(lblMessage, gc);
             lblMessage.setHorizontalAlignment(JLabel.LEFT);
-            lstLayers = new JList<>();
             lstLayers.setCellRenderer(
                     new ListCellRenderer<SaveLayerInfo>() {
                         private final DefaultListCellRenderer def = new DefaultListCellRenderer();
@@ -198,52 +204,42 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             gc.weighty = 1.0;
             add(lstLayers, gc);
         }
+    }
 
-        LayerListWarningMessagePanel(String msg, List<SaveLayerInfo> infos) {
-            build();
-            lblMessage.setText(msg);
-            lstLayers.setListData(infos.toArray(new SaveLayerInfo[0]));
+    private static void warn(String msg, List<SaveLayerInfo> infos, String title) {
+        JPanel panel = new LayerListWarningMessagePanel(msg, infos);
+        // For unit test coverage in headless mode
+        if (!GraphicsEnvironment.isHeadless()) {
+            JOptionPane.showConfirmDialog(Main.parent, panel, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    protected void warnLayersWithConflictsAndUploadRequest(List<SaveLayerInfo> infos) {
-        String msg = trn("<html>{0} layer has unresolved conflicts.<br>"
+    protected static void warnLayersWithConflictsAndUploadRequest(List<SaveLayerInfo> infos) {
+        warn(trn("<html>{0} layer has unresolved conflicts.<br>"
                 + "Either resolve them first or discard the modifications.<br>"
                 + "Layer with conflicts:</html>",
                 "<html>{0} layers have unresolved conflicts.<br>"
                 + "Either resolve them first or discard the modifications.<br>"
                 + "Layers with conflicts:</html>",
                 infos.size(),
-                infos.size());
-        JOptionPane.showConfirmDialog(
-                Main.parent,
-                new LayerListWarningMessagePanel(msg, infos),
-                tr("Unsaved data and conflicts"),
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.WARNING_MESSAGE
-        );
+                infos.size()),
+             infos, tr("Unsaved data and conflicts"));
     }
 
-    protected void warnLayersWithoutFilesAndSaveRequest(List<SaveLayerInfo> infos) {
-        String msg = trn("<html>{0} layer needs saving but has no associated file.<br>"
+    protected static void warnLayersWithoutFilesAndSaveRequest(List<SaveLayerInfo> infos) {
+        warn(trn("<html>{0} layer needs saving but has no associated file.<br>"
                 + "Either select a file for this layer or discard the changes.<br>"
                 + "Layer without a file:</html>",
                 "<html>{0} layers need saving but have no associated file.<br>"
                 + "Either select a file for each of them or discard the changes.<br>"
                 + "Layers without a file:</html>",
                 infos.size(),
-                infos.size());
-        JOptionPane.showConfirmDialog(
-                Main.parent,
-                new LayerListWarningMessagePanel(msg, infos),
-                tr("Unsaved data and missing associated file"),
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.WARNING_MESSAGE
-        );
+                infos.size()),
+             infos, tr("Unsaved data and missing associated file"));
     }
 
-    protected void warnLayersWithIllegalFilesAndSaveRequest(List<SaveLayerInfo> infos) {
-        String msg = trn("<html>{0} layer needs saving but has an associated file<br>"
+    protected static void warnLayersWithIllegalFilesAndSaveRequest(List<SaveLayerInfo> infos) {
+        warn(trn("<html>{0} layer needs saving but has an associated file<br>"
                 + "which cannot be written.<br>"
                 + "Either select another file for this layer or discard the changes.<br>"
                 + "Layer with a non-writable file:</html>",
@@ -252,17 +248,11 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 + "Either select another file for each of them or discard the changes.<br>"
                 + "Layers with non-writable files:</html>",
                 infos.size(),
-                infos.size());
-        JOptionPane.showConfirmDialog(
-                Main.parent,
-                new LayerListWarningMessagePanel(msg, infos),
-                tr("Unsaved data non-writable files"),
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.WARNING_MESSAGE
-        );
+                infos.size()),
+             infos, tr("Unsaved data non-writable files"));
     }
 
-    protected boolean confirmSaveLayerInfosOK() {
+    static boolean confirmSaveLayerInfosOK(SaveLayersModel model) {
         List<SaveLayerInfo> layerInfos = model.getLayersWithConflictsAndUploadRequest();
         if (!layerInfos.isEmpty()) {
             warnLayersWithConflictsAndUploadRequest(layerInfos);
@@ -387,12 +377,12 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     }
 
     final class SaveAndProceedAction extends AbstractAction implements PropertyChangeListener {
-        private static final int is = 24; // icon size
+        private static final int ICON_SIZE = 24;
         private static final String BASE_ICON = "BASE_ICON";
         private final transient Image save = ImageProvider.get("save").getImage();
         private final transient Image upld = ImageProvider.get("upload").getImage();
-        private final transient Image saveDis = new BufferedImage(is, is, BufferedImage.TYPE_4BYTE_ABGR);
-        private final transient Image upldDis = new BufferedImage(is, is, BufferedImage.TYPE_4BYTE_ABGR);
+        private final transient Image saveDis = new BufferedImage(ICON_SIZE, ICON_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
+        private final transient Image upldDis = new BufferedImage(ICON_SIZE, ICON_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
 
         SaveAndProceedAction() {
             // get disabled versions of icons
@@ -418,20 +408,21 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         public void redrawIcon() {
             try { // Can fail if model is not yet setup properly
                 Image base = ((ImageIcon) getValue(BASE_ICON)).getImage();
-                BufferedImage newIco = new BufferedImage(is*3, is, BufferedImage.TYPE_4BYTE_ABGR);
+                BufferedImage newIco = new BufferedImage(ICON_SIZE*3, ICON_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
                 Graphics2D g = newIco.createGraphics();
-                g.drawImage(model.getLayersToUpload().isEmpty() ? upldDis : upld, is*0, 0, is, is, null);
-                g.drawImage(model.getLayersToSave().isEmpty()   ? saveDis : save, is*1, 0, is, is, null);
-                g.drawImage(base,                                                 is*2, 0, is, is, null);
+                g.drawImage(model.getLayersToUpload().isEmpty() ? upldDis : upld, ICON_SIZE*0, 0, ICON_SIZE, ICON_SIZE, null);
+                g.drawImage(model.getLayersToSave().isEmpty()   ? saveDis : save, ICON_SIZE*1, 0, ICON_SIZE, ICON_SIZE, null);
+                g.drawImage(base,                                                 ICON_SIZE*2, 0, ICON_SIZE, ICON_SIZE, null);
                 putValue(SMALL_ICON, new ImageIcon(newIco));
             } catch (Exception e) {
+                Main.warn(e);
                 putValue(SMALL_ICON, getValue(BASE_ICON));
             }
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (!confirmSaveLayerInfosOK())
+            if (!confirmSaveLayerInfosOK(model))
                 return;
             launchSafeAndUploadTask();
         }
