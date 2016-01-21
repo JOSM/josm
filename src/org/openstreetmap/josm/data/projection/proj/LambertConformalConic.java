@@ -158,7 +158,6 @@ public class LambertConformalConic extends AbstractProj {
 
     @Override
     public double[] project(double phi, double lambda) {
-        lambda = normalizeLon(lambda);
         double sinphi = sin(phi);
         double l = (0.5*log((1+sinphi)/(1-sinphi))) - e/2*log((1+e*sinphi)/(1-e*sinphi));
         double r = f*exp(-n*l);

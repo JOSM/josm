@@ -128,7 +128,6 @@ public class AlbersEqualArea extends AbstractProj {
 
     @Override
     public double[] project(double y, double x) {
-        x = normalizeLon(x);
         x *= n;
         double rho = c - n * qsfn(Math.sin(y));
         if (rho < 0.0) {

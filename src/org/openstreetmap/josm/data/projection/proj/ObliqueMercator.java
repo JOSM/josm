@@ -287,9 +287,9 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
             } else if (diff > Math.PI) {
                 lon2 += 2.0 * Math.PI;
             }
-            centralMeridian = normalizeLon(0.5 * (lon1 + lon2) -
+            centralMeridian = normalizeLonRad(0.5 * (lon1 + lon2) -
                      Math.atan(J * Math.tan(0.5 * B * (lon1 - lon2)) / P) / B);
-            gamma0 = Math.atan(2.0 * Math.sin(B * normalizeLon(lon1 - centralMeridian)) /
+            gamma0 = Math.atan(2.0 * Math.sin(B * normalizeLonRad(lon1 - centralMeridian)) /
                      (Fp - 1.0 / Fp));
             azimuth = Math.asin(D * Math.sin(gamma0));
             rectifiedGridAngle = azimuth;
@@ -358,9 +358,12 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
         }
     }
 
+    private double normalizeLonRad(double a) {
+        return Math.toRadians(LatLon.normalizeLon(Math.toDegrees(a)));
+    }
+
     @Override
     public double[] project(double y, double x) {
-        x = normalizeLon(x);
         double u, v;
         if (Math.abs(Math.abs(y) - Math.PI/2.0) > EPSILON) {
             double Q = E / Math.pow(tsfn(y, Math.sin(y)), B);

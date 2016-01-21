@@ -101,6 +101,26 @@ public class LatLon extends Coordinate {
     }
 
     /**
+     * Make sure longitude value is within <code>[-180, 180]</code> range.
+     * @param lon the longitude in degrees
+     * @return lon plus/minus multiples of <code>360</code>, as needed to get
+     * in <code>[-180, 180]</code> range
+     */
+    public static double normalizeLon(double lon) {
+        if (lon >= -180 && lon <= 180)
+            return lon;
+        else {
+            lon = lon % 360.0;
+            if (lon > 180) {
+                return lon - 360;
+            } else if (lon < -180) {
+                return lon + 360;
+            }
+            return lon;
+        }
+    }
+
+    /**
      * Replies true if lat is in the range [-90,90] and lon is in the range [-180,180]
      *
      * @return true if lat is in the range [-90,90] and lon is in the range [-180,180]

@@ -125,7 +125,6 @@ public class TransverseMercator extends AbstractProj {
 
     @Override
     public double[] project(double y, double x) {
-        x = normalizeLon(x);
         double sinphi = Math.sin(y);
         double cosphi = Math.cos(y);
 
