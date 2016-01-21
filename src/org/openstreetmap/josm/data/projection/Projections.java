@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.projection.proj.AlbersEqualArea;
 import org.openstreetmap.josm.data.projection.proj.CassiniSoldner;
 import org.openstreetmap.josm.data.projection.proj.ClassProjFactory;
 import org.openstreetmap.josm.data.projection.proj.DoubleStereographic;
+import org.openstreetmap.josm.data.projection.proj.LambertAzimuthalEqualArea;
 import org.openstreetmap.josm.data.projection.proj.LambertConformalConic;
 import org.openstreetmap.josm.data.projection.proj.LonLat;
 import org.openstreetmap.josm.data.projection.proj.Mercator;
@@ -88,6 +89,7 @@ public final class Projections {
         registerBaseProjection("aea", AlbersEqualArea.class, "core");
         registerBaseProjection("cass", CassiniSoldner.class, "core");
         registerBaseProjection("josm:smerc", Mercator.class, "core");
+        registerBaseProjection("laea", LambertAzimuthalEqualArea.class, "core");
         registerBaseProjection("lcc", LambertConformalConic.class, "core");
         registerBaseProjection("lonlat", LonLat.class, "core");
         registerBaseProjection("omerc", ObliqueMercator.class, "core");
