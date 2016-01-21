@@ -4,13 +4,13 @@ package org.openstreetmap.josm.data.projection;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -25,7 +25,6 @@ import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
 import org.openstreetmap.josm.data.projection.proj.ICentralMeridianProvider;
-import org.openstreetmap.josm.data.projection.proj.IPolar;
 import org.openstreetmap.josm.data.projection.proj.Mercator;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
@@ -153,6 +152,16 @@ public class CustomProjection extends AbstractProjection {
             this.key = key;
             this.hasValue = hasValue;
         }
+    }
+
+    private enum Polarity { NORTH, SOUTH }
+
+    private EnumMap<Polarity, EastNorth> polesEN;
+    private EnumMap<Polarity, LatLon> polesLL;
+    {
+        polesLL = new EnumMap<>(Polarity.class);
+        polesLL.put(Polarity.NORTH, LatLon.NORTH_POLE);
+        polesLL.put(Polarity.SOUTH, LatLon.SOUTH_POLE);
     }
 
     /**
@@ -760,6 +769,27 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
+    private EastNorth getPole(Polarity whichPole) {
+        if (polesEN == null) {
+            polesEN = new EnumMap<>(Polarity.class);
+            for (Polarity p : Polarity.values()) {
+                polesEN.put(p, null);
+                LatLon ll = polesLL.get(p);
+                try {
+                    EastNorth enPole = latlon2eastNorth(ll);
+                    if (enPole.isValid()) {
+                        // project back and check if the result is somewhat reasonable
+                        LatLon llBack = eastNorth2latlon(enPole);
+                        if (llBack.isValid() && ll.greatCircleDistance(llBack) < 1000) {
+                            polesEN.put(p, enPole);
+                        }
+                    }
+                } catch (Exception e) {}
+            }
+        }
+        return polesEN.get(whichPole);
+    }
+
     @Override
     public Bounds getLatLonBoundsBox(ProjectionBounds r) {
         final int N = 10;
@@ -787,19 +817,10 @@ public class CustomProjection extends AbstractProjection {
         }
         // if the box contains one of the poles, the above method did not get
         // correct min/max latitude value
-        if (proj instanceof IPolar) {
-            IPolar polarProj = (IPolar) proj;
-            if (polarProj.hasPole(false)) {
-                EastNorth enNorthPole = latlon2eastNorth(LatLon.NORTH_POLE);
-                if (r.contains(enNorthPole)) {
-                    result.extend(LatLon.NORTH_POLE);
-                }
-            }
-            if (polarProj.hasPole(true)) {
-                EastNorth enSouthPole = latlon2eastNorth(LatLon.SOUTH_POLE);
-                if (r.contains(enSouthPole)) {
-                    result.extend(LatLon.SOUTH_POLE);
-                }
+        for (Polarity p : Polarity.values()) {
+            EastNorth pole = getPole(p);
+            if (pole != null && r.contains(pole)) {
+                result.extend(polesLL.get(p));
             }
         }
         return result;

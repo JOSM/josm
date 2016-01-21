@@ -56,7 +56,7 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * @see DoubleStereographic
  * @since 9419
  */
-public class PolarStereographic extends AbstractProj implements IPolar {
+public class PolarStereographic extends AbstractProj {
     /**
      * Maximum number of iterations for iterative computations.
      */
@@ -179,10 +179,5 @@ public class PolarStereographic extends AbstractProj implements IPolar {
         } else {
             return new Bounds(-CUT, -180, 90, 180, false);
         }
-    }
-
-    @Override
-    public boolean hasPole(boolean south) {
-        return south == southPole;
     }
 }
