@@ -142,19 +142,6 @@ public class BuildProjectionDefinitions {
             noGeocent++;
         }
 
-        // exclude entries where we don't support the base projection
-        Proj bp = Projections.getBaseProjection(proj);
-        if (!"utm".equals(proj) && bp == null) {
-            result = false;
-            noBaseProjection++;
-            if (!"geocent".equals(proj)) {
-                if (!baseProjectionMap.containsKey(proj)) {
-                    baseProjectionMap.put(proj, 0);
-                }
-                baseProjectionMap.put(proj, baseProjectionMap.get(proj)+1);
-            }
-        }
-
         // no support for NAD27 datum, as it requires a conversion database
         String datum = parameters.get(CustomProjection.Param.datum.key);
         if ("NAD27".equals(datum)) {
@@ -168,6 +155,19 @@ public class BuildProjectionDefinitions {
             noDatumgrid++;
         }
         
+        // exclude entries where we don't support the base projection
+        Proj bp = Projections.getBaseProjection(proj);
+        if (result && !"utm".equals(proj) && bp == null) {
+            result = false;
+            noBaseProjection++;
+            if (!"geocent".equals(proj)) {
+                if (!baseProjectionMap.containsKey(proj)) {
+                    baseProjectionMap.put(proj, 0);
+                }
+                baseProjectionMap.put(proj, baseProjectionMap.get(proj)+1);
+            }
+        }
+
         if (result && "omerc".equals(proj) && !parameters.containsKey(CustomProjection.Param.bounds.key)) {
             result = false;
             noOmercNoBounds++;
