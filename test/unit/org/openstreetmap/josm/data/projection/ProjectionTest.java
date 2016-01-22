@@ -111,7 +111,6 @@ public class ProjectionTest {
 
         final double EPS = 1e-6;
         testProj("lonlat", EPS, "");
-        testProj("josm:smerc", EPS, "");
         testProj("lcc", EPS, "+lat_0=34");
         testProj("lcc", EPS, "+lat_1=87 +lat_2=83.6 +lat_0=85.43");
         testProj("somerc", EPS, "+lat_0=47");
@@ -124,6 +123,7 @@ public class ProjectionTest {
         testProj("omerc", EPS, "+lat_0=4 +lonc=115 +alpha=53 +no_uoff +gamma=53.130 +bounds=112,4,116,7");
         testProj("cass", 1e-3, "+lat_0=11 +bounds=-1.0,-89,1.0,89");
         testProj("laea", 3e-3, "+lat_0=34");
+        testProj("merc", 1e-5, "");
 
         if (error2) {
             System.err.println(text2);

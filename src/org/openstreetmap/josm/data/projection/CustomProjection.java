@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.WGS84Datum;
 import org.openstreetmap.josm.data.projection.proj.ICentralMeridianProvider;
+import org.openstreetmap.josm.data.projection.proj.IScaleFactorProvider;
 import org.openstreetmap.josm.data.projection.proj.Mercator;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
@@ -272,6 +273,9 @@ public class CustomProjection extends AbstractProjection {
             s = parameters.get(Param.k_0.key);
             if (s != null) {
                 this.k0 = parseDouble(s, Param.k_0.key);
+            }
+            if (proj instanceof IScaleFactorProvider) {
+                this.k0 *= ((IScaleFactorProvider) proj).getScaleFactor();
             }
             s = parameters.get(Param.bounds.key);
             if (s != null) {
