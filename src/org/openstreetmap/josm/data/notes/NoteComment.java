@@ -27,7 +27,8 @@ public class NoteComment {
         opened,
         closed,
         reopened,
-        commented
+        commented,
+        hidden
     }
 
     /**
