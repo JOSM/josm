@@ -73,11 +73,18 @@ public abstract class AbstractProj implements Proj {
      * @see #e
      */
     protected double e2;
+    
+    /**
+     * is ellipsoid spherical?
+     * @see Ellisoid.spherical
+     */
+    protected boolean spherical;
 
     @Override
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
         e2 = params.ellps.e2;
         e = params.ellps.e;
+        spherical = params.ellps.spherical;
         //  Compute constants for the mlfn
         double t;
         en0 = C00 - e2  *  (C02 + e2  *

@@ -88,10 +88,10 @@ public final class Projections {
     static {
         registerBaseProjection("aea", AlbersEqualArea.class, "core");
         registerBaseProjection("cass", CassiniSoldner.class, "core");
-        registerBaseProjection("josm:smerc", Mercator.class, "core");
         registerBaseProjection("laea", LambertAzimuthalEqualArea.class, "core");
         registerBaseProjection("lcc", LambertConformalConic.class, "core");
         registerBaseProjection("lonlat", LonLat.class, "core");
+        registerBaseProjection("merc", Mercator.class, "core");
         registerBaseProjection("omerc", ObliqueMercator.class, "core");
         registerBaseProjection("somerc", SwissObliqueMercator.class, "core");
         registerBaseProjection("stere", PolarStereographic.class, "core");

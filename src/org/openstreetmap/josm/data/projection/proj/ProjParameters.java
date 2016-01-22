@@ -14,7 +14,7 @@ public class ProjParameters {
     public Double lat1;
     public Double lat2;
 
-    // Polar Stereographic
+    // Polar Stereographic and Mercator
     public Double lat_ts;
 
     // Oblique Mercator

@@ -131,6 +131,12 @@ public final class Ellipsoid {
     public final double eb2;
 
     /**
+     * if ellipsoid is spherical, i.e.&nbsp;the major and minor semiaxis are
+     * the same
+     */
+    public final boolean spherical;
+
+    /**
      * private constructur - use one of the create_* methods
      *
      * @param a semimajor radius of the ellipsoid axis
@@ -138,13 +144,15 @@ public final class Ellipsoid {
      * @param e first eccentricity of the ellipsoid ( = sqrt((a*a - b*b)/(a*a)))
      * @param e2 first eccentricity squared
      * @param eb2 square of the second eccentricity
+     * @param sperical if the ellipsoid is sphere
      */
-    private Ellipsoid(double a, double b, double e, double e2, double eb2) {
+    private Ellipsoid(double a, double b, double e, double e2, double eb2, boolean sperical) {
         this.a = a;
         this.b = b;
         this.e = e;
         this.e2 = e2;
         this.eb2 = eb2;
+        this.spherical = sperical;
     }
 
     /**
@@ -158,7 +166,7 @@ public final class Ellipsoid {
         double e2 = (a*a - b*b) / (a*a);
         double e = Math.sqrt(e2);
         double eb2 = e2 / (1.0 - e2);
-        return new Ellipsoid(a, b, e, e2, eb2);
+        return new Ellipsoid(a, b, e, e2, eb2, a == b);
     }
 
     /**
@@ -172,7 +180,7 @@ public final class Ellipsoid {
         double b = a * Math.sqrt(1.0 - es);
         double e = Math.sqrt(es);
         double eb2 = es / (1.0 - es);
-        return new Ellipsoid(a, b, e, es, eb2);
+        return new Ellipsoid(a, b, e, es, eb2, es == 0);
     }
 
     /**
@@ -187,7 +195,7 @@ public final class Ellipsoid {
         double e2 = f * (2 - f);
         double e = Math.sqrt(e2);
         double eb2 = e2 / (1.0 - e2);
-        return new Ellipsoid(a, b, e, e2, eb2);
+        return new Ellipsoid(a, b, e, e2, eb2, f == 0);
     }
 
     /**
@@ -333,7 +341,7 @@ public final class Ellipsoid {
         }
         return new LatLon(Math.toDegrees(lt), Math.toDegrees(lg));
     }
-    
+
     /**
      * convert ellipsoidal coordinates to cartesian coordinates
      *
