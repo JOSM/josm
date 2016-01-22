@@ -249,13 +249,17 @@ public abstract class ComboMultiSelect extends KeyedItem {
             if (value.equals(DIFFERENT))
                 return "<b>" + Utils.escapeReservedCharactersHTML(DIFFERENT) + "</b>";
 
-            final StringBuilder res = new StringBuilder("<b>");
-            res.append(Utils.escapeReservedCharactersHTML(getDisplayValue(true)))
-               .append("</b>");
-            if (getShortDescription(true) != null) {
+            String displayValue = Utils.escapeReservedCharactersHTML(getDisplayValue(true));
+            String shortDescription = getShortDescription(true);
+
+            if (displayValue.isEmpty() && (shortDescription == null || shortDescription.isEmpty()))
+                return "&nbsp;";
+
+            final StringBuilder res = new StringBuilder("<b>").append(displayValue).append("</b>");
+            if (shortDescription != null) {
                 // wrap in table to restrict the text width
                 res.append("<div style=\"width:300px; padding:0 0 5px 5px\">")
-                   .append(getShortDescription(true))
+                   .append(shortDescription)
                    .append("</div>");
             }
             return res.toString();
@@ -294,9 +298,10 @@ public abstract class ComboMultiSelect extends KeyedItem {
         // toString is mainly used to initialize the Editor
         @Override
         public String toString() {
-            if (value.equals(DIFFERENT))
+            if (DIFFERENT.equals(value))
                 return DIFFERENT;
-            return getDisplayValue(true).replaceAll("<.*>", ""); // remove additional markup, e.g. <br>
+            String displayValue = getDisplayValue(true);
+            return displayValue != null ? displayValue.replaceAll("<.*>", "") : null; // remove additional markup, e.g. <br>
         }
 
         @Override
