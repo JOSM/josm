@@ -399,5 +399,21 @@
 <29871> +proj=omerc +lat_0=4 +lonc=115 +alpha=53.31582047222222 +k=0.99984 +x_0=590476.8714630401 +y_0=442857.653094361 +gamma=53.13010236111111 +ellps=evrstSS +towgs84=-679,669,-48,0,0,0,0 +to_meter=20.11676512155263 +no_defs +bounds=109,0,120,8 <>
 # Timbalai 1948 / RSO Borneo (ft)
 <29872> +proj=omerc +lat_0=4 +lonc=115 +alpha=53.31582047222222 +k=0.99984 +x_0=590476.8727431979 +y_0=442857.6545573985 +gamma=53.13010236111111 +ellps=evrstSS +towgs84=-679,669,-48,0,0,0,0 +to_meter=0.3047994715386762 +no_defs +bounds=109,0,120,8 <>
+# NAD83(2011) / Oregon Coast zone (ft)
+<6843> +proj=omerc +lat_0=44.75 +lonc=-124.05 +alpha=5 +k=1 +x_0=-299999.9999988 +y_0=-4600000.00001208 +no_uoff +gamma=5 +ellps=GRS80 +units=ft +no_defs +bounds=-125,41,-123,47 <>
+# NAD83(2011) / Oregon Coast zone (m)
+<6842> +proj=omerc +lat_0=44.75 +lonc=-124.05 +alpha=5 +k=1 +x_0=-300000 +y_0=-4600000 +no_uoff +gamma=5 +ellps=GRS80 +units=m +no_defs +bounds=-125,41,-123,47 <>
+# NAD83(CORS96) / Oregon Coast zone (ft)
+<6841> +proj=omerc +lat_0=44.75 +lonc=-124.05 +alpha=5 +k=1 +x_0=-299999.9999988 +y_0=-4600000.00001208 +no_uoff +gamma=5 +ellps=GRS80 +units=ft +no_defs +bounds=-125,41,-123,47 <>
+# NAD83(CORS96) / Oregon Coast zone (m)
+<6840> +proj=omerc +lat_0=44.75 +lonc=-124.05 +alpha=5 +k=1 +x_0=-300000 +y_0=-4600000 +no_uoff +gamma=5 +ellps=GRS80 +units=m +no_defs +bounds=-125,41,-123,47 <>
 # Tananarive (Paris) / Laborde Grid approximation
 <29702> +proj=omerc +lat_0=-18.9 +lonc=44.10000000000001 +alpha=18.9 +k=0.9995000000000001 +x_0=400000 +y_0=800000 +gamma=18.9 +ellps=intl +towgs84=-189,-242,-91,0,0,0,0 +pm=paris +units=m +no_defs +bounds=43,-26,51,-11 <>
+# NAD83(CORS96) / Oregon Columbia River West zone (ft)
+<6809> +proj=omerc +lat_0=45.91666666666666 +lonc=-123 +alpha=295 +k=1 +x_0=7000000.00000248 +y_0=-2999999.999988 +no_uoff +gamma=295 +ellps=GRS80 +units=ft +no_defs +bounds=-125,45,-121,47 <>
+# NAD83(CORS96) / Oregon Columbia River West zone (m)
+<6808> +proj=omerc +lat_0=45.91666666666666 +lonc=-123 +alpha=295 +k=1 +x_0=7000000 +y_0=-3000000 +no_uoff +gamma=295 +ellps=GRS80 +units=m +no_defs +bounds=-125,45,-121,47 <>
+# NAD83(2011) / Oregon Columbia River West zone (ft)
+<6811> +proj=omerc +lat_0=45.91666666666666 +lonc=-123 +alpha=295 +k=1 +x_0=7000000.00000248 +y_0=-2999999.999988 +no_uoff +gamma=295 +ellps=GRS80 +units=ft +no_defs +bounds=-125,45,-121,47 <>
+# NAD83(2011) / Oregon Columbia River West zone (m)
+<6810> +proj=omerc +lat_0=45.91666666666666 +lonc=-123 +alpha=295 +k=1 +x_0=7000000 +y_0=-3000000 +no_uoff +gamma=295 +ellps=GRS80 +units=m +no_defs +bounds=-125,45,-121,47 <>
