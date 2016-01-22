@@ -82,4 +82,21 @@ public class NoteReaderTest {
         assertEquals(Action.closed, c2.getNoteAction());
         assertEquals("", c2.getText());
     }
+
+    /**
+     * Non-regression test for bug #12393.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testTicket12393() throws Exception {
+        // CHECKSTYLE.OFF: LineLength
+        new NoteReader(
+            "<note id=\"233775\" lat=\"48.2411985\" lon=\"-122.3744820\" created_at=\"2014-08-31T17:13:29Z\" closed_at=\"2015-09-06T23:35:14Z\">"+
+            "<comment action=\"opened\" timestamp=\"2014-08-31T17:13:29Z\" uid=\"7247\" user=\"goldfndr\">Jump Start Espresso | 26930</comment>"+
+            "<comment action=\"hidden\" timestamp=\"2015-09-06T23:34:26Z\" uid=\"355617\" user=\"pnorman\"></comment>"+
+            "<comment action=\"reopened\" timestamp=\"2015-09-06T23:34:38Z\" uid=\"355617\" user=\"pnorman\"></comment>"+
+            "<comment action=\"closed\" timestamp=\"2015-09-06T23:35:14Z\" uid=\"355617\" user=\"pnorman\">mapped, but inadvertently hid the note</comment>"+
+            "</note>").parse();
+        // CHECKSTYLE.ON: LineLength
+    }
 }

@@ -1359,8 +1359,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         protected void warn(Exception e) {
-            String emsg = e.getMessage() != null ? e.getMessage() : e.toString();
-            emsg = emsg.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+            String emsg = Utils.escapeReservedCharactersHTML(e.getMessage() != null ? e.getMessage() : e.toString());
             final String msg = tr(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM), url, emsg);
 
             GuiHelper.runInEDT(new Runnable() {

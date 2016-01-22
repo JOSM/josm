@@ -129,7 +129,7 @@ public class NoteReader {
 
         @Override
         public void endElement(String namespaceURI, String localName, String qName) {
-            if ("note".equals(qName)) {
+            if (notes != null && "note".equals(qName)) {
                 notes.add(thisNote);
             }
             if ("comment".equals(qName)) {
