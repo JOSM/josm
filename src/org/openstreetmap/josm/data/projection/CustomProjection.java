@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -784,7 +785,9 @@ public class CustomProjection extends AbstractProjection {
                             polesEN.put(p, enPole);
                         }
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    Main.error(e);
+                }
             }
         }
         return polesEN.get(whichPole);

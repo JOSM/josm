@@ -20,12 +20,12 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  *        U.S. Geological Survey Professional Paper 1395)</li>
  * </ul>
  *
- * @see <A HREF="http://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html">Lambert Azimuthal Equal-Area Projection on MathWorld</A>
- * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/lambert_azimuthal_equal_area.html">"Lambert_Azimuthal_Equal_Area" on RemoteSensing.org</A>
- *
  * @author Gerald Evenden  (for original code in Proj4)
  * @author Beate Stollberg
  * @author Martin Desruisseaux
+ *
+ * @see <A HREF="http://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html">Lambert Azimuthal Equal-Area Projection</A>
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/lambert_azimuthal_equal_area.html">"Lambert_Azimuthal_Equal_Area"</A>
  */
 public class LambertAzimuthalEqualArea extends AbstractProj {
 
@@ -47,7 +47,7 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
     private static final double P20 = 0.01641501294219154443;
 
     /** The projection mode. */
-    private enum Mode { OBLIQUE, EQUATORIAL, NORTH_POLE, SOUTH_POLE };
+    private enum Mode { OBLIQUE, EQUATORIAL, NORTH_POLE, SOUTH_POLE }
 
     /** The projection mode for this particular instance. */
     private Mode mode;
@@ -57,7 +57,7 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
 
     /** Coefficients for authalic latitude. */
     private double APA0, APA1, APA2;
-    
+
     private double latitudeOfOrigin;
 
     @Override
@@ -73,10 +73,10 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
     @Override
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
         super.initialize(params);
-        
+
         if (params.lat0 == null)
             throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
-        
+
         latitudeOfOrigin = Math.toRadians(params.lat0);
         /*
          * Detects the mode (oblique, etc.).
