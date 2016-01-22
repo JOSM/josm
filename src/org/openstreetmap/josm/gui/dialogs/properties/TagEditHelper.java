@@ -714,7 +714,7 @@ public class TagEditHelper {
         }
 
         protected void suggestRecentlyAddedTags(JPanel mainPanel, final FocusAdapter focus) {
-            final int tagsToShow = Math.max(PROPERTY_RECENT_TAGS_NUMBER.get(), MAX_LRU_TAGS_NUMBER);
+            final int tagsToShow = Math.min(PROPERTY_RECENT_TAGS_NUMBER.get(), MAX_LRU_TAGS_NUMBER);
             if (!(tagsToShow > 0 && !recentTags.isEmpty()))
                 return;
 
