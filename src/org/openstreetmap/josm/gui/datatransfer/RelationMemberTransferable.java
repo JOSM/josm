@@ -11,11 +11,22 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 
+/**
+ * Transferable objects for {@link RelationMemberData}.
+ * @since 9368
+ */
 public class RelationMemberTransferable implements Transferable {
 
+    /**
+     * Data flavor for {@link RelationMemberData}.
+     */
     public static final DataFlavor RELATION_MEMBER_DATA = new DataFlavor(RelationMemberData.class, RelationMemberData.class.getName());
     private final Collection<RelationMember> members;
 
+    /**
+     * Constructs a new {@code RelationMemberTransferable}.
+     * @param members list of relation members
+     */
     public RelationMemberTransferable(Collection<RelationMember> members) {
         this.members = members;
     }
