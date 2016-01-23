@@ -47,7 +47,7 @@
 # SWEREF99 13 30 / EPSG:3008 (Sweden)
 <3008> +proj=tmerc +lon_0=13.5 +x_0=150000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=12.1,55.2,14.65,62.26  <>
 # LKS-92 (Latvia TM)
-<3059> +proj=tmerc +lon_0=24 +k_0=0.9996 +x_0=500000 +y_0=-6000000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=-180,-90,180,90  <>
+<3059> +proj=tmerc +lon_0=24 +k_0=0.9996 +x_0=500000 +y_0=-6000000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=-18,54,30,60  <>
 # Lambert Zone (Estonia)
 <3301> +proj=lcc +lat_0=57.51755393055556 +lat_1=59.333333333333336 +lat_2=58 +lon_0=24 +x_0=500000 +y_0=6375000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=21.64,56.05,28.58,61.13  <>
 # Belgian Lambert 2008
