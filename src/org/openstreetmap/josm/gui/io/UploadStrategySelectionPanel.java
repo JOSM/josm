@@ -33,6 +33,7 @@ import javax.swing.event.DocumentListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmApi;
 
 /**
@@ -225,7 +226,8 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         gc.weighty = 1.0;
         add(new JPanel(), gc);
 
-        int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize();
+        Capabilities capabilities = OsmApi.getOsmApi().getCapabilities();
+        int maxChunkSize = capabilities != null ? capabilities.getMaxChangesetSize() : -1;
         pnlMultiChangesetPolicyPanel.setVisible(
                 maxChunkSize > 0 && numUploadedObjects > maxChunkSize
         );
