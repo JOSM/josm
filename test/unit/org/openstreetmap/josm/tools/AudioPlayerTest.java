@@ -18,8 +18,8 @@ import org.openstreetmap.josm.TestUtils;
  */
 public class AudioPlayerTest {
 
-    // We play wav files of about 4 seconds + pause, so define timeout at 10 seconds
-    private static final long MAX_DURATION = 10000;
+    // We play wav files of about 4 seconds + pause, so define timeout at 12 seconds
+    private static final long MAX_DURATION = 12000;
 
     /**
      * Setup test.
