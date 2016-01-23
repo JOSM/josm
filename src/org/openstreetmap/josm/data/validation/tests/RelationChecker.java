@@ -184,6 +184,7 @@ public class RelationChecker extends Test {
             case WAY:
                 return r.types.contains(TaggingPresetType.WAY);
             case MULTIPOLYGON:
+                return r.types.contains(TaggingPresetType.MULTIPOLYGON);
             case RELATION:
                 return r.types.contains(TaggingPresetType.RELATION);
             default: // not matching type
