@@ -39,7 +39,7 @@
 # UTM France (DOM) Martinique
 <2973> +proj=utm +zone=20 +ellps=intl +towgs84=126.926,547.939,130.409,-2.7867,5.16124,-0.85844,13.82265 +units=m +bounds=-61.25,14.25,-60.725,15.025  <>
 # UTM France (DOM) Reunion
-<2975> +proj=utm +zone=40 +south +ellps=GRS80 +nadgrids=null +units=m +bounds=37.58,-25.92,58.27,-10.6  <>
+<2975> +proj=utm +zone=40 +south +ellps=GRS80 +nadgrids=null +units=m +bounds=51,-25.92,58.27,-10.6  <>
 # Monte Mario / Italy zone 1
 <3003> +proj=tmerc +lat_0=0 +lon_0=9 +k=0.9996 +x_0=1500000 +y_0=0 +ellps=intl +units=m +bounds=5,36,13,48 <>
 # Monte Mario / Italy zone 2
