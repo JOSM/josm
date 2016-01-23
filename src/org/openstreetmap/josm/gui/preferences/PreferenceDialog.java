@@ -10,7 +10,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -83,7 +83,7 @@ public class PreferenceDialog extends JDialog {
         this.setMinimumSize(new Dimension(600, 350));
         // set the maximum width to the current screen. If the dialog is opened on a
         // smaller screen than before, this will reset the stored preference.
-        this.setMaximumSize(Toolkit.getDefaultToolkit().getScreenSize());
+        this.setMaximumSize(GuiHelper.getScreenSize());
     }
 
     /**

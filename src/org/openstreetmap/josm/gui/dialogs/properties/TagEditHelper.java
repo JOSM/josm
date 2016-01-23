@@ -13,7 +13,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -504,7 +503,7 @@ public class TagEditHelper {
 
         private void selectACComboBoxSavingUnixBuffer(AutoCompletingComboBox cb) {
             // select combobox with saving unix system selection (middle mouse paste)
-            Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
+            Clipboard sysSel = GuiHelper.getSystemSelection();
             if (sysSel != null) {
                 Transferable old = Utils.getTransferableContent(sysSel);
                 cb.requestFocusInWindow();

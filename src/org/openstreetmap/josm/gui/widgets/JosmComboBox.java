@@ -3,8 +3,6 @@ package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -23,6 +21,8 @@ import javax.swing.JList;
 import javax.swing.JTextField;
 import javax.swing.plaf.basic.ComboPopup;
 import javax.swing.text.JTextComponent;
+
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * Class overriding each {@link JComboBox} in JOSM to control consistently the number of displayed items at once.<br>
@@ -166,7 +166,7 @@ public class JosmComboBox<E> extends JComboBox<E> {
     protected final void init(E prototype) {
         if (prototype != null) {
             setPrototypeDisplayValue(prototype);
-            int screenHeight = GraphicsEnvironment.isHeadless() ? 600 : Toolkit.getDefaultToolkit().getScreenSize().height;
+            int screenHeight = GuiHelper.getScreenSize().height;
             // Compute maximum number of visible items based on the preferred size of the combo box.
             // This assumes that items have the same height as the combo box, which is not granted by the look and feel
             int maxsize = (screenHeight/getPreferredSize().height) / 2;

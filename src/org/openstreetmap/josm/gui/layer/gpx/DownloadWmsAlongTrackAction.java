@@ -3,11 +3,11 @@ package org.openstreetmap.josm.gui.layer.gpx;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -102,9 +102,11 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
     }
 
     protected AbstractTileSourceLayer askedLayer() {
-        Collection<AbstractTileSourceLayer> targetLayers = Main.map.mapView.getLayersOfType(AbstractTileSourceLayer.class);
+        List<AbstractTileSourceLayer> targetLayers = Main.map.mapView.getLayersOfType(AbstractTileSourceLayer.class);
         if (targetLayers.isEmpty()) {
-            warnNoImageryLayers();
+            if (!GraphicsEnvironment.isHeadless()) {
+                warnNoImageryLayers();
+            }
             return null;
         }
         JosmComboBox<AbstractTileSourceLayer> layerList = new JosmComboBox<>(targetLayers.toArray(new AbstractTileSourceLayer[0]));
@@ -113,6 +115,10 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
         JPanel pnl = new JPanel(new GridBagLayout());
         pnl.add(new JLabel(tr("Please select the imagery layer.")), GBC.eol());
         pnl.add(layerList, GBC.eol());
+        if (GraphicsEnvironment.isHeadless()) {
+            // return first layer in headless mode, for unit tests
+            return targetLayers.get(0);
+        }
         ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Select imagery layer"), new String[]{tr("Download"), tr("Cancel")});
         ed.setButtonIcons(new String[]{"dialogs/down", "cancel"});
         ed.setContent(pnl);

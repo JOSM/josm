@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -20,6 +19,7 @@ import javax.swing.border.EtchedBorder;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
@@ -89,7 +89,7 @@ public class AlignImageryPanel extends JPanel {
         BooleanProperty showAgain = new BooleanProperty("message.imagery.nagPanel." + infoToAdd.getUrl(), true);
         if (Main.isDisplayingMapView() && showAgain.get() && !infoToAdd.isGeoreferenceValid()) {
             if (Main.map.getTopPanel(AlignImageryPanel.class) == null) {
-                double w = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+                double w = GuiHelper.getScreenSize().getWidth();
                 AlignImageryPanel p = new AlignImageryPanel(w > 1300, showAgain, infoToAdd);
                 Main.map.addTopPanel(p);
             }

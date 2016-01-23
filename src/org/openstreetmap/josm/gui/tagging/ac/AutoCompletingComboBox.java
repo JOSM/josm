@@ -2,8 +2,6 @@
 package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.awt.Component;
-import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.FocusEvent;
@@ -25,6 +23,7 @@ import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -132,7 +131,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
             }
             final JTextComponent editorComponent = comboBox.getEditorComponent();
             // save unix system selection (middle mouse paste)
-            Clipboard sysSel = GraphicsEnvironment.isHeadless() ? null : Toolkit.getDefaultToolkit().getSystemSelection();
+            Clipboard sysSel = GuiHelper.getSystemSelection();
             if (sysSel != null) {
                 Transferable old = Utils.getTransferableContent(sysSel);
                 editorComponent.select(start, end);
@@ -197,7 +196,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
                             Main.map.keyDetector.setEnabled(false);
                         }
                         // save unix system selection (middle mouse paste)
-                        Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
+                        Clipboard sysSel = GuiHelper.getSystemSelection();
                         if (sysSel != null) {
                             Transferable old = Utils.getTransferableContent(sysSel);
                             editorComponent.selectAll();

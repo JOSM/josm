@@ -413,7 +413,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
          */
         private Popup popupCreatePopup(Component content, MouseState ms) {
             Point p = mv.getLocationOnScreen();
-            Dimension scrn = Toolkit.getDefaultToolkit().getScreenSize();
+            Dimension scrn = GuiHelper.getScreenSize();
 
             // Create a JScrollPane around the content, in case there's not enough space
             JScrollPane sp = GuiHelper.embedInVerticalScrollPane(content);

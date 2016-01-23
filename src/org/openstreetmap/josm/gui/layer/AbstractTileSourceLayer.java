@@ -5,10 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Point;
@@ -83,6 +83,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.WMSLayerImporter;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -669,13 +670,9 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     }
 
     protected int estimateTileCacheSize() {
-        // Default screen size in headless mode, for unit tests
-        int height = 800;
-        int width = 600;
-        if (!GraphicsEnvironment.isHeadless()) {
-            height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-            width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-        }
+        Dimension screenSize = GuiHelper.getScreenSize();
+        int height = screenSize.height;
+        int width = screenSize.width;
         int tileSize = 256; // default tile size
         if (tileSource != null) {
             tileSize = tileSource.getTileSize();
