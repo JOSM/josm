@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.download;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -14,6 +13,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.bbox.BBoxChooser;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * JComponent that displays the slippy map tiles.
@@ -58,7 +58,7 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
             int w, h;
 
             // retrieve the size of the display
-            Dimension iScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            Dimension iScreenSize = GuiHelper.getScreenSize();
 
             if (iDownloadDialogDimension == null) {
                 // enlarge: make the each dimension 90% of the absolute display size

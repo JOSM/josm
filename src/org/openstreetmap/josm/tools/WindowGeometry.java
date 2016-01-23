@@ -11,7 +11,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +18,7 @@ import java.util.regex.Pattern;
 import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * This is a helper class for persisting the geometry of a JOSM window to the preference store
@@ -467,7 +467,7 @@ public class WindowGeometry {
      * @return size of the full virtual screen
      */
     public static Rectangle getFullScreenInfo() {
-        return new Rectangle(new Point(0, 0), Toolkit.getDefaultToolkit().getScreenSize());
+        return new Rectangle(new Point(0, 0), GuiHelper.getScreenSize());
     }
 
     @Override

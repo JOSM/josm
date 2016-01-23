@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,7 +81,7 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
         GPXSettingsPanel panel = new GPXSettingsPanel(layers.get(0).getName(), hasLocal, hasNonlocal);
         JScrollPane scrollpane = GuiHelper.embedInVerticalScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+        int screenHeight = GuiHelper.getScreenSize().height;
         if (screenHeight < 700) {
             // to fit on screen 800x600
             scrollpane.setPreferredSize(new Dimension(panel.getPreferredSize().width, Math.min(panel.getPreferredSize().height, 450)));

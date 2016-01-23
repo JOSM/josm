@@ -8,7 +8,6 @@ import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -20,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -83,7 +83,7 @@ public class FullscreenToggleAction extends ToggleAction {
 
         if (selected) {
             prevBounds = frame.getBounds();
-            frame.setBounds(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+            frame.setBounds(new Rectangle(GuiHelper.getScreenSize()));
         }
 
         // we cannot use hw-exclusive fullscreen mode in MS-Win, as long

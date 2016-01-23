@@ -3,8 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
+import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +11,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public final class OsmUrlToBounds {
     private static final String SHORTLINK_PREFIX = "http://osm.org/go/";
@@ -190,19 +190,12 @@ public final class OsmUrlToBounds {
 
     public static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
         int tileSizeInPixels = 256;
-        int height;
-        int width;
-        try {
-            height = Toolkit.getDefaultToolkit().getScreenSize().height;
-            width = Toolkit.getDefaultToolkit().getScreenSize().width;
-            if (Main.isDisplayingMapView()) {
-                height = Main.map.mapView.getHeight();
-                width = Main.map.mapView.getWidth();
-            }
-        } catch (HeadlessException he) {
-            // in headless mode, when running tests
-            height = 480;
-            width = 640;
+        Dimension screenSize = GuiHelper.getScreenSize();
+        int height = screenSize.height;
+        int width = screenSize.width;
+        if (Main.isDisplayingMapView()) {
+            height = Main.map.mapView.getHeight();
+            width = Main.map.mapView.getWidth();
         }
         double scale = (1 << zoom) * tileSizeInPixels / (2 * Math.PI * Ellipsoid.WGS84.a);
         double deltaX = width / 2.0 / scale;

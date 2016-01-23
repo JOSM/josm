@@ -10,11 +10,13 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
@@ -381,5 +383,28 @@ public final class GuiHelper {
     public static void setBackgroundReadable(JComponent c, Color background) {
         c.setBackground(background);
         c.setForeground(ColorHelper.getForegroundColor(background));
+    }
+
+    /**
+     * Gets the size of the screen. On systems with multiple displays, the primary display is used.
+     * This method returns always 800x600 in headless mode (useful for unit tests).
+     * @return the size of this toolkit's screen, in pixels, or 800x600
+     * @see Toolkit#getScreenSize
+     * @since 9576
+     */
+    public static Dimension getScreenSize() {
+        return GraphicsEnvironment.isHeadless() ? new Dimension(800, 600) : Toolkit.getDefaultToolkit().getScreenSize();
+    }
+
+    /**
+     * Gets the singleton instance of the system selection as a <code>Clipboard</code> object.
+     * This allows an application to read and modify the current, system-wide selection.
+     * @return the system selection as a <code>Clipboard</code>, or <code>null</code> if the native platform does not
+     *         support a system selection <code>Clipboard</code> or if GraphicsEnvironment.isHeadless() returns true
+     * @see Toolkit#getSystemSelection
+     * @since 9576
+     */
+    public static Clipboard getSystemSelection() {
+        return GraphicsEnvironment.isHeadless() ? null : Toolkit.getDefaultToolkit().getSystemSelection();
     }
 }

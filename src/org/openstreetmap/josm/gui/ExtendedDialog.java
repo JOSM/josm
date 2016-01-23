@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -437,7 +436,7 @@ public class ExtendedDialog extends JDialog {
      * @return Dimension Size of the parent Component or 2/3 of screen size if not available
      */
     protected Dimension findMaxDialogSize() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension screenSize = GuiHelper.getScreenSize();
         Dimension x = new Dimension(screenSize.width*2/3, screenSize.height*2/3);
         if (parent != null) {
             x = JOptionPane.getFrameForComponent(parent).getSize();
@@ -625,7 +624,7 @@ public class ExtendedDialog extends JDialog {
     private static JMultilineLabel string2label(String msg) {
         JMultilineLabel lbl = new JMultilineLabel(msg);
         // Make it not wider than 1/2 of the screen
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension screenSize = GuiHelper.getScreenSize();
         lbl.setMaxWidth(screenSize.width/2);
         // Disable default Enter key binding to allow dialog's one (then enables to hit default button from here)
         lbl.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), new Object());
