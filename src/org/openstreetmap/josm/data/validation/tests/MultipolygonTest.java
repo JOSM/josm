@@ -155,142 +155,192 @@ public class MultipolygonTest extends Test {
     public void visit(Relation r) {
         if (r.isMultipolygon()) {
             checkMembersAndRoles(r);
+            checkOuterWay(r);
 
-            Multipolygon polygon = MultipolygonCache.getInstance().get(Main.map.mapView, r);
+            // Rest of checks is only for complete multipolygons
+            if (!r.hasIncompleteMembers()) {
+                Multipolygon polygon = MultipolygonCache.getInstance().get(Main.map.mapView, r);
 
-            boolean hasOuterWay = false;
-            for (RelationMember m : r.getMembers()) {
-                if ("outer".equals(m.getRole())) {
-                    hasOuterWay = true;
-                    break;
-                }
+                // Create new multipolygon using the logics from CreateMultipolygonAction and see if roles match.
+                checkMemberRoleCorrectness(r);
+                checkStyleConsistency(r, polygon);
+                checkGeometry(r, polygon);
             }
-            if (!hasOuterWay) {
-                addError(r, new TestError(this, Severity.WARNING, tr("No outer way for multipolygon"), MISSING_OUTER_WAY, r));
+        }
+    }
+
+    /**
+     * Checks that multipolygon has at least an outer way:<ul>
+     * <li>{@link #MISSING_OUTER_WAY}: No outer way for multipolygon</li>
+     * </ul>
+     * @param r relation
+     */
+    private void checkOuterWay(Relation r) {
+        boolean hasOuterWay = false;
+        for (RelationMember m : r.getMembers()) {
+            if ("outer".equals(m.getRole())) {
+                hasOuterWay = true;
+                break;
             }
+        }
+        if (!hasOuterWay) {
+            addError(r, new TestError(this, Severity.WARNING, tr("No outer way for multipolygon"), MISSING_OUTER_WAY, r));
+        }
+    }
 
-            if (r.hasIncompleteMembers()) {
-                return; // Rest of checks is only for complete multipolygons
-            }
-
-            // Create new multipolygon using the logics from CreateMultipolygonAction and see if roles match.
-            final Pair<Relation, Relation> newMP = CreateMultipolygonAction.createMultipolygonRelation(r.getMemberPrimitives(Way.class), false);
-            if (newMP != null) {
-                for (RelationMember member : r.getMembers()) {
-                    final Collection<RelationMember> memberInNewMP = newMP.b.getMembersFor(Collections.singleton(member.getMember()));
-                    if (memberInNewMP != null && !memberInNewMP.isEmpty()) {
-                        final String roleInNewMP = memberInNewMP.iterator().next().getRole();
-                        if (!member.getRole().equals(roleInNewMP)) {
-                            List<OsmPrimitive> l = new ArrayList<>();
-                            l.add(r);
-                            l.add(member.getMember());
-                            addError(r, new TestError(this, Severity.WARNING, RelationChecker.ROLE_VERIF_PROBLEM_MSG,
-                                    tr("Role for ''{0}'' should be ''{1}''",
-                                            member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
-                                    MessageFormat.format("Role for ''{0}'' should be ''{1}''",
-                                            member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
-                                    WRONG_MEMBER_ROLE, l, Collections.singleton(member.getMember())));
-                        }
-                    }
-                }
-            }
-
-            if (styles != null && !"boundary".equals(r.get("type"))) {
-                AreaElement area = ElemStyles.getAreaElemStyle(r, false);
-                boolean areaStyle = area != null;
-                // If area style was not found for relation then use style of ways
-                if (area == null) {
-                    for (Way w : polygon.getOuterWays()) {
-                        area = ElemStyles.getAreaElemStyle(w, true);
-                        if (area != null) {
-                            break;
-                        }
-                    }
-                    if (area == null) {
-                        addError(r, new TestError(this, Severity.OTHER, tr("No area style for multipolygon"), NO_STYLE, r));
-                    } else {
-                        /* old style multipolygon - solve: copy tags from outer way to multipolygon */
-                        addError(r, new TestError(this, Severity.WARNING,
-                                trn("Multipolygon relation should be tagged with area tags and not the outer way",
-                                        "Multipolygon relation should be tagged with area tags and not the outer ways",
-                                        polygon.getOuterWays().size()),
-                           NO_STYLE_POLYGON, r));
-                    }
-                }
-
-                if (area != null) {
-                    for (Way wInner : polygon.getInnerWays()) {
-                        AreaElement areaInner = ElemStyles.getAreaElemStyle(wInner, false);
-
-                        if (areaInner != null && area.equals(areaInner)) {
-                            List<OsmPrimitive> l = new ArrayList<>();
-                            l.add(r);
-                            l.add(wInner);
-                            addError(r, new TestError(this, Severity.OTHER,
-                                    tr("With the currently used mappaint style the style for inner way equals the multipolygon style"),
-                                    INNER_STYLE_MISMATCH, l, Collections.singletonList(wInner)));
-                        }
-                    }
-                    for (Way wOuter : polygon.getOuterWays()) {
-                        AreaElement areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
-                        if (areaOuter != null) {
-                            List<OsmPrimitive> l = new ArrayList<>();
-                            l.add(r);
-                            l.add(wOuter);
-                            if (!area.equals(areaOuter)) {
-                                addError(r, new TestError(this, Severity.WARNING, !areaStyle ? tr("Style for outer way mismatches")
-                                : tr("With the currently used mappaint style(s) the style for outer way mismatches polygon"),
-                                OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
-                            } else if (areaStyle) { /* style on outer way of multipolygon, but equal to polygon */
-                                addError(r, new TestError(this, Severity.WARNING, tr("Area style on outer way"), OUTER_STYLE,
-                                l, Collections.singletonList(wOuter)));
-                            }
-                        }
-                    }
-                }
-            }
-
-            List<Node> openNodes = polygon.getOpenEnds();
-            if (!openNodes.isEmpty()) {
-                List<OsmPrimitive> primitives = new LinkedList<>();
-                primitives.add(r);
-                primitives.addAll(openNodes);
-                Arrays.asList(openNodes, r);
-                addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY,
-                        primitives, openNodes));
-            }
-
-            // For painting is used Polygon class which works with ints only. For validation we need more precision
-            List<GeneralPath> outerPolygons = createPolygons(polygon.getOuterPolygons());
-            for (Multipolygon.PolyData pdInner : polygon.getInnerPolygons()) {
-                boolean outside = true;
-                boolean crossing = false;
-                Multipolygon.PolyData outerWay = null;
-                for (int i = 0; i < polygon.getOuterPolygons().size(); i++) {
-                    GeneralPath outer = outerPolygons.get(i);
-                    Intersection intersection = getPolygonIntersection(outer, pdInner.getNodes());
-                    outside = outside & intersection == Intersection.OUTSIDE;
-                    if (intersection == Intersection.CROSSING) {
-                        crossing = true;
-                        outerWay = polygon.getOuterPolygons().get(i);
-                    }
-                }
-                if (outside || crossing) {
-                    List<List<Node>> highlights = new ArrayList<>();
-                    highlights.add(pdInner.getNodes());
-                    if (outside) {
-                        addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"),
-                                INNER_WAY_OUTSIDE, Collections.singletonList(r), highlights));
-                    } else if (outerWay != null) {
-                        highlights.add(outerWay.getNodes());
-                        addError(r, new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"),
-                                CROSSING_WAYS, Collections.singletonList(r), highlights));
+    /**
+     * Create new multipolygon using the logics from CreateMultipolygonAction and see if roles match:<ul>
+     * <li>{@link #WRONG_MEMBER_ROLE}: Role for ''{0}'' should be ''{1}''</li>
+     * </ul>
+     * @param r relation
+     */
+    private void checkMemberRoleCorrectness(Relation r) {
+        final Pair<Relation, Relation> newMP = CreateMultipolygonAction.createMultipolygonRelation(r.getMemberPrimitives(Way.class), false);
+        if (newMP != null) {
+            for (RelationMember member : r.getMembers()) {
+                final Collection<RelationMember> memberInNewMP = newMP.b.getMembersFor(Collections.singleton(member.getMember()));
+                if (memberInNewMP != null && !memberInNewMP.isEmpty()) {
+                    final String roleInNewMP = memberInNewMP.iterator().next().getRole();
+                    if (!member.getRole().equals(roleInNewMP)) {
+                        List<OsmPrimitive> l = new ArrayList<>();
+                        l.add(r);
+                        l.add(member.getMember());
+                        addError(r, new TestError(this, Severity.WARNING, RelationChecker.ROLE_VERIF_PROBLEM_MSG,
+                                tr("Role for ''{0}'' should be ''{1}''",
+                                        member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
+                                MessageFormat.format("Role for ''{0}'' should be ''{1}''",
+                                        member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
+                                WRONG_MEMBER_ROLE, l, Collections.singleton(member.getMember())));
                     }
                 }
             }
         }
     }
 
+    /**
+     * Various style-related checks:<ul>
+     * <li>{@link #NO_STYLE_POLYGON}: Multipolygon relation should be tagged with area tags and not the outer way</li>
+     * <li>{@link #INNER_STYLE_MISMATCH}: With the currently used mappaint style the style for inner way equals the multipolygon style</li>
+     * <li>{@link #OUTER_STYLE_MISMATCH}: Style for outer way mismatches</li>
+     * <li>{@link #OUTER_STYLE}: Area style on outer way</li>
+     * </ul>
+     * @param r relation
+     * @param polygon multipolygon
+     */
+    private void checkStyleConsistency(Relation r, Multipolygon polygon) {
+        if (styles != null && !"boundary".equals(r.get("type"))) {
+            AreaElement area = ElemStyles.getAreaElemStyle(r, false);
+            boolean areaStyle = area != null;
+            // If area style was not found for relation then use style of ways
+            if (area == null) {
+                for (Way w : polygon.getOuterWays()) {
+                    area = ElemStyles.getAreaElemStyle(w, true);
+                    if (area != null) {
+                        break;
+                    }
+                }
+                if (area == null) {
+                    addError(r, new TestError(this, Severity.OTHER, tr("No area style for multipolygon"), NO_STYLE, r));
+                } else {
+                    /* old style multipolygon - solve: copy tags from outer way to multipolygon */
+                    addError(r, new TestError(this, Severity.WARNING,
+                            trn("Multipolygon relation should be tagged with area tags and not the outer way",
+                                    "Multipolygon relation should be tagged with area tags and not the outer ways",
+                                    polygon.getOuterWays().size()),
+                       NO_STYLE_POLYGON, r));
+                }
+            }
+
+            if (area != null) {
+                for (Way wInner : polygon.getInnerWays()) {
+                    AreaElement areaInner = ElemStyles.getAreaElemStyle(wInner, false);
+
+                    if (areaInner != null && area.equals(areaInner)) {
+                        List<OsmPrimitive> l = new ArrayList<>();
+                        l.add(r);
+                        l.add(wInner);
+                        addError(r, new TestError(this, Severity.OTHER,
+                                tr("With the currently used mappaint style the style for inner way equals the multipolygon style"),
+                                INNER_STYLE_MISMATCH, l, Collections.singletonList(wInner)));
+                    }
+                }
+                for (Way wOuter : polygon.getOuterWays()) {
+                    AreaElement areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
+                    if (areaOuter != null) {
+                        List<OsmPrimitive> l = new ArrayList<>();
+                        l.add(r);
+                        l.add(wOuter);
+                        if (!area.equals(areaOuter)) {
+                            addError(r, new TestError(this, Severity.WARNING, !areaStyle ? tr("Style for outer way mismatches")
+                            : tr("With the currently used mappaint style(s) the style for outer way mismatches polygon"),
+                            OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
+                        } else if (areaStyle) { /* style on outer way of multipolygon, but equal to polygon */
+                            addError(r, new TestError(this, Severity.WARNING, tr("Area style on outer way"), OUTER_STYLE,
+                            l, Collections.singletonList(wOuter)));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Various geometry-related checks:<ul>
+     * <li>{@link #NON_CLOSED_WAY}: Multipolygon is not closed</li>
+     * <li>{@link #INNER_WAY_OUTSIDE}: Multipolygon inner way is outside</li>
+     * <li>{@link #CROSSING_WAYS}: Intersection between multipolygon ways</li>
+     * </ul>
+     * @param r relation
+     * @param polygon multipolygon
+     */
+    private void checkGeometry(Relation r, Multipolygon polygon) {
+        List<Node> openNodes = polygon.getOpenEnds();
+        if (!openNodes.isEmpty()) {
+            List<OsmPrimitive> primitives = new LinkedList<>();
+            primitives.add(r);
+            primitives.addAll(openNodes);
+            Arrays.asList(openNodes, r);
+            addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY,
+                    primitives, openNodes));
+        }
+
+        // For painting is used Polygon class which works with ints only. For validation we need more precision
+        List<GeneralPath> outerPolygons = createPolygons(polygon.getOuterPolygons());
+        for (Multipolygon.PolyData pdInner : polygon.getInnerPolygons()) {
+            boolean outside = true;
+            boolean crossing = false;
+            Multipolygon.PolyData outerWay = null;
+            for (int i = 0; i < polygon.getOuterPolygons().size(); i++) {
+                GeneralPath outer = outerPolygons.get(i);
+                Intersection intersection = getPolygonIntersection(outer, pdInner.getNodes());
+                outside = outside & intersection == Intersection.OUTSIDE;
+                if (intersection == Intersection.CROSSING) {
+                    crossing = true;
+                    outerWay = polygon.getOuterPolygons().get(i);
+                }
+            }
+            if (outside || crossing) {
+                List<List<Node>> highlights = new ArrayList<>();
+                highlights.add(pdInner.getNodes());
+                if (outside) {
+                    addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"),
+                            INNER_WAY_OUTSIDE, Collections.singletonList(r), highlights));
+                } else if (outerWay != null) {
+                    highlights.add(outerWay.getNodes());
+                    addError(r, new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"),
+                            CROSSING_WAYS, Collections.singletonList(r), highlights));
+                }
+            }
+        }
+    }
+
+    /**
+     * Check for:<ul>
+     * <li>{@link #WRONG_MEMBER_ROLE}: No useful role for multipolygon member</li>
+     * <li>{@link #WRONG_MEMBER_TYPE}: Non-Way in multipolygon</li>
+     * </ul>
+     * @param r relation
+     */
     private void checkMembersAndRoles(Relation r) {
         for (RelationMember rm : r.getMembers()) {
             if (rm.isWay()) {
