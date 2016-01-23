@@ -212,11 +212,11 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     }
 
     /**
-     * Replies the current dataset
+     * Replies the current dataset.
      *
      * @return the current dataset. null, if no current dataset exists
      */
-    protected static DataSet getCurrentDataSet() {
+    public static DataSet getCurrentDataSet() {
         return Main.main != null ? Main.main.getCurrentDataSet() : null;
     }
 
