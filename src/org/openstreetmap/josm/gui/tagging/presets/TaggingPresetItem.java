@@ -87,7 +87,9 @@ public abstract class TaggingPresetItem {
         for (String type : Arrays.asList(types.split(","))) {
             try {
                 TaggingPresetType presetType = TaggingPresetType.fromString(type);
-                result.add(presetType);
+                if (presetType != null) {
+                    result.add(presetType);
+                }
             } catch (IllegalArgumentException e) {
                 throw new SAXException(tr("Unknown type: {0}", type), e);
             }

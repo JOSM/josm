@@ -16,7 +16,9 @@ public enum TaggingPresetType {
     /** Relation */
     RELATION(/* ICON */ "Mf_relation", "relation"),
     /** Closed way */
-    CLOSEDWAY(/* ICON */ "Mf_closedway", "closedway");
+    CLOSEDWAY(/* ICON */ "Mf_closedway", "closedway"),
+    /** Multipolygon */
+    MULTIPOLYGON(/* ICON */ "multipoly_create", "multipolygon"); // FIXME find a better multipolygon icon
     private final String iconName;
     private final String name;
 
@@ -56,11 +58,16 @@ public enum TaggingPresetType {
      * @return the {@code TaggingPresetType} of {@code type}
      */
     public static TaggingPresetType forPrimitiveType(OsmPrimitiveType type) {
-        if (type == OsmPrimitiveType.NODE) return NODE;
-        if (type == OsmPrimitiveType.WAY) return WAY;
-        if (type == OsmPrimitiveType.CLOSEDWAY) return CLOSEDWAY;
-        if (type == OsmPrimitiveType.RELATION || type == OsmPrimitiveType.MULTIPOLYGON)
-                return RELATION;
+        if (type == OsmPrimitiveType.NODE)
+            return NODE;
+        if (type == OsmPrimitiveType.WAY)
+            return WAY;
+        if (type == OsmPrimitiveType.CLOSEDWAY)
+            return CLOSEDWAY;
+        if (type == OsmPrimitiveType.MULTIPOLYGON)
+            return TaggingPresetType.MULTIPOLYGON;
+        if (type == OsmPrimitiveType.RELATION)
+            return RELATION;
         throw new IllegalArgumentException("Unexpected primitive type: " + type);
     }
 
