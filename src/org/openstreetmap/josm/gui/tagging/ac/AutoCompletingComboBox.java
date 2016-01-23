@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
@@ -131,7 +132,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
             }
             final JTextComponent editorComponent = comboBox.getEditorComponent();
             // save unix system selection (middle mouse paste)
-            Clipboard sysSel = Toolkit.getDefaultToolkit().getSystemSelection();
+            Clipboard sysSel = GraphicsEnvironment.isHeadless() ? null : Toolkit.getDefaultToolkit().getSystemSelection();
             if (sysSel != null) {
                 Transferable old = Utils.getTransferableContent(sysSel);
                 editorComponent.select(start, end);

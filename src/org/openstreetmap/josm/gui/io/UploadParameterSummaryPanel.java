@@ -16,6 +16,7 @@ import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -66,7 +67,8 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         // check whether we can use one changeset only or whether we have to use multiple changesets
         //
         boolean useOneChangeset = true;
-        int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize();
+        Capabilities capabilities = OsmApi.getOsmApi().getCapabilities();
+        int maxChunkSize = capabilities != null ? capabilities.getMaxChangesetSize() : -1;
         if (maxChunkSize > 0 && numObjects > maxChunkSize) {
             useOneChangeset = false;
         }
