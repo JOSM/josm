@@ -105,7 +105,7 @@ public final class Projections {
         ellipsoids.put("bess_nam", Ellipsoid.BesselNamibia);
         ellipsoids.put("clrk66", Ellipsoid.Clarke1866);
         ellipsoids.put("clrk80", Ellipsoid.Clarke1880);
-        ellipsoids.put("clarkeIGN", Ellipsoid.ClarkeIGN);
+        ellipsoids.put("clrk80ign", Ellipsoid.ClarkeIGN);
         ellipsoids.put("evrstSS", Ellipsoid.EverestSabahSarawak);
         ellipsoids.put("intl", Ellipsoid.Hayford);
         ellipsoids.put("helmert", Ellipsoid.Helmert);
