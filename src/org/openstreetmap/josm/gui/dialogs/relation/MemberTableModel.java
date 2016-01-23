@@ -53,6 +53,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
      **/
     private final transient List<RelationMember> members;
     private transient List<WayConnectionType> connectionType;
+    private final Relation relation;
 
     private DefaultListSelectionModel listSelectionModel;
     private final CopyOnWriteArrayList<IMemberModelListener> listeners;
@@ -64,12 +65,14 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
 
     /**
      * constructor
+     * @param relation relation
      * @param layer data layer
      * @param presetHandler tagging preset handler
      */
-    public MemberTableModel(OsmDataLayer layer, TaggingPresetHandler presetHandler) {
-        members = new ArrayList<>();
-        listeners = new CopyOnWriteArrayList<>();
+    public MemberTableModel(Relation relation, OsmDataLayer layer, TaggingPresetHandler presetHandler) {
+        this.relation = relation;
+        this.members = new ArrayList<>();
+        this.listeners = new CopyOnWriteArrayList<>();
         this.layer = layer;
         this.presetHandler = presetHandler;
         addTableModelListener(this);
@@ -113,6 +116,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         // just trigger a repaint - the display name of the relation members may have changed
         Collection<RelationMember> sel = getSelectedMembers();
         GuiHelper.runInEDT(new Runnable() {
+            @Override
             public void run() {
                 fireTableDataChanged();
             }
@@ -436,7 +440,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     }
 
     RelationMember getRelationMemberForPrimitive(final OsmPrimitive primitive) {
-        final Collection<TaggingPreset> presets = TaggingPresets.getMatchingPresets(EnumSet.of(TaggingPresetType.RELATION),
+        final Collection<TaggingPreset> presets = TaggingPresets.getMatchingPresets(EnumSet.of(TaggingPresetType.forPrimitive(relation)),
                 presetHandler.getSelection().iterator().next().getKeys(), false);
         Collection<String> potentialRoles = new TreeSet<>();
         for (TaggingPreset tp : presets) {

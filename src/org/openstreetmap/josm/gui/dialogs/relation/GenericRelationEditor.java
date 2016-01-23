@@ -164,13 +164,13 @@ public class GenericRelationEditor extends RelationEditor  {
 
         // init the various models
         //
-        memberTableModel = new MemberTableModel(getLayer(), presetHandler);
+        memberTableModel = new MemberTableModel(relation, getLayer(), presetHandler);
         memberTableModel.register();
         selectionTableModel = new SelectionTableModel(getLayer());
         selectionTableModel.register();
         referrerModel = new ReferringRelationsBrowserModel(relation);
 
-        tagEditorPanel = new TagEditorPanel(presetHandler);
+        tagEditorPanel = new TagEditorPanel(relation, presetHandler);
 
         // populate the models
         //
@@ -804,7 +804,7 @@ public class GenericRelationEditor extends RelationEditor  {
         CheckParameterUtil.ensureParameterNotNull(orig, "orig");
         try {
             final Collection<TaggingPreset> presets = TaggingPresets.getMatchingPresets(
-                    EnumSet.of(TaggingPresetType.RELATION), orig.getKeys(), false);
+                    EnumSet.of(TaggingPresetType.forPrimitive(orig)), orig.getKeys(), false);
             Relation relation = new Relation(orig);
             boolean modified = false;
             for (OsmPrimitive p : primitivesToAdd) {

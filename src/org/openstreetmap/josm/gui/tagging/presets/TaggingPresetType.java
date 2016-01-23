@@ -65,7 +65,7 @@ public enum TaggingPresetType {
         if (type == OsmPrimitiveType.CLOSEDWAY)
             return CLOSEDWAY;
         if (type == OsmPrimitiveType.MULTIPOLYGON)
-            return TaggingPresetType.MULTIPOLYGON;
+            return MULTIPOLYGON;
         if (type == OsmPrimitiveType.RELATION)
             return RELATION;
         throw new IllegalArgumentException("Unexpected primitive type: " + type);
