@@ -32,14 +32,14 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  *       EPSG Guidence Note Number 7, Version 19.</li>
  * </ul>
  *
- * @see <A HREF="http://mathworld.wolfram.com/MercatorProjection.html">Mercator projection on MathWorld</A>
- * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/mercator_1sp.html">"mercator_1sp" on RemoteSensing.org</A>
- * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/mercator_2sp.html">"mercator_2sp" on RemoteSensing.org</A>
- *
  * @author André Gosselin
  * @author Martin Desruisseaux (PMO, IRD)
  * @author Rueben Schulz
  * @author Simone Giannecchini
+ *
+ * @see <A HREF="http://mathworld.wolfram.com/MercatorProjection.html">Mercator projection on MathWorld</A>
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/mercator_1sp.html">"mercator_1sp" on RemoteSensing.org</A>
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/mercator_2sp.html">"mercator_2sp" on RemoteSensing.org</A>
  */
 public class Mercator extends AbstractProj implements IScaleFactorProvider {
     /**
