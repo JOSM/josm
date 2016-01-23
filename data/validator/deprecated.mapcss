@@ -778,3 +778,10 @@ relation[/^..$/][!to] {
 *[historic=abandoned] {
   throwWarning: tr("{0} is deprecated. Use the {1}: key prefix instead.", "{0.tag}", "{0.value}");
 }
+
+/* #12431 */
+*[amenity=swimming_pool] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leisure=swimming_pool";
+  fixChangeKey: "amenity => leisure";
+}
