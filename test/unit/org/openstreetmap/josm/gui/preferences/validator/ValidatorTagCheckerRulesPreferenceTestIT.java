@@ -17,9 +17,9 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 
 /**
- * Unit tests of {@link ValidatorTagCheckerRulesPreference} class.
+ * Integration tests of {@link ValidatorTagCheckerRulesPreference} class.
  */
-public class ValidatorTagCheckerRulesPreferenceTest {
+public class ValidatorTagCheckerRulesPreferenceTestIT {
 
     /**
      * Setup test.
