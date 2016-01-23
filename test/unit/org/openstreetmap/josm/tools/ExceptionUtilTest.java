@@ -94,6 +94,9 @@ public class ExceptionUtilTest {
      */
     @Test
     public void testExplainChangesetClosedException() {
+        // This test relies on the fact that CLDR is not the default local provider (see I18n.init)
+        assertEquals("JRE,CLDR", System.getProperty("java.locale.providers"));
+
         assertEquals("<html>Failed to upload to changeset <strong>0</strong><br>because it has already been closed on ?.",
                 ExceptionUtil.explainChangesetClosedException(new ChangesetClosedException("")));
 
@@ -115,6 +118,9 @@ public class ExceptionUtilTest {
      */
     @Test
     public void testExplainConflict() {
+        // This test relies on the fact that CLDR is not the default local provider (see I18n.init)
+        assertEquals("JRE,CLDR", System.getProperty("java.locale.providers"));
+
         int code = HttpURLConnection.HTTP_CONFLICT;
         assertEquals("<html>The server reported that it has detected a conflict.</html>",
                 ExceptionUtil.explainConflict(new OsmApiException("")));

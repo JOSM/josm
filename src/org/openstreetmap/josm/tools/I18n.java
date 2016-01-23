@@ -408,7 +408,7 @@ public final class I18n {
         // Enable CLDR locale provider on Java 8 to get additional languages, such as Khmer.
         // http://docs.oracle.com/javase/8/docs/technotes/guides/intl/enhancements.8.html#cldr
         // FIXME: This can be removed after we switch to a minimal version of Java that enables CLDR by default
-        // or includes all languages we need in the JRE. See http://openjdk.java.net/jeps/8043554 for Java 9
+        // or includes all languages we need in the JRE. See http://openjdk.java.net/jeps/252 for Java 9
         Utils.updateSystemProperty("java.locale.providers", "JRE,CLDR");
 
         //languages.put("ar", PluralMode.MODE_AR);
