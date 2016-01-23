@@ -27,7 +27,6 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 public class LambertConformalConic extends AbstractProj {
 
     protected Ellipsoid ellps;
-    protected double e;
 
     public abstract static class Parameters {
         public final double latitudeOrigin;
@@ -77,8 +76,8 @@ public class LambertConformalConic extends AbstractProj {
 
     @Override
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
+        super.initialize(params);
         ellps = params.ellps;
-        e = ellps.e;
         if (params.lat0 == null)
             throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", Param.lat_0.key));
         if (params.lat1 != null && params.lat2 != null) {
