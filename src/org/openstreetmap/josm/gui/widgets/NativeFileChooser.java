@@ -129,7 +129,8 @@ public class NativeFileChooser extends AbstractFileChooser {
 
     @Override
     public void setSelectedFile(File file) {
-        fileDialog.setDirectory(file.getAbsolutePath());
+        if (file == null) return;
+        fileDialog.setDirectory(file.getParent());
         fileDialog.setFile(file.getName());
     }
 
