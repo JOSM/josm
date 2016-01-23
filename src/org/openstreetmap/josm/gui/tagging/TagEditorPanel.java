@@ -8,7 +8,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.EnumSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
@@ -18,12 +17,12 @@ import javax.swing.JScrollPane;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -31,7 +30,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * UIs. It provides a spreadsheet like tabular control for editing tag names
  * and tag values. Two action buttons are placed on the left, one for adding
  * a new tag and one for deleting the currently selected tags.
- *
+ * @since 2040
  */
 public class TagEditorPanel extends JPanel {
     /** the tag editor model */
@@ -139,7 +138,8 @@ public class TagEditorPanel extends JPanel {
         }
 
         addFocusListener(new FocusAdapter() {
-            @Override public void focusGained(FocusEvent e) {
+            @Override
+            public void focusGained(FocusEvent e) {
                 tagTable.requestFocusInCell(0, 0);
             }
         });
@@ -148,10 +148,11 @@ public class TagEditorPanel extends JPanel {
     /**
      * Creates a new tag editor panel. The editor model is created
      * internally and can be retrieved with {@link #getModel()}.
+     * @param primitive primitive to consider
      * @param presetHandler tagging preset handler
      */
-    public TagEditorPanel(TaggingPresetHandler presetHandler) {
-        this(null, presetHandler, 0);
+    public TagEditorPanel(OsmPrimitive primitive, TaggingPresetHandler presetHandler) {
+        this(new TagEditorModel().forPrimitive(primitive), presetHandler, 0);
     }
 
     /**
@@ -197,7 +198,7 @@ public class TagEditorPanel extends JPanel {
         TagCellEditor editor = (TagCellEditor) tagTable.getColumnModel().getColumn(0).getCellEditor();
         editor.setAutoCompletionManager(autocomplete);
         editor.setAutoCompletionList(acList);
-        editor = ((TagCellEditor) tagTable.getColumnModel().getColumn(1).getCellEditor());
+        editor = (TagCellEditor) tagTable.getColumnModel().getColumn(1).getCellEditor();
         editor.setAutoCompletionManager(autocomplete);
         editor.setAutoCompletionList(acList);
     }
@@ -210,7 +211,7 @@ public class TagEditorPanel extends JPanel {
 
     private void updatePresets() {
         presetListPanel.updatePresets(
-                EnumSet.of(TaggingPresetType.RELATION),
+                model.getTaggingPresetTypes(),
                 model.getTags(), presetHandler);
         validate();
     }

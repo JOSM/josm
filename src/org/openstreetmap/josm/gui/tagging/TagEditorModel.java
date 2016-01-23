@@ -8,6 +8,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,11 +25,12 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * TagEditorModel is a table model.
- *
+ * TagEditorModel is a table model to use with {@link TagEditorPanel}.
+ * @since 1762
  */
 public class TagEditorModel extends AbstractTableModel {
     public static final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
@@ -42,6 +44,8 @@ public class TagEditorModel extends AbstractTableModel {
 
     private final DefaultListSelectionModel rowSelectionModel;
     private final DefaultListSelectionModel colSelectionModel;
+
+    private OsmPrimitive primitive;
 
     /**
      * Creates a new tag editor model. Internally allocates two selection models
@@ -57,8 +61,7 @@ public class TagEditorModel extends AbstractTableModel {
      * @see #getColumnSelectionModel()
      */
     public TagEditorModel() {
-        this.rowSelectionModel = new DefaultListSelectionModel();
-        this.colSelectionModel  = new DefaultListSelectionModel();
+        this(new DefaultListSelectionModel(), new DefaultListSelectionModel());
     }
 
     /**
@@ -73,7 +76,7 @@ public class TagEditorModel extends AbstractTableModel {
         CheckParameterUtil.ensureParameterNotNull(rowSelectionModel, "rowSelectionModel");
         CheckParameterUtil.ensureParameterNotNull(colSelectionModel, "colSelectionModel");
         this.rowSelectionModel = rowSelectionModel;
-        this.colSelectionModel  = colSelectionModel;
+        this.colSelectionModel = colSelectionModel;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -615,6 +618,29 @@ public class TagEditorModel extends AbstractTableModel {
      */
     public boolean isDirty() {
         return dirty;
+    }
+
+    /**
+     * Returns the list of tagging presets types to consider when updating the presets list panel.
+     * By default returns type of associated primitive or empty set.
+     * @return the list of tagging presets types to consider when updating the presets list panel
+     * @see #forPrimitive
+     * @see TaggingPresetType#forPrimitive
+     * @since 9588
+     */
+    public Collection<TaggingPresetType> getTaggingPresetTypes() {
+        return primitive == null ? EnumSet.noneOf(TaggingPresetType.class) : EnumSet.of(TaggingPresetType.forPrimitive(primitive));
+    }
+
+    /**
+     * Makes this TagEditorModel specific to a given OSM primitive.
+     * @param primitive primitive to consider
+     * @return {@code this}
+     * @since 9588
+     */
+    public TagEditorModel forPrimitive(OsmPrimitive primitive) {
+        this.primitive = primitive;
+        return this;
     }
 
     class SelectionStateMemento {

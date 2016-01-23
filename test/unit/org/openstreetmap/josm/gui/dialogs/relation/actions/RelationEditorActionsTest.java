@@ -32,12 +32,12 @@ public class RelationEditorActionsTest {
      */
     @Test
     public void testAllActions() {
-        DataSet ds = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(new DataSet(), "test", null);
-        MemberTableModel memberTableModel = new MemberTableModel(layer, null);
-        SelectionTableModel selectionTableModel = new SelectionTableModel(layer);
+        final DataSet ds = new DataSet();
         final Relation orig = new Relation(1);
         ds.addPrimitive(orig);
+        OsmDataLayer layer = new OsmDataLayer(new DataSet(), "test", null);
+        MemberTableModel memberTableModel = new MemberTableModel(orig, layer, null);
+        SelectionTableModel selectionTableModel = new SelectionTableModel(layer);
 
         RelationAware editor = new RelationAware() {
             private Relation r = orig;
