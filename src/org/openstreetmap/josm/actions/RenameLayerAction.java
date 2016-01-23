@@ -83,6 +83,8 @@ public class RenameLayerAction extends AbstractAction {
                     newname += oldname.substring(oldname.lastIndexOf('.'));
                 }
                 File newFile = new File(newname);
+                if (!SaveActionBase.confirmOverwrite(newFile))
+                    return;
                 if (Main.platform.rename(file, newFile)) {
                     layer.setAssociatedFile(newFile);
                     if (!layer.isRenamed()) {
