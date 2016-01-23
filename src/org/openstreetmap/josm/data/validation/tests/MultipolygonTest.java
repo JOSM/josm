@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData.Intersection;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -299,30 +300,42 @@ public class MultipolygonTest extends Test {
             List<OsmPrimitive> primitives = new LinkedList<>();
             primitives.add(r);
             primitives.addAll(openNodes);
-            addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY,
-                    primitives, openNodes));
+            addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY, primitives, openNodes));
         }
 
         // For painting is used Polygon class which works with ints only. For validation we need more precision
-        List<GeneralPath> outerPolygons = createPolygons(polygon.getOuterPolygons());
-        for (Multipolygon.PolyData pdInner : polygon.getInnerPolygons()) {
+        List<PolyData> innerPolygons = polygon.getInnerPolygons();
+        List<PolyData> outerPolygons = innerPolygons.isEmpty() ? Collections.<PolyData>emptyList() : polygon.getOuterPolygons();
+        List<GeneralPath> innerPolygonsPaths = innerPolygons.isEmpty() ? Collections.<GeneralPath>emptyList() : createPolygons(innerPolygons);
+        List<GeneralPath> outerPolygonsPaths = innerPolygons.isEmpty() ? Collections.<GeneralPath>emptyList() : createPolygons(outerPolygons);
+        for (int i = 0; i < innerPolygons.size(); i++) {
+            PolyData pdInner = innerPolygons.get(i);
+            // Check for intersection between inner members
+            for (int j = i+1; j < innerPolygons.size(); j++) {
+                checkCrossingWays(r, innerPolygons, innerPolygonsPaths, pdInner, j);
+            }
+            // Check for intersection between inner and outer members
             boolean outside = true;
-            for (int i = 0; i < polygon.getOuterPolygons().size(); i++) {
-                Intersection intersection = getPolygonIntersection(outerPolygons.get(i), pdInner.getNodes());
-                outside = outside & intersection == Intersection.OUTSIDE;
-                if (intersection == Intersection.CROSSING) {
-                    Multipolygon.PolyData outerWay = polygon.getOuterPolygons().get(i);
-                    if (outerWay != null) {
-                        addError(r, new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"),
-                                CROSSING_WAYS, Collections.singletonList(r), Arrays.asList(pdInner.getNodes(), outerWay.getNodes())));
-                    }
-                }
+            for (int o = 0; o < outerPolygons.size(); o++) {
+                outside &= checkCrossingWays(r, outerPolygons, outerPolygonsPaths, pdInner, o) == Intersection.OUTSIDE;
             }
             if (outside) {
                 addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"),
                         INNER_WAY_OUTSIDE, Collections.singletonList(r), Arrays.asList(pdInner.getNodes())));
             }
         }
+    }
+
+    private Intersection checkCrossingWays(Relation r, List<PolyData> polygons, List<GeneralPath> polygonsPaths, PolyData pd, int idx) {
+        Intersection intersection = getPolygonIntersection(polygonsPaths.get(idx), pd.getNodes());
+        if (intersection == Intersection.CROSSING) {
+            PolyData pdOther = polygons.get(idx);
+            if (pdOther != null) {
+                addError(r, new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"),
+                        CROSSING_WAYS, Collections.singletonList(r), Arrays.asList(pd.getNodes(), pdOther.getNodes())));
+            }
+        }
+        return intersection;
     }
 
     /**
