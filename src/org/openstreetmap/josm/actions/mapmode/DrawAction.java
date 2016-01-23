@@ -140,6 +140,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         readPreferences();
         snapHelper.init();
+        readPreferences();
     }
 
     private JCheckBoxMenuItem addMenuItem() {
@@ -238,7 +239,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         ignoreNextKeyRelease = true;
     }
 
-    private void readPreferences() {
+    @Override
+    protected void readPreferences() {
         rubberLineColor = Main.pref.getColor(marktr("helper line"), null);
         if (rubberLineColor == null) rubberLineColor = PaintColors.SELECTED.get();
 

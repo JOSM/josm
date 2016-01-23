@@ -141,7 +141,8 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         Main.map.keyDetector.addModifierListener(this);
     }
 
-    private void readPreferences() {
+    @Override
+    protected void readPreferences() {
         guideColor = Main.pref.getColor(marktr("improve way accuracy helper line"), null);
         if (guideColor == null) guideColor = PaintColors.HIGHLIGHT.get();
 

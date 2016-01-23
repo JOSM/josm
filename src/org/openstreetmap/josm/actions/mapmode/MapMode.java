@@ -14,6 +14,8 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 
 /**
  * A class implementing MapMode is able to be selected as an mode for map editing.
@@ -21,7 +23,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * MapModes should register/deregister all necessary listeners on the map's view control.
  */
-public abstract class MapMode extends JosmAction implements MouseListener, MouseMotionListener {
+public abstract class MapMode extends JosmAction implements MouseListener, MouseMotionListener, PreferenceChangedListener {
     protected final Cursor cursor;
     protected boolean ctrl;
     protected boolean alt;
@@ -62,6 +64,8 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      */
     public void enterMode() {
         putValue("active", Boolean.TRUE);
+        Main.pref.addPreferenceChangeListener(this);
+        readPreferences();
         Main.map.mapView.setNewCursor(cursor, this);
         updateStatusLine();
     }
@@ -71,6 +75,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      */
     public void exitMode() {
         putValue("active", Boolean.FALSE);
+        Main.pref.removePreferenceChangeListener(this);
         Main.map.mapView.resetCursor(this);
     }
 
@@ -82,6 +87,8 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     public String getModeHelpText() {
         return "";
     }
+
+    protected void readPreferences() {}
 
     /**
      * Call selectMapMode(this) on the parent mapFrame.
@@ -158,5 +165,10 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     @Override
     public void mouseDragged(MouseEvent e) {
         // Do nothing
+    }
+
+    @Override
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        readPreferences();
     }
 }

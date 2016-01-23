@@ -294,13 +294,13 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         super.enterMode();
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
-        readPreferences();
         ignoreNextKeyRelease = true;
         Main.map.keyDetector.addKeyListener(this);
         Main.map.keyDetector.addModifierListener(this);
     }
 
-    private void readPreferences() {
+    @Override
+    protected void readPreferences() {
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
         initialMoveThreshold = Main.pref.getInteger("extrude.initial-move-threshold", 1);
         mainColor = Main.pref.getColor(marktr("Extrude: main line"), null);
