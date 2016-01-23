@@ -299,7 +299,6 @@ public class MultipolygonTest extends Test {
             List<OsmPrimitive> primitives = new LinkedList<>();
             primitives.add(r);
             primitives.addAll(openNodes);
-            Arrays.asList(openNodes, r);
             addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY,
                     primitives, openNodes));
         }
@@ -308,28 +307,20 @@ public class MultipolygonTest extends Test {
         List<GeneralPath> outerPolygons = createPolygons(polygon.getOuterPolygons());
         for (Multipolygon.PolyData pdInner : polygon.getInnerPolygons()) {
             boolean outside = true;
-            boolean crossing = false;
-            Multipolygon.PolyData outerWay = null;
             for (int i = 0; i < polygon.getOuterPolygons().size(); i++) {
-                GeneralPath outer = outerPolygons.get(i);
-                Intersection intersection = getPolygonIntersection(outer, pdInner.getNodes());
+                Intersection intersection = getPolygonIntersection(outerPolygons.get(i), pdInner.getNodes());
                 outside = outside & intersection == Intersection.OUTSIDE;
                 if (intersection == Intersection.CROSSING) {
-                    crossing = true;
-                    outerWay = polygon.getOuterPolygons().get(i);
+                    Multipolygon.PolyData outerWay = polygon.getOuterPolygons().get(i);
+                    if (outerWay != null) {
+                        addError(r, new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"),
+                                CROSSING_WAYS, Collections.singletonList(r), Arrays.asList(pdInner.getNodes(), outerWay.getNodes())));
+                    }
                 }
             }
-            if (outside || crossing) {
-                List<List<Node>> highlights = new ArrayList<>();
-                highlights.add(pdInner.getNodes());
-                if (outside) {
-                    addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"),
-                            INNER_WAY_OUTSIDE, Collections.singletonList(r), highlights));
-                } else if (outerWay != null) {
-                    highlights.add(outerWay.getNodes());
-                    addError(r, new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"),
-                            CROSSING_WAYS, Collections.singletonList(r), highlights));
-                }
+            if (outside) {
+                addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"),
+                        INNER_WAY_OUTSIDE, Collections.singletonList(r), Arrays.asList(pdInner.getNodes())));
             }
         }
     }
