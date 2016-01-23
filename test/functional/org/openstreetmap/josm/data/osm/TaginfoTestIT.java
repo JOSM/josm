@@ -65,8 +65,14 @@ public class TaginfoTestIT {
                     if (!TagChecker.isTagInPresets(key, value)) {
                         // If not, check if we have either a deprecated mapcss test for it
                         Node n = new Node();
+                        Way w = new Way();
+                        Relation r = new Relation();
                         n.put(key, value);
-                        if (mapCssTagChecker.getErrorsForPrimitive(n, false).isEmpty()) {
+                        w.put(key, value);
+                        r.put(key, value);
+                        if (mapCssTagChecker.getErrorsForPrimitive(n, false).isEmpty()
+                         && mapCssTagChecker.getErrorsForPrimitive(w, false).isEmpty()
+                         && mapCssTagChecker.getErrorsForPrimitive(r, false).isEmpty()) {
                             // Or a legacy tagchecker ignore rule
                             if (!TagChecker.isTagIgnored(key, value)) {
                                 ok = !errors.add(key +"="+ value + " - " + obj.getInt("count_all"));
