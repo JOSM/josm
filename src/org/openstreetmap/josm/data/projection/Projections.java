@@ -117,7 +117,6 @@ public final class Projections {
         ellipsoids.put("WGS84", Ellipsoid.WGS84);
 
         datums.put("WGS84", WGS84Datum.INSTANCE);
-        datums.put("GRS80", GRS80Datum.INSTANCE);
         datums.put("NAD83", GRS80Datum.INSTANCE);
         datums.put("carthage", new ThreeParameterDatum(
                 "Carthage 1934 Tunisia", "carthage",

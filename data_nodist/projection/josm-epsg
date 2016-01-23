@@ -73,7 +73,7 @@
 # Lambert CC9 (France) Zone 50
 <3950> +proj=lcc +lat_0=50 +lat_1=49.25 +lat_2=50.75 +lon_0=3 +x_0=1700000 +y_0=9200000 +ellps=GRS80 +nadgrids=null +units=m +bounds=-5.5,47.5,10.2,51.1  <>
 # ETRS89
-<4258> +proj=lonlat +datum=GRS80 +axis=neu +bounds=-180,-90,180,90  <>
+<4258> +proj=lonlat +ellps=GRS80 +nadgrids=null +axis=neu +bounds=-180,-90,180,90  <>
 # WGS 84
 <4326> +proj=lonlat +datum=WGS84 +axis=neu +bounds=-180,-90,180,90  <>
 # Swiss Grid (Switzerland)
@@ -81,27 +81,27 @@
 # HD72 / EOV (Hungary)
 <23700> +proj=somerc +lat_0=47.14439372222222 +lon_0=19.04857177777778 +k_0=0.99993 +x_0=650000 +y_0=200000 +ellps=GRS67 +towgs84=52.17,-71.82,-14.9 +units=m +bounds=16.1200,45.7800,22.9100,48.6000  <>
 # ETRS89 / UTM zone 28N
-<25828> +proj=utm +zone=28 +datum=GRS80 +units=m +bounds=-20,-5,-10,85 <>
+<25828> +proj=utm +zone=28 +ellps=GRS80 +nadgrids=null +units=m +bounds=-20,-5,-10,85 <>
 # ETRS89 / UTM zone 29N
-<25829> +proj=utm +zone=29 +datum=GRS80 +units=m +bounds=-14,-5,-4,85  <>
+<25829> +proj=utm +zone=29 +ellps=GRS80 +nadgrids=null +units=m +bounds=-14,-5,-4,85  <>
 # ETRS89 / UTM zone 30N
-<25830> +proj=utm +zone=30 +datum=GRS80 +units=m +bounds=-8,-5,2,85  <>
+<25830> +proj=utm +zone=30 +ellps=GRS80 +nadgrids=null +units=m +bounds=-8,-5,2,85  <>
 # ETRS89 / UTM zone 31N
-<25831> +proj=utm +zone=31 +datum=GRS80 +units=m +bounds=-2,-5,8,85  <>
+<25831> +proj=utm +zone=31 +ellps=GRS80 +nadgrids=null +units=m +bounds=-2,-5,8,85  <>
 # ETRS89 / UTM zone 32N
-<25832> +proj=utm +zone=32 +datum=GRS80 +units=m +bounds=4,-5,14,85  <>
+<25832> +proj=utm +zone=32 +ellps=GRS80 +nadgrids=null +units=m +bounds=4,-5,14,85  <>
 # ETRS89 / UTM zone 33N
-<25833> +proj=utm +zone=33 +datum=GRS80 +units=m +bounds=10,-5,20,85  <>
+<25833> +proj=utm +zone=33 +ellps=GRS80 +nadgrids=null +units=m +bounds=10,-5,20,85  <>
 # ETRS89 / UTM zone 34N
-<25834> +proj=utm +zone=34 +datum=GRS80 +units=m +bounds=16,-5,26,85  <>
+<25834> +proj=utm +zone=34 +ellps=GRS80 +nadgrids=null +units=m +bounds=16,-5,26,85  <>
 # ETRS89 / UTM zone 35N
-<25835> +proj=utm +zone=35 +datum=GRS80 +units=m +bounds=22,-5,32,85  <>
+<25835> +proj=utm +zone=35 +ellps=GRS80 +nadgrids=null +units=m +bounds=22,-5,32,85  <>
 # ETRS89 / UTM zone 36N
-<25836> +proj=utm +zone=36 +datum=GRS80 +units=m +bounds=28,-5,38,85  <>
+<25836> +proj=utm +zone=36 +ellps=GRS80 +nadgrids=null +units=m +bounds=28,-5,38,85  <>
 # ETRS89 / UTM zone 37N
-<25837> +proj=utm +zone=37 +datum=GRS80 +units=m +bounds=34,-5,44,85  <>
+<25837> +proj=utm +zone=37 +ellps=GRS80 +nadgrids=null +units=m +bounds=34,-5,44,85  <>
 # ETRS89 / UTM zone 38N
-<25838> +proj=utm +zone=38 +datum=GRS80 +units=m +bounds=40,-5,50,85  <>
+<25838> +proj=utm +zone=38 +ellps=GRS80 +nadgrids=null +units=m +bounds=40,-5,50,85  <>
 # Lambert 4 Zones France (Nord)
 <27561> +proj=lcc +lat_0=49.5 +lat_1=48d35'54.682" +lat_2=50d23'45.282" +lon_0=2d20'14.025" +x_0=600000 +y_0=200000 +a=6378249.2 +b=6356515 +nadgrids=ntf_r93_b.gsb +units=m +bounds=-4.416666666666665,46.65,9.18,51.300000000000004  <>
 # Lambert 4 Zones France (Centre)
