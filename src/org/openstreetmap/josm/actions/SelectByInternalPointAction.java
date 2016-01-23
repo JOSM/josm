@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,7 +22,11 @@ import org.openstreetmap.josm.tools.Geometry;
  * This allows to select a polygon/multipolygon by an internal point.
  * @since 7144
  */
-public class SelectByInternalPointAction extends JosmAction {
+public final class SelectByInternalPointAction {
+
+    private SelectByInternalPointAction() {
+        // Hide public constructor for utility class
+    }
 
     /**
      * Returns the surrounding polygons/multipolygons
@@ -34,35 +37,30 @@ public class SelectByInternalPointAction extends JosmAction {
      * @return the surrounding polygons/multipolygons
      */
     public static Collection<OsmPrimitive> getSurroundingObjects(EastNorth internalPoint) {
-        final DataSet ds = getCurrentDataSet();
+        final DataSet ds = JosmAction.getCurrentDataSet();
         if (ds == null) {
             return Collections.emptySet();
         }
         final Node n = new Node(internalPoint);
         final Map<Double, OsmPrimitive> found = new TreeMap<>();
         for (Way w : ds.getWays()) {
-            if (w.isUsable() && w.isClosed() && w.isSelectable()) {
-                if (Geometry.nodeInsidePolygon(n, w.getNodes())) {
-                    found.put(Geometry.closedWayArea(w), w);
-                }
+            if (w.isUsable() && w.isClosed() && w.isSelectable() && Geometry.nodeInsidePolygon(n, w.getNodes())) {
+                found.put(Geometry.closedWayArea(w), w);
             }
         }
         for (Relation r : ds.getRelations()) {
-            if (r.isUsable() && r.isMultipolygon() && r.isSelectable()) {
-                if (Geometry.isNodeInsideMultiPolygon(n, r, null)) {
-                    for (RelationMember m : r.getMembers()) {
-                        if (m.isWay() && m.getWay().isClosed()) {
-                            found.values().remove(m.getWay());
-                        }
+            if (r.isUsable() && r.isMultipolygon() && r.isSelectable() && Geometry.isNodeInsideMultiPolygon(n, r, null)) {
+                for (RelationMember m : r.getMembers()) {
+                    if (m.isWay() && m.getWay().isClosed()) {
+                        found.values().remove(m.getWay());
                     }
-                    // estimate multipolygon size by its bounding box area
-                    BBox bBox = r.getBBox();
-                    EastNorth en1 = Main.map.mapView.getProjection().latlon2eastNorth(bBox.getTopLeft());
-                    EastNorth en2 = Main.map.mapView.getProjection().latlon2eastNorth(bBox.getBottomRight());
-                    double s = Math.abs((en1.east() - en2.east()) * (en1.north() - en2.north()));
-                    if (s == 0) s = 1e8;
-                    found.put(s, r);
                 }
+                // estimate multipolygon size by its bounding box area
+                BBox bBox = r.getBBox();
+                EastNorth en1 = Main.map.mapView.getProjection().latlon2eastNorth(bBox.getTopLeft());
+                EastNorth en2 = Main.map.mapView.getProjection().latlon2eastNorth(bBox.getBottomRight());
+                double s = Math.abs((en1.east() - en2.east()) * (en1.north() - en2.north()));
+                found.put(s <= 0 ? 1e8 : s, r);
             }
         }
         return found.values();
@@ -88,23 +86,19 @@ public class SelectByInternalPointAction extends JosmAction {
      */
     public static void performSelection(EastNorth internalPoint, boolean doAdd, boolean doRemove) {
         final Collection<OsmPrimitive> surroundingObjects = getSurroundingObjects(internalPoint);
+        final DataSet ds = JosmAction.getCurrentDataSet();
         if (surroundingObjects.isEmpty()) {
             return;
         } else if (doRemove) {
-            final Collection<OsmPrimitive> newSelection = new ArrayList<>(getCurrentDataSet().getSelected());
+            final Collection<OsmPrimitive> newSelection = new ArrayList<>(ds.getSelected());
             newSelection.removeAll(surroundingObjects);
-            getCurrentDataSet().setSelected(newSelection);
+            ds.setSelected(newSelection);
         } else if (doAdd) {
-            final Collection<OsmPrimitive> newSelection = new ArrayList<>(getCurrentDataSet().getSelected());
+            final Collection<OsmPrimitive> newSelection = new ArrayList<>(ds.getSelected());
             newSelection.add(surroundingObjects.iterator().next());
-            getCurrentDataSet().setSelected(newSelection);
+            ds.setSelected(newSelection);
         } else {
-            getCurrentDataSet().setSelected(surroundingObjects.iterator().next());
+            ds.setSelected(surroundingObjects.iterator().next());
         }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException();
     }
 }
