@@ -21,7 +21,7 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * about the equator.
  * <p>
  * This class has been derived from the implementation of the Geotools project;
- * git 8cbf52d, org.geotools.referencing.operation.projection.CassiniSoldner
+ * git 8cbf52d, org.geotools.referencing.operation.projection.Mercator
  * at the time of migration.
  * <p>
  * <b>References:</b>

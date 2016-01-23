@@ -105,7 +105,7 @@ public final class Projections {
         ellipsoids.put("bess_nam", Ellipsoid.BesselNamibia);
         ellipsoids.put("clrk66", Ellipsoid.Clarke1866);
         ellipsoids.put("clrk80", Ellipsoid.Clarke1880);
-        ellipsoids.put("clarkeIGN", Ellipsoid.ClarkeIGN);
+        ellipsoids.put("clrk80ign", Ellipsoid.ClarkeIGN);
         ellipsoids.put("evrstSS", Ellipsoid.EverestSabahSarawak);
         ellipsoids.put("intl", Ellipsoid.Hayford);
         ellipsoids.put("helmert", Ellipsoid.Helmert);
@@ -121,7 +121,7 @@ public final class Projections {
         datums.put("NAD83", GRS80Datum.INSTANCE);
         datums.put("carthage", new ThreeParameterDatum(
                 "Carthage 1934 Tunisia", "carthage",
-                Ellipsoid.Clarke1880, -263.0, 6.0, 431.0));
+                Ellipsoid.ClarkeIGN, -263.0, 6.0, 431.0));
         datums.put("GGRS87", new ThreeParameterDatum(
                 "Greek Geodetic Reference System 1987", "GGRS87",
                 Ellipsoid.GRS80, -199.87, 74.79, 246.62));
