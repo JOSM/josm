@@ -1332,6 +1332,9 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         CopyAllKeyValueAction() {
             putValue(NAME, tr("Copy all Keys/Values"));
             putValue(SHORT_DESCRIPTION, tr("Copy the key and value of all the tags to clipboard"));
+            Shortcut sc = Shortcut.registerShortcut("system:copytags", tr("Edit: {0}", tr("Copy Tags")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
+            Main.registerActionShortcut(this, sc);
+            sc.setAccelerator(this);
         }
 
         @Override
