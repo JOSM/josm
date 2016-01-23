@@ -1393,7 +1393,6 @@ area[man_made=beacon],
 area[man_made=bridge],
 area[bridge:support],
 area[man_made=chimney],
-area[man_made=crane],
 area[man_made=gasometer],
 area[man_made=storage_tank],
 area[man_made=bunker_silo],
@@ -1419,11 +1418,6 @@ node[bridge:support] {
 }
 node[man_made=chimney] {
     icon-image: "misc/landmark/chimney.png";
-    set icon_z17;
-    text: auto;
-}
-node[man_made=crane] {
-    icon-image: "misc/landmark/crane.png";
     set icon_z17;
     text: auto;
 }
@@ -1475,6 +1469,18 @@ node[man_made=monitoring_station] {
 }
 node[man_made=mineshaft] {
     icon-image: "misc/landmark/mine.png";
+    set icon_z17;
+    text: auto;
+}
+area[man_made=crane]:closed {
+    fill-color: manmade#d8d8d8;
+}
+way[man_made=crane] {
+    width: 2;
+    color: manmade#d8d8d8;
+}
+node[man_made=crane] {
+    icon-image: "misc/landmark/crane.png";
     set icon_z17;
     text: auto;
 }

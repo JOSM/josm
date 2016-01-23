@@ -5847,7 +5847,7 @@
                 <reference ref="name_operator" />
             </optional>
         </item> <!-- Bunker Silo -->
-        <item name="Crane" icon="presets/crane.png" type="node,closedway" preset_name_label="true">
+        <item name="Crane" icon="presets/crane.png" type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=crane"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=crane"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=crane"
