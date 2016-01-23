@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection.proj;
 
+import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 
 /**
@@ -73,10 +74,10 @@ public abstract class AbstractProj implements Proj {
      * @see #e
      */
     protected double e2;
-    
+
     /**
      * is ellipsoid spherical?
-     * @see Ellisoid.spherical
+     * @see Ellipsoid#spherical
      */
     protected boolean spherical;
 
