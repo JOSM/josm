@@ -724,7 +724,7 @@
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Living Street -->
-        <item name="Pedestrian" icon="styles/standard/transport/way/way_pedestrian.svg" type="way,closedway,relation" preset_name_label="true">
+        <item name="Pedestrian" icon="styles/standard/transport/way/way_pedestrian.svg" type="way,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=pedestrian"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=pedestrian"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=pedestrian"
@@ -1184,7 +1184,7 @@
             <text key="ref" text="Number" />
             <text key="exit_to" text="Exit to" />
         </item> <!-- Motorway Junction -->
-        <item name="Services" icon="styles/standard/vehicle/services.svg" type="node,closedway,relation" preset_name_label="true">
+        <item name="Services" icon="styles/standard/vehicle/services.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=services"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=services"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=services"
@@ -1199,7 +1199,7 @@
                 <check key="toilets" text="Toilets" />
             </optional>
         </item> <!-- Services -->
-        <item name="Rest Area" icon="styles/standard/vehicle/rest_area.svg" type="node,closedway" preset_name_label="true">
+        <item name="Rest Area" icon="styles/standard/vehicle/rest_area.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=rest_area"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=rest_area"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=rest_area"
@@ -1524,7 +1524,7 @@
             <reference ref="barrier_5" />
         </item> <!-- Border Control -->
         <separator/> <!-- *** Linear Barriers *** -->
-        <item name="Hedge" icon="presets/hedge.png" type="way,closedway,relation" preset_name_label="true">
+        <item name="Hedge" icon="presets/hedge.png" type="way,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=hedge"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=hedge"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:barrier=hedge"
@@ -2023,7 +2023,7 @@
             </optional>
         </item> <!-- Culvert -->
         <separator/>
-        <item name="Basin" icon="presets/landuse_water.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Basin" icon="presets/landuse_water.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=basin"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=basin"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=basin"
@@ -2035,7 +2035,7 @@
             <key key="landuse" value="basin" />
             <text key="name" text="Name" />
         </item> <!-- Basin -->
-        <item name="Reservoir" icon="presets/landuse_water.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Reservoir" icon="presets/landuse_water.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=reservoir"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=reservoir"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=reservoir"
@@ -2983,7 +2983,7 @@
                 <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position" />
                 <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position" />
                 <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position" />
-                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,relation" member_expression="public_transport=platform" />
+                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
                 <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
                 <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
                 <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway OR railway OR waterway OR aerialway" />
@@ -3019,7 +3019,7 @@
             </optional>
             <roles>
                 <role key="stop" text="Stop Position" requisite="optional" type="node" member_expression="public_transport=stop_position" />
-                <role key="platform" text="Platform" requisite="optional" type="node,way,closedway,relation" member_expression="public_transport=platform" />
+                <role key="platform" text="Platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
                 <role key="" text="Subway Entrance" requisite="optional" type="node" member_expression="railway=subway_entrance" />
                 <role key="" text="Station or amenities" requisite="optional" type="node,way,closedway" member_expression="amenity|public_transport=station" />
             </roles>
@@ -3866,7 +3866,7 @@
         </item> <!-- Other Information Point -->
     </group> <!-- Tourism -->
     <group name="Leisure" icon="presets/theme_park.png">
-        <item name="Movie Theater/Cinema" icon="presets/cinema.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Movie Theater/Cinema" icon="presets/cinema.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=cinema"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=cinema"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=cinema"
@@ -4126,7 +4126,7 @@
             <text key="wikipedia" text="Wikipedia" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Museum -->
-        <item name="Theatre" icon="presets/theater.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Theatre" icon="presets/theater.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=theatre"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=theatre"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=theatre"
@@ -4139,7 +4139,7 @@
             <reference ref="wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Theatre -->
-        <item name="Library" icon="styles/standard/shop/library.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Library" icon="styles/standard/shop/library.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=library"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=library"
                   el.href="http://wiki.openstreetmap.org/wiki/El:Tag:amenity=library"
@@ -4154,7 +4154,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Library -->
-        <item name="Arts Centre" icon="presets/arts_centre.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Arts Centre" icon="presets/arts_centre.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=arts_centre"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=arts_centre"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=arts_centre"
@@ -4182,7 +4182,7 @@
             <text key="name" text="Name" />
             <text key="artist_name" text="Artist Name" />
         </item> <!-- Artwork -->
-        <item name="Studio" icon="presets/studio.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Studio" icon="presets/studio.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=studio"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=studio"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=studio"
@@ -4197,7 +4197,7 @@
         </item> <!-- Studio -->
     </group> <!-- Culture -->
     <group name="Place of Worship" icon="styles/standard/religion.png">
-        <item name="Church" icon="styles/standard/religion/church.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Church" icon="styles/standard/religion/church.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
@@ -4222,7 +4222,7 @@
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Church -->
-        <item name="Mosque" icon="styles/standard/religion/muslim.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Mosque" icon="styles/standard/religion/muslim.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
@@ -4246,7 +4246,7 @@
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Mosque -->
-        <item name="Synagogue" icon="styles/standard/religion/jewish.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Synagogue" icon="styles/standard/religion/jewish.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
@@ -4270,7 +4270,7 @@
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Synagogue -->
-        <item name="Buddhist Temple" icon="styles/standard/religion/buddhism.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Buddhist Temple" icon="styles/standard/religion/buddhism.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
@@ -4293,7 +4293,7 @@
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Buddhist Temple -->
-        <item name="Hindu Temple" icon="styles/standard/religion/hinduism.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Hindu Temple" icon="styles/standard/religion/hinduism.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
@@ -4316,7 +4316,7 @@
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Hindu Temple -->
-        <item name="Shinto Shrine" icon="styles/standard/religion/shinto.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Shinto Shrine" icon="styles/standard/religion/shinto.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
@@ -4338,7 +4338,7 @@
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Shinto Shrine -->
-        <item name="Other Place of Worship" icon="styles/standard/religion.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Other Place of Worship" icon="styles/standard/religion.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:amenity=place_of_worship"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=place_of_worship"
@@ -4362,7 +4362,7 @@
         </item> <!-- Other Place of Worship -->
     </group> <!-- Place of Worship -->
     <group name="Public Building" icon="presets/townhall.png">
-        <item name="Public Building" icon="styles/standard/service.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Public Building" icon="styles/standard/service.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=public_building"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=public_building"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=public_building"
@@ -4373,7 +4373,7 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Public Building -->
-        <item name="Town Hall" icon="presets/townhall.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Town Hall" icon="presets/townhall.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=townhall"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=townhall"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=townhall"
@@ -4400,7 +4400,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Community Centre -->
-        <item name="Embassy" icon="presets/embassy.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Embassy" icon="presets/embassy.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=embassy"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=embassy"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=embassy"
@@ -4413,7 +4413,7 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Embassy -->
-        <item name="Courthouse" icon="styles/standard/service/administration/courthouse.svg" type="node,closedway,relation" preset_name_label="true">
+        <item name="Courthouse" icon="styles/standard/service/administration/courthouse.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=courthouse"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=courthouse"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=courthouse"
@@ -4425,7 +4425,7 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Courthouse -->
-        <item name="Prison" icon="styles/standard/service/administration/prison.svg" type="node,closedway,relation" preset_name_label="true">
+        <item name="Prison" icon="styles/standard/service/administration/prison.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=prison"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=prison"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=prison"
@@ -4437,7 +4437,7 @@
             <reference ref="name_operator" />
             <reference ref="link_contact_address" />
         </item> <!-- Prison -->
-        <item name="Police" icon="styles/standard/service/police.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Police" icon="styles/standard/service/police.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=police"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=police"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=police"
@@ -4458,7 +4458,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Ranger Station -->
-        <item name="Fire Station" icon="presets/firebrigade.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Fire Station" icon="presets/firebrigade.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fire_station"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=fire_station"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=fire_station"
@@ -4472,7 +4472,7 @@
             <text key="name" text="Name" />
             <reference ref="link_contact_address" />
         </item> <!-- Fire Station -->
-        <item name="Post Office" icon="styles/standard/service/post_office.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Post Office" icon="styles/standard/service/post_office.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=post_office"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=post_office"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=post_office"
@@ -4491,7 +4491,7 @@
         </item> <!-- Post Office -->
     </group> <!-- Public Buildings -->
     <group name="Education" icon="presets/school.png">
-        <item name="Kindergarten" icon="presets/kindergarten.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Kindergarten" icon="presets/kindergarten.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=kindergarten"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=kindergarten"
                   el.href="http://wiki.openstreetmap.org/wiki/El:Tag:amenity=kindergarten"
@@ -4505,7 +4505,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Kindergarten -->
-        <item name="School" icon="presets/school.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="School" icon="presets/school.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=school"
                   ar.href="http://wiki.openstreetmap.org/wiki/Ar:Tag:amenity=school"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=school"
@@ -4523,7 +4523,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- School -->
-        <item name="University" icon="styles/standard/education/university.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="University" icon="styles/standard/education/university.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=university"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=university"
                   el.href="http://wiki.openstreetmap.org/wiki/El:Tag:amenity=university"
@@ -4539,7 +4539,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- University -->
-        <item name="College" icon="styles/standard/education/college.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="College" icon="styles/standard/education/college.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=college"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=college"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=college"
@@ -4962,7 +4962,7 @@
             <check key="payment:telephone_cards" text="Telephone cards" />
             <preset_link preset_name="Payment Methods" />
         </item> <!-- Telephone -->
-        <item name="Internet Access" icon="presets/network-wireless.svg" type="node,closedway,relation" preset_name_label="true">
+        <item name="Internet Access" icon="presets/network-wireless.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:internet_access"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:internet_access"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:internet_access"
@@ -6130,7 +6130,7 @@
         </item> <!-- Surveillance Camera -->
     </group> <!-- Man Made -->
     <group name="Bridges" icon="styles/standard/transport/bridge/bridge.svg">
-        <item name="Bridge" icon="styles/standard/transport/bridge/bridge.svg" type="way,relation" preset_name_label="true">
+        <item name="Bridge" icon="styles/standard/transport/bridge/bridge.svg" type="way,relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bridge"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:bridge"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:bridge"
@@ -6148,7 +6148,7 @@
             <combo key="bridge:structure" text="Structure" values="arch,beam,truss,floating,suspension,cable-stayed,simple-suspension,humpback" match="key" />
             <reference ref="optional_bridge" />
         </item> <!-- Bridge -->
-        <item name="Movable Bridge" icon="styles/standard/transport/bridge/bridge_movable.svg" type="way,relation" preset_name_label="true">
+        <item name="Movable Bridge" icon="styles/standard/transport/bridge/bridge_movable.svg" type="way,relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:bridge:movable"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:bridge:movable"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:bridge:movable" />
@@ -7769,7 +7769,7 @@
         <text key="ref" text="Reference number" />
         <preset_link preset_name="Payment Methods" />
     </item> <!-- Vending Machine -->
-    <item name="Payment Methods" icon="styles/standard/money/dollar.svg" type="node,way,closedway,relation" preset_name_label="true">
+    <item name="Payment Methods" icon="styles/standard/money/dollar.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Key:payment"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:payment"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Key:payment"
@@ -8467,7 +8467,7 @@
                 <reference ref="leaf" />
             </optional>
         </item> <!-- Tree Row -->
-        <item name="Wood" icon="styles/standard/misc/landmark/forest.svg" type="closedway,relation" preset_name_label="true">
+        <item name="Wood" icon="styles/standard/misc/landmark/forest.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wood"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=wood"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wood"
@@ -8482,7 +8482,7 @@
             <text key="name" text="Name" />
             <reference ref="leaf" />
         </item> <!-- Wood -->
-        <item name="Forest" icon="styles/standard/misc/landmark/forest.svg" type="closedway,relation" preset_name_label="true">
+        <item name="Forest" icon="styles/standard/misc/landmark/forest.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=forest"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=forest"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=forest"
@@ -8510,7 +8510,7 @@
             <key key="man_made" value="cutline" />
             <combo key="cutline" text="Type" values="border,firebreak,hunting,loggingmachine,pipeline,piste,section" values_context="cutline" />
         </item> <!-- Cutline -->
-        <item name="Grassland" icon="styles/standard/misc/landuse/meadow.svg" type="closedway,relation" preset_name_label="true">
+        <item name="Grassland" icon="styles/standard/misc/landuse/meadow.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=grassland"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=grassland"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=grassland"
@@ -8528,7 +8528,7 @@
             <text key="name" text="Name" />
             <combo key="grassland" text="Type" values="pampas,prairie,puszta,savanna,steppe,veld" />
         </item> <!-- Grassland -->
-        <item name="Nature Reserve" icon="styles/standard/leisure/nature_reserve.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Nature Reserve" icon="styles/standard/leisure/nature_reserve.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=nature_reserve"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=nature_reserve"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=nature_reserve"
@@ -8540,7 +8540,7 @@
             <text key="name" text="Name" />
         </item> <!-- Nature Reserve -->
         <separator/>
-        <item name="Scree" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
+        <item name="Scree" icon="presets/empty.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=scree"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=scree"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=scree"
@@ -8556,7 +8556,7 @@
             <key key="natural" value="scree" />
             <text key="name" text="Name" />
         </item> <!-- Scree -->
-        <item name="Fell" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
+        <item name="Fell" icon="presets/empty.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=fell"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=fell"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=fell"
@@ -8569,7 +8569,7 @@
             <key key="natural" value="fell" />
             <text key="name" text="Name" />
         </item> <!-- Fell -->
-        <item name="Scrub" icon="presets/scrub.svg" type="closedway,relation" preset_name_label="true">
+        <item name="Scrub" icon="presets/scrub.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=scrub"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=scrub"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=scrub"
@@ -8587,7 +8587,7 @@
                 <reference ref="leaf" />
             </optional>
         </item> <!-- Scrub -->
-        <item name="Heath" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
+        <item name="Heath" icon="presets/empty.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=heath"
                   bg.href="http://wiki.openstreetmap.org/wiki/Bg:Tag:natural=heath"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=heath"
@@ -8603,7 +8603,7 @@
             <key key="natural" value="heath" />
             <text key="name" text="Name" />
         </item> <!-- Heath -->
-        <item name="Sand" icon="styles/standard/misc/sand.svg" type="closedway,relation" preset_name_label="true">
+        <item name="Sand" icon="styles/standard/misc/sand.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=sand"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=sand"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=sand"
@@ -8614,7 +8614,7 @@
             <key key="natural" value="sand" />
             <text key="name" text="Name" />
         </item> <!-- Sand -->
-        <item name="Bare Rock" icon="presets/empty.png" type="closedway,relation" preset_name_label="true">
+        <item name="Bare Rock" icon="presets/empty.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=bare_rock"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=bare_rock"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=bare_rock"
@@ -8660,7 +8660,7 @@
         </item> <!-- Stone -->
     </group> <!-- Nature -->
     <group name="Land use" icon="presets/landuse.png">
-        <item name="Farmyard" icon="styles/standard/misc/landuse/farmyard.png" type="closedway,relation" preset_name_label="true">
+        <item name="Farmyard" icon="styles/standard/misc/landuse/farmyard.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=farmyard"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=farmyard"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=farmyard"
@@ -8672,7 +8672,7 @@
             <key key="landuse" value="farmyard" />
             <text key="name" text="Name" />
         </item> <!-- Farmyard -->
-        <item name="Farmland" icon="styles/standard/misc/landuse/farmland.png" type="closedway,relation" preset_name_label="true">
+        <item name="Farmland" icon="styles/standard/misc/landuse/farmland.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=farmland"
                   ca.href="http://wiki.openstreetmap.org/wiki/Ca:Tag:landuse=farmland"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=farmland"
@@ -8686,7 +8686,7 @@
             <text key="name" text="Name" />
             <combo key="crop" text="Crop" values="corn,grass,rice,wheat,hop" values_context="crop" />
         </item> <!-- Farmland -->
-        <item name="Meadow" icon="styles/standard/misc/landuse/meadow.svg" type="closedway,relation" preset_name_label="true">
+        <item name="Meadow" icon="styles/standard/misc/landuse/meadow.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=meadow"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=meadow"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=meadow"
@@ -8699,7 +8699,7 @@
             <key key="landuse" value="meadow" />
             <text key="name" text="Name" />
         </item> <!-- Meadow -->
-        <item name="Orchard" icon="styles/standard/misc/landuse/orchard.svg" type="closedway,relation" preset_name_label="true">
+        <item name="Orchard" icon="styles/standard/misc/landuse/orchard.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=orchard"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=orchard"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=orchard"
@@ -8712,7 +8712,7 @@
             <text key="name" text="Name" />
             <combo key="trees" text="Trees" values="olive_trees,apple_trees,oil_palms,orange_trees,almond_trees,banana_plants,coconut_palms,hazel_plants,cherry_trees,persimmon_trees,walnut_trees,plum_trees,peach_trees,tea_plants" />
         </item> <!-- Orchard -->
-        <item name="Vineyard" icon="presets/fruits.png" type="closedway,relation" preset_name_label="true">
+        <item name="Vineyard" icon="presets/fruits.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=vineyard"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=vineyard"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=vineyard"
@@ -8753,7 +8753,7 @@
             <text key="genus" text="Genus" />
             <text key="species" text="Species" />
         </item> <!-- Plant Nursery -->
-        <item name="Allotments" icon="styles/standard/misc/landuse/allotments.svg" type="closedway,relation" preset_name_label="true">
+        <item name="Allotments" icon="styles/standard/misc/landuse/allotments.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=allotments"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=allotments"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=allotments"
@@ -8768,7 +8768,7 @@
             <text key="name" text="Name" />
         </item> <!-- Allotments -->
         <separator/>
-        <item name="Garden" icon="styles/standard/leisure/garden.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Garden" icon="styles/standard/leisure/garden.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=garden"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=garden"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=garden"
@@ -8779,7 +8779,7 @@
             <key key="leisure" value="garden" />
             <text key="name" text="Name" />
         </item> <!-- Garden -->
-        <item name="Grass" icon="styles/standard/misc/landuse/meadow.svg" type="closedway,relation" preset_name_label="true">
+        <item name="Grass" icon="styles/standard/misc/landuse/meadow.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=grass"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=grass"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=grass"
@@ -8794,7 +8794,7 @@
             <key key="landuse" value="grass" />
             <text key="name" text="Name" />
         </item> <!-- Grass -->
-        <item name="Village Green" icon="styles/standard/leisure/common.png" type="closedway,relation" preset_name_label="true">
+        <item name="Village Green" icon="styles/standard/leisure/common.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=village_green"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=village_green"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=village_green"
@@ -8808,7 +8808,7 @@
             <key key="landuse" value="village_green" />
             <text key="name" text="Name" />
         </item> <!-- Village Green -->
-        <item name="Common" icon="styles/standard/leisure/common.png" type="closedway,relation" preset_name_label="true">
+        <item name="Common" icon="styles/standard/leisure/common.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=common"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=common"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=common"
@@ -8818,7 +8818,7 @@
             <key key="leisure" value="common" />
             <text key="name" text="Name" />
         </item> <!-- Common -->
-        <item name="Park" icon="styles/standard/leisure/park.png" type="closedway,relation" preset_name_label="true">
+        <item name="Park" icon="styles/standard/leisure/park.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=park"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=park"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=park"
@@ -8831,7 +8831,7 @@
             <key key="leisure" value="park" />
             <text key="name" text="Name" />
         </item> <!-- Park -->
-        <item name="Recreation Ground" icon="styles/standard/leisure/common.png" type="closedway,relation" preset_name_label="true">
+        <item name="Recreation Ground" icon="styles/standard/leisure/common.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=recreation_ground"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=recreation_ground"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=recreation_ground"
@@ -8844,7 +8844,7 @@
             <text key="name" text="Name" />
         </item> <!-- Recreation Ground -->
         <separator/>
-        <item name="Residential Area" icon="styles/standard/misc/landmark/building.png" type="closedway,relation" preset_name_label="true">
+        <item name="Residential Area" icon="styles/standard/misc/landmark/building.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=residential"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=residential"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=residential"
@@ -8857,7 +8857,7 @@
             <key key="landuse" value="residential" />
             <text key="name" text="Name" />
         </item> <!-- Residential Area -->
-        <item name="Graveyard" icon="presets/graveyard.png" type="node,closedway,relation" preset_name_label="true">
+        <item name="Graveyard" icon="presets/graveyard.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=grave_yard"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=grave_yard"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=grave_yard"
@@ -8871,7 +8871,7 @@
             <key key="amenity" value="grave_yard" />
             <reference ref="religious" />
         </item> <!-- Graveyard -->
-        <item name="Cemetery" icon="presets/cemetery.png" type="closedway,relation" preset_name_label="true">
+        <item name="Cemetery" icon="presets/cemetery.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=cemetery"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=cemetery"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=cemetery"
@@ -8887,7 +8887,7 @@
             <key key="landuse" value="cemetery" />
             <reference ref="religious" />
         </item> <!-- Cemetery -->
-        <item name="Religious" icon="styles/standard/religion.png" type="closedway,relation" preset_name_label="true">
+        <item name="Religious" icon="styles/standard/religion.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=religious"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=religious"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=religious"
@@ -8896,7 +8896,7 @@
             <key key="landuse" value="religious" />
             <reference ref="religious" />
         </item> <!-- Religious -->
-        <item name="Retail" icon="styles/standard/shop/mall.png" type="closedway,relation" preset_name_label="true">
+        <item name="Retail" icon="styles/standard/shop/mall.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=retail"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=retail"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=retail"
@@ -8909,7 +8909,7 @@
             <key key="landuse" value="retail" />
             <text key="name" text="Name" />
         </item> <!-- Retail -->
-        <item name="Commercial" icon="styles/standard/misc/landuse/commercial.png" type="closedway,relation" preset_name_label="true">
+        <item name="Commercial" icon="styles/standard/misc/landuse/commercial.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=commercial"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=commercial"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=commercial"
@@ -8922,7 +8922,7 @@
             <key key="landuse" value="commercial" />
             <text key="name" text="Name" />
         </item> <!-- Commercial -->
-        <item name="Industrial" icon="styles/standard/misc/landmark/works.png" type="closedway,relation" preset_name_label="true">
+        <item name="Industrial" icon="styles/standard/misc/landmark/works.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=industrial"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=industrial"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=industrial"
@@ -8936,7 +8936,7 @@
             <key key="landuse" value="industrial" />
             <text key="name" text="Name" />
         </item> <!-- Industrial -->
-        <item name="Garages" icon="presets/garages.png" type="closedway,relation" preset_name_label="true">
+        <item name="Garages" icon="presets/garages.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=garages"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=garages"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=garages"
@@ -8949,7 +8949,7 @@
             <text key="name" text="Name" />
             <text key="operator" text="Operator" />
         </item> <!-- Garages -->
-        <item name="Railway Land" icon="presets/rail_light.png" type="closedway,relation" preset_name_label="true">
+        <item name="Railway Land" icon="presets/rail_light.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=railway"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=railway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=railway"
@@ -8961,7 +8961,7 @@
             <key key="landuse" value="railway" />
             <text key="name" text="Name" />
         </item> <!-- Railway Land -->
-        <item name="Military" icon="presets/military.png" type="closedway,relation" preset_name_label="true">
+        <item name="Military" icon="presets/military.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=military"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=military"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=military"
@@ -8973,7 +8973,7 @@
             <text key="name" text="Name" />
         </item> <!-- Military -->
         <separator/>
-        <item name="Construction Area" icon="presets/construction.png" type="closedway,relation" preset_name_label="true">
+        <item name="Construction Area" icon="presets/construction.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=construction"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=construction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=construction"
@@ -8986,7 +8986,7 @@
             <key key="landuse" value="construction" />
             <text key="name" text="Name" />
         </item> <!-- Construction Area -->
-        <item name="Brownfield" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
+        <item name="Brownfield" icon="presets/landuse.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=brownfield"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=brownfield"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=brownfield"
@@ -8999,7 +8999,7 @@
             <key key="landuse" value="brownfield" />
             <text key="name" text="Name" />
         </item> <!-- Brownfield -->
-        <item name="Greenfield" icon="presets/landuse.png" type="closedway,relation" preset_name_label="true">
+        <item name="Greenfield" icon="presets/landuse.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=greenfield"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=greenfield"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=greenfield"
@@ -9010,7 +9010,7 @@
             <key key="landuse" value="greenfield" />
             <text key="name" text="Name" />
         </item> <!-- Greenfield -->
-        <item name="Landfill" icon="styles/standard/misc/landuse/landfill.svg" type="closedway,relation" preset_name_label="true">
+        <item name="Landfill" icon="styles/standard/misc/landuse/landfill.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=landfill"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=landfill"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=landfill"
@@ -9022,7 +9022,7 @@
             <key key="landuse" value="landfill" />
             <text key="name" text="Name" />
         </item> <!-- Landfill -->
-        <item name="Quarry" icon="presets/mine.png" type="closedway,relation" preset_name_label="true">
+        <item name="Quarry" icon="presets/mine.png" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=quarry"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=quarry"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=quarry"
@@ -9037,7 +9037,7 @@
     </group> <!-- Landuse -->
   </group> <!-- Geography -->
     <group name="Annotation" icon="presets/addresses.png">
-        <item name="Name" icon="presets/message.png" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Name" icon="presets/message.png" type="node,way,closedway,relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:name"
                   ar.href="http://wiki.openstreetmap.org/wiki/Ar:Key:name"
                   ca.href="http://wiki.openstreetmap.org/wiki/Ca:Key:name"
@@ -9068,7 +9068,7 @@
                 <text key="short_name" text="Common name abbreviation" match="key" />
             </optional>
         </item> <!-- Name -->
-        <item name="Addresses" icon="presets/addresses.png" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Addresses" icon="presets/addresses.png" type="node,way,closedway,relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:addr"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:addr"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:addr"
@@ -9123,7 +9123,7 @@
                 <combo key="addr:inclusion" text="Accuracy" values="actual,estimate,potential" match="key" />
             </optional>
         </item> <!-- Address Interpolation -->
-        <item name="Contact (Common Schema)" icon="presets/contact.png" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Contact (Common Schema)" icon="presets/contact.png" type="node,way,closedway,relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Annotations"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Annotations"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Annotations"
@@ -9139,7 +9139,7 @@
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
         </item> <!-- Contact (Common Schema) -->
-        <item name="Contact (Schema with 'contact:*' Prefix)" icon="presets/contact.png" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Contact (Schema with 'contact:*' Prefix)" icon="presets/contact.png" type="node,way,closedway,relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:contact"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:contact"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:contact"
@@ -9159,7 +9159,7 @@
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
         </item> <!-- Contact (Schema with 'contact:*' Prefix) -->
-        <item name="Description" icon="styles/standard/misc/description.svg" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Description" icon="styles/standard/misc/description.svg" type="node,way,closedway,relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:description"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:description"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:description"
@@ -9178,7 +9178,7 @@
             <preset_link preset_name="Note" />
             <preset_link preset_name="Fixme" />
         </item> <!-- Description -->
-        <item name="Note" icon="styles/standard/misc/note-annotation.png" name_context="the tag note=*" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Note" icon="styles/standard/misc/note-annotation.png" name_context="the tag note=*" type="node,way,closedway,relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:note"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:note"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:note"
@@ -9198,7 +9198,7 @@
             <preset_link preset_name="Fixme" />
             <preset_link preset_name="Description" />
         </item> <!-- Note -->
-        <item name="Fixme" icon="styles/standard/misc/fixme-annotation.png" type="node,way,closedway,relation" preset_name_label="true">
+        <item name="Fixme" icon="styles/standard/misc/fixme-annotation.png" type="node,way,closedway,relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:fixme"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:fixme"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:fixme"
@@ -9219,7 +9219,7 @@
         </item> <!-- Fixme -->
     </group> <!-- Annotation -->
     <group name="Relations" icon="presets/relations.png">
-        <item name="Multipolygon" icon="presets/multipolygon.png" type="relation" preset_name_label="true">
+        <item name="Multipolygon" icon="presets/multipolygon.png" type="relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:multipolygon"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Relation:multipolygon"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:multipolygon"
@@ -9274,9 +9274,9 @@
             <text key="name" text="Site name" />
             <roles>
                 <role key="label" text="where to place the label" requisite="optional" type="node" />
-                <role key="perimeter" text="perimeter of the site" requisite="optional" type="closedway,relation" />
+                <role key="perimeter" text="perimeter of the site" requisite="optional" type="closedway,multipolygon" />
                 <role key="entrance" text="entrances to the site, on the perimeter" requisite="optional" type="node" />
-                <role key="" text="members of site" requisite="optional" type="node,way,closedway,relation" />
+                <role key="" text="members of site" requisite="optional" type="node,way,closedway,multipolygon" />
             </roles>
         </item> <!-- Site -->
         <separator/>
@@ -9526,7 +9526,7 @@
             <text key="name" text="Street name" />
             <roles>
                 <role key="street" text="street" requisite="required" type="way,closedway" member_expression="highway" />
-                <role key="house" text="house" requisite="required" type="node,way,closedway,relation" member_expression="&quot;addr:housenumber&quot; | &quot;addr:interpolation&quot; | &quot;addr:housename&quot;" />
+                <role key="house" text="house" requisite="required" type="node,way,closedway,multipolygon" member_expression="&quot;addr:housenumber&quot; | &quot;addr:interpolation&quot; | &quot;addr:housename&quot;" />
             </roles>
         </item> <!-- Associated Street -->
         <item name="Street" type="relation" preset_name_label="true">
@@ -9608,7 +9608,7 @@
             <roles>
                 <role key="across" text="ways supported by (on top of) the bridge" requisite="optional" type="way" />
                 <role key="under" text="ways passing under the bridge" requisite="optional" type="way" />
-                <role key="outline" text="way forming the outline footprint" requisite="optional" count="1" type="closedway,relation" />
+                <role key="outline" text="way forming the outline footprint" requisite="optional" count="1" type="closedway,multipolygon" />
                 <role key="edge" text="edge ways parallel to 'across'" requisite="optional" type="way" />
             </roles>
         </item> <!-- Bridge -->
@@ -9622,7 +9622,7 @@
             <text key="operator" text="Operator" />
             <roles>
                 <role key="through" text="ways passing through the tunnel" requisite="required" type="way" />
-                <role key="outline" text="way forming the outline footprint" requisite="optional" count="1" type="closedway,relation" />
+                <role key="outline" text="way forming the outline footprint" requisite="optional" count="1" type="closedway,multipolygon" />
                 <role key="edge" text="edge ways parallel to 'through'" requisite="optional" type="way" />
             </roles>
         </item> <!-- Tunnel -->
