@@ -42,6 +42,7 @@ public class SwissObliqueMercator implements Proj {
     private double alpha;
     private double b0;
     private double k;
+    private double phi0;
 
     private static final double EPSILON = 1e-11;
 
@@ -54,7 +55,7 @@ public class SwissObliqueMercator implements Proj {
     }
 
     private void initialize(double lat_0) {
-        double phi0 = toRadians(lat_0);
+        phi0 = toRadians(lat_0);
         kR = sqrt(1 - ellps.e2) / (1 - (ellps.e2 * pow(sin(phi0), 2)));
         alpha = sqrt(1 + (ellps.eb2 * pow(cos(phi0), 4)));
         b0 = asin(sin(phi0) / alpha);
@@ -117,6 +118,10 @@ public class SwissObliqueMercator implements Proj {
 
     @Override
     public Bounds getAlgorithmBounds() {
-        return new Bounds(-85, -179, 85, 179, false);
+        if (phi0 > 0) {
+            return new Bounds(-10, -40, 85, 40, false);
+        } else {
+            return new Bounds(-85, -40, 10, 40, false);
+        }
     }
 }

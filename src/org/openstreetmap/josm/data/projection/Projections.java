@@ -125,9 +125,9 @@ public final class Projections {
         datums.put("GGRS87", new ThreeParameterDatum(
                 "Greek Geodetic Reference System 1987", "GGRS87",
                 Ellipsoid.GRS80, -199.87, 74.79, 246.62));
-        datums.put("hermannskogel", new ThreeParameterDatum(
+        datums.put("hermannskogel", new SevenParameterDatum(
                 "Hermannskogel", "hermannskogel",
-                Ellipsoid.Bessel1841, 653.0, -212.0, 449.0));
+                Ellipsoid.Bessel1841, 577.326, 90.129, 463.919, 5.137, 1.474, 5.297, 2.4232));
         datums.put("ire65", new SevenParameterDatum(
                 "Ireland 1965", "ire65",
                 Ellipsoid.AiryMod, 482.530, -130.596, 564.557, -1.042, -0.214, -0.631, 8.15));
