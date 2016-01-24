@@ -23,6 +23,9 @@ public class TileSourceInfo {
     /** headers meaning, that there is no tile at this zoom level */
     protected Map<String, String> noTileHeaders;
 
+    /** checksum of empty tiles */
+    protected Map<String, String> noTileChecksums;
+
     /** minimum zoom level supported by the tile source */
     protected int minZoom;
 
@@ -98,6 +101,15 @@ public class TileSourceInfo {
      */
     public Map<String, String> getNoTileHeaders() {
         return noTileHeaders;
+    }
+
+    /**
+     * Checkusm for empty tiles for servers delivering such tile types
+     * @return map of checksums, that when detected, means that this is "no tile at this zoom level" situation
+     * @since 32021
+     */
+    public Map<String, String> getNoTileChecksums() {
+        return noTileChecksums;
     }
 
     /**
