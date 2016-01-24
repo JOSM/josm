@@ -3,6 +3,8 @@ package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.awt.Point;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     protected String baseUrl;
     protected String id;
     private final Map<String, String> noTileHeaders;
+    private final Map<String, String> noTileChecksums;
     private final Map<String, String> metadataHeaders;
     protected int tileSize;
     protected OsmMercator osmMercator;
@@ -43,6 +46,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
         }
         this.id = info.getUrl();
         this.noTileHeaders = info.getNoTileHeaders();
+        this.noTileChecksums = info.getNoTileChecksums();
         this.metadataHeaders = info.getMetadataHeaders();
         this.tileSize = info.getTileSize();
         this.osmMercator = new OsmMercator(this.tileSize);
@@ -215,6 +219,30 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
                             return true;
                         }
                     }
+                }
+            }
+        }
+        if (noTileChecksums != null) {
+            for (Entry<String, String> searchEntry: noTileChecksums.entrySet()) {
+                MessageDigest md = null;
+                try {
+                    md = MessageDigest.getInstance(searchEntry.getKey());
+                } catch (NoSuchAlgorithmException e) {
+                    break;
+                }
+                byte[] byteDigest = md.digest(content);
+                final int len = byteDigest.length;
+
+                char[] hexChars = new char[len * 2];
+                for (int i = 0, j = 0; i < len; i++) {
+                    final int v = byteDigest[i];
+                    int vn = (v & 0xf0) >> 4;
+                    hexChars[j++] = (char)(vn + (vn >= 10 ? 'a'-10 : '0'));
+                    vn = (v & 0xf);
+                    hexChars[j++] = (char)(vn + (vn >= 10 ? 'a'-10 : '0'));
+                }
+                if (new String(hexChars).equalsIgnoreCase(searchEntry.getValue())) {
+                    return true;
                 }
             }
         }
