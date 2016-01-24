@@ -15,7 +15,7 @@ public class LatLonDialogTest {
      * Unit test of {@link LatLonDialog#parseLatLon} method.
      */
     @Test
-    public void testparseLatLon() {
+    public void testParseLatLon() {
         assertEquals(new LatLon(49.29918, 19.24788), LatLonDialog.parseLatLon("49.29918° 19.24788°"));
         assertEquals(new LatLon(49.29918, 19.24788), LatLonDialog.parseLatLon("N 49.29918 E 19.24788°"));
         assertEquals(new LatLon(49.29918, 19.24788), LatLonDialog.parseLatLon("49.29918° 19.24788°"));
