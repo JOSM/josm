@@ -37,7 +37,7 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -55,7 +55,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author Wiktor Niesiobędzki
  * @since 8526
  */
-public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource {
+public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTileSource {
     private static final String PATTERN_HEADER  = "\\{header\\(([^,]+),([^}]+)\\)\\}";
 
     private static final String URL_GET_ENCODING_PARAMS = "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER={layer}&STYLE={style}&"
