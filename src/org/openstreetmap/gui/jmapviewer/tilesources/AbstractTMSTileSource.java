@@ -27,8 +27,8 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     protected String name;
     protected String baseUrl;
     protected String id;
-    private final Map<String, List<String> > noTileHeaders;
-    private final Map<String, List<String> > noTileChecksums;
+    private final Map<String, List<String>> noTileHeaders;
+    private final Map<String, List<String>> noTileChecksums;
     private final Map<String, String> metadataHeaders;
     protected int tileSize;
     protected OsmMercator osmMercator;
@@ -239,9 +239,9 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
                 for (int i = 0, j = 0; i < len; i++) {
                     final int v = byteDigest[i];
                     int vn = (v & 0xf0) >> 4;
-                    hexChars[j++] = (char)(vn + (vn >= 10 ? 'a'-10 : '0'));
+                    hexChars[j++] = (char) (vn + (vn >= 10 ? 'a'-10 : '0'));
                     vn = (v & 0xf);
-                    hexChars[j++] = (char)(vn + (vn >= 10 ? 'a'-10 : '0'));
+                    hexChars[j++] = (char) (vn + (vn >= 10 ? 'a'-10 : '0'));
                 }
                 for (String val: searchEntry.getValue()) {
                     if (new String(hexChars).equalsIgnoreCase(val)) {
