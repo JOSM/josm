@@ -73,6 +73,17 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         }
     }
 
+    private JosmTextField tfFilter;
+    private PluginListPanel pnlPluginPreferences;
+    private PluginPreferencesModel model;
+    private JScrollPane spPluginPreferences;
+    private PluginUpdatePolicyPanel pnlPluginUpdatePolicy;
+
+    /**
+     * is set to true if this preference pane has been selected by the user
+     */
+    private boolean pluginPreferencesActivated;
+
     private PluginPreference() {
         super(/* ICON(preferences/) */ "plugin", tr("Plugins"), tr("Configure available plugins."), false, new JTabbedPane());
     }
@@ -145,20 +156,8 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         });
     }
 
-    private JosmTextField tfFilter;
-    private PluginListPanel pnlPluginPreferences;
-    private PluginPreferencesModel model;
-    private JScrollPane spPluginPreferences;
-    private PluginUpdatePolicyPanel pnlPluginUpdatePolicy;
-
-    /**
-     * is set to true if this preference pane has been selected
-     * by the user
-     */
-    private boolean pluginPreferencesActivated;
-
     protected JPanel buildSearchFieldPanel() {
-        JPanel pnl  = new JPanel(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -267,14 +266,19 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
     }
 
     /**
-     * Replies the list of plugins waiting for update or download
+     * Replies the set of plugins waiting for update or download
      *
-     * @return the list of plugins waiting for update or download
+     * @return the set of plugins waiting for update or download
      */
     public Set<PluginInformation> getPluginsScheduledForUpdateOrDownload() {
         return model != null ? model.getPluginsScheduledForUpdateOrDownload() : null;
     }
 
+    /**
+     * Replies the list of plugins which have been added by the user to the set of activated plugins
+     *
+     * @return the list of newly activated plugins
+     */
     public List<PluginInformation> getNewlyActivatedPlugins() {
         return model != null ? model.getNewlyActivatedPlugins() : null;
     }
@@ -288,9 +292,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             List<String> l = new LinkedList<>(model.getSelectedPluginNames());
             Collections.sort(l);
             Main.pref.putCollection("plugins", l);
-            if (!model.getNewlyDeactivatedPlugins().isEmpty()) return true;
+            if (!model.getNewlyDeactivatedPlugins().isEmpty())
+                return true;
             for (PluginInformation pi : model.getNewlyActivatedPlugins()) {
-                if (!pi.canloadatruntime) return true;
+                if (!pi.canloadatruntime)
+                    return true;
             }
         }
         return false;
@@ -307,14 +313,15 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                if (task.isCanceled()) return;
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        model.setAvailablePlugins(task.getAvailablePlugins());
-                        pnlPluginPreferences.refreshView();
-                    }
-                });
+                if (!task.isCanceled()) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            model.setAvailablePlugins(task.getAvailablePlugins());
+                            pnlPluginPreferences.refreshView();
+                        }
+                    });
+                }
             }
         };
         Main.worker.submit(task);
@@ -345,15 +352,16 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             Runnable continuation = new Runnable() {
                 @Override
                 public void run() {
-                    if (task.isCanceled()) return;
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            model.updateAvailablePlugins(task.getAvailablePlugins());
-                            pnlPluginPreferences.refreshView();
-                            Main.pref.putInteger("pluginmanager.version", Version.getInstance().getVersion()); // fix #7030
-                        }
-                    });
+                    if (!task.isCanceled()) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                model.updateAvailablePlugins(task.getAvailablePlugins());
+                                pnlPluginPreferences.refreshView();
+                                Main.pref.putInteger("pluginmanager.version", Version.getInstance().getVersion()); // fix #7030
+                            }
+                        });
+                    }
                 }
             };
             Main.worker.submit(task);
@@ -511,12 +519,11 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
     private static class PluginConfigurationSitesPanel extends JPanel {
 
-        private DefaultListModel<String> model;
+        private final DefaultListModel<String> model = new DefaultListModel<>();
 
-        protected final void build() {
-            setLayout(new GridBagLayout());
+        PluginConfigurationSitesPanel() {
+            super(new GridBagLayout());
             add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
-            model = new DefaultListModel<>();
             for (String s : Main.pref.getPluginSites()) {
                 model.addElement(s);
             }
@@ -581,12 +588,9 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             add(buttons, GBC.eol());
         }
 
-        PluginConfigurationSitesPanel() {
-            build();
-        }
-
         public List<String> getUpdateSites() {
-            if (model.getSize() == 0) return Collections.emptyList();
+            if (model.getSize() == 0)
+                return Collections.emptyList();
             List<String> ret = new ArrayList<>(model.getSize());
             for (int i = 0; i < model.getSize(); i++) {
                 ret.add(model.get(i));

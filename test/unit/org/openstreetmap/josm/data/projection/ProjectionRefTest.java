@@ -64,7 +64,7 @@ public class ProjectionRefTest {
         String def;
         List<Pair<LatLon, EastNorth>> data;
 
-        public RefEntry(String code, String def) {
+        RefEntry(String code, String def) {
             this.code = code;
             this.def = def;
             this.data = new ArrayList<>();
@@ -82,10 +82,9 @@ public class ProjectionRefTest {
     /**
      * Reads data from the reference file.
      * @return the data
-     * @throws IOException
-     * @throws FileNotFoundException
+     * @throws IOException if any I/O error occurs
      */
-    private static Collection<RefEntry> readData() throws IOException, FileNotFoundException {
+    private static Collection<RefEntry> readData() throws IOException {
         Collection<RefEntry> result = new ArrayList<>();
         if (!new File(REFERENCE_DATA_FILE).exists()) {
             System.err.println("Warning: refrence file does not exist.");
@@ -257,10 +256,9 @@ public class ProjectionRefTest {
     /**
      * Writes data to file.
      * @param refs the data
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
-    private static void writeData(Collection<RefEntry> refs) throws FileNotFoundException, IOException {
+    private static void writeData(Collection<RefEntry> refs) throws IOException {
         Map<String, RefEntry> refsMap = new TreeMap<>(new CodeProjectionChoice.CodeComparator());
         for (RefEntry ref : refs) {
             refsMap.put(ref.code, ref);
