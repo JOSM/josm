@@ -4,8 +4,6 @@ package org.openstreetmap.gui.jmapviewer.tilesources;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
-
 /**
  * Data class that keeps basic information about a tile source.
  *
@@ -37,7 +35,7 @@ public class TileSourceInfo {
     protected String cookies = "";
 
     /** tile size of the displayed tiles */
-    private int tileSize = OsmMercator.DEFAUL_TILE_SIZE; // FIXME: set to -1 for next release
+    private int tileSize = -1;
 
     /** mapping &lt;header key, metadata key&gt; */
     protected Map<String, String> metadataHeaders;
