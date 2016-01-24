@@ -501,8 +501,9 @@ public class MapCSSStyleSource extends StyleSource {
     }
 
     @Override
+    @SuppressWarnings("resource")
     public CachedFile getCachedFile() throws IOException {
-        return new CachedFile(url).setHttpAccept(MAPCSS_STYLE_MIME_TYPES);
+        return new CachedFile(url).setHttpAccept(MAPCSS_STYLE_MIME_TYPES); // NOSONAR
     }
 
     @Override

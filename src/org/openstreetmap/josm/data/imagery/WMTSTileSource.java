@@ -104,6 +104,13 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     }
 
     private static class Layer {
+        private String format;
+        private String name;
+        private TileMatrixSet tileMatrixSet;
+        private String baseUrl;
+        private String style;
+        public Collection<String> tileMatrixSetLinks = new ArrayList<>();
+
         Layer(Layer l) {
             if (l != null) {
                 format = l.format;
@@ -116,13 +123,6 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
 
         Layer() {
         }
-
-        private String format;
-        private String name;
-        private TileMatrixSet tileMatrixSet;
-        private String baseUrl;
-        private String style;
-        public Collection<String> tileMatrixSetLinks = new ArrayList<>();
     }
 
     private enum TransferMode {
@@ -150,7 +150,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
     }
 
     private static final class SelectLayerDialog extends ExtendedDialog {
-        private final Layer[] layers;
+        private final transient Layer[] layers;
         private final JTable list;
 
         SelectLayerDialog(Collection<Layer> layers) {
@@ -255,7 +255,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
 
     private String handleTemplate(String url) {
         Pattern pattern = Pattern.compile(PATTERN_HEADER);
-        StringBuffer output = new StringBuffer();
+        StringBuffer output = new StringBuffer(); // NOSONAR
         Matcher matcher = pattern.matcher(url);
         while (matcher.find()) {
             this.headers.put(matcher.group(1), matcher.group(2));
@@ -277,9 +277,7 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
             if (data == null || data.length == 0) {
                 throw new IllegalArgumentException("Could not read data from: " + baseUrl);
             }
-            XMLStreamReader reader = factory.createXMLStreamReader(
-                    new ByteArrayInputStream(data)
-                    );
+            XMLStreamReader reader = factory.createXMLStreamReader(new ByteArrayInputStream(data));
 
             Collection<Layer> ret = null;
             for (int event = reader.getEventType(); reader.hasNext(); event = reader.next()) {
@@ -508,21 +506,20 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
     private static TransferMode getTransferMode(XMLStreamReader reader) throws XMLStreamException {
-        QName GET_QNAME = new QName(OWS_NS_URL, "Get");
+        QName getQname = new QName(OWS_NS_URL, "Get");
 
-        Utils.ensure(GET_QNAME.equals(reader.getName()), "WMTS Parser state invalid. Expected element %s, got %s",
-                GET_QNAME, reader.getName());
+        Utils.ensure(getQname.equals(reader.getName()), "WMTS Parser state invalid. Expected element %s, got %s",
+                getQname, reader.getName());
         for (int event = reader.getEventType();
-                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && GET_QNAME.equals(reader.getName()));
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && getQname.equals(reader.getName()));
                 event = reader.next()) {
-            if (event == XMLStreamReader.START_ELEMENT && new QName(OWS_NS_URL, "Constraint").equals(reader.getName())) {
-                if ("GetEncoding".equals(reader.getAttributeValue("", "name"))) {
-                    moveReaderToTag(reader, new QName[]{
-                            new QName(OWS_NS_URL, "AllowedValues"),
-                            new QName(OWS_NS_URL, "Value")
-                    });
-                    return TransferMode.fromString(reader.getElementText());
-                }
+            if (event == XMLStreamReader.START_ELEMENT && new QName(OWS_NS_URL, "Constraint").equals(reader.getName())
+             && "GetEncoding".equals(reader.getAttributeValue("", "name"))) {
+                moveReaderToTag(reader, new QName[]{
+                        new QName(OWS_NS_URL, "AllowedValues"),
+                        new QName(OWS_NS_URL, "Value")
+                });
+                return TransferMode.fromString(reader.getElementText());
             }
         }
         return null;
@@ -564,15 +561,13 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
                     }
                 }
 
-                if (event == XMLStreamReader.END_ELEMENT) {
-                    if (parentTag != null && parentTag.equals(reader.getName())) {
-                        currentLevel -= 1;
-                        searchTag = parentTag;
-                        if (currentLevel >= 0) {
-                            parentTag = tags[currentLevel];
-                        } else {
-                            parentTag = null;
-                        }
+                if (event == XMLStreamReader.END_ELEMENT && parentTag != null && parentTag.equals(reader.getName())) {
+                    currentLevel -= 1;
+                    searchTag = parentTag;
+                    if (currentLevel >= 0) {
+                        parentTag = tags[currentLevel];
+                    } else {
+                        parentTag = null;
                     }
                 }
             }
