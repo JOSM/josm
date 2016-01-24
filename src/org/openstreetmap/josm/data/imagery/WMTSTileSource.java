@@ -624,17 +624,6 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         return getTileSize();
     }
 
-    // FIXME: remove in September 2015, when ImageryPreferenceEntry.tileSize will be initialized to -1 instead to 256
-    // need to leave it as it is to keep compatiblity between tested and latest JOSM versions
-    @Override
-    public int getTileSize() {
-        TileMatrix matrix = getTileMatrix(1);
-        if (matrix == null) {
-            return 1;
-        }
-        return matrix.tileHeight;
-    }
-
     @Override
     public String getTileUrl(int zoom, int tilex, int tiley) {
         String url;

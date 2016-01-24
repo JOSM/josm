@@ -43,6 +43,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -1412,7 +1414,16 @@ public class Preferences {
             JsonObjectBuilder object = Json.createObjectBuilder();
             for (Object o: map.entrySet()) {
                 Entry e = (Entry) o;
-                object.add(e.getKey().toString(), e.getValue().toString());
+                Object evalue = e.getValue();
+                if (evalue instanceof Collection) {
+                    JsonArrayBuilder a = Json.createArrayBuilder();
+                    for (Object evo : (Collection)evalue) {
+                        a.add(evo.toString());
+                    }
+                    object.add(e.getKey().toString(), a.build());
+                } else {
+                    object.add(e.getKey().toString(), evalue.toString());
+                }
             }
             writer.writeObject(object.build());
         }
@@ -1427,7 +1438,13 @@ public class Preferences {
             ret = new HashMap(object.size());
             for (Entry<String, JsonValue> e: object.entrySet()) {
                 JsonValue value = e.getValue();
-                if (value instanceof JsonString) {
+                if (value instanceof JsonArray) {
+                    List <String> finalList = new ArrayList<String>();
+                    for(JsonString js: ((JsonArray)value).getValuesAs(JsonString.class)) {
+                        finalList.add(js.getString());
+                    }
+                    ret.put(e.getKey(), finalList);
+                } else if (value instanceof JsonString) {
                     // in some cases, when JsonValue.toString() is called, then additional quotation marks are left in value
                     ret.put(e.getKey(), ((JsonString) value).getString());
                 } else {
@@ -1496,8 +1513,8 @@ public class Preferences {
      * corresponding fields.
      *
      * The map value (a String) is converted to the field type. Supported
-     * types are: boolean, Boolean, int, Integer, double, Double, String and
-     * Map&lt;String, String&gt;.
+     * types are: boolean, Boolean, int, Integer, double, Double, String,
+     * Map&lt;String, String&gt; and Map&lt;String, List&lt;String&gt;&gt;.
      *
      * Only fields with annotation {@link pref} are taken into account.
      * @param <T> the class
