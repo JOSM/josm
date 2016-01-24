@@ -79,9 +79,6 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         this.serverProjections = new TreeSet<>(info.getServerProjections());
         handleTemplate();
         initProjection();
-        // FIXME: remove in September 2015, when ImageryPreferenceEntry.tileSize will be initialized to -1 instead to 256
-        // need to leave it as it is to keep compatibility between tested and latest JOSM versions
-        tileSize = WMSLayer.PROP_IMAGE_SIZE.get();
     }
 
     /**
