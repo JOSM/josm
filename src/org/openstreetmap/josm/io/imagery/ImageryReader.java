@@ -93,8 +93,8 @@ public class ImageryReader implements Closeable {
         // language of last element, does only work for simple ENTRY_ATTRIBUTE's
         private String lang;
         private List<String> projections;
-        private Map<String, String> noTileHeaders;
-        private Map<String, String> noTileChecksums;
+        private Map<String, List<String> > noTileHeaders;
+        private Map<String, List<String> > noTileChecksums;
         private Map<String, String> metadataHeaders;
 
         @Override
@@ -171,10 +171,26 @@ public class ImageryReader implements Closeable {
                     projections = new ArrayList<>();
                     newState = State.PROJECTIONS;
                 } else if ("no-tile-header".equals(qName)) {
-                    noTileHeaders.put(atts.getValue("name"), atts.getValue("value"));
+                    String name = atts.getValue("name");
+                    List<String> l;
+                    if (noTileHeaders.containsKey(name)) {
+                        l = noTileHeaders.get(name);
+                    } else {
+                        l = new ArrayList<String>();
+                        noTileHeaders.put(atts.getValue("name"), l);
+                    }
+                    l.add(atts.getValue("value"));
                     newState = State.NO_TILE;
                 } else if ("no-tile-checksum".equals(qName)) {
-                    noTileChecksums.put(atts.getValue("type"), atts.getValue("value"));
+                    String type = atts.getValue("type");
+                    List<String> l;
+                    if (noTileChecksums.containsKey(type)) {
+                        l = noTileChecksums.get(type);
+                    } else {
+                        l = new ArrayList<String>();
+                        noTileChecksums.put(type, l);
+                    }
+                    l.add(atts.getValue("value"));
                     newState = State.NO_TILESUM;
                 } else if ("metadata-header".equals(qName)) {
                     metadataHeaders.put(atts.getValue("header-name"), atts.getValue("metadata-key"));

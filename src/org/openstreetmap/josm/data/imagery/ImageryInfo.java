@@ -218,8 +218,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref String projections;
         @pref String icon;
         @pref String description;
-        @pref Map<String, String> noTileHeaders;
-        @pref Map<String, String> noTileChecksums;
+        @pref Map<String, List<String>> noTileHeaders;
+        @pref Map<String, List<String>> noTileChecksums;
         @pref int tileSize = OsmMercator.DEFAUL_TILE_SIZE;
         @pref Map<String, String> metadataHeaders;
         @pref boolean valid_georeference;
@@ -975,14 +975,14 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * will be returned, then this tile will be treated as "no tile at this zoom level"
      *
      * @param noTileHeaders Map of &lt;header name, header value&gt; which will be treated as "no tile at this zoom level"
-     * @since 8344
+     * @since 9611
      */
-    public void setNoTileHeaders(Map<String, String> noTileHeaders) {
+    public void setNoTileHeaders(Map<String, List<String>> noTileHeaders) {
        this.noTileHeaders = noTileHeaders;
     }
 
     @Override
-    public Map<String, String> getNoTileHeaders() {
+    public Map<String, List<String>> getNoTileHeaders() {
         return noTileHeaders;
     }
 
@@ -991,14 +991,14 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * will be returned, then this tile will be treated as "no tile at this zoom level"
      *
      * @param noTileChecksums Map of &lt;checksum type, checksum value&gt; which will be treated as "no tile at this zoom level"
-     * @since 9610
+     * @since 9611
      */
-    public void setNoTileChecksums(Map<String, String> noTileChecksums) {
+    public void setNoTileChecksums(Map<String, List<String>> noTileChecksums) {
        this.noTileChecksums = noTileChecksums;
     }
 
     @Override
-    public Map<String, String> getNoTileChecksums() {
+    public Map<String, List<String>> getNoTileChecksums() {
         return noTileChecksums;
     }
 
