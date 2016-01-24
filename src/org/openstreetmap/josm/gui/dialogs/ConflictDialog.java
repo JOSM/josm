@@ -511,7 +511,10 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         }
     }
 
-    class ConflictPainter extends AbstractVisitor {
+    /**
+     * Paints conflicts.
+     */
+    public static class ConflictPainter extends AbstractVisitor {
         // Manage a stack of visited relations to avoid infinite recursion with cyclic relations (fix #7938)
         private final Set<Relation> visited = new HashSet<>();
         private final NavigatableComponent nc;
@@ -528,7 +531,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             g.drawRect(p.x-1, p.y-1, 2, 2);
         }
 
-        public void visit(Node n1, Node n2) {
+        private void visit(Node n1, Node n2) {
             Point p1 = nc.getPoint(n1);
             Point p2 = nc.getPoint(n2);
             g.drawLine(p1.x, p1.y, p2.x, p2.y);
