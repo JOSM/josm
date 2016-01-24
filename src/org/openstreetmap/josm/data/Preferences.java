@@ -1417,7 +1417,7 @@ public class Preferences {
                 Object evalue = e.getValue();
                 if (evalue instanceof Collection) {
                     JsonArrayBuilder a = Json.createArrayBuilder();
-                    for (Object evo : (Collection)evalue) {
+                    for (Object evo: (Collection) evalue) {
                         a.add(evo.toString());
                     }
                     object.add(e.getKey().toString(), a.build());
@@ -1439,8 +1439,8 @@ public class Preferences {
             for (Entry<String, JsonValue> e: object.entrySet()) {
                 JsonValue value = e.getValue();
                 if (value instanceof JsonArray) {
-                    List <String> finalList = new ArrayList<String>();
-                    for(JsonString js: ((JsonArray)value).getValuesAs(JsonString.class)) {
+                    List<String> finalList = new ArrayList<String>();
+                    for (JsonString js: ((JsonArray) value).getValuesAs(JsonString.class)) {
                         finalList.add(js.getString());
                     }
                     ret.put(e.getKey(), finalList);
