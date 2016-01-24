@@ -2,94 +2,348 @@
 package org.openstreetmap.josm.data.projection;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
+import org.openstreetmap.josm.gui.preferences.projection.CodeProjectionChoice;
+import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Test projections using reference data. (Currently provided by proj.4)
+ * Test projections using reference data from external program.
  *
- * The data file data_nodist/projection/projection-reference-data.csv can be created like this:
- *      Fist run this file's main method to collect epsg codes and bounds data.
- *      Then pipe the result into test/generate-proj-data.pl.
+ * To update the reference data file <code>data_nodist/projection/projection-reference-data</code>,
+ * run the main method of this class. For this, you need to have the cs2cs
+ * program from the proj.4 library in path (or use <code>CS2CS_EXE</code> to set
+ * the full path of the executable). Make sure the required *.gsb grid files
+ * can be accessed, i.e. copy them from <code>data/projection</code> to <code>/usr/share/proj</code> or
+ * wherever cs2cs expects them to be placed.
+ *
+ * The input parameter for the external library is <em>not</em> the projection code
+ * (e.g. "EPSG:25828"), but the entire definition, (e.g. "+proj=utm +zone=28 +ellps=GRS80 +nadgrids=null").
+ * This means the test does not verify our definitions, but the correctness
+ * of the algorithm, given a certain definition.
  */
 public class ProjectionRefTest {
 
+    private static final String CS2CS_EXE = "cs2cs";
+
+    private static final String REFERENCE_DATA_FILE = "data_nodist/projection/projection-reference-data";
+
+    private static class RefEntry {
+        String code;
+        String def;
+        List<Pair<LatLon, EastNorth>> data;
+
+        public RefEntry(String code, String def) {
+            this.code = code;
+            this.def = def;
+            this.data = new ArrayList<>();
+        }
+    }
+
+    static Random rand = new Random();
+
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+        Collection<RefEntry> refs = readData();
+        refs = updateData(refs);
+        writeData(refs);
+    }
+
     /**
-     * create a list of epsg codes and bounds to be used by the perl script
-     * @param args program main arguments
+     * Reads data from the reference file.
+     * @return the data
+     * @throws IOException
+     * @throws FileNotFoundException
      */
-    public static void main(String[] args) {
-        Map<String, Projection> allCodes = new HashMap<>();
-        for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
-            for (String code : pc.allCodes()) {
-                Collection<String> pref = pc.getPreferencesFromCode(code);
-                pc.setPreferences(pref);
-                Projection p = pc.getProjection();
-                allCodes.put(code, p);
+    private static Collection<RefEntry> readData() throws IOException, FileNotFoundException {
+        Collection<RefEntry> result = new ArrayList<>();
+        if (!new File(REFERENCE_DATA_FILE).exists()) {
+            System.err.println("Warning: refrence file does not exist.");
+            return result;
+        }
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(
+                new FileInputStream(REFERENCE_DATA_FILE), StandardCharsets.UTF_8))) {
+            String line;
+            Pattern projPattern = Pattern.compile("<(.+?)>(.*)<>");
+            RefEntry curEntry = null;
+            while ((line = in.readLine()) != null) {
+                if (line.startsWith("#") || line.trim().isEmpty()) {
+                    continue;
+                }
+                if (line.startsWith("<")) {
+                    Matcher m = projPattern.matcher(line);
+                    if (!m.matches()) {
+                        Assert.fail("unable to parse line: " + line);
+                    }
+                    String code = m.group(1);
+                    String def = m.group(2).trim();
+                    curEntry = new RefEntry(code, def);
+                    result.add(curEntry);
+                } else if (curEntry != null) {
+                    String[] f = line.trim().split(",");
+                    double lon = Double.parseDouble(f[0]);
+                    double lat = Double.parseDouble(f[1]);
+                    double east = Double.parseDouble(f[2]);
+                    double north = Double.parseDouble(f[3]);
+                    curEntry.data.add(Pair.create(new LatLon(lat, lon), new EastNorth(east, north)));
+                }
             }
         }
-        for (Entry<String, Projection> e : allCodes.entrySet()) {
-            System.out.println(String.format("%s %s", e.getKey(), e.getValue().getWorldBoundsLatLon()));
+        return result;
+    }
+
+    /**
+     * Generates new reference data by calling external program cs2cs.
+     *
+     * Old data is kept, as long as the projection definition is still the same.
+     *
+     * @param refs old data
+     * @return updated data
+     */
+    private static Collection<RefEntry> updateData(Collection<RefEntry> refs) {
+        Set<String> failed = new LinkedHashSet<>();
+        final int N_POINTS = 20;
+
+        Map<String, RefEntry> refsMap = new HashMap<>();
+        for (RefEntry ref : refs) {
+            refsMap.put(ref.code, ref);
+        }
+
+        List<RefEntry> refsNew = new ArrayList<>();
+
+        Set<String> codes = new TreeSet<>(new CodeProjectionChoice.CodeComparator());
+        codes.addAll(Projections.getAllProjectionCodes());
+        for (String code : codes) {
+            String def = Projections.getInit(code);
+
+            RefEntry ref = new RefEntry(code, def);
+            RefEntry oldRef = refsMap.get(code);
+
+            if (oldRef != null && Objects.equals(def, oldRef.def)) {
+                for (int i = 0; i < N_POINTS && i < oldRef.data.size(); i++) {
+                    ref.data.add(oldRef.data.get(i));
+                }
+            }
+            if (ref.data.size() < N_POINTS) {
+                System.out.print(code);
+                System.out.flush();
+                Projection proj = Projections.getProjectionByCode(code);
+                Bounds b = proj.getWorldBoundsLatLon();
+                for (int i = ref.data.size(); i < N_POINTS; i++) {
+                    System.out.print(".");
+                    System.out.flush();
+                    LatLon ll = getRandom(b);
+                    EastNorth en = latlon2eastNorthProj4(def, ll);
+                    if (en != null) {
+                        ref.data.add(Pair.create(ll, en));
+                    } else {
+                        System.err.println("Warning: cannot convert "+code+" at "+ll);
+                        failed.add(code);
+                    }
+                }
+                System.out.println();
+            }
+            refsNew.add(ref);
+        }
+        if (!failed.isEmpty()) {
+            System.err.println("Error: the following " + failed.size() + " entries had errors: " + failed);
+        }
+        return refsNew;
+    }
+
+    /**
+     * Get random LatLon value within the bounds.
+     * @param b the bounds
+     * @return random LatLon value within the bounds
+     */
+    private static LatLon getRandom(Bounds b) {
+        double lat, lon;
+        lat = b.getMin().lat() + rand.nextDouble() * (b.getMax().lat() - b.getMin().lat());
+        double minlon = b.getMinLon();
+        double maxlon = b.getMaxLon();
+        if (b.crosses180thMeridian()) {
+            maxlon += 360;
+        }
+        lon = minlon + rand.nextDouble() * (maxlon - minlon);
+        lon = LatLon.toIntervalLon(lon);
+        return new LatLon(lat, lon);
+    }
+
+    /**
+     * Run external cs2cs command from the PROJ.4 library to convert lat/lon to
+     * east/north value.
+     * @param def the proj.4 projection definition string
+     * @param ll the LatLon
+     * @return projected EastNorth or null in case of error
+     */
+    private static EastNorth latlon2eastNorthProj4(String def, LatLon ll) {
+        List<String> args = new ArrayList<>();
+        args.add(CS2CS_EXE);
+        args.addAll(Arrays.asList("-f %.9f +proj=longlat +datum=WGS84 +to".split(" ")));
+        // proj.4 cannot read our ntf_r93_b.gsb file
+        // possibly because it is big endian. Use equivalent
+        // little endian file shipped with proj.4.
+        // see http://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NT111_V1_HARMEL_TransfoNTF-RGF93_FormatGrilleNTV2.pdf
+        def = def.replace("ntf_r93_b.gsb", "ntf_r93.gsb");
+        args.addAll(Arrays.asList(def.split(" ")));
+        ProcessBuilder pb = new ProcessBuilder(args);
+
+        String output;
+        try {
+            Process process = pb.start();
+            OutputStream stdin = process.getOutputStream();
+            final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
+            InputStream stdout = process.getInputStream();
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+            String input = String.format("%.9f %.9f\n", ll.lon(), ll.lat());
+            writer.write(input);
+            writer.close();
+            output = reader.readLine();
+            reader.close();
+        } catch (IOException e) {
+            System.err.println("Error: Running external command failed: " + e + "\nCommand was: "+Utils.join(" ", args));
+            return null;
+        }
+        Pattern p = Pattern.compile("(\\S+)\\s+(\\S+)\\s.*");
+        Matcher m = p.matcher(output);
+        if (!m.matches()) {
+            System.err.println("Error: Cannot parse cs2cs output: '" + output + "'");
+            return null;
+        }
+        String es = m.group(1);
+        String ns = m.group(2);
+        if ("*".equals(es) || "*".equals(ns)) {
+            System.err.println("Error: cs2cs is unable to convert coordinates.");
+            return null;
+        }
+        try {
+            return new EastNorth(Double.parseDouble(es), Double.parseDouble(ns));
+        } catch (NumberFormatException nfe) {
+            System.err.println("Error: Cannot parse cs2cs output: '" + es + "', '" + ns + "'" + "\nCommand was: "+Utils.join(" ", args));
+            return null;
+        }
+    }
+
+    /**
+     * Writes data to file.
+     * @param refs the data
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    private static void writeData(Collection<RefEntry> refs) throws FileNotFoundException, IOException {
+        Map<String, RefEntry> refsMap = new TreeMap<>(new CodeProjectionChoice.CodeComparator());
+        for (RefEntry ref : refs) {
+            refsMap.put(ref.code, ref);
+        }
+        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(REFERENCE_DATA_FILE), StandardCharsets.UTF_8))) {
+            for (Map.Entry<String, RefEntry> e : refsMap.entrySet()) {
+                RefEntry ref = e.getValue();
+                out.write("<" + ref.code + "> " + ref.def + "  <>\n");
+                for (Pair<LatLon, EastNorth> p : ref.data) {
+                    LatLon ll = p.a;
+                    EastNorth en = p.b;
+                    out.write("    " + ll.lon() + "," + ll.lat() + "," + en.east() + "," + en.north() + "\n");
+                }
+            }
         }
     }
 
     @Test
-    public void test() throws IOException, FileNotFoundException {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream("data_nodist/projection/projection-reference-data.csv"), StandardCharsets.UTF_8))) {
-            StringBuilder fail = new StringBuilder();
-            String line;
-            while ((line = in.readLine()) != null) {
-                if (line.startsWith("#")) {
-                    continue;
+    public void test() throws IOException {
+        StringBuilder fail = new StringBuilder();
+        Set<String> allCodes = new HashSet<>(Projections.getAllProjectionCodes());
+        Collection<RefEntry> refs = readData();
+
+        for (RefEntry ref : refs) {
+            String def0 = Projections.getInit(ref.code);
+            if (def0 == null) {
+                Assert.fail("unkown code: "+ref.code);
+            }
+            if (!ref.def.equals(def0)) {
+                Assert.fail("definitions for " + ref.code + " do not match");
+            }
+            Projection proj = Projections.getProjectionByCode(ref.code);
+            double scale = proj.getMetersPerUnit();
+            for (Pair<LatLon, EastNorth> p : ref.data) {
+                LatLon ll = p.a;
+                EastNorth enRef = p.b;
+                enRef = new EastNorth(enRef.east() * scale, enRef.north() * scale); // convert to meter
+
+                EastNorth en = proj.latlon2eastNorth(ll);
+                if (proj.switchXY()) {
+                    en = new EastNorth(en.north(), en.east());
                 }
-                String[] f = line.split(",");
-                String code = f[0];
-                double lat = Double.parseDouble(f[1]);
-                double lon = Double.parseDouble(f[2]);
-                double east = Double.parseDouble(f[3]);
-                double north = Double.parseDouble(f[4]);
-                Projection p = Projections.getProjectionByCode(code);
-                EastNorth en = p.latlon2eastNorth(new LatLon(lat, lon));
-                String errorEN = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
-                        "        expected: eastnorth(%s,%s),%n" +
-                        "        but got:  eastnorth(%s,%s)!%n",
-                        p.toString(), code, lat, lon, east, north, en.east(), en.north());
-                final double EPSILON_EN = SwissGridTest.SWISS_EPSG_CODE.equals(code)
-                        ? SwissGridTest.EPSILON_APPROX
-                        : 1e-3; // 1 mm accuracy
-                if (Math.abs(east - en.east()) > EPSILON_EN || Math.abs(north - en.north()) > EPSILON_EN) {
+                final double EPSILON_EN = 1e-2; // 1cm
+                if (!isEqual(enRef, en, EPSILON_EN, true)) {
+                    String errorEN = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
+                            "        expected: eastnorth(%s,%s),%n" +
+                            "        but got:  eastnorth(%s,%s)!%n",
+                            proj.toString(), proj.toCode(), ll.lat(), ll.lon(), enRef.east(), enRef.north(), en.east(), en.north());
                     fail.append(errorEN);
                 }
-                LatLon ll = p.eastNorth2latlon(new EastNorth(east, north));
-                String errorLL = String.format("%s (%s): Inverse projecting eastnorth(%s,%s):%n" +
-                        "        expected: latlon(%s,%s),%n" +
-                        "        but got:  latlon(%s,%s)!%n",
-                        p.toString(), code, east, north, lat, lon, ll.lat(), ll.lon());
-                final double EPSILON_LL = Math.toDegrees(EPSILON_EN / 6378137); // 1 mm accuracy (or better)
-                if (Math.abs(lat - ll.lat()) > EPSILON_LL || Math.abs(lon - ll.lon()) > EPSILON_LL) {
-                    if (!("yes".equals(System.getProperty("suppressPermanentFailure")) && code.equals("EPSG:21781"))) {
-                        fail.append(errorLL);
-                    }
-                }
             }
-            if (fail.length() > 0) {
-                System.err.println(fail.toString());
-                throw new AssertionError(fail.toString());
-            }
+            allCodes.remove(ref.code);
         }
+        if (!allCodes.isEmpty()) {
+            Assert.fail("no reference data for following projections: "+allCodes);
+        }
+        if (fail.length() > 0) {
+            System.err.println(fail.toString());
+            throw new AssertionError(fail.toString());
+        }
+    }
+
+    /**
+     * Check if two EastNorth objects are equal.
+     * @param en1 first value
+     * @param en2 second value
+     * @param epsilon allowed tolerance
+     * @param abs true if absolute value is compared; this is done as long as
+     * advanced axis configuration is not supported in JOSM
+     * @return true if both are considered equal
+     */
+    private static boolean isEqual(EastNorth en1, EastNorth en2, double epsilon, boolean abs) {
+        double east1 = en1.east();
+        double north1 = en1.north();
+        double east2 = en2.east();
+        double north2 = en2.north();
+        if (abs) {
+            east1 = Math.abs(east1);
+            north1 = Math.abs(north1);
+            east2 = Math.abs(east2);
+            north2 = Math.abs(north2);
+        }
+        return Math.abs(east1 - east2) < epsilon && Math.abs(north1 - north2) < epsilon;
     }
 }
