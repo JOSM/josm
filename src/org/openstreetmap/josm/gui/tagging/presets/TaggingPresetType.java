@@ -18,7 +18,7 @@ public enum TaggingPresetType {
     /** Closed way */
     CLOSEDWAY(/* ICON */ "Mf_closedway", "closedway"),
     /** Multipolygon */
-    MULTIPOLYGON(/* ICON */ "multipoly_create", "multipolygon"); // FIXME find a better multipolygon icon
+    MULTIPOLYGON(/* ICON */ "Mf_multipolygon", "multipolygon");
     private final String iconName;
     private final String name;
 

@@ -93,8 +93,8 @@ public class ImageryReader implements Closeable {
         // language of last element, does only work for simple ENTRY_ATTRIBUTE's
         private String lang;
         private List<String> projections;
-        private Map<String, List<String> > noTileHeaders;
-        private Map<String, List<String> > noTileChecksums;
+        private Map<String, List<String>> noTileHeaders;
+        private Map<String, List<String>> noTileChecksums;
         private Map<String, String> metadataHeaders;
 
         @Override
