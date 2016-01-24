@@ -27,8 +27,8 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     protected String name;
     protected String baseUrl;
     protected String id;
-    private final Map<String, String> noTileHeaders;
-    private final Map<String, String> noTileChecksums;
+    private final Map<String, List<String> > noTileHeaders;
+    private final Map<String, List<String> > noTileChecksums;
     private final Map<String, String> metadataHeaders;
     protected int tileSize;
     protected OsmMercator osmMercator;
@@ -211,19 +211,21 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     @Override
     public boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content) {
         if (noTileHeaders != null && headers != null) {
-            for (Entry<String, String> searchEntry: noTileHeaders.entrySet()) {
+            for (Entry<String, List<String>> searchEntry: noTileHeaders.entrySet()) {
                 List<String> headerVals = headers.get(searchEntry.getKey());
                 if (headerVals != null) {
                     for (String headerValue: headerVals) {
-                        if (headerValue.matches(searchEntry.getValue())) {
-                            return true;
+                        for (String val: searchEntry.getValue()) {
+                            if (headerValue.matches(val)) {
+                                return true;
+                            }
                         }
                     }
                 }
             }
         }
         if (noTileChecksums != null) {
-            for (Entry<String, String> searchEntry: noTileChecksums.entrySet()) {
+            for (Entry<String, List<String>> searchEntry: noTileChecksums.entrySet()) {
                 MessageDigest md = null;
                 try {
                     md = MessageDigest.getInstance(searchEntry.getKey());
@@ -241,8 +243,10 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
                     vn = (v & 0xf);
                     hexChars[j++] = (char)(vn + (vn >= 10 ? 'a'-10 : '0'));
                 }
-                if (new String(hexChars).equalsIgnoreCase(searchEntry.getValue())) {
-                    return true;
+                for (String val: searchEntry.getValue()) {
+                    if (new String(hexChars).equalsIgnoreCase(val)) {
+                        return true;
+                    }
                 }
             }
         }
