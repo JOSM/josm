@@ -120,7 +120,8 @@ public class BoundingBoxSelection implements DownloadSelection {
         showUrl.setBackground(dlg.getBackground());
         showUrl.addFocusListener(new SelectAllOnFocusHandler(showUrl));
 
-        gui.addDownloadAreaSelector(dlg, tr("Bounding Box"));
+        if (gui != null)
+            gui.addDownloadAreaSelector(dlg, tr("Bounding Box"));
         this.parent = gui;
     }
 
