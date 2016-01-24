@@ -45,6 +45,7 @@ public class ExceptionUtilTest {
         serverUrl = api.getServerUrl();
         host = new URL(serverUrl).getHost();
         user = CredentialsManager.getInstance().getUsername();
+        DateUtils.PROP_ISO_DATES.put(Boolean.TRUE);
     }
 
     /**
@@ -94,13 +95,10 @@ public class ExceptionUtilTest {
      */
     @Test
     public void testExplainChangesetClosedException() {
-        // This test relies on the fact that CLDR is not the default local provider (see I18n.init)
-        assertEquals("JRE,CLDR", System.getProperty("java.locale.providers"));
-
         assertEquals("<html>Failed to upload to changeset <strong>0</strong><br>because it has already been closed on ?.",
                 ExceptionUtil.explainChangesetClosedException(new ChangesetClosedException("")));
 
-        assertEquals("<html>Failed to upload to changeset <strong>1</strong><br>because it has already been closed on Jan 1, 2016 12:00:00 AM.",
+        assertEquals("<html>Failed to upload to changeset <strong>1</strong><br>because it has already been closed on 2016-01-01 00:00:00.",
                 ExceptionUtil.explainChangesetClosedException(new ChangesetClosedException(1, DateUtils.fromString("2016-01-01"), null)));
     }
 
@@ -118,9 +116,6 @@ public class ExceptionUtilTest {
      */
     @Test
     public void testExplainConflict() {
-        // This test relies on the fact that CLDR is not the default local provider (see I18n.init)
-        assertEquals("JRE,CLDR", System.getProperty("java.locale.providers"));
-
         int code = HttpURLConnection.HTTP_CONFLICT;
         assertEquals("<html>The server reported that it has detected a conflict.</html>",
                 ExceptionUtil.explainConflict(new OsmApiException("")));
@@ -128,7 +123,7 @@ public class ExceptionUtilTest {
                 ExceptionUtil.explainConflict(new OsmApiException(code, "header", "")));
         assertEquals("<html>Closing of changeset <strong>1</strong> failed <br>because it has already been closed.",
                 ExceptionUtil.explainConflict(new OsmApiException(code, "The changeset 1 was closed at xxx", "")));
-        assertEquals("<html>Closing of changeset <strong>1</strong> failed<br> because it has already been closed on Jan 1, 2016 1:34:56 PM.",
+        assertEquals("<html>Closing of changeset <strong>1</strong> failed<br> because it has already been closed on 2016-01-01 13:34:56.",
                 ExceptionUtil.explainConflict(new OsmApiException(code, "The changeset 1 was closed at 2016-01-01 12:34:56 UTC", "")));
     }
 
