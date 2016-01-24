@@ -33,31 +33,51 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * This is non-modal dialog, always showing on top, which displays history information
  * about a given {@link org.openstreetmap.josm.data.osm.OsmPrimitive}.
- *
+ * @since 1709
  */
 public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListener {
 
     /** the embedded browser */
-    private HistoryBrowser browser;
-    private CloseAction closeAction;
-    private JLabel titleLabel;
+    private final HistoryBrowser browser = new HistoryBrowser();
+    private final CloseAction closeAction = new CloseAction();
+    private final JLabel titleLabel = new JLabel("", JLabel.CENTER);
 
     /**
-     * displays the title for this dialog
+     * Constructs a new {@code HistoryBrowserDialog}.
+     *
+     * @param history the history to be displayed
+     */
+    public HistoryBrowserDialog(History history) {
+        super(JOptionPane.getFrameForComponent(Main.parent), false);
+        build();
+        setHistory(history);
+        setTitle(buildTitle(history));
+        pack();
+        if (getInsets().top > 0) {
+            titleLabel.setVisible(false);
+        }
+        HistoryDataSet.getInstance().addHistoryDataSetListener(this);
+        addWindowListener(new WindowClosingAdapter());
+    }
+
+    /**
+     * Constructs the title for this dialog
      *
      * @param h the current history
+     * @return the title for this dialog
      */
-    protected void renderTitle(History h) {
-        String title = "";
-        switch(h.getEarliest().getType()) {
-        case NODE:  title = marktr("History for node {0}"); break;
-        case WAY: title = marktr("History for way {0}"); break;
-        case RELATION:  title = marktr("History for relation {0}"); break;
+    static String buildTitle(History h) {
+        String title;
+        switch (h.getEarliest().getType()) {
+        case NODE: title = marktr("History for node {0}");
+            break;
+        case WAY: title = marktr("History for way {0}");
+            break;
+        case RELATION: title = marktr("History for relation {0}");
+            break;
+        default: title = "";
         }
-        setTitle(tr(
-                title,
-                Long.toString(h.getId())
-        ));
+        return tr(title, Long.toString(h.getId()));
     }
 
     @Override
@@ -74,11 +94,8 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
     protected void build() {
         setLayout(new BorderLayout());
 
-        titleLabel = new JLabel();
-        titleLabel.setHorizontalAlignment(JLabel.CENTER);
         add(titleLabel, BorderLayout.NORTH);
 
-        browser = new HistoryBrowser();
         add(browser, BorderLayout.CENTER);
 
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -87,7 +104,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         btn.setName("btn.reload");
         pnl.add(btn);
 
-        btn = new SideButton(closeAction = new CloseAction());
+        btn = new SideButton(closeAction);
         final String closeHistoryBrowserDialogKey = "CloseHistoryBrowserDialog";
         KeyStroke escapeKey = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
         getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeKey, closeHistoryBrowserDialogKey);
@@ -101,24 +118,6 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         add(pnl, BorderLayout.SOUTH);
 
         HelpUtil.setHelpContext(getRootPane(), ht("/Action/ObjectHistory"));
-    }
-
-    /**
-     * Constructs a new {@code HistoryBrowserDialog}.
-     *
-     * @param history the history to be displayed
-     */
-    public HistoryBrowserDialog(History history) {
-        super(JOptionPane.getFrameForComponent(Main.parent), false);
-        build();
-        setHistory(history);
-        renderTitle(history);
-        pack();
-        if (getInsets().top > 0) {
-            titleLabel.setVisible(false);
-        }
-        HistoryDataSet.getInstance().addHistoryDataSetListener(this);
-        addWindowListener(new WindowClosingAdapter());
     }
 
     /**
@@ -139,10 +138,14 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
     /* ---------------------------------------------------------------------------------- */
     /* interface HistoryDataSetListener                                                   */
     /* ---------------------------------------------------------------------------------- */
+
     @Override
     public void historyUpdated(HistoryDataSet source, PrimitiveId primitiveId) {
         if (primitiveId == null || primitiveId.equals(browser.getHistory().getPrimitiveId())) {
-            browser.populate(source.getHistory(browser.getHistory().getPrimitiveId()));
+            History history = source.getHistory(browser.getHistory().getPrimitiveId());
+            if (history != null) {
+                browser.populate(history);
+            }
         }
     }
 
