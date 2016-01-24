@@ -61,6 +61,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * Place selector.
+ * @since 1329
+ */
 public class PlaceSelection implements DownloadSelection {
     private static final String HISTORY_KEY = "download.places.history";
 
@@ -144,17 +148,20 @@ public class PlaceSelection implements DownloadSelection {
         scrollPane.setPreferredSize(new Dimension(200, 200));
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        gui.addDownloadAreaSelector(panel, tr("Areas around places"));
+        if (gui != null)
+            gui.addDownloadAreaSelector(panel, tr("Areas around places"));
 
         scrollPane.setPreferredSize(scrollPane.getPreferredSize());
         tblSearchResults.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tblSearchResults.getSelectionModel().addListSelectionListener(new ListSelectionHandler());
         tblSearchResults.addMouseListener(new MouseAdapter() {
-            @Override public void mouseClicked(MouseEvent e) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() > 1) {
                     SearchResult sr = model.getSelectedSearchResult();
-                    if (sr == null) return;
-                    parent.startDownload(sr.getDownloadArea());
+                    if (sr != null) {
+                        parent.startDownload(sr.getDownloadArea());
+                    }
                 }
             }
         });
@@ -409,14 +416,12 @@ public class PlaceSelection implements DownloadSelection {
 
         @Override
         public int getRowCount() {
-            if (data == null) return 0;
-            return data.size();
+            return data != null ? data.size() : 0;
         }
 
         @Override
         public Object getValueAt(int row, int column) {
-            if (data == null) return null;
-            return data.get(row);
+            return data != null ? data.get(row) : null;
         }
 
         public void setData(List<SearchResult> data) {
@@ -443,8 +448,13 @@ public class PlaceSelection implements DownloadSelection {
     static class NamedResultTableColumnModel extends DefaultTableColumnModel {
         private TableColumn col3;
         private TableColumn col4;
+
+        NamedResultTableColumnModel() {
+            createColumns();
+        }
+
         protected final void createColumns() {
-            TableColumn col = null;
+            TableColumn col;
             NamedResultCellRenderer renderer = new NamedResultCellRenderer();
 
             // column 0 - Name
@@ -484,10 +494,6 @@ public class PlaceSelection implements DownloadSelection {
             col3.setHeaderValue(third);
             col4.setHeaderValue(fourth);
             fireColumnMarginChanged();
-        }
-
-        NamedResultTableColumnModel() {
-            createColumns();
         }
     }
 
@@ -554,7 +560,8 @@ public class PlaceSelection implements DownloadSelection {
             reset();
             renderColor(isSelected);
 
-            if (value == null) return this;
+            if (value == null)
+                return this;
             SearchResult sr = (SearchResult) value;
             switch(column) {
             case 0:

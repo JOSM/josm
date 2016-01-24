@@ -36,7 +36,8 @@ public class TileSelection implements DownloadSelection, PropertyChangeListener 
 
     @Override
     public void addGui(final DownloadDialog gui) {
-        gui.addDownloadAreaSelector(chooser, tr("Tile Numbers"));
+        if (gui != null)
+            gui.addDownloadAreaSelector(chooser, tr("Tile Numbers"));
         parent = gui;
     }
 

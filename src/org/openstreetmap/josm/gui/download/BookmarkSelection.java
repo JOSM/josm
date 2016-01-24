@@ -104,7 +104,8 @@ public class BookmarkSelection implements DownloadSelection {
     @Override
     public void addGui(final DownloadDialog gui) {
         JPanel dlg = new JPanel(new GridBagLayout());
-        gui.addDownloadAreaSelector(dlg, tr("Bookmarks"));
+        if (gui != null)
+            gui.addDownloadAreaSelector(dlg, tr("Bookmarks"));
         GridBagConstraints gc = new GridBagConstraints();
 
         bookmarks = new BookmarkList();
@@ -112,7 +113,7 @@ public class BookmarkSelection implements DownloadSelection {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 Bookmark b = bookmarks.getSelectedValue();
-                if (b != null) {
+                if (b != null && gui != null) {
                     gui.boundingBoxChanged(b.getArea(), BookmarkSelection.this);
                 }
             }
