@@ -44,6 +44,7 @@ public class ImageryReader implements Closeable {
         BOUNDS,
         SHAPE,
         NO_TILE,
+        NO_TILESUM,
         METADATA,
         UNKNOWN,            // element is not recognized in the current context
     }
@@ -93,6 +94,7 @@ public class ImageryReader implements Closeable {
         private String lang;
         private List<String> projections;
         private Map<String, String> noTileHeaders;
+        private Map<String, String> noTileChecksums;
         private Map<String, String> metadataHeaders;
 
         @Override
@@ -106,6 +108,7 @@ public class ImageryReader implements Closeable {
             bounds = null;
             projections = null;
             noTileHeaders = null;
+            noTileChecksums = null;
         }
 
         @Override
@@ -124,6 +127,7 @@ public class ImageryReader implements Closeable {
                     skipEntry = false;
                     newState = State.ENTRY;
                     noTileHeaders = new HashMap<>();
+                    noTileChecksums = new HashMap<>();
                     metadataHeaders = new HashMap<>();
                 }
                 break;
@@ -169,6 +173,9 @@ public class ImageryReader implements Closeable {
                 } else if ("no-tile-header".equals(qName)) {
                     noTileHeaders.put(atts.getValue("name"), atts.getValue("value"));
                     newState = State.NO_TILE;
+                } else if ("no-tile-checksum".equals(qName)) {
+                    noTileChecksums.put(atts.getValue("type"), atts.getValue("value"));
+                    newState = State.NO_TILESUM;
                 } else if ("metadata-header".equals(qName)) {
                     metadataHeaders.put(atts.getValue("header-name"), atts.getValue("metadata-key"));
                     newState = State.METADATA;
@@ -224,6 +231,8 @@ public class ImageryReader implements Closeable {
                 if ("entry".equals(qName)) {
                     entry.setNoTileHeaders(noTileHeaders);
                     noTileHeaders = null;
+                    entry.setNoTileChecksums(noTileChecksums);
+                    noTileChecksums = null;
                     entry.setMetadataHeaders(metadataHeaders);
                     metadataHeaders = null;
 

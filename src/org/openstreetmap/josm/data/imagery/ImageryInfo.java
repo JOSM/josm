@@ -219,6 +219,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref String icon;
         @pref String description;
         @pref Map<String, String> noTileHeaders;
+        @pref Map<String, String> noTileChecksums;
         @pref int tileSize = OsmMercator.DEFAUL_TILE_SIZE;
         @pref Map<String, String> metadataHeaders;
         @pref boolean valid_georeference;
@@ -278,6 +279,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             }
             if (i.noTileHeaders != null && !i.noTileHeaders.isEmpty()) {
                 noTileHeaders = i.noTileHeaders;
+            }
+
+            if (i.noTileChecksums != null && !i.noTileChecksums.isEmpty()) {
+                noTileChecksums = i.noTileChecksums;
             }
 
             if (i.metadataHeaders != null && !i.metadataHeaders.isEmpty()) {
@@ -408,6 +413,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         if (e.noTileHeaders != null) {
             noTileHeaders = e.noTileHeaders;
         }
+        if (e.noTileChecksums != null) {
+            noTileChecksums = e.noTileChecksums;
+        }
         setTileSize(e.tileSize);
         metadataHeaders = e.metadataHeaders;
         isEpsg4326To3857Supported = e.supports_epsg_4326_to_3857_conversion;
@@ -439,6 +447,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.icon = i.icon;
         this.description = i.description;
         this.noTileHeaders = i.noTileHeaders;
+        this.noTileChecksums = i.noTileChecksums;
         this.metadataHeaders = i.metadataHeaders;
         this.isEpsg4326To3857Supported = i.isEpsg4326To3857Supported;
         this.isGeoreferenceValid = i.isGeoreferenceValid;
@@ -484,6 +493,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 Objects.equals(this.icon, other.icon) &&
                 Objects.equals(this.description, other.description) &&
                 Objects.equals(this.noTileHeaders, other.noTileHeaders) &&
+                Objects.equals(this.noTileChecksums, other.noTileChecksums) &&
                 Objects.equals(this.metadataHeaders, other.metadataHeaders);
     }
 
@@ -974,6 +984,22 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     @Override
     public Map<String, String> getNoTileHeaders() {
         return noTileHeaders;
+    }
+
+    /**
+     * Sets the map of &lt;checksum type, checksum value&gt; that if any tile with that checksum
+     * will be returned, then this tile will be treated as "no tile at this zoom level"
+     *
+     * @param noTileChecksums Map of &lt;checksum type, checksum value&gt; which will be treated as "no tile at this zoom level"
+     * @since 9610
+     */
+    public void setNoTileChecksums(Map<String, String> noTileChecksums) {
+       this.noTileChecksums = noTileChecksums;
+    }
+
+    @Override
+    public Map<String, String> getNoTileChecksums() {
+        return noTileChecksums;
     }
 
     /**
