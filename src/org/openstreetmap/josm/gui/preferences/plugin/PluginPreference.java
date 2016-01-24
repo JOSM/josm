@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -142,18 +143,20 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
         }
         sb.append("</html>");
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-                HelpAwareOptionPane.showOptionDialog(
-                        parent,
-                        sb.toString(),
-                        tr("Update plugins"),
-                        !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
-                                HelpUtil.ht("/Preferences/Plugins")
-                        );
-            }
-        });
+        if (!GraphicsEnvironment.isHeadless()) {
+            GuiHelper.runInEDTAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    HelpAwareOptionPane.showOptionDialog(
+                            parent,
+                            sb.toString(),
+                            tr("Update plugins"),
+                            !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
+                                    HelpUtil.ht("/Preferences/Plugins")
+                            );
+                }
+            });
+        }
     }
 
     protected JPanel buildSearchFieldPanel() {

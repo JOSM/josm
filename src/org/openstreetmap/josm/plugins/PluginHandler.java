@@ -1204,7 +1204,7 @@ public final class PluginHandler {
 
     /**
      * Determines if the specified file is a valid and accessible JAR file.
-     * @param jar The fil to check
+     * @param jar The file to check
      * @return true if file can be opened as a JAR file.
      * @since 5723
      */
@@ -1213,9 +1213,12 @@ public final class PluginHandler {
             try {
                 new JarFile(jar).close();
             } catch (Exception e) {
+                Main.warn(e);
                 return false;
             }
             return true;
+        } else if (jar != null) {
+            Main.warn("Invalid jar file ''"+jar+"'' (exists: "+jar.exists()+", canRead: "+jar.canRead()+")");
         }
         return false;
     }
