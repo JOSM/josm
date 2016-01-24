@@ -123,7 +123,9 @@ public class ExpertToggleAction extends ToggleAction {
               false /* register toolbar */
         );
         putValue("toolbar", "expertmode");
-        Main.toolbar.register(this);
+        if (Main.toolbar != null) {
+            Main.toolbar.register(this);
+        }
         setSelected(Main.pref.getBoolean("expert", false));
         notifySelectedState();
     }

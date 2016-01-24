@@ -82,10 +82,8 @@ public class PluginPreferencesModel extends Observable {
         Set<String> activePlugins = new HashSet<>();
         activePlugins.addAll(Main.pref.getCollection("plugins", activePlugins));
         for (PluginInformation pi: availablePlugins) {
-            if (selectedPluginsMap.get(pi) == null) {
-                if (activePlugins.contains(pi.name)) {
-                    selectedPluginsMap.put(pi, Boolean.TRUE);
-                }
+            if (selectedPluginsMap.get(pi) == null && activePlugins.contains(pi.name)) {
+                selectedPluginsMap.put(pi, Boolean.TRUE);
             }
         }
         clearChanged();
@@ -93,13 +91,14 @@ public class PluginPreferencesModel extends Observable {
     }
 
     protected void updateAvailablePlugin(PluginInformation other) {
-        if (other == null) return;
-        PluginInformation pi = getPluginInformation(other.name);
-        if (pi == null) {
-            availablePlugins.add(other);
-            return;
+        if (other != null) {
+            PluginInformation pi = getPluginInformation(other.name);
+            if (pi == null) {
+                availablePlugins.add(other);
+                return;
+            }
+            pi.updateFromPluginSite(other);
         }
-        pi.updateFromPluginSite(other);
     }
 
     /**
@@ -215,9 +214,10 @@ public class PluginPreferencesModel extends Observable {
      * @param plugins the list of plugins to clear for a pending download
      */
     public void clearPendingPlugins(Collection<PluginInformation> plugins) {
-        if (plugins == null || plugins.isEmpty()) return;
-        for (PluginInformation pi: plugins) {
-            pendingDownloads.remove(pi.name);
+        if (plugins != null) {
+            for (PluginInformation pi: plugins) {
+                pendingDownloads.remove(pi.name);
+            }
         }
     }
 
@@ -263,8 +263,8 @@ public class PluginPreferencesModel extends Observable {
      */
     public boolean isSelectedPlugin(String name) {
         PluginInformation pi = getPluginInformation(name);
-        if (pi == null) return false;
-        if (selectedPluginsMap.get(pi) == null) return false;
+        if (pi == null || selectedPluginsMap.get(pi) == null)
+            return false;
         return selectedPluginsMap.get(pi);
     }
 
@@ -272,7 +272,7 @@ public class PluginPreferencesModel extends Observable {
      * Replies the set of plugins which have been added by the user to
      * the set of activated plugins.
      *
-     * @return the set of newly deactivated plugins
+     * @return the set of newly activated plugins
      */
     public List<PluginInformation> getNewlyActivatedPlugins() {
         List<PluginInformation> ret = new LinkedList<>();
@@ -288,7 +288,7 @@ public class PluginPreferencesModel extends Observable {
 
     /**
      * Replies the set of plugins which have been removed by the user from
-     * the set of activated plugins.
+     * the set of deactivated plugins.
      *
      * @return the set of newly deactivated plugins
      */
@@ -348,22 +348,21 @@ public class PluginPreferencesModel extends Observable {
      * @param plugins the collections of plugins to refresh
      */
     public void refreshLocalPluginVersion(Collection<PluginInformation> plugins) {
-        if (plugins == null) return;
-        for (PluginInformation pi : plugins) {
-            File downloadedPluginFile = PluginHandler.findUpdatedJar(pi.name);
-            if (downloadedPluginFile == null) {
-                continue;
-            }
-            try {
-                PluginInformation newinfo = new PluginInformation(downloadedPluginFile, pi.name);
-                PluginInformation oldinfo = getPluginInformation(pi.name);
-                if (oldinfo == null) {
-                    // should not happen
+        if (plugins != null) {
+            for (PluginInformation pi : plugins) {
+                File downloadedPluginFile = PluginHandler.findUpdatedJar(pi.name);
+                if (downloadedPluginFile == null) {
                     continue;
                 }
-                oldinfo.updateLocalInfo(newinfo);
-            } catch (PluginException e) {
-                Main.error(e);
+                try {
+                    PluginInformation newinfo = new PluginInformation(downloadedPluginFile, pi.name);
+                    PluginInformation oldinfo = getPluginInformation(pi.name);
+                    if (oldinfo != null) {
+                        oldinfo.updateLocalInfo(newinfo);
+                    }
+                } catch (PluginException e) {
+                    Main.error(e);
+                }
             }
         }
     }

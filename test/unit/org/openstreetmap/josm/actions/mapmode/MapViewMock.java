@@ -51,7 +51,7 @@ class MapViewMock extends MapView {
 
     @Override
     public Point2D getPoint2D(EastNorth p) {
-        return new Point2D.Double(p.getX(), p.getY());
+        return p != null ? new Point2D.Double(p.getX(), p.getY()) : null;
     }
 
     @Override
