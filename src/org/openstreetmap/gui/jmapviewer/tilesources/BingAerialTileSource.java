@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class BingAerialTileSource extends AbstractTMSTileSource {
+public class BingAerialTileSource extends TMSTileSource {
 
     private static final String API_KEY = "Arzdiw4nlOJzRwOz__qailc8NiR31Tt51dN2D7cm57NrnceZnCpgOkmJhNpGoppU";
     private static volatile Future<List<Attribution>> attributions; // volatile is required for getAttribution(), see below.

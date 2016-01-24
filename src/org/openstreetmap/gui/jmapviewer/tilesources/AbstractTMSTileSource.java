@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileXY;
@@ -31,7 +30,6 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     private final Map<String, List<String>> noTileChecksums;
     private final Map<String, String> metadataHeaders;
     protected int tileSize;
-    protected OsmMercator osmMercator;
 
     /**
      * Creates an instance based on TileSource information
@@ -49,7 +47,6 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
         this.noTileChecksums = info.getNoTileChecksums();
         this.metadataHeaders = info.getMetadataHeaders();
         this.tileSize = info.getTileSize();
-        this.osmMercator = new OsmMercator(this.getTileSize());
     }
 
     /**
@@ -127,19 +124,6 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     }
 
     @Override
-    public double getDistance(double lat1, double lon1, double lat2, double lon2) {
-        return osmMercator.getDistance(lat1, lon1, lat2, lon2);
-    }
-
-    @Override
-    public Point latLonToXY(double lat, double lon, int zoom) {
-        return new Point(
-                (int) osmMercator.lonToX(lon, zoom),
-                (int) osmMercator.latToY(lat, zoom)
-                );
-    }
-
-    @Override
     public Point latLonToXY(ICoordinate point, int zoom) {
         return latLonToXY(point.getLat(), point.getLon(), zoom);
     }
@@ -147,22 +131,6 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     @Override
     public ICoordinate xyToLatLon(Point point, int zoom) {
         return xyToLatLon(point.x, point.y, zoom);
-    }
-
-    @Override
-    public ICoordinate xyToLatLon(int x, int y, int zoom) {
-        return new Coordinate(
-                osmMercator.yToLat(y, zoom),
-                osmMercator.xToLon(x, zoom)
-                );
-    }
-
-    @Override
-    public TileXY latLonToTileXY(double lat, double lon, int zoom) {
-        return new TileXY(
-                osmMercator.lonToX(lon, zoom) / getTileSize(),
-                osmMercator.latToY(lat, zoom) / getTileSize()
-                );
     }
 
     @Override
@@ -178,14 +146,6 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     @Override
     public ICoordinate tileXYToLatLon(Tile tile) {
         return tileXYToLatLon(tile.getXtile(), tile.getYtile(), tile.getZoom());
-    }
-
-    @Override
-    public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
-        return new Coordinate(
-                osmMercator.yToLat(y * getTileSize(), zoom),
-                osmMercator.xToLon(x * getTileSize(), zoom)
-                );
     }
 
     @Override

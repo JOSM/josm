@@ -8,14 +8,14 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 /**
  * Abstract class for OSM Tile sources
  */
-public abstract class AbstractOsmTileSource extends AbstractTMSTileSource {
-    
+public abstract class AbstractOsmTileSource extends TMSTileSource {
+
     /**
-     * The OSM attribution. Must be always in line with 
+     * The OSM attribution. Must be always in line with
      * <a href="https://www.openstreetmap.org/copyright/en">https://www.openstreetmap.org/copyright/en</a>
      */
     public static final String DEFAULT_OSM_ATTRIBUTION = "\u00a9 OpenStreetMap contributors";
-    
+
     /**
      * Constructs a new OSM tile source
      * @param name Source name as displayed in GUI
