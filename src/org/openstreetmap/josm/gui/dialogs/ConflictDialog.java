@@ -70,20 +70,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * This dialog displays the {@link ConflictCollection} of the active {@link OsmDataLayer} in a toggle
  * dialog on the right of the main frame.
- *
+ * @since 86
  */
 public final class ConflictDialog extends ToggleDialog implements MapView.EditLayerChangeListener, IConflictListener, SelectionChangedListener {
-
-    /**
-     * Replies the color used to paint conflicts.
-     *
-     * @return the color used to paint conflicts
-     * @see #paintConflicts
-     * @since 1221
-     */
-    public static Color getColor() {
-        return Main.pref.getColor(marktr("conflict"), Color.gray);
-    }
 
     /** the collection of conflicts displayed by this conflict dialog */
     private transient ConflictCollection conflicts;
@@ -96,8 +85,31 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     private final JPopupMenu popupMenu = new JPopupMenu();
     private final transient PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
 
-    private ResolveAction actResolve;
-    private SelectAction actSelect;
+    private final ResolveAction actResolve = new ResolveAction();
+    private final SelectAction actSelect = new SelectAction();
+
+    /**
+     * Constructs a new {@code ConflictDialog}.
+     */
+    public ConflictDialog() {
+        super(tr("Conflict"), "conflict", tr("Resolve conflicts."),
+                Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")),
+                KeyEvent.VK_C, Shortcut.ALT_SHIFT), 100);
+
+        build();
+        refreshView();
+    }
+
+    /**
+     * Replies the color used to paint conflicts.
+     *
+     * @return the color used to paint conflicts
+     * @see #paintConflicts
+     * @since 1221
+     */
+    public static Color getColor() {
+        return Main.pref.getColor(marktr("conflict"), Color.gray);
+    }
 
     /**
      * builds the GUI
@@ -116,10 +128,10 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             }
         });
 
-        SideButton btnResolve = new SideButton(actResolve = new ResolveAction());
+        SideButton btnResolve = new SideButton(actResolve);
         addListSelectionListener(actResolve);
 
-        SideButton btnSelect = new SideButton(actSelect = new SelectAction());
+        SideButton btnSelect = new SideButton(actSelect);
         addListSelectionListener(actSelect);
 
         createLayout(lstConflicts, true, Arrays.asList(new SideButton[] {
@@ -152,18 +164,6 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
                 // Do nothing
             }
         });
-    }
-
-    /**
-     * constructor
-     */
-    public ConflictDialog() {
-        super(tr("Conflict"), "conflict", tr("Resolve conflicts."),
-                Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")),
-                KeyEvent.VK_C, Shortcut.ALT_SHIFT), 100);
-
-        build();
-        refreshView();
     }
 
     @Override
@@ -208,10 +208,10 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
     /**
      * Launches a conflict resolution dialog for the first selected conflict
-     *
      */
     private void resolve() {
-        if (conflicts == null || model.getSize() == 0) return;
+        if (conflicts == null || model.getSize() == 0)
+            return;
 
         int index = lstConflicts.getSelectedIndex();
         if (index < 0) {
@@ -233,7 +233,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      */
     public void refreshView() {
         OsmDataLayer editLayer =  Main.main.getEditLayer();
-        conflicts = (editLayer == null ? new ConflictCollection() : editLayer.getConflicts());
+        conflicts = editLayer == null ? new ConflictCollection() : editLayer.getConflicts();
         GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {
@@ -268,48 +268,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         if (preferencesColor.equals(Main.pref.getColor(marktr("background"), Color.black)))
             return;
         g.setColor(preferencesColor);
-        Visitor conflictPainter = new AbstractVisitor() {
-            // Manage a stack of visited relations to avoid infinite recursion with cyclic relations (fix #7938)
-            private final Set<Relation> visited = new HashSet<>();
-            @Override
-            public void visit(Node n) {
-                Point p = nc.getPoint(n);
-                g.drawRect(p.x-1, p.y-1, 2, 2);
-            }
-
-            public void visit(Node n1, Node n2) {
-                Point p1 = nc.getPoint(n1);
-                Point p2 = nc.getPoint(n2);
-                g.drawLine(p1.x, p1.y, p2.x, p2.y);
-            }
-
-            @Override
-            public void visit(Way w) {
-                Node lastN = null;
-                for (Node n : w.getNodes()) {
-                    if (lastN == null) {
-                        lastN = n;
-                        continue;
-                    }
-                    visit(lastN, n);
-                    lastN = n;
-                }
-            }
-
-            @Override
-            public void visit(Relation e) {
-                if (!visited.contains(e)) {
-                    visited.add(e);
-                    try {
-                        for (RelationMember em : e.getMembers()) {
-                            em.getMember().accept(this);
-                        }
-                    } finally {
-                        visited.remove(e);
-                    }
-                }
-            }
-        };
+        Visitor conflictPainter = new ConflictPainter(nc, g);
         for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
             if (conflicts == null || !conflicts.hasConflictForMy(o)) {
                 continue;
@@ -329,7 +288,6 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         refreshView();
     }
 
-
     /**
      * replies the conflict collection currently held by this dialog; may be null
      *
@@ -345,17 +303,17 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      * @return Conflict
      */
     public Conflict<? extends OsmPrimitive> getSelectedConflict() {
-        if (conflicts == null || model.getSize() == 0) return null;
+        if (conflicts == null || model.getSize() == 0)
+            return null;
 
         int index = lstConflicts.getSelectedIndex();
-        if (index < 0) return null;
 
-        return conflicts.get(index);
+        return index >= 0 ? conflicts.get(index) : null;
     }
 
     private boolean isConflictSelected() {
-        final ListSelectionModel model = lstConflicts.getSelectionModel();
-        return model.getMinSelectionIndex() >= 0 && model.getMaxSelectionIndex() >= model.getMinSelectionIndex();
+        final ListSelectionModel selModel = lstConflicts.getSelectionModel();
+        return selModel.getMinSelectionIndex() >= 0 && selModel.getMaxSelectionIndex() >= selModel.getMinSelectionIndex();
     }
 
     @Override
@@ -443,29 +401,28 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
         @Override
         public OsmPrimitive getElementAt(int index) {
-            if (index < 0) return null;
-            if (index >= getSize()) return null;
+            if (index < 0 || index >= getSize())
+                return null;
             return conflicts.get(index).getMy();
         }
 
         @Override
         public int getSize() {
-            if (conflicts == null) return 0;
-            return conflicts.size();
+            return conflicts != null ? conflicts.size() : 0;
         }
 
         public int indexOf(OsmPrimitive my) {
-            if (conflicts == null) return -1;
-            for (int i = 0; i < conflicts.size(); i++) {
-                if (conflicts.get(i).isMatchingMy(my))
-                    return i;
+            if (conflicts != null) {
+                for (int i = 0; i < conflicts.size(); i++) {
+                    if (conflicts.get(i).isMatchingMy(my))
+                        return i;
+                }
             }
             return -1;
         }
 
         public OsmPrimitive get(int idx) {
-            if (conflicts == null) return null;
-            return conflicts.get(idx).getMy();
+            return conflicts != null ? conflicts.get(idx).getMy() : null;
         }
     }
 
@@ -528,9 +485,11 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             final List<Command> commands = new ArrayList<>();
             for (OsmPrimitive osmPrimitive : lstConflicts.getSelectedValuesList()) {
                 Conflict<? extends OsmPrimitive> c = conflicts.getConflictForMy(osmPrimitive);
-                resolver.populate(c);
-                resolver.decideRemaining(type);
-                commands.add(resolver.buildResolveCommand());
+                if (c != null) {
+                    resolver.populate(c);
+                    resolver.decideRemaining(type);
+                    commands.add(resolver.buildResolveCommand());
+                }
             }
             Main.main.undoRedo.add(new SequenceCommand(name, commands));
             refreshView();
@@ -552,6 +511,57 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         }
     }
 
+    class ConflictPainter extends AbstractVisitor {
+        // Manage a stack of visited relations to avoid infinite recursion with cyclic relations (fix #7938)
+        private final Set<Relation> visited = new HashSet<>();
+        private final NavigatableComponent nc;
+        private final Graphics g;
+
+        ConflictPainter(NavigatableComponent nc, Graphics g) {
+            this.nc = nc;
+            this.g = g;
+        }
+
+        @Override
+        public void visit(Node n) {
+            Point p = nc.getPoint(n);
+            g.drawRect(p.x-1, p.y-1, 2, 2);
+        }
+
+        public void visit(Node n1, Node n2) {
+            Point p1 = nc.getPoint(n1);
+            Point p2 = nc.getPoint(n2);
+            g.drawLine(p1.x, p1.y, p2.x, p2.y);
+        }
+
+        @Override
+        public void visit(Way w) {
+            Node lastN = null;
+            for (Node n : w.getNodes()) {
+                if (lastN == null) {
+                    lastN = n;
+                    continue;
+                }
+                visit(lastN, n);
+                lastN = n;
+            }
+        }
+
+        @Override
+        public void visit(Relation e) {
+            if (!visited.contains(e)) {
+                visited.add(e);
+                try {
+                    for (RelationMember em : e.getMembers()) {
+                        em.getMember().accept(this);
+                    }
+                } finally {
+                    visited.remove(e);
+                }
+            }
+        }
+    }
+
     /**
      * Warns the user about the number of detected conflicts
      *
@@ -559,7 +569,8 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      * @since 5775
      */
     public void warnNumNewConflicts(int numNewConflicts) {
-        if (numNewConflicts == 0) return;
+        if (numNewConflicts == 0)
+            return;
 
         String msg1 = trn(
                 "There was {0} conflict detected.",
