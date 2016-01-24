@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.interfaces.Attributed;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
@@ -220,7 +219,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref String description;
         @pref Map<String, List<String>> noTileHeaders;
         @pref Map<String, List<String>> noTileChecksums;
-        @pref int tileSize = OsmMercator.DEFAUL_TILE_SIZE;
+        @pref int tileSize = -1;
         @pref Map<String, String> metadataHeaders;
         @pref boolean valid_georeference;
         @pref boolean supports_epsg_4326_to_3857_conversion;
