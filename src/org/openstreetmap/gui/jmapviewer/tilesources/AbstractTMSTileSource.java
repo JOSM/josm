@@ -49,7 +49,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
         this.noTileChecksums = info.getNoTileChecksums();
         this.metadataHeaders = info.getMetadataHeaders();
         this.tileSize = info.getTileSize();
-        this.osmMercator = new OsmMercator(this.tileSize);
+        this.osmMercator = new OsmMercator(this.getTileSize());
     }
 
     /**
@@ -160,8 +160,8 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     @Override
     public TileXY latLonToTileXY(double lat, double lon, int zoom) {
         return new TileXY(
-                osmMercator.lonToX(lon, zoom) / tileSize,
-                osmMercator.latToY(lat, zoom) / tileSize
+                osmMercator.lonToX(lon, zoom) / getTileSize(),
+                osmMercator.latToY(lat, zoom) / getTileSize()
                 );
     }
 
@@ -183,8 +183,8 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     @Override
     public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
         return new Coordinate(
-                osmMercator.yToLat(y * tileSize, zoom),
-                osmMercator.xToLon(x * tileSize, zoom)
+                osmMercator.yToLat(y * getTileSize(), zoom),
+                osmMercator.xToLon(x * getTileSize(), zoom)
                 );
     }
 
