@@ -975,7 +975,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * will be returned, then this tile will be treated as "no tile at this zoom level"
      *
      * @param noTileHeaders Map of &lt;header name, header value&gt; which will be treated as "no tile at this zoom level"
-     * @since 9611
+     * @since 9613
      */
     public void setNoTileHeaders(Map<String, List<String>> noTileHeaders) {
        this.noTileHeaders = noTileHeaders;
@@ -991,7 +991,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * will be returned, then this tile will be treated as "no tile at this zoom level"
      *
      * @param noTileChecksums Map of &lt;checksum type, checksum value&gt; which will be treated as "no tile at this zoom level"
-     * @since 9611
+     * @since 9613
      */
     public void setNoTileChecksums(Map<String, List<String>> noTileChecksums) {
        this.noTileChecksums = noTileChecksums;
