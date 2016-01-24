@@ -66,32 +66,6 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         }
 
         /**
-         * Comparator that compares the number part of the code numerically.
-         */
-        private static class CodeComparator implements Comparator<String>, Serializable {
-            private static final long serialVersionUID = 1L;
-            private final Pattern codePattern = Pattern.compile("([a-zA-Z]+):(\\d+)");
-
-            @Override
-            public int compare(String c1, String c2) {
-                Matcher matcher1 = codePattern.matcher(c1);
-                Matcher matcher2 = codePattern.matcher(c2);
-                if (matcher1.matches()) {
-                    if (matcher2.matches()) {
-                        int cmp1 = matcher1.group(1).compareTo(matcher2.group(1));
-                        if (cmp1 != 0) return cmp1;
-                        int num1 = Integer.parseInt(matcher1.group(2));
-                        int num2 = Integer.parseInt(matcher2.group(2));
-                        return Integer.compare(num1, num2);
-                    } else
-                        return -1;
-                } else if (matcher2.matches())
-                    return 1;
-                return c1.compareTo(c2);
-            }
-        }
-
-        /**
          * List model for the filtered view on the list of all codes.
          */
         private class ProjectionCodeListModel extends AbstractListModel<String> {
@@ -182,6 +156,32 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
                 selectionList.setSelectedIndex(idx);
                 selectionList.ensureIndexIsVisible(idx);
             }
+        }
+    }
+
+    /**
+     * Comparator that compares the number part of the code numerically.
+     */
+    public static class CodeComparator implements Comparator<String>, Serializable {
+        private static final long serialVersionUID = 1L;
+        private final Pattern codePattern = Pattern.compile("([a-zA-Z]+):(\\d+)");
+
+        @Override
+        public int compare(String c1, String c2) {
+            Matcher matcher1 = codePattern.matcher(c1);
+            Matcher matcher2 = codePattern.matcher(c2);
+            if (matcher1.matches()) {
+                if (matcher2.matches()) {
+                    int cmp1 = matcher1.group(1).compareTo(matcher2.group(1));
+                    if (cmp1 != 0) return cmp1;
+                    int num1 = Integer.parseInt(matcher1.group(2));
+                    int num2 = Integer.parseInt(matcher2.group(2));
+                    return Integer.compare(num1, num2);
+                } else
+                    return -1;
+            } else if (matcher2.matches())
+                return 1;
+            return c1.compareTo(c2);
         }
     }
 
