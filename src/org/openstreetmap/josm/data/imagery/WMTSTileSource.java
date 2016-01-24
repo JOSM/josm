@@ -593,11 +593,9 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
      * @param proj projection to be used by this TileSource
      */
     public void initProjection(Projection proj) {
-        String layerName = null;
-        if (currentLayer != null) {
-            layerName = currentLayer.name;
-        }
-        Collection<Layer> candidates = getLayers(layerName, proj.toCode());
+        // getLayers will return only layers matching the name, if the user already choose the layer
+        // so we will not ask the user again to chose the layer, if he just changes projection
+        Collection<Layer> candidates = getLayers(currentLayer != null ? currentLayer.name : null, proj.toCode());
         if (!candidates.isEmpty()) {
             Layer newLayer = userSelectLayer(candidates);
             if (newLayer != null) {
@@ -609,19 +607,35 @@ public class WMTSTileSource extends TMSTileSource implements TemplatedTileSource
         this.crsScale = getTileSize() * 0.28e-03 / proj.getMetersPerUnit();
     }
 
+    /**
+     *
+     * @param name of the layer to match
+     * @param projectionCode projection code to match
+     * @return Collection of layers matching the name of the layer and projection, or only projection if name is not provided
+     */
     private Collection<Layer> getLayers(String name, String projectionCode) {
         Collection<Layer> ret = new ArrayList<>();
-        for (Layer layer: this.layers) {
-            if ((name == null || name.equals(layer.name)) && (projectionCode == null || projectionCode.equals(layer.tileMatrixSet.crs))) {
-                ret.add(layer);
+        if (this.layers != null) {
+            for (Layer layer: this.layers) {
+                if ((name == null || name.equals(layer.name)) && (projectionCode == null || projectionCode.equals(layer.tileMatrixSet.crs))) {
+                    ret.add(layer);
+                }
             }
         }
         return ret;
     }
 
     @Override
-    public int getDefaultTileSize() {
-        return getTileSize();
+    public int getTileSize() {
+        // no support for non-square tiles (tileHeight != tileWidth)
+        // and for different tile sizes at different zoom levels
+        Collection<Layer> layers = getLayers(null, Main.getProjection().toCode());
+        if (!layers.isEmpty()) {
+            return layers.iterator().next().tileMatrixSet.tileMatrix.first().tileHeight;
+        }
+        // if no layers is found, fallback to default mercator tile size. Maybe it will work
+        Main.warn("WMTS: Could not determine tile size. Using default tile size of: {0}", getDefaultTileSize());
+        return getDefaultTileSize();
     }
 
     @Override

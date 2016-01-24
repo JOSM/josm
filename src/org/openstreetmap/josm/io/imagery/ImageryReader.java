@@ -151,7 +151,7 @@ public class ImageryReader implements Closeable {
                         "country-code",
                         "icon",
                         "tile-size",
-                        "validGeoreference",
+                        "valid-georeference",
                         "epsg4326to3857Supported",
                 }).contains(qName)) {
                     newState = State.ENTRY_ATTRIBUTE;
