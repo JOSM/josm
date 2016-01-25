@@ -67,7 +67,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     private JPanel pnlPropertiesPanel;
     private JPanel pnlActionButtonsPanel;
     private JPanel pnlResult;
-    private final Executor executor;
+    private final transient Executor executor;
 
     /**
      * Builds the panel with the three privileges the user can grant JOSM

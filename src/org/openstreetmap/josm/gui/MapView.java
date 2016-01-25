@@ -1183,7 +1183,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
         void repaint(long tm, int x, int y, int width, int height);
     }
 
-    private final CopyOnWriteArrayList<RepaintListener> repaintListeners = new CopyOnWriteArrayList<>();
+    private final transient CopyOnWriteArrayList<RepaintListener> repaintListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Adds a listener that gets informed whenever repaint() is called for this class.

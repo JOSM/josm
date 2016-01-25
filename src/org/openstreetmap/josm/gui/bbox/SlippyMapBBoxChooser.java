@@ -126,8 +126,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     private transient Bounds bbox;
 
     // upper left and lower right corners of the selection rectangle (x/y on ZOOM_MAX)
-    private ICoordinate iSelectionRectStart;
-    private ICoordinate iSelectionRectEnd;
+    private transient ICoordinate iSelectionRectStart;
+    private transient ICoordinate iSelectionRectEnd;
 
     /**
      * Constructs a new {@code SlippyMapBBoxChooser}.

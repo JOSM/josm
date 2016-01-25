@@ -53,10 +53,10 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
      **/
     private final transient List<RelationMember> members;
     private transient List<WayConnectionType> connectionType;
-    private final Relation relation;
+    private final transient Relation relation;
 
     private DefaultListSelectionModel listSelectionModel;
-    private final CopyOnWriteArrayList<IMemberModelListener> listeners;
+    private final transient CopyOnWriteArrayList<IMemberModelListener> listeners;
     private final transient OsmDataLayer layer;
     private final transient TaggingPresetHandler presetHandler;
 

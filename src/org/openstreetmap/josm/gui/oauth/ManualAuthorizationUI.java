@@ -46,7 +46,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
     private transient AccessTokenSecretValidator valAccessTokenSecret;
     private JCheckBox cbSaveToPreferences;
     private HtmlPanel pnlMessage;
-    private final Executor executor;
+    private final transient Executor executor;
 
     protected JPanel buildAccessTokenPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());

@@ -55,7 +55,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     private SideButton btnTest;
     /** indicates whether to use the default OSM URL or not */
     private JCheckBox cbUseDefaultServerUrl;
-    private final CollectionProperty SERVER_URL_HISTORY = new CollectionProperty("osm-server.url-history", Arrays.asList(
+    private final transient CollectionProperty SERVER_URL_HISTORY = new CollectionProperty("osm-server.url-history", Arrays.asList(
             "http://api06.dev.openstreetmap.org/api", "http://master.apis.dev.openstreetmap.org/api"));
 
     private transient ApiUrlPropagator propagator;
