@@ -46,8 +46,8 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     private RetrieveRequestTokenPanel pnlRetrieveRequestToken;
     private RetrieveAccessTokenPanel pnlRetrieveAccessToken;
     private ShowAccessTokenPanel pnlShowAccessToken;
-    private final Executor executor;
-    
+    private final transient Executor executor;
+
     /**
      * build the UI
      */

@@ -100,7 +100,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     /**
      * Collection of nodes that is moved
      */
-    private List<Node> movingNodeList;
+    private transient List<Node> movingNodeList;
 
     /**
      * The direction that is currently active.

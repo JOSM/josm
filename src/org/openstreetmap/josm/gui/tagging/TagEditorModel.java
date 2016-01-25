@@ -45,7 +45,7 @@ public class TagEditorModel extends AbstractTableModel {
     private final DefaultListSelectionModel rowSelectionModel;
     private final DefaultListSelectionModel colSelectionModel;
 
-    private OsmPrimitive primitive;
+    private transient OsmPrimitive primitive;
 
     /**
      * Creates a new tag editor model. Internally allocates two selection models

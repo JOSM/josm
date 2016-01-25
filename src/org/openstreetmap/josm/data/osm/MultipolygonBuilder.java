@@ -307,10 +307,10 @@ public class MultipolygonBuilder {
 
     private static class Worker extends RecursiveTask<List<PolygonLevel>> {
 
-        private final List<JoinedPolygon> input;
+        private final transient List<JoinedPolygon> input;
         private final int from;
         private final int to;
-        private final List<PolygonLevel> output;
+        private final transient List<PolygonLevel> output;
         private final int directExecutionTaskSize;
 
         Worker(List<JoinedPolygon> input, int from, int to, List<PolygonLevel> output, int directExecutionTaskSize) {

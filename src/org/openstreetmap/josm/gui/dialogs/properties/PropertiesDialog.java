@@ -138,7 +138,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
      */
     private final ReadOnlyTableModel tagData = new ReadOnlyTableModel();
     private final PropertiesCellRenderer cellRenderer = new PropertiesCellRenderer();
-    private final TableRowSorter<ReadOnlyTableModel> tagRowSorter = new TableRowSorter<>(tagData);
+    private final transient TableRowSorter<ReadOnlyTableModel> tagRowSorter = new TableRowSorter<>(tagData);
     private final JosmTextField tagTableFilter;
 
     /**

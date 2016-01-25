@@ -317,7 +317,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         pb.extend(p2);
         return pb;
     }
-    
+
     /**
      * @param r rectangle
      * @return Minimum bounds that will cover rectangle
@@ -604,8 +604,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    private final Stack<ZoomData> zoomUndoBuffer = new Stack<>();
-    private final Stack<ZoomData> zoomRedoBuffer = new Stack<>();
+    private final transient Stack<ZoomData> zoomUndoBuffer = new Stack<>();
+    private final transient Stack<ZoomData> zoomRedoBuffer = new Stack<>();
     private Date zoomTimestamp = new Date();
 
     private void pushZoomUndo(EastNorth center, double scale) {
