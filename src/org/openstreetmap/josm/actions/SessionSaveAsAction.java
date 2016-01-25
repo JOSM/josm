@@ -290,5 +290,5 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
     @Override
     public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
         updateEnabledState();
-    };
+    }
 }
