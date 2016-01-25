@@ -586,7 +586,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         zoomTo(box.getBounds());
     }
 
-    private class ZoomData {
+    private static class ZoomData {
         private final EastNorth center;
         private final double scale;
 

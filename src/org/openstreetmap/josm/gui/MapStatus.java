@@ -673,7 +673,9 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             MouseState ms = new MouseState(lastMousePos, modifiers);
             // remove mouse states that are in the queue. Our mouse state is newer.
             incomingMouseState.clear();
-            incomingMouseState.offer(ms);
+            if (!incomingMouseState.offer(ms)) {
+                Main.warn("Unable to handle new MouseState: " + ms);
+            }
         }
     }
 

@@ -33,7 +33,7 @@ public final class MultikeyActionsHandler {
 
     private final Map<MultikeyShortcutAction, MyAction> myActions = new HashMap<>();
 
-    private final class ShowLayersPopupWorker implements Runnable {
+    private static final class ShowLayersPopupWorker implements Runnable {
         private final MyAction action;
 
         private ShowLayersPopupWorker(MyAction action) {
