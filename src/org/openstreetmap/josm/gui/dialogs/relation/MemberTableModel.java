@@ -440,7 +440,8 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     }
 
     RelationMember getRelationMemberForPrimitive(final OsmPrimitive primitive) {
-        final Collection<TaggingPreset> presets = TaggingPresets.getMatchingPresets(EnumSet.of(TaggingPresetType.forPrimitive(relation)),
+        final Collection<TaggingPreset> presets = TaggingPresets.getMatchingPresets(
+                EnumSet.of(relation != null ? TaggingPresetType.forPrimitive(relation) : TaggingPresetType.RELATION),
                 presetHandler.getSelection().iterator().next().getKeys(), false);
         Collection<String> potentialRoles = new TreeSet<>();
         for (TaggingPreset tp : presets) {
