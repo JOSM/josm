@@ -6,7 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
+import org.openstreetmap.josm.gui.preferences.map.MapPreference;
 
 /**
  * Unit tests of {@link ProjectionPreference} class.
@@ -34,6 +35,6 @@ public class ProjectionPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        new ProjectionPreference.Factory().createPreferenceSetting().addGui(new PreferenceTabbedPane());
+        PreferencesTestUtils.testPreferenceSettingAddGui(new ProjectionPreference.Factory(), MapPreference.class);
     }
 }

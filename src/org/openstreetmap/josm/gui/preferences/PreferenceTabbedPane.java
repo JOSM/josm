@@ -469,9 +469,11 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         factories.add(advancedPreferenceFactory);
 
         for (PreferenceSettingFactory factory : factories) {
-            PreferenceSetting setting = factory.createPreferenceSetting();
-            if (setting != null) {
-                settings.add(setting);
+            if (factory != null) {
+                PreferenceSetting setting = factory.createPreferenceSetting();
+                if (setting != null) {
+                    settings.add(setting);
+                }
             }
         }
         addGUITabs(false);
