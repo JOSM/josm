@@ -34,6 +34,8 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.session.SessionLayerExporter;
@@ -48,7 +50,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * Saves a JOSM session
  * @since 4685
  */
-public class SessionSaveAsAction extends DiskAccessAction {
+public class SessionSaveAsAction extends DiskAccessAction implements MapFrameListener {
 
     private transient List<Layer> layers;
     private transient Map<Layer, SessionLayerExporter> exporters;
@@ -70,6 +72,7 @@ public class SessionSaveAsAction extends DiskAccessAction {
         super(tr("Save Session As..."), "session", tr("Save the current session to a new file."),
                 null, toolbar, "save_as-session", installAdapters);
         putValue("help", ht("/Action/SessionSaveAs"));
+        Main.addMapFrameListener(this);
     }
 
     @Override
@@ -283,4 +286,9 @@ public class SessionSaveAsAction extends DiskAccessAction {
     protected void updateEnabledState() {
         setEnabled(Main.isDisplayingMapView());
     }
+
+    @Override
+    public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
+        updateEnabledState();
+    };
 }
