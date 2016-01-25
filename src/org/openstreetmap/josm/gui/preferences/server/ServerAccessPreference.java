@@ -33,13 +33,13 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
         }
     }
 
+    /** indicates whether to use the default OSM URL or not */
+    private final OsmApiUrlInputPanel pnlApiUrlPreferences = new OsmApiUrlInputPanel();
+
     private ServerAccessPreference() {
         super(/* ICON(preferences/) */ "connection", tr("Connection Settings"),
                 tr("Connection Settings for the OSM server."), false, new JTabbedPane());
     }
-
-    /** indicates whether to use the default OSM URL or not */
-    private OsmApiUrlInputPanel pnlApiUrlPreferences;
 
     /**
      * Builds the tabbed pane with the server preferences
@@ -66,7 +66,6 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 1.0;
         gc.insets = new Insets(0, 0, 0, 0);
-        pnlApiUrlPreferences = new OsmApiUrlInputPanel();
         pnl.add(pnlApiUrlPreferences, gc);
 
         // the remaining access properties
