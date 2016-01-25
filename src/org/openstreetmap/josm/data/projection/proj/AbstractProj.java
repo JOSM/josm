@@ -98,6 +98,11 @@ public abstract class AbstractProj implements Proj {
         en4 =   t * e2  *  C88;
     }
 
+    @Override
+    public boolean isGeographic() {
+        return false;
+    }
+
     /**
      * Calculates the meridian distance. This is the distance along the central
      * meridian from the equator to {@code phi}. Accurate to &lt; 1e-5 meters

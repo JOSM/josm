@@ -81,4 +81,13 @@ public interface Proj {
      * @return the bounds where this projection is applicable, null if unknown
      */
     Bounds getAlgorithmBounds();
+
+    /**
+     * Return true, if a geographic coordinate reference system is represented.
+     *
+     * I.e. if it returns latitude/longitude values rather than Cartesian
+     * east/north coordinates on a flat surface.
+     * @return true, if it is geographic
+     */
+    boolean isGeographic();
 }
