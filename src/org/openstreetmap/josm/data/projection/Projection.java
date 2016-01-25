@@ -95,11 +95,10 @@ public interface Projection {
     /**
      * Get the number of meters per unit of this projection. This more
      * defines the scale of the map, than real conversion of unit to meters
-     * as this value is more less correct only along great circles.
+     * as this value is more less correct only along certain lines of true scale.
      *
      * Used by WMTS to properly scale tiles
      * @return meters per unit of projection
-     *
      */
     double getMetersPerUnit();
 

@@ -33,7 +33,7 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * <a href="http://www.swisstopo.admin.ch/internet/swisstopo/en/home/topics/survey/sys/refsys/switzerland.parsysrelated1.37696.downloadList.97912.DownloadFile.tmp/swissprojectionen.pdf">
  * this formula (rigorous formulas)</a>.
  */
-public class SwissObliqueMercator implements Proj {
+public class SwissObliqueMercator extends AbstractProj {
 
     // CHECKSTYLE.ON: LineLength
 
@@ -48,6 +48,7 @@ public class SwissObliqueMercator implements Proj {
 
     @Override
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
+        super.initialize(params);
         if (params.lat0 == null)
             throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
         ellps = params.ellps;

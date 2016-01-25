@@ -42,4 +42,9 @@ public class LonLat implements Proj {
     public Bounds getAlgorithmBounds() {
         return new Bounds(-90, -180, 90, 180, false);
     }
+
+    @Override
+    public boolean isGeographic() {
+        return true;
+    }
 }

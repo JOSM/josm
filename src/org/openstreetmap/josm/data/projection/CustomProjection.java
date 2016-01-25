@@ -54,7 +54,8 @@ public class CustomProjection extends AbstractProjection {
     protected String code;
     protected String cacheDir;
     protected Bounds bounds;
-    private double metersPerUnit = 1;
+    private double metersPerUnit;
+    private double metersPerUnitNoDegrees;
     private String axis = "enu"; // default axis orientation is East, North, Up
 
     /**
@@ -285,11 +286,14 @@ public class CustomProjection extends AbstractProjection {
             if (s != null) {
                 this.code = s;
             }
+            boolean defaultUnits = true;
             s = parameters.get(Param.units.key);
             if (s != null) {
                 s = Utils.strip(s, "\"");
                 if (UNITS_TO_METERS.containsKey(s)) {
                     this.metersPerUnit = UNITS_TO_METERS.get(s);
+                    this.metersPerUnitNoDegrees = this.metersPerUnit;
+                    defaultUnits = false;
                 } else {
                     Main.warn("No metersPerUnit found for: " + s);
                 }
@@ -297,6 +301,12 @@ public class CustomProjection extends AbstractProjection {
             s = parameters.get(Param.to_meter.key);
             if (s != null) {
                 this.metersPerUnit = parseDouble(s, Param.to_meter.key);
+                this.metersPerUnitNoDegrees = this.metersPerUnit;
+                defaultUnits = false;
+            }
+            if (defaultUnits) {
+                this.metersPerUnit = proj.isGeographic() ? METER_PER_UNIT_DEGREE : 1;
+                this.metersPerUnitNoDegrees = 1;
             }
             s = parameters.get(Param.axis.key);
             if (s != null) {
@@ -698,6 +708,16 @@ public class CustomProjection extends AbstractProjection {
     @Override
     public double getMetersPerUnit() {
         return metersPerUnit;
+    }
+    
+    /**
+     * Like {@link #getMetersPerUnit()}, but has default value 1 for a
+     * geographic CRS. I.e. by default, degrees are not converted to meters,
+     * but left alone (similar to proj.4 behavior).
+     * @return 
+     */
+    public double getMetersPerUnitProj() {
+        return metersPerUnitNoDegrees;
     }
 
     @Override

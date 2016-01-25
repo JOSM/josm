@@ -28,10 +28,9 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  * Source: IOGP Publication 373-7-2 – Geomatics Guidance Note number 7, part 2,
  * Sec. 1.3.7.1 Oblique and Equatorial Stereographic, http://www.epsg.org/GuidanceNotes
  */
-public class DoubleStereographic implements Proj {
+public class DoubleStereographic extends AbstractProj {
 
     private Ellipsoid ellps;
-    private double e;
     private double n;
     private double c;
     private double chi0;
@@ -51,10 +50,10 @@ public class DoubleStereographic implements Proj {
 
     @Override
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
+        super.initialize(params);
         if (params.lat0 == null)
             throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
         ellps = params.ellps;
-        e = ellps.e;
         initialize(params.lat0);
     }
 

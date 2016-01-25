@@ -292,7 +292,7 @@ public class ProjectionRefTest {
                 Assert.fail("definitions for " + ref.code + " do not match");
             }
             Projection proj = Projections.getProjectionByCode(ref.code);
-            double scale = proj.getMetersPerUnit();
+            double scale = ((CustomProjection) proj).getMetersPerUnitProj();
             for (Pair<LatLon, EastNorth> p : ref.data) {
                 LatLon ll = p.a;
                 EastNorth enRef = p.b;
