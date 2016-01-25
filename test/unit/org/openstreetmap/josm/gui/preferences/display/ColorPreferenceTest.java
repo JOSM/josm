@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 
 /**
  * Unit tests of {@link ColorPreference} class.
@@ -26,5 +27,13 @@ public class ColorPreferenceTest {
     @Test
     public void testColorPreference()  {
         assertNotNull(new ColorPreference.Factory().createPreferenceSetting());
+    }
+
+    /**
+     * Unit test of {@link ColorPreference#addGui}.
+     */
+    @Test
+    public void testAddGui() {
+        new ColorPreference.Factory().createPreferenceSetting().addGui(new PreferenceTabbedPane());
     }
 }

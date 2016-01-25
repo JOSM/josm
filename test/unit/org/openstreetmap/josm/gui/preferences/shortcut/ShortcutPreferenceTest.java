@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 
 /**
  * Unit tests of {@link ShortcutPreference} class.
@@ -26,5 +27,13 @@ public class ShortcutPreferenceTest {
     @Test
     public void testShortcutPreference()  {
         assertNotNull(new ShortcutPreference.Factory().createPreferenceSetting());
+    }
+
+    /**
+     * Unit test of {@link ShortcutPreference#addGui}.
+     */
+    @Test
+    public void testAddGui() {
+        new ShortcutPreference.Factory().createPreferenceSetting().addGui(new PreferenceTabbedPane());
     }
 }

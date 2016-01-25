@@ -71,6 +71,23 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     private JosmTextField txtFilter;
     private PreferencesTable table;
 
+    private final Map<String, String> profileTypes = new LinkedHashMap<>();
+
+    private final Comparator<PrefEntry> customComparator = new Comparator<PrefEntry>() {
+        @Override
+        public int compare(PrefEntry o1, PrefEntry o2) {
+            if (o1.isChanged() && !o2.isChanged())
+                return -1;
+            if (o2.isChanged() && !o1.isChanged())
+                return 1;
+            if (!(o1.isDefault()) && o2.isDefault())
+                return -1;
+            if (!(o2.isDefault()) && o1.isDefault())
+                return 1;
+            return o1.compareTo(o2);
+        }
+    };
+
     private AdvancedPreference() {
         super(/* ICON(preferences/) */ "advanced", tr("Advanced Preferences"), tr("Setting Preference entries directly. Use with caution!"));
     }
@@ -135,8 +152,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         p.add(edit, GBC.std().insets(5, 5, 5, 0));
         edit.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                boolean ok = table.editPreference(gui);
-                if (ok) applyFilter();
+                if (table.editPreference(gui))
+                    applyFilter();
             }
         });
 
@@ -210,7 +227,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                 JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
         if (fc != null) {
             File[] sel = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : (new File[]{fc.getSelectedFile()});
-            if (sel.length == 1 && !sel[0].getName().contains(".")) sel[0] = new File(sel[0].getAbsolutePath()+".xml");
+            if (sel.length == 1 && !sel[0].getName().contains("."))
+                sel[0] = new File(sel[0].getAbsolutePath()+".xml");
             return sel;
         }
         return new File[0];
@@ -253,7 +271,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
     private void readPreferencesFromXML() {
         File[] files = askUserForCustomSettingsFiles(false, tr("Open JOSM customization file"));
-        if (files.length == 0) return;
+        if (files.length == 0)
+            return;
 
         Preferences tmpPrefs = CustomConfigurator.clonePreferences(Main.pref);
 
@@ -275,17 +294,6 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         Collections.sort(allData, customComparator);
         applyFilter();
     }
-
-    private final Comparator<PrefEntry> customComparator = new Comparator<PrefEntry>() {
-        @Override
-        public int compare(PrefEntry o1, PrefEntry o2) {
-            if (o1.isChanged() && !o2.isChanged()) return -1;
-            if (o2.isChanged() && !o1.isChanged()) return 1;
-            if (!(o1.isDefault()) && o2.isDefault()) return -1;
-            if (!(o2.isDefault()) && o1.isDefault()) return 1;
-            return o1.compareTo(o2);
-        }
-    };
 
     private List<PrefEntry> prepareData(Map<String, Setting<?>> loaded, Map<String, Setting<?>> orig, Map<String, Setting<?>> defaults) {
         List<PrefEntry> data = new ArrayList<>();
@@ -319,8 +327,6 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         displayData.addAll(data);
         return data;
     }
-
-    private final Map<String, String> profileTypes = new LinkedHashMap<>();
 
     private JPopupMenu buildPopupMenu() {
         JPopupMenu menu = new JPopupMenu();
@@ -458,7 +464,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                 displayData.add(e);
             }
         }
-        if (table != null) table.fireDataChanged();
+        if (table != null)
+            table.fireDataChanged();
     }
 
     @Override

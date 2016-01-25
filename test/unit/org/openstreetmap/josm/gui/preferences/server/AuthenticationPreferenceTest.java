@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 
 /**
  * Unit tests of {@link AuthenticationPreference} class.
@@ -26,5 +27,13 @@ public class AuthenticationPreferenceTest {
     @Test
     public void testAuthenticationPreference()  {
         assertNotNull(new AuthenticationPreference.Factory().createPreferenceSetting());
+    }
+
+    /**
+     * Unit test of {@link AuthenticationPreference#addGui}.
+     */
+    @Test
+    public void testAddGui() {
+        new AuthenticationPreference.Factory().createPreferenceSetting().addGui(new PreferenceTabbedPane());
     }
 }
