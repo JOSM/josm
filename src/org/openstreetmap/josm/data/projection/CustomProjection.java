@@ -40,6 +40,12 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class CustomProjection extends AbstractProjection {
 
+    /*
+     * Equation taken from:
+     * https://github.com/openlayers/ol3/blob/master/src/ol/proj/proj.js#L48-#L49
+     * Value for Radius taken form:
+     * https://github.com/openlayers/ol3/blob/master/src/ol/sphere/normal.js#L11
+     */
     private static final double METER_PER_UNIT_DEGREE = 2 * Math.PI * 6370997 / 360;
     private static final Map<String, Double> UNITS_TO_METERS = getUnitsToMeters();
     private static final Map<String, Double> PRIME_MERIDANS = getPrimeMeridians();
