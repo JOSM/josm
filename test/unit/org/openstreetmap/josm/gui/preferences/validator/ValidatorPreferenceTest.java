@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 
 /**
  * Unit tests of {@link ValidatorPreference} class.
@@ -26,5 +27,13 @@ public class ValidatorPreferenceTest {
     @Test
     public void testValidatorPreference()  {
         assertNotNull(new ValidatorPreference.Factory().createPreferenceSetting());
+    }
+
+    /**
+     * Unit test of {@link ValidatorPreference#addGui}.
+     */
+    @Test
+    public void testAddGui() {
+        new ValidatorPreference.Factory().createPreferenceSetting().addGui(new PreferenceTabbedPane());
     }
 }

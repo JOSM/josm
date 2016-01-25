@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 
 /**
  * Unit tests of {@link RemoteControlPreference} class.
@@ -26,5 +27,13 @@ public class RemoteControlPreferenceTest {
     @Test
     public void testRemoteControlPreference()  {
         assertNotNull(new RemoteControlPreference.Factory().createPreferenceSetting());
+    }
+
+    /**
+     * Unit test of {@link RemoteControlPreference#addGui}.
+     */
+    @Test
+    public void testAddGui() {
+        new RemoteControlPreference.Factory().createPreferenceSetting().addGui(new PreferenceTabbedPane());
     }
 }

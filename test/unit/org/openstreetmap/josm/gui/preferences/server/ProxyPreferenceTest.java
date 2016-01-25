@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 
 /**
  * Unit tests of {@link ProxyPreference} class.
@@ -26,5 +27,13 @@ public class ProxyPreferenceTest {
     @Test
     public void testProxyPreference()  {
         assertNotNull(new ProxyPreference.Factory().createPreferenceSetting());
+    }
+
+    /**
+     * Unit test of {@link ProxyPreference#addGui}.
+     */
+    @Test
+    public void testAddGui() {
+        new ProxyPreference.Factory().createPreferenceSetting().addGui(new PreferenceTabbedPane());
     }
 }
