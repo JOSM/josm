@@ -1251,9 +1251,14 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
     public void cleanupDeletedPrimitives() {
         beginUpdate();
         try {
-            if (cleanupDeleted(nodes.iterator())
-                    || cleanupDeleted(ways.iterator())
-                    || cleanupDeleted(relations.iterator())) {
+            bool changed = cleanupDeleted(nodes.iterator();
+            if (cleanupDeleted(ways.iterator()) {
+                changed = true;
+            }
+            if (cleanupDeleted(relations.iterator())) {
+                changed = true;
+            }
+            if (changed) {
                 fireSelectionChanged();
             }
         } finally {
