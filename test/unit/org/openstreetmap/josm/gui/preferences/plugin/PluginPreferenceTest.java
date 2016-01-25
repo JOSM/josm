@@ -52,7 +52,8 @@ public class PluginPreferenceTest {
         assertEquals("", PluginPreference.buildDownloadSummary(
                 new PluginDownloadTask(NullProgressMonitor.INSTANCE, Arrays.asList(dummy), "")));
         assertEquals("The following plugin has been downloaded <strong>successfully</strong>:<ul><li>dummy_plugin (31772)</li></ul>"+
-                     "Downloading the following plugin has <strong>failed</strong>:<ul><li>dummy_plugin</li></ul>",
+                     "Downloading the following plugin has <strong>failed</strong>:<ul><li>dummy_plugin</li></ul>"+
+                     "<br>Error message(untranslated): test",
                 PluginPreference.buildDownloadSummary(
                         new PluginDownloadTask(NullProgressMonitor.INSTANCE, Arrays.asList(dummy), "") {
                     @Override
@@ -63,6 +64,11 @@ public class PluginPreferenceTest {
                     @Override
                     public Collection<PluginInformation> getDownloadedPlugins() {
                         return Collections.singleton(dummy);
+                    }
+
+                    @Override
+                    public Exception getLastException() {
+                        return new Exception("test");
                     }
                 }));
     }

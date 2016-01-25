@@ -97,6 +97,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
     public static String buildDownloadSummary(PluginDownloadTask task) {
         Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
         Collection<PluginInformation> failed = task.getFailedPlugins();
+        Exception exception = task.getLastException();
         StringBuilder sb = new StringBuilder();
         if (!downloaded.isEmpty()) {
             sb.append(trn(
@@ -123,6 +124,10 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 sb.append("<li>").append(pi.name).append("</li>");
             }
             sb.append("</ul>");
+        }
+        if (exception != null) {
+            // Same i18n string in ExceptionUtil.explainBadRequest()
+            sb.append(tr("<br>Error message(untranslated): {0}", exception.getMessage()));
         }
         return sb.toString();
     }

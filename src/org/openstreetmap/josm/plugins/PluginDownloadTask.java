@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
  *
  * When the task is finished {@link #getDownloadedPlugins()} replies the list of downloaded plugins
  * and {@link #getFailedPlugins()} replies the list of failed plugins.
- *
+ * @since 2817
  */
 public class PluginDownloadTask extends PleaseWaitRunnable {
 
@@ -42,6 +42,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
     private final Collection<PluginInformation> toUpdate = new LinkedList<>();
     private final Collection<PluginInformation> failed = new LinkedList<>();
     private final Collection<PluginInformation> downloaded = new LinkedList<>();
+    private Exception lastException;
     private boolean canceled;
     private HttpClient downloadConnection;
 
@@ -96,7 +97,9 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
     }
 
     @Override
-    protected void finish() {}
+    protected void finish() {
+        // Do nothing. Error/success feedback is managed in PluginPreference.notifyDownloadResults()
+    }
 
     protected void download(PluginInformation pi, File file) throws PluginDownloadException {
         if (pi.mainversion > Version.getInstance().getVersion()) {
@@ -149,13 +152,16 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException {
         File pluginDir = Main.pref.getPluginsDirectory();
         if (!pluginDir.exists() && !pluginDir.mkdirs()) {
-            /*lastException =*/ new PluginDownloadException(tr("Failed to create plugin directory ''{0}''", pluginDir.toString()));
+            String message = tr("Failed to create plugin directory ''{0}''", pluginDir.toString());
+            lastException = new PluginDownloadException(message);
+            Main.error(message);
             failed.addAll(toUpdate);
             return;
         }
         getProgressMonitor().setTicksCount(toUpdate.size());
         for (PluginInformation d : toUpdate) {
-            if (canceled) return;
+            if (canceled)
+                return;
             String message = tr("Downloading Plugin {0}...", d.name);
             Main.info(message);
             progressMonitor.subTask(message);
@@ -164,6 +170,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
             try {
                 download(d, pluginFile);
             } catch (PluginDownloadException e) {
+                lastException = e;
                 Main.error(e);
                 failed.add(d);
                 continue;
@@ -198,5 +205,14 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
      */
     public Collection<PluginInformation> getDownloadedPlugins() {
         return downloaded;
+    }
+
+    /**
+     * Replies the last exception that occured during download, or {@code null}.
+     * @return the last exception that occured during download, or {@code null}
+     * @since 9621
+     */
+    public Exception getLastException() {
+        return lastException;
     }
 }
