@@ -204,18 +204,16 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
                     lambda = 0.0;
                     phi = latitudeOfOrigin;
                 } else {
-                    double sCe, cCe, q, ab;
+                    double sCe, cCe, ab;
                     sCe = 2.0 * Math.asin(0.5 * rho / rq);
                     cCe = Math.cos(sCe);
                     sCe = Math.sin(sCe);
                     x *= sCe;
                     if (mode == Mode.OBLIQUE) {
                         ab = cCe * sinb1 + y * sCe * cosb1 / rho;
-                        q  = qp * ab;
                         y  = rho * cosb1 * cCe - y * sinb1 * sCe;
                     } else {
                         ab = y * sCe / rho;
-                        q  = qp * ab;
                         y  = rho * cCe;
                     }
                     lambda = Math.atan2(x, y);
