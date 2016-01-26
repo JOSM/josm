@@ -71,7 +71,8 @@ public final class RightAndLefthandTraffic {
 
     private static void initialize() {
         leftHandTrafficPolygons = new ArrayList<>();
-        try (InputStream is = new CachedFile("resource://data/left-right-hand-traffic.osm").getInputStream()) {
+        try (CachedFile cf = new CachedFile("resource://data/left-right-hand-traffic.osm");
+                InputStream is = cf.getInputStream()) {
             DataSet data = OsmReader.parseDataSet(is, null);
             for (Way w : data.getWays()) {
                 leftHandTrafficPolygons.add(Geometry.getAreaLatLon(w.getNodes()));

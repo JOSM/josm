@@ -37,7 +37,7 @@ public final class FontsManager {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         for (String fontFile : INCLUDED_FONTS) {
             String url = "resource://data/fonts/"+fontFile;
-            try (InputStream i = new CachedFile(url).getInputStream()) {
+            try (CachedFile cf = new CachedFile(url); InputStream i = cf.getInputStream()) {
                 ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, i));
             } catch (IOException | FontFormatException ex) {
                 throw new RuntimeException(ex);
