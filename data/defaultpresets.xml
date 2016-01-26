@@ -5264,18 +5264,133 @@
             <text key="name" text="Name" />
             <combo key="sport" text="Sport" values="athletics,cycling,dog_racing,equestrian,horse_racing,running,skating" values_context="sport" />
         </item> <!-- Racetrack -->
-        <item name="Golf Course" icon="styles/standard/sport/golf.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
-                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
-            <space />
-            <key key="leisure" value="golf_course" />
-            <reference ref="name_oh_wheelchair" />
-        </item> <!-- Golf Course -->
+        <group name="Golf" icon="styles/standard/sport/golf/golf.svg">
+                <item name="Golf Course" icon="styles/standard/sport/golf/golf.svg" type="node,closedway,multipolygon" preset_name_label="true">
+                    <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
+                          de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
+                          es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
+                          fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
+                          ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
+                          pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
+                          pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                    <space />
+                    <key key="leisure" value="golf_course" />
+                    <reference ref="name_oh_wheelchair" />
+                </item> <!-- Golf Course -->
+            <separator/>
+            <item name="Tee" name_context="golf" icon="styles/standard/sport/golf/tee.svg" type="node,closedway" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                <space />
+                <key key="golf" value="tee" />
+            </item> <!-- Tee -->
+            <item name="Hole" name_context="golf" icon="styles/standard/sport/golf/hole.svg" type="way" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                <space />
+                <key key="golf" value="hole" />
+                <text key="ref" text="Reference" />
+                <text key="par" text="Par" />
+                <optional>
+                    <text key="name" text="Name" />
+                    <combo key="handicap" text="Handicap rating" values="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18" />
+                </optional>
+            </item> <!-- Hole -->
+            <item name="Pin" name_context="golf" icon="styles/standard/sport/golf/pin.svg" type="node" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                <space />
+                <key key="golf" value="pin" />
+                <text key="ref" text="Reference" />
+            </item> <!-- Pin -->
+            <separator/>
+            <item name="Bunker" name_context="golf" icon="styles/standard/sport/golf/bunker.svg" type="closedway" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:golf=bunker" />
+                <space />
+                <key key="golf" value="bunker" />
+                <combo key="natural" text="Natural" value="sand" />
+            </item> <!-- Bunker -->
+             <item name="Frontal Water hazard" name_context="golf" icon="styles/standard/sport/golf/water_hazard.svg" type="closedway" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                <space />
+                <key key="golf" value="water_hazard" />
+                <key key="natural" value="water" match="keyvalue" />
+            </item> <!-- Frontal Water hazard -->
+             <item name="Lateral water hazard" name_context="golf" icon="styles/standard/sport/golf/lateral_water_hazard.svg" type="closedway" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                <space />
+                <key key="golf" value="lateral_water_hazard" />
+                <key key="natural" value="water" match="keyvalue" />
+            </item> <!-- Lateral water hazard -->
+            <separator/>
+            <item name="Green" name_context="golf" icon="styles/standard/sport/golf/green.svg" type="closedway,multipolygon" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                <space />
+                <key key="golf" value="green" />
+            </item> <!-- Green -->
+            <item name="Fairway" name_context="golf" icon="styles/standard/sport/golf/fairway.svg" type="closedway,multipolygon" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:golf=fairway" />
+                <space />
+                <key key="golf" value="fairway" />
+                <key key="surface" value="grass" match="keyvalue" />
+            </item> <!-- Fairway -->
+            <item name="Rough" name_context="golf" icon="styles/standard/sport/golf/rough.svg" type="closedway,multipolygon" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                <space />
+                <key key="golf" value="rough" />
+            </item> <!-- Rough -->
+            <separator/>
+            <item name="Driving range" name_context="golf" type="node,closedway" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=golf_course"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=golf_course"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=golf_course"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=golf_course" />
+                <space />
+                <key key="golf" value="driving_range" />
+            </item> <!-- Driving range -->
+        </group> <!-- Golf -->
         <item name="Miniature Golf" icon="styles/standard/sport/miniature_golf.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=miniature_golf"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=miniature_golf"
