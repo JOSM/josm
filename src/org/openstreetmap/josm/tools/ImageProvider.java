@@ -835,6 +835,8 @@ public class ImageProvider {
             }
         } catch (IOException e) {
             return null;
+        } finally {
+            cf.close();
         }
     }
 
@@ -1140,6 +1142,7 @@ public class ImageProvider {
             try (InputStream is = cf.getInputStream()) {
                 parser.parse(new InputSource(is));
             }
+            cf.close();
         } catch (SAXReturnException r) {
             return r.getResult();
         } catch (Exception e) {
