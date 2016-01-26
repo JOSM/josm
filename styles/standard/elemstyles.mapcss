@@ -1765,7 +1765,6 @@ node[office=government] {
 /****************/
 
 area[leisure=sports_centre],
-area[leisure=golf_course],
 area[leisure=stadium],
 area[leisure=horse_riding],
 area[leisure=water_park] {
@@ -1773,11 +1772,6 @@ area[leisure=water_park] {
 }
 node[leisure=sports_centre] {
     icon-image: "sport/centre.png";
-    set icon_z17;
-    text: auto;
-}
-node[leisure=golf_course] {
-    icon-image: "sport/golf.svg";
     set icon_z17;
     text: auto;
 }
@@ -1915,6 +1909,60 @@ node[leisure=ice_rink] {
 }
 node[leisure=sauna] {
     icon-image: "leisure/sauna.png";
+    set icon_z17;
+    text: auto;
+}
+area[leisure=golf_course] {
+    fill-color: leisure#c7f1a3;
+}
+node[leisure=golf_course] {
+    icon-image: "sport/golf/golf.svg";
+    set icon_z17;
+    text: auto;
+}
+
+/*************/
+/* golf tags */
+/*************/
+area[golf=tee] {
+    fill-color: golf#c7f1a3;
+}
+node[golf=tee] {
+    icon-image: "sport/golf/tee.svg";
+    set icon_z17;
+    text: auto;
+}
+way[golf=hole] {
+    width: 1;
+    dashes: 10,10;
+    color: golf_hole#808080;
+}
+node[golf=pin] {
+    icon-image: "sport/golf/pin.svg";
+    set icon_z17;
+    text: auto;
+}
+area[golf=bunker] {
+    fill-color: golf_bunker#ffab00;
+}
+area[golf=water_hazard],
+area[golf=lateral_water_hazard] {
+    fill-color: golf_water_hazard#0000ff;
+}
+area[golf=green] {
+    fill-color: golf_green#00e700;
+}
+area[golf=fairway] {
+    fill-color: golf_fairway#009a00;
+}
+area[golf=rough] {
+    fill-color: golf_rough#006700;
+}
+area[golf=driving_range] {
+    fill-color: golf_driving_range#c7f1a3;
+}
+node[golf=driving_range] {
+    icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
