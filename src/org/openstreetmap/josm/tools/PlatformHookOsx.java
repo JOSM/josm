@@ -363,7 +363,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
                 File newPref = Main.pref.getPreferenceFile();
                 if (!newPref.exists()) {
                     try {
-                        Main.pref.getPreferencesDirectory().mkdirs();
+                        Utils.mkDirs(Main.pref.getPreferencesDirectory());
                         Main.info("Copying old preferences file to new location");
                         Utils.copyFile(oldPref, newPref);
                         Utils.deleteFile(oldPref, marktr("Unable to delete old preferences file {0}"));

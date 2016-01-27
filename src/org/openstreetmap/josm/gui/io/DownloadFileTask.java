@@ -95,7 +95,7 @@ public class DownloadFileTask extends PleaseWaitRunnable {
             if (mkdir) {
                 File newDir = file.getParentFile();
                 if (!newDir.exists()) {
-                    newDir.mkdirs();
+                    Utils.mkDirs(newDir);
                 }
             }
 
@@ -183,7 +183,7 @@ public class DownloadFileTask extends PleaseWaitRunnable {
                 ZipEntry ze = es.nextElement();
                 File newFile = new File(dir, ze.getName());
                 if (ze.isDirectory()) {
-                    newFile.mkdirs();
+                    Utils.mkDirs(newFile);
                 } else try (InputStream is = zf.getInputStream(ze)) {
                     Files.copy(is, newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
