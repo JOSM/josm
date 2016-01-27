@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.AddAbortException;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.SelectionTable;
 import org.openstreetmap.josm.gui.dialogs.relation.SelectionTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -27,7 +27,7 @@ abstract class AddFromSelectionAction extends AbstractRelationEditorAction {
     protected final SelectionTableModel selectionTableModel;
 
     protected AddFromSelectionAction(MemberTable memberTable, MemberTableModel memberTableModel, SelectionTable selectionTable,
-            SelectionTableModel selectionTableModel, String actionMapKey, OsmDataLayer layer, RelationAware editor) {
+            SelectionTableModel selectionTableModel, String actionMapKey, OsmDataLayer layer, IRelationEditor editor) {
         super(memberTable, memberTableModel, actionMapKey, layer, editor);
         this.selectionTable = selectionTable;
         this.selectionTableModel = selectionTableModel;

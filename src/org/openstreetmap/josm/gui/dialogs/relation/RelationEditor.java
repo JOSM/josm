@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * Abstract relation editor.
  * @since 1599
  */
-public abstract class RelationEditor extends ExtendedDialog implements RelationAware {
+public abstract class RelationEditor extends ExtendedDialog implements IRelationEditor {
 
     /** the property name for the current relation.
      * @see #setRelation(Relation)

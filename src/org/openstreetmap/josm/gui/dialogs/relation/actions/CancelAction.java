@@ -17,7 +17,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
@@ -39,7 +39,7 @@ public class CancelAction extends SavingAction {
      * @param tfRole role text field
      */
     public CancelAction(MemberTable memberTable, MemberTableModel memberTableModel, TagEditorModel tagModel, OsmDataLayer layer,
-            RelationAware editor, AutoCompletingTextField tfRole) {
+            IRelationEditor editor, AutoCompletingTextField tfRole) {
         super(memberTable, memberTableModel, tagModel, layer, editor, tfRole);
         putValue(SHORT_DESCRIPTION, tr("Cancel the updates and close the dialog"));
         putValue(SMALL_ICON, ImageProvider.get("cancel"));

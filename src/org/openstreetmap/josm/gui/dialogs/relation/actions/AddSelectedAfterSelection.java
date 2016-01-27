@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.AddAbortException;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.SelectionTableModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -24,7 +24,7 @@ public class AddSelectedAfterSelection extends AddFromSelectionAction {
      * @param selectionTableModel selection table model
      * @param editor relation editor
      */
-    public AddSelectedAfterSelection(MemberTableModel memberTableModel, SelectionTableModel selectionTableModel, RelationAware editor) {
+    public AddSelectedAfterSelection(MemberTableModel memberTableModel, SelectionTableModel selectionTableModel, IRelationEditor editor) {
         super(null, memberTableModel, null, selectionTableModel, null, null, editor);
         putValue(SHORT_DESCRIPTION, tr("Add all objects selected in the current dataset after the last selected member"));
         putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyaftercurrentright"));

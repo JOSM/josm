@@ -22,7 +22,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationDialogManager;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -40,7 +40,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
     protected final AutoCompletingTextField tfRole;
 
     protected SavingAction(MemberTable memberTable, MemberTableModel memberTableModel, TagEditorModel tagModel, OsmDataLayer layer,
-            RelationAware editor, AutoCompletingTextField tfRole) {
+            IRelationEditor editor, AutoCompletingTextField tfRole) {
         super(memberTable, memberTableModel, null, layer, editor);
         this.tagModel = tagModel;
         this.tfRole = tfRole;

@@ -4,17 +4,15 @@ package org.openstreetmap.josm.gui.dialogs.relation.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -34,7 +32,7 @@ public class ApplyAction extends SavingAction implements PropertyChangeListener,
      * @param tagModel tag editor model
      */
     public ApplyAction(MemberTable memberTable, MemberTableModel memberTableModel, TagEditorModel tagModel, OsmDataLayer layer,
-            RelationAware editor) {
+            IRelationEditor editor) {
         super(memberTable, memberTableModel, tagModel, layer, editor, null);
         putValue(SHORT_DESCRIPTION, tr("Apply the current updates"));
         putValue(SMALL_ICON, ImageProvider.get("save"));
@@ -47,7 +45,7 @@ public class ApplyAction extends SavingAction implements PropertyChangeListener,
     @Override
     public void actionPerformed(ActionEvent e) {
         if (applyChanges()) {
-            ((GenericRelationEditor) editor).reloadDataFromRelation();
+            editor.reloadDataFromRelation();
         }
     }
 

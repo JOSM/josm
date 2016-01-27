@@ -6,9 +6,9 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
 import org.openstreetmap.josm.gui.dialogs.relation.SelectionTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
@@ -39,7 +39,7 @@ public class RelationEditorActionsTest {
         MemberTableModel memberTableModel = new MemberTableModel(orig, layer, null);
         SelectionTableModel selectionTableModel = new SelectionTableModel(layer);
 
-        RelationAware editor = new RelationAware() {
+        IRelationEditor editor = new IRelationEditor() {
             private Relation r = orig;
 
             @Override
@@ -60,6 +60,11 @@ public class RelationEditorActionsTest {
             @Override
             public Relation getRelation() {
                 return r;
+            }
+
+            @Override
+            public void reloadDataFromRelation() {
+                // Do nothing
             }
         };
 
