@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -57,14 +58,39 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * Help browser displaying HTML pages fetched from JOSM wiki.
  */
-public class HelpBrowser extends JDialog {
+public class HelpBrowser extends JDialog implements IHelpBrowser {
+
     /** the unique instance */
     private static HelpBrowser instance;
 
-    /** the menu item in the windows menu. Required to properly
-     * hide on dialog close.
-     */
+    /** the menu item in the windows menu. Required to properly hide on dialog close */
     private JMenuItem windowMenuItem;
+
+    /** the help browser */
+    private JosmEditorPane help;
+
+    /** the help browser history */
+    private transient HelpBrowserHistory history;
+
+    /** the currently displayed URL */
+    private String url;
+
+    private final transient HelpContentReader reader;
+
+    private static final JosmAction focusAction = new JosmAction(tr("JOSM Help Browser"), "help", "", null, false, false) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            HelpBrowser.getInstance().setVisible(true);
+        }
+    };
+
+    /**
+     * Constructs a new {@code HelpBrowser}.
+     */
+    public HelpBrowser() {
+        reader = new HelpContentReader(HelpUtil.getWikiBaseUrl());
+        build();
+    }
 
     /**
      * Replies the unique instance of the help browser
@@ -109,24 +135,6 @@ public class HelpBrowser extends JDialog {
         browser.toFront();
     }
 
-    /** the help browser */
-    private JosmEditorPane help;
-
-    /** the help browser history */
-    private transient HelpBrowserHistory history;
-
-    /** the currently displayed URL */
-    private String url;
-
-    private final transient HelpContentReader reader;
-
-    private static final JosmAction focusAction = new JosmAction(tr("JOSM Help Browser"), "help", "", null, false, false) {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            HelpBrowser.getInstance().setVisible(true);
-        }
-    };
-
     /**
      * Builds the style sheet used in the internal help browser
      *
@@ -135,13 +143,13 @@ public class HelpBrowser extends JDialog {
     protected StyleSheet buildStyleSheet() {
         StyleSheet ss = new StyleSheet();
         StringBuilder css = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(
+        try (BufferedReader breader = new BufferedReader(
                 new InputStreamReader(
                         getClass().getResourceAsStream("/data/help-browser.css"), StandardCharsets.UTF_8
                 )
         )) {
-            String line = null;
-            while ((line = reader.readLine()) != null) {
+            String line;
+            while ((line = breader.readLine()) != null) {
                 css.append(line);
                 css.append('\n');
             }
@@ -156,13 +164,13 @@ public class HelpBrowser extends JDialog {
 
     protected JToolBar buildToolBar() {
         JToolBar tb = new JToolBar();
-        tb.add(new JButton(new HomeAction()));
-        tb.add(new JButton(new BackAction(history)));
-        tb.add(new JButton(new ForwardAction(history)));
-        tb.add(new JButton(new ReloadAction()));
+        tb.add(new JButton(new HomeAction(this)));
+        tb.add(new JButton(new BackAction(this)));
+        tb.add(new JButton(new ForwardAction(this)));
+        tb.add(new JButton(new ReloadAction(this)));
         tb.add(new JSeparator());
-        tb.add(new JButton(new OpenInBrowserAction()));
-        tb.add(new JButton(new EditAction()));
+        tb.add(new JButton(new OpenInBrowserAction(this)));
+        tb.add(new JButton(new EditAction(this)));
         return tb;
     }
 
@@ -225,14 +233,6 @@ public class HelpBrowser extends JDialog {
         super.setVisible(visible);
     }
 
-    /**
-     * Constructs a new {@code HelpBrowser}.
-     */
-    public HelpBrowser() {
-        reader = new HelpContentReader(HelpUtil.getWikiBaseUrl());
-        build();
-    }
-
     protected void loadTopic(String content) {
         Document document = help.getEditorKit().createDefaultDocument();
         try {
@@ -243,11 +243,7 @@ public class HelpBrowser extends JDialog {
         help.setDocument(document);
     }
 
-    /**
-     * Replies the current URL
-     *
-     * @return the current URL
-     */
+    @Override
     public String getUrl() {
         return url;
     }
@@ -362,14 +358,7 @@ public class HelpBrowser extends JDialog {
         this.url = url;
     }
 
-    /**
-     * Opens an URL and displays the content.
-     *
-     *  If the URL is the locator of an absolute help topic, help content is loaded from
-     *  the JOSM wiki. Otherwise, the help browser loads the page from the given URL
-     *
-     * @param url the url
-     */
+    @Override
     public void openUrl(String url) {
         if (!isVisible()) {
             setVisible(true);
@@ -409,12 +398,7 @@ public class HelpBrowser extends JDialog {
         }
     }
 
-    /**
-     * Loads and displays the help information for a help topic given
-     * by a relative help topic name, i.e. "/Action/New"
-     *
-     * @param relativeHelpTopic the relative help topic
-     */
+    @Override
     public void openHelpTopic(String relativeHelpTopic) {
         if (!isVisible()) {
             setVisible(true);
@@ -425,30 +409,47 @@ public class HelpBrowser extends JDialog {
         loadRelativeHelpTopic(relativeHelpTopic);
     }
 
-    class OpenInBrowserAction extends AbstractAction {
-        OpenInBrowserAction() {
+    abstract static class AbstractBrowserAction extends AbstractAction {
+        protected final transient IHelpBrowser browser;
+
+        protected AbstractBrowserAction(IHelpBrowser browser) {
+            this.browser = browser;
+        }
+    }
+
+    static class OpenInBrowserAction extends AbstractBrowserAction {
+
+        /**
+         * Constructs a new {@code OpenInBrowserAction}.
+         * @param browser help browser
+         */
+        OpenInBrowserAction(IHelpBrowser browser) {
+            super(browser);
             putValue(SHORT_DESCRIPTION, tr("Open the current help page in an external browser"));
             putValue(SMALL_ICON, ImageProvider.get("help", "internet"));
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            OpenBrowser.displayUrl(getUrl());
+            OpenBrowser.displayUrl(browser.getUrl());
         }
     }
 
-    class EditAction extends AbstractAction {
+    static class EditAction extends AbstractBrowserAction {
+
         /**
          * Constructs a new {@code EditAction}.
+         * @param browser help browser
          */
-        EditAction() {
+        EditAction(IHelpBrowser browser) {
+            super(browser);
             putValue(SHORT_DESCRIPTION, tr("Edit the current help page"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            String url = getUrl();
+            String url = browser.getUrl();
             if (url == null)
                 return;
             if (!url.startsWith(HelpUtil.getWikiBaseHelpUrl())) {
@@ -456,15 +457,17 @@ public class HelpBrowser extends JDialog {
                         "<html>The current URL <tt>{0}</tt><br>"
                         + "is an external URL. Editing is only possible for help topics<br>"
                         + "on the help server <tt>{1}</tt>.</html>",
-                        getUrl(),
+                        url,
                         HelpUtil.getWikiBaseUrl()
                 );
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        message,
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                );
+                if (!GraphicsEnvironment.isHeadless()) {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            message,
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                }
                 return;
             }
             url = url.replaceAll("#[^#]*$", "");
@@ -472,74 +475,89 @@ public class HelpBrowser extends JDialog {
         }
     }
 
-    class ReloadAction extends AbstractAction {
-        ReloadAction() {
+    static class ReloadAction extends AbstractBrowserAction {
+
+        /**
+         * Constructs a new {@code ReloadAction}.
+         * @param browser help browser
+         */
+        ReloadAction(IHelpBrowser browser) {
+            super(browser);
             putValue(SHORT_DESCRIPTION, tr("Reload the current help page"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            openUrl(getUrl());
+            browser.openUrl(browser.getUrl());
         }
     }
 
-    static class BackAction extends AbstractAction implements Observer {
-        private final transient HelpBrowserHistory history;
+    static class BackAction extends AbstractBrowserAction implements Observer {
 
-        BackAction(HelpBrowserHistory history) {
-            this.history = history;
-            history.addObserver(this);
+        /**
+         * Constructs a new {@code BackAction}.
+         * @param browser help browser
+         */
+        BackAction(IHelpBrowser browser) {
+            super(browser);
+            browser.getHistory().addObserver(this);
             putValue(SHORT_DESCRIPTION, tr("Go to the previous page"));
             putValue(SMALL_ICON, ImageProvider.get("help", "previous"));
-            setEnabled(history.canGoBack());
+            setEnabled(browser.getHistory().canGoBack());
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            history.back();
+            browser.getHistory().back();
         }
 
         @Override
         public void update(Observable o, Object arg) {
-            setEnabled(history.canGoBack());
+            setEnabled(browser.getHistory().canGoBack());
         }
     }
 
-    static class ForwardAction extends AbstractAction implements Observer {
-        private final transient HelpBrowserHistory history;
+    static class ForwardAction extends AbstractBrowserAction implements Observer {
 
-        ForwardAction(HelpBrowserHistory history) {
-            this.history = history;
-            history.addObserver(this);
+        /**
+         * Constructs a new {@code ForwardAction}.
+         * @param browser help browser
+         */
+        ForwardAction(IHelpBrowser browser) {
+            super(browser);
+            browser.getHistory().addObserver(this);
             putValue(SHORT_DESCRIPTION, tr("Go to the next page"));
             putValue(SMALL_ICON, ImageProvider.get("help", "next"));
-            setEnabled(history.canGoForward());
+            setEnabled(browser.getHistory().canGoForward());
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            history.forward();
+            browser.getHistory().forward();
         }
 
         @Override
         public void update(Observable o, Object arg) {
-            setEnabled(history.canGoForward());
+            setEnabled(browser.getHistory().canGoForward());
         }
     }
 
-    class HomeAction extends AbstractAction  {
+    static class HomeAction extends AbstractBrowserAction {
+
         /**
          * Constructs a new {@code HomeAction}.
+         * @param browser help browser
          */
-        HomeAction() {
+        HomeAction(IHelpBrowser browser) {
+            super(browser);
             putValue(SHORT_DESCRIPTION, tr("Go to the JOSM help home page"));
             putValue(SMALL_ICON, ImageProvider.get("help", "home"));
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            openHelpTopic("/");
+            browser.openHelpTopic("/");
         }
     }
 
@@ -575,8 +593,7 @@ public class HelpBrowser extends JDialog {
         /**
          * Checks whether the hyperlink event originated on a &lt;a ...&gt; element with
          * a relative href consisting of a URL fragment only, i.e.
-         * &lt;a href="#thisIsALocalFragment"&gt;. If so, replies the fragment, i.e.
-         * "thisIsALocalFragment".
+         * &lt;a href="#thisIsALocalFragment"&gt;. If so, replies the fragment, i.e. "thisIsALocalFragment".
          *
          * Otherwise, replies <code>null</code>
          *
@@ -586,10 +603,12 @@ public class HelpBrowser extends JDialog {
         protected String getUrlFragment(HyperlinkEvent e) {
             AttributeSet set = e.getSourceElement().getAttributes();
             Object value = set.getAttribute(Tag.A);
-            if (!(value instanceof SimpleAttributeSet)) return null;
+            if (!(value instanceof SimpleAttributeSet))
+                return null;
             SimpleAttributeSet atts = (SimpleAttributeSet) value;
             value = atts.getAttribute(javax.swing.text.html.HTML.Attribute.HREF);
-            if (value == null) return null;
+            if (value == null)
+                return null;
             String s = (String) value;
             if (s.matches("#.*"))
                 return s.substring(1);
@@ -630,5 +649,10 @@ public class HelpBrowser extends JDialog {
                 openUrl(e.getURL().toString());
             }
         }
+    }
+
+    @Override
+    public HelpBrowserHistory getHistory() {
+        return history;
     }
 }
