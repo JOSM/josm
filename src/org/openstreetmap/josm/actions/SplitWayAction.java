@@ -616,7 +616,7 @@ public class SplitWayAction extends JosmAction {
                             OsmPrimitive via = null;
                             for (RelationMember rmv : r.getMembers()) {
                                 if ("restriction".equals(type) && "via".equals(rmv.getRole())
-                                        || "destination_sign".equals(type) && "sign".equals(rmv.getRole())) {
+                                        || "destination_sign".equals(type) && rmv.hasRole("sign", "intersection")) {
                                     via = rmv.getMember();
                                 }
                             }
