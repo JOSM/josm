@@ -117,7 +117,7 @@ public abstract class Plugin implements MapFrameListener {
         String pluginDirName = getPluginDir();
         File pluginDir = new File(pluginDirName);
         if (!pluginDir.exists()) {
-            pluginDir.mkdirs();
+            Utils.mkDirs(pluginDir);
         }
         try (InputStream in = getClass().getResourceAsStream(from)) {
             if (in == null) {

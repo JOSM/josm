@@ -165,7 +165,7 @@ public class OsmValidator implements LayerChangeListener {
         try {
             File pathDir = new File(getValidatorDir());
             if (!pathDir.exists()) {
-                pathDir.mkdirs();
+                Utils.mkDirs(pathDir);
             }
         } catch (Exception e) {
             Main.error(e);

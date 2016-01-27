@@ -459,7 +459,6 @@ public final class Utils {
     /**
      * Deletes a file and log a default warning if the deletion fails.
      * @param file file to delete
-     * and must contain a single parameter <code>{0}</code> for the file path
      * @return {@code true} if and only if the file is successfully deleted; {@code false} otherwise
      * @since 9296
      */
@@ -479,6 +478,32 @@ public final class Utils {
         boolean result = file.delete();
         if (!result) {
             Main.warn(tr(warnMsg, file.getPath()));
+        }
+        return result;
+    }
+
+    /**
+     * Creates a directory and log a default warning if the creation fails.
+     * @param dir directory to create
+     * @return {@code true} if and only if the directory is successfully created; {@code false} otherwise
+     * @since 9645
+     */
+    public static boolean mkDirs(File dir) {
+        return mkDirs(dir, marktr("Unable to create directory {0}"));
+    }
+
+    /**
+     * Creates a directory and log a configurable warning if the creation fails.
+     * @param dir directory to create
+     * @param warnMsg warning message. It will be translated with {@code tr()}
+     * and must contain a single parameter <code>{0}</code> for the directory path
+     * @return {@code true} if and only if the directory is successfully created; {@code false} otherwise
+     * @since 9645
+     */
+    public static boolean mkDirs(File dir, String warnMsg) {
+        boolean result = dir.mkdirs();
+        if (!result) {
+            Main.warn(tr(warnMsg, dir.getPath()));
         }
         return result;
     }

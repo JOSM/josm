@@ -426,7 +426,7 @@ public class CachedFile implements Closeable {
 
         File destDirFile = new File(destDir);
         if (!destDirFile.exists()) {
-            destDirFile.mkdirs();
+            Utils.mkDirs(destDirFile);
         }
 
         // No local file + offline => nothing to do
