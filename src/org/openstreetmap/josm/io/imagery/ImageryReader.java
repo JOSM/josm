@@ -39,7 +39,10 @@ public class ImageryReader implements Closeable {
         IMAGERY,            // inside the imagery element
         ENTRY,              // inside an entry
         ENTRY_ATTRIBUTE,    // note we are inside an entry attribute to collect the character data
-        PROJECTIONS,
+        PROJECTIONS,        // inside projections block of an entry
+        MIRROR,             // inside an mirror entry
+        MIRROR_ATTRIBUTE,   // note we are inside an mirror attribute to collect the character data
+        MIRROR_PROJECTIONS, // inside projections block of an mirror entry
         CODE,
         BOUNDS,
         SHAPE,
@@ -88,6 +91,8 @@ public class ImageryReader implements Closeable {
         private boolean skipEntry;
 
         private ImageryInfo entry;
+        /** In case of mirror parsing this contains the mirror entry */
+        private ImageryInfo mirrorEntry;
         private ImageryBounds bounds;
         private Shape shape;
         // language of last element, does only work for simple ENTRY_ATTRIBUTE's
@@ -131,6 +136,21 @@ public class ImageryReader implements Closeable {
                     metadataHeaders = new HashMap<>();
                 }
                 break;
+            case MIRROR:
+                if (Arrays.asList(new String[] {
+                        "type",
+                        "url",
+                        "min-zoom",
+                        "max-zoom",
+                        "tile-size",
+                }).contains(qName)) {
+                    newState = State.MIRROR_ATTRIBUTE;
+                    lang = atts.getValue("lang");
+                } else if ("projections".equals(qName)) {
+                    projections = new ArrayList<>();
+                    newState = State.MIRROR_PROJECTIONS;
+                }
+                break;
             case ENTRY:
                 if (Arrays.asList(new String[] {
                         "name",
@@ -170,6 +190,10 @@ public class ImageryReader implements Closeable {
                 } else if ("projections".equals(qName)) {
                     projections = new ArrayList<>();
                     newState = State.PROJECTIONS;
+                } else if ("mirror".equals(qName)) {
+                    projections = new ArrayList<>();
+                    newState = State.MIRROR;
+                    mirrorEntry = new ImageryInfo();
                 } else if ("no-tile-header".equals(qName)) {
                     String name = atts.getValue("name");
                     List<String> l;
@@ -213,6 +237,7 @@ public class ImageryReader implements Closeable {
                 }
                 break;
             case PROJECTIONS:
+            case MIRROR_PROJECTIONS:
                 if ("code".equals(qName)) {
                     newState = State.CODE;
                 }
@@ -256,6 +281,67 @@ public class ImageryReader implements Closeable {
                         entries.add(entry);
                     }
                     entry = null;
+                }
+                break;
+            case MIRROR:
+                if ("mirror".equals(qName)) {
+                    if (mirrorEntry != null) {
+                        entry.addMirror(mirrorEntry);
+                        mirrorEntry = null;
+                    }
+                }
+                break;
+            case MIRROR_ATTRIBUTE:
+                if (mirrorEntry != null) {
+                    switch(qName) {
+                    case "type":
+                        boolean found = false;
+                        for (ImageryType type : ImageryType.values()) {
+                            if (Objects.equals(accumulator.toString(), type.getTypeString())) {
+                                mirrorEntry.setImageryType(type);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            mirrorEntry = null;
+                        }
+                        break;
+                    case "url":
+                        mirrorEntry.setUrl(accumulator.toString());
+                        break;
+                    case "min-zoom":
+                    case "max-zoom":
+                        Integer val = null;
+                        try {
+                            val = Integer.valueOf(accumulator.toString());
+                        } catch (NumberFormatException e) {
+                            val = null;
+                        }
+                        if (val == null) {
+                            mirrorEntry = null;
+                        } else {
+                            if ("min-zoom".equals(qName)) {
+                                mirrorEntry.setDefaultMinZoom(val);
+                            } else {
+                                mirrorEntry.setDefaultMaxZoom(val);
+                            }
+                        }
+                        break;
+                    case "tile-size":
+                        Integer tileSize = null;
+                        try {
+                            tileSize = Integer.valueOf(accumulator.toString());
+                        } catch (NumberFormatException e) {
+                            tileSize = null;
+                        }
+                        if (tileSize == null) {
+                            mirrorEntry = null;
+                        } else {
+                            entry.setTileSize(tileSize.intValue());
+                        }
+                        break;
+                    }
                 }
                 break;
             case ENTRY_ATTRIBUTE:
@@ -378,9 +464,17 @@ public class ImageryReader implements Closeable {
                 entry.setServerProjections(projections);
                 projections = null;
                 break;
-            case NO_TILE:
+            case MIRROR_PROJECTIONS:
+                mirrorEntry.setServerProjections(projections);
+                projections = null;
                 break;
-
+            /* nothing to do for these or the unknown type:
+            case NO_TILE:
+            case NO_TILESUM:
+            case METADATA:
+            case UNKNOWN:
+                break;
+            */
             }
         }
     }

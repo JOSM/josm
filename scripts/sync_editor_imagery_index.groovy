@@ -44,7 +44,7 @@ class sync_editor_imagery_index {
     static def skipEntries = [:]
 
     static def options
-    
+
     /**
      * Main method.
      */
@@ -52,10 +52,12 @@ class sync_editor_imagery_index {
         parse_command_line_arguments(args)
         def script = new sync_editor_imagery_index()
         script.loadSkip()
+        script.start()
         script.loadJosmEntries()
         script.loadEIIEntries()
         script.checkInOneButNotTheOther()
         script.checkCommonEntries()
+        script.end()
         if(outputStream != null) {
             outputStream.close();
         }
@@ -68,12 +70,14 @@ class sync_editor_imagery_index {
      * Parse command line arguments.
      */
     static void parse_command_line_arguments(args) {
-        def cli = new CliBuilder()
+        def cli = new CliBuilder(width: 160)
         cli.o(longOpt:'output', args:1, argName: "output", "Output file, - prints to stdout (default: -)")
         cli.e(longOpt:'eii_input', args:1, argName:"eii_input", "Input file for the editor imagery index (json). Default is $eiiInputFile (current directory).")
         cli.j(longOpt:'josm_input', args:1, argName:"josm_input", "Input file for the JOSM imagery list (xml). Default is $josmInputFile (current directory).")
         cli.s(longOpt:'shorten', "shorten the output, so it is easier to read in a console window")
         cli.n(longOpt:'noskip', argName:"noskip", "don't skip known entries")
+        cli.x(longOpt:'xhtmlbody', argName:"xhtmlbody", "create XHTML body for display in a web page")
+        cli.X(longOpt:'xhtml', argName:"xhtml", "create XHTML for display in a web page")
         cli.m(longOpt:'nomissingeii', argName:"nomissingeii", "don't show missing editor imagery index entries")
         cli.h(longOpt:'help', "show this help")
         options = cli.parse(args)
@@ -98,10 +102,10 @@ class sync_editor_imagery_index {
         if (options.noskip)
             return;
         /* TMS proxies for our wms */
-        skipEntries["  Czech CUZK:KM tiles proxy - http://osm-{switch:a,b,c}.zby.cz/tiles_cuzk.php/{zoom}/{x}/{y}.png"] = 1
-        skipEntries["  [CH] Stadt Zürich Luftbild 2011 - http://mapproxy.sosm.ch:8080/tiles/zh_luftbild2011/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
-        skipEntries["  [CH] Übersichtsplan Zürich - http://mapproxy.sosm.ch:8080/tiles/zh_uebersichtsplan/EPSG900913/{zoom}/{x}/{y}.png?origin=nw"] = 1
-        skipEntries["  [CH] Kanton Solothurn 25cm (SOGIS 2011-2014) - http://mapproxy.osm.ch:8080/tiles/sogis2014/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
+        skipEntries["-  Czech CUZK:KM tiles proxy - http://osm-{switch:a,b,c}.zby.cz/tiles_cuzk.php/{zoom}/{x}/{y}.png"] = 1
+        skipEntries["-  [CH] Stadt Zürich Luftbild 2011 - http://mapproxy.sosm.ch:8080/tiles/zh_luftbild2011/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
+        skipEntries["-  [CH] Übersichtsplan Zürich - http://mapproxy.sosm.ch:8080/tiles/zh_uebersichtsplan/EPSG900913/{zoom}/{x}/{y}.png?origin=nw"] = 1
+        skipEntries["-  [CH] Kanton Solothurn 25cm (SOGIS 2011-2014) - http://mapproxy.osm.ch:8080/tiles/sogis2014/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
         /* URL style mismatch */
         skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://cyberjapandata.gsi.go.jp/xyz/ort/{z}/{x}/{y}.jpg"] = 1
         skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://tms.cadastre.openstreetmap.fr/*/tout/{z}/{x}/{y}.png"] = 1
@@ -115,18 +119,18 @@ class sync_editor_imagery_index {
         skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.openmap.lt/ort10lt/g/{z}/{x}/{y}.jpeg"] = 1
 
         skipEntries["+++ EII-URL is not unique: http://geolittoral.application.equipement.gouv.fr/wms/metropole?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=ortholittorale&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["  Streets NRW Geofabrik.de - http://tools.geofabrik.de/osmi/view/strassennrw/wxs?REQUEST=GetMap&SERVICE=wms&VERSION=1.1.1&FORMAT=image/png&SRS={proj}&STYLES=&LAYERS=unzugeordnete_strassen,kreisstrassen_ast,kreisstrassen,landesstrassen_ast,landesstrassen,bundesstrassen_ast,bundesstrassen,autobahnen_ast,autobahnen,endpunkte&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["  Czech UHUL:ORTOFOTO - http://geoportal2.uhul.cz/cgi-bin/oprl.asp?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&SRS={proj}&LAYERS=Ortofoto_cb&STYLES=default&FORMAT=image/jpeg&TRANSPARENT=TRUE&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["  Czech ÚHUL:ORTOFOTO tiles proxy - http://osm-{switch:a,b,c}.zby.cz/tiles_uhul.php/{zoom}/{x}/{y}.jpg"] = 1
-        skipEntries["  [CH] Kanton Solothurn 25cm (SOGIS 2011-2014) - http://www.sogis1.so.ch/cgi-bin/sogis/sogis_orthofoto.wms?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Orthofoto_SO&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["  [CH] Kanton Solothurn Infrarot 12.5cm (SOGIS 2011) - http://www.sogis1.so.ch/cgi-bin/sogis/sogis_ortho.wms?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=Orthofoto11_CIR&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["  [CH] Stadt Bern 10cm/25cm (2008) - http://map.bern.ch/arcgis/services/Orthofoto_2008/MapServer/WMSServer?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=0,1&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["  [EE] Estonia Basemap (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=pohi_vr2&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["  [EE] Estonia Forestry (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=cir_ngr&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["  [EE] Estonia Hillshading (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=reljeef&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["  [EE] Estonia Ortho (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?VERSION=1.1.1&REQUEST=GetMap&LAYERS=of10000&SRS={proj}&FORMAT=image/jpeg&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["  Hamburg (DK5) - http://gateway.hamburg.de/OGCFassade/HH_WMS_Geobasisdaten.aspx?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=1&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["  Hamburg (40 cm) - http://gateway.hamburg.de/OGCFassade/HH_WMS_DOP40.aspx?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=0&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  Streets NRW Geofabrik.de - http://tools.geofabrik.de/osmi/view/strassennrw/wxs?REQUEST=GetMap&SERVICE=wms&VERSION=1.1.1&FORMAT=image/png&SRS={proj}&STYLES=&LAYERS=unzugeordnete_strassen,kreisstrassen_ast,kreisstrassen,landesstrassen_ast,landesstrassen,bundesstrassen_ast,bundesstrassen,autobahnen_ast,autobahnen,endpunkte&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  Czech UHUL:ORTOFOTO - http://geoportal2.uhul.cz/cgi-bin/oprl.asp?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&SRS={proj}&LAYERS=Ortofoto_cb&STYLES=default&FORMAT=image/jpeg&TRANSPARENT=TRUE&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  Czech ÚHUL:ORTOFOTO tiles proxy - http://osm-{switch:a,b,c}.zby.cz/tiles_uhul.php/{zoom}/{x}/{y}.jpg"] = 1
+        skipEntries["-  [CH] Kanton Solothurn 25cm (SOGIS 2011-2014) - http://www.sogis1.so.ch/cgi-bin/sogis/sogis_orthofoto.wms?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Orthofoto_SO&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  [CH] Kanton Solothurn Infrarot 12.5cm (SOGIS 2011) - http://www.sogis1.so.ch/cgi-bin/sogis/sogis_ortho.wms?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=Orthofoto11_CIR&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  [CH] Stadt Bern 10cm/25cm (2008) - http://map.bern.ch/arcgis/services/Orthofoto_2008/MapServer/WMSServer?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=0,1&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  [EE] Estonia Basemap (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=pohi_vr2&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  [EE] Estonia Forestry (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=cir_ngr&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  [EE] Estonia Hillshading (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=reljeef&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  [EE] Estonia Ortho (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?VERSION=1.1.1&REQUEST=GetMap&LAYERS=of10000&SRS={proj}&FORMAT=image/jpeg&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  Hamburg (DK5) - http://gateway.hamburg.de/OGCFassade/HH_WMS_Geobasisdaten.aspx?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=1&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  Hamburg (40 cm) - http://gateway.hamburg.de/OGCFassade/HH_WMS_DOP40.aspx?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=0&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
         skipEntries["  name differs: http://wms.openstreetmap.fr/tms/1.0.0/tours_2013/{zoom}/{x}/{y}"] = 3
         skipEntries["  name differs: http://wms.openstreetmap.fr/tms/1.0.0/tours/{zoom}/{x}/{y}"] = 3
         skipEntries["  name differs: https://secure.erlangen.de/arcgiser/services/Luftbilder2011/MapServer/WmsServer?FORMAT=image/bmp&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Erlangen_ratio10_5cm_gk4.jp2&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
@@ -134,15 +138,14 @@ class sync_editor_imagery_index {
         skipEntries["  name differs: http://{switch:a,b,c}.layers.openstreetmap.fr/bano/{zoom}/{x}/{y}.png"] = 3
         skipEntries["  name differs: http://ooc.openstreetmap.org/os1/{zoom}/{x}/{y}.jpg"] = 3
         skipEntries["  name differs: http://www.gisnet.lv/cgi-bin/osm_latvia?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=piekraste&SRS={proj}&WIDTH={width}&height={height}&BBOX={bbox}"] = 3
-        skipEntries["  name differs: http://tms.cadastre.openstreetmap.fr/*/tout/{z}/{x}/{y}.png"] = 3
+        skipEntries["  name differs: http://tms.cadastre.openstreetmap.fr/*/tout/{zoom}/{x}/{y}.png"] = 3
         skipEntries["  name differs: http://{switch:a,b,c}.tiles.mapbox.com/v4/enf.e0b8291e/{zoom}/{x}/{y}.png?access_token=pk.eyJ1Ijoib3BlbnN0cmVldG1hcCIsImEiOiJhNVlHd29ZIn0.ti6wATGDWOmCnCYen-Ip7Q"] = 3
         skipEntries["  name differs: http://geo.nls.uk/mapdata2/os/25_inch/scotland_1/{zoom}/{x}/{y}.png"] = 3
         skipEntries["  name differs: http://geo.nls.uk/mapdata3/os/6_inch_gb_1900/{zoom}/{x}/{y}.png"] = 3
-        skipEntries["  maxzoom differs: [DE] Bavaria (2 m) - http://geodaten.bayern.de/ogc/ogc_dop200_oa.cgi?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=adv_dop200c&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
         skipEntries["  name differs: http://geoserver.infobex.hu/Budapest2014/IST/{zoom}/{x}/{y}.jpg"] = 3
         skipEntries["  name differs: http://mapproxy.openmap.lt/ort10lt/g/{zoom}/{x}/{y}.jpeg"] = 3
         skipEntries["  name differs: http://e.tile.openstreetmap.hu/ortofoto2000/{zoom}/{x}/{y}.jpg"] = 3
-        skipEntries["  name differs: http://tms.cadastre.openstreetmap.fr/*/tout/{zoom}/{x}/{y}.png"] = 3
+        skipEntries["  maxzoom differs: [DE] Bavaria (2 m) - http://geodaten.bayern.de/ogc/ogc_dop200_oa.cgi?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=adv_dop200c&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
         skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries County - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=County&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
         skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries NPWS Reserve - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=NPWSReserve&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
         skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries Parish - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=Parish&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
@@ -155,19 +158,47 @@ class sync_editor_imagery_index {
         skipEntries["  country code differs: [LT] ORT10LT (Lithuania) - http://mapproxy.openmap.lt/ort10lt/g/{zoom}/{x}/{y}.jpeg"] = 3
     }
 
-    void myprintln(String s) {
-        if(skipEntries.containsKey(s)) {
-            skipCount = skipEntries.get(s)
-        }
-        if(skipCount) {
-            skipCount -= 1;
-            return
-        }
+    void myprintlnfinal(String s) {
         if(outputStream != null) {
             outputStream.write(s);
             outputStream.newLine();
         } else {
             println s;
+        }
+    }
+
+    void myprintln(String s) {
+        if(skipEntries.containsKey(s)) {
+            skipCount = skipEntries.get(s)
+            skipEntries.remove(s)
+        }
+        if(skipCount) {
+            skipCount -= 1;
+            if(options.xhtmlbody || options.xhtml) {
+                s = "<pre style=\"margin:3px;color:green\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
+            } else {
+                return
+            }
+        } else if(options.xhtmlbody || options.xhtml) {
+            String color = s.startsWith("***") ? "black" : (s.startsWith("+ ") ? "blue" : "red")
+            s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
+        }
+        myprintlnfinal(s)
+    }
+
+    void start() {
+        if (options.xhtml) {
+            myprintlnfinal "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
+            myprintlnfinal "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><title>JOSM - EII differences</title></head><body>\n"
+        }
+    }
+
+    void end() {
+        for (def s: skipEntries.keySet()) {
+            myprintln "+++ Obsolete skip entry: " + s
+        }
+        if (options.xhtml) {
+            myprintlnfinal "</body></html>\n"
         }
     }
 
@@ -198,10 +229,22 @@ class sync_editor_imagery_index {
         
         for (def e : josmEntries) {
             def url = getUrl(e)
+            if (url.contains("{z}")) {
+                myprintln "+++ JOSM-URL uses {z} instead of {zoom}: "+url
+                url = url.replace("{z}","{zoom}")
+            }
             if (josmUrls.containsKey(url)) {
                 myprintln "+++ JOSM-URL is not unique: "+url
             } else {
               josmUrls.put(url, e)
+            }
+            for (def m : e.getMirrors()) {
+                url = getUrl(m)
+                if (josmUrls.containsKey(url)) {
+                    myprintln "+++ JOSM-Mirror-URL is not unique: "+url
+                } else {
+                  josmUrls.put(url, m)
+                }
             }
         }
         myprintln "*** Loaded ${josmEntries.size()} entries (JOSM). ***"
@@ -221,22 +264,18 @@ class sync_editor_imagery_index {
     void checkInOneButNotTheOther() {
         def l1 = inOneButNotTheOther(eiiUrls, josmUrls)
         myprintln "*** URLs found in EII but not in JOSM (${l1.size()}): ***"
-        if (l1.isEmpty()) {
-            myprintln "  -"
-        } else {
+        if (!l1.isEmpty()) {
             for (def l : l1)
-                myprintln l
+                myprintln "-"+l
         }
 
         if (options.nomissingeii)
             return
         def l2 = inOneButNotTheOther(josmUrls, eiiUrls)
         myprintln "*** URLs found in JOSM but not in EII (${l2.size()}): ***"
-        if (l2.isEmpty()) {
-            myprintln "  -"
-        } else {
+        if (!l2.isEmpty()) {
             for (def l : l2)
-                myprintln l
+                myprintln "+" + l
         }
     }
     
