@@ -3,9 +3,15 @@ package org.openstreetmap.josm.gui.dialogs.relation.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
+import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
@@ -17,7 +23,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Apply the current updates.
  * @since 9496
  */
-public class ApplyAction extends SavingAction {
+public class ApplyAction extends SavingAction implements PropertyChangeListener, TableModelListener {
 
     /**
      * Constructs a new {@code ApplyAction}.
@@ -33,28 +39,30 @@ public class ApplyAction extends SavingAction {
         putValue(SHORT_DESCRIPTION, tr("Apply the current updates"));
         putValue(SMALL_ICON, ImageProvider.get("save"));
         putValue(NAME, tr("Apply"));
-        setEnabled(true);
+        updateEnabledState();
+        memberTableModel.addTableModelListener(this);
+        tagModel.addPropertyChangeListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (editor.getRelation() == null) {
-            applyNewRelation(tagModel);
-        } else if (!memberTableModel.hasSameMembersAs(editor.getRelationSnapshot()) || tagModel.isDirty()) {
-            if (editor.isDirtyRelation()) {
-                if (confirmClosingBecauseOfDirtyState()) {
-                    if (layer.getConflicts().hasConflictForMy(editor.getRelation())) {
-                        warnDoubleConflict();
-                        return;
-                    }
-                    applyExistingConflictingRelation(tagModel);
-                    if (editor instanceof Component) {
-                        ((Component) editor).setVisible(false);
-                    }
-                }
-            } else {
-                applyExistingNonConflictingRelation(tagModel);
-            }
+        if (applyChanges()) {
+            ((GenericRelationEditor) editor).reloadDataFromRelation();
         }
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(isEditorDirty());
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        updateEnabledState();
+    }
+
+    @Override
+    public void tableChanged(TableModelEvent e) {
+        updateEnabledState();
     }
 }

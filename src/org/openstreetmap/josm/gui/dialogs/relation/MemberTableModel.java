@@ -234,9 +234,13 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
             return;
         }
         RelationMember member = members.get(rowIndex);
-        RelationMember newMember = new RelationMember(value.toString(), member.getMember());
+        String role = value.toString();
+        if (member.hasRole(role))
+            return;
+        RelationMember newMember = new RelationMember(role, member.getMember());
         members.remove(rowIndex);
         members.add(rowIndex, newMember);
+        fireTableDataChanged();
     }
 
     @Override

@@ -165,9 +165,12 @@ public class TagEditorModel extends AbstractTableModel {
      * removes all tags in the model
      */
     public void clear() {
+        boolean wasEmpty = tags.isEmpty();
         tags.clear();
-        setDirty(true);
-        fireTableDataChanged();
+        if (!wasEmpty) {
+            setDirty(true);
+            fireTableDataChanged();
+        }
     }
 
     /**
@@ -334,7 +337,6 @@ public class TagEditorModel extends AbstractTableModel {
         TagModel tag = new TagModel();
         tags.add(tag);
         fireTableDataChanged();
-        setDirty(true);
     }
 
     /**
