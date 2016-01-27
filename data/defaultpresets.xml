@@ -5405,7 +5405,7 @@
                 <key key="golf" value="rough" />
             </item> <!-- Rough -->
             <separator/>
-            <item name="Driving range" name_context="golf" type="node,closedway" preset_name_label="true">
+            <item name="Driving range" name_context="golf" icon="styles/standard/sport/golf/driving_range.svg" type="node,closedway" preset_name_label="true">
                 <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
                       de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=golf_course"
                       es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:leisure=golf_course"

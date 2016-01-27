@@ -1962,7 +1962,7 @@ area[golf=driving_range] {
     fill-color: golf_driving_range#c7f1a3;
 }
 node[golf=driving_range] {
-    icon-image: "misc/no_icon.png";
+    icon-image: "sport/golf/driving_range.svg";
     set icon_z17;
     text: auto;
 }
