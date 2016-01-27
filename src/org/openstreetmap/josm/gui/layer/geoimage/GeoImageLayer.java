@@ -70,6 +70,10 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class GeoImageLayer extends Layer implements PropertyChangeListener, JumpToMarkerLayer {
 
+    private static List<Action> menuAdditions = new LinkedList<>();
+
+    private static volatile List<MapMode> supportedMapModes;
+
     List<ImageEntry> data;
     GpxLayer gpxLayer;
 
@@ -87,12 +91,65 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     private BufferedImage offscreenBuffer;
     boolean updateOffscreenBuffer = true;
 
-    /** Loads a set of images, while displaying a dialog that indicates what the plugin is currently doing.
+    private MouseAdapter mouseAdapter;
+    private MapModeChangeListener mapModeListener;
+
+    /**
+     * Constructs a new {@code GeoImageLayer}.
+     * @param data The list of images to display
+     * @param gpxLayer The associated GPX layer
+     */
+    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer) {
+        this(data, gpxLayer, null, false);
+    }
+
+    /**
+     * Constructs a new {@code GeoImageLayer}.
+     * @param data The list of images to display
+     * @param gpxLayer The associated GPX layer
+     * @param name Layer name
+     * @since 6392
+     */
+    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer, final String name) {
+        this(data, gpxLayer, name, false);
+    }
+
+    /**
+     * Constructs a new {@code GeoImageLayer}.
+     * @param data The list of images to display
+     * @param gpxLayer The associated GPX layer
+     * @param useThumbs Thumbnail display flag
+     * @since 6392
+     */
+    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer, boolean useThumbs) {
+        this(data, gpxLayer, null, useThumbs);
+    }
+
+    /**
+     * Constructs a new {@code GeoImageLayer}.
+     * @param data The list of images to display
+     * @param gpxLayer The associated GPX layer
+     * @param name Layer name
+     * @param useThumbs Thumbnail display flag
+     * @since 6392
+     */
+    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer, final String name, boolean useThumbs) {
+        super(name != null ? name : tr("Geotagged Images"));
+        if (data != null) {
+            Collections.sort(data);
+        }
+        this.data = data;
+        this.gpxLayer = gpxLayer;
+        this.useThumbs = useThumbs;
+    }
+
+    /**
+     * Loads a set of images, while displaying a dialog that indicates what the plugin is currently doing.
      * In facts, this object is instantiated with a list of files. These files may be JPEG files or
      * directories. In case of directories, they are scanned to find all the images they contain.
      * Then all the images that have be found are loaded as ImageEntry instances.
      */
-    private static final class Loader extends PleaseWaitRunnable {
+    static final class Loader extends PleaseWaitRunnable {
 
         private boolean canceled;
         private GeoImageLayer layer;
@@ -101,15 +158,15 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         private final Set<String> errorMessages;
         private final GpxLayer gpxLayer;
 
-        protected void rememberError(String message) {
-            this.errorMessages.add(message);
-        }
-
         Loader(Collection<File> selection, GpxLayer gpxLayer) {
             super(tr("Extracting GPS locations from EXIF"));
             this.selection = selection;
             this.gpxLayer = gpxLayer;
             errorMessages = new LinkedHashSet<>();
+        }
+
+        protected void rememberError(String message) {
+            this.errorMessages.add(message);
         }
 
         @Override
@@ -132,7 +189,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             progressMonitor.setTicksCount(files.size());
 
             // read the image files
-            List<ImageEntry> data = new ArrayList<>(files.size());
+            List<ImageEntry> entries = new ArrayList<>(files.size());
 
             for (File f : files) {
 
@@ -145,9 +202,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
 
                 ImageEntry e = new ImageEntry(f);
                 e.extractExif();
-                data.add(e);
+                entries.add(e);
             }
-            layer = new GeoImageLayer(data, gpxLayer);
+            layer = new GeoImageLayer(entries, gpxLayer);
             files.clear();
         }
 
@@ -241,65 +298,13 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     public static void create(Collection<File> files, GpxLayer gpxLayer) {
-        Loader loader = new Loader(files, gpxLayer);
-        Main.worker.execute(loader);
-    }
-
-    /**
-     * Constructs a new {@code GeoImageLayer}.
-     * @param data The list of images to display
-     * @param gpxLayer The associated GPX layer
-     */
-    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer) {
-        this(data, gpxLayer, null, false);
-    }
-
-    /**
-     * Constructs a new {@code GeoImageLayer}.
-     * @param data The list of images to display
-     * @param gpxLayer The associated GPX layer
-     * @param name Layer name
-     * @since 6392
-     */
-    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer, final String name) {
-        this(data, gpxLayer, name, false);
-    }
-
-    /**
-     * Constructs a new {@code GeoImageLayer}.
-     * @param data The list of images to display
-     * @param gpxLayer The associated GPX layer
-     * @param useThumbs Thumbnail display flag
-     * @since 6392
-     */
-    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer, boolean useThumbs) {
-        this(data, gpxLayer, null, useThumbs);
-    }
-
-    /**
-     * Constructs a new {@code GeoImageLayer}.
-     * @param data The list of images to display
-     * @param gpxLayer The associated GPX layer
-     * @param name Layer name
-     * @param useThumbs Thumbnail display flag
-     * @since 6392
-     */
-    public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer, final String name, boolean useThumbs) {
-        super(name != null ? name : tr("Geotagged Images"));
-        if (data != null) {
-            Collections.sort(data);
-        }
-        this.data = data;
-        this.gpxLayer = gpxLayer;
-        this.useThumbs = useThumbs;
+        Main.worker.execute(new Loader(files, gpxLayer));
     }
 
     @Override
     public Icon getIcon() {
         return ImageProvider.get("dialogs/geoimage");
     }
-
-    private static List<Action> menuAdditions = new LinkedList<>();
 
     public static void registerMenuAddition(Action addition) {
         menuAdditions.add(addition);
@@ -508,8 +513,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
             if (e.getPos() != null) {
                 Point p = mv.getPoint(e.getPos());
 
-                int imgWidth = 100;
-                int imgHeight = 100;
+                int imgWidth;
+                int imgHeight;
                 if (useThumbs && e.hasThumbnail()) {
                     Dimension d = scaledDimension(e.getThumbnail());
                     imgWidth = d.width;
@@ -569,6 +574,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
     }
 
+    /**
+     * Shows next photo.
+     */
     public void showNextPhoto() {
         if (data != null && !data.isEmpty()) {
             currentPhoto++;
@@ -582,6 +590,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         Main.map.repaint();
     }
 
+    /**
+     * Shows previous photo.
+     */
     public void showPreviousPhoto() {
         if (data != null && !data.isEmpty()) {
             currentPhoto--;
@@ -595,6 +606,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         Main.map.repaint();
     }
 
+    /**
+     * Shows first photo.
+     */
     public void showFirstPhoto() {
         if (data != null && !data.isEmpty()) {
             currentPhoto = 0;
@@ -605,6 +619,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         Main.map.repaint();
     }
 
+    /**
+     * Shows last photo.
+     */
     public void showLastPhoto() {
         if (data != null && !data.isEmpty()) {
             currentPhoto = data.size() - 1;
@@ -637,7 +654,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     public void removeCurrentPhotoFromDisk() {
-        ImageEntry toDelete = null;
+        ImageEntry toDelete;
         if (data != null && !data.isEmpty() && currentPhoto >= 0 && currentPhoto < data.size()) {
             toDelete = data.get(currentPhoto);
 
@@ -683,11 +700,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     }
 
     public void copyCurrentPhotoPath() {
-        ImageEntry toCopy = null;
         if (data != null && !data.isEmpty() && currentPhoto >= 0 && currentPhoto < data.size()) {
-            toCopy = data.get(currentPhoto);
-            String copyString = toCopy.getFile().toString();
-            Utils.copyToClipboard(copyString);
+            Utils.copyToClipboard(data.get(currentPhoto).getFile().toString());
         }
     }
 
@@ -758,8 +772,6 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
     }
 
-    private static volatile List<MapMode> supportedMapModes;
-
     /**
      * Registers a map mode for which the functionality of this layer should be available.
      * @param mapMode Map mode to be registered
@@ -793,9 +805,6 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
         }
         return false;
     }
-
-    private MouseAdapter mouseAdapter;
-    private MapModeChangeListener mapModeListener;
 
     @Override
     public void hookUpMapView() {

@@ -10,6 +10,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
@@ -381,8 +382,10 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         setContentVisible(true);
         this.setVisible(true);
         titleBar.setVisible(false);
-        detachedDialog = new DetachedDialog();
-        detachedDialog.setVisible(true);
+        if (!GraphicsEnvironment.isHeadless()) {
+            detachedDialog = new DetachedDialog();
+            detachedDialog.setVisible(true);
+        }
         setIsShowing(true);
         setIsDocked(false);
     }
