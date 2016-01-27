@@ -73,6 +73,7 @@ public class RelationEditorActionsTest {
         new AddSelectedAtEndAction(memberTableModel, selectionTableModel, editor).actionPerformed(null);
 
         new ApplyAction(memberTable, memberTableModel, tagModel, layer, editor).actionPerformed(null);
+        new RefreshAction(memberTable, memberTableModel, tagModel, layer, editor).actionPerformed(null);
         new OKAction(memberTable, memberTableModel, tagModel, layer, editor, tfRole).actionPerformed(null);
         new CancelAction(memberTable, memberTableModel, tagModel, layer, editor, tfRole).actionPerformed(null);
 

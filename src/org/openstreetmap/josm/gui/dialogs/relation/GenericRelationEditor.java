@@ -76,6 +76,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.actions.MoveDownAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.MoveUpAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.OKAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.PasteMembersAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.RefreshAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.RemoveAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.RemoveSelectedAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.ReverseAction;
@@ -127,6 +128,14 @@ public class GenericRelationEditor extends RelationEditor  {
      */
     private JButton sortBelowButton;
     /**
+     * Action for performing the {@link RefreshAction}
+     */
+    private RefreshAction refreshAction;
+    /**
+     * Action for performing the {@link ApplyAction}
+     */
+    private ApplyAction applyAction;
+    /**
      * Action for performing the {@link CancelAction}
      */
     private CancelAction cancelAction;
@@ -171,21 +180,7 @@ public class GenericRelationEditor extends RelationEditor  {
         referrerModel = new ReferringRelationsBrowserModel(relation);
 
         tagEditorPanel = new TagEditorPanel(relation, presetHandler);
-
-        // populate the models
-        //
-        if (relation != null) {
-            tagEditorPanel.getModel().initFromPrimitive(relation);
-            this.memberTableModel.populate(relation);
-            if (!getLayer().data.getRelations().contains(relation)) {
-                // treat it as a new relation if it doesn't exist in the
-                // data set yet.
-                setRelation(null);
-            }
-        } else {
-            tagEditorPanel.getModel().clear();
-            this.memberTableModel.populate(null);
-        }
+        populateModels(relation);
         tagEditorPanel.getModel().ensureOneTag();
 
         JSplitPane pane = buildSplitPane();
@@ -258,7 +253,42 @@ public class GenericRelationEditor extends RelationEditor  {
         HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/RelationEditor"));
     }
 
-    protected void cancel() {
+    /**
+     * Reloads data from relation.
+     */
+    public void reloadDataFromRelation() {
+        setRelation(getRelation());
+        populateModels(getRelation());
+        refreshAction.updateEnabledState();
+    }
+
+    private void populateModels(Relation relation) {
+        if (relation != null) {
+            tagEditorPanel.getModel().initFromPrimitive(relation);
+            memberTableModel.populate(relation);
+            if (!getLayer().data.getRelations().contains(relation)) {
+                // treat it as a new relation if it doesn't exist in the data set yet.
+                setRelation(null);
+            }
+        } else {
+            tagEditorPanel.getModel().clear();
+            memberTableModel.populate(null);
+        }
+    }
+
+    /**
+     * Apply changes.
+     * @see ApplyAction
+     */
+    public void apply() {
+        applyAction.actionPerformed(null);
+    }
+
+    /**
+     * Cancel changes.
+     * @see CancelAction
+     */
+    public void cancel() {
         cancelAction.actionPerformed(null);
     }
 
@@ -268,9 +298,12 @@ public class GenericRelationEditor extends RelationEditor  {
      * @return the toolbar
      */
     protected JToolBar buildToolBar() {
-        JToolBar tb  = new JToolBar();
+        JToolBar tb = new JToolBar();
         tb.setFloatable(false);
-        tb.add(new ApplyAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this));
+        refreshAction = new RefreshAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this);
+        applyAction = new ApplyAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this);
+        tb.add(refreshAction);
+        tb.add(applyAction);
         tb.add(new DuplicateRelationAction(memberTableModel, tagEditorPanel.getModel(), getLayer()));
         DeleteCurrentRelationAction deleteAction = new DeleteCurrentRelationAction(getLayer(), this);
         addPropertyChangeListener(deleteAction);

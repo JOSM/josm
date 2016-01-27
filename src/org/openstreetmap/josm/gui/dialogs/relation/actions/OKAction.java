@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.dialogs.relation.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import org.openstreetmap.josm.Main;
@@ -42,24 +41,8 @@ public class OKAction extends SavingAction {
     public void actionPerformed(ActionEvent e) {
         Main.pref.put("relation.editor.generic.lastrole", tfRole.getText());
         memberTable.stopHighlighting();
-        if (editor.getRelation() == null) {
-            applyNewRelation(tagModel);
-        } else if (!memberTableModel.hasSameMembersAs(editor.getRelationSnapshot()) || tagModel.isDirty()) {
-            if (editor.isDirtyRelation()) {
-                if (confirmClosingBecauseOfDirtyState()) {
-                    if (layer.getConflicts().hasConflictForMy(editor.getRelation())) {
-                        warnDoubleConflict();
-                        return;
-                    }
-                    applyExistingConflictingRelation(tagModel);
-                } else
-                    return;
-            } else {
-                applyExistingNonConflictingRelation(tagModel);
-            }
-        }
-        if (editor instanceof Component) {
-            ((Component) editor).setVisible(false);
-        }
+        if (!applyChanges())
+            return;
+        hideEditor();
     }
 }

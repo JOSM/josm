@@ -145,7 +145,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
     }
 
-
     /** original name of the imagery entry in case of translation call, for multiple languages English when possible */
     private String origName;
     /** (original) language of the translated name entry */
@@ -185,6 +184,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private String termsOfUseURL;
     /** country code of the imagery (for country specific imagery) */
     private String countryCode = "";
+    /** mirrors of different type for this entry */
+    private List<ImageryInfo> mirrors = null;
     /** icon used in menu */
     private String icon;
     private boolean isGeoreferenceValid = false;
@@ -1028,4 +1029,48 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.isGeoreferenceValid = isGeoreferenceValid;
     }
 
+    /**
+     * Adds a mirror entry. Mirror entries are completed with the data from the master entry
+     * and only describe another method to access identical data.
+     *
+     * @param entry the mirror to be added
+     * @since 9658
+     */
+    public void addMirror(ImageryInfo entry) {
+       if (mirrors == null) {
+           mirrors = new ArrayList<>();
+       }
+       mirrors.add(entry);
+    }
+
+    /**
+     * Returns the mirror entries. Entries are completed with master entry data.
+     *
+     * @return the list of mirrors
+     * @since 9658
+     */
+    public List<ImageryInfo> getMirrors() {
+       List<ImageryInfo> l = new ArrayList<>();
+       if (mirrors != null) {
+           for (ImageryInfo i : mirrors) {
+               ImageryInfo n = new ImageryInfo(this);
+               if (i.defaultMaxZoom != 0) {
+                   n.defaultMaxZoom = i.defaultMaxZoom;
+               }
+               if (i.defaultMinZoom != 0) {
+                   n.defaultMinZoom = i.defaultMinZoom;
+               }
+               if (i.serverProjections != null) {
+                   n.serverProjections = i.serverProjections;
+               }
+               n.url = i.url;
+               n.imageryType = i.imageryType;
+               if (i.getTileSize() != 0) {
+                   n.setTileSize(i.getTileSize());
+               }
+               l.add(n);
+           }
+       }
+       return l;
+    }
 }
