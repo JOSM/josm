@@ -21,7 +21,9 @@ import java.util.logging.Logger;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -38,6 +40,12 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
 public class MultiFetchServerObjectReaderTest {
     private static Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
+
+    /**
+     * Global timeout applied to all test methods.
+     */
+    @Rule
+    public Timeout globalTimeout = Timeout.seconds(60);
 
     /**
      * builds a large data set to be used later for testing MULTI FETCH on the server
