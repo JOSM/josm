@@ -3647,6 +3647,19 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Cafe -->
+        <item name="Ice cream" icon="styles/standard/food/icecream.png" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:ice_cream" />
+            <space />
+            <key key="amenity" value="ice_cream" />
+            <reference ref="name_operator" />
+            <check key="outdoor_seating" text="Outdoor seating" />
+            <combo key="takeaway" text="Takeaway" values="yes,no,only" />
+            <reference ref="oh_wheelchair" />
+            <space />
+            <reference ref="internet_smoking" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Ice cream -->
         <item name="Pub" icon="presets/pub.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=pub"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=pub"
@@ -5168,6 +5181,16 @@
                 <text key="description" text="Description" />
             </optional>
         </item> <!-- Drinking Water -->
+        <item name="Water Point" icon="styles/standard/accommodation/camping/water.png" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=water_point" />
+            <space />
+            <key key="amenity" value="water_point" />
+            <optional>
+                <check key="drinking_water" text="Drinking Water" />
+                <text key="name" text="Name" />
+                <text key="description" text="Description" />
+            </optional>
+        </item> <!-- Water Point -->
         <item name="Compressed Air" icon="styles/standard/vehicle/compressed_air.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=compressed_air"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=compressed_air"
