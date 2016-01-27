@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+import com.drew.metadata.exif.ExifDirectoryBase;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -43,6 +44,9 @@ public final class ExifReader {
             String dateStr = null;
             String subSeconds = null;
             for (Directory dirIt : metadata.getDirectories()) {
+                if (!(dirIt instanceof ExifDirectoryBase)) {
+                    continue;
+                }
                 for (Tag tag : dirIt.getTags()) {
                     if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL /* 0x9003 */ &&
                             !tag.getDescription().matches("\\[[0-9]+ .+\\]")) {
