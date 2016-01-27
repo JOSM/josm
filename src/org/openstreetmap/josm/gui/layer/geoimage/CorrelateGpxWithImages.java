@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -749,20 +750,22 @@ public class CorrelateGpxWithImages extends AbstractAction {
         outerPanel = new JPanel(new BorderLayout());
         outerPanel.add(statusBar, BorderLayout.PAGE_END);
 
-        syncDialog = new ExtendedDialog(
-                Main.parent,
-                tr("Correlate images with GPX track"),
-                new String[] {tr("Correlate"), tr("Cancel")},
-                false
-        );
-        syncDialog.setContent(panelTf, false);
-        syncDialog.setButtonIcons(new String[] {"ok", "cancel"});
-        syncDialog.setupDialog();
-        outerPanel.add(syncDialog.getContentPane(), BorderLayout.PAGE_START);
-        syncDialog.setContentPane(outerPanel);
-        syncDialog.pack();
-        syncDialog.addWindowListener(new SyncDialogWindowListener());
-        syncDialog.showDialog();
+        if (!GraphicsEnvironment.isHeadless()) {
+            syncDialog = new ExtendedDialog(
+                    Main.parent,
+                    tr("Correlate images with GPX track"),
+                    new String[] {tr("Correlate"), tr("Cancel")},
+                    false
+            );
+            syncDialog.setContent(panelTf, false);
+            syncDialog.setButtonIcons(new String[] {"ok", "cancel"});
+            syncDialog.setupDialog();
+            outerPanel.add(syncDialog.getContentPane(), BorderLayout.PAGE_START);
+            syncDialog.setContentPane(outerPanel);
+            syncDialog.pack();
+            syncDialog.addWindowListener(new SyncDialogWindowListener());
+            syncDialog.showDialog();
+        }
     }
 
     private final transient StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
