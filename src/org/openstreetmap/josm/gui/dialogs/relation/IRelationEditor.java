@@ -4,10 +4,10 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 import org.openstreetmap.josm.data.osm.Relation;
 
 /**
- * Super interface of relation-aware editors.
- * @since 9496
+ * Super interface of relation editors.
+ * @since 9659
  */
-public interface RelationAware {
+public interface IRelationEditor {
 
     /**
      * Replies the currently edited relation
@@ -39,4 +39,9 @@ public interface RelationAware {
      * @return true if the currently edited relation has been changed elsewhere.
      */
     boolean isDirtyRelation();
+
+    /**
+     * Reloads data from relation.
+     */
+    void reloadDataFromRelation();
 }

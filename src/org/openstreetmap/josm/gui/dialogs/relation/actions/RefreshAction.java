@@ -16,7 +16,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
@@ -38,7 +38,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
      * @param tagModel tag editor model
      */
     public RefreshAction(MemberTable memberTable, MemberTableModel memberTableModel, TagEditorModel tagModel, OsmDataLayer layer,
-            RelationAware editor) {
+            IRelationEditor editor) {
         super(memberTable, memberTableModel, tagModel, layer, editor, null);
         // CHECKSTYLE.OFF: LineLength
         Shortcut sc = Shortcut.registerShortcut("relationeditor:refresh", tr("Relation Editor: Refresh"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);

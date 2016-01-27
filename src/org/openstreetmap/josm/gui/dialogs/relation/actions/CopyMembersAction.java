@@ -9,7 +9,7 @@ import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
@@ -24,7 +24,7 @@ public class CopyMembersAction extends AddFromSelectionAction {
      * @param layer OSM data layer
      * @param editor relation editor
      */
-    public CopyMembersAction(MemberTableModel memberTableModel, OsmDataLayer layer, RelationAware editor) {
+    public CopyMembersAction(MemberTableModel memberTableModel, OsmDataLayer layer, IRelationEditor editor) {
         super(null, memberTableModel, null, null, null, layer, editor);
     }
 

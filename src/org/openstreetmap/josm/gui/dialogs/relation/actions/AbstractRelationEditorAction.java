@@ -9,7 +9,7 @@ import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
@@ -20,14 +20,14 @@ abstract class AbstractRelationEditorAction extends AbstractAction implements Ta
     protected final MemberTable memberTable;
     protected final MemberTableModel memberTableModel;
     protected final transient OsmDataLayer layer;
-    protected final transient RelationAware editor;
+    protected final transient IRelationEditor editor;
 
     protected AbstractRelationEditorAction(MemberTable memberTable, MemberTableModel memberTableModel, String actionMapKey) {
         this(memberTable, memberTableModel, actionMapKey, null, null);
     }
 
     protected AbstractRelationEditorAction(MemberTable memberTable, MemberTableModel memberTableModel, String actionMapKey,
-            OsmDataLayer layer, RelationAware editor) {
+            OsmDataLayer layer, IRelationEditor editor) {
         this.memberTable = memberTable;
         this.memberTableModel = memberTableModel;
         this.layer = layer;

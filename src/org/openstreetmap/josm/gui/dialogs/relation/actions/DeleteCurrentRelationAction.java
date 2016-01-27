@@ -10,7 +10,7 @@ import java.beans.PropertyChangeListener;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -25,7 +25,7 @@ public class DeleteCurrentRelationAction extends AbstractRelationEditorAction im
      * @param layer OSM data layer
      * @param editor relation editor
      */
-    public DeleteCurrentRelationAction(OsmDataLayer layer, RelationAware editor) {
+    public DeleteCurrentRelationAction(OsmDataLayer layer, IRelationEditor editor) {
         super(null, null, null, layer, editor);
         putValue(SHORT_DESCRIPTION, tr("Delete the currently edited relation"));
         putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));

@@ -253,9 +253,7 @@ public class GenericRelationEditor extends RelationEditor  {
         HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/RelationEditor"));
     }
 
-    /**
-     * Reloads data from relation.
-     */
+    @Override
     public void reloadDataFromRelation() {
         setRelation(getRelation());
         populateModels(getRelation());

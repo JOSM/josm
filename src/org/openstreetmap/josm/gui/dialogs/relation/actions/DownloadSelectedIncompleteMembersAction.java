@@ -10,7 +10,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.RelationAware;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -30,7 +30,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationEdi
      * @param editor relation editor
      */
     public DownloadSelectedIncompleteMembersAction(MemberTable memberTable, MemberTableModel memberTableModel, String actionMapKey,
-            OsmDataLayer layer, RelationAware editor) {
+            OsmDataLayer layer, IRelationEditor editor) {
         super(memberTable, memberTableModel, actionMapKey, layer, editor);
         //  Shortcut.register Shortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
             // KeyEvent.VK_K, Shortcut.ALT)
