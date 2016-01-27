@@ -42,6 +42,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
@@ -201,7 +202,7 @@ public class SessionReader {
             File file = getFile(uriStr);
             if (file != null) {
                 try {
-                    return new BufferedInputStream(new FileInputStream(file));
+                    return new BufferedInputStream(Compression.getUncompressedFileInputStream(file));
                 } catch (FileNotFoundException e) {
                     throw new IOException(tr("File ''{0}'' does not exist.", file.getPath()), e);
                 }
