@@ -918,6 +918,16 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      ------------*/
 
     @Override
+    public final void setKeys(TagMap keys) {
+        boolean locked = writeLock();
+        try {
+            super.setKeys(keys);
+        } finally {
+            writeUnlock(locked);
+        }
+    }
+
+    @Override
     public final void setKeys(Map<String, String> keys) {
         boolean locked = writeLock();
         try {

@@ -5323,7 +5323,7 @@
                 <link href="http://wiki.openstreetmap.org/wiki/Tag:golf=bunker" />
                 <space />
                 <key key="golf" value="bunker" />
-                <combo key="natural" text="Natural" value="sand" />
+                <combo key="natural" text="Natural" text_context="golf" values="sand" default="sand" />
             </item> <!-- Bunker -->
              <item name="Frontal Water hazard" name_context="golf" icon="styles/standard/sport/golf/water_hazard.svg" type="closedway" preset_name_label="true">
                 <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=golf_course"
