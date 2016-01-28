@@ -83,7 +83,7 @@ public final class SplitWayActionTest {
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.map.mapView.removeLayer(layer);
+            Main.main.removeLayer(layer);
         }
 
         // Ensures 3 ways.

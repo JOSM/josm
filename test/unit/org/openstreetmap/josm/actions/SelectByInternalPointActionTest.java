@@ -78,11 +78,15 @@ public final class SelectByInternalPointActionTest {
     @Test
     public void testGetSurroundingObjects() {
         Layer layer = initDataSet();
-        assertEquals(0, SelectByInternalPointAction.getSurroundingObjects(null).size());
-        assertEquals(0, SelectByInternalPointAction.getSurroundingObjects(new EastNorth(0, 0)).size());
-        assertEquals(1, SelectByInternalPointAction.getSurroundingObjects(new EastNorth(1.5, 1.5)).size());
-        assertEquals(0, SelectByInternalPointAction.getSurroundingObjects(new EastNorth(3, 3)).size());
-        Main.main.removeLayer(layer);
+        try {
+            assertEquals(0, SelectByInternalPointAction.getSurroundingObjects(null).size());
+            assertEquals(0, SelectByInternalPointAction.getSurroundingObjects(new EastNorth(0, 0)).size());
+            assertEquals(1, SelectByInternalPointAction.getSurroundingObjects(new EastNorth(1.5, 1.5)).size());
+            assertEquals(0, SelectByInternalPointAction.getSurroundingObjects(new EastNorth(3, 3)).size());
+        } finally {
+            // Ensure we clean the place before leaving, even if test fails.
+            Main.main.removeLayer(layer);
+        }
     }
 
     /**
@@ -91,9 +95,13 @@ public final class SelectByInternalPointActionTest {
     @Test
     public void testGetSmallestSurroundingObject() {
         Layer layer = initDataSet();
-        assertNull(SelectByInternalPointAction.getSmallestSurroundingObject(null));
-        assertNotNull(SelectByInternalPointAction.getSmallestSurroundingObject(new EastNorth(1.5, 1.5)));
-        Main.main.removeLayer(layer);
+        try {
+            assertNull(SelectByInternalPointAction.getSmallestSurroundingObject(null));
+            assertNotNull(SelectByInternalPointAction.getSmallestSurroundingObject(new EastNorth(1.5, 1.5)));
+        } finally {
+            // Ensure we clean the place before leaving, even if test fails.
+            Main.main.removeLayer(layer);
+        }
     }
 
     /**
@@ -102,23 +110,26 @@ public final class SelectByInternalPointActionTest {
     @Test
     public void testPerformSelection() {
         Layer layer = initDataSet();
-        DataSet ds = JosmAction.getCurrentDataSet();
+        try {
+            DataSet ds = JosmAction.getCurrentDataSet();
 
-        assertEquals(0, ds.getSelected().size());
-        SelectByInternalPointAction.performSelection(null, false, false);
-        assertEquals(0, ds.getSelected().size());
-        SelectByInternalPointAction.performSelection(new EastNorth(0, 0), false, false);
-        assertEquals(0, ds.getSelected().size());
-        SelectByInternalPointAction.performSelection(new EastNorth(1.5, 1.5), false, false);
-        assertEquals(1, ds.getSelected().size());
-        ds.clearSelection();
-        ds.addSelected(ds.getNodes());
-        assertEquals(4, ds.getSelected().size());
-        SelectByInternalPointAction.performSelection(new EastNorth(1.5, 1.5), true, false);
-        assertEquals(5, ds.getSelected().size());
-        SelectByInternalPointAction.performSelection(new EastNorth(1.5, 1.5), false, true);
-        assertEquals(4, ds.getSelected().size());
-
-        Main.main.removeLayer(layer);
+            assertEquals(0, ds.getSelected().size());
+            SelectByInternalPointAction.performSelection(null, false, false);
+            assertEquals(0, ds.getSelected().size());
+            SelectByInternalPointAction.performSelection(new EastNorth(0, 0), false, false);
+            assertEquals(0, ds.getSelected().size());
+            SelectByInternalPointAction.performSelection(new EastNorth(1.5, 1.5), false, false);
+            assertEquals(1, ds.getSelected().size());
+            ds.clearSelection();
+            ds.addSelected(ds.getNodes());
+            assertEquals(4, ds.getSelected().size());
+            SelectByInternalPointAction.performSelection(new EastNorth(1.5, 1.5), true, false);
+            assertEquals(5, ds.getSelected().size());
+            SelectByInternalPointAction.performSelection(new EastNorth(1.5, 1.5), false, true);
+            assertEquals(4, ds.getSelected().size());
+        } finally {
+            // Ensure we clean the place before leaving, even if test fails.
+            Main.main.removeLayer(layer);
+        }
     }
 }

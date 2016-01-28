@@ -13,10 +13,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
-import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
@@ -46,14 +45,12 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
         putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tr("Refresh relation from data layer"), sc));
         putValue(SMALL_ICON, ImageProvider.get("dialogs/refresh"));
         putValue(NAME, tr("Refresh"));
-        getEditor().getRootPane().getActionMap().put("refresh", this);
-        getEditor().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "refresh");
+        if (editor instanceof JComponent) {
+            ((JComponent) editor).getRootPane().getActionMap().put("refresh", this);
+            ((JComponent) editor).getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "refresh");
+        }
         Main.main.undoRedo.addCommandQueueListener(this);
         updateEnabledState();
-    }
-
-    private GenericRelationEditor getEditor() {
-        return (GenericRelationEditor) editor;
     }
 
     @Override
@@ -69,7 +66,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
         }
         if (isEditorDirty() && confirmDiscardDirtyData() != 0)
             return;
-        getEditor().reloadDataFromRelation();
+        editor.reloadDataFromRelation();
     }
 
     @Override

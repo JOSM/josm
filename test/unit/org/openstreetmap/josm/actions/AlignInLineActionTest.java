@@ -66,7 +66,7 @@ public final class AlignInLineActionTest {
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.map.mapView.removeLayer(layer);
+            Main.main.removeLayer(layer);
         }
 
         // Points 1 and 3 are the extremities and must not have moved. Only point 2 must have moved.
@@ -105,7 +105,7 @@ public final class AlignInLineActionTest {
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.map.mapView.removeLayer(layer);
+            Main.main.removeLayer(layer);
         }
 
         // Only point 1 must have moved.
@@ -148,7 +148,7 @@ public final class AlignInLineActionTest {
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.map.mapView.removeLayer(layer);
+            Main.main.removeLayer(layer);
         }
 
         assertCoordEq(point1, 0, 2);
