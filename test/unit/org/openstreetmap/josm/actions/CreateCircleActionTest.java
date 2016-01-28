@@ -96,7 +96,7 @@ public final class CreateCircleActionTest {
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.map.mapView.removeLayer(layer);
+            Main.main.removeLayer(layer);
         }
 
         // Expected result: Dataset contain one closed way, clockwise
@@ -174,7 +174,7 @@ public final class CreateCircleActionTest {
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.map.mapView.removeLayer(layer);
+            Main.main.removeLayer(layer);
         }
 
         // Expected result: Dataset contain one closed way, clockwise

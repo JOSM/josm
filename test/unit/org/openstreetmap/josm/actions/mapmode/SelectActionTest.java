@@ -101,56 +101,61 @@ public class SelectActionTest {
 
         Main.pref = new PreferencesMock();
         Main.main.addLayer(layer);
-        SelectAction action = new SelectActionMock(Main.map, dataSet, layer);
-        nodesMerged = false;
+        try {
+            SelectAction action = new SelectActionMock(Main.map, dataSet, layer);
+            nodesMerged = false;
 
-        action.setEnabled(true);
-        action.putValue("active", true);
+            action.setEnabled(true);
+            action.putValue("active", true);
 
-        MouseEvent event;
-        event = new MouseEvent(Main.map,
-                               MouseEvent.MOUSE_PRESSED,
-                               0,
-                               InputEvent.BUTTON1_MASK | InputEvent.CTRL_MASK,
-                               100, 0,
-                               1,
-                               false);
-        action.mousePressed(event);
-        event = new MouseEvent(Main.map,
-                               MouseEvent.MOUSE_DRAGGED,
-                               1000,
-                               InputEvent.BUTTON1_MASK | InputEvent.CTRL_MASK,
-                               50, 0,
-                               1,
-                               false);
-        action.mouseDragged(event);
-        event = new MouseEvent(Main.map,
-                               MouseEvent.MOUSE_RELEASED,
-                               2000,
-                               InputEvent.BUTTON1_MASK | InputEvent.CTRL_MASK,
-                               5, 0,
-                               1,
-                               false);
-        action.mouseReleased(event);
+            MouseEvent event;
+            event = new MouseEvent(Main.map,
+                                   MouseEvent.MOUSE_PRESSED,
+                                   0,
+                                   InputEvent.BUTTON1_MASK | InputEvent.CTRL_MASK,
+                                   100, 0,
+                                   1,
+                                   false);
+            action.mousePressed(event);
+            event = new MouseEvent(Main.map,
+                                   MouseEvent.MOUSE_DRAGGED,
+                                   1000,
+                                   InputEvent.BUTTON1_MASK | InputEvent.CTRL_MASK,
+                                   50, 0,
+                                   1,
+                                   false);
+            action.mouseDragged(event);
+            event = new MouseEvent(Main.map,
+                                   MouseEvent.MOUSE_RELEASED,
+                                   2000,
+                                   InputEvent.BUTTON1_MASK | InputEvent.CTRL_MASK,
+                                   5, 0,
+                                   1,
+                                   false);
+            action.mouseReleased(event);
 
-        // As result of test, we must find a 2 nodes way, from EN(0, 0) to EN(100, 0)
-        assertTrue("Nodes are not merged", nodesMerged);
-        assertSame(String.format("Expect exactly one way, found %d\n", dataSet.getWays().size()),
-                   dataSet.getWays().size(), 1);
-        Way rw = dataSet.getWays().iterator().next();
-        assertFalse("Way shouldn't be deleted\n", rw.isDeleted());
-        assertSame(String.format("Way shouldn't have 2 nodes, %d found\n", w.getNodesCount()),
-                   rw.getNodesCount(), 2);
-        Node r1 = rw.firstNode();
-        Node r2 = rw.lastNode();
-        if (r1.getEastNorth().east() > r2.getEastNorth().east()) {
-            Node tmp = r1;
-            r1 = r2;
-            r2 = tmp;
+            // As result of test, we must find a 2 nodes way, from EN(0, 0) to EN(100, 0)
+            assertTrue("Nodes are not merged", nodesMerged);
+            assertSame(String.format("Expect exactly one way, found %d\n", dataSet.getWays().size()),
+                       dataSet.getWays().size(), 1);
+            Way rw = dataSet.getWays().iterator().next();
+            assertFalse("Way shouldn't be deleted\n", rw.isDeleted());
+            assertSame(String.format("Way shouldn't have 2 nodes, %d found\n", w.getNodesCount()),
+                       rw.getNodesCount(), 2);
+            Node r1 = rw.firstNode();
+            Node r2 = rw.lastNode();
+            if (r1.getEastNorth().east() > r2.getEastNorth().east()) {
+                Node tmp = r1;
+                r1 = r2;
+                r2 = tmp;
+            }
+            assertSame(String.format("East should be 0, found %f\n", r1.getEastNorth().east()),
+                       Double.compare(r1.getEastNorth().east(), 0), 0);
+            assertSame(String.format("East should be 100, found %f\n", r2.getEastNorth().east()),
+                       Double.compare(r2.getEastNorth().east(), 100), 0);
+        } finally {
+            // Ensure we clean the place before leaving, even if test fails.
+            Main.main.removeLayer(layer);
         }
-        assertSame(String.format("East should be 0, found %f\n", r1.getEastNorth().east()),
-                   Double.compare(r1.getEastNorth().east(), 0), 0);
-        assertSame(String.format("East should be 100, found %f\n", r2.getEastNorth().east()),
-                   Double.compare(r2.getEastNorth().east(), 100), 0);
     }
 }

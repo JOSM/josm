@@ -41,18 +41,28 @@ public class GeoImageLayerTest {
             GpxReader reader = new GpxReader(in);
             assertTrue(reader.parse(true));
             GpxLayer gpxLayer = new GpxLayer(reader.getGpxData());
-            Main.main.addLayer(gpxLayer);
-            assertEquals(1, Main.map.mapView.getNumLayers());
-            new Loader(
-                    Collections.singleton(new File(TestUtils.getRegressionDataFile(12255, "G0016941.JPG"))),
-                    gpxLayer).run();
-            assertEquals(2, Main.map.mapView.getNumLayers());
-            GeoImageLayer layer = Main.map.mapView.getLayersOfType(GeoImageLayer.class).iterator().next();
-            assertEquals(gpxLayer, layer.getGpxLayer());
-            List<ImageEntry> images = layer.getImages();
-            assertEquals(1, images.size());
-            assertEquals("<html>1 image loaded. 0 were found to be GPS tagged.</html>", layer.getInfoComponent());
-            assertEquals("<html>1 image loaded. 0 were found to be GPS tagged.</html>", layer.getToolTipText());
+            try {
+                Main.main.addLayer(gpxLayer);
+                assertEquals(1, Main.map.mapView.getNumLayers());
+                new Loader(
+                        Collections.singleton(new File(TestUtils.getRegressionDataFile(12255, "G0016941.JPG"))),
+                        gpxLayer).run();
+                assertEquals(2, Main.map.mapView.getNumLayers());
+                GeoImageLayer layer = Main.map.mapView.getLayersOfType(GeoImageLayer.class).iterator().next();
+                try {
+                    assertEquals(gpxLayer, layer.getGpxLayer());
+                    List<ImageEntry> images = layer.getImages();
+                    assertEquals(1, images.size());
+                    assertEquals("<html>1 image loaded. 0 were found to be GPS tagged.</html>", layer.getInfoComponent());
+                    assertEquals("<html>1 image loaded. 0 were found to be GPS tagged.</html>", layer.getToolTipText());
+                } finally {
+                    // Ensure we clean the place before leaving, even if test fails.
+                    Main.map.mapView.removeLayer(layer);
+                }
+            } finally {
+                // Ensure we clean the place before leaving, even if test fails.
+                Main.main.removeLayer(gpxLayer);
+            }
         }
     }
 }

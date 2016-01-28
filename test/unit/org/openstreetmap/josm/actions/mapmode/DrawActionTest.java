@@ -67,32 +67,37 @@ public class DrawActionTest {
         dataSet.addPrimitive(w);
 
         Main.main.addLayer(layer);
-        assertTrue(Main.map.selectDrawTool(false));
+        try {
+            assertTrue(Main.map.selectDrawTool(false));
 
-        Main.map.mapModeDraw.mouseReleased(new MouseEvent(
-                Main.map,
-                MouseEvent.MOUSE_RELEASED,
-                2000,
-                InputEvent.BUTTON1_MASK,
-                50, 0,
-                2, false));
+            Main.map.mapModeDraw.mouseReleased(new MouseEvent(
+                    Main.map,
+                    MouseEvent.MOUSE_RELEASED,
+                    2000,
+                    InputEvent.BUTTON1_MASK,
+                    50, 0,
+                    2, false));
 
-        JList<OsmPrimitive> lstPrimitives = new JList<>();
-        OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
+            JList<OsmPrimitive> lstPrimitives = new JList<>();
+            OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
 
-        assertEquals(3, w.getNodesCount());
-        Collection<Node> sel = dataSet.getSelectedNodes();
-        assertEquals(1, sel.size());
+            assertEquals(3, w.getNodesCount());
+            Collection<Node> sel = dataSet.getSelectedNodes();
+            assertEquals(1, sel.size());
 
-        Node n3 = sel.iterator().next();
+            Node n3 = sel.iterator().next();
 
-        assertNotNull(renderer.getListCellRendererComponent(lstPrimitives, n3, 0, false, false));
+            assertNotNull(renderer.getListCellRendererComponent(lstPrimitives, n3, 0, false, false));
 
-        Main.main.undoRedo.undo();
+            Main.main.undoRedo.undo();
 
-        assertEquals(2, w.getNodesCount());
-        assertTrue(dataSet.getSelectedNodes().isEmpty());
+            assertEquals(2, w.getNodesCount());
+            assertTrue(dataSet.getSelectedNodes().isEmpty());
 
-        assertNotNull(renderer.getListCellRendererComponent(lstPrimitives, n3, 0, false, false));
+            assertNotNull(renderer.getListCellRendererComponent(lstPrimitives, n3, 0, false, false));
+        } finally {
+            // Ensure we clean the place before leaving, even if test fails.
+            Main.main.removeLayer(layer);
+        }
     }
 }
