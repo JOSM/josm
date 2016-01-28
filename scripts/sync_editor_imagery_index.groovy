@@ -99,8 +99,6 @@ class sync_editor_imagery_index {
     }
 
     void loadSkip() {
-        if (options.noskip)
-            return;
         /* TMS proxies for our wms */
         skipEntries["-  Czech CUZK:KM tiles proxy - http://osm-{switch:a,b,c}.zby.cz/tiles_cuzk.php/{zoom}/{x}/{y}.png"] = 1
         skipEntries["-  [CH] Stadt Zürich Luftbild 2011 - http://mapproxy.sosm.ch:8080/tiles/zh_luftbild2011/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
@@ -176,8 +174,9 @@ class sync_editor_imagery_index {
             skipCount -= 1;
             if(options.xhtmlbody || options.xhtml) {
                 s = "<pre style=\"margin:3px;color:green\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
-            } else {
-                return
+            }
+            if (!options.noskip) {
+                return;
             }
         } else if(options.xhtmlbody || options.xhtml) {
             String color = s.startsWith("***") ? "black" : (s.startsWith("+ ") ? "blue" : "red")
