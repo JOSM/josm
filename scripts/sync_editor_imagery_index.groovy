@@ -13,7 +13,7 @@
  * Main JOSM binary needs to be in classpath, e.g.
  *
  * $ groovy -cp ../dist/josm-custom.jar sync_editor-imagery-index.groovy
- * 
+ *
  * Add option "-h" to show the available command line flags.
  */
 import java.io.FileReader
@@ -35,7 +35,7 @@ class sync_editor_imagery_index {
 
     def eiiUrls = new HashMap<String, JsonObject>()
     def josmUrls = new HashMap<String, ImageryInfo>()
-    
+
     static String eiiInputFile = 'imagery.json'
     static String josmInputFile = 'maps.xml'
     static FileWriter outputFile = null
@@ -225,7 +225,7 @@ class sync_editor_imagery_index {
     void loadJosmEntries() {
         def reader = new ImageryReader(josmInputFile)
         josmEntries = reader.parse()
-        
+
         for (def e : josmEntries) {
             def url = getUrl(e)
             if (url.contains("{z}")) {
@@ -259,7 +259,7 @@ class sync_editor_imagery_index {
         }
         l.sort()
     }
-    
+
     void checkInOneButNotTheOther() {
         def l1 = inOneButNotTheOther(eiiUrls, josmUrls)
         myprintln "*** URLs found in EII but not in JOSM (${l1.size()}): ***"
@@ -277,7 +277,7 @@ class sync_editor_imagery_index {
                 myprintln "+" + l
         }
     }
-    
+
     void checkCommonEntries() {
         myprintln "*** Same URL, but different name: ***"
         for (def url : eiiUrls.keySet()) {
@@ -290,7 +290,7 @@ class sync_editor_imagery_index {
                 myprintln "     (JOSM):    ${getName(j)}"
             }
         }
-        
+
         myprintln "*** Same URL, but different type: ***"
         for (def url : eiiUrls.keySet()) {
             def e = eiiUrls.get(url)
@@ -302,7 +302,7 @@ class sync_editor_imagery_index {
                 myprintln "     (JOSM):    ${getType(j)}"
             }
         }
-        
+
         myprintln "*** Same URL, but different zoom bounds: ***"
         for (def url : eiiUrls.keySet()) {
             def e = eiiUrls.get(url)
@@ -324,7 +324,7 @@ class sync_editor_imagery_index {
                 myprintln "     (JOSM):    ${jMaxZoom}"
             }
         }
-        
+
         myprintln "*** Same URL, but different country code: ***"
         for (def url : eiiUrls.keySet()) {
             def e = eiiUrls.get(url)
@@ -354,7 +354,7 @@ class sync_editor_imagery_index {
             }
         }
     }
-    
+
     /**
      * Utility functions that allow uniform access for both ImageryInfo and JsonObject.
      */
