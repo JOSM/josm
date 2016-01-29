@@ -573,6 +573,7 @@ public class TagEditHelper {
     protected class AddTagsDialog extends AbstractTagsDialog {
         private final List<JosmAction> recentTagsActions = new ArrayList<>();
         protected final transient FocusAdapter focus;
+        private JPanel recentTagsPanel;
 
         // Counter of added commands for possible undo
         private int commandCount;
@@ -583,7 +584,7 @@ public class TagEditHelper {
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/AddValue", true /* show help button */);
 
-            JPanel mainPanel = new JPanel(new GridBagLayout());
+            final JPanel mainPanel = new JPanel(new GridBagLayout());
             keys = new AutoCompletingComboBox();
             values = new AutoCompletingComboBox();
 
@@ -644,7 +645,7 @@ public class TagEditHelper {
                     }
                 });
 
-            suggestRecentlyAddedTags(mainPanel, focus);
+            suggestRecentlyAddedTags(mainPanel);
 
             mainPanel.add(Box.createVerticalGlue(), GBC.eop().fill());
             setContent(mainPanel, false);
@@ -655,6 +656,7 @@ public class TagEditHelper {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     selectNumberOfTags();
+                    suggestRecentlyAddedTags(mainPanel);
                 }
             });
             JCheckBoxMenuItem rememberLastTags = new JCheckBoxMenuItem(
@@ -696,31 +698,54 @@ public class TagEditHelper {
         }
 
         protected void selectNumberOfTags() {
-            String s = JOptionPane.showInputDialog(this, tr("Please enter the number of recently added tags to display"));
-            if (s == null) {
-                return;
-            }
-            try {
-                int v = Integer.parseInt(s);
-                if (v >= 0 && v <= MAX_LRU_TAGS_NUMBER) {
-                    PROPERTY_RECENT_TAGS_NUMBER.put(v);
+            String s = String.format("%d", PROPERTY_RECENT_TAGS_NUMBER.get());
+            while (true) {
+                s = JOptionPane.showInputDialog(this, tr("Please enter the number of recently added tags to display"), s);
+                if (s == null) {
                     return;
                 }
-            } catch (NumberFormatException ex) {
-                Main.warn(ex);
+                try {
+                    int v = Integer.parseInt(s);
+                    if (v >= 0 && v <= MAX_LRU_TAGS_NUMBER) {
+                        PROPERTY_RECENT_TAGS_NUMBER.put(v);
+                        return;
+                    }
+                } catch (NumberFormatException ex) {
+                    Main.warn(ex);
+                }
+                JOptionPane.showMessageDialog(this, tr("Please enter integer number between 0 and {0}", MAX_LRU_TAGS_NUMBER));
             }
-            JOptionPane.showMessageDialog(this, tr("Please enter integer number between 0 and {0}", MAX_LRU_TAGS_NUMBER));
         }
 
-        protected void suggestRecentlyAddedTags(JPanel mainPanel, final FocusAdapter focus) {
+        protected void suggestRecentlyAddedTags(JPanel mainPanel) {
+
+            if (recentTagsPanel == null) {
+                recentTagsPanel = new JPanel(new GridBagLayout());
+                suggestRecentlyAddedTags();
+                mainPanel.add(recentTagsPanel, GBC.eol().fill(GBC.HORIZONTAL));
+            } else {
+                Dimension panelOldSize = panelOldSize = recentTagsPanel.getPreferredSize();
+                recentTagsPanel.removeAll();
+                suggestRecentlyAddedTags();
+                Dimension panelNewSize = recentTagsPanel.getPreferredSize();
+                Dimension dialogOldSize = getMinimumSize();
+                Dimension dialogNewSize = new Dimension(dialogOldSize.width, dialogOldSize.height-panelOldSize.height+panelNewSize.height);
+                setMinimumSize(dialogNewSize);
+                setPreferredSize(dialogNewSize);
+                setSize(dialogNewSize);
+                revalidate();
+                repaint();
+            }
+        }
+
+        protected void suggestRecentlyAddedTags() {
             final int tagsToShow = Math.min(PROPERTY_RECENT_TAGS_NUMBER.get(), MAX_LRU_TAGS_NUMBER);
             if (!(tagsToShow > 0 && !recentTags.isEmpty()))
                 return;
-
-            mainPanel.add(new JLabel(tr("Recently added tags")), GBC.eol());
+            recentTagsPanel.add(new JLabel(tr("Recently added tags")), GBC.eol());
 
             int count = 1;
-            // We store the maximum number (9) of recent tags to allow dynamic change of number of tags shown in the preferences.
+            // We store the maximum number of recent tags to allow dynamic change of number of tags shown in the preferences.
             // This implies to iterate in descending order, as the oldest elements will only be removed after we reach the maximum
             // number and not the number of tags to show.
             // However, as Set does not allow to iterate in descending order, we need to copy its elements into a List we can access
@@ -777,7 +802,7 @@ public class TagEditHelper {
                 }
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.ipadx = 5;
-                mainPanel.add(new JLabel(action.isEnabled() ? icon : GuiHelper.getDisabledIcon(icon)), gbc);
+                recentTagsPanel.add(new JLabel(action.isEnabled() ? icon : GuiHelper.getDisabledIcon(icon)), gbc);
                 // Create tag label
                 final String color = action.isEnabled() ? "" : "; color:gray";
                 final JLabel tagLabel = new JLabel("<html>"
@@ -789,10 +814,10 @@ public class TagEditHelper {
                 tagLabel.setFont(tagLabel.getFont().deriveFont(Font.PLAIN));
                 if (action.isEnabled() && sc != null && scShift != null) {
                     // Register action
-                    mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "choose"+count);
-                    mainPanel.getActionMap().put("choose"+count, action);
-                    mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scShift.getKeyStroke(), "apply"+count);
-                    mainPanel.getActionMap().put("apply"+count, actionShift);
+                    recentTagsPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "choose"+count);
+                    recentTagsPanel.getActionMap().put("choose"+count, action);
+                    recentTagsPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scShift.getKeyStroke(), "apply"+count);
+                    recentTagsPanel.getActionMap().put("apply"+count, actionShift);
                 }
                 if (action.isEnabled()) {
                     // Make the tag label clickable and set tooltip to the action description (this displays also the keyboard shortcut)
@@ -822,7 +847,7 @@ public class TagEditHelper {
                 // Finally add label to the resulting panel
                 JPanel tagPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
                 tagPanel.add(tagLabel);
-                mainPanel.add(tagPanel, GBC.eol().fill(GBC.HORIZONTAL));
+                recentTagsPanel.add(tagPanel, GBC.eol().fill(GBC.HORIZONTAL));
             }
         }
 
