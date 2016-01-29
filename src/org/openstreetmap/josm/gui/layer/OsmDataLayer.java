@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,6 +76,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -120,6 +123,37 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * @since 3669
      */
     public final List<TestError> validationErrors = new ArrayList<>();
+
+    public static final int DEFAULT_RECENT_RELATIONS_NUMBER = 20;
+    public static final IntegerProperty PROPERTY_RECENT_RELATIONS_NUMBER = new IntegerProperty("properties.last-closed-relations-size",
+            DEFAULT_RECENT_RELATIONS_NUMBER);
+
+    /** List of recent relations */
+    private final Map<Relation, Void> recentRelations = new LinkedHashMap<Relation, Void>(PROPERTY_RECENT_RELATIONS_NUMBER.get()+1, 1.1f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Relation, Void> eldest) {
+            return size() > PROPERTY_RECENT_RELATIONS_NUMBER.get();
+        }
+    };
+
+    /**
+     * Returns list of recently closed relations or null if none.
+     */
+    public ArrayList<Relation> getRecentRelations() {
+        ArrayList<Relation> list = new ArrayList<Relation>(recentRelations.keySet());
+        Collections.reverse(list);
+        return list;
+    }
+
+    public void setRecentRelation(Relation relation) {
+        recentRelations.put(relation, null);
+        Main.map.relationListDialog.enableRecentRelations();
+    }
+
+    public void removeRecentRelation(Relation relation) {
+        recentRelations.remove(relation);
+        Main.map.relationListDialog.enableRecentRelations();
+    }
 
     protected void setRequiresSaveToFile(boolean newValue) {
         boolean oldValue = requiresSaveToFile;

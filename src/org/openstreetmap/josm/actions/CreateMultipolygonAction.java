@@ -120,6 +120,8 @@ public class CreateMultipolygonAction extends JosmAction {
 
                                 editor.setModal(true);
                                 editor.setVisible(true);
+                            } else {
+                                Main.main.getEditLayer().setRecentRelation(relation);
                             }
                         }
                     });
