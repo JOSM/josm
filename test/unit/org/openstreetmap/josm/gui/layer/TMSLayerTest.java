@@ -48,8 +48,8 @@ public class TMSLayerTest {
     }
 
     private static void test(ImageryType expected, TMSLayer layer) {
-        Main.main.addLayer(layer);
         try {
+            Main.main.addLayer(layer);
             assertEquals(expected, layer.getInfo().getImageryType());
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
