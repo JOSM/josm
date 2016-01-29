@@ -3,10 +3,13 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
+
 import javax.swing.JLabel;
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -31,7 +34,14 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
 
     @Override
     protected ImageryInfo getImageryInfo() {
-        return new ImageryInfo(getImageryName(), "wmts:" + sanitize(getImageryRawUrl(), ImageryType.WMTS));
+        ImageryInfo ret = new ImageryInfo(getImageryName(), "wmts:" + sanitize(getImageryRawUrl(), ImageryType.WMTS));
+        try {
+            new WMTSTileSource(ret); // check if constructor throws an error
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e); // if so, wrap exception, so proper message will be shown to the user
+        }
+        return ret;
+
     }
 
     @Override
