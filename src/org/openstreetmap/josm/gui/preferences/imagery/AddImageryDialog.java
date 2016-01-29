@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.preferences.imagery.AddImageryPanel.ContentVal
  * @since 5731
  */
 public class AddImageryDialog extends ExtendedDialog implements ContentValidationListener {
-    
+
     /**
      * Constructs a new AddImageryDialog.
      * @param parent The parent element that will be used for position and maximum size

@@ -26,7 +26,7 @@ public class DownloadOsmChangeCompressedTask extends DownloadOsmChangeTask {
     public String getTitle() {
         return tr("Download Compressed OSM Change");
     }
-    
+
     /**
      * Loads a given URL
      * @param new_layer {@code true} if the data should be saved to a new layer
