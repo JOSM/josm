@@ -138,7 +138,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     /**
      * Returns list of recently closed relations or null if none.
-     * @return list of recently closed relations or null if none
+     * @return list of recently closed relations or <code>null</code> if none
+     * @since 9668
      */
     public ArrayList<Relation> getRecentRelations() {
         ArrayList<Relation> list = new ArrayList<Relation>(recentRelations.keySet());
@@ -147,8 +148,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     /**
-     * Sets list of recently closed relations.
-     * @param relation list of recently closed relations
+     * Adds recently closed relation.
+     * @param relation new entry for the list of recently closed relations
+     * @since 9668
      */
     public void setRecentRelation(Relation relation) {
         recentRelations.put(relation, null);
@@ -158,6 +160,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     /**
      * Remove relation from list of recent relations.
      * @param relation relation to remove
+     * @since 9668
      */
     public void removeRecentRelation(Relation relation) {
         recentRelations.remove(relation);
