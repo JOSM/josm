@@ -283,12 +283,12 @@ public class FileChooserManager {
      * @return this
      */
     public FileChooserManager doCreateFileChooser() {
-        File file = new File(curDir);
+        File f = new File(curDir);
         // Use native dialog is preference is set, unless an unsupported selection mode is specifically wanted
         if (PROP_USE_NATIVE_FILE_DIALOG.get() && NativeFileChooser.supportsSelectionMode(selectionMode)) {
-            fc = new NativeFileChooser(file);
+            fc = new NativeFileChooser(f);
         } else {
-            fc = new SwingFileChooser(file);
+            fc = new SwingFileChooser(f);
         }
 
         if (title != null) {
@@ -331,7 +331,8 @@ public class FileChooserManager {
      * @return the {@code AbstractFileChooser} if the user effectively choses a file or directory. {@code null} if the user cancelled the dialog.
      */
     public AbstractFileChooser openFileChooser(Component parent) {
-        if (fc == null) doCreateFileChooser();
+        if (fc == null)
+            doCreateFileChooser();
 
         if (parent == null) {
             parent = Main.parent;
@@ -346,17 +347,15 @@ public class FileChooserManager {
             Main.pref.put(lastDirProperty, fc.getCurrentDirectory().getAbsolutePath());
         }
 
-        if (!open) {
-            File file = fc.getSelectedFile();
-            if (!SaveActionBase.confirmOverwrite(file)) {
-                return null;
-            }
+        if (!open && !SaveActionBase.confirmOverwrite(fc.getSelectedFile())) {
+            return null;
         }
         return fc;
     }
 
     /**
-     * Opens the file chooser dialog, then checks if filename has the given extension. If not, adds the extension and asks for overwrite if filename exists.
+     * Opens the file chooser dialog, then checks if filename has the given extension.
+     * If not, adds the extension and asks for overwrite if filename exists.
      *
      * @return the {@code File} or {@code null} if the user cancelled the dialog.
      */
