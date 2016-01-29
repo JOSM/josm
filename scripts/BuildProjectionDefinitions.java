@@ -154,7 +154,7 @@ public class BuildProjectionDefinitions {
             result = false;
             noDatumgrid++;
         }
-        
+
         // exclude entries where we don't support the base projection
         Proj bp = Projections.getBaseProjection(proj);
         if (result && !"utm".equals(proj) && bp == null) {
