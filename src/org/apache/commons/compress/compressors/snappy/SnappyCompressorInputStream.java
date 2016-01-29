@@ -135,6 +135,9 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
         }
 
         int readable = Math.min(len, available());
+        if (readable == 0 && len > 0) {
+            return -1;
+        }
         System.arraycopy(decompressBuf, readIndex, b, off, readable);
         readIndex += readable;
         if (readIndex > blockSize) {
