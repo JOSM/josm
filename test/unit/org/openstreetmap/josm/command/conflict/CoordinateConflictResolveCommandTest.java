@@ -4,9 +4,8 @@ package org.openstreetmap.josm.command.conflict;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
@@ -19,10 +18,15 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+
 /**
  * Unit tests of {@link CoordinateConflictResolveCommand} class.
  */
 public class CoordinateConflictResolveCommandTest {
+
+    private static OsmDataLayer layer;
 
     /**
      * Setup test.
@@ -30,7 +34,16 @@ public class CoordinateConflictResolveCommandTest {
     @BeforeClass
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init(true);
-        Main.map.mapView.addLayer(new OsmDataLayer(new DataSet(), null, null));
+        layer = new OsmDataLayer(new DataSet(), null, null);
+        Main.main.addLayer(layer);
+    }
+
+    /**
+     * Cleanup test resources.
+     */
+    @AfterClass
+    public static void tearDownAfterClass() {
+        Main.main.removeLayer(layer);
     }
 
     private static Conflict<Node> createConflict() {
