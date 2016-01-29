@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,6 +16,7 @@ import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.date.DateUtilsTest;
 
@@ -48,7 +50,7 @@ public class ExifReaderTest {
 
     /**
      * Tests reading sub-seconds from the EXIF header
-     * @throws ParseException  if {@link ExifReader#readTime} fails to parse date/time of sample file
+     * @throws ParseException if {@link ExifReader#readTime} fails to parse date/time of sample file
      */
     @Test
     public void testReadTimeSubSecond1() throws ParseException {
@@ -79,11 +81,22 @@ public class ExifReaderTest {
     }
 
     /**
-     * Test coordinates extraction
+     * Test direction extraction
      */
     @Test
     public void testReadDirection() {
         Double direction = ExifReader.readDirection(directionSampleFile);
         assertEquals(new Double(46.5), direction);
+    }
+
+    /**
+     * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/11685">#11685</a>
+     * @throws IOException if an error occurs during reading
+     */
+    @Test
+    public void testTicket11685() throws IOException {
+        File file = new File(TestUtils.getRegressionDataFile(11685, "2015-11-08_15-33-27-Xiaomi_YI-Y0030832.jpg"));
+        String dateStr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(ExifReader.readTime(file));
+        assertEquals("2015-11-08T15:33:27.500", dateStr);
     }
 }
