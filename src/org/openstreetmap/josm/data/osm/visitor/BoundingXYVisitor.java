@@ -136,7 +136,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
         LatLon maxLatlon = Main.getProjection().eastNorth2latlon(bounds.getMax());
         bounds = new ProjectionBounds(
                 Main.getProjection().latlon2eastNorth(new LatLon(
-                        Math.max(-90, minLatlon.lat() - enlargeDegree), 
+                        Math.max(-90, minLatlon.lat() - enlargeDegree),
                         Math.max(-180, minLatlon.lon() - enlargeDegree))),
                 Main.getProjection().latlon2eastNorth(new LatLon(
                         Math.min(90, maxLatlon.lat() + enlargeDegree),

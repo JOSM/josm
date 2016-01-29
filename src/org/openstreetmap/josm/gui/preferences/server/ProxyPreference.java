@@ -29,7 +29,7 @@ public final class ProxyPreference implements SubPreferenceSetting {
     }
 
     private static Set<ProxyPreferenceListener> listeners = new HashSet<>();
-    
+
     private ProxyPreferencesPanel pnlProxyPreferences;
 
     private ProxyPreference() {
@@ -62,7 +62,7 @@ public final class ProxyPreference implements SubPreferenceSetting {
     public TabPreferenceSetting getTabPreferenceSetting(PreferenceTabbedPane gui) {
         return gui.getServerPreference();
     }
-    
+
     /**
      * Adds a new ProxyPreferenceListener.
      * @param listener the listener to add

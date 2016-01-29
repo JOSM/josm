@@ -10,7 +10,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Executor that displays the progress monitor to the user.
- * 
+ *
  * Similar to Executors.newSingleThreadExecutor(), but displays the
  * progress monitor whenever a new task is executed.
  */

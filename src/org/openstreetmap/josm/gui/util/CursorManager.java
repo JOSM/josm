@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * This class manages multiple cursors for multiple components.
  * All components share the same cursor that was last set using {@link #setNewCursor(Cursor, Object)}
- * 
+ *
  * @author Michael Zangl
  */
 public class CursorManager {

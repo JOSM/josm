@@ -8,7 +8,7 @@ import org.openstreetmap.josm.data.Preferences.writeExplicitly;
 
 /**
  * Data class representing one entry in the filter dialog.
- * 
+ *
  * @author Petr_Dlouhý
  */
 public class Filter extends SearchSetting {
