@@ -41,6 +41,7 @@ import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.actions.relation.DuplicateRelationAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
+import org.openstreetmap.josm.actions.relation.RecentRelationsAction;
 import org.openstreetmap.josm.actions.relation.SelectMembersAction;
 import org.openstreetmap.josm.actions.relation.SelectRelationAction;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
@@ -122,6 +123,7 @@ public class RelationListDialog extends ToggleDialog
 
     private final transient HighlightHelper highlightHelper = new HighlightHelper();
     private final boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
+    private RecentRelationsAction recentRelationsAction;
 
     /**
      * Constructs <code>RelationListDialog</code>
@@ -168,9 +170,13 @@ public class RelationListDialog extends ToggleDialog
         JPanel pane = new JPanel(new BorderLayout());
         pane.add(filter, BorderLayout.NORTH);
         pane.add(new JScrollPane(displaylist), BorderLayout.CENTER);
+
+        SideButton editButton = new SideButton(editAction, false);
+        recentRelationsAction = new RecentRelationsAction(editButton);
+
         createLayout(pane, false, Arrays.asList(new SideButton[]{
                 new SideButton(newAction, false),
-                new SideButton(editAction, false),
+                editButton,
                 new SideButton(duplicateAction, false),
                 new SideButton(deleteRelationsAction, false),
                 new SideButton(selectRelationAction, false)
@@ -190,6 +196,10 @@ public class RelationListDialog extends ToggleDialog
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, GuiHelper.getMenuShortcutKeyMaskEx()), "copy");
 
         updateActionsRelationLists();
+    }
+
+    public void enableRecentRelations() {
+        recentRelationsAction.enableArrow();
     }
 
     // inform all actions about list of relations they need

@@ -66,6 +66,7 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
         setRelation(relation);
+        layer.removeRecentRelation(relation);
     }
 
     /**
@@ -188,5 +189,11 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
     @Override
     public final void removePropertyChangeListener(PropertyChangeListener listener) {
         this.support.removePropertyChangeListener(listener);
+    }
+
+    @Override
+    public void dispose() {
+        layer.setRecentRelation(relation);
+        super.dispose();
     }
 }

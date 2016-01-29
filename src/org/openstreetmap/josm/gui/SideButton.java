@@ -89,12 +89,13 @@ public class SideButton extends JButton implements Destroyable {
         setMargin(new Insets(0, 0, 0, 0));
     }
 
-    public void createArrow(ActionListener listener) {
+    public BasicArrowButton createArrow(ActionListener listener) {
         setMargin(new Insets(0, 0, 0, 0));
         BasicArrowButton arrowButton = new BasicArrowButton(SwingConstants.SOUTH, null, null, Color.BLACK, null);
         arrowButton.setBorder(BorderFactory.createEmptyBorder());
         add(arrowButton, BorderLayout.EAST);
         arrowButton.addActionListener(listener);
+        return arrowButton;
     }
 
     @Override
