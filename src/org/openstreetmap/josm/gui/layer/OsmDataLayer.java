@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -425,8 +424,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     /**
-     * merges the primitives in dataset <code>from</code> into the dataset of
-     * this layer
+     * merges the primitives in dataset <code>from</code> into the dataset of this layer
      *
      * @param from  the source data set
      * @param progressMonitor the progress monitor, can be {@code null}
@@ -436,6 +434,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         try {
             visitor.merge(progressMonitor);
         } catch (DataIntegrityProblemException e) {
+            Main.error(e);
             JOptionPane.showMessageDialog(
                     Main.parent,
                     e.getHtmlMessage() != null ? e.getHtmlMessage() : e.getMessage(),
@@ -746,12 +745,10 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         possibleKeys.add(0, gpxKey);
         for (String key : possibleKeys) {
             String value = p.get(key);
-            if (value != null) {
-                // Sanity checks
-                if (!GpxConstants.PT_FIX.equals(gpxKey) || GpxConstants.FIX_VALUES.contains(value)) {
-                    wpt.put(gpxKey, value);
-                    break;
-                }
+            // Sanity checks
+            if (value != null && (!GpxConstants.PT_FIX.equals(gpxKey) || GpxConstants.FIX_VALUES.contains(value))) {
+                wpt.put(gpxKey, value);
+                break;
             }
         }
     }
@@ -778,15 +775,15 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final GpxData data = toGpxData();
-            final GpxLayer gpxLayer = new GpxLayer(data, tr("Converted from: {0}", getName()));
+            final GpxData gpxData = toGpxData();
+            final GpxLayer gpxLayer = new GpxLayer(gpxData, tr("Converted from: {0}", getName()));
             if (getAssociatedFile() != null) {
                 final String filename = getAssociatedFile().getName().replaceAll(Pattern.quote(".gpx.osm") + "$", "") + ".gpx";
                 gpxLayer.setAssociatedFile(new File(getAssociatedFile().getParentFile(), filename));
             }
             Main.main.addLayer(gpxLayer);
-            if (Main.pref.getBoolean("marker.makeautomarkers", true) && !data.waypoints.isEmpty()) {
-                Main.main.addLayer(new MarkerLayer(data, tr("Converted from: {0}", getName()), null, gpxLayer));
+            if (Main.pref.getBoolean("marker.makeautomarkers", true) && !gpxData.waypoints.isEmpty()) {
+                Main.main.addLayer(new MarkerLayer(gpxData, tr("Converted from: {0}", getName()), null, gpxLayer));
             }
             Main.main.removeLayer(OsmDataLayer.this);
         }
@@ -803,14 +800,14 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         if (this.data.dataSources.isEmpty())
             return true;
 
-        boolean layer_bounds_point = false;
+        boolean layerBoundsPoint = false;
         for (DataSource src : this.data.dataSources) {
             if (src.bounds.contains(coor)) {
-                layer_bounds_point = true;
+                layerBoundsPoint = true;
                 break;
             }
         }
-        return layer_bounds_point;
+        return layerBoundsPoint;
     }
 
     /**
@@ -941,43 +938,39 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     @Override
     public boolean checkSaveConditions() {
-        if (isDataSetEmpty()) {
-            if (1 != GuiHelper.runInEDTAndWaitAndReturn(new Callable<Integer>() {
-                @Override
-                public Integer call() {
-                    ExtendedDialog dialog = new ExtendedDialog(
-                            Main.parent,
-                            tr("Empty document"),
-                            new String[] {tr("Save anyway"), tr("Cancel")}
-                    );
-                    dialog.setContent(tr("The document contains no data."));
-                    dialog.setButtonIcons(new String[] {"save", "cancel"});
-                    return dialog.showDialog().getValue();
-                }
-            })) {
-                return false;
+        if (isDataSetEmpty() && 1 != GuiHelper.runInEDTAndWaitAndReturn(new Callable<Integer>() {
+            @Override
+            public Integer call() {
+                ExtendedDialog dialog = new ExtendedDialog(
+                        Main.parent,
+                        tr("Empty document"),
+                        new String[] {tr("Save anyway"), tr("Cancel")}
+                );
+                dialog.setContent(tr("The document contains no data."));
+                dialog.setButtonIcons(new String[] {"save", "cancel"});
+                return dialog.showDialog().getValue();
             }
+        })) {
+            return false;
         }
 
-        ConflictCollection conflicts = getConflicts();
-        if (conflicts != null && !conflicts.isEmpty()) {
-            if (1 != GuiHelper.runInEDTAndWaitAndReturn(new Callable<Integer>() {
-                @Override
-                public Integer call() {
-                    ExtendedDialog dialog = new ExtendedDialog(
-                            Main.parent,
-                            /* I18N: Display title of the window showing conflicts */
-                            tr("Conflicts"),
-                            new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
-                    );
-                    dialog.setContent(
-                            tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
-                    dialog.setButtonIcons(new String[] {"save", "cancel"});
-                    return dialog.showDialog().getValue();
-                }
-            })) {
-                return false;
+        ConflictCollection conflictsCol = getConflicts();
+        if (conflictsCol != null && !conflictsCol.isEmpty() && 1 != GuiHelper.runInEDTAndWaitAndReturn(new Callable<Integer>() {
+            @Override
+            public Integer call() {
+                ExtendedDialog dialog = new ExtendedDialog(
+                        Main.parent,
+                        /* I18N: Display title of the window showing conflicts */
+                        tr("Conflicts"),
+                        new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
+                );
+                dialog.setContent(
+                        tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
+                dialog.setButtonIcons(new String[] {"save", "cancel"});
+                return dialog.showDialog().getValue();
             }
+        })) {
+            return false;
         }
         return true;
     }
@@ -1005,7 +998,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         File file = getAssociatedFile();
         if (file == null && isRenamed()) {
             String filename = Main.pref.get("lastDirectory") + '/' + getName();
-            if (!OsmImporter.FILE_FILTER.acceptName(filename)) filename = filename + '.' + extension;
+            if (!OsmImporter.FILE_FILTER.acceptName(filename))
+                filename = filename + '.' + extension;
             file = new File(filename);
         }
         return new FileChooserManager()
