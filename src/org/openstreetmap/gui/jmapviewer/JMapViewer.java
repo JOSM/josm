@@ -1062,7 +1062,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     }
 
     /**
-     * Sets whether zoom controls are displayed or not. 
+     * Sets whether zoom controls are displayed or not.
      * @param visible {@code true} if zoom controls are displayed, {@code false} otherwise
      */
     public void setZoomContolsVisible(boolean visible) {
@@ -1072,7 +1072,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     }
 
     /**
-     * Determines whether zoom controls are displayed or not. 
+     * Determines whether zoom controls are displayed or not.
      * @return {@code true} if zoom controls are displayed, {@code false} otherwise
      */
     public boolean getZoomControlsVisible() {
@@ -1149,7 +1149,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     }
 
     /**
-     * Determines whether scroll wrap is enabled or not. 
+     * Determines whether scroll wrap is enabled or not.
      * @return {@code true} if scroll wrap is enabled, {@code false} otherwise
      */
     public boolean isScrollWrapEnabled() {
@@ -1157,7 +1157,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     }
 
     /**
-     * Sets whether scroll wrap is enabled or not. 
+     * Sets whether scroll wrap is enabled or not.
      * @param scrollWrapEnabled {@code true} if scroll wrap is enabled, {@code false} otherwise
      */
     public void setScrollWrapEnabled(boolean scrollWrapEnabled) {

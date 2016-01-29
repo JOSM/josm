@@ -7,7 +7,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapObject;
 
 public class Layer extends AbstractLayer {
     private List<MapObject> elements;
-    
+
     public Layer(String name) {
         super(name);
     }

@@ -11,7 +11,7 @@ public class Style {
     private Color backColor;
     private Stroke stroke;
     private Font font;
-    
+
     private static final AlphaComposite TRANSPARENCY = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);
     private static final AlphaComposite OPAQUE = AlphaComposite.getInstance(AlphaComposite.SRC);
 
