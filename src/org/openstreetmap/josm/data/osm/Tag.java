@@ -11,10 +11,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Tag represents an immutable key/value-pair. Both the key and the value may
- * be empty, but not null.
- *
- * <p/>
+ * Tag represents an immutable key/value-pair. Both the key and the value may be empty, but not null.
+ * <p>
  * It implements the {@link Tagged} interface. However, since instances of this class are immutable,
  * the modifying methods throw an {@link UnsupportedOperationException}.
  */
