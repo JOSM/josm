@@ -53,7 +53,7 @@ public class AttributionSupport {
         }
     }
 
-    public void paintAttribution(Graphics g, int width, int height, ICoordinate topLeft, ICoordinate bottomRight, 
+    public void paintAttribution(Graphics g, int width, int height, ICoordinate topLeft, ICoordinate bottomRight,
             int zoom, ImageObserver observer) {
         if (source == null || !source.requiresAttribution()) {
             attrToUBounds = null;

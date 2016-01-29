@@ -10,7 +10,7 @@ public class MapQuestOsmTileSource extends AbstractMapQuestTileSource {
     public MapQuestOsmTileSource() {
         super("MapQuest-OSM", PATTERN, "mapquest-osm");
     }
-    
+
     @Override
     public String getAttributionText(int zoom, ICoordinate topLeft,
             ICoordinate botRight) {

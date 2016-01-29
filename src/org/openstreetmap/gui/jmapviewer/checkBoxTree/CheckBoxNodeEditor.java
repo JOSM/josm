@@ -16,7 +16,7 @@ import javax.swing.tree.TreePath;
 
 /**
  * Editor for checkBox Tree
- * 
+ *
  * @author galo
  */
 public class CheckBoxNodeEditor extends AbstractCellEditor implements TreeCellEditor {

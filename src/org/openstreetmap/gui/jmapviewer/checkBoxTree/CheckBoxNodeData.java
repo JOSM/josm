@@ -6,7 +6,7 @@ import org.openstreetmap.gui.jmapviewer.LayerGroup;
 
 /**
  * Node Data for checkBox Tree
- * 
+ *
  * @author galo
  */
 public class CheckBoxNodeData {

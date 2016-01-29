@@ -14,7 +14,7 @@ import javax.swing.tree.TreeCellRenderer;
 
 /**
  * Renderer for checkBox Tree
- * 
+ *
  * @author galo
  */
 public class CheckBoxNodeRenderer implements TreeCellRenderer {
@@ -101,7 +101,7 @@ public class CheckBoxNodeRenderer implements TreeCellRenderer {
 /*
     private JPopupMenu createPopupMenu(final AbstractLayer layer) {
         JMenuItem menuItem;
- 
+
         //Create the popup menu.
         if (layer.isVisibleTexts()) menuItem = new JMenuItem("hide texts");
         else menuItem = new JMenuItem("show texts");
@@ -113,7 +113,7 @@ public class CheckBoxNodeRenderer implements TreeCellRenderer {
                 setVisibleTexts(layer, !layer.isVisibleTexts());
             }
         });
- 
+
         return popup;
     }
 

@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 
 /**
  * Node Panel for checkBox Tree
- * 
+ *
  * @author galo
  */
 public class CheckBoxNodePanel extends JPanel {
