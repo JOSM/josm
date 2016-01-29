@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.AllMapCSSTests
     LabelCompositionStrategyTest.class,
     MapCSSWithExtendedTextDirectivesTest.class,
     AllMapCSSTests.class
-    
+
 ])
 public class AllMappaintTests extends TestCase{}
 

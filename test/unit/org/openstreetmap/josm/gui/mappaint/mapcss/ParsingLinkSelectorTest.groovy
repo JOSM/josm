@@ -13,17 +13,17 @@ class ParsingLinkSelectorTest {
     public static void createJOSMFixture(){
         JOSMFixture.createUnitTestFixture().init()
     }
-    
+
     @Test
     public void parseEmptyChildSelector() {
         def css = """
            relation > way {}
         """
         MapCSSStyleSource source = new MapCSSStyleSource(css)
-        source.loadStyleSource()        
+        source.loadStyleSource()
         assert source.rules.size() == 1
     }
-    
+
     @Test
     public void parseEmptyParentSelector() {
         def css = """
@@ -33,8 +33,8 @@ class ParsingLinkSelectorTest {
         source.loadStyleSource()
         assert source.rules.size() == 1
     }
-    
-    
+
+
     @Test
     public void parseChildSelectorWithKeyValueCondition() {
         def css = """
@@ -44,7 +44,7 @@ class ParsingLinkSelectorTest {
         source.loadStyleSource()
         assert source.rules.size() == 1
     }
-    
+
     @Test
     public void parseChildSelectorWithKeyCondition() {
         def css = """
