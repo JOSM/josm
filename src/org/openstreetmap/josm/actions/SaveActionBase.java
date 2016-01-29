@@ -23,9 +23,20 @@ import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.io.FileExporter;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Abstract superclass of save actions.
+ * @since 290
+ */
 public abstract class SaveActionBase extends DiskAccessAction {
     private File file;
 
+    /**
+     * Constructs a new {@code SaveActionBase}.
+     * @param name The action's text as displayed on the menu (if it is added to a menu)
+     * @param iconName The filename of the icon to use
+     * @param tooltip A longer description of the action that will be displayed in the tooltip
+     * @param shortcut A ready-created shortcut object or {@code null} if you don't want a shortcut
+     */
     public SaveActionBase(String name, String iconName, String tooltip, Shortcut shortcut) {
         super(name, iconName, tooltip, shortcut);
     }
@@ -37,6 +48,10 @@ public abstract class SaveActionBase extends DiskAccessAction {
         doSave();
     }
 
+    /**
+     * Saves the active layer.
+     * @return {@code true} if the save operation succeeds
+     */
     public boolean doSave() {
         if (Main.isDisplayingMapView()) {
             Layer layer = Main.map.mapView.getActiveLayer();
@@ -47,6 +62,11 @@ public abstract class SaveActionBase extends DiskAccessAction {
         return false;
     }
 
+    /**
+     * Saves the given layer.
+     * @param layer layer to save
+     * @return {@code true} if the save operation succeeds
+     */
     public boolean doSave(Layer layer) {
         if (!layer.checkSaveConditions())
             return false;
@@ -159,10 +179,12 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * Checks if selected filename has the given extension. If not, adds the extension and asks for overwrite if filename exists.
      *
      * @param fc FileChooser where file was already selected
+     * @param extension file extension
      * @return the {@code File} or {@code null} if the user cancelled the dialog.
      */
     public static File checkFileAndConfirmOverWrite(AbstractFileChooser fc, String extension) {
-        if (fc == null) return null;
+        if (fc == null)
+            return null;
         File file = fc.getSelectedFile();
 
         FileFilter ff = fc.getFileFilter();
@@ -189,8 +211,13 @@ public abstract class SaveActionBase extends DiskAccessAction {
         return file;
     }
 
+    /**
+     * Asks user to confirm overwiting a file.
+     * @param file file to overwrite
+     * @return {@code true} if the file can be written
+     */
     public static boolean confirmOverwrite(File file) {
-        if (file == null || (file.exists())) {
+        if (file == null || file.exists()) {
             ExtendedDialog dialog = new ExtendedDialog(
                     Main.parent,
                     tr("Overwrite"),
@@ -209,6 +236,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
         try {
             filepath = file.getCanonicalPath();
         } catch (IOException ign) {
+            Main.warn(ign);
             return;
         }
 
