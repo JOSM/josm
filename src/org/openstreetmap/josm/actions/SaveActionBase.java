@@ -155,7 +155,13 @@ public abstract class SaveActionBase extends DiskAccessAction {
         return checkFileAndConfirmOverWrite(fc, extension);
     }
 
-    private static File checkFileAndConfirmOverWrite(AbstractFileChooser fc, String extension) {
+    /**
+     * Checks if selected filename has the given extension. If not, adds the extension and asks for overwrite if filename exists.
+     *
+     * @param fc FileChooser where file was already selected
+     * @return the {@code File} or {@code null} if the user cancelled the dialog.
+     */
+    public static File checkFileAndConfirmOverWrite(AbstractFileChooser fc, String extension) {
         if (fc == null) return null;
         File file = fc.getSelectedFile();
 
