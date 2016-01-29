@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import com.drew.metadata.exif.ExifDirectoryBase;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -18,6 +17,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifDirectoryBase;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
@@ -69,7 +69,7 @@ public final class ExifReader {
                 final Date date = DateUtils.fromString(dateStr);
                 if (subSeconds != null) {
                     try {
-                        date.setTime(date.getTime() + Integer.parseInt(subSeconds));
+                        date.setTime(date.getTime() + (long) (1000L * Double.parseDouble("0." + subSeconds)));
                     } catch (NumberFormatException e) {
                         Main.warn("Failed parsing sub seconds from [{0}]", subSeconds);
                         Main.warn(e);

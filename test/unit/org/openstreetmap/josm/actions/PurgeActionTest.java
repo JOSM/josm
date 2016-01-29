@@ -42,18 +42,24 @@ public class PurgeActionTest {
     public void testCopyStringWayRelation() throws FileNotFoundException, IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(12038, "data.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
-            Main.map.mapView.addLayer(new OsmDataLayer(ds, null, null));
-            for (Way w : ds.getWays()) {
-                if (w.getId() == 222191929L) {
-                    ds.addSelected(w);
+            OsmDataLayer layer = new OsmDataLayer(ds, null, null);
+            Main.main.addLayer(layer);
+            try {
+                for (Way w : ds.getWays()) {
+                    if (w.getId() == 222191929L) {
+                        ds.addSelected(w);
+                    }
                 }
-            }
-            new PurgeAction().actionPerformed(null);
-            for (Way w : ds.getWays()) {
-                if (w.getId() == 222191929L) {
-                    assertTrue(w.isIncomplete());
-                    assertEquals(0, w.getNodesCount());
+                new PurgeAction().actionPerformed(null);
+                for (Way w : ds.getWays()) {
+                    if (w.getId() == 222191929L) {
+                        assertTrue(w.isIncomplete());
+                        assertEquals(0, w.getNodesCount());
+                    }
                 }
+            } finally {
+                // Ensure we clean the place before leaving, even if test fails.
+                Main.main.removeLayer(layer);
             }
         }
     }
