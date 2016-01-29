@@ -199,8 +199,10 @@ public class VersionInfoPanel extends JPanel implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         HistoryOsmPrimitive primitive = getPrimitive();
-        Changeset cs = primitive.getChangeset();
-        update(cs, model.isLatest(primitive), primitive.getTimestamp(), primitive.getVersion());
+        if (primitive != null) {
+            Changeset cs = primitive.getChangeset();
+            update(cs, model.isLatest(primitive), primitive.getTimestamp(), primitive.getVersion());
+        }
     }
 
     /**
