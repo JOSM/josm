@@ -37,7 +37,24 @@ public class FileChooserManager {
     private final String lastDirProperty;
     private final String curDir;
 
+    private boolean multiple = false;
+    private String title = null;
+    private Collection<? extends FileFilter> filters;
+    private FileFilter defaultFilter;
+    private int selectionMode = JFileChooser.FILES_ONLY;
+    private String extension = null;
+    private boolean allTypes = false;
+    private File file = null;
+
     private AbstractFileChooser fc;
+
+    /**
+     * Creates a new {@code FileChooserManager} with default values.
+     * @see #createFileChooser
+     */
+    public FileChooserManager() {
+        this(false, null, null);
+    }
 
     /**
      * Creates a new {@code FileChooserManager}.
@@ -101,7 +118,7 @@ public class FileChooserManager {
      * @return this
      */
     public final FileChooserManager createFileChooser() {
-        return doCreateFileChooser(false, null, null, null, null, JFileChooser.FILES_ONLY, false);
+        return doCreateFileChooser();
     }
 
     /**
@@ -118,8 +135,14 @@ public class FileChooserManager {
      * @see DiskAccessAction#createAndOpenFileChooser(boolean, boolean, String, FileFilter, int, String)
      */
     public final FileChooserManager createFileChooser(boolean multiple, String title, FileFilter filter, int selectionMode) {
-        doCreateFileChooser(multiple, title, Collections.singleton(filter), filter, null, selectionMode, false);
-        getFileChooser().setAcceptAllFileFilterUsed(false);
+        multiple(multiple);
+        title(title);
+        filters(Collections.singleton(filter));
+        defaultFilter(filter);
+        selectionMode(selectionMode);
+
+        doCreateFileChooser();
+        fc.setAcceptAllFileFilterUsed(false);
         return this;
     }
 
@@ -139,7 +162,12 @@ public class FileChooserManager {
      */
     public final FileChooserManager createFileChooser(boolean multiple, String title, Collection<? extends FileFilter> filters,
             FileFilter defaultFilter, int selectionMode) {
-        return doCreateFileChooser(multiple, title, filters, defaultFilter, null, selectionMode, false);
+        multiple(multiple);
+        title(title);
+        filters(filters);
+        defaultFilter(defaultFilter);
+        selectionMode(selectionMode);
+        return doCreateFileChooser();
     }
 
     /**
@@ -158,11 +186,103 @@ public class FileChooserManager {
      * @see DiskAccessAction#createAndOpenFileChooser(boolean, boolean, String, FileFilter, int, String)
      */
     public final FileChooserManager createFileChooser(boolean multiple, String title, String extension, boolean allTypes, int selectionMode) {
-        return doCreateFileChooser(multiple, title, null, null, extension, selectionMode, allTypes);
+        multiple(multiple);
+        title(title);
+        extension(extension);
+        allTypes(allTypes);
+        selectionMode(selectionMode);
+        return doCreateFileChooser();
     }
 
-    private FileChooserManager doCreateFileChooser(boolean multiple, String title, Collection<? extends FileFilter> filters,
-            FileFilter defaultFilter, String extension, int selectionMode, boolean allTypes) {
+    /**
+     * Builder method to set {@code multiple} property.
+     * @param value If true, makes the dialog allow multiple file selections
+     * @return this
+     */
+    public FileChooserManager multiple(boolean value) {
+        multiple = value;
+        return this;
+    }
+
+    /**
+     * Builder method to set {@code title} property.
+     * @param value The string that goes in the dialog window's title bar
+     * @return this
+     */
+     public FileChooserManager title(String value) {
+        title = value;
+        return this;
+    }
+
+    /**
+     * Builder method to set {@code filters} property.
+     * @param value The file filters that will be proposed by the dialog
+     * @return this
+     */
+    public FileChooserManager filters(Collection<? extends FileFilter> value) {
+        filters = value;
+        return this;
+    }
+
+    /**
+     * Builder method to set {@code defaultFilter} property.
+     * @param value The file filter that will be selected by default
+     * @return this
+     */
+    public FileChooserManager defaultFilter(FileFilter value) {
+        defaultFilter = value;
+        return this;
+    }
+
+    /**
+     * Builder method to set {@code selectionMode} property.
+     * @param value The selection mode that allows the user to:<br><ul>
+     *                      <li>just select files ({@code JFileChooser.FILES_ONLY})</li>
+     *                      <li>just select directories ({@code JFileChooser.DIRECTORIES_ONLY})</li>
+     *                      <li>select both files and directories ({@code JFileChooser.FILES_AND_DIRECTORIES})</li></ul>
+     * @return this
+     */
+    public FileChooserManager selectionMode(int value) {
+        selectionMode = value;
+        return this;
+    }
+
+    /**
+     * Builder method to set {@code extension} property.
+     * @param value The file extension that will be selected as the default file filter
+     * @return this
+     */
+    public FileChooserManager extension(String value) {
+        extension = value;
+        return this;
+    }
+
+    /**
+     * Builder method to set {@code allTypes} property.
+     * @param value If true, all the files types known by JOSM will be proposed in the "file type" combobox.
+     *              If false, only the file filters that include {@code extension} will be proposed
+     * @return this
+     */
+    public FileChooserManager allTypes(boolean value) {
+        allTypes = value;
+        return this;
+    }
+
+    /**
+     * Builder method to set {@code file} property.
+     * @param value {@link File} object with default filename
+     * @return this
+     */
+    public FileChooserManager file(File value) {
+        file = value;
+        return this;
+    }
+
+    /**
+     * Builds {@code FileChooserManager} object using properties set by builder methods or default values.
+     * @return this
+     */
+    public FileChooserManager doCreateFileChooser() {
         File file = new File(curDir);
         // Use native dialog is preference is set, unless an unsupported selection mode is specifically wanted
         if (PROP_USE_NATIVE_FILE_DIALOG.get() && NativeFileChooser.supportsSelectionMode(selectionMode)) {
@@ -178,6 +298,7 @@ public class FileChooserManager {
         fc.setFileSelectionMode(selectionMode);
         fc.setMultiSelectionEnabled(multiple);
         fc.setAcceptAllFileFilterUsed(false);
+        fc.setSelectedFile(this.file);
 
         if (filters != null) {
             for (FileFilter filter : filters) {
@@ -195,7 +316,7 @@ public class FileChooserManager {
     }
 
     /**
-     * Opens the {@code AbstractFileChooser} that has been created. Nothing happens if it has not been created yet.
+     * Opens the {@code AbstractFileChooser} that has been created.
      * @return the {@code AbstractFileChooser} if the user effectively choses a file or directory. {@code null} if the user cancelled the dialog.
      */
     public final AbstractFileChooser openFileChooser() {
@@ -204,34 +325,42 @@ public class FileChooserManager {
 
     /**
      * Opens the {@code AbstractFileChooser} that has been created and waits for the user to choose a file/directory, or cancel the dialog.<br>
-     * Nothing happens if the dialog has not been created yet.<br>
      * When the user choses a file or directory, the {@code lastDirProperty} is updated to the chosen directory path.
      *
      * @param parent The Component used as the parent of the AbstractFileChooser. If null, uses {@code Main.parent}.
      * @return the {@code AbstractFileChooser} if the user effectively choses a file or directory. {@code null} if the user cancelled the dialog.
      */
     public AbstractFileChooser openFileChooser(Component parent) {
-        if (fc != null) {
-            if (parent == null) {
-                parent = Main.parent;
-            }
+        if (fc == null) doCreateFileChooser();
 
-            int answer = open ? fc.showOpenDialog(parent) : fc.showSaveDialog(parent);
-            if (answer != JFileChooser.APPROVE_OPTION) {
+        if (parent == null) {
+            parent = Main.parent;
+        }
+
+        int answer = open ? fc.showOpenDialog(parent) : fc.showSaveDialog(parent);
+        if (answer != JFileChooser.APPROVE_OPTION) {
+            return null;
+        }
+
+        if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
+            Main.pref.put(lastDirProperty, fc.getCurrentDirectory().getAbsolutePath());
+        }
+
+        if (!open) {
+            File file = fc.getSelectedFile();
+            if (!SaveActionBase.confirmOverwrite(file)) {
                 return null;
-            }
-
-            if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
-                Main.pref.put(lastDirProperty, fc.getCurrentDirectory().getAbsolutePath());
-            }
-
-            if (!open) {
-                File file = fc.getSelectedFile();
-                if (!SaveActionBase.confirmOverwrite(file)) {
-                    return null;
-                }
             }
         }
         return fc;
+    }
+
+    /**
+     * Opens the file chooser dialog, then checks if filename has the given extension. If not, adds the extension and asks for overwrite if filename exists.
+     *
+     * @return the {@code File} or {@code null} if the user cancelled the dialog.
+     */
+    public File getFileForSave() {
+        return SaveActionBase.checkFileAndConfirmOverWrite(openFileChooser(), extension);
     }
 }

@@ -44,7 +44,6 @@ import javax.swing.JScrollPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
-import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
@@ -91,7 +90,9 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.io.OsmImporter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
@@ -1001,7 +1002,17 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     @Override
     public File createAndOpenSaveFileChooser() {
         String extension = Main.pref.get("save.extension.osm", "osm");
-        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save OSM file"), extension);
+        File file = getAssociatedFile();
+        if (file == null && isRenamed()) {
+            String filename = Main.pref.get("lastDirectory") + '/' + getName();
+            if (!OsmImporter.FILE_FILTER.acceptName(filename)) filename = filename + '.' + extension;
+            file = new File(filename);
+        }
+        return new FileChooserManager()
+            .title(tr("Save OSM file"))
+            .extension(extension)
+            .file(file)
+            .getFileForSave();
     }
 
     @Override
