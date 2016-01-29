@@ -7,8 +7,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -119,8 +120,11 @@ public class UntaggedWay extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
+        DataSet ds = JosmAction.getCurrentDataSet();
+        if (ds == null)
+            return;
         waysUsedInRelations = new HashSet<>();
-        for (Relation r : Main.main.getCurrentDataSet().getRelations()) {
+        for (Relation r : ds.getRelations()) {
             if (r.isUsable()) {
                 for (RelationMember m : r.getMembers()) {
                     if (r.isMultipolygon() || WHITELIST.contains(m.getRole())) {

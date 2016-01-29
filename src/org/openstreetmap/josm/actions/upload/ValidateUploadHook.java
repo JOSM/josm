@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -72,11 +73,15 @@ public class ValidateUploadHook implements UploadHook {
             }
         }
         tests = null;
-        OsmDataLayer editLayer = Main.main.getEditLayer();
-        editLayer.validationErrors.clear();
-        editLayer.validationErrors.addAll(errors);
-        Main.map.validatorDialog.tree.setErrors(errors);
-        if (errors == null || errors.isEmpty())
+        OsmDataLayer editLayer = JosmAction.getEditLayer();
+        if (editLayer != null) {
+            editLayer.validationErrors.clear();
+            editLayer.validationErrors.addAll(errors);
+        }
+        if (Main.map != null) {
+            Main.map.validatorDialog.tree.setErrors(errors);
+        }
+        if (errors.isEmpty())
             return true;
 
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {

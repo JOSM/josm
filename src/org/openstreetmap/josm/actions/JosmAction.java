@@ -207,7 +207,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      *
      * @return the current edit layer. null, if no edit layer exists
      */
-    protected static OsmDataLayer getEditLayer() {
+    public static OsmDataLayer getEditLayer() {
         return Main.main != null ? Main.main.getEditLayer() : null;
     }
 
