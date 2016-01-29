@@ -1625,28 +1625,28 @@ node[man_made=cutline] {
 /* office tags */
 /***************/
 
-node[office=accountant],
-node[office=administrative],
-node[office=advertising_agency],
-node[office=architect],
-node[office=association],
-node[office=company],
-node[office=educational_institution],
-node[office=employment_agency],
-node[office=estate_agent],
-node[office=foundation],
-node[office=government],
-node[office=insurance],
-node[office=it],
-node[office=lawyer],
-node[office=newspaper],
-node[office=ngo],
-node[office=notary],
-node[office=political_party],
-node[office=religion],
-node[office=research],
-node[office=tax_advisor],
-node[office=telecommunication] {
+area[office=accountant],
+area[office=administrative],
+area[office=advertising_agency],
+area[office=architect],
+area[office=association],
+area[office=company],
+area[office=educational_institution],
+area[office=employment_agency],
+area[office=estate_agent],
+area[office=foundation],
+area[office=government],
+area[office=insurance],
+area[office=it],
+area[office=lawyer],
+area[office=newspaper],
+area[office=ngo],
+area[office=notary],
+area[office=political_party],
+area[office=religion],
+area[office=research],
+area[office=tax_advisor],
+area[office=telecommunication] {
     fill-color: office#de5696;
 }
 node[office=accountant] {
@@ -3206,16 +3206,58 @@ node[vending=excrement_bags] {
 /* craft tags */
 /**************/
 
-area[craft=painter],
+area[craft=carpenter],
+area[craft=shoemaker],
+area[craft=photographer],
+area[craft=metal_construction],
+area[craft=electrician],
+area[craft=brewery],
 area[craft=plumber],
-area[craft=pottery],
+area[craft=sawmill],
+area[craft=gardener],
+area[craft=winery],
+area[craft=hvac],
+area[craft=painter],
 area[craft=stonemason],
-area[craft=tiler],
-area[craft=window_construction] {
+area[craft=handicraft],
+area[craft=pottery],
+area[craft=key_cutter],
+area[craft=caterer],
+area[craft=roofer],
+area[craft=beekeeper],
+area[craft=blacksmith],
+area[craft=locksmith],
+area[craft=window_construction],
+area[craft=upholsterer],
+area[craft=tiler] {
     fill-color: craft#999900;
 }
-node[craft=painter] {
-    icon-image: "craft/painter.png";
+node[craft=carpenter] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=shoemaker] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=photographer] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=metal_construction] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}node[craft=electrician] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=brewery] {
+    icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
@@ -3224,8 +3266,28 @@ node[craft=plumber] {
     set icon_z17;
     text: auto;
 }
-node[craft=pottery] {
-    icon-image: "craft/pottery.png";
+node[craft=sawmill] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=gardener] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=winery] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=hvac] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=painter] {
+    icon-image: "craft/painter.png";
     set icon_z17;
     text: auto;
 }
@@ -3234,13 +3296,58 @@ node[craft=stonemason] {
     set icon_z17;
     text: auto;
 }
-node[craft=tiler] {
-    icon-image: "craft/tiler.png";
+node[craft=handicraft] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=pottery] {
+    icon-image: "craft/pottery.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=key_cutter] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=caterer] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=roofer] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=beekeeper] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=blacksmith] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=locksmith] {
+    icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
 node[craft=window_construction] {
     icon-image: "craft/window_construction.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=upholsterer] {
+    icon-image: "misc/no_icon.png";
+    set icon_z17;
+    text: auto;
+}
+node[craft=tiler] {
+    icon-image: "craft/tiler.png";
     set icon_z17;
     text: auto;
 }

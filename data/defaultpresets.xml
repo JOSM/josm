@@ -8185,6 +8185,176 @@
         <reference ref="link_contact_address" />
     </item>
   </group> <!-- Offices -->
+  <group name="Craft" icon="styles/standard/craft/stonemason.png">
+    <item name="Carpenter" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=carpenter" />
+        <space />
+        <key key="craft" value="carpenter" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Carpenter -->
+    <item name="Shoemaker" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=shoemaker" />
+        <space />
+        <key key="craft" value="shoemaker" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Shoemaker -->
+    <item name="Photographer" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=photographer" />
+        <space />
+        <key key="craft" value="photographer" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Photographer -->
+    <item name="Metal construction" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=metal_construction" />
+        <space />
+        <key key="craft" value="metal_construction" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Metal construction -->
+    <item name="Electrician" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=electrician" />
+        <space />
+        <key key="craft" value="electrician" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Electrician -->
+    <item name="Brewery" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=brewery" />
+        <space />
+        <key key="craft" value="brewery" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Brewery -->
+    <item name="Plumber" icon="styles/standard/craft/plumber.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=plumber" />
+        <space />
+        <key key="craft" value="plumber" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Plumber -->
+    <item name="Sawmill" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=sawmill" />
+        <space />
+        <key key="craft" value="sawmill" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Sawmill -->
+    <item name="Gardener" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=gardener" />
+        <space />
+        <key key="craft" value="gardener" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Gardener -->
+    <item name="Winery" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=winery" />
+        <space />
+        <key key="craft" value="winery" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Winery -->
+    <item name="Hvac" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=hvac" />
+        <space />
+        <key key="craft" value="hvac" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Hvac -->
+    <item name="Painter" icon="styles/standard/craft/painter.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=painter" />
+        <space />
+        <key key="craft" value="painter" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Painter -->
+    <item name="Stonemason" icon="styles/standard/craft/stonemason.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=stonemason" />
+        <space />
+        <key key="craft" value="stonemason" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Stonemason -->
+    <item name="Handicraft" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=handicraft" />
+        <space />
+        <key key="craft" value="handicraft" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Handicraft -->
+    <item name="Pottery" icon="styles/standard/craft/pottery.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=pottery" />
+        <space />
+        <key key="craft" value="pottery" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Pottery -->
+    <item name="Key cutter" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=key_cutter" />
+        <space />
+        <key key="craft" value="key_cutter" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Key cutter -->
+    <item name="Caterer" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=caterer" />
+        <space />
+        <key key="craft" value="caterer" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Caterer -->
+    <item name="Roofer" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=roofer" />
+        <space />
+        <key key="craft" value="roofer" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Roofer -->
+    <item name="Beekeeper" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=beekeeper" />
+        <space />
+        <key key="craft" value="beekeeper" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Beekeeper -->
+    <item name="Blacksmith" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=blacksmith" />
+        <space />
+        <key key="craft" value="blacksmith" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Blacksmith -->
+    <item name="Locksmith" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=locksmith" />
+        <space />
+        <key key="craft" value="locksmith" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Locksmith -->
+    <item name="Window construction" icon="styles/standard/craft/window_construction.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=window_construction" />
+        <space />
+        <key key="craft" value="window_construction" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Window construction -->
+    <item name="Upholsterer" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=upholsterer" />
+        <space />
+        <key key="craft" value="upholsterer" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Upholsterer -->
+    <item name="Tiler" icon="styles/standard/craft/tiler.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=tiler" />
+        <space />
+        <key key="craft" value="tiler" />
+        <reference ref="name_operator_oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Tiler -->
+  </group> <!-- Craft -->
   <group name="Geography" icon="presets/peak.svg">
     <group name="Boundaries" icon="presets/boundaries.png">
         <item name="Administrative" icon="presets/boundaries.png" type="way,closedway,relation" preset_name_label="true">
