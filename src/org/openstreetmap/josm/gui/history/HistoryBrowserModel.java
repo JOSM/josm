@@ -219,7 +219,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * TODO: Maybe rename to reflect this? eg. updateNodeListTableModels
      */
     protected void initNodeListTableModels() {
-        if (current.getType() != OsmPrimitiveType.WAY || reference.getType() != OsmPrimitiveType.WAY)
+        if (current == null || current.getType() != OsmPrimitiveType.WAY
+         || reference == null || reference.getType() != OsmPrimitiveType.WAY)
             return;
         TwoColumnDiff diff = new TwoColumnDiff(
                 ((HistoryWay) reference).getNodes().toArray(),
