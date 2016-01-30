@@ -16,6 +16,9 @@ public class IntegerProperty extends AbstractProperty<Integer> {
      */
     public IntegerProperty(String key, int defaultValue) {
         super(key, defaultValue);
+        if (Main.pref != null) {
+            get();
+        }
     }
 
     @Override

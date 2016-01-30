@@ -15,6 +15,9 @@ public class BooleanProperty extends AbstractProperty<Boolean> {
      */
     public BooleanProperty(String key, boolean defaultValue) {
         super(key, defaultValue);
+        if (Main.pref != null) {
+            get();
+        }
     }
 
     @Override
