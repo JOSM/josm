@@ -3961,6 +3961,21 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Water Park -->
+        <item name="Swimming Pool" icon="styles/standard/sport/pool.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=swimming_pool"
+                  ca.href="http://wiki.openstreetmap.org/wiki/Ca:Tag:leisure=swimming_pool"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=swimming_pool"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=swimming_pool"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:leisure=swimming_pool"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=swimming_pool"
+                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=swimming_pool"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:leisure=swimming_pool" />
+            <key key="leisure" value="swimming_pool" />
+            <space />
+            <label text="Used for the water area only." />
+            <space />
+            <combo key="access" text="Access" values="yes,customers,private" />
+        </item> <!-- Swimming Pool -->
         <item name="Sauna" icon="presets/sauna.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=sauna"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=sauna"
@@ -4051,18 +4066,6 @@
             <key key="leisure" value="fishing" />
             <text key="name" text="Name" />
         </item> <!-- Fishing -->
-        <item name="Private Swimming Pool" icon="styles/standard/sport/pool.png" type="node,closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=swimming_pool"
-                  ca.href="http://wiki.openstreetmap.org/wiki/Ca:Tag:leisure=swimming_pool"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=swimming_pool"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=swimming_pool"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:leisure=swimming_pool"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=swimming_pool"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:leisure=swimming_pool"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:leisure=swimming_pool" />
-            <key key="leisure" value="swimming_pool" />
-            <key key="access" value="private" />
-        </item> <!-- Private Swimming Pool -->
         <separator/>
         <item name="Night Club" icon="styles/standard/leisure/discoball.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nightclub"
