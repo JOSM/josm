@@ -14,8 +14,8 @@
    viewBox="0 0 16 16"
    id="svg4264"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="bridge_movable4.svg">
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="bridge_movable.svg">
   <defs
      id="defs4266" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="8"
-     inkscape:cx="7.2832951"
-     inkscape:cy="16.201829"
+     inkscape:zoom="22.627417"
+     inkscape:cx="10.409927"
+     inkscape:cy="7.5038767"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -49,7 +49,12 @@
      inkscape:snap-center="true"
      inkscape:snap-grids="true"
      inkscape:snap-to-guides="true"
-     inkscape:snap-page="true">
+     inkscape:snap-page="true"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
        id="grid4137" />
@@ -62,7 +67,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <cc:license
            rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
       </cc:Work>
@@ -83,7 +88,7 @@
      id="layer1"
      transform="translate(0,-1036.3621)">
     <rect
-       style="fill:#000000;fill-opacity:1;stroke:none;stroke-opacity:1"
+       style="fill:#1a1a1a;fill-opacity:1;stroke:none;stroke-opacity:1"
        id="rect4202-1"
        width="6.1549902"
        height="2.3634679"
@@ -92,12 +97,12 @@
        transform="matrix(0.70710695,-0.70710662,0.70710695,0.70710662,0,0)" />
     <path
        inkscape:connector-curvature="0"
-       style="fill:#000000"
+       style="fill:#1a1a1a"
        d="m -4.7683724e-7,1042.3621 0,3 C 2.0000005,1045.3621 3.0000005,1046.0887 3.0253915,1048.3621 l 0,4 0.330078,0 1.09375,0 0.550781,0 0,-4 0,-6 -5.00000097683724,0 z"
        id="path3444-5-9" />
     <path
        inkscape:connector-curvature="0"
-       style="fill:#000000"
+       style="fill:#1a1a1a"
        d="m 11.000003,1042.3621 0,5.5625 c 0.01005,0.1443 0.02734,0.2784 0.02734,0.4375 l 0,4 1.972662,0 0,-4 c 1e-6,-2.2734 1,-3 3,-3 l 0,-3 -5.000002,0 z"
        id="path3444-5-1-4" />
   </g>
