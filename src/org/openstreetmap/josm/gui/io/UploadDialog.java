@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -176,13 +177,13 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // -- upload button
-        btnUpload = new SideButton(new UploadAction());
+        btnUpload = new SideButton(new UploadAction(this));
         pnl.add(btnUpload);
         btnUpload.setFocusable(true);
         InputMapUtils.enableEnter(btnUpload);
 
         // -- cancel button
-        CancelAction cancelAction = new CancelAction();
+        CancelAction cancelAction = new CancelAction(this);
         pnl.add(new SideButton(cancelAction));
         getRootPane().registerKeyboardAction(
                 cancelAction,
@@ -369,50 +370,20 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         pnlChangesetManagement.setSelectedChangesetForNextUpload(cs);
     }
 
-    /**
-     * @deprecated No longer supported, does nothing;
-     * @return empty map
-     */
-    @Deprecated
-    public Map<String, String> getDefaultChangesetTags() {
-        return pnlTagSettings.getDefaultTags();
-    }
-
-    /**
-     * @param tags ignored
-     * @deprecated No longer supported, does nothing; use {@link #setChangesetTags(DataSet)} instead!
-     */
-    @Deprecated
-    public void setDefaultChangesetTags(Map<String, String> tags) {
-        // Deprecated
-    }
-
-    /**
-     * Replies the {@link UploadStrategySpecification} the user entered in the dialog.
-     *
-     * @return the {@link UploadStrategySpecification} the user entered in the dialog.
-     */
+    @Override
     public UploadStrategySpecification getUploadStrategySpecification() {
         UploadStrategySpecification spec = pnlUploadStrategySelectionPanel.getUploadStrategySpecification();
         spec.setCloseChangesetAfterUpload(pnlChangesetManagement.isCloseChangesetAfterUpload());
         return spec;
     }
 
-    /**
-     * Returns the current value for the upload comment
-     *
-     * @return the current value for the upload comment
-     */
-    protected String getUploadComment() {
+    @Override
+    public String getUploadComment() {
         return changesetCommentModel.getComment();
     }
 
-    /**
-     * Returns the current value for the changeset source
-     *
-     * @return the current value for the changeset source
-     */
-    protected String getUploadSource() {
+    @Override
+    public String getUploadSource() {
         return changesetSourceModel.getComment();
     }
 
@@ -448,11 +419,14 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     }
 
     /**
-     * Handles an upload
-     *
+     * Handles an upload.
      */
-    class UploadAction extends AbstractAction {
-        UploadAction() {
+    static class UploadAction extends AbstractAction {
+
+        private final transient IUploadDialog dialog;
+
+        UploadAction(IUploadDialog dialog) {
+            this.dialog = dialog;
             putValue(NAME, tr("Upload Changes"));
             putValue(SMALL_ICON, ImageProvider.get("upload"));
             putValue(SHORT_DESCRIPTION, tr("Upload the changed primitives"));
@@ -492,19 +466,25 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         }
 
         protected boolean warnUploadTag(final String title, final String message, final String togglePref) {
-            ExtendedDialog dlg = new ExtendedDialog(UploadDialog.this,
-                    title,
-                    new String[] {tr("Revise"), tr("Cancel"), tr("Continue as is")});
-            dlg.setContent("<html>" + message + "</html>");
-            dlg.setButtonIcons(new Icon[] {
+            String[] buttonTexts = new String[] {tr("Revise"), tr("Cancel"), tr("Continue as is")};
+            Icon[] buttonIcons = new Icon[] {
                     new ImageProvider("ok").setMaxSize(ImageSizes.LARGEICON).get(),
                     new ImageProvider("cancel").setMaxSize(ImageSizes.LARGEICON).get(),
                     new ImageProvider("upload").setMaxSize(ImageSizes.LARGEICON).addOverlay(
-                            new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get()});
-            dlg.setToolTipTexts(new String[] {
+                            new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get()};
+            String[] tooltips = new String[] {
                     tr("Return to the previous dialog to enter a more descriptive comment"),
                     tr("Cancel and return to the previous dialog"),
-                    tr("Ignore this hint and upload anyway")});
+                    tr("Ignore this hint and upload anyway")};
+
+            if (GraphicsEnvironment.isHeadless()) {
+                return false;
+            }
+
+            ExtendedDialog dlg = new ExtendedDialog((Component) dialog, title, buttonTexts);
+            dlg.setContent("<html>" + message + "</html>");
+            dlg.setButtonIcons(buttonIcons);
+            dlg.setToolTipTexts(tooltips);
             dlg.setIcon(JOptionPane.WARNING_MESSAGE);
             dlg.toggleEnable(togglePref);
             dlg.setCancelButton(1, 2);
@@ -513,7 +493,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
         protected void warnIllegalChunkSize() {
             HelpAwareOptionPane.showOptionDialog(
-                    UploadDialog.this,
+                    (Component) dialog,
                     tr("Please enter a valid chunk size first"),
                     tr("Illegal chunk size"),
                     JOptionPane.ERROR_MESSAGE,
@@ -523,18 +503,21 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if ((getUploadComment().trim().length() < 10 && warnUploadComment()) /* abort for missing comment */
-                    || (getUploadSource().trim().isEmpty() && warnUploadSource()) /* abort for missing changeset source */
-                    ) {
-                tpConfigPanels.setSelectedIndex(0);
-                pnlBasicUploadSettings.initEditingOfUploadComment();
+            if (dialog.getUploadComment().trim().length() < 10 && warnUploadComment()) {
+                // abort for missing comment
+                dialog.handleMissingComment();
+                return;
+            }
+            if (dialog.getUploadSource().trim().isEmpty() && warnUploadSource()) {
+                // abort for missing changeset source
+                dialog.handleMissingSource();
                 return;
             }
 
             /* test for empty tags in the changeset metadata and proceed only after user's confirmation.
              * though, accept if key and value are empty (cf. xor). */
             List<String> emptyChangesetTags = new ArrayList<>();
-            for (final Entry<String, String> i : pnlTagSettings.getTags(true).entrySet()) {
+            for (final Entry<String, String> i : dialog.getTags(true).entrySet()) {
                 final boolean isKeyEmpty = i.getKey() == null || i.getKey().trim().isEmpty();
                 final boolean isValueEmpty = i.getValue() == null || i.getValue().trim().isEmpty();
                 final boolean ignoreKey = "comment".equals(i.getKey()) || "source".equals(i.getKey());
@@ -552,29 +535,33 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                     JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.WARNING_MESSAGE
             )) {
-                tpConfigPanels.setSelectedIndex(0);
-                pnlBasicUploadSettings.initEditingOfUploadComment();
+                dialog.handleMissingComment();
                 return;
             }
 
-            UploadStrategySpecification strategy = getUploadStrategySpecification();
+            UploadStrategySpecification strategy = dialog.getUploadStrategySpecification();
             if (strategy.getStrategy().equals(UploadStrategy.CHUNKED_DATASET_STRATEGY)
                     && strategy.getChunkSize() == UploadStrategySpecification.UNSPECIFIED_CHUNK_SIZE) {
                 warnIllegalChunkSize();
-                tpConfigPanels.setSelectedIndex(0);
+                dialog.handleIllegalChunkSize();
                 return;
             }
-            setCanceled(false);
-            setVisible(false);
+            if (dialog instanceof AbstractUploadDialog) {
+                ((AbstractUploadDialog) dialog).setCanceled(false);
+                ((AbstractUploadDialog) dialog).setVisible(false);
+            }
         }
     }
 
     /**
-     * Action for canceling the dialog
-     *
+     * Action for canceling the dialog.
      */
-    class CancelAction extends AbstractAction {
-        CancelAction() {
+    static class CancelAction extends AbstractAction {
+
+        private final transient IUploadDialog dialog;
+
+        CancelAction(IUploadDialog dialog) {
+            this.dialog = dialog;
             putValue(NAME, tr("Cancel"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
             putValue(SHORT_DESCRIPTION, tr("Cancel the upload and resume editing"));
@@ -582,8 +569,10 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            setCanceled(true);
-            setVisible(false);
+            if (dialog instanceof AbstractUploadDialog) {
+                ((AbstractUploadDialog) dialog).setCanceled(true);
+                ((AbstractUploadDialog) dialog).setVisible(false);
+            }
         }
     }
 
@@ -663,5 +652,27 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      */
     public String getLastChangesetSourceFromHistory() {
         return getLastChangesetTagFromHistory(BasicUploadSettingsPanel.SOURCE_HISTORY_KEY, BasicUploadSettingsPanel.getDefaultSources());
+    }
+
+    @Override
+    public Map<String, String> getTags(boolean keepEmpty) {
+        return pnlTagSettings.getTags(keepEmpty);
+    }
+
+    @Override
+    public void handleMissingComment() {
+        tpConfigPanels.setSelectedIndex(0);
+        pnlBasicUploadSettings.initEditingOfUploadComment();
+    }
+
+    @Override
+    public void handleMissingSource() {
+        tpConfigPanels.setSelectedIndex(0);
+        pnlBasicUploadSettings.initEditingOfUploadSource();
+    }
+
+    @Override
+    public void handleIllegalChunkSize() {
+        tpConfigPanels.setSelectedIndex(0);
     }
 }

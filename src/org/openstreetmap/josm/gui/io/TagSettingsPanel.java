@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.io;
 
 import java.awt.BorderLayout;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -13,7 +12,6 @@ import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -92,24 +90,6 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      */
     public Map<String, String> getTags(boolean keepEmpty) {
         return pnlTagEditor.getModel().getTags(keepEmpty);
-    }
-
-    /**
-     * @return an empty map
-     * @deprecated No longer supported, returns an empty map
-     */
-    @Deprecated
-    public Map<String, String> getDefaultTags() {
-        return new HashMap<>();
-    }
-
-    /**
-     * @param tags ignored
-     * @deprecated No longer supported, does nothing; use {@link UploadDialog#setChangesetTags(DataSet)} instead!
-     */
-    @Deprecated
-    public void setDefaultTags(Map<String, String> tags) {
-        // Deprecated
     }
 
     /**

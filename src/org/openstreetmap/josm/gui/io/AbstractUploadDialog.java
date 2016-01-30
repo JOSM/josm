@@ -12,7 +12,7 @@ import javax.swing.JDialog;
  * This is an abstract base class for dialogs used for entering generic upload options.
  * @since 7358
  */
-public abstract class AbstractUploadDialog extends JDialog {
+public abstract class AbstractUploadDialog extends JDialog implements IUploadDialog {
 
     private boolean canceled;
 
@@ -180,11 +180,7 @@ public abstract class AbstractUploadDialog extends JDialog {
         super(owner);
     }
 
-    /**
-     * Returns true if the dialog was canceled
-     *
-     * @return true if the dialog was canceled
-     */
+    @Override
     public final boolean isCanceled() {
         return canceled;
     }
@@ -198,9 +194,7 @@ public abstract class AbstractUploadDialog extends JDialog {
         this.canceled = canceled;
     }
 
-    /**
-     * Remembers the user input in the preference settings
-     */
+    @Override
     public void rememberUserInput() {
         // Override if needed
     }

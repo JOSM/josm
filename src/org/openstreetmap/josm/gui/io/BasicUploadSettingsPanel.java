@@ -94,6 +94,10 @@ public class BasicUploadSettingsPanel extends JPanel {
         return pnl;
     }
 
+    /**
+     * Returns the default list of sources.
+     * @return the default list of sources
+     */
     public static List<String> getDefaultSources() {
         return Arrays.asList("knowledge", "survey", "Bing");
     }
@@ -139,10 +143,14 @@ public class BasicUploadSettingsPanel extends JPanel {
                     }
 
                     @Override
-                    public void keyReleased(KeyEvent e) {}
+                    public void keyReleased(KeyEvent e) {
+                        // Do nothing
+                    }
 
                     @Override
-                    public void keyPressed(KeyEvent e) {}
+                    public void keyPressed(KeyEvent e) {
+                        // Do nothing
+                    }
                 }
         );
     }
@@ -168,9 +176,20 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadComment.getEditorComponent().requestFocusInWindow();
     }
 
+    /**
+     * Initializes editing of upload comment.
+     */
     public void initEditingOfUploadComment() {
         hcbUploadComment.getEditor().selectAll();
         hcbUploadComment.requestFocusInWindow();
+    }
+
+    /**
+     * Initializes editing of upload source.
+     */
+    public void initEditingOfUploadSource() {
+        hcbUploadSource.getEditor().selectAll();
+        hcbUploadSource.requestFocusInWindow();
     }
 
     public UploadParameterSummaryPanel getUploadParameterSummaryPanel() {
