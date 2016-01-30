@@ -11,6 +11,9 @@ public abstract class ParametrizedEnumProperty<T extends Enum<T>> {
     public ParametrizedEnumProperty(Class<T> enumClass, T defaultValue) {
         this.defaultValue = defaultValue;
         this.enumClass = enumClass;
+        if (Main.pref != null) {
+            get();
+        }
     }
 
     protected abstract String getKey(String... params);

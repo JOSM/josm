@@ -17,6 +17,9 @@ public class CollectionProperty extends AbstractProperty<Collection<String>> {
      */
     public CollectionProperty(String key, Collection<String> defaultValue) {
         super(key, defaultValue);
+        if (Main.pref != null) {
+            get();
+        }
     }
 
     @Override

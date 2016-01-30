@@ -23,6 +23,9 @@ public class ColorProperty extends AbstractProperty<Color> implements ColorKey {
     public ColorProperty(String colName, Color defaultValue) {
         super(getColorKey(colName), defaultValue);
         this.name = colName;
+        if (Main.pref != null) {
+            get();
+        }
     }
 
     @Override

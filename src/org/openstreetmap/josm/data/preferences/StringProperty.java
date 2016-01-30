@@ -15,6 +15,9 @@ public class StringProperty extends AbstractProperty<String> {
      */
     public StringProperty(String key, String defaultValue) {
         super(key, defaultValue);
+        if (Main.pref != null) {
+            get();
+        }
     }
 
     @Override
