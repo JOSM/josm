@@ -236,10 +236,9 @@ public class TagEditHelper {
             recentTags.clear();
             Collection<String> c = Main.pref.getCollection("properties.recent-tags");
             Iterator<String> it = c.iterator();
-            String key, value;
             while (it.hasNext()) {
-                key = it.next();
-                value = it.next();
+                String key = it.next();
+                String value = it.next();
                 recentTags.put(new Tag(key, value), null);
             }
         }
@@ -724,7 +723,7 @@ public class TagEditHelper {
                 suggestRecentlyAddedTags();
                 mainPanel.add(recentTagsPanel, GBC.eol().fill(GBC.HORIZONTAL));
             } else {
-                Dimension panelOldSize = panelOldSize = recentTagsPanel.getPreferredSize();
+                Dimension panelOldSize = recentTagsPanel.getPreferredSize();
                 recentTagsPanel.removeAll();
                 suggestRecentlyAddedTags();
                 Dimension panelNewSize = recentTagsPanel.getPreferredSize();
