@@ -176,7 +176,7 @@ public class OpenFileAction extends DiskAccessAction {
 
         @Override
         protected void finish() {
-            // do nothing
+            Main.map.repaint();
         }
 
         protected void alertFilesNotMatchingWithImporter(Collection<File> files, FileImporter importer) {
