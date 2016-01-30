@@ -9,6 +9,8 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -220,6 +222,14 @@ public class ColorPreference implements SubPreferenceSetting {
                 defaultSet.setEnabled(sel >= 0);
             }
         };
+        colors.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    colorEdit.doClick();
+                }
+            }
+        });
         colors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final TableCellRenderer oldColorsRenderer = colors.getDefaultRenderer(Object.class);
         colors.setDefaultRenderer(Object.class, new TableCellRenderer() {

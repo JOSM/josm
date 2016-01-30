@@ -347,7 +347,8 @@ public class FileChooserManager {
             Main.pref.put(lastDirProperty, fc.getCurrentDirectory().getAbsolutePath());
         }
 
-        if (!open && !SaveActionBase.confirmOverwrite(fc.getSelectedFile())) {
+        if (!open && !FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get() &&
+            !SaveActionBase.confirmOverwrite(fc.getSelectedFile())) {
             return null;
         }
         return fc;

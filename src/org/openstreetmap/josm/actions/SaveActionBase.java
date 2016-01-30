@@ -204,8 +204,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 fn += '.' + ((ExtensionFileFilter) ff).getDefaultExtension();
             }
             file = new File(fn);
-            // Confirm overwrite, except for OSX native file dialogs which already ask for confirmation (see #11362)
-            if (!(Main.isPlatformOsx() && FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get()) && !confirmOverwrite(file))
+            if (!fc.getSelectedFile().exists() && !confirmOverwrite(file))
                 return null;
         }
         return file;
