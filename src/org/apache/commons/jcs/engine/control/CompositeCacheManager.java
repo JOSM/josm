@@ -24,14 +24,13 @@ import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.security.AccessControlException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.management.MBeanServer;
@@ -57,6 +56,7 @@ import org.apache.commons.jcs.engine.control.event.ElementEventQueue;
 import org.apache.commons.jcs.engine.control.event.behavior.IElementEventQueue;
 import org.apache.commons.jcs.engine.stats.CacheStats;
 import org.apache.commons.jcs.engine.stats.behavior.ICacheStats;
+import org.apache.commons.jcs.utils.config.OptionConverter;
 import org.apache.commons.jcs.utils.threadpool.DaemonThreadFactory;
 import org.apache.commons.jcs.utils.threadpool.ThreadPoolManager;
 import org.apache.commons.logging.Log;
@@ -79,15 +79,18 @@ public class CompositeCacheManager
     /** JMX object name */
     public static final String JMX_OBJECT_NAME = "org.apache.commons.jcs:type=JCSAdminBean";
 
+    /** default region prefix */
+    private static final String DEFAULT_REGION = "jcs.default";
+
     /** Caches managed by this cache manager */
     private final ConcurrentMap<String, ICache<?, ?>> caches =
         new ConcurrentHashMap<String, ICache<?, ?>>();
 
     /** Lock for initialization of caches */
-    private ReentrantLock cacheLock = new ReentrantLock();
+    private final ReentrantLock cacheLock = new ReentrantLock();
 
     /** Number of clients accessing this cache manager */
-    private int clients;
+    private final AtomicInteger clients = new AtomicInteger(0);
 
     /** Default cache attributes for this cache manager */
     private ICompositeCacheAttributes defaultCacheAttr = new CompositeCacheAttributes();
@@ -97,15 +100,15 @@ public class CompositeCacheManager
 
     /** Used to keep track of configured auxiliaries */
     private final ConcurrentMap<String, AuxiliaryCacheFactory> auxiliaryFactoryRegistry =
-        new ConcurrentHashMap<String, AuxiliaryCacheFactory>( 11 );
+        new ConcurrentHashMap<String, AuxiliaryCacheFactory>( );
 
     /** Used to keep track of attributes for auxiliaries. */
     private final ConcurrentMap<String, AuxiliaryCacheAttributes> auxiliaryAttributeRegistry =
-        new ConcurrentHashMap<String, AuxiliaryCacheAttributes>( 11 );
+        new ConcurrentHashMap<String, AuxiliaryCacheAttributes>( );
 
     /** Used to keep track of configured auxiliaries */
     private final ConcurrentMap<String, AuxiliaryCache<?, ?>> auxiliaryCaches =
-        new ConcurrentHashMap<String, AuxiliaryCache<?, ?>>( 11 );
+        new ConcurrentHashMap<String, AuxiliaryCache<?, ?>>( );
 
     /** Properties with which this manager was configured. This is exposed for other managers. */
     private Properties configurationProperties;
@@ -115,9 +118,6 @@ public class CompositeCacheManager
 
     /** The Singleton Instance */
     private static CompositeCacheManager instance;
-
-    /** The prefix of relevant system properties */
-    private static final String SYSTEM_PROPERTY_KEY_PREFIX = "jcs";
 
     /** Should we use system property substitutions. */
     private static final boolean DEFAULT_USE_SYSTEM_PROPERTIES = true;
@@ -190,7 +190,7 @@ public class CompositeCacheManager
             instance.configure( propsFilename );
         }
 
-        instance.incrementClients();
+        instance.clients.incrementAndGet();
 
         return instance;
     }
@@ -218,7 +218,7 @@ public class CompositeCacheManager
             instance.initialize();
         }
 
-        instance.incrementClients();
+        instance.clients.incrementAndGet();
 
         return instance;
     }
@@ -436,50 +436,23 @@ public class CompositeCacheManager
         }
         if ( useSystemProperties )
         {
-            overrideWithSystemProperties( props );
+            CompositeCacheConfigurator.overrideWithSystemProperties( props );
         }
         doConfigure( props );
     }
 
     /**
-     * Any property values will be replaced with system property values that match the key.
-     * <p>
-     * TODO move to a utility.
-     * <p>
-     * @param props
-     */
-    private static void overrideWithSystemProperties( Properties props )
-    {
-        // override any setting with values from the system properties.
-        Properties sysProps = System.getProperties();
-        Set<Object> keys = sysProps.keySet();
-        Iterator<Object> keyIt = keys.iterator();
-        while ( keyIt.hasNext() )
-        {
-            String key = (String) keyIt.next();
-            if ( key.startsWith( SYSTEM_PROPERTY_KEY_PREFIX ) )
-            {
-                if ( log.isInfoEnabled() )
-                {
-                    log.info( "Using system property [[" + key + "] [" + sysProps.getProperty( key ) + "]]" );
-                }
-                props.setProperty( key, sysProps.getProperty( key ) );
-            }
-        }
-    }
-
-    /**
      * Configure the cache using the supplied properties.
      * <p>
-     * @param props assumed not null
+     * @param properties assumed not null
      */
-    private void doConfigure( Properties props )
+    private void doConfigure( Properties properties )
     {
         // We will expose this for managers that need raw properties.
-        this.configurationProperties = props;
+        this.configurationProperties = properties;
 
         // set the props value and then configure the ThreadPoolManager
-        ThreadPoolManager.setProps( props );
+        ThreadPoolManager.setProps( properties );
         ThreadPoolManager poolMgr = ThreadPoolManager.getInstance();
         if ( log.isDebugEnabled() )
         {
@@ -487,9 +460,40 @@ public class CompositeCacheManager
         }
 
         // configure the cache
-        CompositeCacheConfigurator configurator = new CompositeCacheConfigurator( this );
+        CompositeCacheConfigurator configurator = new CompositeCacheConfigurator();
 
-        configurator.doConfigure( props );
+        long start = System.currentTimeMillis();
+
+        // set default value list
+        this.defaultAuxValues = OptionConverter.findAndSubst( CompositeCacheManager.DEFAULT_REGION,
+                properties );
+
+        log.info( "Setting default auxiliaries to " + this.defaultAuxValues );
+
+        // set default cache attr
+        this.defaultCacheAttr = configurator.parseCompositeCacheAttributes( properties, "",
+                new CompositeCacheAttributes(), DEFAULT_REGION );
+
+        log.info( "setting defaultCompositeCacheAttributes to " + this.defaultCacheAttr );
+
+        // set default element attr
+        this.defaultElementAttr = configurator.parseElementAttributes( properties, "",
+                new ElementAttributes(), DEFAULT_REGION );
+
+        log.info( "setting defaultElementAttributes to " + this.defaultElementAttr );
+
+        // set up system caches to be used by non system caches
+        // need to make sure there is no circularity of reference
+        configurator.parseSystemRegions( properties, this );
+
+        // setup preconfigured caches
+        configurator.parseRegions( properties, this );
+
+        long end = System.currentTimeMillis();
+        if ( log.isInfoEnabled() )
+        {
+            log.info( "Finished configuration in " + ( end - start ) + " ms." );
+        }
 
         isConfigured = true;
     }
@@ -502,26 +506,6 @@ public class CompositeCacheManager
     public ICompositeCacheAttributes getDefaultCacheAttributes()
     {
         return this.defaultCacheAttr.clone();
-    }
-
-    /**
-     * Sets the defaultCacheAttributes attribute of the CacheHub object
-     * <p>
-     * @param icca The new defaultCacheAttributes value
-     */
-    public void setDefaultCacheAttributes( ICompositeCacheAttributes icca )
-    {
-        this.defaultCacheAttr = icca;
-    }
-
-    /**
-     * Sets the defaultElementAttributes attribute of the CacheHub object
-     * <p>
-     * @param iea The new defaultElementAttributes value
-     */
-    public void setDefaultElementAttributes( IElementAttributes iea )
-    {
-        this.defaultElementAttr = iea;
     }
 
     /**
@@ -541,7 +525,7 @@ public class CompositeCacheManager
      * @return CompositeCache -- the cache region controller
      */
     @Override
-    public <K, V> CompositeCache<K, V>  getCache( String cacheName )
+    public <K, V> CompositeCache<K, V> getCache( String cacheName )
     {
         return getCache( cacheName, this.defaultCacheAttr.clone() );
     }
@@ -622,9 +606,9 @@ public class CompositeCacheManager
                 {
                     cattr.setCacheName( cattr.getCacheName() );
 
-                    CompositeCacheConfigurator configurator = new CompositeCacheConfigurator( this );
+                    CompositeCacheConfigurator configurator = new CompositeCacheConfigurator();
 
-                    cache = configurator.parseRegion( this.getConfigurationProperties(), cattr.getCacheName(),
+                    cache = configurator.parseRegion( this.getConfigurationProperties(), this, cattr.getCacheName(),
                                                       this.defaultAuxValues, cattr );
 
                     caches.put( cattr.getCacheName(), cache );
@@ -687,6 +671,8 @@ public class CompositeCacheManager
                 {
                     observer.shutdown();
                 }
+
+                shutdownObservers.clear();
             }
 
             // Unregister JMX bean
@@ -741,12 +727,6 @@ public class CompositeCacheManager
     }
 
     /** */
-    private void incrementClients()
-    {
-        clients++;
-    }
-
-    /** */
     public void release()
     {
         release( false );
@@ -760,7 +740,7 @@ public class CompositeCacheManager
         synchronized ( CompositeCacheManager.class )
         {
             // Wait until called by the last client
-            if ( --clients > 0 )
+            if ( clients.decrementAndGet() > 0 )
             {
                 if ( log.isDebugEnabled() )
                 {
@@ -801,14 +781,6 @@ public class CompositeCacheManager
     public CacheType getCacheType()
     {
         return CacheType.CACHE_HUB;
-    }
-
-    /**
-     * @return ICompositeCacheAttributes
-     */
-    public ICompositeCacheAttributes getDefaultCattr()
-    {
-        return this.defaultCacheAttr;
     }
 
     /**
@@ -883,14 +855,6 @@ public class CompositeCacheManager
     {
         String key = String.format("aux.%s.region.%s", auxName, cacheName);
         return (AuxiliaryCache<K, V>) auxiliaryCaches.get(key);
-    }
-
-    /**
-     * @param defaultAuxValues the defaultAuxValues to set
-     */
-    public void setDefaultAuxValues(String defaultAuxValues)
-    {
-        this.defaultAuxValues = defaultAuxValues;
     }
 
     /**
@@ -974,16 +938,6 @@ public class CompositeCacheManager
     /**
      * This is exposed so other manager can get access to the props.
      * <p>
-     * @param props
-     */
-    void setConfigurationProperties( Properties props )
-    {
-        this.configurationProperties = props;
-    }
-
-    /**
-     * This is exposed so other manager can get access to the props.
-     * <p>
      * @return the configurationProperties
      */
     @Override
@@ -1008,7 +962,8 @@ public class CompositeCacheManager
         return isConfigured;
     }
 
-    public void setJmxName(final String name) {
+    public void setJmxName(final String name)
+    {
         if (isJMXRegistered)
         {
             throw new IllegalStateException("Too late, MBean registration is done");
