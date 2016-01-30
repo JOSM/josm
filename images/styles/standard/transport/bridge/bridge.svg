@@ -14,8 +14,8 @@
    viewBox="0 0 16 10"
    id="svg4264"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="bridge4.svg">
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="bridge.svg">
   <defs
      id="defs4266" />
   <sodipodi:namedview
@@ -49,7 +49,12 @@
      inkscape:snap-center="true"
      inkscape:snap-grids="true"
      inkscape:snap-to-guides="true"
-     inkscape:snap-page="true">
+     inkscape:snap-page="true"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
        id="grid4137" />
@@ -62,7 +67,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <cc:license
            rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
       </cc:Work>
@@ -83,7 +88,7 @@
      id="layer1"
      transform="translate(0,-1042.3621)">
     <path
-       style="fill:#000000"
+       style="fill:#1a1a1a"
        d="M 2.8610235e-6,-1 0,2.0000004 c 2.0000004,0 3.0000012,0.726562 3.0253922,3.0000003 l -6e-7,4.0000005 0.3300781,0 1.09375,0 0.5507812,0 6e-7,-4.0000005 c 4e-7,-2.2734383 0.9999996,-3.0000003 2.9999999,-3.0000003 2.0000006,0 3.0273456,0.726562 3.0273446,3.0000003 l 0,4.0000005 1.972656,0 0,-4.0000005 c 10e-7,-2.2734383 1.000001,-3.0000003 3.000001,-3.0000003 l 0,-3.0000004 z"
        transform="translate(-4.7683724e-7,1043.3621)"
        id="path3444-5"
