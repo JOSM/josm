@@ -563,10 +563,22 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     @Override
+    public void setModified(boolean modified) {
+        boolean locked = writeLock();
+        try {
+            super.setModified(modified);
+            clearCachedStyle();
+        } finally {
+            writeUnlock(locked);
+        }
+    }
+
+    @Override
     public void setVisible(boolean visible) {
         boolean locked = writeLock();
         try {
             super.setVisible(visible);
+            clearCachedStyle();
         } finally {
             writeUnlock(locked);
         }
@@ -584,6 +596,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
                     dataSet.firePrimitivesAdded(Collections.singleton(this), false);
                 }
             }
+            clearCachedStyle();
         } finally {
             writeUnlock(locked);
         }
@@ -606,6 +619,11 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
     }
 
+    /**
+     * Determines whether the primitive is selected
+     * @return whether the primitive is selected
+     * @see DataSet#isSelected(OsmPrimitive)
+     */
     public boolean isSelected() {
         return dataSet != null && dataSet.isSelected(this);
     }
