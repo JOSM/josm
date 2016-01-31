@@ -33,12 +33,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -1345,7 +1347,16 @@ public class ImageProvider {
 
         // Check if the presets have icons for nodes/relations.
         if (!OsmPrimitiveType.WAY.equals(primitive.getType())) {
-            for (final TaggingPreset preset : TaggingPresets.getMatchingPresets(primitive)) {
+            final Collection<TaggingPreset> presets = new TreeSet<>(new Comparator<TaggingPreset>() {
+                @Override
+                public int compare(TaggingPreset o1, TaggingPreset o2) {
+                    final int o1TypesSize = o1.types == null || o1.types.isEmpty() ? Integer.MAX_VALUE : o1.types.size();
+                    final int o2TypesSize = o2.types == null || o2.types.isEmpty() ? Integer.MAX_VALUE : o2.types.size();
+                    return Integer.compare(o1TypesSize, o2TypesSize);
+                }
+            });
+            presets.addAll(TaggingPresets.getMatchingPresets(primitive));
+            for (final TaggingPreset preset : presets) {
                 if (preset.getIcon() != null) {
                     return preset.getIcon();
                 }
