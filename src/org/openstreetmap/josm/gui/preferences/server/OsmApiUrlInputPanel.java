@@ -123,6 +123,7 @@ public class OsmApiUrlInputPanel extends JPanel {
      */
     public void initFromPreferences() {
         String url =  OsmApi.getOsmApi().getServerUrl();
+        tfOsmServerUrl.setPossibleItems(SERVER_URL_HISTORY.get());
         if (OsmApi.DEFAULT_API_URL.equals(url.trim())) {
             cbUseDefaultServerUrl.setSelected(true);
             propagator.propagate(OsmApi.DEFAULT_API_URL);
@@ -131,7 +132,6 @@ public class OsmApiUrlInputPanel extends JPanel {
             tfOsmServerUrl.setText(url);
             propagator.propagate(url);
         }
-        tfOsmServerUrl.setPossibleItems(SERVER_URL_HISTORY.get());
     }
 
     /**
