@@ -19,7 +19,6 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
-import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.io.FileExporter;
 import org.openstreetmap.josm.tools.Shortcut;
 
