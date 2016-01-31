@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Unit tests for class {@link SearchCompiler}.
@@ -380,13 +381,30 @@ public class SearchCompilerTest {
         anonymous.match(anonymous.n2, true);
     }
 
+    /**
+     * Compiles "foo type bar" and tests the parse error message
+     */
     @Test
-    public void testFooTypeBar() throws Exception {
+    public void testFooTypeBar() {
         try {
             SearchCompiler.compile("foo type bar");
             throw new RuntimeException();
         } catch (ParseError parseError) {
             assertEquals("<html>Expecting <code>:</code> after <i>type</i>", parseError.getMessage());
         }
+    }
+
+    /**
+     * Search for primitive timestamps.
+     * @throws ParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testTimestamp() throws ParseError {
+        final Match search = SearchCompiler.compile("timestamp:2010/2011");
+        final Node n1 = new Node();
+        n1.setTimestamp(DateUtils.fromString("2010-01-22"));
+        assertTrue(search.match(n1));
+        n1.setTimestamp(DateUtils.fromString("2016-01-22"));
+        assertFalse(search.match(n1));
     }
 }

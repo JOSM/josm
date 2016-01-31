@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -152,6 +153,7 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
                     menuItem.setAccelerator(keystroke);
                     first = false;
                 }
+                menuItem.setIcon(ImageProvider.getPadded(relation, new Rectangle(16, 16)));
                 add(menuItem);
             }
         }
