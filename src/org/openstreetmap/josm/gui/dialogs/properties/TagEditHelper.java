@@ -672,27 +672,23 @@ public class TagEditHelper {
             popupMenu.add(rememberLastTags);
         }
 
-        private String code(String text) {
-            return "<code>" + text + "</code> ";
-        }
-
         @Override
         public void setContentPane(Container contentPane) {
             final int commandDownMask = GuiHelper.getMenuShortcutKeyMaskEx();
             List<String> lines = new ArrayList<>();
             Shortcut sc = Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask);
             if (sc != null) {
-                lines.add(code(sc.getKeyText()) + tr("to apply first suggestion"));
+                lines.add(sc.getKeyText() + " " + tr("to apply first suggestion"));
             }
-            lines.add(code(KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK)+'+'+KeyEvent.getKeyText(KeyEvent.VK_ENTER))
+            lines.add(KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK)+'+'+KeyEvent.getKeyText(KeyEvent.VK_ENTER) + " "
                     +tr("to add without closing the dialog"));
             sc = Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask | KeyEvent.SHIFT_DOWN_MASK);
             if (sc != null) {
-                lines.add(code(sc.getKeyText()) + tr("to add first suggestion without closing the dialog"));
+                lines.add(sc.getKeyText() + " " + tr("to add first suggestion without closing the dialog"));
             }
             final JLabel helpLabel = new JLabel("<html>" + Utils.join("<br>", lines) + "</html>");
             helpLabel.setFont(helpLabel.getFont().deriveFont(Font.PLAIN));
-            contentPane.add(helpLabel, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(1, 2, 1, 2));
+            contentPane.add(helpLabel, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 5, 5, 5));
             super.setContentPane(contentPane);
         }
 
