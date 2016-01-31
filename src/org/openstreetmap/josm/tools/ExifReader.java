@@ -103,8 +103,8 @@ public final class ExifReader {
         try {
             final Metadata metadata = JpegMetadataReader.readMetadata(filename);
             final Directory dir = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-            return dir.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-        } catch (JpegProcessingException | MetadataException | IOException e) {
+            return dir == null ? null : dir.getInteger(ExifIFD0Directory.TAG_ORIENTATION);
+        } catch (JpegProcessingException | IOException e) {
             Main.error(e);
         }
         return null;
@@ -121,11 +121,7 @@ public final class ExifReader {
             final Metadata metadata = JpegMetadataReader.readMetadata(filename);
             final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
             return readLatLon(dirGps);
-        } catch (JpegProcessingException e) {
-            Main.error(e);
-        } catch (IOException e) {
-            Main.error(e);
-        } catch (MetadataException e) {
+        } catch (JpegProcessingException | IOException | MetadataException e) {
             Main.error(e);
         }
         return null;
@@ -159,9 +155,7 @@ public final class ExifReader {
             final Metadata metadata = JpegMetadataReader.readMetadata(filename);
             final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
             return readDirection(dirGps);
-        } catch (JpegProcessingException e) {
-            Main.error(e);
-        } catch (IOException e) {
+        } catch (JpegProcessingException | IOException e) {
             Main.error(e);
         }
         return null;

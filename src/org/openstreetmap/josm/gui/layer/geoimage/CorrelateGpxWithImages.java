@@ -1175,7 +1175,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
     private static Double getElevation(WayPoint wp) {
         String value = wp.getString(GpxConstants.PT_ELE);
-        if (value != null) {
+        if (value != null && !value.isEmpty()) {
             try {
                 return new Double(value);
             } catch (NumberFormatException e) {
