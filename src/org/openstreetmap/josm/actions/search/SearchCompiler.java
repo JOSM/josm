@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -176,10 +177,20 @@ public class SearchCompiler {
                         } else if (rangeA.length == 2) {
                             String rangeA1 = rangeA[0].trim();
                             String rangeA2 = rangeA[1].trim();
-                            // if min timestap is empty: use lowest possible date
-                            long minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime();
-                            // if max timestamp is empty: use "now"
-                            long maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime();
+                            final long minDate;
+                            final long maxDate;
+                            try {
+                                // if min timestap is empty: use lowest possible date
+                                minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime();
+                            } catch (UncheckedParseException ex) {
+                                throw new ParseError(tr("Cannot parse timestamp ''{0}''", rangeA1), ex);
+                            }
+                            try {
+                                // if max timestamp is empty: use "now"
+                                maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime();
+                            } catch (UncheckedParseException ex) {
+                                throw new ParseError(tr("Cannot parse timestamp ''{0}''", rangeA2), ex);
+                            }
                             return new TimestampRange(minDate, maxDate);
                         } else {
                             throw new ParseError("<html>" + tr("Expecting {0} after {1}", "<i>min</i>/<i>max</i>", "<i>timestamp</i>"));
