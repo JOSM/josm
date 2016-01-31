@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.CustomMatchers.hasSize;
 import static org.CustomMatchers.isEmpty;
 import static org.junit.Assert.assertThat;
 
@@ -43,6 +44,22 @@ public class UntaggedNodeTest {
             test.visit(ds.allPrimitives());
             test.endTest();
             assertThat(test.getErrors(), isEmpty());
+        }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12464">Bug #12464</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testTicket12464() throws Exception {
+        test.initialize();
+        test.startTest(null);
+        try (InputStream fis = TestUtils.getRegressionDataStream(12464, "example.osm")) {
+            final DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+            test.visit(ds.allPrimitives());
+            test.endTest();
+            assertThat(test.getErrors(), hasSize(1));
         }
     }
 }

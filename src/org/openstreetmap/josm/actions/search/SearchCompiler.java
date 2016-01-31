@@ -1424,14 +1424,14 @@ public class SearchCompiler {
             this.all = all;
         }
 
-        protected abstract Collection<Bounds> getBounds();
+        protected abstract Collection<Bounds> getBounds(OsmPrimitive primitive);
 
         @Override
         public boolean match(OsmPrimitive osm) {
             if (!osm.isUsable())
                 return false;
             else if (osm instanceof Node) {
-                Collection<Bounds> allBounds = getBounds();
+                Collection<Bounds> allBounds = getBounds(osm);
                 if (allBounds != null) {
                     LatLon coor = ((Node) osm).getCoor();
                     for (Bounds bounds: allBounds) {
@@ -1466,9 +1466,8 @@ public class SearchCompiler {
         }
 
         @Override
-        protected Collection<Bounds> getBounds() {
-            return Main.main == null || Main.main.getCurrentDataSet() == null || Main.main.getCurrentDataSet().getDataSourceArea() == null
-                    ? null : Main.main.getCurrentDataSet().getDataSourceBounds();
+        protected Collection<Bounds> getBounds(OsmPrimitive primitive) {
+            return primitive.getDataSet() != null ? primitive.getDataSet().getDataSourceBounds() : null;
         }
 
         @Override
@@ -1479,7 +1478,7 @@ public class SearchCompiler {
 
     /**
      * Matches objects which are not outside the source area ("downloaded area").
-     * Unlink {@link InDataSourceArea} this matches also if no source area is set (e.g., for new layers).
+     * Unlike {@link InDataSourceArea} this matches also if no source area is set (e.g., for new layers).
      */
     public static class NotOutsideDataSourceArea extends InDataSourceArea {
 
@@ -1491,8 +1490,8 @@ public class SearchCompiler {
         }
 
         @Override
-        protected Collection<Bounds> getBounds() {
-            final Collection<Bounds> bounds = super.getBounds();
+        protected Collection<Bounds> getBounds(OsmPrimitive primitive) {
+            final Collection<Bounds> bounds = super.getBounds(primitive);
             return bounds == null || bounds.isEmpty() ? Collections.singleton(Main.getProjection().getWorldBoundsLatLon()) : bounds;
         }
 
@@ -1512,7 +1511,7 @@ public class SearchCompiler {
         }
 
         @Override
-        protected Collection<Bounds> getBounds() {
+        protected Collection<Bounds> getBounds(OsmPrimitive primitive) {
             if (!Main.isDisplayingMapView()) {
                 return null;
             }
