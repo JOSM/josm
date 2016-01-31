@@ -46,6 +46,7 @@ import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -304,7 +305,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     ss.mapCSSSearch = mapCSSSearch.isSelected();
                     SearchCompiler.compile(ss);
                     return true;
-                } catch (ParseError e) {
+                } catch (ParseError | MapCSSException e) {
                     return false;
                 }
             }
