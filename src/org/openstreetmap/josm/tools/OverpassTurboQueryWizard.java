@@ -1,11 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import org.openstreetmap.josm.Main;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.regex.Pattern;
+import java.util.HashMap;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -13,7 +15,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 /**
- * Uses <a href="https://github.com/tyrasd/overpass-turbo/">Overpass Turbo</a> query wizard code
+ * Uses <a href="https://github.com/tyrasd/overpass-wizard/">Overpass Turbo query wizard</a> code (MIT Licensed)
  * to build an Overpass QL from a {@link org.openstreetmap.josm.actions.search.SearchAction} like query.
  *
  * Requires a JavaScript {@link ScriptEngine}.
@@ -37,13 +39,11 @@ public final class OverpassTurboQueryWizard {
     }
 
     private OverpassTurboQueryWizard() {
-        // overpass-turbo is MIT Licensed
-
         try (final Reader reader = new InputStreamReader(
-                getClass().getResourceAsStream("/data/overpass-turbo-ffs.js"), StandardCharsets.UTF_8)) {
-            engine.eval("var console = {log: function(){}};");
+                getClass().getResourceAsStream("/data/overpass-wizard.js"), StandardCharsets.UTF_8)) {
+            engine.eval("var console = {error: " + Main.class.getCanonicalName() + ".warn};");
+            engine.eval("var global = {};");
             engine.eval(reader);
-            engine.eval("var construct_query = turbo.ffs().construct_query;");
         } catch (ScriptException | IOException ex) {
             throw new RuntimeException("Failed to initialize OverpassTurboQueryWizard", ex);
         }
@@ -57,14 +57,17 @@ public final class OverpassTurboQueryWizard {
      */
     public String constructQuery(String search) throws UncheckedParseException {
         try {
-            final Object result = ((Invocable) engine).invokeFunction("construct_query", search);
+            final Object result = ((Invocable) engine).invokeMethod(engine.get("global"),
+                    "overpassWizard", search, new HashMap<String, Object>() {{
+                        put("comment", false);
+                        put("outputFormat", "xml");
+                        put("outputMode", "recursive_meta");
+                    }});
             if (result == Boolean.FALSE) {
                 throw new UncheckedParseException();
             }
             String query = (String) result;
-            query = Pattern.compile("^.*\\[out:json\\]", Pattern.DOTALL).matcher(query).replaceFirst("");
-            query = Pattern.compile("^out.*", Pattern.MULTILINE).matcher(query).replaceAll("out meta;");
-            query = query.replace("({{bbox}})", "");
+            query = query.replace("[bbox:{{bbox}}]", "");
             return query;
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException();
