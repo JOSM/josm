@@ -2,14 +2,12 @@
 package org.openstreetmap.josm.gui.dialogs.relation.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
 
 import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
@@ -30,10 +28,7 @@ public class CopyMembersAction extends AddFromSelectionAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Set<OsmPrimitive> primitives = new HashSet<>();
-        for (RelationMember rm: memberTableModel.getSelectedMembers()) {
-            primitives.add(rm.getMember());
-        }
+        final Collection<OsmPrimitive> primitives = memberTableModel.getSelectedChildPrimitives();
         if (!primitives.isEmpty()) {
             CopyAction.copy(layer, primitives);
         }

@@ -68,9 +68,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      * and performance (we do want to have something to offer to worker threads before tasks will be resubmitted by class consumer)
      */
 
-    private static ThreadPoolExecutor DEFAULT_DOWNLOAD_JOB_DISPATCHER = new ThreadPoolExecutor(
+    private static final ThreadPoolExecutor DEFAULT_DOWNLOAD_JOB_DISPATCHER = new ThreadPoolExecutor(
             2, // we have a small queue, so threads will be quickly started (threads are started only, when queue is full)
-            THREAD_LIMIT.get().intValue(), // do not this number of threads
+            THREAD_LIMIT.get(), // do not this number of threads
             30, // keepalive for thread
             TimeUnit.SECONDS,
             // make queue of LIFO type - so recently requested tiles will be loaded first (assuming that these are which user is waiting to see)
@@ -80,21 +80,21 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
 
 
-    private static ConcurrentMap<String, Set<ICachedLoaderListener>> inProgress = new ConcurrentHashMap<>();
-    private static ConcurrentMap<String, Boolean> useHead = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Set<ICachedLoaderListener>> inProgress = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Boolean> useHead = new ConcurrentHashMap<>();
 
-    protected long now; // when the job started
+    protected final long now; // when the job started
 
-    private ICacheAccess<K, V> cache;
+    private final ICacheAccess<K, V> cache;
     private ICacheElement<K, V> cacheElement;
     protected V cacheData;
     protected CacheEntryAttributes attributes;
 
     // HTTP connection parameters
-    private int connectTimeout;
-    private int readTimeout;
-    private Map<String, String> headers;
-    private ThreadPoolExecutor downloadJobExecutor;
+    private final int connectTimeout;
+    private final int readTimeout;
+    private final Map<String, String> headers;
+    private final ThreadPoolExecutor downloadJobExecutor;
     private Runnable finishTask;
     private boolean force;
 
