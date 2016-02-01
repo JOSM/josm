@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.awt.Component;
-import java.awt.Rectangle;
+import java.awt.Dimension;
 
 import javax.swing.JTable;
 
@@ -22,7 +22,7 @@ public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
         super();
     }
 
-    protected void renderPrimitive(OsmPrimitive primitive, Rectangle cellSize) {
+    protected void renderPrimitive(OsmPrimitive primitive, Dimension cellSize) {
         // Make icon the full height of the table cell. Icon background is square.
         setIcon(ImageProvider.getPadded(primitive, cellSize));
         setText(primitive.getDisplayName(DefaultNameFormatter.getInstance()));
@@ -37,7 +37,7 @@ public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
         if (value == null)
             return this;
 
-        Rectangle cellSize = table.getCellRect(row, column, false);
+        Dimension cellSize = table.getCellRect(row, column, false).getSize();
 
         OsmPrimitive primitive = (OsmPrimitive) value;
         renderBackgroundForeground(getModel(table), primitive, isSelected);

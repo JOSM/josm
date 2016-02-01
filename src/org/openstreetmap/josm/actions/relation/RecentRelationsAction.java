@@ -153,7 +153,7 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
                     menuItem.setAccelerator(keystroke);
                     first = false;
                 }
-                menuItem.setIcon(ImageProvider.getPadded(relation, new Rectangle(16, 16)));
+                menuItem.setIcon(ImageProvider.getPadded(relation, ImageProvider.ImageSizes.MENU.getImageDimension()));
                 add(menuItem);
             }
         }

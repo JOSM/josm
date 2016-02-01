@@ -11,7 +11,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
@@ -133,35 +132,62 @@ public class ImageProvider {
      */
     public enum ImageSizes {
         /** SMALL_ICON value of on Action */
-        SMALLICON,
+        SMALLICON(Main.pref.getInteger("iconsize.smallicon", 16)),
         /** LARGE_ICON_KEY value of on Action */
-        LARGEICON,
+        LARGEICON(Main.pref.getInteger("iconsize.largeicon", 24)),
         /** map icon */
-        MAP,
+        MAP(Main.pref.getInteger("iconsize.map", 16)),
         /** map icon maximum size */
-        MAPMAX,
+        MAPMAX(Main.pref.getInteger("iconsize.mapmax", 48)),
         /** cursor icon size */
-        CURSOR,
+        CURSOR(Main.pref.getInteger("iconsize.cursor", 32)),
         /** cursor overlay icon size */
-        CURSOROVERLAY,
+        CURSOROVERLAY(CURSOR.imageSize),
         /** menu icon size */
-        MENU,
+        MENU(SMALLICON.imageSize),
         /** menu icon size in popup menus
          * @since 8323
          */
-        POPUPMENU,
+        POPUPMENU(LARGEICON.imageSize),
         /** Layer list icon size
          * @since 8323
          */
-        LAYER,
+        LAYER(Main.pref.getInteger("iconsize.layer", 16)),
         /** Toolbar button icon size
          * @since 9253
          */
-        TOOLBAR,
+        TOOLBAR(LARGEICON.imageSize),
         /** Side button maximum height
          * @since 9253
          */
-        SIDEBUTTON
+        SIDEBUTTON(Main.pref.getInteger("iconsize.sidebutton", 20)),
+        /**
+         * The default image size
+         * @since 9705
+         */
+        DEFAULT(Main.pref.getInteger("iconsize.default", 24));
+
+        private final int imageSize;
+
+        ImageSizes(int imageSize) {
+            this.imageSize = imageSize;
+        }
+
+        /**
+         * Returns the image size in pixels
+         * @return the image size in pixels
+         */
+        public int getImageSize() {
+            return imageSize;
+        }
+
+        /**
+         * Returns the image size as dimension
+         * @return the image size as dimension
+         */
+        public Dimension getImageDimension() {
+            return new Dimension(imageSize, imageSize);
+        }
     }
 
     /**
@@ -353,24 +379,11 @@ public class ImageProvider {
      * @param size the size enumeration
      * @return dimension of image in pixels
      * @since 7687
+     * @deprecated Use {@link ImageSizes#getImageDimension()} instead
      */
+    @Deprecated
     public static Dimension getImageSizes(ImageSizes size) {
-        int sizeval;
-        switch(size) {
-        case MAPMAX: sizeval = Main.pref.getInteger("iconsize.mapmax", 48); break;
-        case MAP: sizeval = Main.pref.getInteger("iconsize.mapmax", 16); break;
-        case SIDEBUTTON: sizeval = Main.pref.getInteger("iconsize.sidebutton", 20); break;
-        case TOOLBAR: /* TOOLBAR is LARGELICON - only provided in case of future changes */
-        case POPUPMENU: /* POPUPMENU is LARGELICON - only provided in case of future changes */
-        case LARGEICON: sizeval = Main.pref.getInteger("iconsize.largeicon", 24); break;
-        case MENU: /* MENU is SMALLICON - only provided in case of future changes */
-        case SMALLICON: sizeval = Main.pref.getInteger("iconsize.smallicon", 16); break;
-        case CURSOROVERLAY: /* same as cursor - only provided in case of future changes */
-        case CURSOR: sizeval = Main.pref.getInteger("iconsize.cursor", 32); break;
-        case LAYER: sizeval = Main.pref.getInteger("iconsize.layer", 16); break;
-        default: sizeval = Main.pref.getInteger("iconsize.default", 24); break;
-        }
-        return new Dimension(sizeval, sizeval);
+        return (size == null ? ImageSizes.DEFAULT : size).getImageDimension();
     }
 
     /**
@@ -397,7 +410,7 @@ public class ImageProvider {
      * @since 7687
      */
     public ImageProvider setSize(ImageSizes size) {
-        return setSize(getImageSizes(size));
+        return setSize(size.getImageDimension());
     }
 
     /**
@@ -473,7 +486,7 @@ public class ImageProvider {
      * @since 7687
      */
     public ImageProvider setMaxSize(ImageSizes size) {
-        return setMaxSize(getImageSizes(size));
+        return setMaxSize(size.getImageDimension());
     }
 
     /**
@@ -1304,7 +1317,7 @@ public class ImageProvider {
      * @return Icon for {@code primitive} that fits in cell.
      * @since 8903
      */
-    public static ImageIcon getPadded(OsmPrimitive primitive, Rectangle iconSize) {
+    public static ImageIcon getPadded(OsmPrimitive primitive, Dimension iconSize) {
         // Check if the current styles have special icon for tagged nodes.
         if (primitive instanceof org.openstreetmap.josm.data.osm.Node) {
             Pair<StyleElementList, Range> nodeStyles = MapPaintStyles.getStyles().generateStyles(primitive, 100, false);
@@ -1313,7 +1326,7 @@ public class ImageProvider {
                     NodeElement nodeStyle = (NodeElement) style;
                     MapImage icon = nodeStyle.mapImage;
                     if (icon != null) {
-                        int backgroundWidth = iconSize.height;
+                        int backgroundWidth = iconSize.width;
                         int backgroundHeight = iconSize.height;
                         int iconWidth = icon.getWidth();
                         int iconHeight = icon.getHeight();
@@ -1768,7 +1781,7 @@ public class ImageProvider {
     }
 
     /**
-     * Determines if the given {@code BufferedImage} has a transparent color determiend by a previous call to {@link #read}.
+     * Determines if the given {@code BufferedImage} has a transparent color determined by a previous call to {@link #read}.
      * @param bi The {@code BufferedImage} to test
      * @return {@code true} if {@code bi} has a transparent color determined by a previous call to {@code read}.
      * @see #read
