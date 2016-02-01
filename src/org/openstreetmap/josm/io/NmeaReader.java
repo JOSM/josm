@@ -50,10 +50,6 @@ public class NmeaReader {
         public String getType() {
             return this.type;
         }
-
-        public boolean equals(String type) {
-            return this.type.equals(type);
-        }
     }
 
     // GPVTG

@@ -56,7 +56,7 @@ public class SideButton extends JButton implements Destroyable {
             action.addPropertyChangeListener(propertyChangeListener = new PropertyChangeListener() {
                 @Override
                 public void propertyChange(PropertyChangeEvent evt) {
-                    if (evt.getPropertyName() == javax.swing.Action.SMALL_ICON) {
+                    if (javax.swing.Action.SMALL_ICON.equals(evt.getPropertyName())) {
                         fixIcon(null);
                     }
                 }
