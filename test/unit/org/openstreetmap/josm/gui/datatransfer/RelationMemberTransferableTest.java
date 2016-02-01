@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.datatransfer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.openstreetmap.josm.gui.datatransfer.RelationMemberTransferable.RELATION_MEMBER_DATA;
 
@@ -16,8 +15,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.RelationMemberData;
 
 /**
  * Unit tests of {@link RelationMemberTransferable} class.
@@ -57,13 +56,12 @@ public class RelationMemberTransferableTest {
      * @throws UnsupportedFlavorException never
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void testGetTransferDataNominal() throws UnsupportedFlavorException {
         RelationMemberTransferable rmt = new RelationMemberTransferable(Collections.singleton(new RelationMember("test", new Node(1))));
         assertEquals("node 1 test # incomplete\n", rmt.getTransferData(DataFlavor.stringFlavor));
-        Collection<PrimitiveData> td = (Collection<PrimitiveData>) rmt.getTransferData(RELATION_MEMBER_DATA);
+        Collection<RelationMemberData> td = ((RelationMemberTransferable.Data) rmt.getTransferData(RELATION_MEMBER_DATA)).getRelationMemberData();
         assertEquals(1, td.size());
-        assertNotNull(td.iterator().next());
+        assertTrue(td.iterator().next() instanceof RelationMemberData);
     }
 
     /**

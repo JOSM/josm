@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.datatransfer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable.PRIMITIVE_DATA;
 
@@ -56,13 +55,12 @@ public class PrimitiveTransferableTest {
      * @throws UnsupportedFlavorException never
      */
     @Test
-    @SuppressWarnings("unchecked")
     public void testGetTransferDataNominal() throws UnsupportedFlavorException {
         PrimitiveTransferable pt = new PrimitiveTransferable(Collections.singleton(new Node(1)));
         assertEquals("node 1 # incomplete\n", pt.getTransferData(DataFlavor.stringFlavor));
-        Collection<PrimitiveData> td = (Collection<PrimitiveData>) pt.getTransferData(PRIMITIVE_DATA);
+        Collection<PrimitiveData> td = ((PrimitiveTransferable.Data) pt.getTransferData(PRIMITIVE_DATA)).getPrimitiveData();
         assertEquals(1, td.size());
-        assertNotNull(td.iterator().next());
+        assertTrue(td.iterator().next() instanceof PrimitiveData);
     }
 
     /**

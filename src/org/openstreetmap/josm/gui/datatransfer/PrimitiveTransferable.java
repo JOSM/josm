@@ -18,9 +18,28 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 public class PrimitiveTransferable implements Transferable {
 
     /**
-     * Data flavor for {@link PrimitiveData}.
+     * A wrapper for a collection of {@link PrimitiveData}.
      */
-    public static final DataFlavor PRIMITIVE_DATA = new DataFlavor(PrimitiveData.class, PrimitiveData.class.getName());
+    public static final class Data {
+        private final Collection<PrimitiveData> primitiveData;
+
+        private Data(Collection<PrimitiveData> primitiveData) {
+            this.primitiveData = primitiveData;
+        }
+
+        /**
+         * Returns the contained {@link PrimitiveData}
+         * @return the contained {@link PrimitiveData}
+         */
+        public Collection<PrimitiveData> getPrimitiveData() {
+            return primitiveData;
+        }
+    }
+
+    /**
+     * Data flavor for {@link PrimitiveData} which is wrapped in {@link Data}.
+     */
+    public static final DataFlavor PRIMITIVE_DATA = new DataFlavor(Data.class, Data.class.getName());
     private final Collection<? extends OsmPrimitive> primitives;
 
     /**
@@ -46,7 +65,7 @@ public class PrimitiveTransferable implements Transferable {
         if (DataFlavor.stringFlavor.equals(flavor)) {
             return getStringData();
         } else if (PRIMITIVE_DATA.equals(flavor)) {
-            return getRelationMemberData();
+            return getPrimitiveData();
         }
         throw new UnsupportedFlavorException(flavor);
     }
@@ -62,11 +81,11 @@ public class PrimitiveTransferable implements Transferable {
         return sb.toString().replace("\u200E", "").replace("\u200F", "");
     }
 
-    protected Collection<PrimitiveData> getRelationMemberData() {
+    protected Data getPrimitiveData() {
         final Collection<PrimitiveData> r = new ArrayList<>(primitives.size());
         for (OsmPrimitive primitive : primitives) {
             r.add(primitive.save());
         }
-        return r;
+        return new Data(r);
     }
 }
