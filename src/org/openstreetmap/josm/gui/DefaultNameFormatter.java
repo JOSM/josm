@@ -331,7 +331,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return result;
     }
 
-    private void formatRelationNameAndType(Relation relation, StringBuilder result, TaggingPreset preset) {
+    private StringBuilder formatRelationNameAndType(Relation relation, StringBuilder result, TaggingPreset preset) {
         if (preset == null) {
             result.append(getRelationTypeName(relation));
             String relationName = getRelationName(relation);
@@ -345,6 +345,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             preset.nameTemplate.appendText(result, relation);
             result.append('(');
         }
+        return result;
     }
 
     private final Comparator<Relation> relationComparator = new Comparator<Relation>() {
@@ -356,12 +357,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             TaggingPreset preset2 = TaggingPresetNameTemplateList.getInstance().findPresetTemplate(r2);
 
             if (preset1 != null || preset2 != null) {
-                StringBuilder name1 = new StringBuilder();
-                formatRelationNameAndType(r1, name1, preset1);
-                StringBuilder name2 = new StringBuilder();
-                formatRelationNameAndType(r2, name2, preset2);
+                String name1 = formatRelationNameAndType(r1, new StringBuilder(), preset1).toString();
+                String name2 = formatRelationNameAndType(r2, new StringBuilder(), preset2).toString();
 
-                int comp = AlphanumComparator.getInstance().compare(name1.toString(), name2.toString());
+                int comp = AlphanumComparator.getInstance().compare(name1, name2);
                 if (comp != 0)
                     return comp;
             } else {
@@ -381,19 +380,16 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     return comp;
             }
 
-            if (r1.getMembersCount() != r2.getMembersCount())
-                return (r1.getMembersCount() > r2.getMembersCount()) ? 1 : -1;
-
-            int comp = Boolean.valueOf(r1.hasIncompleteMembers()).compareTo(Boolean.valueOf(r2.hasIncompleteMembers()));
+            int comp = Integer.compare(r1.getMembersCount(), r2.getMembersCount());
             if (comp != 0)
                 return comp;
 
-            if (r1.getUniqueId() > r2.getUniqueId())
-                return 1;
-            else if (r1.getUniqueId() < r2.getUniqueId())
-                return -1;
-            else
-                return 0;
+
+            comp = Boolean.compare(r1.hasIncompleteMembers(), r2.hasIncompleteMembers());
+            if (comp != 0)
+                return comp;
+
+            return Long.compare(r1.getUniqueId(), r2.getUniqueId());
         }
     };
 
