@@ -411,11 +411,13 @@ public class Storage<T> extends AbstractSet<T> {
 
         @Override
         public T remove(Object o) {
-            modCount++;
-            @SuppressWarnings("unchecked") K key = (K) o;
-            int bucket = getBucket(fHash, key);
+            synchronized (Storage.this) {
+                modCount++;
+                @SuppressWarnings("unchecked") K key = (K) o;
+                int bucket = getBucket(fHash, key);
 
-            return bucket < 0 ? null : doRemove(bucket);
+                return bucket < 0 ? null : doRemove(bucket);
+            }
         }
 
         @Override
