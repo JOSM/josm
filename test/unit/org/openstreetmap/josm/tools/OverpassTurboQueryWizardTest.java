@@ -17,7 +17,7 @@ public class OverpassTurboQueryWizardTest {
      */
     @BeforeClass
     public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init(true);
+        JOSMFixture.createUnitTestFixture().init(false);
         OverpassTurboQueryWizard.getInstance();
     }
 
@@ -28,17 +28,13 @@ public class OverpassTurboQueryWizardTest {
     public void testKeyValue() {
         final String query = OverpassTurboQueryWizard.getInstance().constructQuery("amenity=drinking_water");
         assertEquals("" +
-                "[timeout:25];\n" +
-                "// gather results\n" +
+                "[out:xml][timeout:25];\n" +
                 "(\n" +
-                "  // query part for: “amenity=drinking_water”\n" +
                 "  node[\"amenity\"=\"drinking_water\"];\n" +
                 "  way[\"amenity\"=\"drinking_water\"];\n" +
                 "  relation[\"amenity\"=\"drinking_water\"];\n" +
                 ");\n" +
-                "// print results\n" +
-                "out meta;\n" +
-                ">;\n" +
+                "(._;>;);\n" +
                 "out meta;", query);
     }
 
