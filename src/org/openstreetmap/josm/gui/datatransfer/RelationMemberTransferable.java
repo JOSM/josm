@@ -18,9 +18,28 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 public class RelationMemberTransferable implements Transferable {
 
     /**
-     * Data flavor for {@link RelationMemberData}.
+     * A wrapper for a collection of {@link RelationMemberData}.
      */
-    public static final DataFlavor RELATION_MEMBER_DATA = new DataFlavor(RelationMemberData.class, RelationMemberData.class.getName());
+    public static final class Data {
+        private final Collection<RelationMemberData> relationMemberDatas;
+
+        private Data(Collection<RelationMemberData> primitiveData) {
+            this.relationMemberDatas = primitiveData;
+        }
+
+        /**
+         * Returns the contained {@link RelationMemberData}
+         * @return the contained {@link RelationMemberData}
+         */
+        public Collection<RelationMemberData> getRelationMemberData() {
+            return relationMemberDatas;
+        }
+    }
+
+    /**
+     * Data flavor for {@link RelationMemberData} which is wrapped in {@link Data}.
+     */
+    public static final DataFlavor RELATION_MEMBER_DATA = new DataFlavor(Data.class, Data.class.getName());
     private final Collection<RelationMember> members;
 
     /**
@@ -63,11 +82,11 @@ public class RelationMemberTransferable implements Transferable {
         return sb.toString().replace("\u200E", "").replace("\u200F", "");
     }
 
-    protected Collection<RelationMemberData> getRelationMemberData() {
+    protected Data getRelationMemberData() {
         final Collection<RelationMemberData> r = new ArrayList<>(members.size());
         for (RelationMember member : members) {
             r.add(new RelationMemberData(member.getRole(), member.getType(), member.getUniqueId()));
         }
-        return r;
+        return new Data(r);
     }
 }

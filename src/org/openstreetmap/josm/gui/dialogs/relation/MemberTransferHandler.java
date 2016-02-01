@@ -63,11 +63,9 @@ class MemberTransferHandler extends TransferHandler {
 
     protected void importRelationMemberData(TransferSupport support, final MemberTable destination, int insertRow)
             throws UnsupportedFlavorException, IOException {
-        //noinspection unchecked
-        @SuppressWarnings("unchecked")
-        final Collection<RelationMemberData> memberData = (Collection<RelationMemberData>)
+        final RelationMemberTransferable.Data memberData = (RelationMemberTransferable.Data)
                 support.getTransferable().getTransferData(RelationMemberTransferable.RELATION_MEMBER_DATA);
-        importData(destination, insertRow, memberData, new Function<RelationMemberData, RelationMember>() {
+        importData(destination, insertRow, memberData.getRelationMemberData(), new Function<RelationMemberData, RelationMember>() {
             @Override
             public RelationMember apply(RelationMemberData member) {
                 final OsmPrimitive p = destination.getLayer().data.getPrimitiveById(member.getUniqueId(), member.getType());
@@ -83,11 +81,9 @@ class MemberTransferHandler extends TransferHandler {
 
     protected void importPrimitiveData(TransferSupport support, final MemberTable destination, int insertRow)
             throws UnsupportedFlavorException, IOException {
-        //noinspection unchecked
-        @SuppressWarnings("unchecked")
-        final Collection<PrimitiveData> data = (Collection<PrimitiveData>)
+        final PrimitiveTransferable.Data data = (PrimitiveTransferable.Data)
                 support.getTransferable().getTransferData(PrimitiveTransferable.PRIMITIVE_DATA);
-        importData(destination, insertRow, data, new Function<PrimitiveData, RelationMember>() {
+        importData(destination, insertRow, data.getPrimitiveData(), new Function<PrimitiveData, RelationMember>() {
             @Override
             public RelationMember apply(PrimitiveData data) {
                 final OsmPrimitive p = destination.getLayer().data.getPrimitiveById(data);
