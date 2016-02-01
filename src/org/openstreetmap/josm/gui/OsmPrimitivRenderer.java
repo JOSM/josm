@@ -45,7 +45,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
     public Component getListCellRendererComponent(JList<? extends OsmPrimitive> list, OsmPrimitive value, int index,
             boolean isSelected, boolean cellHasFocus) {
         Component def = defaultListCellRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        return renderer(def, value);
+        return renderer(def, value, list.getModel().getSize() > 1000);
     }
 
     /**
@@ -55,7 +55,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component def = defaultTableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         if (value instanceof OsmPrimitive)
-            return renderer(def, (OsmPrimitive) value);
+            return renderer(def, (OsmPrimitive) value, table.getModel().getRowCount() > 1000);
         else if (value instanceof HistoryOsmPrimitive)
             return renderer(def, (HistoryOsmPrimitive) value);
         else
@@ -67,14 +67,17 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
      * provided that it's a kind of JLabel.
      * @param def the rendering component
      * @param value the OsmPrimitive to render
+     * @param fast whether the icons should be loaded fast since many items are being displayed
      * @return the modified rendering component
      */
-    private Component renderer(Component def, OsmPrimitive value) {
+    private Component renderer(Component def, OsmPrimitive value, boolean fast) {
         if (value != null && def instanceof JLabel) {
             ((JLabel) def).setText(getComponentText(value));
-            ImageIcon icon = ImageProvider.getPadded(value,
-                // Height of component no yet known, assume the default 16px.
-                    ImageProvider.ImageSizes.SMALLICON.getImageDimension());
+            final ImageIcon icon = fast
+                    ? ImageProvider.get(value.getType())
+                    : ImageProvider.getPadded(value,
+                        // Height of component no yet known, assume the default 16px.
+                        ImageProvider.ImageSizes.SMALLICON.getImageDimension());
             if (icon != null) {
                 ((JLabel) def).setIcon(icon);
             } else {
