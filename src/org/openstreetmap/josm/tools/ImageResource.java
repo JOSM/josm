@@ -87,9 +87,9 @@ public class ImageResource {
      * @since 7693
      */
     public void getImageIcon(AbstractAction a) {
-        ImageIcon icon = getImageIconBounded(ImageProvider.getImageSizes(ImageProvider.ImageSizes.SMALLICON));
+        ImageIcon icon = getImageIconBounded(ImageProvider.ImageSizes.SMALLICON.getImageDimension());
         a.putValue(Action.SMALL_ICON, icon);
-        icon = getImageIconBounded(ImageProvider.getImageSizes(ImageProvider.ImageSizes.LARGEICON));
+        icon = getImageIconBounded(ImageProvider.ImageSizes.LARGEICON.getImageDimension());
         a.putValue(Action.LARGE_ICON_KEY, icon);
     }
 
