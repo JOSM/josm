@@ -419,12 +419,23 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     @Override
     public OsmPrimitiveType getDisplayType() {
-        return isMultipolygon() ? OsmPrimitiveType.MULTIPOLYGON
-        : OsmPrimitiveType.RELATION;
+        return isMultipolygon() && !isBoundary() ? OsmPrimitiveType.MULTIPOLYGON : OsmPrimitiveType.RELATION;
     }
 
+    /**
+     * Determines if this relation is a boundary.
+     * @return {@code true} if a boundary relation
+     */
+    public boolean isBoundary() {
+        return "boundary".equals(get("type"));
+    }
+
+    /**
+     * Determines if this relation behaves as a multipolygon.
+     * @return {@code true} if it's a real mutlipolygon or a boundary relation
+     */
     public boolean isMultipolygon() {
-        return "multipolygon".equals(get("type")) || "boundary".equals(get("type"));
+        return "multipolygon".equals(get("type")) || isBoundary();
     }
 
     @Override
