@@ -1,7 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -102,5 +104,28 @@ public class RelationTest {
 
         ds.addPrimitive(r1);
         Assert.assertEquals(new BBox(w1), r1.getBBox());
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12467">Bug #12467</a>.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testTicket12467() throws Exception {
+        Relation r = new Relation();
+        r.put("type", "boundary");
+        assertTrue(r.isBoundary());
+        assertTrue(r.isMultipolygon());
+        assertEquals(OsmPrimitiveType.RELATION, r.getDisplayType());
+
+        r.put("type", "multipolygon");
+        assertFalse(r.isBoundary());
+        assertTrue(r.isMultipolygon());
+        assertEquals(OsmPrimitiveType.MULTIPOLYGON, r.getDisplayType());
+
+        r.put("type", "something_else");
+        assertFalse(r.isBoundary());
+        assertFalse(r.isMultipolygon());
+        assertEquals(OsmPrimitiveType.RELATION, r.getDisplayType());
     }
 }
