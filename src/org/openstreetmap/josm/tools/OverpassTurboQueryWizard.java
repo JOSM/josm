@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import org.openstreetmap.josm.Main;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -13,6 +11,8 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
+import org.openstreetmap.josm.Main;
 
 /**
  * Uses <a href="https://github.com/tyrasd/overpass-wizard/">Overpass Turbo query wizard</a> code (MIT Licensed)
@@ -58,11 +58,12 @@ public final class OverpassTurboQueryWizard {
     public String constructQuery(String search) throws UncheckedParseException {
         try {
             final Object result = ((Invocable) engine).invokeMethod(engine.get("global"),
-                    "overpassWizard", search, new HashMap<String, Object>() {{
+                    "overpassWizard", search, new HashMap<String, Object>() { {
                         put("comment", false);
                         put("outputFormat", "xml");
                         put("outputMode", "recursive_meta");
-                    }});
+                    } }
+            );
             if (result == Boolean.FALSE) {
                 throw new UncheckedParseException();
             }

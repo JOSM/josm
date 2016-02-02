@@ -661,8 +661,7 @@ public class Preferences {
     /**
      * Get the directory where cached content of any kind should be stored.
      *
-     * If the directory doesn't exist on the file system, it will be created
-     * by this method.
+     * If the directory doesn't exist on the file system, it will be created by this method.
      *
      * @return the cache directory
      */
@@ -736,8 +735,7 @@ public class Preferences {
     /**
      * Get settings value for a certain key.
      * @param key the identifier for the setting
-     * @return "" if there is nothing set for the preference key,
-     *  the corresponding value otherwise. The result is not null.
+     * @return "" if there is nothing set for the preference key, the corresponding value otherwise. The result is not null.
      */
     public synchronized String get(final String key) {
         String value = get(key, null);
@@ -747,10 +745,8 @@ public class Preferences {
     /**
      * Get settings value for a certain key and provide default a value.
      * @param key the identifier for the setting
-     * @param def the default value. For each call of get() with a given key, the
-     *  default value must be the same.
-     * @return the corresponding value if the property has been set before,
-     *  def otherwise
+     * @param def the default value. For each call of get() with a given key, the default value must be the same.
+     * @return the corresponding value if the property has been set before, {@code def} otherwise
      */
     public synchronized String get(final String key, final String def) {
         return getSetting(key, new StringSetting(def), StringSetting.class).getValue();
@@ -816,8 +812,7 @@ public class Preferences {
     /**
      * Set a value for a certain setting.
      * @param key the unique identifier for the setting
-     * @param value the value of the setting. Can be null or "" which both removes
-     *  the key-value entry.
+     * @param value the value of the setting. Can be null or "" which both removes the key-value entry.
      * @return {@code true}, if something has changed (i.e. value is different than before)
      */
     public boolean put(final String key, String value) {
@@ -1145,8 +1140,7 @@ public class Preferences {
      * Get a list of values for a certain key
      * @param key the identifier for the setting
      * @param def the default value.
-     * @return the corresponding value if the property has been set before,
-     *  def otherwise
+     * @return the corresponding value if the property has been set before, {@code def} otherwise
      */
     public Collection<String> getCollection(String key, Collection<String> def) {
         return getSetting(key, ListSetting.create(def), ListSetting.class).getValue();
@@ -1155,8 +1149,7 @@ public class Preferences {
     /**
      * Get a list of values for a certain key
      * @param key the identifier for the setting
-     * @return the corresponding value if the property has been set before,
-     *  an empty Collection otherwise.
+     * @return the corresponding value if the property has been set before, an empty collection otherwise.
      */
     public Collection<String> getCollection(String key) {
         Collection<String> val = getCollection(key, null);
@@ -1170,12 +1163,10 @@ public class Preferences {
     }
 
     /**
-     * Set a value for a certain setting. The changed setting is saved
-     * to the preference file immediately. Due to caching mechanisms on modern
-     * operating systems and hardware, this shouldn't be a performance problem.
+     * Set a value for a certain setting. The changed setting is saved to the preference file immediately.
+     * Due to caching mechanisms on modern operating systems and hardware, this shouldn't be a performance problem.
      * @param key the unique identifier for the setting
-     * @param setting the value of the setting. In case it is null, the key-value
-     * entry will be removed.
+     * @param setting the value of the setting. In case it is null, the key-value entry will be removed.
      * @return {@code true}, if something has changed (i.e. value is different than before)
      */
     public boolean putSetting(final String key, Setting<?> setting) {
@@ -1219,12 +1210,10 @@ public class Preferences {
      * Get settings value for a certain key and provide default a value.
      * @param <T> the setting type
      * @param key the identifier for the setting
-     * @param def the default value. For each call of getSetting() with a given
-     * key, the default value must be the same. <code>def</code> must not be
-     * null, but the value of <code>def</code> can be null.
+     * @param def the default value. For each call of getSetting() with a given key, the default value must be the same.
+     * <code>def</code> must not be null, but the value of <code>def</code> can be null.
      * @param klass the setting type (same as T)
-     * @return the corresponding value if the property has been set before,
-     *  def otherwise
+     * @return the corresponding value if the property has been set before, {@code def} otherwise
      */
     @SuppressWarnings("unchecked")
     public synchronized <T extends Setting<?>> T getSetting(String key, T def, Class<T> klass) {
@@ -1311,8 +1300,7 @@ public class Preferences {
 
     /**
      * Annotation used for converting objects to String Maps and vice versa.
-     * Indicates that a certain field should be considered in the conversion
-     * process. Otherwise it is ignored.
+     * Indicates that a certain field should be considered in the conversion process. Otherwise it is ignored.
      *
      * @see #serializeStruct(java.lang.Object, java.lang.Class)
      * @see #deserializeStruct(java.util.Map, java.lang.Class)
@@ -1322,8 +1310,7 @@ public class Preferences {
 
     /**
      * Annotation used for converting objects to String Maps.
-     * Indicates that a certain field should be written to the map, even if
-     * the value is the same as the default value.
+     * Indicates that a certain field should be written to the map, even if the value is the same as the default value.
      *
      * @see #serializeStruct(java.lang.Object, java.lang.Class)
      */
@@ -1332,10 +1319,8 @@ public class Preferences {
 
     /**
      * Get a list of hashes which are represented by a struct-like class.
-     * Possible properties are given by fields of the class klass that have
-     * the @pref annotation.
-     * Default constructor is used to initialize the struct objects, properties
-     * then override some of these default values.
+     * Possible properties are given by fields of the class klass that have the @pref annotation.
+     * Default constructor is used to initialize the struct objects, properties then override some of these default values.
      * @param <T> klass type
      * @param key main preference key
      * @param klass The struct class
@@ -1371,19 +1356,15 @@ public class Preferences {
     }
 
     /**
-     * Convenience method that saves a MapListSetting which is provided as a
-     * Collection of objects.
+     * Convenience method that saves a MapListSetting which is provided as a collection of objects.
      *
-     * Each object is converted to a <code>Map&lt;String, String&gt;</code> using
-     * the fields with {@link pref} annotation. The field name is the key and
-     * the value will be converted to a string.
+     * Each object is converted to a <code>Map&lt;String, String&gt;</code> using the fields with {@link pref} annotation.
+     * The field name is the key and the value will be converted to a string.
      *
      * Considers only fields that have the @pref annotation.
      * In addition it does not write fields with null values. (Thus they are cleared)
-     * Default values are given by the field values after default constructor has
-     * been called.
-     * Fields equal to the default value are not written unless the field has
-     * the @writeExplicitly annotation.
+     * Default values are given by the field values after default constructor has been called.
+     * Fields equal to the default value are not written unless the field has the @writeExplicitly annotation.
      * @param <T> the class,
      * @param key main preference key
      * @param val the list that is supposed to be saved
@@ -1456,8 +1437,7 @@ public class Preferences {
     }
 
     /**
-     * Convert an object to a String Map, by using field names and values as map
-     * key and value.
+     * Convert an object to a String Map, by using field names and values as map key and value.
      *
      * The field value is converted to a String.
      *
@@ -1465,8 +1445,7 @@ public class Preferences {
      *
      * Fields will not be written to the map if the value is null or unchanged
      * (compared to an object created with the no-arg-constructor).
-     * The {@link writeExplicitly} annotation overrides this behavior, i.e. the
-     * default value will also be written.
+     * The {@link writeExplicitly} annotation overrides this behavior, i.e. the default value will also be written.
      *
      * @param <T> the class of the object <code>struct</code>
      * @param struct the object to be converted
@@ -1508,13 +1487,11 @@ public class Preferences {
     }
 
     /**
-     * Converts a String-Map to an object of a certain class, by comparing
-     * map keys to field names of the class and assigning map values to the
-     * corresponding fields.
+     * Converts a String-Map to an object of a certain class, by comparing map keys to field names of the class and assigning
+     * map values to the corresponding fields.
      *
-     * The map value (a String) is converted to the field type. Supported
-     * types are: boolean, Boolean, int, Integer, double, Double, String,
-     * Map&lt;String, String&gt; and Map&lt;String, List&lt;String&gt;&gt;.
+     * The map value (a String) is converted to the field type. Supported types are: boolean, Boolean, int, Integer, double,
+     * Double, String, Map&lt;String, String&gt; and Map&lt;String, List&lt;String&gt;&gt;.
      *
      * Only fields with annotation {@link pref} are taken into account.
      * @param <T> the class
@@ -1588,17 +1565,14 @@ public class Preferences {
      *
      */
     public void updateSystemProperties() {
-        if ("true".equals(get("prefer.ipv6", "auto"))) {
+        if ("true".equals(get("prefer.ipv6", "auto")) && !"true".equals(Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true"))) {
             // never set this to false, only true!
-            if (!"true".equals(Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true"))) {
-                Main.info(tr("Try enabling IPv6 network, prefering IPv6 over IPv4 (only works on early startup)."));
-            }
+            Main.info(tr("Try enabling IPv6 network, prefering IPv6 over IPv4 (only works on early startup)."));
         }
         Utils.updateSystemProperty("http.agent", Version.getInstance().getAgentString());
         Utils.updateSystemProperty("user.language", get("language"));
-        // Workaround to fix a Java bug.
+        // Workaround to fix a Java bug. This ugly hack comes from Sun bug database: https://bugs.openjdk.java.net/browse/JDK-6292739
         // Force AWT toolkit to update its internal preferences (fix #6345).
-        // This ugly hack comes from Sun bug database: https://bugs.openjdk.java.net/browse/JDK-6292739
         if (!GraphicsEnvironment.isHeadless()) {
             try {
                 Field field = Toolkit.class.getDeclaredField("resources");
@@ -1619,11 +1593,10 @@ public class Preferences {
         if (getBoolean("jdk.tls.disableSNIExtension", false)) {
             Utils.updateSystemProperty("jsse.enableSNIExtension", "false");
         }
-        // Workaround to fix another Java bug
+        // Workaround to fix another Java bug - The bug seems to have been fixed in Java 8, to remove during transition
         // Force Java 7 to use old sorting algorithm of Arrays.sort (fix #8712).
         // See Oracle bug database: https://bugs.openjdk.java.net/browse/JDK-7075600
         // and https://bugs.openjdk.java.net/browse/JDK-6923200
-        // The bug seems to have been fixed in Java 8, to remove during transition
         if (getBoolean("jdk.Arrays.useLegacyMergeSort", !Version.getInstance().isLocalBuild())) {
             Utils.updateSystemProperty("java.util.Arrays.useLegacyMergeSort", "true");
         }
@@ -1668,17 +1641,15 @@ public class Preferences {
     protected XMLStreamReader parser;
 
     public static void validateXML(Reader in) throws IOException, SAXException {
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         try (InputStream xsdStream = new CachedFile("resource://data/preferences.xsd").getInputStream()) {
-            Schema schema = factory.newSchema(new StreamSource(xsdStream));
+            Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(new StreamSource(xsdStream));
             Validator validator = schema.newValidator();
             validator.validate(new StreamSource(in));
         }
     }
 
     protected void fromXML(Reader in) throws XMLStreamException {
-        XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
-        this.parser = parser;
+        this.parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
         parse();
     }
 
@@ -1967,7 +1938,7 @@ public class Preferences {
             if (setting != null && setting instanceof MapListSetting) {
                 List<Map<String, String>> l = new LinkedList<>();
                 boolean modified = false;
-                for (Map<String, String> map: ((MapListSetting)setting).getValue()) {
+                for (Map<String, String> map: ((MapListSetting) setting).getValue()) {
                     Map<String, String> newMap = new HashMap<>();
                     for (Entry<String, String> entry: map.entrySet()) {
                         String value = entry.getValue();

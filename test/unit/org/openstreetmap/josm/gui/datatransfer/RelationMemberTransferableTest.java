@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.datatransfer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.openstreetmap.josm.gui.datatransfer.RelationMemberTransferable.RELATION_MEMBER_DATA;
 
@@ -59,9 +60,10 @@ public class RelationMemberTransferableTest {
     public void testGetTransferDataNominal() throws UnsupportedFlavorException {
         RelationMemberTransferable rmt = new RelationMemberTransferable(Collections.singleton(new RelationMember("test", new Node(1))));
         assertEquals("node 1 test # incomplete\n", rmt.getTransferData(DataFlavor.stringFlavor));
-        Collection<RelationMemberData> td = ((RelationMemberTransferable.Data) rmt.getTransferData(RELATION_MEMBER_DATA)).getRelationMemberData();
+        Collection<RelationMemberData> td = ((RelationMemberTransferable.Data) rmt.getTransferData(RELATION_MEMBER_DATA))
+                .getRelationMemberData();
         assertEquals(1, td.size());
-        assertTrue(td.iterator().next() instanceof RelationMemberData);
+        assertNotNull(td.iterator().next());
     }
 
     /**
