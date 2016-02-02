@@ -1961,6 +1961,31 @@ public class Preferences {
                 }
             }
         }
+        /* drop in October 2016 */
+        if (loadedVersion < 9715) {
+            Setting<?> setting = settingsMap.get("imagery.entries");
+            if (setting != null && setting instanceof MapListSetting) {
+                List<Map<String, String>> l = new LinkedList<>();
+                boolean modified = false;
+                for (Map<String, String> map: ((MapListSetting)setting).getValue()) {
+                    Map<String, String> newMap = new HashMap<>();
+                    for (Entry<String, String> entry: map.entrySet()) {
+                        String value = entry.getValue();
+                        if ("noTileHeaders".equals(entry.getKey())) {
+                            value = value.replaceFirst("\":(\".*\")\\}", "\":[$1]}");
+                            if (!value.equals(entry.getValue())) {
+                                modified = true;
+                            }
+                        }
+                        newMap.put(entry.getKey(), value);
+                    }
+                    l.add(newMap);
+                }
+                if (modified) {
+                    putListOfStructs("imagery.entries", l);
+                }
+            }
+        }
 
         for (String key : OBSOLETE_PREF_KEYS) {
             if (settingsMap.containsKey(key)) {
