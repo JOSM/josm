@@ -1018,6 +1018,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             .title(tr("Save OSM file"))
             .extension(extension)
             .file(file)
+            .allTypes(true)
             .getFileForSave();
     }
 
