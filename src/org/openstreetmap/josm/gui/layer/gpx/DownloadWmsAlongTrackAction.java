@@ -35,8 +35,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
 
 /**
- * Class downloading WMS and TMS along the GPX track
- *
+ * Class downloading WMS and TMS along the GPX track.
+ * @since 5715
  */
 public class DownloadWmsAlongTrackAction extends AbstractAction {
 
@@ -50,9 +50,51 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
         this.data = data;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        final List<LatLon> points = new ArrayList<>();
+    static class PrecacheWmsTask extends PleaseWaitRunnable {
+
+        private final AbstractTileSourceLayer layer;
+        private final List<LatLon> points;
+        private PrecacheTask precacheTask;
+
+        protected PrecacheWmsTask(AbstractTileSourceLayer layer, List<LatLon> points) {
+            super(tr("Precaching WMS"));
+            this.layer = layer;
+            this.points = points;
+        }
+
+        @Override
+        protected void realRun() throws SAXException, IOException, OsmTransferException {
+            precacheTask = layer.new PrecacheTask(progressMonitor);
+            layer.downloadAreaToCache(precacheTask, points, 0, 0);
+            while (!precacheTask.isFinished() && !progressMonitor.isCanceled()) {
+                synchronized (this) {
+                    try {
+                        wait(200);
+                    } catch (InterruptedException ex) {
+                        Main.warn("InterruptedException in "+getClass().getSimpleName()+" while precaching WMS");
+                    }
+                }
+            }
+        }
+
+        @Override
+        protected void finish() {
+            // Do nothing
+        }
+
+        @Override
+        protected void cancel() {
+            precacheTask.cancel();
+        }
+
+        @Override
+        public ProgressTaskId canRunInBackground() {
+            return ProgressTaskIds.PRECACHE_WMS;
+        }
+    }
+
+    PrecacheWmsTask createTask() {
+        List<LatLon> points = new ArrayList<>();
         for (GpxTrack trk : data.tracks) {
             for (GpxTrackSegment segment : trk.getSegments()) {
                 for (WayPoint p : segment.getWayPoints()) {
@@ -63,45 +105,22 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
         for (WayPoint p : data.waypoints) {
             points.add(p.getCoor());
         }
-        final AbstractTileSourceLayer layer = askedLayer();
-        if (layer != null) {
-            PleaseWaitRunnable task = new PleaseWaitRunnable(tr("Precaching WMS")) {
-                private PrecacheTask precacheTask;
+        AbstractTileSourceLayer layer = askedLayer();
+        return layer != null ? new PrecacheWmsTask(layer, points) : null;
+    }
 
-                @Override
-                protected void realRun() throws SAXException, IOException, OsmTransferException {
-                    precacheTask = layer.new PrecacheTask(progressMonitor);
-                    layer.downloadAreaToCache(precacheTask, points, 0, 0);
-                    while (!precacheTask.isFinished() && !progressMonitor.isCanceled()) {
-                        synchronized (this) {
-                            try {
-                                wait(200);
-                            } catch (InterruptedException ex) {
-                                Main.warn("InterruptedException in "+getClass().getSimpleName()+" while precaching WMS");
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                protected void finish() {
-                }
-
-                @Override
-                protected void cancel() {
-                    precacheTask.cancel();
-                }
-
-                @Override
-                public ProgressTaskId canRunInBackground() {
-                    return ProgressTaskIds.PRECACHE_WMS;
-                }
-            };
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        PrecacheWmsTask task = createTask();
+        if (task != null) {
             Main.worker.execute(task);
         }
     }
 
     protected AbstractTileSourceLayer askedLayer() {
+        if (!Main.isDisplayingMapView()) {
+            return null;
+        }
         List<AbstractTileSourceLayer> targetLayers = Main.map.mapView.getLayersOfType(AbstractTileSourceLayer.class);
         if (targetLayers.isEmpty()) {
             if (!GraphicsEnvironment.isHeadless()) {

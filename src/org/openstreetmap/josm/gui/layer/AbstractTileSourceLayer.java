@@ -1689,7 +1689,6 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 ((TMSCachedTileLoader) this.tileLoader).setDownloadExecutor(
                         TMSCachedTileLoader.getNewThreadPoolExecutor("Precache downloader"));
             }
-
         }
 
         /**
@@ -1717,10 +1716,12 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
 
         @Override
         public void tileLoadingFinished(Tile tile, boolean success) {
+            int processed = this.processedCount.incrementAndGet();
             if (success) {
-                int processed = this.processedCount.incrementAndGet();
                 this.progressMonitor.worked(1);
                 this.progressMonitor.setCustomText(tr("Downloaded {0}/{1} tiles", processed, totalCount));
+            } else {
+                Main.warn("Tile loading failure: " + tile + " - " + tile.getErrorMessage());
             }
         }
 
