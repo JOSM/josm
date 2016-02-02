@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="MapSource 6.16.3" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+
+  <metadata>
+    <link href="http://www.garmin.com">
+      <text>Garmin International</text>
+    </link>
+    <time>2016-01-09T19:37:38Z</time>
+    <bounds maxlat="47.201499743387103" maxlon="8.798418799415231" minlat="47.18490038998425" minlon="8.77192972227931"/>
+  </metadata>
+
+  <wpt lat="47.192017380148172" lon="8.795854020863771">
+    <ele>480</ele>
+    <time>2016-01-09T19:29:38Z</time>
+    <name>Schranke</name>
+    <cmt>Pfad</cmt>
+    <desc>Pfad</desc>
+    <sym>Toll Booth</sym>
+    <extensions>
+      <gpxx:WaypointExtension xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
+        <gpxx:DisplayMode>SymbolAndName</gpxx:DisplayMode>
+      </gpxx:WaypointExtension>
+    </extensions>
+  </wpt>
+
+  <trk>
+    <name>2016-01-03 20:40:14</name>
+    <extensions>
+      <gpxx:TrackExtension xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
+        <gpxx:DisplayColor>Black</gpxx:DisplayColor>
+      </gpxx:TrackExtension>
+    </extensions>
+    <trkseg>
+      <trkpt lat="47.19286847859621" lon="8.79732714034617">
+        <ele>471.86000000000001</ele>
+        <time>2016-01-03T11:59:58Z</time>
+      </trkpt>
+      <trkpt lat="47.192921955138445" lon="8.797342479228973">
+        <ele>471.43000000000001</ele>
+        <time>2016-01-03T11:59:59Z</time>
+      </trkpt>
+      <trkpt lat="47.192975012585521" lon="8.797344239428639">
+        <ele>470.69</ele>
+        <time>2016-01-03T12:00:00Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+
+</gpx>
