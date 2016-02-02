@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipOutputStream;
@@ -99,19 +98,6 @@ public enum Compression {
     @SuppressWarnings("resource")
     public static InputStream getUncompressedFileInputStream(File file) throws IOException {
         return byExtension(file.getName()).getUncompressedInputStream(new FileInputStream(file));
-    }
-
-    /**
-     * Returns an un-compressing {@link InputStream} for the {@link URL} {@code url}.
-     * @param url URL
-     * @return un-compressing input stream
-     *
-     * @throws IOException if any I/O error occurs
-     * @deprecated Use {@link org.openstreetmap.josm.tools.HttpClient} instead
-     */
-    @Deprecated
-    public static InputStream getUncompressedURLInputStream(URL url) throws IOException {
-        return Utils.openURLAndDecompress(url, true);
     }
 
     /**
