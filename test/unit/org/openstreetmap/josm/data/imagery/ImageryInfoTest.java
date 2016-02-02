@@ -3,9 +3,15 @@ package org.openstreetmap.josm.data.imagery;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.data.Preferences;
 
 /**
  *
@@ -31,5 +37,39 @@ public class ImageryInfoTest {
         testImageryTMS.setDefaultMinZoom(16);
         testImageryTMS.setDefaultMaxZoom(23);
         assertEquals("tms[16,23]:http://localhost", testImageryTMS.getExtendedUrl());
+    }
+
+    /**
+     * Tests the {@linkplain Preferences#serializeStruct(Object, Class) serialization} of {@link ImageryInfo.ImageryPreferenceEntry}
+     */
+    @Test
+    public void testSerializeStruct() {
+        final ImageryInfo.ImageryPreferenceEntry info = new ImageryInfo.ImageryPreferenceEntry();
+        info.noTileHeaders = Collections.singletonMap("ETag", Arrays.asList("foo", "bar"));
+        final Map<String, String> map = Preferences.serializeStruct(info, ImageryInfo.ImageryPreferenceEntry.class);
+        assertEquals("{noTileHeaders={\"ETag\":[\"foo\",\"bar\"]}}", map.toString());
+    }
+
+    /**
+     * Tests the {@linkplain Preferences#deserializeStruct(Map, Class)} deserialization} of {@link ImageryInfo.ImageryPreferenceEntry}
+     */
+    @Test
+    public void testDeserializeStruct() {
+        final ImageryInfo.ImageryPreferenceEntry info = Preferences.deserializeStruct(
+                Collections.singletonMap("noTileHeaders", "{\"ETag\":[\"foo\",\"bar\"]}"), ImageryInfo.ImageryPreferenceEntry.class);
+        assertEquals(info.noTileHeaders, Collections.singletonMap("ETag", Arrays.asList("foo", "bar")));
+        final List<String> eTag = info.noTileHeaders.get("ETag");
+        assertEquals(eTag, Arrays.asList("foo", "bar"));
+    }
+
+    /**
+     * Tests the {@linkplain Preferences#deserializeStruct(Map, Class)} deserialization} of legacy {@link ImageryInfo.ImageryPreferenceEntry}
+     */
+    @Test
+    public void testDeserializeStructTicket12474() {
+        final ImageryInfo.ImageryPreferenceEntry info = Preferences.deserializeStruct(
+                Collections.singletonMap("noTileHeaders", "{\"ETag\":\"foo-and-bar\"}"), ImageryInfo.ImageryPreferenceEntry.class);
+        final List<String> eTag = info.noTileHeaders.get("ETag");
+        assertEquals(eTag, Arrays.asList("foo", "bar"));
     }
 }
