@@ -2027,6 +2027,7 @@ area[shop=hairdresser],
 area[shop=hardware],
 area[shop=hearing_aids],
 area[shop=hifi],
+area[shop=houseware],
 area[shop=jewelry],
 area[shop=kitchen],
 area[shop=mall],
@@ -2267,6 +2268,11 @@ node[shop=hearing_aids] {
 }
 node[shop=hifi] {
     icon-image: "shop/hifi.svg";
+    set icon_z17;
+    text: auto;
+}
+node[shop=houseware] {
+    icon-image: "shop/houseware.svg";
     set icon_z17;
     text: auto;
 }

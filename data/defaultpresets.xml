@@ -7439,6 +7439,17 @@
             <reference ref="name_brand_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Kitchen -->
+        <item name="Houseware" icon="styles/standard/shop/houseware.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=houseware"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=houseware"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=houseware"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=houseware"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=houseware" />
+            <space />
+            <key key="shop" value="houseware" />
+            <reference ref="name_brand_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Houseware -->
         <item name="Curtain" icon="presets/curtain.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=curtain"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=curtain"
