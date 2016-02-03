@@ -1294,32 +1294,136 @@
             <check key="button_operated" text="Button operated" />
             <check key="traffic_signals:sound" text="Sound signals" />
         </item> <!-- Pedestrian Crossing -->
-        <item name="Traffic Calming" icon="styles/standard/vehicle/choker.svg" type="node,way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
-                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:traffic_calming"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_calming"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Key:traffic_calming"
-                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_calming"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_calming"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:traffic_calming"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
-                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
-            <space />
-            <combo key="traffic_calming" text="Type" match="key" values_searchable="true">
-                <list_entry value="yes" display_value="yes - choose a specific value instead if possible" icon="styles/standard/vehicle/traffic_calming.svg" />
-                <list_entry value="bump" icon="styles/standard/vehicle/bump.svg" />
-                <list_entry value="chicane" icon="styles/standard/vehicle/chicane.svg" />
-                <list_entry value="choker" icon="styles/standard/vehicle/choker.svg" />
-                <list_entry value="cushion" icon="styles/standard/vehicle/cushion.svg" />
-                <list_entry value="hump" icon="styles/standard/vehicle/hump.svg" />
-                <list_entry value="island" icon="styles/standard/vehicle/island.svg" />
-                <list_entry value="rumble_strip" icon="styles/standard/vehicle/rumble_strip.svg" />
-                <list_entry value="table" icon="styles/standard/vehicle/table.svg" />
-            </combo>
-        </item> <!-- Traffic Calming -->
+        <group name="Traffic Calming" icon="styles/standard/vehicle/choker.svg"> 
+            <item name="Bump" icon="styles/standard/vehicle/bump.svg" type="node,way" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
+                      cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:traffic_calming"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_calming"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Key:traffic_calming"
+                      fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_calming"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_calming"
+                      it.href="http://wiki.openstreetmap.org/wiki/IT:Key:traffic_calming"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
+                      pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
+                      ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="bump" />
+            </item> <!-- Bump -->
+            <item name="Chicane" icon="styles/standard/vehicle/chicane.svg" type="node,way" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
+                      cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:traffic_calming"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_calming"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Key:traffic_calming"
+                      fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_calming"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_calming"
+                      it.href="http://wiki.openstreetmap.org/wiki/IT:Key:traffic_calming"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
+                      pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
+                      ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="chicane" />
+            </item> <!-- Chicane -->
+            <item name="Choker" icon="styles/standard/vehicle/choker.svg" type="node,way" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
+                      cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:traffic_calming"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_calming"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Key:traffic_calming"
+                      fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_calming"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_calming"
+                      it.href="http://wiki.openstreetmap.org/wiki/IT:Key:traffic_calming"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
+                      pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
+                      ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="choker" />
+            </item> <!-- Choker -->
+            <item name="Cushion" icon="styles/standard/vehicle/cushion.svg" type="node,way" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
+                      cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:traffic_calming"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_calming"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Key:traffic_calming"
+                      fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_calming"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_calming"
+                      it.href="http://wiki.openstreetmap.org/wiki/IT:Key:traffic_calming"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
+                      pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
+                      ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="cushion" />
+            </item> <!-- Cushion -->
+            <item name="Hump" icon="styles/standard/vehicle/hump.svg" type="node,way" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
+                      cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:traffic_calming"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_calming"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Key:traffic_calming"
+                      fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_calming"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_calming"
+                      it.href="http://wiki.openstreetmap.org/wiki/IT:Key:traffic_calming"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
+                      pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
+                      ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="hump" />
+            </item> <!-- Hump -->
+            <item name="Island" name_context="traffic_calming" icon="styles/standard/vehicle/island.svg" type="node,way" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
+                      cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:traffic_calming"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_calming"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Key:traffic_calming"
+                      fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_calming"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_calming"
+                      it.href="http://wiki.openstreetmap.org/wiki/IT:Key:traffic_calming"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
+                      pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
+                      ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="island" />
+            </item> <!-- Island -->
+            <item name="Rumble strip" icon="styles/standard/vehicle/rumble_strip.svg" type="node,way" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
+                      cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:traffic_calming"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_calming"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Key:traffic_calming"
+                      fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_calming"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_calming"
+                      it.href="http://wiki.openstreetmap.org/wiki/IT:Key:traffic_calming"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
+                      pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
+                      ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="rumble_strip" />
+            </item> <!-- Rumble strip -->
+            <item name="Table" icon="styles/standard/vehicle/table.svg" type="node,way" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"
+                      cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:traffic_calming"
+                      de.href="http://wiki.openstreetmap.org/wiki/DE:Key:traffic_calming"
+                      es.href="http://wiki.openstreetmap.org/wiki/ES:Key:traffic_calming"
+                      fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:traffic_calming"
+                      fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:traffic_calming"
+                      it.href="http://wiki.openstreetmap.org/wiki/IT:Key:traffic_calming"
+                      ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:traffic_calming"
+                      pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:traffic_calming"
+                      pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:traffic_calming"
+                      pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:traffic_calming"
+                      ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="table" />
+            </item> <!-- Table -->
+        </group> <!-- Traffic Calming -->
         <item name="Passing Place" icon="styles/standard/vehicle/passing_place.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=passing_place"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=passing_place"
