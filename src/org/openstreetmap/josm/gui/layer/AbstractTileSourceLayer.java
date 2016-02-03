@@ -1334,7 +1334,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
                 return;
             for (Tile t : this.allTilesCreate()) {
                 if (t.hasError()) {
-                    loadTile(t, true);
+                    tileLoader.createTileLoaderJob(t).submit(force);
                 }
             }
         }
