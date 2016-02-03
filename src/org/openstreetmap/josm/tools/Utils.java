@@ -24,10 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -67,7 +65,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Version;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -826,58 +823,6 @@ public final class Utils {
         };
     }
 
-    private static final Pattern HTTP_PREFFIX_PATTERN = Pattern.compile("https?");
-
-    /**
-     * Opens a HTTP connection to the given URL and sets the User-Agent property to JOSM's one.
-     * @param httpURL The HTTP url to open (must use http:// or https://)
-     * @return An open HTTP connection to the given URL
-     * @throws java.io.IOException if an I/O exception occurs.
-     * @since 5587
-     * @deprecated Use {@link HttpClient} instead
-     */
-    @Deprecated
-    public static HttpURLConnection openHttpConnection(URL httpURL) throws IOException {
-        if (httpURL == null || !HTTP_PREFFIX_PATTERN.matcher(httpURL.getProtocol()).matches()) {
-            throw new IllegalArgumentException("Invalid HTTP url");
-        }
-        if (Main.isDebugEnabled()) {
-            Main.debug("Opening HTTP connection to "+httpURL.toExternalForm());
-        }
-        HttpURLConnection connection = (HttpURLConnection) httpURL.openConnection();
-        connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
-        connection.setUseCaches(false);
-        return connection;
-    }
-
-    /**
-     * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
-     * @param url The url to open
-     * @return An stream for the given URL
-     * @throws java.io.IOException if an I/O exception occurs.
-     * @since 5867
-     * @deprecated Use {@link HttpClient} instead
-     */
-    @Deprecated
-    public static InputStream openURL(URL url) throws IOException {
-        return HttpClient.create(url).connect().getContent();
-    }
-
-    /**
-     * Opens a connection to the given URL, sets the User-Agent property to JOSM's one, and decompresses stream if necessary.
-     * @param url The url to open
-     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link BZip2CompressorInputStream}
-     *                   if the {@code Content-Type} header is set accordingly.
-     * @return An stream for the given URL
-     * @throws IOException if an I/O exception occurs.
-     * @since 6421
-     * @deprecated Use {@link HttpClient} instead
-     */
-    @Deprecated
-    public static InputStream openURLAndDecompress(final URL url, final boolean decompress) throws IOException {
-        return HttpClient.create(url).connect().uncompress(decompress).getContent();
-    }
-
     /**
      * Returns a Bzip2 input stream wrapping given input stream.
      * @param in The raw input stream
@@ -924,103 +869,6 @@ public final class Utils {
             Main.debug("Zip entry: "+ze.getName());
         }
         return zis;
-    }
-
-    /***
-     * Setups the given URL connection to match JOSM needs by setting its User-Agent and timeout properties.
-     * @param connection The connection to setup
-     * @return {@code connection}, with updated properties
-     * @since 5887
-     * @deprecated Use {@link HttpClient} instead
-     */
-    @Deprecated
-    public static URLConnection setupURLConnection(URLConnection connection) {
-        if (connection != null) {
-            connection.setRequestProperty("User-Agent", Version.getInstance().getFullAgentString());
-            connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect", 15)*1000);
-            connection.setReadTimeout(Main.pref.getInteger("socket.timeout.read", 30)*1000);
-        }
-        return connection;
-    }
-
-    /**
-     * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
-     * @param url The url to open
-     * @return An buffered stream reader for the given URL (using UTF-8)
-     * @throws java.io.IOException if an I/O exception occurs.
-     * @since 5868
-     * @deprecated Use {@link HttpClient} instead
-     */
-    @Deprecated
-    public static BufferedReader openURLReader(URL url) throws IOException {
-        return HttpClient.create(url).connect().getContentReader();
-    }
-
-    /**
-     * Opens a connection to the given URL and sets the User-Agent property to JOSM's one.
-     * @param url The url to open
-     * @param decompress whether to wrap steam in a {@link GZIPInputStream} or {@link BZip2CompressorInputStream}
-     *                   if the {@code Content-Type} header is set accordingly.
-     * @return An buffered stream reader for the given URL (using UTF-8)
-     * @throws IOException if an I/O exception occurs.
-     * @since 6421
-     * @deprecated Use {@link HttpClient} instead
-     */
-    @Deprecated
-    public static BufferedReader openURLReaderAndDecompress(final URL url, final boolean decompress) throws IOException {
-        return HttpClient.create(url).connect().uncompress(decompress).getContentReader();
-    }
-
-    /**
-     * Opens a HTTP connection to the given URL, sets the User-Agent property to JOSM's one and optionnaly disables Keep-Alive.
-     * @param httpURL The HTTP url to open (must use http:// or https://)
-     * @param keepAlive whether not to set header {@code Connection=close}
-     * @return An open HTTP connection to the given URL
-     * @throws java.io.IOException if an I/O exception occurs.
-     * @since 5587
-     * @deprecated Use {@link HttpClient} instead
-     */
-    @Deprecated
-    public static HttpURLConnection openHttpConnection(URL httpURL, boolean keepAlive) throws IOException {
-        HttpURLConnection connection = openHttpConnection(httpURL);
-        if (!keepAlive) {
-            connection.setRequestProperty("Connection", "close");
-        }
-        if (Main.isDebugEnabled()) {
-            try {
-                Main.debug("REQUEST: "+ connection.getRequestProperties());
-            } catch (IllegalStateException e) {
-                Main.warn(e);
-            }
-        }
-        return connection;
-    }
-
-    /**
-     * Opens a HTTP connection to given URL, sets the User-Agent property to JOSM's one, optionally disables Keep-Alive, and
-     * optionally - follows redirects. It means, that it's not possible to send custom headers with method
-     *
-     * @param httpURL The HTTP url to open (must use http:// or https://)
-     * @param keepAlive whether not to set header {@code Connection=close}
-     * @param followRedirects wheter or not to follow HTTP(S) redirects
-     * @return An open HTTP connection to the given URL
-     * @throws IOException if an I/O exception occurs
-     * @since 8650
-     * @deprecated Use {@link HttpClient} instead
-     */
-    @Deprecated
-    public static HttpURLConnection openHttpConnection(URL httpURL, boolean keepAlive, boolean followRedirects) throws IOException {
-        HttpURLConnection connection = openHttpConnection(httpURL, keepAlive);
-        if (followRedirects) {
-            for (int i = 0; i < 5; i++) {
-                if (connection.getResponseCode() == 302) {
-                    connection = openHttpConnection(new URL(connection.getHeaderField("Location")), keepAlive);
-                } else {
-                    break;
-                }
-            }
-        }
-        return connection;
     }
 
     /**
