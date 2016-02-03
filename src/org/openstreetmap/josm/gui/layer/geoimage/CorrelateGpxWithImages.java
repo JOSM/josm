@@ -1317,7 +1317,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         return endIndex;
     }
 
-    private static String formatTimezone(double timezone) {
+    static String formatTimezone(double timezone) {
         StringBuilder ret = new StringBuilder();
 
         if (timezone < 0) {
@@ -1336,7 +1336,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         return ret.toString();
     }
 
-    private static double parseTimezone(String timezone) throws ParseException {
+    static double parseTimezone(String timezone) throws ParseException {
 
         if (timezone.isEmpty())
             return 0;
@@ -1407,7 +1407,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             return (h + m / 60.0) * (sgnTimezone == '-' ? -1 : 1);
     }
 
-    private static long parseOffset(String offset) throws ParseException {
+    static long parseOffset(String offset) throws ParseException {
         String error = tr("Error while parsing offset.\nExpected format: {0}", "number");
 
         if (!offset.isEmpty()) {

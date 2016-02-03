@@ -19,7 +19,7 @@ import org.unitils.reflectionassert.ReflectionAssert;
 /**
  * Unit tests of {@link TemplateParser} class.
  */
-public class TemplateEngineTest {
+public class TemplateParserTest {
 
     /**
      * Setup test.
