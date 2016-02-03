@@ -75,6 +75,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -127,6 +128,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     public static final int DEFAULT_RECENT_RELATIONS_NUMBER = 20;
     public static final IntegerProperty PROPERTY_RECENT_RELATIONS_NUMBER = new IntegerProperty("properties.last-closed-relations-size",
             DEFAULT_RECENT_RELATIONS_NUMBER);
+    public static final StringProperty PROPERTY_SAVE_EXTENSION = new StringProperty("save.extension.osm", "osm");
+
 
     /** List of recent relations */
     private final Map<Relation, Void> recentRelations = new LinkedHashMap<Relation, Void>(PROPERTY_RECENT_RELATIONS_NUMBER.get()+1, 1.1f, true) {
@@ -1006,7 +1009,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     @Override
     public File createAndOpenSaveFileChooser() {
-        String extension = Main.pref.get("save.extension.osm", "osm");
+        String extension = PROPERTY_SAVE_EXTENSION.get();
         File file = getAssociatedFile();
         if (file == null && isRenamed()) {
             String filename = Main.pref.get("lastDirectory") + '/' + getName();
