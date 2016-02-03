@@ -79,6 +79,7 @@ import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.SAXException;
@@ -999,6 +1000,64 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
     }
 
+    static class NoGpxTimestamps extends Exception {
+    }
+
+    /**
+     * Tries to auto-guess the timezone and offset.
+     *
+     * @param imgs the images to correlate
+     * @param gpx the gpx track to correlate to
+     * @return a pair of timezone (in hours) and offset (in seconds)
+     * @throws IndexOutOfBoundsException when there are no images
+     * @throws NoGpxTimestamps when the gpx track does not contain a timestamp
+     */
+    static Pair<Double, Long> autoGuess(List<ImageEntry> imgs, GpxData gpx) throws IndexOutOfBoundsException, NoGpxTimestamps {
+
+        // Init variables
+        long firstExifDate = imgs.get(0).getExifTime().getTime() / 1000;
+
+        long firstGPXDate = -1;
+        // Finds first GPX point
+        outer: for (GpxTrack trk : gpx.tracks) {
+            for (GpxTrackSegment segment : trk.getSegments()) {
+                for (WayPoint curWp : segment.getWayPoints()) {
+                    try {
+                        final Date parsedTime = curWp.setTimeFromAttribute();
+                        if (parsedTime != null) {
+                            firstGPXDate = parsedTime.getTime() / 1000;
+                            break outer;
+                        }
+                    } catch (Exception e) {
+                        Main.warn(e);
+                    }
+                }
+            }
+        }
+
+        if (firstGPXDate < 0) {
+            throw new NoGpxTimestamps();
+        }
+
+        // seconds
+        long diff = firstExifDate - firstGPXDate;
+
+        double diffInH = (double) diff / (60 * 60);    // hours
+
+        // Find day difference
+        int dayOffset = (int) Math.round(diffInH / 24); // days
+        double tz = diff - dayOffset * 24 * 60 * 60L;  // seconds
+
+        // In hours, rounded to two decimal places
+        tz = (double) Math.round(tz * 100 / (60 * 60)) / 100;
+
+        // Due to imprecise clocks we might get a "+3:28" timezone, which should obviously be 3:30 with
+        // -2 minutes offset. This determines the real timezone and finds offset.
+        final double timezone = (double) Math.round(tz * 2) / 2; // hours, rounded to one decimal place
+        final long delta = Math.round(diff - timezone * 60 * 60); // seconds
+        return Pair.create(timezone, delta);
+    }
+
     private class AutoGuessActionListener implements ActionListener {
 
         @Override
@@ -1010,59 +1069,21 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             List<ImageEntry> imgs = getSortedImgList();
 
-            // no images found, exit
-            if (imgs.isEmpty()) {
+            try {
+                final Pair<Double, Long> r = autoGuess(imgs, gpx);
+                timezone = r.a;
+                delta = r.b;
+            } catch (IndexOutOfBoundsException ex) {
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("The selected photos do not contain time information."),
                         tr("Photos do not contain time information"), JOptionPane.WARNING_MESSAGE);
                 return;
-            }
-
-            // Init variables
-            long firstExifDate = imgs.get(0).getExifTime().getTime()/1000;
-
-            long firstGPXDate = -1;
-            // Finds first GPX point
-            outer: for (GpxTrack trk : gpx.tracks) {
-                for (GpxTrackSegment segment : trk.getSegments()) {
-                    for (WayPoint curWp : segment.getWayPoints()) {
-                        try {
-                            final Date parsedTime = curWp.setTimeFromAttribute();
-                            if (parsedTime != null) {
-                                firstGPXDate = parsedTime.getTime();
-                                break outer;
-                            }
-                        } catch (Exception e) {
-                            Main.warn(e);
-                        }
-                    }
-                }
-            }
-
-            // No GPX timestamps found, exit
-            if (firstGPXDate < 0) {
+            } catch (NoGpxTimestamps ex) {
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("The selected GPX track does not contain timestamps. Please select another one."),
                         tr("GPX Track has no time information"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
-            // seconds
-            long diff = firstExifDate - firstGPXDate;
-
-            double diffInH = (double) diff/(60*60);    // hours
-
-            // Find day difference
-            int dayOffset = (int) Math.round(diffInH / 24); // days
-            double tz = diff - dayOffset*24*60*60L;  // seconds
-
-            // In hours, rounded to two decimal places
-            tz = (double) Math.round(tz*100/(60*60)) / 100;
-
-            // Due to imprecise clocks we might get a "+3:28" timezone, which should obviously be 3:30 with
-            // -2 minutes offset. This determines the real timezone and finds offset.
-            timezone = (double) Math.round(tz * 2)/2; // hours, rounded to one decimal place
-            delta = Math.round(diff - timezone*60*60); // seconds
 
             tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
             tfOffset.getDocument().removeDocumentListener(statusBarUpdater);
