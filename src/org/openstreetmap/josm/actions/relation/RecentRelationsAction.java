@@ -67,7 +67,7 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
      * Enables arrow button.
      */
     public void enableArrow() {
-        arrow.setEnabled(getLastRelation() != null);
+        arrow.setVisible(getLastRelation() != null);
     }
 
     /**
