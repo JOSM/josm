@@ -70,7 +70,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer {
             @Override
             public void run() {
                 Main.debug("Attribution loaded, running loadAllErrorTiles");
-                TMSLayer.this.loadAllErrorTiles(true);
+                TMSLayer.this.loadAllErrorTiles(false);
             }
         });
     }
