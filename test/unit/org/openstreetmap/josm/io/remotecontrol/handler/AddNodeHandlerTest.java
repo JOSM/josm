@@ -1,25 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Unit tests of {@link ImportHandler} class.
+ * Unit tests of {@link AddNodeHandler} class.
  */
-public class ImportHandlerTest {
+public class AddNodeHandlerTest {
 
     /**
      * Rule used for tests throwing exceptions.
@@ -35,20 +30,22 @@ public class ImportHandlerTest {
         JOSMFixture.createUnitTestFixture().init(true);
     }
 
-    private static ImportHandler newHandler(String url) {
-        ImportHandler req = new ImportHandler();
+    private static AddNodeHandler newHandler(String url) {
+        AddNodeHandler req = new AddNodeHandler();
         if (url != null)
             req.setUrl(url);
         return req;
     }
 
     /**
-     * Non-regression test for bug #7434.
+     * Unit test for bad request - no layer.
+     * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket7434() {
-        ImportHandler req = newHandler("http://localhost:8111/import?url=http://localhost:8888/relations?relations=19711&mode=recursive");
-        assertEquals("http://localhost:8888/relations?relations=19711&mode=recursive", req.args.get("url"));
+    public void testBadRequestNoLayer() throws Exception {
+        thrown.expect(RequestHandlerBadRequestException.class);
+        thrown.expectMessage("There is no layer opened to add node");
+        newHandler("https://localhost?lat=0&lon=0").handle();
     }
 
     /**
@@ -58,8 +55,14 @@ public class ImportHandlerTest {
     @Test
     public void testBadRequestNoParam() throws Exception {
         thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("MalformedURLException: null");
-        newHandler(null).handle();
+        thrown.expectMessage("NumberFormatException (empty String)");
+        OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
+        try {
+            Main.main.addLayer(layer);
+            newHandler(null).handle();
+        } finally {
+            Main.main.removeLayer(layer);
+        }
     }
 
     /**
@@ -69,8 +72,8 @@ public class ImportHandlerTest {
     @Test
     public void testBadRequestInvalidUrl() throws Exception {
         thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("MalformedURLException: no protocol: invalid_url");
-        newHandler("https://localhost?url=invalid_url").handle();
+        thrown.expectMessage("The following keys are mandatory, but have not been provided: lat, lon");
+        newHandler("invalid_url").handle();
     }
 
     /**
@@ -80,7 +83,7 @@ public class ImportHandlerTest {
     @Test
     public void testBadRequestIncompleteUrl() throws Exception {
         thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("The following keys are mandatory, but have not been provided: url");
+        thrown.expectMessage("The following keys are mandatory, but have not been provided: lat, lon");
         newHandler("https://localhost").handle();
     }
 
@@ -90,13 +93,12 @@ public class ImportHandlerTest {
      */
     @Test
     public void testNominalRequest() throws Exception {
-        String url = new File(TestUtils.getRegressionDataFile(11957, "data.osm")).toURI().toURL().toExternalForm();
+        OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            newHandler("https://localhost?url=" + Utils.encodeUrl(url)).handle();
+            Main.main.addLayer(layer);
+            newHandler("https://localhost?lat=0&lon=0").handle();
         } finally {
-            for (OsmDataLayer layer : Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
-                Main.main.removeLayer(layer);
-            }
+            Main.main.removeLayer(layer);
         }
     }
 }

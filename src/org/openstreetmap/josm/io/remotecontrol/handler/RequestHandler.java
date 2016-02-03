@@ -222,20 +222,26 @@ public abstract class RequestHandler {
         String[] optional = getOptionalParams();
         List<String> missingKeys = new LinkedList<>();
         boolean error = false;
-        if (mandatory != null) for (String key : mandatory) {
-            String value = args.get(key);
-            if (value == null || value.isEmpty()) {
-                error = true;
-                Main.warn('\'' + myCommand + "' remote control request must have '" + key + "' parameter");
-                missingKeys.add(key);
+        if (mandatory != null && args != null) {
+            for (String key : mandatory) {
+                String value = args.get(key);
+                if (value == null || value.isEmpty()) {
+                    error = true;
+                    Main.warn('\'' + myCommand + "' remote control request must have '" + key + "' parameter");
+                    missingKeys.add(key);
+                }
             }
         }
         Set<String> knownParams = new HashSet<>();
-        if (mandatory != null) Collections.addAll(knownParams, mandatory);
-        if (optional != null) Collections.addAll(knownParams, optional);
-        for (String par: args.keySet()) {
-            if (!knownParams.contains(par)) {
-                Main.warn("Unknown remote control parameter {0}, skipping it", par);
+        if (mandatory != null)
+            Collections.addAll(knownParams, mandatory);
+        if (optional != null)
+            Collections.addAll(knownParams, optional);
+        if (args != null) {
+            for (String par: args.keySet()) {
+                if (!knownParams.contains(par)) {
+                    Main.warn("Unknown remote control parameter {0}, skipping it", par);
+                }
             }
         }
         if (error) {

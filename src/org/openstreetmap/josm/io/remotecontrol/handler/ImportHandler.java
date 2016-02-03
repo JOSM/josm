@@ -97,7 +97,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
 
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
-        String urlString = args.get("url");
+        String urlString = args != null ? args.get("url") : null;
         if (Main.pref.getBoolean("remotecontrol.importhandler.fix_url_query", true)) {
             urlString = Utils.fixURLQuery(urlString);
         }

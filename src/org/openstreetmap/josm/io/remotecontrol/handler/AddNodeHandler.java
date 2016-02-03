@@ -114,8 +114,8 @@ public class AddNodeHandler extends RequestHandler {
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
         try {
-            lat = Double.parseDouble(args.get("lat"));
-            lon = Double.parseDouble(args.get("lon"));
+            lat = Double.parseDouble(args != null ? args.get("lat") : "");
+            lon = Double.parseDouble(args != null ? args.get("lon") : "");
         } catch (NumberFormatException e) {
             throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+')', e);
         }
