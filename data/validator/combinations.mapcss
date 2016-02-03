@@ -145,7 +145,6 @@ way[power=cable                ][!voltage],
 }
 
 /* {0.key} without {1.key} or {2.key} */
-*[incline                      ][!highway][!railway],
 *[oneway                       ][!highway][!railway] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.key}");
 }
@@ -179,6 +178,7 @@ way[power=cable                ][!voltage],
 }
 
 /* {0.key} without {1.key}, {2.key} or {3.tag} */
+*[incline                      ][!highway][!railway][aeroway!~/^(runway|taxiway)$/],
 *[toll                         ][!highway][!barrier][route!~/^(ferry|road)$/] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.tag}");
 }
