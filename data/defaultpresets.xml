@@ -5936,7 +5936,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,cowshed,construction,basilica,cathedral,chapel,church,temple,mosque,synagogue,transformer_tower" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,silo,cowshed,construction,basilica,cathedral,chapel,church,temple,mosque,synagogue,transformer_tower" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <text key="height" text="Height (meters)" />
@@ -6071,6 +6071,16 @@
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- Gasometer -->
+        <item name="Silo" icon="presets/silo.png" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=silo" />
+            <space />
+            <key key="man_made" value="silo" />
+            <optional>
+                <reference ref="name_operator" />
+                <combo key="building" text="Building" values="silo" values_context="building" />
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
+        </item> <!-- Silo -->
         <item name="Storage Tank" icon="presets/storage_tank.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=storage_tank"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=storage_tank"
