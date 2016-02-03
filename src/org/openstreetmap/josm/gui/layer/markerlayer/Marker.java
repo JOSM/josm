@@ -266,7 +266,7 @@ public class Marker implements TemplateEngineDataProvider {
     public static final String MARKER_OFFSET = "waypointOffset";
     public static final String MARKER_FORMATTED_OFFSET = "formattedWaypointOffset";
 
-    public static final String LABEL_PATTERN_AUTO = "?{ '{name} - {desc}' | '{name}' | '{desc}' }";
+    public static final String LABEL_PATTERN_AUTO = "?{ '{name} ({desc})' | '{name} ({cmt})' | '{name}' | '{desc}' | '{cmt}' }";
     public static final String LABEL_PATTERN_NAME = "{name}";
     public static final String LABEL_PATTERN_DESC = "{desc}";
 
