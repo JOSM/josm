@@ -16,6 +16,9 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 public class WayPoint extends WithAttributes implements Comparable<WayPoint>, TemplateEngineDataProvider {
 
+    /**
+     * The seconds (not milliseconds!) since 1970-01-01.
+     */
     public double time;
     public Color customColoring;
     public boolean drawLine;
@@ -118,7 +121,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         if (attr.containsKey(PT_TIME)) {
             try {
                 final Date time = DateUtils.fromString(get(PT_TIME).toString());
-                setTime(time);
+                this.time = time.getTime() / 1000.;
                 return time;
             } catch (Exception e) {
                 Main.warn(e);
