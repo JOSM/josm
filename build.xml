@@ -688,6 +688,7 @@ Build-Date: ${build.tstamp}
     <target name="epsg" depends="epsg-compile">
         <touch file="${epsg.output}"/>
         <java classname="BuildProjectionDefinitions" failonerror="true">
+            <sysproperty key="java.awt.headless" value="true"/>
             <classpath>
                 <pathelement path="."/>
                 <pathelement path="build"/>
