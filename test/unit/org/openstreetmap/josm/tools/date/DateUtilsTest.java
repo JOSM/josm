@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools.date;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Date;
 import java.util.TimeZone;
 
 import org.junit.Test;
@@ -72,5 +73,16 @@ public class DateUtilsTest {
     @Test(expected = UncheckedParseException.class)
     public void testIllegalDate() {
         DateUtils.fromString("2014-");
+    }
+
+    /**
+     * Tests that formatting a date w/ milliseconds does not cause incorrect parsing afterwards
+     */
+    @Test
+    public void testFormattingMillisecondsDoesNotCauseIncorrectParsing() {
+        DateUtils.fromDate(new Date(123));
+        assertEquals(1453694709000L, DateUtils.fromString("2016-01-25T04:05:09.000Z").getTime());
+        assertEquals(1453694709200L, DateUtils.fromString("2016-01-25T04:05:09.200Z").getTime());
+        assertEquals(1453694709400L, DateUtils.fromString("2016-01-25T04:05:09.400Z").getTime());
     }
 }

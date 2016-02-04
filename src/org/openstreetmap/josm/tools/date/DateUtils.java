@@ -94,6 +94,7 @@ public final class DateUtils {
                 parsePart2(str, 11),
                 parsePart2(str, 14),
                 parsePart2(str, 17));
+            c.set(Calendar.MILLISECOND, 0);
 
             if (str.length() == 25) {
                 int plusHr = parsePart2(str, 20);
@@ -115,6 +116,7 @@ public final class DateUtils {
                 parsePart2(str, 11),
                 parsePart2(str, 14),
                 parsePart2(str, 17));
+            c.set(Calendar.MILLISECOND, 0);
             long millis = parsePart3(str, 20);
             if (str.length() == 29) {
                 millis += parsePart2(str, 24) * (str.charAt(23) == '+' ? -3600000 : 3600000);
