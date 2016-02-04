@@ -1220,7 +1220,7 @@ public final class Utils {
      * @return the repaired URL
      */
     public static String fixURLQuery(String url) {
-        if (url.indexOf('?') == -1)
+        if (url == null || url.indexOf('?') == -1)
             return url;
 
         String query = url.substring(url.indexOf('?') + 1);

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -119,6 +120,14 @@ public abstract class OsmServerReader extends OsmConnection {
                 url = new URL(urlStr.replace(" ", "%20"));
             } catch (MalformedURLException e) {
                 throw new OsmTransferException(e);
+            }
+
+            if ("file".equals(url.getProtocol())) {
+                try {
+                    return url.openStream();
+                } catch (IOException e) {
+                    throw new OsmTransferException(e);
+                }
             }
 
             final HttpClient client = HttpClient.create(url);
