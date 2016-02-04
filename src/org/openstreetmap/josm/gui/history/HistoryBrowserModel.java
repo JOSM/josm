@@ -624,10 +624,10 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     protected void setLatest(HistoryOsmPrimitive latest) {
         if (latest == null) {
             if (this.current == this.latest) {
-                this.current = history.getLatest();
+                this.current = history != null ? history.getLatest() : null;
             }
             if (this.reference == this.latest) {
-                this.reference = history.getLatest();
+                this.reference = history != null ? history.getLatest() : null;
             }
             this.latest = null;
         } else {
@@ -643,8 +643,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     /**
-     * Removes this model as listener for data change and layer change
-     * events.
+     * Removes this model as listener for data change and layer change events.
      *
      */
     public void unlinkAsListener() {
