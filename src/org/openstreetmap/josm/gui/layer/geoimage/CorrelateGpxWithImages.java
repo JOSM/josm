@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 
@@ -93,8 +94,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private static List<GpxData> loadedGpxData = new ArrayList<>();
 
     private final transient GeoImageLayer yLayer;
-    private double timezone;
-    private long delta;
+    private Timezone timezone;
+    private Offset delta;
 
     /**
      * Constructs a new {@code CorrelateGpxWithImages} action.
@@ -121,7 +122,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             // Parse values again, to display an error if the format is not recognized
             try {
-                timezone = parseTimezone(tfTimezone.getText().trim());
+                timezone = Timezone.parseTimezone(tfTimezone.getText().trim());
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(Main.parent, e.getMessage(),
                         tr("Invalid timezone"), JOptionPane.ERROR_MESSAGE);
@@ -129,7 +130,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             }
 
             try {
-                delta = parseOffset(tfOffset.getText().trim());
+                delta = Offset.parseOffset(tfOffset.getText().trim());
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(Main.parent, e.getMessage(),
                         tr("Invalid offset"), JOptionPane.ERROR_MESSAGE);
@@ -167,8 +168,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 actionPerformed(null);
                 break;
             case DONE:
-                Main.pref.put("geoimage.timezone", formatTimezone(timezone));
-                Main.pref.put("geoimage.delta", Long.toString(delta * 1000));
+                Main.pref.put("geoimage.timezone", timezone.formatTimezone());
+                Main.pref.put("geoimage.delta", delta.formatOffset());
                 Main.pref.put("geoimage.showThumbs", yLayer.useThumbs);
 
                 yLayer.useThumbs = cbShowThumbs.isSelected();
@@ -409,7 +410,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 TimeZone tz = TimeZone.getTimeZone(tzStr);
 
                 String tzDesc = new StringBuilder(tzStr).append(" (")
-                .append(formatTimezone(tz.getRawOffset() / 3600000.0))
+                .append(new Timezone(tz.getRawOffset() / 3600000.0).formatTimezone())
                 .append(')').toString();
                 vtTimezones.add(tzDesc);
             }
@@ -427,7 +428,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             }
 
             cbTimezones.setSelectedItem(new StringBuilder(defaultTz.getID()).append(" (")
-                    .append(formatTimezone(defaultTz.getRawOffset() / 3600000.0))
+                    .append(new Timezone(defaultTz.getRawOffset() / 3600000.0).formatTimezone())
                     .append(')').toString());
 
             gc.gridx = 1;
@@ -550,7 +551,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 String tzValue = selectedTz.substring(pos + 1, selectedTz.length() - 1);
 
                 Main.pref.put("geoimage.timezoneid", tzId);
-                tfOffset.setText(Long.toString(delta / 1000));
+                tfOffset.setText(Offset.milliseconds(delta).formatOffset());
                 tfTimezone.setText(tzValue);
 
                 isOk = true;
@@ -608,23 +609,22 @@ public class CorrelateGpxWithImages extends AbstractAction {
             prefTimezone = "0:00";
         }
         try {
-            timezone = parseTimezone(prefTimezone);
+            timezone = Timezone.parseTimezone(prefTimezone);
         } catch (ParseException e) {
-            timezone = 0;
+            timezone = Timezone.ZERO;
         }
 
         tfTimezone = new JosmTextField(10);
-        tfTimezone.setText(formatTimezone(timezone));
+        tfTimezone.setText(timezone.formatTimezone());
 
         try {
-            delta = parseOffset(Main.pref.get("geoimage.delta", "0"));
+            delta = Offset.parseOffset(Main.pref.get("geoimage.delta", "0"));
         } catch (ParseException e) {
-            delta = 0;
+            delta = Offset.ZERO;
         }
-        delta = delta / 1000;  // milliseconds -> seconds
 
         tfOffset = new JosmTextField(10);
-        tfOffset.setText(Long.toString(delta));
+        tfOffset.setText(delta.formatOffset());
 
         JButton buttonViewGpsPhoto = new JButton(tr("<html>Use photo of an accurate clock,<br>"
                 + "e.g. GPS receiver display</html>"));
@@ -812,8 +812,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         private String statusText() {
             try {
-                timezone = parseTimezone(tfTimezone.getText().trim());
-                delta = parseOffset(tfOffset.getText().trim());
+                timezone = Timezone.parseTimezone(tfTimezone.getText().trim());
+                delta = Offset.parseOffset(tfOffset.getText().trim());
             } catch (ParseException e) {
                 return e.getMessage();
             }
@@ -838,7 +838,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             if (selGpx == null)
                 return tr("No gpx selected");
 
-            final long offset_ms = ((long) (timezone * 3600) + delta) * 1000; // in milliseconds
+            final long offset_ms = ((long) (timezone.getHours() * 3600 * 1000)) + delta.getMilliseconds(); // in milliseconds
             lastNumMatched = matchGpxTrack(dateImgLst, selGpx.data, offset_ms);
 
             return trn("<html>Matched <b>{0}</b> of <b>{1}</b> photo to GPX track.</html>",
@@ -868,7 +868,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent arg0) {
 
-            long diff = delta + Math.round(timezone*60*60);
+            long diff = delta.getSeconds() + Math.round(timezone.getHours() * 60 * 60);
 
             double diffInH = (double) diff/(60*60);    // hours
 
@@ -933,17 +933,17 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     lblSeconds.setText(tr("Seconds: {0}", sldSeconds.getValue()));
 
                     try {
-                        timezone = parseTimezone(zone);
+                        timezone = Timezone.parseTimezone(zone);
                     } catch (ParseException pe) {
                         throw new RuntimeException(pe);
                     }
-                    delta = sldMinutes.getValue()*60 + sldSeconds.getValue();
+                    delta = Offset.seconds(sldMinutes.getValue() * 60 + sldSeconds.getValue() + 24 * 60 * 60L * dayOffset); // add the day offset
 
                     tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
                     tfOffset.getDocument().removeDocumentListener(statusBarUpdater);
 
-                    tfTimezone.setText(formatTimezone(timezone));
-                    tfOffset.setText(Long.toString(delta + 24*60*60L*dayOffset));    // add the day offset to the offset field
+                    tfTimezone.setText(timezone.formatTimezone());
+                    tfOffset.setText(delta.formatOffset());
 
                     tfTimezone.getDocument().addDocumentListener(statusBarUpdater);
                     tfOffset.getDocument().addDocumentListener(statusBarUpdater);
@@ -1008,11 +1008,11 @@ public class CorrelateGpxWithImages extends AbstractAction {
      *
      * @param imgs the images to correlate
      * @param gpx the gpx track to correlate to
-     * @return a pair of timezone (in hours) and offset (in seconds)
+     * @return a pair of timezone and offset
      * @throws IndexOutOfBoundsException when there are no images
      * @throws NoGpxTimestamps when the gpx track does not contain a timestamp
      */
-    static Pair<Double, Long> autoGuess(List<ImageEntry> imgs, GpxData gpx) throws IndexOutOfBoundsException, NoGpxTimestamps {
+    static Pair<Timezone, Offset> autoGuess(List<ImageEntry> imgs, GpxData gpx) throws IndexOutOfBoundsException, NoGpxTimestamps {
 
         // Init variables
         long firstExifDate = imgs.get(0).getExifTime().getTime() / 1000;
@@ -1055,7 +1055,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         // -2 minutes offset. This determines the real timezone and finds offset.
         final double timezone = (double) Math.round(tz * 2) / 2; // hours, rounded to one decimal place
         final long delta = Math.round(diff - timezone * 60 * 60); // seconds
-        return Pair.create(timezone, delta);
+        return Pair.create(new Timezone(timezone), Offset.seconds(delta));
     }
 
     private class AutoGuessActionListener implements ActionListener {
@@ -1070,7 +1070,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             List<ImageEntry> imgs = getSortedImgList();
 
             try {
-                final Pair<Double, Long> r = autoGuess(imgs, gpx);
+                final Pair<Timezone, Offset> r = autoGuess(imgs, gpx);
                 timezone = r.a;
                 delta = r.b;
             } catch (IndexOutOfBoundsException ex) {
@@ -1088,8 +1088,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
             tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
             tfOffset.getDocument().removeDocumentListener(statusBarUpdater);
 
-            tfTimezone.setText(formatTimezone(timezone));
-            tfOffset.setText(Long.toString(delta));
+            tfTimezone.setText(timezone.formatTimezone());
+            tfOffset.setText(delta.formatOffset());
             tfOffset.requestFocus();
 
             tfTimezone.getDocument().addDocumentListener(statusBarUpdater);
@@ -1317,110 +1317,189 @@ public class CorrelateGpxWithImages extends AbstractAction {
         return endIndex;
     }
 
-    static String formatTimezone(double timezone) {
-        StringBuilder ret = new StringBuilder();
+    static final class Timezone {
 
-        if (timezone < 0) {
-            ret.append('-');
-            timezone = -timezone;
-        } else {
-            ret.append('+');
+        static final Timezone ZERO = new Timezone(0.0);
+        private final double timezone;
+
+        Timezone(double hours) {
+            this.timezone = hours;
         }
-        ret.append((long) timezone).append(':');
-        int minutes = (int) ((timezone % 1) * 60);
-        if (minutes < 10) {
-            ret.append('0');
+
+        public double getHours() {
+            return timezone;
         }
-        ret.append(minutes);
 
-        return ret.toString();
-    }
+        String formatTimezone() {
+            StringBuilder ret = new StringBuilder();
 
-    static double parseTimezone(String timezone) throws ParseException {
+            double timezone = this.timezone;
+            if (timezone < 0) {
+                ret.append('-');
+                timezone = -timezone;
+            } else {
+                ret.append('+');
+            }
+            ret.append((long) timezone).append(':');
+            int minutes = (int) ((timezone % 1) * 60);
+            if (minutes < 10) {
+                ret.append('0');
+            }
+            ret.append(minutes);
 
-        if (timezone.isEmpty())
-            return 0;
+            return ret.toString();
+        }
 
-        String error = tr("Error while parsing timezone.\nExpected format: {0}", "+H:MM");
+        static Timezone parseTimezone(String timezone) throws ParseException {
 
-        char sgnTimezone = '+';
-        StringBuilder hTimezone = new StringBuilder();
-        StringBuilder mTimezone = new StringBuilder();
-        int state = 1; // 1=start/sign, 2=hours, 3=minutes.
-        for (int i = 0; i < timezone.length(); i++) {
-            char c = timezone.charAt(i);
-            switch (c) {
-            case ' ' :
-                if (state != 2 || hTimezone.length() != 0)
-                    throw new ParseException(error, i);
-                break;
-            case '+' :
-            case '-' :
-                if (state == 1) {
-                    sgnTimezone = c;
-                    state = 2;
-                } else
-                    throw new ParseException(error, i);
-                break;
-            case ':' :
-            case '.' :
-                if (state == 2) {
-                    state = 3;
-                } else
-                    throw new ParseException(error, i);
-                break;
-            case '0' : case '1' : case '2' : case '3' : case '4' :
-            case '5' : case '6' : case '7' : case '8' : case '9' :
-                switch(state) {
-                case 1 :
-                case 2 :
-                    state = 2;
-                    hTimezone.append(c);
-                    break;
-                case 3 :
-                    mTimezone.append(c);
-                    break;
-                default :
-                    throw new ParseException(error, i);
+            if (timezone.isEmpty())
+                return ZERO;
+
+            String error = tr("Error while parsing timezone.\nExpected format: {0}", "+H:MM");
+
+            char sgnTimezone = '+';
+            StringBuilder hTimezone = new StringBuilder();
+            StringBuilder mTimezone = new StringBuilder();
+            int state = 1; // 1=start/sign, 2=hours, 3=minutes.
+            for (int i = 0; i < timezone.length(); i++) {
+                char c = timezone.charAt(i);
+                switch (c) {
+                    case ' ':
+                        if (state != 2 || hTimezone.length() != 0)
+                            throw new ParseException(error, i);
+                        break;
+                    case '+':
+                    case '-':
+                        if (state == 1) {
+                            sgnTimezone = c;
+                            state = 2;
+                        } else
+                            throw new ParseException(error, i);
+                        break;
+                    case ':':
+                    case '.':
+                        if (state == 2) {
+                            state = 3;
+                        } else
+                            throw new ParseException(error, i);
+                        break;
+                    case '0':
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                    case '9':
+                        switch (state) {
+                            case 1:
+                            case 2:
+                                state = 2;
+                                hTimezone.append(c);
+                                break;
+                            case 3:
+                                mTimezone.append(c);
+                                break;
+                            default:
+                                throw new ParseException(error, i);
+                        }
+                        break;
+                    default:
+                        throw new ParseException(error, i);
                 }
-                break;
-            default :
-                throw new ParseException(error, i);
             }
-        }
 
-        int h = 0;
-        int m = 0;
-        try {
-            h = Integer.parseInt(hTimezone.toString());
-            if (mTimezone.length() > 0) {
-                m = Integer.parseInt(mTimezone.toString());
-            }
-        } catch (NumberFormatException nfe) {
-            // Invalid timezone
-            throw new ParseException(error, 0);
-        }
-
-        if (h > 12 || m > 59)
-            throw new ParseException(error, 0);
-        else
-            return (h + m / 60.0) * (sgnTimezone == '-' ? -1 : 1);
-    }
-
-    static long parseOffset(String offset) throws ParseException {
-        String error = tr("Error while parsing offset.\nExpected format: {0}", "number");
-
-        if (!offset.isEmpty()) {
+            int h = 0;
+            int m = 0;
             try {
-                if (offset.startsWith("+")) {
-                    offset = offset.substring(1);
+                h = Integer.parseInt(hTimezone.toString());
+                if (mTimezone.length() > 0) {
+                    m = Integer.parseInt(mTimezone.toString());
                 }
-                return Long.parseLong(offset);
             } catch (NumberFormatException nfe) {
+                // Invalid timezone
                 throw new ParseException(error, 0);
             }
-        } else {
-            return 0;
+
+            if (h > 12 || m > 59)
+                throw new ParseException(error, 0);
+            else
+                return new Timezone((h + m / 60.0) * (sgnTimezone == '-' ? -1 : 1));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Timezone)) return false;
+            Timezone timezone1 = (Timezone) o;
+            return Double.compare(timezone1.timezone, timezone) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(timezone);
+        }
+    }
+
+    static final class Offset {
+
+        static final Offset ZERO = new Offset(0);
+        private final long milliseconds;
+
+        private Offset(long milliseconds) {
+            this.milliseconds = milliseconds;
+        }
+
+        static Offset milliseconds(long milliseconds) {
+            return new Offset(milliseconds);
+        }
+
+        static Offset seconds(long seconds) {
+            return new Offset(1000 * seconds);
+        }
+
+        long getMilliseconds() {
+            return milliseconds;
+        }
+
+        long getSeconds() {
+            return milliseconds / 1000;
+        }
+
+        String formatOffset() {
+            return Long.toString(milliseconds / 1000);
+        }
+
+        static Offset parseOffset(String offset) throws ParseException {
+            String error = tr("Error while parsing offset.\nExpected format: {0}", "number");
+
+            if (!offset.isEmpty()) {
+                try {
+                    if (offset.startsWith("+")) {
+                        offset = offset.substring(1);
+                    }
+                    return Offset.seconds(Long.parseLong(offset));
+                } catch (NumberFormatException nfe) {
+                    throw new ParseException(error, 0);
+                }
+            } else {
+                return Offset.ZERO;
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Offset)) return false;
+            Offset offset = (Offset) o;
+            return milliseconds == offset.milliseconds;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(milliseconds);
         }
     }
 }
