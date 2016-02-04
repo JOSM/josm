@@ -19,7 +19,6 @@ import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Reads a NMEA file. Based on information from
@@ -286,7 +285,7 @@ public class NmeaReader {
                 if (!currentwp.attr.containsKey("time")) {
                     // As this sentence has no complete time only use it
                     // if there is no time so far
-                    currentwp.put(GpxConstants.PT_TIME, DateUtils.fromDate(d));
+                    currentwp.setTime(d);
                 }
                 // elevation
                 accu = e[GPGGA.HEIGHT_UNTIS.position];
@@ -397,7 +396,7 @@ public class NmeaReader {
                     currentwp = new WayPoint(latLon);
                 }
                 // time: this sentence has complete time so always use it.
-                currentwp.put(GpxConstants.PT_TIME, DateUtils.fromDate(d));
+                currentwp.setTime(d);
                 // speed
                 accu = e[GPRMC.SPEED.position];
                 if (!accu.isEmpty() && !currentwp.attr.containsKey("speed")) {
