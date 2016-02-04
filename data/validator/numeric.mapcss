@@ -25,14 +25,18 @@
   assertNoMatch: "node layer=+5";
 }
 
+*[building:levels][building:levels !~ /^(([0-9]|[1-9][0-9]*)(\.5)?)$/],
 *[level][level !~ /^((([0-9]|-[1-9])|[1-9][0-9]*)(\.5)?)(;(([0-9]|-[1-9])|[1-9][0-9]*)(\.5)?)*$|^-0\.5$/] {
-  throwWarning: tr("level should be numbers with optional .5 increments");
+  throwWarning: tr("{0} should have numbers only with optional .5 increments", "{0.key}");
   assertMatch: "node level=one";
   assertNoMatch: "node level=0";
   assertNoMatch: "node level=1";
   assertNoMatch: "node level=-1";
   assertNoMatch: "node level=-0.5";
   assertNoMatch: "node level=1.5";
+  assertNoMatch: "node building:levels=1.5";
+  assertMatch: "node building:levels=-1";
+  assertNoMatch: "node building:levels=0";
 }
 
 *[height][height !~ /^(([0-9]+\.?[0-9]*( (m|ft))?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/] {
