@@ -742,7 +742,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
         OsmDataLayer l = (OsmDataLayer) newLayer;
         l.data.addDataSetListener(this);
-        OsmPrimitive primitive = l.data.getPrimitiveById(history.getId(), history.getType());
+        OsmPrimitive primitive = history != null ? l.data.getPrimitiveById(history.getId(), history.getType()) : null;
         HistoryOsmPrimitive latest;
         if (canShowAsLatest(primitive)) {
             latest = new HistoryPrimitiveBuilder().build(primitive);
