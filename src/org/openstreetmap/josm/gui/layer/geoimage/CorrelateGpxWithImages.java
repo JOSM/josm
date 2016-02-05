@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
@@ -868,21 +869,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent arg0) {
 
-            long diff = delta.getSeconds() + Math.round(timezone.getHours() * 60 * 60);
-
-            double diffInH = (double) diff/(60*60);    // hours
-
-            // Find day difference
-            final int dayOffset = (int) Math.round(diffInH / 24); // days
-            double tmz = diff - dayOffset*24*60*60L;  // seconds
-
-            // In hours, rounded to two decimal places
-            tmz = (double) Math.round(tmz*100/(60*60)) / 100;
-
-            // Due to imprecise clocks we might get a "+3:28" timezone, which should obviously be 3:30 with
-            // -2 minutes offset. This determines the real timezone and finds offset.
-            double fixTimezone = (double) Math.round(tmz * 2)/2; // hours, rounded to one decimal place
-            int offset = (int) Math.round(diff - fixTimezone*60*60) - dayOffset*24*60*60; // seconds
+            final Offset offset = Offset.milliseconds(
+                    delta.getMilliseconds() + Math.round(timezone.getHours() * 60 * 60 * 1000));
+            final int dayOffset = offset.getDayOffset();
+            final Pair<Timezone, Offset> timezoneOffsetPair = offset.withoutDayOffset().splitOutTimezone();
 
             // Info Labels
             final JLabel lblMatches = new JLabel();
@@ -894,11 +884,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
             sldTimezone.setPaintLabels(true);
             Dictionary<Integer, JLabel> labelTable = new Hashtable<>();
             // CHECKSTYLE.OFF: ParenPad
-            labelTable.put(-24, new JLabel("-12:00"));
-            labelTable.put(-12, new JLabel( "-6:00"));
-            labelTable.put(  0, new JLabel(  "0:00"));
-            labelTable.put( 12, new JLabel(  "6:00"));
-            labelTable.put( 24, new JLabel( "12:00"));
+            for (int i = -12; i <= 12; i += 6) {
+                labelTable.put(i * 2, new JLabel(new Timezone(i).formatTimezone()));
+            }
             // CHECKSTYLE.ON: ParenPad
             sldTimezone.setLabelTable(labelTable);
 
@@ -910,34 +898,31 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             // Seconds slider
             final JLabel lblSeconds = new JLabel();
-            final JSlider sldSeconds = new JSlider(-60, 60, 0);
+            final JSlider sldSeconds = new JSlider(-600, 600, 0);
             sldSeconds.setPaintLabels(true);
-            sldSeconds.setMajorTickSpacing(30);
+            labelTable = new Hashtable<>();
+            // CHECKSTYLE.OFF: ParenPad
+            for (int i = -60; i <= 60; i += 30) {
+                labelTable.put(i * 10, new JLabel(Offset.seconds(i).formatOffset()));
+            }
+            // CHECKSTYLE.ON: ParenPad
+            sldSeconds.setLabelTable(labelTable);
+            sldSeconds.setMajorTickSpacing(300);
 
             // This is called whenever one of the sliders is moved.
             // It updates the labels and also calls the "match photos" code
             class SliderListener implements ChangeListener {
                 @Override
                 public void stateChanged(ChangeEvent e) {
-                    // parse slider position into real timezone
-                    double tz = Math.abs(sldTimezone.getValue());
-                    String zone = tz % 2 == 0
-                    ? (int) Math.floor(tz/2) + ":00"
-                            : (int) Math.floor(tz/2) + ":30";
-                    if (sldTimezone.getValue() < 0) {
-                        zone = '-' + zone;
-                    }
+                    timezone = new Timezone(sldTimezone.getValue() / 2.);
 
-                    lblTimezone.setText(tr("Timezone: {0}", zone));
+                    lblTimezone.setText(tr("Timezone: {0}", timezone.formatTimezone()));
                     lblMinutes.setText(tr("Minutes: {0}", sldMinutes.getValue()));
-                    lblSeconds.setText(tr("Seconds: {0}", sldSeconds.getValue()));
+                    lblSeconds.setText(tr("Seconds: {0}", Offset.milliseconds(100 * sldSeconds.getValue()).formatOffset()));
 
-                    try {
-                        timezone = Timezone.parseTimezone(zone);
-                    } catch (ParseException pe) {
-                        throw new RuntimeException(pe);
-                    }
-                    delta = Offset.seconds(sldMinutes.getValue() * 60 + sldSeconds.getValue() + 24 * 60 * 60L * dayOffset); // add the day offset
+                    delta = Offset.milliseconds(100 * sldSeconds.getValue()
+                            + 1000L * 60 * sldMinutes.getValue()
+                            + 1000L * 60 * 60 * 24 * dayOffset);
 
                     tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
                     tfOffset.getDocument().removeDocumentListener(statusBarUpdater);
@@ -971,9 +956,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
             // will be off range for the sliders. Catch this error
             // and inform the user about it.
             try {
-                sldTimezone.setValue((int) (fixTimezone*2));
-                sldMinutes.setValue(offset / 60);
-                sldSeconds.setValue(offset % 60);
+                sldTimezone.setValue((int) (timezoneOffsetPair.a.getHours() * 2));
+                sldMinutes.setValue((int) (timezoneOffsetPair.b.getSeconds() / 60));
+                final long deciSeconds = timezoneOffsetPair.b.getMilliseconds() / 100;
+                sldSeconds.setValue((int) (deciSeconds % 60));
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("An error occurred while trying to match the photos to the GPX track."
@@ -1015,7 +1001,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     static Pair<Timezone, Offset> autoGuess(List<ImageEntry> imgs, GpxData gpx) throws IndexOutOfBoundsException, NoGpxTimestamps {
 
         // Init variables
-        long firstExifDate = imgs.get(0).getExifTime().getTime() / 1000;
+        long firstExifDate = imgs.get(0).getExifTime().getTime();
 
         long firstGPXDate = -1;
         // Finds first GPX point
@@ -1025,7 +1011,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     try {
                         final Date parsedTime = curWp.setTimeFromAttribute();
                         if (parsedTime != null) {
-                            firstGPXDate = parsedTime.getTime() / 1000;
+                            firstGPXDate = parsedTime.getTime();
                             break outer;
                         }
                     } catch (Exception e) {
@@ -1039,23 +1025,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             throw new NoGpxTimestamps();
         }
 
-        // seconds
-        long diff = firstExifDate - firstGPXDate;
-
-        double diffInH = (double) diff / (60 * 60);    // hours
-
-        // Find day difference
-        int dayOffset = (int) Math.round(diffInH / 24); // days
-        double tz = diff - dayOffset * 24 * 60 * 60L;  // seconds
-
-        // In hours, rounded to two decimal places
-        tz = (double) Math.round(tz * 100 / (60 * 60)) / 100;
-
-        // Due to imprecise clocks we might get a "+3:28" timezone, which should obviously be 3:30 with
-        // -2 minutes offset. This determines the real timezone and finds offset.
-        final double timezone = (double) Math.round(tz * 2) / 2; // hours, rounded to one decimal place
-        final long delta = Math.round(diff - timezone * 60 * 60); // seconds
-        return Pair.create(new Timezone(timezone), Offset.seconds(delta));
+        return Offset.milliseconds(firstExifDate - firstGPXDate).splitOutTimezone();
     }
 
     private class AutoGuessActionListener implements ActionListener {
@@ -1469,7 +1439,13 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
 
         String formatOffset() {
-            return Long.toString(milliseconds / 1000);
+            if (milliseconds % 1000 == 0) {
+                return Long.toString(milliseconds / 1000);
+            } else if (milliseconds % 100 == 0) {
+                return String.format(Locale.ENGLISH, "%.1f", milliseconds / 1000.);
+            } else {
+                return String.format(Locale.ENGLISH, "%.3f", milliseconds / 1000.);
+            }
         }
 
         static Offset parseOffset(String offset) throws ParseException {
@@ -1480,13 +1456,35 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     if (offset.startsWith("+")) {
                         offset = offset.substring(1);
                     }
-                    return Offset.seconds(Long.parseLong(offset));
+                    return Offset.milliseconds(Math.round(Double.parseDouble(offset) * 1000));
                 } catch (NumberFormatException nfe) {
                     throw new ParseException(error, 0);
                 }
             } else {
                 return Offset.ZERO;
             }
+        }
+
+        int getDayOffset() {
+            final double diffInH = (double) getMilliseconds() / 1000. / 60 / 60; // hours
+
+            // Find day difference
+            return (int) Math.round(diffInH / 24);
+        }
+
+        Offset withoutDayOffset() {
+            return milliseconds(getMilliseconds() - getDayOffset() * 24 * 60 * 60 * 1000);
+        }
+
+        Pair<Timezone, Offset> splitOutTimezone() {
+            // In hours, rounded to two decimal places
+            double tz = (double) Math.round(withoutDayOffset().getSeconds() * 100 / (60 * 60)) / 100;
+
+            // Due to imprecise clocks we might get a "+3:28" timezone, which should obviously be 3:30 with
+            // -2 minutes offset. This determines the real timezone and finds offset.
+            final double timezone = (double) Math.round(tz * 2) / 2; // hours, rounded to one decimal place
+            final long delta = Math.round(getMilliseconds() - timezone * 60 * 60 * 1000); // milliseconds
+            return Pair.create(new Timezone(timezone), Offset.milliseconds(delta));
         }
 
         @Override

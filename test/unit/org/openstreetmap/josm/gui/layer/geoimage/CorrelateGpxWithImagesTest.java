@@ -98,6 +98,11 @@ public class CorrelateGpxWithImagesTest {
         assertEquals("0", CorrelateGpxWithImages.Offset.seconds(0).formatOffset());
         assertEquals("123", CorrelateGpxWithImages.Offset.seconds(123).formatOffset());
         assertEquals("-4242", CorrelateGpxWithImages.Offset.seconds(-4242).formatOffset());
+        assertEquals("0.1", CorrelateGpxWithImages.Offset.milliseconds(100).formatOffset());
+        assertEquals("0.120", CorrelateGpxWithImages.Offset.milliseconds(120).formatOffset());
+        assertEquals("0.123", CorrelateGpxWithImages.Offset.milliseconds(123).formatOffset());
+        assertEquals("1.2", CorrelateGpxWithImages.Offset.milliseconds(1200).formatOffset());
+        assertEquals("1.234", CorrelateGpxWithImages.Offset.milliseconds(1234).formatOffset());
     }
 
     @Test
@@ -106,5 +111,23 @@ public class CorrelateGpxWithImagesTest {
         assertEquals(4242L, CorrelateGpxWithImages.Offset.parseOffset("4242").getSeconds());
         assertEquals(-4242L, CorrelateGpxWithImages.Offset.parseOffset("-4242").getSeconds());
         assertEquals(0L, CorrelateGpxWithImages.Offset.parseOffset("-0").getSeconds());
+        assertEquals(100L, CorrelateGpxWithImages.Offset.parseOffset("0.1").getMilliseconds());
+        assertEquals(123L, CorrelateGpxWithImages.Offset.parseOffset("0.123").getMilliseconds());
+        assertEquals(-42420L, CorrelateGpxWithImages.Offset.parseOffset("-42.42").getMilliseconds());
+    }
+
+    @Test
+    public void testSplitOutTimezone() throws Exception {
+        assertEquals("+1:00", CorrelateGpxWithImages.Offset.seconds(3602).splitOutTimezone().a.formatTimezone());
+        assertEquals("2", CorrelateGpxWithImages.Offset.seconds(3602).splitOutTimezone().b.formatOffset());
+        assertEquals("-7:00", CorrelateGpxWithImages.Offset.seconds(-7 * 3600 + 123).splitOutTimezone().a.formatTimezone());
+        assertEquals("123", CorrelateGpxWithImages.Offset.seconds(-7 * 3600 + 123).splitOutTimezone().b.formatOffset());
+        assertEquals(1, CorrelateGpxWithImages.Offset.seconds(35 * 3600 + 421).getDayOffset());
+        assertEquals(11 * 3600 + 421, CorrelateGpxWithImages.Offset.seconds(35 * 3600 + 421).withoutDayOffset().getSeconds());
+        assertEquals("+11:00", CorrelateGpxWithImages.Offset.seconds(35 * 3600 + 421).splitOutTimezone().a.formatTimezone());
+        assertEquals(86400 + 421, CorrelateGpxWithImages.Offset.seconds(35 * 3600 + 421).splitOutTimezone().b.getSeconds());
+        assertEquals(421, CorrelateGpxWithImages.Offset.seconds(35 * 3600 + 421).withoutDayOffset().splitOutTimezone().b.getSeconds());
+        assertEquals("+1:00", CorrelateGpxWithImages.Offset.milliseconds(3602987).splitOutTimezone().a.formatTimezone());
+        assertEquals("2.987", CorrelateGpxWithImages.Offset.milliseconds(3602987).splitOutTimezone().b.formatOffset());
     }
 }
