@@ -38,19 +38,23 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
@@ -65,6 +69,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.EnumProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -120,6 +125,36 @@ public class TagEditHelper {
     public static final IntegerProperty PROPERTY_RECENT_TAGS_NUMBER = new IntegerProperty("properties.recently-added-tags",
             DEFAULT_LRU_TAGS_NUMBER);
 
+    /**
+     * What to do with recent tags where keys already exist
+     */
+    private enum RecentExisting {
+        ENABLE,
+        DISABLE,
+        HIDE
+    }
+
+    /**
+     * Preference setting for popup menu item "Recent tags with existing key"
+     */
+    public static final EnumProperty<RecentExisting> PROPERTY_RECENT_EXISTING = new EnumProperty<>(
+        "properties.recently-added-tags-existing-key", RecentExisting.class, RecentExisting.DISABLE);
+
+    /**
+     * What to do after applying tag
+     */
+    private enum RefreshRecent {
+        NO,
+        STATUS,
+        REFRESH
+    }
+
+    /**
+     * Preference setting for popup menu item "Refresh recent tags list after applying tag"
+     */
+    public static final EnumProperty<RefreshRecent> PROPERTY_REFRESH_RECENT = new EnumProperty<>(
+        "properties.refresh-recently-added-tags", RefreshRecent.class, RefreshRecent.STATUS);
+
     // LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
     private final Map<Tag, Void> recentTags = new LinkedHashMap<Tag, Void>(MAX_LRU_TAGS_NUMBER+1, 1.1f, true) {
         @Override
@@ -128,16 +163,35 @@ public class TagEditHelper {
         }
     };
 
+    // Copy of recently added tags, used to cache initial status
+    private List<Tag> tags;
+
+    /**
+     * Constructs a new {@code TagEditHelper}.
+     * @param tagTable
+     * @param propertyData
+     * @param valueCount
+     */
     public TagEditHelper(JTable tagTable, DefaultTableModel propertyData, Map<String, Map<String, Integer>> valueCount) {
         this.tagTable = tagTable;
         this.tagData = propertyData;
         this.valueCount = valueCount;
     }
 
+    /**
+     * Finds the key from given row of tag editor.
+     * @param viewRow index of row
+     * @return key of tag
+     */
     public final String getDataKey(int viewRow) {
         return tagData.getValueAt(tagTable.convertRowIndexToModel(viewRow), 0).toString();
     }
 
+    /**
+     * Finds the values from given row of tag editor.
+     * @param viewRow index of row
+     * @return map of values and number of occurrences
+     */
     @SuppressWarnings("unchecked")
     public final Map<String, Integer> getDataValues(int viewRow) {
         return (Map<String, Integer>) tagData.getValueAt(tagTable.convertRowIndexToModel(viewRow), 1);
@@ -211,6 +265,9 @@ public class TagEditHelper {
         return changedKey;
     }
 
+    /**
+     * Reset last changed key.
+     */
     public void resetChangedKey() {
         changedKey = null;
     }
@@ -256,6 +313,13 @@ public class TagEditHelper {
             }
             Main.pref.putCollection("properties.recent-tags", c);
         }
+    }
+
+    /**
+     * Update cache of recent tags used for displaying tags.
+     */
+    private void cacheRecentTags() {
+        tags = new LinkedList<>(recentTags.keySet());
     }
 
     /**
@@ -572,6 +636,7 @@ public class TagEditHelper {
     protected class AddTagsDialog extends AbstractTagsDialog {
         private final List<JosmAction> recentTagsActions = new ArrayList<>();
         protected final transient FocusAdapter focus;
+        private JPanel mainPanel;
         private JPanel recentTagsPanel;
 
         // Counter of added commands for possible undo
@@ -583,7 +648,7 @@ public class TagEditHelper {
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/AddValue", true /* show help button */);
 
-            final JPanel mainPanel = new JPanel(new GridBagLayout());
+            mainPanel = new JPanel(new GridBagLayout());
             keys = new AutoCompletingComboBox();
             values = new AutoCompletingComboBox();
 
@@ -640,11 +705,13 @@ public class TagEditHelper {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         performTagAdding();
+                        refreshRecentTags();
                         selectKeysComboBox();
                     }
                 });
 
-            suggestRecentlyAddedTags(mainPanel);
+            cacheRecentTags();
+            suggestRecentlyAddedTags();
 
             mainPanel.add(Box.createVerticalGlue(), GBC.eop().fill());
             setContent(mainPanel, false);
@@ -655,9 +722,13 @@ public class TagEditHelper {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     selectNumberOfTags();
-                    suggestRecentlyAddedTags(mainPanel);
+                    suggestRecentlyAddedTags();
                 }
             });
+
+            popupMenu.add(buildMenuRecentExisting());
+            popupMenu.add(buildMenuRefreshRecent());
+
             JCheckBoxMenuItem rememberLastTags = new JCheckBoxMenuItem(
                 new AbstractAction(tr("Remember last used tags after a restart")) {
                 @Override
@@ -670,6 +741,49 @@ public class TagEditHelper {
             });
             rememberLastTags.setState(PROPERTY_REMEMBER_TAGS.get());
             popupMenu.add(rememberLastTags);
+        }
+
+        private JMenu buildMenuRecentExisting() {
+            JMenu menu = new JMenu(tr("Recent tags with existing key"));
+            TreeMap<RecentExisting, String> radios = new TreeMap<>();
+            radios.put(RecentExisting.ENABLE, tr("Enable"));
+            radios.put(RecentExisting.DISABLE, tr("Disable"));
+            radios.put(RecentExisting.HIDE, tr("Hide"));
+            ButtonGroup buttonGroup = new ButtonGroup();
+            for (final Map.Entry<RecentExisting, String> entry : radios.entrySet()) {
+                JRadioButtonMenuItem radio = new JRadioButtonMenuItem(new AbstractAction(entry.getValue()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        PROPERTY_RECENT_EXISTING.put(entry.getKey());
+                        suggestRecentlyAddedTags();
+                    }
+                });
+                buttonGroup.add(radio);
+                radio.setSelected(PROPERTY_RECENT_EXISTING.get() == entry.getKey());
+                menu.add(radio);
+            }
+            return menu;
+        }
+
+        private JMenu buildMenuRefreshRecent() {
+            JMenu menu = new JMenu(tr("Refresh recent tags list after applying tag"));
+            TreeMap<RefreshRecent, String> radios = new TreeMap<>();
+            radios.put(RefreshRecent.NO, tr("No refresh"));
+            radios.put(RefreshRecent.STATUS, tr("Refresh tag status only (enabled / disabled)"));
+            radios.put(RefreshRecent.REFRESH, tr("Refresh tag status and list of recently added tags"));
+            ButtonGroup buttonGroup = new ButtonGroup();
+            for (final Map.Entry<RefreshRecent, String> entry : radios.entrySet()) {
+                JRadioButtonMenuItem radio = new JRadioButtonMenuItem(new AbstractAction(entry.getValue()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        PROPERTY_REFRESH_RECENT.put(entry.getKey());
+                    }
+                });
+                buttonGroup.add(radio);
+                radio.setSelected(PROPERTY_REFRESH_RECENT.get() == entry.getKey());
+                menu.add(radio);
+            }
+            return menu;
         }
 
         @Override
@@ -712,16 +826,15 @@ public class TagEditHelper {
             }
         }
 
-        protected void suggestRecentlyAddedTags(JPanel mainPanel) {
-
+        protected void suggestRecentlyAddedTags() {
             if (recentTagsPanel == null) {
                 recentTagsPanel = new JPanel(new GridBagLayout());
-                suggestRecentlyAddedTags();
+                buildRecentTagsPanel();
                 mainPanel.add(recentTagsPanel, GBC.eol().fill(GBC.HORIZONTAL));
             } else {
                 Dimension panelOldSize = recentTagsPanel.getPreferredSize();
                 recentTagsPanel.removeAll();
-                suggestRecentlyAddedTags();
+                buildRecentTagsPanel();
                 Dimension panelNewSize = recentTagsPanel.getPreferredSize();
                 Dimension dialogOldSize = getMinimumSize();
                 Dimension dialogNewSize = new Dimension(dialogOldSize.width, dialogOldSize.height-panelOldSize.height+panelNewSize.height);
@@ -733,21 +846,25 @@ public class TagEditHelper {
             }
         }
 
-        protected void suggestRecentlyAddedTags() {
+        protected void buildRecentTagsPanel() {
             final int tagsToShow = Math.min(PROPERTY_RECENT_TAGS_NUMBER.get(), MAX_LRU_TAGS_NUMBER);
             if (!(tagsToShow > 0 && !recentTags.isEmpty()))
                 return;
             recentTagsPanel.add(new JLabel(tr("Recently added tags")), GBC.eol());
 
-            int count = 1;
+            int count = 0;
+            destroyActions();
             // We store the maximum number of recent tags to allow dynamic change of number of tags shown in the preferences.
             // This implies to iterate in descending order, as the oldest elements will only be removed after we reach the maximum
             // number and not the number of tags to show.
             // However, as Set does not allow to iterate in descending order, we need to copy its elements into a List we can access
             // in reverse order.
-            List<Tag> tags = new LinkedList<>(recentTags.keySet());
-            for (int i = tags.size()-1; i >= 0 && count <= tagsToShow; i--, count++) {
+            for (int i = tags.size()-1; i >= 0 && count < tagsToShow; i--) {
                 final Tag t = tags.get(i);
+                boolean keyExists = keyExists(t);
+                if (keyExists && PROPERTY_RECENT_EXISTING.get() == RecentExisting.HIDE)
+                    continue;
+                count++;
                 // Create action for reusing the tag, with keyboard shortcut
                 /* POSSIBLE SHORTCUTS: 1,2,3,4,5,6,7,8,9,0=10 */
                 final Shortcut sc = count > 10 ? null : Shortcut.registerShortcut("properties:recent:" + count,
@@ -772,12 +889,15 @@ public class TagEditHelper {
                     public void actionPerformed(ActionEvent e) {
                         action.actionPerformed(null);
                         performTagAdding();
+                        refreshRecentTags();
                         selectKeysComboBox();
                     }
                 };
                 recentTagsActions.add(action);
                 recentTagsActions.add(actionShift);
-                disableTagIfNeeded(t, action);
+                if (keyExists && PROPERTY_RECENT_EXISTING.get() == RecentExisting.DISABLE) {
+                    action.setEnabled(false);
+                }
                 // Find and display icon
                 ImageIcon icon = MapPaintStyles.getNodeIcon(t, false); // Filters deprecated icon
                 if (icon == null) {
@@ -822,14 +942,14 @@ public class TagEditHelper {
                         @Override
                         public void mouseClicked(MouseEvent e) {
                             action.actionPerformed(null);
-                            // add tags and close window on double-click
-                            if (e.getClickCount() > 1) {
-                                buttonAction(0, null); // emulate OK click and close the dialog
-                            }
-                            // add tags on Shift-Click
                             if (e.isShiftDown()) {
+                                // add tags on Shift-Click
                                 performTagAdding();
+                                refreshRecentTags();
                                 selectKeysComboBox();
+                            } else if (e.getClickCount() > 1) {
+                                // add tags and close window on double-click
+                                buttonAction(0, null); // emulate OK click and close the dialog
                             }
                         }
                     });
@@ -843,6 +963,10 @@ public class TagEditHelper {
                 JPanel tagPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
                 tagPanel.add(tagLabel);
                 recentTagsPanel.add(tagPanel, GBC.eol().fill(GBC.HORIZONTAL));
+            }
+            // Clear label if no tags were added
+            if (count == 0) {
+                recentTagsPanel.removeAll();
             }
         }
 
@@ -872,6 +996,7 @@ public class TagEditHelper {
             lastAddKey = key;
             lastAddValue = value;
             recentTags.put(new Tag(key, value), null);
+            valueCount.put(key, new TreeMap<String, Integer>());
             AutoCompletionManager.rememberUserInput(key, value, false);
             commandCount++;
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
@@ -888,14 +1013,14 @@ public class TagEditHelper {
             Main.main.undoRedo.undo(commandCount);
         }
 
-        private void disableTagIfNeeded(final Tag t, final JosmAction action) {
-            // Disable action if its key is already set on the object (the key being absent from the keys list for this reason
-            // performing this action leads to autocomplete to the next key (see #7671 comments)
-            for (int j = 0; j < tagData.getRowCount(); ++j) {
-                if (t.getKey().equals(getDataKey(j))) {
-                    action.setEnabled(false);
-                    break;
-                }
+        private boolean keyExists(final Tag t) {
+            return valueCount.containsKey(t.getKey());
+        }
+
+        private void refreshRecentTags() {
+            switch (PROPERTY_REFRESH_RECENT.get()) {
+                case REFRESH: cacheRecentTags(); // break missing intentionally
+                case STATUS: suggestRecentlyAddedTags();
             }
         }
     }
