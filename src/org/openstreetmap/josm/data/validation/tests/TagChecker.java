@@ -126,6 +126,7 @@ public class TagChecker extends TagTest {
     protected static final int LOW_CHAR_KEY      = 1211;
     protected static final int MISSPELLED_VALUE  = 1212;
     protected static final int MISSPELLED_KEY    = 1213;
+    protected static final int MULTIPLE_SPACES   = 1214;
     /** 1250 and up is used by tagcheck */
 
     protected EditableList sourcesList;
@@ -430,6 +431,11 @@ public class TagChecker extends TagTest {
                         tr(s, key), MessageFormat.format(s, key), INVALID_SPACE, p));
                 withErrors.put(p, "SPACE");
             }
+            if (checkValues && value != null && value.contains("  ") && !withErrors.contains(p, "SPACE")) {
+                errors.add(new TestError(this, Severity.WARNING, tr("Property values contain multiple white spaces"),
+                        tr(s, key), MessageFormat.format(s, key), MULTIPLE_SPACES, p));
+                withErrors.put(p, "SPACE");
+            }
             if (checkValues && value != null && !value.equals(Entities.unescape(value)) && !withErrors.contains(p, "HTML")) {
                 errors.add(new TestError(this, Severity.OTHER, tr("Property values contain HTML entity"),
                         tr(s, key), MessageFormat.format(s, key), INVALID_HTML, p));
@@ -653,9 +659,9 @@ public class TagChecker extends TagTest {
                     String value = prop.getValue();
                     if (value == null || value.trim().isEmpty()) {
                         commands.add(new ChangePropertyCommand(p, key, null));
-                    } else if (value.startsWith(" ") || value.endsWith(" ")) {
+                    } else if (value.startsWith(" ") || value.endsWith(" ") || value.contains("  ")) {
                         commands.add(new ChangePropertyCommand(p, key, Tag.removeWhiteSpaces(value)));
-                    } else if (key.startsWith(" ") || key.endsWith(" ")) {
+                    } else if (key.startsWith(" ") || key.endsWith(" ") || key.contains("  ")) {
                         commands.add(new ChangePropertyKeyCommand(p, key, Tag.removeWhiteSpaces(key)));
                     } else {
                         String evalue = Entities.unescape(value);
@@ -680,7 +686,8 @@ public class TagChecker extends TagTest {
         if (testError.getTester() instanceof TagChecker) {
             int code = testError.getCode();
             return code == INVALID_KEY || code == EMPTY_VALUES || code == INVALID_SPACE ||
-                   code == INVALID_KEY_SPACE || code == INVALID_HTML || code == MISSPELLED_VALUE;
+                   code == INVALID_KEY_SPACE || code == INVALID_HTML || code == MISSPELLED_VALUE ||
+                   code == MULTIPLE_SPACES;
         }
 
         return false;
