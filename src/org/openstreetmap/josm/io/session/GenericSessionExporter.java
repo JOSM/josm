@@ -220,5 +220,5 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
         return include.isSelected();
     }
 
-    protected abstract void addDataFile(OutputStream out);
+    protected abstract void addDataFile(OutputStream out) throws IOException;
 }

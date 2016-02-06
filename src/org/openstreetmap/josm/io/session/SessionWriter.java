@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
@@ -70,6 +71,7 @@ public class SessionWriter {
         registerSessionLayerExporter(GpxLayer.class, GpxTracksSessionExporter.class);
         registerSessionLayerExporter(GeoImageLayer.class, GeoImageSessionExporter.class);
         registerSessionLayerExporter(MarkerLayer.class, MarkerSessionExporter.class);
+        registerSessionLayerExporter(NoteLayer.class, NoteSessionExporter.class);
     }
 
     /**
