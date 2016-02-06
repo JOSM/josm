@@ -74,6 +74,7 @@ public class SessionReader {
         registerSessionLayerImporter("tracks", GpxTracksSessionImporter.class);
         registerSessionLayerImporter("geoimage", GeoImageSessionImporter.class);
         registerSessionLayerImporter("markers", MarkerSessionImporter.class);
+        registerSessionLayerImporter("osm-notes", NoteSessionImporter.class);
     }
 
     /**

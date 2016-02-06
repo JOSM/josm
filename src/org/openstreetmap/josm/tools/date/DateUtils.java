@@ -79,11 +79,13 @@ public final class DateUtils {
      * @throws UncheckedParseException if the date does not match any of the supported date formats
      */
     public static synchronized long tsFromString(String str) throws UncheckedParseException {
-        // "2007-07-25T09:26:24{Z|{+|-}01:00}"
+        // "2007-07-25T09:26:24{Z|{+|-}01[:00]}"
         if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx") ||
                 checkLayout(str, "xxxx:xx:xx xx:xx:xx") ||
                 checkLayout(str, "xxxx-xx-xx xx:xx:xx UTC") ||
+                checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx") ||
+                checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx:00") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx:00")) {
             final Calendar c = checkLayout(str, "xxxx:xx:xx xx:xx:xx") ? calendarLocale : calendar; // consider EXIF date in default timezone
@@ -96,7 +98,7 @@ public final class DateUtils {
                 parsePart2(str, 17));
             c.set(Calendar.MILLISECOND, 0);
 
-            if (str.length() == 25) {
+            if (str.length() == 22 || str.length() == 25) {
                 int plusHr = parsePart2(str, 20);
                 int mul = str.charAt(19) == '+' ? -3600000 : 3600000;
                 return c.getTimeInMillis()+plusHr*mul;

@@ -36,19 +36,12 @@ public class NoteImporter extends FileImporter {
             Main.debug("importing notes file " + file.getAbsolutePath());
         }
         try (InputStream is = Compression.getUncompressedFileInputStream(file)) {
-            final List<Note> fileNotes = new NoteReader(is).parse();
-
-            List<NoteLayer> noteLayers = null;
-            if (Main.map != null) {
-                noteLayers = Main.map.mapView.getLayersOfType(NoteLayer.class);
-            }
-            if (noteLayers != null && !noteLayers.isEmpty()) {
-                noteLayers.get(0).getNoteData().addNotes(fileNotes);
-            } else {
+            final NoteLayer layer = loadLayer(is, file, file.getName(), progressMonitor);
+            if (!Main.map.mapView.hasLayer(layer)) {
                 GuiHelper.runInEDT(new Runnable() {
                     @Override
                     public void run() {
-                        Main.main.addLayer(new NoteLayer(fileNotes, file.getName()));
+                        Main.main.addLayer(layer);
                     }
                 });
             }
@@ -57,5 +50,33 @@ public class NoteImporter extends FileImporter {
             Main.error(e, true);
             throw new IOException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Load note layer from InputStream.
+     * @param in input stream
+     * @param associatedFile filename of data (can be <code>null</code> if the stream does not come from a file)
+     * @param layerName name of generated layer
+     * @param progressMonitor handler for progress monitoring and canceling
+     * @return note layer
+     * @throws IOException
+     * @throws SAXException
+     * @since 9746
+     */
+    public NoteLayer loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor)
+            throws SAXException, IOException {
+        final List<Note> fileNotes = new NoteReader(in).parse();
+        List<NoteLayer> noteLayers = null;
+        if (Main.map != null) {
+            noteLayers = Main.map.mapView.getLayersOfType(NoteLayer.class);
+        }
+        final NoteLayer layer;
+        if (noteLayers != null && !noteLayers.isEmpty()) {
+            layer = noteLayers.get(0);
+            layer.getNoteData().addNotes(fileNotes);
+        } else {
+            layer = new NoteLayer(fileNotes, associatedFile != null ? associatedFile.getName() : tr("Notes"));
+        }
+        return layer;
     }
 }
