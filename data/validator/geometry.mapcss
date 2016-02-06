@@ -97,6 +97,15 @@ way[route=bus] {
   throwWarning: tr("{0} on a way. Should be used in a relation", "{0.tag}"); 
 }
 
+/* #12502 */
+node[leisure=park][natural=tree] {
+  throwWarning: tr("{0} together with {1} on a node. Remove {0}.", "{0.tag}", "{1.tag}");
+  fixRemove: "leisure";
+}
+node[leisure=park][natural!=tree] {
+  throwWarning: tr("{0} on a node. Should be drawn as an area.", "{0.tag}");
+}
+
 /* see ticket:#10125 */
 node[source:geometry] {
   throwWarning: tr("{0} on a node", "{0.key}");
