@@ -29,8 +29,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.jcs.auxiliary.disk.behavior.IDiskCacheAttributes.DiskLimitType;
@@ -70,7 +73,10 @@ public class BlockDiskKeyStore<K>
     /** The maximum number of keys to store in memory */
     private final int maxKeySize;
 
-    /** we need this so we can communicate free blocks to the data store when keys fall off the LRU */
+    /**
+     * we need this so we can communicate free blocks to the data store when
+     * keys fall off the LRU
+     */
     protected final BlockDiskCache<K, ?> blockDiskCache;
 
     private DiskLimitType diskLimitType = DiskLimitType.COUNT;
@@ -112,7 +118,12 @@ public class BlockDiskKeyStore<K>
         if (keyFile.length() > 0)
         {
             loadKeys();
-            // TODO verify somehow
+            if (!verify())
+            {
+                log.warn(logCacheName + "Key File is invalid. Resetting file.");
+                initKeyMap();
+                reset();
+            }
         }
         else
         {
@@ -121,8 +132,8 @@ public class BlockDiskKeyStore<K>
     }
 
     /**
-     * Saves key file to disk. This gets the LRUMap entry set and write the entries out one by one
-     * after putting them in a wrapper.
+     * Saves key file to disk. This gets the LRUMap entry set and write the
+     * entries out one by one after putting them in a wrapper.
      */
     protected void saveKeys()
     {
@@ -142,7 +153,12 @@ public class BlockDiskKeyStore<K>
                 ObjectOutputStream oos = new ObjectOutputStream(bos);
                 try
                 {
-                    // don't need to synchronize, since the underlying collection makes a copy
+                    if (!verify())
+                    {
+                        throw new IOException("Inconsistent key file");
+                    }
+                    // don't need to synchronize, since the underlying
+                    // collection makes a copy
                     for (Map.Entry<K, int[]> entry : keyHash.entrySet())
                     {
                         BlockDiskElementDescriptor<K> descriptor = new BlockDiskElementDescriptor<K>();
@@ -162,7 +178,7 @@ public class BlockDiskKeyStore<K>
             if (log.isInfoEnabled())
             {
                 log.info(logCacheName + "Finished saving keys. It took " + timer.getElapsedTimeString() + " to store " + numKeys
-                    + " keys.  Key file length [" + keyFile.length() + "]");
+                        + " keys.  Key file length [" + keyFile.length() + "]");
             }
         }
         catch (IOException e)
@@ -184,7 +200,8 @@ public class BlockDiskKeyStore<K>
     }
 
     /**
-     * This is mainly used for testing. It leave the disk in tact, and just clears memory.
+     * This is mainly used for testing. It leave the disk in tact, and just
+     * clears memory.
      */
     protected void clearMemoryMap()
     {
@@ -214,7 +231,8 @@ public class BlockDiskKeyStore<K>
         }
         else
         {
-            // If no max size, use a plain map for memory and processing efficiency.
+            // If no max size, use a plain map for memory and processing
+            // efficiency.
             keyHash = new HashMap<K, int[]>();
             // keyHash = Collections.synchronizedMap( new HashMap() );
             if (log.isInfoEnabled())
@@ -225,8 +243,8 @@ public class BlockDiskKeyStore<K>
     }
 
     /**
-     * Loads the keys from the .key file. The keys are stored individually on disk. They are added
-     * one by one to an LRUMap..
+     * Loads the keys from the .key file. The keys are stored individually on
+     * disk. They are added one by one to an LRUMap..
      */
     protected void loadKeys()
     {
@@ -282,7 +300,7 @@ public class BlockDiskKeyStore<K>
                 if (log.isInfoEnabled())
                 {
                     log.info(logCacheName + "Loaded keys from [" + fileName + "], key count: " + keyHash.size() + "; up to "
-                        + maxKeySize + " will be available.");
+                            + maxKeySize + " will be available.");
                 }
             }
         }
@@ -362,8 +380,53 @@ public class BlockDiskKeyStore<K>
     }
 
     /**
-     * Class for recycling and lru. This implements the LRU size overflow callback, so we can mark the
-     * blocks as free.
+     * Verify key store integrity
+     *
+     * @return true if key store is valid
+     */
+    private boolean verify()
+    {
+        Map<Integer, Set<K>> blockAllocationMap = new TreeMap<Integer, Set<K>>();
+        for (Entry<K, int[]> e : keyHash.entrySet())
+        {
+            for (int block : e.getValue())
+            {
+                Set<K> keys = blockAllocationMap.get(block);
+                if (keys == null)
+                {
+                    keys = new HashSet<K>();
+                    blockAllocationMap.put(block, keys);
+                }
+                else if (!log.isDebugEnabled())
+                {
+                    // keys are not null, and no debug - fail fast
+                    return false;
+                }
+                keys.add(e.getKey());
+            }
+        }
+        boolean ok = true;
+        if (log.isDebugEnabled())
+        {
+            for (Entry<Integer, Set<K>> e : blockAllocationMap.entrySet())
+            {
+                log.debug("Block " + e.getKey() + ":" + e.getValue());
+                if (e.getValue().size() > 1)
+                {
+                    ok = false;
+                }
+            }
+            return ok;
+        }
+        else
+        {
+            return ok;
+        }
+    }
+
+    /**
+     * Class for recycling and lru. This implements the LRU size overflow
+     * callback, so we can mark the blocks as free.
      */
     public class LRUMapSizeLimited extends AbstractLRUMap<K, int[]>
     {
@@ -385,7 +448,8 @@ public class BlockDiskKeyStore<K>
         }
 
         /**
-         * @param maxSize maximum cache size in kB
+         * @param maxSize
+         *            maximum cache size in kB
          */
         public LRUMapSizeLimited(int maxSize)
         {
@@ -450,8 +514,9 @@ public class BlockDiskKeyStore<K>
         }
 
         /**
-         * This is called when the may key size is reached. The least recently used item will be
-         * passed here. We will store the position and size of the spot on disk in the recycle bin.
+         * This is called when the may key size is reached. The least recently
+         * used item will be passed here. We will store the position and size of
+         * the spot on disk in the recycle bin.
          * <p>
          *
          * @param key
@@ -481,8 +546,8 @@ public class BlockDiskKeyStore<K>
     }
 
     /**
-     * Class for recycling and lru. This implements the LRU overflow callback, so we can mark the
-     * blocks as free.
+     * Class for recycling and lru. This implements the LRU overflow callback,
+     * so we can mark the blocks as free.
      */
     public class LRUMapCountLimited extends LRUMap<K, int[]>
     {
@@ -497,8 +562,9 @@ public class BlockDiskKeyStore<K>
         }
 
         /**
-         * This is called when the may key size is reached. The least recently used item will be
-         * passed here. We will store the position and size of the spot on disk in the recycle bin.
+         * This is called when the may key size is reached. The least recently
+         * used item will be passed here. We will store the position and size of
+         * the spot on disk in the recycle bin.
          * <p>
          *
          * @param key
