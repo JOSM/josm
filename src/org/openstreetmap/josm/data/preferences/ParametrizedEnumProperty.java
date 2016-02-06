@@ -5,15 +5,12 @@ import org.openstreetmap.josm.Main;
 
 public abstract class ParametrizedEnumProperty<T extends Enum<T>> {
 
-    private final T defaultValue;
-    private final Class<T> enumClass;
+    protected final T defaultValue;
+    protected final Class<T> enumClass;
 
     public ParametrizedEnumProperty(Class<T> enumClass, T defaultValue) {
         this.defaultValue = defaultValue;
         this.enumClass = enumClass;
-        if (Main.pref != null) {
-            get();
-        }
     }
 
     protected abstract String getKey(String... params);
@@ -27,6 +24,10 @@ public abstract class ParametrizedEnumProperty<T extends Enum<T>> {
     }
 
     protected T parse(String s) {
-        return Enum.valueOf(enumClass, s);
+        try {
+            return Enum.valueOf(enumClass, s);
+        } catch (IllegalArgumentException e) {
+            return defaultValue;
+        }
     }
 }
