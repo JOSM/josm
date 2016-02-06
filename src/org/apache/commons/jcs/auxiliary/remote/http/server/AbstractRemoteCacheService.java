@@ -256,7 +256,7 @@ public abstract class AbstractRemoteCacheService<K extends Serializable, V exten
      * <p>
      * @param cacheName
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */
@@ -275,7 +275,7 @@ public abstract class AbstractRemoteCacheService<K extends Serializable, V exten
      * @param cacheName
      * @param keys
      * @param requesterId
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */
@@ -301,7 +301,7 @@ public abstract class AbstractRemoteCacheService<K extends Serializable, V exten
      * @param cacheName
      * @param keys
      * @param requesterId
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */

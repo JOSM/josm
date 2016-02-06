@@ -118,7 +118,7 @@ public class LateralCache<K, V>
      * The performance costs are too great. It is not recommended that you enable lateral gets.
      * <p>
      * @param key
-     * @return ICacheElement<K, V> or null
+     * @return ICacheElement&lt;K, V&gt; or null
      * @throws IOException
      */
     @Override
@@ -145,7 +145,7 @@ public class LateralCache<K, V>
 
     /**
      * @param pattern
-     * @return A map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return A map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */
@@ -173,7 +173,7 @@ public class LateralCache<K, V>
      * Gets multiple items from the cache based on the given set of keys.
      * <p>
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */

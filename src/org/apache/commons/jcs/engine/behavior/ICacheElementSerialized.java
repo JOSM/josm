@@ -24,7 +24,7 @@ package org.apache.commons.jcs.engine.behavior;
  * <p>
  * The value is stored as a byte array. This should allow for a variety of serialization mechanisms.
  * <p>
- * This currently extends ICacheElement<K, V> for backward compatibility.
+ * This currently extends ICacheElement&lt;K, V&gt; for backward compatibility.
  *<p>
  * @author Aaron Smuts
  */

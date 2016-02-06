@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * This is the top level interface for all cache like structures. It defines the methods used
  * internally by JCS to access, modify, and instrument such structures.
- * <p>
+ * 
  * This allows for a suite of reusable components for accessing such structures, for example
  * asynchronous access via an event queue.
  */
@@ -38,7 +38,7 @@ public interface ICache<K, V>
 {
     /**
      * Puts an item to the cache.
-     * <p>
+     * 
      * @param element
      * @throws IOException
      */
@@ -47,7 +47,7 @@ public interface ICache<K, V>
 
     /**
      * Gets an item from the cache.
-     * <p>
+     * 
      * @param key
      * @return a cache element, or null if there is no data in cache for this key
      * @throws IOException
@@ -57,9 +57,9 @@ public interface ICache<K, V>
 
     /**
      * Gets multiple items from the cache based on the given set of keys.
-     * <p>
+     * 
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no data in cache for any of these keys
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no data in cache for any of these keys
      * @throws IOException
      */
     Map<K, ICacheElement<K, V>> getMultiple(Set<K> keys)
@@ -67,13 +67,13 @@ public interface ICache<K, V>
 
     /**
      * Gets items from the cache matching the given pattern.  Items from memory will replace those from remote sources.
-     * <p>
+     * 
      * This only works with string keys.  It's too expensive to do a toString on every key.
-     * <p>
+     * 
      * Auxiliaries will do their best to handle simple expressions.  For instance, the JDBC disk cache will convert * to % and . to _
-     * <p>
+     * 
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no data matching the pattern.
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no data matching the pattern.
      * @throws IOException
      */
     Map<K, ICacheElement<K, V>> getMatching(String pattern)
@@ -81,7 +81,7 @@ public interface ICache<K, V>
 
     /**
      * Removes an item from the cache.
-     * <p>
+     * 
      * @param key
      * @return false if there was an error in removal
      * @throws IOException
@@ -91,7 +91,7 @@ public interface ICache<K, V>
 
     /**
      * Removes all cached items from the cache.
-     * <p>
+     * 
      * @throws IOException
      */
     void removeAll()
@@ -106,35 +106,35 @@ public interface ICache<K, V>
 
     /**
      * Returns the current cache size in number of elements.
-     * <p>
+     * 
      * @return number of elements
      */
     int getSize();
 
     /**
      * Returns the cache status.
-     * <p>
+     * 
      * @return Alive or Error
      */
     CacheStatus getStatus();
 
     /**
      * Returns the cache stats.
-     * <p>
+     * 
      * @return String of important historical information.
      */
     String getStats();
 
     /**
      * Returns the cache name.
-     * <p>
+     * 
      * @return usually the region name.
      */
     String getCacheName();
 
     /**
      * Sets the key matcher used by get matching.
-     * <p>
+     * 
      * @param keyMatcher
      */
     void setKeyMatcher( IKeyMatcher<K> keyMatcher );

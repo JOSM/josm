@@ -49,7 +49,7 @@ public interface ICacheService<K, V>
      * <p>
      * @param cacheName
      * @param key
-     * @return the ICacheElement<K, V> or null if not found
+     * @return the ICacheElement&lt;K, V&gt; or null if not found
      * @throws ObjectNotFoundException
      * @throws IOException
      */
@@ -61,7 +61,7 @@ public interface ICacheService<K, V>
      * <p>
      * @param cacheName
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws ObjectNotFoundException
      * @throws IOException
@@ -74,7 +74,7 @@ public interface ICacheService<K, V>
      * <p>
      * @param cacheName
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache matching the pattern.
      * @throws IOException
      */

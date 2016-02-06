@@ -30,7 +30,7 @@ public interface AuxiliaryCacheFactory
 {
     /**
      * Creates an auxiliary using the supplied attributes. Adds it to the composite cache manager.
-     * <p>
+     * 
      * @param attr
      * @param cacheMgr This allows auxiliaries to reference the manager without assuming that it is
      *            a singleton. This will allow JCS to be a non-singleton. Also, it makes it easier to
@@ -57,14 +57,14 @@ public interface AuxiliaryCacheFactory
 
     /**
      * Sets the name attribute of the AuxiliaryCacheFactory object
-     * <p>
+     * 
      * @param s The new name value
      */
     void setName( String s );
 
     /**
      * Gets the name attribute of the AuxiliaryCacheFactory object
-     * <p>
+     * 
      * @return The name value
      */
     String getName();

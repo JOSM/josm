@@ -83,9 +83,9 @@ public class BoundedQueue<T>
     }
 
     /**
-     * Return true if the size is <= 0;
+     * Return true if the size is &lt;= 0;
      * <p>
-     * @return true is size <= 0;
+     * @return true is size &lt;= 0;
      */
     public boolean isEmpty()
     {

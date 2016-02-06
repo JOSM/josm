@@ -127,7 +127,8 @@ public abstract class AbstractRemoteCacheListener<K, V>
     }
 
     /**
-     * Gets the remoteType attribute of the RemoteCacheListener object <p.
+     * Gets the remoteType attribute of the RemoteCacheListener object
+     * <p>
      * @return The remoteType value
      * @throws IOException
      */

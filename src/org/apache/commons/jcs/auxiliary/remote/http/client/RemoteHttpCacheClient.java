@@ -143,7 +143,7 @@ public class RemoteHttpCacheClient<K, V>
      * <p>
      * @param cacheName
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache matching the pattern.
      * @throws IOException
      */
@@ -160,7 +160,7 @@ public class RemoteHttpCacheClient<K, V>
      * @param cacheName
      * @param pattern
      * @param requesterId
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache matching the pattern.
      * @throws IOException
      */
@@ -194,7 +194,7 @@ public class RemoteHttpCacheClient<K, V>
      * <p>
      * @param cacheName
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */
@@ -211,7 +211,7 @@ public class RemoteHttpCacheClient<K, V>
      * @param cacheName
      * @param keys
      * @param requesterId
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */

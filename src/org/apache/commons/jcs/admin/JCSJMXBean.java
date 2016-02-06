@@ -50,7 +50,7 @@ public interface JCSJMXBean
     /**
      * Tries to estimate how much data is in a region. This is expensive. If there are any non serializable objects in
      * the region or an error occurs, suppresses exceptions and returns 0.
-     * <p/>
+     * <p>
      *
      * @return int The size of the region in bytes.
      */
@@ -58,7 +58,7 @@ public interface JCSJMXBean
 
     /**
      * Clears all regions in the cache.
-     * <p/>
+     * <p>
      * If this class is running within a remote cache server, clears all regions via the <code>RemoteCacheServer</code>
      * API, so that removes will be broadcast to client machines. Otherwise clears all regions in the cache directly via
      * the usual cache API.
@@ -67,7 +67,7 @@ public interface JCSJMXBean
 
     /**
      * Clears a particular cache region.
-     * <p/>
+     * <p>
      * If this class is running within a remote cache server, clears the region via the <code>RemoteCacheServer</code>
      * API, so that removes will be broadcast to client machines. Otherwise clears the region directly via the usual
      * cache API.
@@ -76,7 +76,7 @@ public interface JCSJMXBean
 
     /**
      * Removes a particular item from a particular region.
-     * <p/>
+     * <p>
      * If this class is running within a remote cache server, removes the item via the <code>RemoteCacheServer</code>
      * API, so that removes will be broadcast to client machines. Otherwise clears the region directly via the usual
      * cache API.

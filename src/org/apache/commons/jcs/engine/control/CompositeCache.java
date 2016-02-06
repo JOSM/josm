@@ -218,7 +218,7 @@ public class CompositeCache<K, V>
      * Put an item into the cache. If it is localOnly, then do no notify remote or lateral
      * auxiliaries.
      * <p>
-     * @param cacheElement the ICacheElement<K, V>
+     * @param cacheElement the ICacheElement&lt;K, V&gt;
      * @param localOnly Whether the operation should be restricted to local auxiliaries.
      * @throws IOException
      */
@@ -627,7 +627,7 @@ public class CompositeCache<K, V>
      * Gets multiple items from the cache based on the given set of keys.
      * <p>
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      */
     @Override
@@ -641,7 +641,7 @@ public class CompositeCache<K, V>
      * laterally for this data.
      * <p>
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      */
     public Map<K, ICacheElement<K, V>> localGetMultiple( Set<K> keys )
@@ -816,7 +816,7 @@ public class CompositeCache<K, V>
      * Build a map of all the matching elements in all of the auxiliaries and memory.
      * <p>
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any matching keys
      */
     @Override
@@ -830,7 +830,7 @@ public class CompositeCache<K, V>
      * go remote or laterally for this data.
      * <p>
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any matching keys
      */
     public Map<K, ICacheElement<K, V>> localGetMatching( String pattern )
@@ -848,7 +848,7 @@ public class CompositeCache<K, V>
      * <p>
      * @param pattern
      * @param localOnly
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any matching keys
      */
     protected Map<K, ICacheElement<K, V>> getMatching( String pattern, boolean localOnly )
@@ -878,10 +878,10 @@ public class CompositeCache<K, V>
 
     /**
      * Gets the key array from the memcache. Builds a set of matches. Calls getMultiple with the
-     * set. Returns a map: key -> result.
+     * set. Returns a map: key -&gt; result.
      * <p>
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any matching keys
      * @throws IOException
      */
@@ -906,7 +906,7 @@ public class CompositeCache<K, V>
      * <p>
      * @param pattern
      * @param localOnly
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any matching keys
      * @throws IOException
      */

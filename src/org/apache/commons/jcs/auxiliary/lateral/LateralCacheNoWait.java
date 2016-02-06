@@ -124,7 +124,7 @@ public class LateralCacheNoWait<K, V>
      * Synchronously reads from the lateral cache.
      * <p>
      * @param key
-     * @return ICacheElement<K, V> if found, else null
+     * @return ICacheElement&lt;K, V&gt; if found, else null
      */
     @Override
     public ICacheElement<K, V> get( K key )
@@ -161,7 +161,7 @@ public class LateralCacheNoWait<K, V>
      * Gets multiple items from the cache based on the given set of keys.
      * <p>
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      */
     @Override
@@ -189,7 +189,7 @@ public class LateralCacheNoWait<K, V>
      * Synchronously reads from the lateral cache.
      * <p>
      * @param pattern
-     * @return ICacheElement<K, V> if found, else empty
+     * @return ICacheElement&lt;K, V&gt; if found, else empty
      */
     @Override
     public Map<K, ICacheElement<K, V>> getMatching(String pattern)
