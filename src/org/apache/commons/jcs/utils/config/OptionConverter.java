@@ -71,7 +71,7 @@ public class OptionConverter
 
     /**
      * Escapes special characters.
-     * <p>
+     * 
      * @param s
      * @return String
      */
@@ -152,7 +152,7 @@ public class OptionConverter
 
     /**
      * Creates an object for the className value of the key.
-     * <p>
+     * 
      * @param props
      * @param key
      * @param defaultValue
@@ -178,7 +178,7 @@ public class OptionConverter
     /**
      * If <code>value</code> is "true", then <code>true</code> is returned. If <code>value</code> is
      * "false", then <code>true</code> is returned. Otherwise, <code>default</code> is returned.
-     * <p>
+     * 
      * Case of value is unimportant.
      * @param value
      * @param defaultValue
@@ -204,7 +204,7 @@ public class OptionConverter
 
     /**
      * Converts to int.
-     * <p>
+     * 
      * @param value
      * @param defaultValue
      * @return int
@@ -276,7 +276,7 @@ public class OptionConverter
     /**
      * Find the value corresponding to <code>key</code> in <code>props</code>. Then perform variable
      * substitution on the found value.
-     * <p>
+     * 
      * @param key
      * @param props
      * @return substituted string
@@ -305,7 +305,7 @@ public class OptionConverter
      * Instantiate an object given a class name. Check that the <code>className</code> is a subclass
      * of <code>superClass</code>. If that test fails or the object could not be instantiated, then
      * <code>defaultValue</code> is returned.
-     * <p>
+     * 
      * @param className The fully qualified class name of the object to instantiate.
      * @param defaultValue The object to return in case of non-fulfillment
      * @return instantiated object
@@ -343,9 +343,9 @@ public class OptionConverter
     /**
      * Perform variable substitution in string <code>val</code> from the values of keys found in the
      * system properties.
-     * <p>
+     * 
      * The variable substitution delimiters are <b>${ </b> and <b>} </b>.
-     * <p>
+     * 
      * For example, if the System properties contains "key=value", then the call
      *
      * <pre>
@@ -353,11 +353,11 @@ public class OptionConverter
      * </pre>
      *
      * will set the variable <code>s</code> to "Value of key is value.".
-     * <p>
+     * 
      * If no value could be found for the specified key, then the <code>props</code> parameter is
      * searched, if the value could not be found there, then substitution defaults to the empty
      * string.
-     * <p>
+     * 
      * For example, if system properties contains no value for the key "inexistentKey", then the call
      *
      * <pre>
@@ -370,7 +370,7 @@ public class OptionConverter
      * delimiter "${" which is not balanced by a stop delimiter "}".
      * </p>
      * <p>
-     * <b>Author </b> Avy Sharell </a>
+     * <b>Author </b> Avy Sharell
      * </p>
      * @param val The string on which variable substitution is performed.
      * @param props

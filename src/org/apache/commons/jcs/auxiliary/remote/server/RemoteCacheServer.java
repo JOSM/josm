@@ -204,8 +204,8 @@ public class RemoteCacheServer<K, V>
     /**
      * Puts a cache bean to the remote cache and notifies all listeners which <br>
      * <ol>
-     * <li>have a different listener id than the originating host; <li>are currently subscribed to
-     * the related cache.
+     * <li>have a different listener id than the originating host;</li>
+     * <li>are currently subscribed to the related cache.</li>
      * </ol>
      * <p>
      * @param item
@@ -679,7 +679,7 @@ public class RemoteCacheServer<K, V>
      * <p>
      * @param cacheName
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */
@@ -698,7 +698,7 @@ public class RemoteCacheServer<K, V>
      * @param cacheName
      * @param keys
      * @param requesterId
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */
@@ -724,7 +724,7 @@ public class RemoteCacheServer<K, V>
      * @param cacheName
      * @param keys
      * @param requesterId
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      */
     private Map<K, ICacheElement<K, V>> processGetMultiple( String cacheName, Set<K> keys, long requesterId )

@@ -45,8 +45,8 @@ import org.apache.commons.logging.LogFactory;
  * This class configures JCS based on a properties object.
  * <p>
  * This class is based on the log4j class org.apache.log4j.PropertyConfigurator which was made by:
- * "Luke Blanshard" <Luke@quiq.com>"Mark DONSZELMANN" <Mark.Donszelmann@cern.ch>"Anders Kristensen"
- * <akristensen@dynamicsoft.com>
+ * "Luke Blanshard" &lt;Luke@quiq.com&gt;"Mark DONSZELMANN" &lt;Mark.Donszelmann@cern.ch&gt;"Anders Kristensen"
+ * &lt;akristensen@dynamicsoft.com&gt;
  */
 public class CompositeCacheConfigurator
 {

@@ -34,7 +34,7 @@ import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
  * might want to find a more efficient memory manager for large cache regions.
  * <p>
  * The LRUMemoryCache is most efficient when the first element is selected. The smaller the region,
- * the better the chance that this will be the case. < .04 ms per put, p3 866, 1/10 of that per get
+ * the better the chance that this will be the case. &lt; .04 ms per put, p3 866, 1/10 of that per get
  */
 public class LRUMemoryCache<K, V>
     extends AbstractDoubleLinkedListMemoryCache<K, V>

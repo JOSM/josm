@@ -88,7 +88,7 @@ public class LateralTCPDiscoveryListener
      * not configured to use the lateral cache, and no facade will be created.
      * <p>
      * @param cacheName - the region name
-     * @param facade - facade (for region) => multiple lateral clients.
+     * @param facade - facade (for region) =&gt; multiple lateral clients.
      * @return true if the facade was not already registered.
      */
     public synchronized boolean addNoWaitFacade( String cacheName, LateralCacheNoWaitFacade<?, ?> facade )

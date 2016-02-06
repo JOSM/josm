@@ -78,9 +78,11 @@ public class HostNameUtil
      * multiple IP addresses, this method will prefer a site-local IP address (e.g. 192.168.x.x or
      * 10.10.x.x, usually IPv4) if the machine has one (and will return the first site-local address
      * if the machine has more than one), but if the machine does not hold a site-local address,
-     * this method will return simply the first non-loopback address found (IPv4 or IPv6). <p/> If
-     * this method cannot find a non-loopback address using this selection algorithm, it will fall
-     * back to calling and returning the result of JDK method <code>InetAddress.getLocalHost</code>.
+     * this method will return simply the first non-loopback address found (IPv4 or IPv6).</p>
+     * <p>
+     * If this method cannot find a non-loopback address using this selection algorithm, it will
+     * fall back to calling and returning the result of JDK method
+     * <code>InetAddress.getLocalHost</code>.
      * <p>
      * <a href="http://issues.apache.org/jira/browse/JCS-40">JIR ISSUE JCS-40</a>
      * <p>

@@ -224,7 +224,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
      *
      * @param key
      *            Identifies item to find
-     * @return ICacheElement<K, V> if found, else null
+     * @return ICacheElement&lt;K, V&gt; if found, else null
      * @throws IOException
      */
     @Override
@@ -327,7 +327,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
      * This spools the last element in the LRU, if one exists.
      * <p>
      *
-     * @return ICacheElement<K, V> if there was a last element, else null.
+     * @return ICacheElement&lt;K, V&gt; if there was a last element, else null.
      * @throws Error
      */
     private ICacheElement<K, V> spoolLastElement() throws Error

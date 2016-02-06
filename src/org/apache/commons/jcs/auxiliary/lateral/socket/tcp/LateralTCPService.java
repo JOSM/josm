@@ -204,7 +204,7 @@ public class LateralTCPService<K, V>
     /**
      * @param cacheName
      * @param key
-     * @return ICacheElement<K, V> if found.
+     * @return ICacheElement&lt;K, V&gt; if found.
      * @throws IOException
      */
     @Override
@@ -220,7 +220,7 @@ public class LateralTCPService<K, V>
      * @param cacheName
      * @param key
      * @param requesterId
-     * @return ICacheElement<K, V> if found.
+     * @return ICacheElement&lt;K, V&gt; if found.
      * @throws IOException
      */
     @Override
@@ -254,7 +254,7 @@ public class LateralTCPService<K, V>
      * <p>
      * @param cacheName
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache matching the pattern.
      * @throws IOException
      */
@@ -271,7 +271,7 @@ public class LateralTCPService<K, V>
      * @param cacheName
      * @param pattern
      * @param requesterId - our identity
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache matching the pattern.
      * @throws IOException
      */
@@ -307,7 +307,7 @@ public class LateralTCPService<K, V>
      * <p>
      * @param cacheName
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */
@@ -326,7 +326,7 @@ public class LateralTCPService<K, V>
      * @param cacheName
      * @param keys
      * @param requesterId
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */

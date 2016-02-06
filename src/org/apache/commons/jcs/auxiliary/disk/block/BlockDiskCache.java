@@ -254,7 +254,7 @@ public class BlockDiskCache<K, V>
      * Gets matching items from the cache.
      * <p>
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache matching keys
      */
     @Override
@@ -300,7 +300,7 @@ public class BlockDiskCache<K, V>
     }
 
     /**
-     * Gets the ICacheElement<K, V> for the key if it is in the cache. The program flow is as follows:
+     * Gets the ICacheElement&lt;K, V&gt; for the key if it is in the cache. The program flow is as follows:
      * <ol>
      * <li>Make sure the disk cache is alive.</li> <li>Get a read lock.</li> <li>See if the key is
      * in the key store.</li> <li>If we found a key, ask the BlockDisk for the object at the

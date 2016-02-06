@@ -40,19 +40,19 @@ import java.util.Properties;
  * in a tomcat base. This give you an easy way to monitor its activity.
  * <p>
  * <code>
- *  <servlet>
-        <servlet-name>JCSRemoteCacheStartupServlet</servlet-name>
-        <servlet-class>
+ *  servlet&gt;
+        &lt;servlet-name&gt;JCSRemoteCacheStartupServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;
              org.apache.commons.jcs.auxiliary.remote.server.RemoteCacheStartupServlet
-        </servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
+        &lt;/servlet-class&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+    &lt;/servlet&gt;
 
 
-    <servlet-mapping>
-        <servlet-name>JCSRemoteCacheStartupServlet</servlet-name>
-        <url-pattern>/jcs</url-pattern>
-    </servlet-mapping>
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;JCSRemoteCacheStartupServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/jcs&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
  * </code>
  * @author Aaron Smuts
  */

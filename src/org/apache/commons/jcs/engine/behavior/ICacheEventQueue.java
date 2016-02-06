@@ -40,7 +40,7 @@ public interface ICacheEventQueue<K, V>
 
     /**
      * Initializes the queue.
-     * <,p>
+     * <p>
      * @param listener
      * @param listenerId
      * @param cacheName

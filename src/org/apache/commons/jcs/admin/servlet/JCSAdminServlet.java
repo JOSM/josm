@@ -95,7 +95,6 @@ public class JCSAdminServlet
      * @param response
      * @param context
      * @return Template
-     * @throws Exception
      *
      */
     @Override

@@ -119,7 +119,7 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
      * Get an item from the cache
      * <p>
      * @param key Identifies item to find
-     * @return ICacheElement<K, V> if found, else null
+     * @return ICacheElement&lt;K, V&gt; if found, else null
      * @throws IOException
      */
     @Override

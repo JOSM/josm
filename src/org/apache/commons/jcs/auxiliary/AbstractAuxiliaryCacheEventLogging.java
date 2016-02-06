@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * All ICacheEvents are defined as final. Children must implement process events. These are wrapped
  * in event log parent calls.
- * <p>
+ * 
  * You can override the public method, but if you don't, the default will call getWithTiming.
  */
 public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
@@ -39,7 +39,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 {
     /**
      * Puts an item into the cache.
-     * <p>
+     * 
      * @param cacheElement
      * @throws IOException
      */
@@ -52,7 +52,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Puts an item into the cache. Wrapped in logging.
-     * <p>
+     * 
      * @param cacheElement
      * @throws IOException
      */
@@ -72,7 +72,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Implementation of put.
-     * <p>
+     * 
      * @param cacheElement
      * @throws IOException
      */
@@ -81,7 +81,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Gets the item from the cache.
-     * <p>
+     * 
      * @param key
      * @return ICacheElement, a wrapper around the key, value, and attributes
      * @throws IOException
@@ -95,7 +95,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Gets the item from the cache. Wrapped in logging.
-     * <p>
+     * 
      * @param key
      * @return ICacheElement, a wrapper around the key, value, and attributes
      * @throws IOException
@@ -116,7 +116,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Implementation of get.
-     * <p>
+     * 
      * @param key
      * @return ICacheElement, a wrapper around the key, value, and attributes
      * @throws IOException
@@ -126,9 +126,9 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Gets multiple items from the cache based on the given set of keys.
-     * <p>
+     * 
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */
@@ -141,9 +141,9 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Gets multiple items from the cache based on the given set of keys.
-     * <p>
+     * 
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */
@@ -164,9 +164,9 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Implementation of getMultiple.
-     * <p>
+     * 
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
      * @throws IOException
      */
@@ -176,14 +176,14 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
     /**
      * Gets items from the cache matching the given pattern. Items from memory will replace those
      * from remote sources.
-     * <p>
+     * 
      * This only works with string keys. It's too expensive to do a toString on every key.
-     * <p>
+     * 
      * Auxiliaries will do their best to handle simple expressions. For instance, the JDBC disk
      * cache will convert * to % and . to _
-     * <p>
+     * 
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data matching the pattern.
      * @throws IOException
      */
@@ -196,9 +196,9 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Gets mmatching items from the cache based on the given pattern.
-     * <p>
+     * 
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data matching the pattern.
      * @throws IOException
      */
@@ -218,9 +218,9 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Implementation of getMatching.
-     * <p>
+     * 
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data matching the pattern.
      * @throws IOException
      */
@@ -229,7 +229,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Removes the item from the cache. Wraps the remove in event logs.
-     * <p>
+     * 
      * @param key
      * @return boolean, whether or not the item was removed
      * @throws IOException
@@ -243,7 +243,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Removes the item from the cache. Wraps the remove in event logs.
-     * <p>
+     * 
      * @param key
      * @return boolean, whether or not the item was removed
      * @throws IOException
@@ -264,7 +264,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Specific implementation of remove.
-     * <p>
+     * 
      * @param key
      * @return boolean, whether or not the item was removed
      * @throws IOException
@@ -274,7 +274,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Removes all from the region. Wraps the removeAll in event logs.
-     * <p>
+     * 
      * @throws IOException
      */
     @Override
@@ -286,7 +286,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Removes all from the region. Wraps the removeAll in event logs.
-     * <p>
+     * 
      * @throws IOException
      */
     protected final void removeAllWithEventLogging()
@@ -305,7 +305,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Specific implementation of removeAll.
-     * <p>
+     * 
      * @throws IOException
      */
     protected abstract void processRemoveAll()
@@ -313,7 +313,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Synchronously dispose the remote cache; if failed, replace the remote handle with a zombie.
-     * <p>
+     * 
      * @throws IOException
      */
     @Override
@@ -326,7 +326,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
     /**
      * Synchronously dispose the remote cache; if failed, replace the remote handle with a zombie.
      * Wraps the removeAll in event logs.
-     * <p>
+     * 
      * @throws IOException
      */
     protected final void disposeWithEventLogging()
@@ -345,7 +345,7 @@ public abstract class AbstractAuxiliaryCacheEventLogging<K, V>
 
     /**
      * Specific implementation of dispose.
-     * <p>
+     * 
      * @throws IOException
      */
     protected abstract void processDispose()

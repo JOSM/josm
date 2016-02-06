@@ -36,7 +36,7 @@ public interface ICacheElement<K, V>
 {
 
     /**
-     * Gets the cacheName attribute of the ICacheElement<K, V> object. The cacheName
+     * Gets the cacheName attribute of the ICacheElement&lt;K, V&gt; object. The cacheName
      * is also known as the region name.
      *
      * @return The cacheName value
@@ -44,28 +44,28 @@ public interface ICacheElement<K, V>
     String getCacheName();
 
     /**
-     * Gets the key attribute of the ICacheElement<K, V> object
+     * Gets the key attribute of the ICacheElement&lt;K, V&gt; object
      *
      * @return The key value
      */
     K getKey();
 
     /**
-     * Gets the val attribute of the ICacheElement<K, V> object
+     * Gets the val attribute of the ICacheElement&lt;K, V&gt; object
      *
      * @return The val value
      */
     V getVal();
 
     /**
-     * Gets the attributes attribute of the ICacheElement<K, V> object
+     * Gets the attributes attribute of the ICacheElement&lt;K, V&gt; object
      *
      * @return The attributes value
      */
     IElementAttributes getElementAttributes();
 
     /**
-     * Sets the attributes attribute of the ICacheElement<K, V> object
+     * Sets the attributes attribute of the ICacheElement&lt;K, V&gt; object
      *
      * @param attr
      *            The new attributes value

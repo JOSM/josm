@@ -496,7 +496,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
      * <p>
      *
      * @param ce
-     *            The ICacheElement<K, V> to put to disk.
+     *            The ICacheElement&lt;K, V&gt; to put to disk.
      */
     @Override
     protected void processUpdate(ICacheElement<K, V> ce)
@@ -611,7 +611,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
      * <p>
      *
      * @param key
-     * @return ICacheElement<K, V> or null
+     * @return ICacheElement&lt;K, V&gt; or null
      * @see AbstractDiskCache#doGet
      */
     @Override
@@ -663,7 +663,7 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
      * <p>
      *
      * @param pattern
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map if there is no
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache matching keys
      */
     @Override

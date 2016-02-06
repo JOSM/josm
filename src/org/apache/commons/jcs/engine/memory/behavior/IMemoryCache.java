@@ -121,7 +121,7 @@ public interface IMemoryCache<K, V>
      * Gets multiple items from the cache based on the given set of keys.
      * <p>
      * @param keys
-     * @return a map of K key to ICacheElement<K, V> element, or an empty map
+     * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map
      * if there is no data in cache for any of these keys
      * @throws IOException
      */

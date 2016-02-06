@@ -38,7 +38,7 @@ public class RemoteCacheResponse<T>
     private String errorMessage;
 
     /**
-     * The payload. Typically a key / ICacheElement<K, V> map. A normal get will return a map with one
+     * The payload. Typically a key / ICacheElement&lt;K, V&gt; map. A normal get will return a map with one
      * record.
      */
     private T payload;

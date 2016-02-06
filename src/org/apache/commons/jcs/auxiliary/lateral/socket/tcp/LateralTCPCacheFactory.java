@@ -226,7 +226,7 @@ public class LateralTCPCacheFactory
      * <p>
      * @param lca configuration for the creation of a new service instance
      *
-     * @return ICacheServiceNonLocal<K, V>
+     * @return ICacheServiceNonLocal&lt;K, V&gt;
      */
     // Need to cast because of common map for all cache services
     @SuppressWarnings("unchecked")

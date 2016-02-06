@@ -25,7 +25,7 @@ import org.apache.commons.jcs.engine.behavior.IElementAttributes;
 
 /**
  * Implementation of cache elements in purgatory.
- * <p>
+ * 
  * Elements are stored in purgatory when they are spooled to the auxiliary cache, but have not yet
  * been written to disk.
  */
@@ -42,8 +42,8 @@ public class PurgatoryElement<K, V>
     private ICacheElement<K, V> cacheElement;
 
     /**
-     * Constructor for the PurgatoryElement<K, V> object
-     * <p>
+     * Constructor for the PurgatoryElement&lt;K, V&gt; object
+     * 
      * @param cacheElement CacheElement
      */
     public PurgatoryElement( ICacheElement<K, V> cacheElement )
@@ -56,7 +56,7 @@ public class PurgatoryElement<K, V>
 
     /**
      * Gets the spoolable property.
-     * <p>
+     * 
      * @return The spoolable value
      */
     public boolean isSpoolable()
@@ -66,7 +66,7 @@ public class PurgatoryElement<K, V>
 
     /**
      * Sets the spoolable property.
-     * <p>
+     * 
      * @param spoolable The new spoolable value
      */
     public void setSpoolable( boolean spoolable )
@@ -76,7 +76,7 @@ public class PurgatoryElement<K, V>
 
     /**
      * Get the wrapped cache element.
-     * <p>
+     * 
      * @return ICacheElement
      */
     public ICacheElement<K, V> getCacheElement()

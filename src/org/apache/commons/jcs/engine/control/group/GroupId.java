@@ -63,7 +63,7 @@ public class GroupId
 
     /**
      * @param obj
-     * @return cacheName.equals( g.cacheName ) && groupName.equals( g.groupName );
+     * @return cacheName.equals( g.cacheName ) &amp;&amp;groupName.equals( g.groupName );
      */
     @Override
     public boolean equals( Object obj )

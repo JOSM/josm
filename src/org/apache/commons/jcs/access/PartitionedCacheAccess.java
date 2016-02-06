@@ -206,7 +206,7 @@ public class PartitionedCacheAccess<K extends Serializable, V extends Serializab
     }
 
     /**
-     * Gets the ICacheElement<K, V> (the wrapped object) for the key from the desired partition.
+     * Gets the ICacheElement&lt;K, V&gt; (the wrapped object) for the key from the desired partition.
      * <p>
      * @param key key
      * @return result, null if not found.

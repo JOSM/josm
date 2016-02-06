@@ -21,7 +21,6 @@ package org.apache.commons.jcs.auxiliary.disk.block;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
@@ -86,10 +85,10 @@ public class BlockDisk
      * <p>
      * @param file
      * @param elementSerializer
-     * @throws FileNotFoundException
+     * @throws IOException
      */
     public BlockDisk( File file, IElementSerializer elementSerializer )
-        throws FileNotFoundException
+        throws IOException
     {
         this( file, DEFAULT_BLOCK_SIZE_BYTES, elementSerializer );
     }
@@ -99,10 +98,10 @@ public class BlockDisk
      * <p>
      * @param file
      * @param blockSizeBytes
-     * @throws FileNotFoundException
+     * @throws IOException
      */
     public BlockDisk( File file, int blockSizeBytes )
-        throws FileNotFoundException
+        throws IOException
     {
         this( file, blockSizeBytes, new StandardSerializer() );
     }
@@ -113,14 +112,15 @@ public class BlockDisk
      * @param file
      * @param blockSizeBytes
      * @param elementSerializer
-     * @throws FileNotFoundException
+     * @throws IOException
      */
     public BlockDisk( File file, int blockSizeBytes, IElementSerializer elementSerializer )
-        throws FileNotFoundException
+        throws IOException
     {
         this.filepath = file.getAbsolutePath();
         RandomAccessFile raf = new RandomAccessFile( filepath, "rw" );
         this.fc = raf.getChannel();
+        this.numberOfBlocks.set((int) Math.ceil(1f * this.fc.size() / blockSizeBytes));
 
         if ( log.isInfoEnabled() )
         {

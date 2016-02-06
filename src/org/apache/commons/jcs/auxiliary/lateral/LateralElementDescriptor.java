@@ -60,7 +60,7 @@ public class LateralElementDescriptor<K, V>
     /**
      * Constructor for the LateralElementDescriptor object
      * <p>
-     * @param ce ICacheElement<K, V> payload
+     * @param ce ICacheElement&lt;K, V&gt; payload
      */
     public LateralElementDescriptor( ICacheElement<K, V> ce )
     {
