@@ -59,8 +59,8 @@ public class NoteImporter extends FileImporter {
      * @param layerName name of generated layer
      * @param progressMonitor handler for progress monitoring and canceling
      * @return note layer
-     * @throws IOException
-     * @throws SAXException
+     * @throws IOException if any I/O error occurs
+     * @throws SAXException if any SAX error occurs
      * @since 9746
      */
     public NoteLayer loadLayer(InputStream in, final File associatedFile, final String layerName, ProgressMonitor progressMonitor)

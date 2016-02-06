@@ -168,9 +168,9 @@ public class TagEditHelper {
 
     /**
      * Constructs a new {@code TagEditHelper}.
-     * @param tagTable
-     * @param propertyData
-     * @param valueCount
+     * @param tagTable tag table
+     * @param propertyData table model
+     * @param valueCount tag value count
      */
     public TagEditHelper(JTable tagTable, DefaultTableModel propertyData, Map<String, Map<String, Integer>> valueCount) {
         this.tagTable = tagTable;
