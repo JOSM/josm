@@ -786,3 +786,8 @@ relation[/^..$/][!to] {
   suggestAlternative: "leisure=swimming_pool";
   fixChangeKey: "amenity => leisure";
 }
+
+/* #12494 */
+*[/.+_[0-9]$/][!/^note_[0-9]$/][!/^description[0-9]$/] {
+  throwWarning: tr("questionable key (ending with a number): {0}", "{0.key}");
+}
