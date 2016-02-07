@@ -1045,7 +1045,10 @@ public abstract class Main {
                 continue;
             }
             AbstractModifiableLayer odl = (AbstractModifiableLayer) l;
-            if ((odl.requiresSaveToFile() || (odl.requiresUploadToServer() && !odl.isUploadDiscouraged())) && odl.isModified()) {
+            if (odl.isModified() &&
+                    ((!odl.isSavable() && !odl.isUploadable()) ||
+                     odl.requiresSaveToFile() ||
+                     (odl.requiresUploadToServer() && !odl.isUploadDiscouraged()))) {
                 layersWithUnmodifiedChanges.add(odl);
             }
         }

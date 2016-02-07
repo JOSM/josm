@@ -46,6 +46,24 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
     }
 
     /**
+     * Replies true if the layer can be saved to a file
+     *
+     * @return {@code true} if the layer can be saved to a file; {@code false} otherwise
+     */
+    public boolean isSavable() {
+        return layer.isSavable();
+    }
+
+    /**
+     * Replies true if the layer can be uploaded to a server
+     *
+     * @return {@code true} if the layer can be uploaded to a server; {@code false} otherwise
+     */
+    public boolean isUploadable() {
+        return layer.isUploadable();
+    }
+
+    /**
      * Replies true if preconditions should be checked before saving; false, otherwise
      *
      * @return true if preconditions should be checked before saving; false, otherwise
@@ -80,7 +98,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      * @param doSaveToFile true to save; false, to skip saving
      */
     public void setDoSaveToFile(boolean doSaveToFile) {
-        this.doSaveToFile = doSaveToFile;
+        this.doSaveToFile = isSavable() ? doSaveToFile : false;
     }
 
     /**
@@ -93,13 +111,12 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
     }
 
     /**
-     * Sets whether this layer should be uploaded to a file
+     * Sets whether this layer should be uploaded to a server
      *
      * @param doUploadToServer {@code true} to upload; {@code false}, to skip uploading
      */
-
     public void setDoUploadToServer(boolean doUploadToServer) {
-        this.doUploadToServer = doUploadToServer;
+        this.doUploadToServer = isUploadable() ? doUploadToServer : false;
     }
 
     /**

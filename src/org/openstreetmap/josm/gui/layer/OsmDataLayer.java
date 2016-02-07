@@ -108,7 +108,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @author imi
  * @since 17
  */
-public class OsmDataLayer extends AbstractModifiableLayer implements Listener, SelectionChangedListener {
+public class OsmDataLayer extends AbstractModifiableLayer implements Listener, SelectionChangedListener, UploadToServer, SaveToFile {
     /** Property used to know if this layer has to be saved on disk */
     public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
     /** Property used to know if this layer has to be uploaded */
@@ -832,6 +832,11 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      */
     public ConflictCollection getConflicts() {
         return conflicts;
+    }
+
+    @Override
+    public boolean isUploadable() {
+        return true;
     }
 
     @Override

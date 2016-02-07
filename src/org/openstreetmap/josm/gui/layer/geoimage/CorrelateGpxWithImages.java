@@ -95,8 +95,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private static List<GpxData> loadedGpxData = new ArrayList<>();
 
     private final transient GeoImageLayer yLayer;
-    private Timezone timezone;
-    private Offset delta;
+    private transient Timezone timezone;
+    private transient Offset delta;
 
     /**
      * Constructs a new {@code CorrelateGpxWithImages} action.
@@ -1466,19 +1466,19 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
 
         int getDayOffset() {
-            final double diffInH = (double) getMilliseconds() / 1000. / 60 / 60; // hours
+            final double diffInH = getMilliseconds() / 1000. / 60 / 60; // hours
 
             // Find day difference
             return (int) Math.round(diffInH / 24);
         }
 
         Offset withoutDayOffset() {
-            return milliseconds(getMilliseconds() - getDayOffset() * 24 * 60 * 60 * 1000);
+            return milliseconds(getMilliseconds() - getDayOffset() * 24L * 60L * 60L * 1000L);
         }
 
         Pair<Timezone, Offset> splitOutTimezone() {
             // In hours, rounded to two decimal places
-            double tz = (double) Math.round(withoutDayOffset().getSeconds() * 100 / (60 * 60)) / 100;
+            double tz = (withoutDayOffset().getSeconds() * 100L / (60L * 60L)) / 100.0;
 
             // Due to imprecise clocks we might get a "+3:28" timezone, which should obviously be 3:30 with
             // -2 minutes offset. This determines the real timezone and finds offset.

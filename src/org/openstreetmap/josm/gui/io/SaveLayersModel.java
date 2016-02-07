@@ -102,15 +102,18 @@ public class SaveLayersModel extends DefaultTableModel {
 
     @Override
     public void setValueAt(Object value, int row, int column) {
+        final SaveLayerInfo info = this.layerInfo.get(row);
         switch(column) {
         case columnFilename:
-            this.layerInfo.get(row).setFile((File) value);
-            this.layerInfo.get(row).setDoSaveToFile(true);
+            info.setFile((File) value);
+            if (info.isSavable()) {
+                info.setDoSaveToFile(true);
+            }
             break;
         case columnActions:
             boolean[] values = (boolean[]) value;
-            this.layerInfo.get(row).setDoUploadToServer(values[0]);
-            this.layerInfo.get(row).setDoSaveToFile(values[1]);
+            info.setDoUploadToServer(values[0]);
+            info.setDoSaveToFile(values[1]);
             break;
         }
         fireTableDataChanged();
