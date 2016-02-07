@@ -19,37 +19,44 @@ package org.apache.commons.jcs.engine.memory.util;
  * under the License.
  */
 
+import java.lang.ref.SoftReference;
+
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
-import org.apache.commons.jcs.utils.struct.DoubleLinkedListNode;
 
 /**
  * This wrapper is needed for double linked lists.
  */
-public class MemoryElementDescriptor<K, V>
-    extends DoubleLinkedListNode<ICacheElement<K, V>>
+public class SoftReferenceElementDescriptor<K, V>
+    extends MemoryElementDescriptor<K, V>
 {
     /** Don't change */
     private static final long serialVersionUID = -1905161209035522460L;
 
     /** The CacheElement wrapped by this descriptor */
-    private final ICacheElement<K, V> ce;
+    private final SoftReference<ICacheElement<K, V>> srce;
 
     /**
      * Constructs a usable MemoryElementDescriptor.
      * <p>
      * @param ce
      */
-    public MemoryElementDescriptor( ICacheElement<K, V> ce )
+    public SoftReferenceElementDescriptor( ICacheElement<K, V> ce )
     {
         super( ce );
-        this.ce = ce;
+        this.srce = new SoftReference<ICacheElement<K, V>>(ce);
     }
 
     /**
      * @return the ce
      */
+    @Override
     public ICacheElement<K, V> getCacheElement()
     {
-        return ce;
+        if (srce != null)
+        {
+            return srce.get();
+        }
+
+        return null;
     }
 }
