@@ -26,7 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
@@ -58,13 +58,13 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
     protected DoubleLinkedList<MemoryElementDescriptor<K, V>> list; // TODO privatise
 
     /** number of hits */
-    private AtomicInteger hitCnt;
+    private AtomicLong hitCnt;
 
     /** number of misses */
-    private AtomicInteger missCnt;
+    private AtomicLong missCnt;
 
     /** number of puts */
-    private AtomicInteger putCnt;
+    private AtomicLong putCnt;
 
     /**
      * For post reflection creation initialization.
@@ -79,9 +79,9 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
         try
         {
             super.initialize(hub);
-            hitCnt = new AtomicInteger(0);
-            missCnt = new AtomicInteger(0);
-            putCnt = new AtomicInteger(0);
+            hitCnt = new AtomicLong(0);
+            missCnt = new AtomicLong(0);
+            putCnt = new AtomicLong(0);
             list = new DoubleLinkedList<MemoryElementDescriptor<K, V>>();
             log.info("initialized MemoryCache for " + getCacheName());
         }
@@ -89,6 +89,21 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
         {
             lock.unlock();
         }
+    }
+
+    /**
+     * Reset statistics
+     *
+     * @see org.apache.commons.jcs.engine.memory.AbstractMemoryCache#dispose()
+     */
+    @Override
+    public void dispose() throws IOException
+    {
+        super.dispose();
+        removeAll();
+        hitCnt.set(0);
+        missCnt.set(0);
+        putCnt.set(0);
     }
 
     /**
@@ -127,10 +142,11 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
             MemoryElementDescriptor<K, V> newNode = adjustListForUpdate(ce);
 
             // this should be synchronized if we were not using a ConcurrentHashMap
-            MemoryElementDescriptor<K, V> oldNode = map.put(newNode.ce.getKey(), newNode);
+            final K key = newNode.getCacheElement().getKey();
+            MemoryElementDescriptor<K, V> oldNode = map.put(key, newNode);
 
             // If the node was the same as an existing node, remove it.
-            if (oldNode != null && newNode.ce.getKey().equals(oldNode.ce.getKey()))
+            if (oldNode != null && key.equals(oldNode.getCacheElement().getKey()))
             {
                 list.remove(oldNode);
             }
@@ -246,7 +262,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
             lock.lock();
             try
             {
-                ce = me.ce;
+                ce = me.getCacheElement();
                 // ABSTRACT
                 adjustListForGet(me);
             }
@@ -337,7 +353,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
         final MemoryElementDescriptor<K, V> last = list.getLast();
         if (last != null)
         {
-            toSpool = last.ce;
+            toSpool = last.getCacheElement();
             if (toSpool != null)
             {
                 getCompositeCache().spoolToDisk(toSpool);
@@ -542,7 +558,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
         log.debug("dumpingCacheEntries");
         for (MemoryElementDescriptor<K, V> me = list.getFirst(); me != null; me = (MemoryElementDescriptor<K, V>) me.next)
         {
-            log.debug("dumpCacheEntries> key=" + me.ce.getKey() + ", val=" + me.ce.getVal());
+            log.debug("dumpCacheEntries> key=" + me.getCacheElement().getKey() + ", val=" + me.getCacheElement().getVal());
         }
     }
 
@@ -560,11 +576,10 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
         log.debug("verifycache: checking linked list by key ");
         for (MemoryElementDescriptor<K, V> li = list.getFirst(); li != null; li = (MemoryElementDescriptor<K, V>) li.next)
         {
-            Object key = li.ce.getKey();
+            K key = li.getCacheElement().getKey();
             if (!map.containsKey(key))
             {
-                log.error("verifycache[" + getCacheName() + "]: map does not contain key : " + li.ce.getKey());
-                log.error("li.hashcode=" + li.ce.getKey().hashCode());
+                log.error("verifycache[" + getCacheName() + "]: map does not contain key : " + key);
                 log.error("key class=" + key.getClass());
                 log.error("key hashcode=" + key.hashCode());
                 log.error("key toString=" + key.toString());
@@ -578,9 +593,9 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
                 }
                 dumpMap();
             }
-            else if (map.get(li.ce.getKey()) == null)
+            else if (map.get(key) == null)
             {
-                log.error("verifycache[" + getCacheName() + "]: linked list retrieval returned null for key: " + li.ce.getKey());
+                log.error("verifycache[" + getCacheName() + "]: linked list retrieval returned null for key: " + key);
             }
         }
 
@@ -601,7 +616,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
 
             for (MemoryElementDescriptor<K, V> li2 = list.getFirst(); li2 != null; li2 = (MemoryElementDescriptor<K, V>) li2.next)
             {
-                if (val.equals(li2.ce.getKey()))
+                if (val.equals(li2.getCacheElement().getKey()))
                 {
                     found = true;
                     break;
@@ -638,7 +653,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
         // go through the linked list looking for the key
         for (MemoryElementDescriptor<K, V> li = list.getFirst(); li != null; li = (MemoryElementDescriptor<K, V>) li.next)
         {
-            if (li.ce.getKey() == key)
+            if (li.getCacheElement().getKey() == key)
             {
                 found = true;
                 log.debug("verifycache(key) key match: " + key);
@@ -682,9 +697,9 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
         {
             elems.add(new StatElement<Integer>("List Size", Integer.valueOf(list.size())));
             elems.add(new StatElement<Integer>("Map Size", Integer.valueOf(map.size())));
-            elems.add(new StatElement<AtomicInteger>("Put Count", putCnt));
-            elems.add(new StatElement<AtomicInteger>("Hit Count", hitCnt));
-            elems.add(new StatElement<AtomicInteger>("Miss Count", missCnt));
+            elems.add(new StatElement<AtomicLong>("Put Count", putCnt));
+            elems.add(new StatElement<AtomicLong>("Hit Count", hitCnt));
+            elems.add(new StatElement<AtomicLong>("Miss Count", missCnt));
         }
         finally
         {

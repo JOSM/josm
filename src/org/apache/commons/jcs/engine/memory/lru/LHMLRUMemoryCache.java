@@ -20,14 +20,13 @@ package org.apache.commons.jcs.engine.memory.lru;
  */
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
@@ -45,20 +44,20 @@ import org.apache.commons.logging.LogFactory;
 /**
  * This is a test memory manager using the jdk1.4 LinkedHashMap.
  */
-public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
+public class LHMLRUMemoryCache<K, V>
     extends AbstractMemoryCache<K, V>
 {
     /** The Logger. */
     private static final Log log = LogFactory.getLog( LRUMemoryCache.class );
 
     /** number of hits */
-    private AtomicInteger hitCnt;
+    private AtomicLong hitCnt;
 
     /** number of misses */
-    private AtomicInteger missCnt;
+    private AtomicLong missCnt;
 
     /** number of puts */
-    private AtomicInteger putCnt;
+    private AtomicLong putCnt;
 
     /**
      * For post reflection creation initialization
@@ -66,12 +65,12 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
      * @param hub
      */
     @Override
-    public synchronized void initialize( CompositeCache<K, V> hub )
+    public void initialize( CompositeCache<K, V> hub )
     {
         super.initialize( hub );
-        hitCnt = new AtomicInteger(0);
-        missCnt = new AtomicInteger(0);
-        putCnt = new AtomicInteger(0);
+        hitCnt = new AtomicLong(0);
+        missCnt = new AtomicLong(0);
+        putCnt = new AtomicLong(0);
         log.info( "initialized LHMLRUMemoryCache for " + getCacheName() );
     }
 
@@ -112,7 +111,14 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
     public ICacheElement<K, V> getQuiet( K key )
         throws IOException
     {
-        return map.get( key ).ce;
+        MemoryElementDescriptor<K, V> me = map.get( key );
+
+        if (me != null)
+        {
+            return me.getCacheElement();
+        }
+
+        return null;
     }
 
     /**
@@ -126,14 +132,12 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
     public synchronized ICacheElement<K, V> get( K key )
         throws IOException
     {
-        MemoryElementDescriptor<K, V> me = null;
-
         if ( log.isDebugEnabled() )
         {
             log.debug( "getting item from cache " + getCacheName() + " for key " + key );
         }
 
-        me = map.get( key );
+        MemoryElementDescriptor<K, V> me = map.get( key );
 
         if ( me != null )
         {
@@ -142,7 +146,7 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
             {
                 log.debug( getCacheName() + ": LHMLRUMemoryCache hit for " + key );
             }
-            return me.ce;
+            return me.getCacheElement();
         }
         else
         {
@@ -258,9 +262,9 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
         ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
 
         elems.add(new StatElement<Integer>( "Map Size", Integer.valueOf(map.size()) ) );
-        elems.add(new StatElement<AtomicInteger>("Put Count", putCnt));
-        elems.add(new StatElement<AtomicInteger>("Hit Count", hitCnt));
-        elems.add(new StatElement<AtomicInteger>("Miss Count", missCnt));
+        elems.add(new StatElement<AtomicLong>("Put Count", putCnt));
+        elems.add(new StatElement<AtomicLong>("Hit Count", hitCnt));
+        elems.add(new StatElement<AtomicLong>("Miss Count", missCnt));
 
         stats.setStatElements( elems );
 
@@ -325,7 +329,7 @@ public class LHMLRUMemoryCache<K extends Serializable, V extends Serializable>
         @Override
         protected boolean removeEldestEntry( Map.Entry<K, MemoryElementDescriptor<K, V>> eldest )
         {
-            ICacheElement<K, V> element = eldest.getValue().ce;
+            ICacheElement<K, V> element = eldest.getValue().getCacheElement();
 
             if ( size() <= getCacheAttributes().getMaxObjects() )
             {
