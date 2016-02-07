@@ -17,6 +17,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -127,5 +128,20 @@ public class SessionReaderTest {
         assertEquals("Bing aerial imagery", image.getName());
         assertEquals(image.getDx(), 12.34, 1e-9);
         assertEquals(image.getDy(), -56.78, 1e-9);
+    }
+
+    /**
+     * Tests to read a .joz file containing notes.
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException is the test file is considered as invalid
+     */
+    @Test
+    public void testReadNotes() throws IOException, IllegalDataException {
+        final List<Layer> layers = testRead("notes.joz");
+        assertSame(layers.size(), 1);
+        assertTrue(layers.get(0) instanceof NoteLayer);
+        final NoteLayer layer = (NoteLayer) layers.get(0);
+        assertEquals("Notes", layer.getName());
+        assertEquals(174, layer.getNoteData().getNotes().size());
     }
 }

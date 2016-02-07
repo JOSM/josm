@@ -76,8 +76,11 @@ public class CorrelateGpxWithImagesTest {
                 CorrelateGpxWithImages.autoGuess(Collections.singletonList(i0), gpx));
     }
 
+    /**
+     * Unit test of {@link CorrelateGpxWithImages.Timezone#formatTimezone}.
+     */
     @Test
-    public void testFormatTimezone() throws Exception {
+    public void testFormatTimezone() {
         assertEquals("+1:00", new CorrelateGpxWithImages.Timezone(1).formatTimezone());
         assertEquals("+6:30", new CorrelateGpxWithImages.Timezone(6.5).formatTimezone());
         assertEquals("-6:30", new CorrelateGpxWithImages.Timezone(-6.5).formatTimezone());
@@ -85,6 +88,10 @@ public class CorrelateGpxWithImagesTest {
         assertEquals("+2:43", new CorrelateGpxWithImages.Timezone(Math.E).formatTimezone());
     }
 
+    /**
+     * Unit test of {@link CorrelateGpxWithImages.Timezone#parseTimezone}.
+     * @throws ParseException in case of parsing error
+     */
     @Test
     public void testParseTimezone() throws ParseException {
         assertEquals(1, CorrelateGpxWithImages.Timezone.parseTimezone("+01:00").getHours(), 1e-3);
@@ -93,8 +100,11 @@ public class CorrelateGpxWithImagesTest {
         assertEquals(11.5, CorrelateGpxWithImages.Timezone.parseTimezone("+11:30").getHours(), 1e-3);
     }
 
+    /**
+     * Unit test of {@link CorrelateGpxWithImages.Offset#formatOffset}.
+     */
     @Test
-    public void testFormatOffest() throws ParseException {
+    public void testFormatOffset() {
         assertEquals("0", CorrelateGpxWithImages.Offset.seconds(0).formatOffset());
         assertEquals("123", CorrelateGpxWithImages.Offset.seconds(123).formatOffset());
         assertEquals("-4242", CorrelateGpxWithImages.Offset.seconds(-4242).formatOffset());
@@ -105,6 +115,10 @@ public class CorrelateGpxWithImagesTest {
         assertEquals("1.234", CorrelateGpxWithImages.Offset.milliseconds(1234).formatOffset());
     }
 
+    /**
+     * Unit test of {@link CorrelateGpxWithImages.Offset#parseOffset}.
+     * @throws ParseException in case of parsing error
+     */
     @Test
     public void testParseOffest() throws ParseException {
         assertEquals(0, CorrelateGpxWithImages.Offset.parseOffset("0").getSeconds());
@@ -116,8 +130,11 @@ public class CorrelateGpxWithImagesTest {
         assertEquals(-42420L, CorrelateGpxWithImages.Offset.parseOffset("-42.42").getMilliseconds());
     }
 
+    /**
+     * Unit test of {@link CorrelateGpxWithImages.Offset#splitOutTimezone}.
+     */
     @Test
-    public void testSplitOutTimezone() throws Exception {
+    public void testSplitOutTimezone() {
         assertEquals("+1:00", CorrelateGpxWithImages.Offset.seconds(3602).splitOutTimezone().a.formatTimezone());
         assertEquals("2", CorrelateGpxWithImages.Offset.seconds(3602).splitOutTimezone().b.formatOffset());
         assertEquals("-7:00", CorrelateGpxWithImages.Offset.seconds(-7 * 3600 + 123).splitOutTimezone().a.formatTimezone());

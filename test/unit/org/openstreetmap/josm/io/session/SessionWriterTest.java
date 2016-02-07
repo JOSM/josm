@@ -18,10 +18,12 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -138,6 +140,10 @@ public class SessionWriterTest {
         return layer;
     }
 
+    private NoteLayer createNoteLayer() {
+        return new NoteLayer(Arrays.asList(new Note(LatLon.ZERO)), "layer name");
+    }
+
     /**
      * Tests to write an empty .jos file.
      */
@@ -201,6 +207,15 @@ public class SessionWriterTest {
     @Test
     public void testWriteImageryLayer() {
         final Layer layer = createImageryLayer();
+        testWrite(Collections.singletonList(layer), true);
+    }
+
+    /**
+     * Tests to write a .joz file containing a note layer.
+     */
+    @Test
+    public void testWriteNoteLayer() {
+        final Layer layer = createNoteLayer();
         testWrite(Collections.singletonList(layer), true);
     }
 }
