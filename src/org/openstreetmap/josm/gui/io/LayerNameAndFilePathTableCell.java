@@ -29,6 +29,13 @@ import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Display and edit layer name and file path in a <code>JTable</code>.
+ * 
+ * Note: Do not use the same object both as <code>TableCellRenderer</code> and
+ * <code>TableCellEditor</code> - this can mess up the current editor component
+ * by subsequent calls to the renderer (#12462).
+ */
 class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
     private static final Color colorError = new Color(255, 197, 197);
     private static final String separator = System.getProperty("file.separator");
