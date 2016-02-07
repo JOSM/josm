@@ -1,8 +1,8 @@
 // License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Data class that keeps basic information about a tile source.
@@ -20,10 +20,10 @@ public class TileSourceInfo {
     protected String name;
 
     /** headers meaning, that there is no tile at this zoom level */
-    protected Map<String, List<String>> noTileHeaders;
+    protected Map<String, Set<String>> noTileHeaders;
 
     /** checksum of empty tiles */
-    protected Map<String, List<String>> noTileChecksums;
+    protected Map<String, Set<String>> noTileChecksums;
 
     /** minimum zoom level supported by the tile source */
     protected int minZoom;
@@ -99,7 +99,7 @@ public class TileSourceInfo {
      * @return map of headers, that when set, means that this is "no tile at this zoom level" situation
      * @since 32022
      */
-    public Map<String, List<String>> getNoTileHeaders() {
+    public Map<String, Set<String>> getNoTileHeaders() {
         return noTileHeaders;
     }
 
@@ -108,7 +108,7 @@ public class TileSourceInfo {
      * @return map of checksums, that when detected, means that this is "no tile at this zoom level" situation
      * @since 32022
      */
-    public Map<String, List<String>> getNoTileChecksums() {
+    public Map<String, Set<String>> getNoTileChecksums() {
         return noTileChecksums;
     }
 
