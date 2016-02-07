@@ -19,25 +19,28 @@ package org.apache.commons.jcs.auxiliary.remote.server;
  * under the License.
  */
 
-import org.apache.commons.jcs.access.exception.CacheException;
-import org.apache.commons.jcs.engine.control.CompositeCacheManager;
-import org.apache.commons.jcs.utils.net.HostNameUtil;
-import org.apache.commons.jcs.utils.props.PropertyLoader;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.util.Properties;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.jcs.access.exception.CacheException;
+import org.apache.commons.jcs.auxiliary.remote.RemoteUtils;
+import org.apache.commons.jcs.engine.control.CompositeCacheManager;
+import org.apache.commons.jcs.utils.net.HostNameUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
- * This servlet can be used to startup the JCS remote cache. It is easy to deploy the remote server
- * in a tomcat base. This give you an easy way to monitor its activity.
+ * This servlet can be used to startup the JCS remote cache. It is easy to
+ * deploy the remote server in a tomcat base. This give you an easy way to
+ * monitor its activity.
  * <p>
  * <code>
  *  servlet&gt;
@@ -54,111 +57,109 @@ import java.util.Properties;
         &lt;url-pattern&gt;/jcs&lt;/url-pattern&gt;
     &lt;/servlet-mapping&gt;
  * </code>
+ *
  * @author Aaron Smuts
  */
 public class RemoteCacheStartupServlet
-    extends HttpServlet
+        extends HttpServlet
 {
     /** Don't change */
     private static final long serialVersionUID = 1L;
 
     /** The logger */
-    private static final Log log = LogFactory.getLog( RemoteCacheStartupServlet.class );
+    private static final Log log = LogFactory.getLog(RemoteCacheStartupServlet.class);
 
-    /** The default port to start the registry on.  */
+    /** The default port to start the registry on. */
     private static final int DEFAULT_REGISTRY_PORT = 1101;
 
     /** properties file name */
-    private static final String DEFAULT_PROPS_FILE_NAME = "cache";
-
-    /** properties file Suffix */
-    private static final String DEFAULT_PROPS_FILE_SUFFIX = "ccf";
+    private static final String DEFAULT_PROPS_FILE_NAME = "/cache.ccf";
 
     /** properties file name, must set prior to calling get instance */
-    private final String propsFileName = DEFAULT_PROPS_FILE_NAME;
+    private String propsFileName = DEFAULT_PROPS_FILE_NAME;
 
-    /** properties file name, must set prior to calling get instance */
-    private final String fullPropsFileName = DEFAULT_PROPS_FILE_NAME + "." + DEFAULT_PROPS_FILE_SUFFIX;
+    /** Configuration properties */
+    private int registryPort = DEFAULT_REGISTRY_PORT;
+
+    /** Configuration properties */
+    private String registryHost = null;
 
     /**
      * Starts the registry and then tries to bind to it.
      * <p>
-     * Gets the port from a props file. Uses the local host name for the registry host. Tries to
-     * start the registry, ignoring failure. Starts the server.
+     * Gets the port from a props file. Uses the local host name for the
+     * registry host. Tries to start the registry, ignoring failure. Starts the
+     * server.
      * <p>
+     *
      * @throws ServletException
      */
     @Override
     public void init()
-        throws ServletException
+            throws ServletException
     {
         super.init();
-        // TODO load from props file or get as init param or get from jndi, or
-        // all three
-        int registryPort = DEFAULT_REGISTRY_PORT;
 
-        Properties props = PropertyLoader.loadProperties( propsFileName );
-        if ( props != null )
+        loadInitParams();
+        Properties props = loadPropertiesFromFile();
+
+        if (registryHost == null)
         {
-            String portS = props.getProperty( "registry.port", String.valueOf( DEFAULT_REGISTRY_PORT ) );
-
+            // we will always use the local machine for the registry
             try
             {
-                registryPort = Integer.parseInt( portS );
+                registryHost = HostNameUtil.getLocalHostAddress();
             }
-            catch ( NumberFormatException e )
+            catch (UnknownHostException e)
             {
-                log.error( "Problem converting port to an int.", e );
+                log.error("Could not get local address to use for the registry!", e);
             }
         }
 
-        // we will always use the local machine for the registry
-        String registryHost;
+        if (log.isDebugEnabled())
+        {
+            log.debug("registryHost = [" + registryHost + "]");
+        }
+
+        if ("localhost".equals(registryHost) || "127.0.0.1".equals(registryHost))
+        {
+            log.warn("The local address [" + registryHost
+                    + "] is INVALID.  Other machines must be able to use the address to reach this server.");
+        }
+
         try
         {
-            registryHost = HostNameUtil.getLocalHostAddress();
-
-            if ( log.isDebugEnabled() )
+            if (props == null)
             {
-                log.debug( "registryHost = [" + registryHost + "]" );
+                RemoteCacheServerFactory.startup(registryHost, registryPort, propsFileName);
             }
-
-            if ( "localhost".equals( registryHost ) || "127.0.0.1".equals( registryHost ) )
+            else
             {
-                log.warn( "The local address [" + registryHost
-                    + "] is INVALID.  Other machines must be able to use the address to reach this server." );
+                RemoteCacheServerFactory.startup(registryHost, registryPort, props, propsFileName);
             }
-
-            try
+            if (log.isInfoEnabled())
             {
-                RemoteCacheServerFactory.startup( registryHost, registryPort, "/" + fullPropsFileName );
-                if ( log.isInfoEnabled() )
-                {
-                    log.info( "Remote JCS Server started with properties from " + fullPropsFileName );
-                }
-            }
-            catch ( IOException e )
-            {
-                log.error( "Problem starting remote cache server.", e );
+                log.info("Remote JCS Server started with properties from " + propsFileName);
             }
         }
-        catch ( UnknownHostException e )
+        catch (IOException e)
         {
-            log.error( "Could not get local address to use for the registry!", e );
+            log.error("Problem starting remote cache server.", e);
         }
     }
 
     /**
      * It just dumps the stats.
      * <p>
+     *
      * @param request
      * @param response
      * @throws ServletException
      * @throws IOException
      */
     @Override
-    protected void service( HttpServletRequest request, HttpServletResponse response )
-        throws ServletException, IOException
+    protected void service(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException
     {
         String stats = "";
 
@@ -171,9 +172,9 @@ public class RemoteCacheStartupServlet
             throw new ServletException(e);
         }
 
-        if ( log.isInfoEnabled() )
+        if (log.isInfoEnabled())
         {
-            log.info( stats );
+            log.info(stats);
         }
 
         try
@@ -185,12 +186,12 @@ public class RemoteCacheStartupServlet
                 response.setCharacterEncoding(characterEncoding);
             }
             OutputStream os = response.getOutputStream();
-            os.write( stats.getBytes(characterEncoding) );
+            os.write(stats.getBytes(characterEncoding));
             os.close();
         }
-        catch ( IOException e )
+        catch (IOException e)
         {
-            log.error( "Problem writing response.", e );
+            log.error("Problem writing response.", e);
         }
     }
 
@@ -202,7 +203,16 @@ public class RemoteCacheStartupServlet
     {
         super.destroy();
 
-        log.info( "Shutting down remote cache " );
+        log.info("Shutting down remote cache ");
+
+        try
+        {
+            RemoteCacheServerFactory.shutdownImpl(registryHost, registryPort);
+        }
+        catch (IOException e)
+        {
+            log.error("Problem shutting down.", e);
+        }
 
         try
         {
@@ -211,6 +221,73 @@ public class RemoteCacheStartupServlet
         catch (CacheException e)
         {
             log.error("Could not retrieve cache manager instance", e);
+        }
+    }
+
+    /**
+     * Load configuration values from config file if possible
+     */
+    private Properties loadPropertiesFromFile()
+    {
+        Properties props = null;
+
+        try
+        {
+            props = RemoteUtils.loadProps(propsFileName);
+            if (props != null)
+            {
+                registryHost = props.getProperty("registry.host", registryHost);
+                String portS = props.getProperty("registry.port", String.valueOf(registryPort));
+                setRegistryPort(portS);
+            }
+        }
+        catch (IOException e)
+        {
+            log.error("Problem loading props.", e);
+        }
+
+        return props;
+    }
+
+    /**
+     * Load configuration values from init params if possible
+     */
+    private void loadInitParams()
+    {
+        ServletConfig config = getServletConfig();
+        String _propsFileName = config.getInitParameter("propsFileName");
+        if (null != _propsFileName)
+        {
+            this.propsFileName = _propsFileName;
+        }
+        String _registryHost = config.getInitParameter("registryHost");
+        if (null != _registryHost)
+        {
+            this.registryHost = _registryHost;
+        }
+        String regPortString = config.getInitParameter("registryPort");
+        if (null != regPortString)
+        {
+            setRegistryPort(regPortString);
+        }
+    }
+
+    /**
+     * Set registry port from string If the string cannot be parsed, the default
+     * value is used
+     *
+     * @param portS
+     */
+    private void setRegistryPort(String portS)
+    {
+        try
+        {
+            this.registryPort = Integer.parseInt(portS);
+        }
+        catch (NumberFormatException e)
+        {
+            log.error("Problem converting port to an int.", e);
+            this.registryPort = DEFAULT_REGISTRY_PORT;
         }
     }
 }
