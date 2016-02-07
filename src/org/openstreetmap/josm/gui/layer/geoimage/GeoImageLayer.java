@@ -59,6 +59,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
+import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.JpgImporter;
@@ -68,7 +69,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Layer displaying geottaged pictures.
  */
-public class GeoImageLayer extends Layer implements PropertyChangeListener, JumpToMarkerLayer {
+public class GeoImageLayer extends AbstractModifiableLayer implements PropertyChangeListener, JumpToMarkerLayer {
 
     private static List<Action> menuAdditions = new LinkedList<>();
 
@@ -368,6 +369,23 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener, Jump
     @Override
     public String getToolTipText() {
         return infoText();
+    }
+
+    /**
+     * Determines if data managed by this layer has been modified.  That is
+     * the case if one image has modified GPS data.
+     * @return {@code true} if data has been modified; {@code false}, otherwise
+     */
+    @Override
+    public boolean isModified() {
+        if (data != null) {
+            for (ImageEntry e : data) {
+                if (e.hasNewGpsData()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

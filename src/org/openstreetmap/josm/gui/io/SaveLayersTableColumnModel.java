@@ -46,7 +46,9 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
                     sb.append(tr("Layer ''{0}'' has modifications which should be uploaded to the server.", info.getName()));
 
                 } else {
-                    panel.add(pnlEmpty, defaultCellStyle);
+                    if (info.isUploadable()) {
+                        panel.add(pnlEmpty, defaultCellStyle);
+                    }
                     if (info.getLayer().requiresUploadToServer()) {
                         sb.append(tr("Layer ''{0}'' has modifications which are discouraged to be uploaded.", info.getName()));
                     } else {
@@ -60,7 +62,9 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
                     sb.append(tr("Layer ''{0}'' has modifications which should be saved to its associated file ''{1}''.",
                             info.getName(), info.getFile().toString()));
                 } else {
-                    panel.add(pnlEmpty, defaultCellStyle);
+                    if (info.isSavable()) {
+                        panel.add(pnlEmpty, defaultCellStyle);
+                    }
                     sb.append(tr("Layer ''{0}'' has no modifications to be saved.", info.getName()));
                 }
             }

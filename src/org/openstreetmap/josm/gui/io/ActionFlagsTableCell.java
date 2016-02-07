@@ -56,7 +56,6 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
 
         ActionMap am = getActionMap();
         for (final JCheckBox b : checkBoxes) {
-            add(b, GBC.eol().fill(GBC.HORIZONTAL));
             b.setPreferredSize(new Dimension(b.getPreferredSize().width, 19));
             b.addActionListener(al);
             am.put(b.getText(), new AbstractAction() {
@@ -67,12 +66,6 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
                 }
             });
         }
-
-        setToolTipText(tr("<html>"+
-            "Select which actions to perform for this layer, if you click the leftmost button.<br/>"+
-            "Check \"upload\" to upload the changes to the OSM server.<br/>"+
-            "Check \"Save\" to save the layer to the file specified on the left."+
-            "</html>"));
     }
 
     protected void updateCheckboxes(Object v) {
@@ -90,8 +83,30 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
         }
     }
 
+    private void updatePanel(SaveLayerInfo info) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append(tr("Select which actions to perform for this layer, if you click the leftmost button."));
+        removeAll();
+        if (info != null) {
+            if (info.isUploadable()) {
+                sb.append("<br/>");
+                sb.append(tr("Check \"Upload\" to upload the changes to the OSM server."));
+                add(checkBoxes[0], GBC.eol().fill(GBC.HORIZONTAL));
+            }
+            if (info.isSavable()) {
+                sb.append("<br/>");
+                sb.append(tr("Check \"Save\" to save the layer to the file specified on the left."));
+                add(checkBoxes[1], GBC.eol().fill(GBC.HORIZONTAL));
+            }
+        }
+        sb.append("</html>");
+        setToolTipText(sb.toString());
+    }
+
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        updatePanel((SaveLayerInfo) value);
         updateCheckboxes(value);
         return this;
     }
@@ -137,6 +152,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        updatePanel((SaveLayerInfo) value);
         updateCheckboxes(value);
         return this;
     }

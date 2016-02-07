@@ -80,11 +80,13 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
         SaveLayerInfo info = (SaveLayerInfo) value;
         StringBuilder sb = new StringBuilder();
         sb.append("<html>")
-          .append(addLblLayerName(info))
-          .append("<br>");
-        add(btnFileChooser, GBC.std());
-        sb.append(addLblFilename(info))
-          .append("</html>");
+          .append(addLblLayerName(info));
+        if (info.isSavable()) {
+            add(btnFileChooser, GBC.std());
+            sb.append("<br>")
+              .append(addLblFilename(info));
+        }
+        sb.append("</html>");
         setToolTipText(sb.toString());
         return this;
     }
@@ -98,15 +100,17 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
 
         StringBuilder sb = new StringBuilder();
         sb.append("<html>")
-          .append(addLblLayerName(info))
-          .append("<br/>");
+          .append(addLblLayerName(info));
 
-        add(btnFileChooser, GBC.std());
-        add(tfFilename, GBC.eol().fill(GBC.HORIZONTAL).insets(1, 0, 0, 0));
-        tfFilename.selectAll();
+        if (info.isSavable()) {
+            add(btnFileChooser, GBC.std());
+            add(tfFilename, GBC.eol().fill(GBC.HORIZONTAL).insets(1, 0, 0, 0));
+            tfFilename.selectAll();
 
-        sb.append(tfFilename.getToolTipText())
-          .append("</html>");
+            sb.append("<br>")
+              .append(tfFilename.getToolTipText());
+        }
+        sb.append("</html>");
         setToolTipText(sb.toString());
         return this;
     }

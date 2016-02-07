@@ -9,7 +9,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * A modifiable layer.
  * @since 7358
  */
-public abstract class AbstractModifiableLayer extends Layer {
+public abstract class AbstractModifiableLayer extends Layer implements UploadToServer, SaveToFile {
 
     /**
      * Constructs a new {@code ModifiableLayer}.
@@ -20,12 +20,25 @@ public abstract class AbstractModifiableLayer extends Layer {
     }
 
     /**
+     * Determines if the layer is able to upload data and implements the
+     * {@code UploadToServer} interface.
+     *
+     * @return true if the layer is able to upload data; false, otherwise
+     */
+    @Override
+    public boolean isUploadable() {
+        // Override if needed
+        return false;
+    }
+
+    /**
      * Determines if the data managed by this layer needs to be uploaded to
      * the server because it contains modified data.
      *
      * @return true if the data managed by this layer needs to be uploaded to
      * the server because it contains modified data; false, otherwise
      */
+    @Override
     public boolean requiresUploadToServer() {
         // Override if needed
         return false;
@@ -39,6 +52,7 @@ public abstract class AbstractModifiableLayer extends Layer {
      *
      * @return true if the data managed by this layer needs to be saved to a file
      */
+    @Override
     public boolean requiresSaveToFile() {
         // Override if needed
         return false;
@@ -50,6 +64,7 @@ public abstract class AbstractModifiableLayer extends Layer {
      *
      * @return true if upload is discouraged for this layer; false, otherwise
      */
+    @Override
     public boolean isUploadDiscouraged() {
         // Override if needed
         return false;
@@ -64,6 +79,7 @@ public abstract class AbstractModifiableLayer extends Layer {
     /**
      * Initializes the layer after a successful save of data to a file.
      */
+    @Override
     public void onPostSaveToFile() {
         // Override if needed
     }
@@ -71,6 +87,7 @@ public abstract class AbstractModifiableLayer extends Layer {
     /**
      * Initializes the layer after a successful upload to the server.
      */
+    @Override
     public void onPostUploadToServer() {
         // Override if needed
     }
@@ -80,6 +97,7 @@ public abstract class AbstractModifiableLayer extends Layer {
      * @param monitor The progress monitor
      * @return a new {@code AbstractIOTask} for uploading data, or {@code null} if not applicable
      */
+    @Override
     public AbstractIOTask createUploadTask(ProgressMonitor monitor) {
         // Override if needed
         return null;
@@ -89,6 +107,7 @@ public abstract class AbstractModifiableLayer extends Layer {
      * Returns the upload dialog for this layer.
      * @return the upload dialog for this layer, or {@code null} if not applicable
      */
+    @Override
     public AbstractUploadDialog getUploadDialog() {
         // Override if needed
         return null;
