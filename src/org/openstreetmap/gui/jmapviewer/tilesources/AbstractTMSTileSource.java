@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -26,8 +27,8 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     protected String name;
     protected String baseUrl;
     protected String id;
-    private final Map<String, List<String>> noTileHeaders;
-    private final Map<String, List<String>> noTileChecksums;
+    private final Map<String, Set<String>> noTileHeaders;
+    private final Map<String, Set<String>> noTileChecksums;
     private final Map<String, String> metadataHeaders;
     protected int tileSize;
 
@@ -171,7 +172,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     @Override
     public boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content) {
         if (noTileHeaders != null && headers != null) {
-            for (Entry<String, List<String>> searchEntry: noTileHeaders.entrySet()) {
+            for (Entry<String, Set<String>> searchEntry: noTileHeaders.entrySet()) {
                 List<String> headerVals = headers.get(searchEntry.getKey());
                 if (headerVals != null) {
                     for (String headerValue: headerVals) {
@@ -185,7 +186,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
             }
         }
         if (noTileChecksums != null) {
-            for (Entry<String, List<String>> searchEntry: noTileChecksums.entrySet()) {
+            for (Entry<String, Set<String>> searchEntry: noTileChecksums.entrySet()) {
                 MessageDigest md = null;
                 try {
                     md = MessageDigest.getInstance(searchEntry.getKey());
