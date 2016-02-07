@@ -97,6 +97,10 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void preStartupHook() {
+        // See #12022 - Disable GNOME ATK Java wrapper as it causes a lot of serious trouble
+        if ("org.GNOME.Accessibility.AtkWrapper".equals(System.getProperty("assistive_technologies"))) {
+            System.clearProperty("assistive_technologies");
+        }
     }
 
     @Override

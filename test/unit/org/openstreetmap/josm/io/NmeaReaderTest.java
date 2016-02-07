@@ -1,19 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.io.NmeaReader.NMEA_TYPE;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 /**
  * Unit tests of {@link NmeaReader} class.
