@@ -19,18 +19,18 @@ package org.apache.commons.jcs.engine;
  * under the License.
  */
 
-import org.apache.commons.jcs.engine.behavior.ICacheElement;
-import org.apache.commons.jcs.engine.behavior.ICacheServiceNonLocal;
-import org.apache.commons.jcs.utils.struct.BoundedQueue;
-import org.apache.commons.jcs.utils.timing.ElapsedTimer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.apache.commons.jcs.engine.behavior.ICacheElement;
+import org.apache.commons.jcs.engine.behavior.ICacheServiceNonLocal;
+import org.apache.commons.jcs.utils.timing.ElapsedTimer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Zombie adapter for the non local cache services. It just balks if there is no queue configured.
@@ -52,14 +52,14 @@ public class ZombieCacheServiceNonLocal<K, V>
     private int maxQueueSize = 0;
 
     /** The queue */
-    private final BoundedQueue<ZombieEvent> queue;
+    private final ConcurrentLinkedQueue<ZombieEvent> queue;
 
     /**
      * Default.
      */
     public ZombieCacheServiceNonLocal()
     {
-        queue = new BoundedQueue<ZombieEvent>( 0 );
+        queue = new ConcurrentLinkedQueue<ZombieEvent>();
     }
 
     /**
@@ -70,7 +70,7 @@ public class ZombieCacheServiceNonLocal<K, V>
     public ZombieCacheServiceNonLocal( int maxQueueSize )
     {
         this.maxQueueSize = maxQueueSize;
-        queue = new BoundedQueue<ZombieEvent>( maxQueueSize );
+        queue = new ConcurrentLinkedQueue<ZombieEvent>();
     }
 
     /**
@@ -81,6 +81,15 @@ public class ZombieCacheServiceNonLocal<K, V>
     public int getQueueSize()
     {
         return queue.size();
+    }
+
+    private void addQueue(ZombieEvent event)
+    {
+        queue.add(event);
+        if (queue.size() > maxQueueSize)
+        {
+            queue.poll(); // drop oldest entry
+        }
     }
 
     /**
@@ -95,7 +104,7 @@ public class ZombieCacheServiceNonLocal<K, V>
         if ( maxQueueSize > 0 )
         {
             PutEvent<K, V> event = new PutEvent<K, V>( item, listenerId );
-            queue.add( event );
+            addQueue( event );
         }
         // Zombies have no inner life
     }
@@ -113,7 +122,7 @@ public class ZombieCacheServiceNonLocal<K, V>
         if ( maxQueueSize > 0 )
         {
             RemoveEvent<K> event = new RemoveEvent<K>( cacheName, key, listenerId );
-            queue.add( event );
+            addQueue( event );
         }
         // Zombies have no inner life
     }
@@ -130,7 +139,7 @@ public class ZombieCacheServiceNonLocal<K, V>
         if ( maxQueueSize > 0 )
         {
             RemoveAllEvent event = new RemoveAllEvent( cacheName, listenerId );
-            queue.add( event );
+            addQueue( event );
         }
         // Zombies have no inner life
     }
@@ -212,7 +221,7 @@ public class ZombieCacheServiceNonLocal<K, V>
             cnt++;
 
             // for each item, call the appropriate service method
-            ZombieEvent event = queue.take();
+            ZombieEvent event = queue.poll();
 
             if ( event instanceof PutEvent )
             {
