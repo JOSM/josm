@@ -12,10 +12,16 @@ import org.junit.Test;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Unit tests of {@link OsmWriter} class.
+ */
 public class OsmWriterTest {
 
+    /**
+     * Unit test of {@link OsmWriter#byIdComparator}.
+     */
     @Test
-    public void testByIdComparator() throws Exception {
+    public void testByIdComparator() {
 
         final List<NodeData> ids = new ArrayList<>();
         for (Long id : Arrays.asList(12L, Long.MIN_VALUE, 65L, -12L, 2L, 0L, -3L, -20L, Long.MAX_VALUE)) {
