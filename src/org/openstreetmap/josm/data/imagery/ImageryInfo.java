@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +32,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.MultiMap;
 
 /**
  * Class that stores info about an image background layer.
@@ -218,8 +220,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref String projections;
         @pref String icon;
         @pref String description;
-        @pref Map<String, List<String>> noTileHeaders;
-        @pref Map<String, List<String>> noTileChecksums;
+        @pref MultiMap<String, String> noTileHeaders;
+        @pref MultiMap<String, String> noTileChecksums;
         @pref int tileSize = -1;
         @pref Map<String, String> metadataHeaders;
         @pref boolean valid_georeference;
@@ -278,11 +280,11 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 projections = val.toString();
             }
             if (i.noTileHeaders != null && !i.noTileHeaders.isEmpty()) {
-                noTileHeaders = i.noTileHeaders;
+                noTileHeaders = new MultiMap<>(i.noTileHeaders);
             }
 
             if (i.noTileChecksums != null && !i.noTileChecksums.isEmpty()) {
-                noTileChecksums = i.noTileChecksums;
+                noTileChecksums = new MultiMap<>(i.noTileChecksums);
             }
 
             if (i.metadataHeaders != null && !i.metadataHeaders.isEmpty()) {
@@ -411,10 +413,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         countryCode = e.country_code;
         icon = e.icon;
         if (e.noTileHeaders != null) {
-            noTileHeaders = e.noTileHeaders;
+            noTileHeaders = e.noTileHeaders.toMap();
         }
         if (e.noTileChecksums != null) {
-            noTileChecksums = e.noTileChecksums;
+            noTileChecksums = e.noTileChecksums.toMap();
         }
         setTileSize(e.tileSize);
         metadataHeaders = e.metadataHeaders;
@@ -977,12 +979,16 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @param noTileHeaders Map of &lt;header name, header value&gt; which will be treated as "no tile at this zoom level"
      * @since 9613
      */
-    public void setNoTileHeaders(Map<String, List<String>> noTileHeaders) {
-       this.noTileHeaders = noTileHeaders;
+    public void setNoTileHeaders(MultiMap<String, String> noTileHeaders) {
+       if (noTileHeaders == null) {
+           this.noTileHeaders = null;
+       } else {
+            this.noTileHeaders = noTileHeaders.toMap();
+       }
     }
 
     @Override
-    public Map<String, List<String>> getNoTileHeaders() {
+    public Map<String, Set<String>> getNoTileHeaders() {
         return noTileHeaders;
     }
 
@@ -993,12 +999,16 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @param noTileChecksums Map of &lt;checksum type, checksum value&gt; which will be treated as "no tile at this zoom level"
      * @since 9613
      */
-    public void setNoTileChecksums(Map<String, List<String>> noTileChecksums) {
-       this.noTileChecksums = noTileChecksums;
+    public void setNoTileChecksums(MultiMap<String, String> noTileChecksums) {
+        if (noTileChecksums == null) {
+            this.noTileChecksums = null;
+        } else {
+            this.noTileChecksums = noTileChecksums.toMap();
+        }
     }
 
     @Override
-    public Map<String, List<String>> getNoTileChecksums() {
+    public Map<String, Set<String>> getNoTileChecksums() {
         return noTileChecksums;
     }
 

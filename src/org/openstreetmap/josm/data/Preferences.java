@@ -71,6 +71,7 @@ import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -1396,15 +1397,7 @@ public class Preferences {
             for (Object o: map.entrySet()) {
                 Entry e = (Entry) o;
                 Object evalue = e.getValue();
-                if (evalue instanceof Collection) {
-                    JsonArrayBuilder a = Json.createArrayBuilder();
-                    for (Object evo: (Collection) evalue) {
-                        a.add(evo.toString());
-                    }
-                    object.add(e.getKey().toString(), a.build());
-                } else {
-                    object.add(e.getKey().toString(), evalue.toString());
-                }
+                object.add(e.getKey().toString(), evalue.toString());
             }
             writer.writeObject(object.build());
         }
@@ -1419,12 +1412,48 @@ public class Preferences {
             ret = new HashMap(object.size());
             for (Entry<String, JsonValue> e: object.entrySet()) {
                 JsonValue value = e.getValue();
+                if (value instanceof JsonString) {
+                    // in some cases, when JsonValue.toString() is called, then additional quotation marks are left in value
+                    ret.put(e.getKey(), ((JsonString) value).getString());
+                } else {
+                    ret.put(e.getKey(), e.getValue().toString());
+                }
+            }
+        }
+        return ret;
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static String multiMapToJson(MultiMap map) {
+        StringWriter stringWriter = new StringWriter();
+        try (JsonWriter writer = Json.createWriter(stringWriter)) {
+            JsonObjectBuilder object = Json.createObjectBuilder();
+            for (Object o: map.entrySet()) {
+                Entry e = (Entry) o;
+                Set evalue = (Set) e.getValue();
+                JsonArrayBuilder a = Json.createArrayBuilder();
+                for (Object evo: (Collection) evalue) {
+                    a.add(evo.toString());
+                }
+                object.add(e.getKey().toString(), a.build());
+            }
+            writer.writeObject(object.build());
+        }
+        return stringWriter.toString();
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static MultiMap multiMapFromJson(String s) {
+        MultiMap ret = null;
+        try (JsonReader reader = Json.createReader(new StringReader(s))) {
+            JsonObject object = reader.readObject();
+            ret = new MultiMap(object.size());
+            for (Entry<String, JsonValue> e: object.entrySet()) {
+                JsonValue value = e.getValue();
                 if (value instanceof JsonArray) {
-                    List<String> finalList = new ArrayList<String>();
                     for (JsonString js: ((JsonArray) value).getValuesAs(JsonString.class)) {
-                        finalList.add(js.getString());
+                        ret.put(e.getKey(), js.getString());
                     }
-                    ret.put(e.getKey(), finalList);
                 } else if (value instanceof JsonString) {
                     // in some cases, when JsonValue.toString() is called, then additional quotation marks are left in value
                     ret.put(e.getKey(), ((JsonString) value).getString());
@@ -1474,6 +1503,8 @@ public class Preferences {
                         String key = f.getName().replace('_', '-');
                         if (fieldValue instanceof Map) {
                             hash.put(key, mapToJson((Map) fieldValue));
+                        } else if (fieldValue instanceof MultiMap) {
+                            hash.put(key, multiMapToJson((MultiMap) fieldValue));
                         } else {
                             hash.put(key, fieldValue.toString());
                         }
@@ -1538,6 +1569,8 @@ public class Preferences {
                 value = key_value.getValue();
             } else if (f.getType().isAssignableFrom(Map.class)) {
                 value = mapFromJson(key_value.getValue());
+            } else if (f.getType().isAssignableFrom(MultiMap.class)) {
+                value = multiMapFromJson(key_value.getValue());
             } else
                 throw new RuntimeException("unsupported preference primitive type");
 

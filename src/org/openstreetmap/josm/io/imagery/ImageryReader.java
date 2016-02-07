@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -98,8 +99,8 @@ public class ImageryReader implements Closeable {
         // language of last element, does only work for simple ENTRY_ATTRIBUTE's
         private String lang;
         private List<String> projections;
-        private Map<String, List<String>> noTileHeaders;
-        private Map<String, List<String>> noTileChecksums;
+        private MultiMap<String, String> noTileHeaders;
+        private MultiMap<String, String> noTileChecksums;
         private Map<String, String> metadataHeaders;
 
         @Override
@@ -131,8 +132,8 @@ public class ImageryReader implements Closeable {
                     entry = new ImageryInfo();
                     skipEntry = false;
                     newState = State.ENTRY;
-                    noTileHeaders = new HashMap<>();
-                    noTileChecksums = new HashMap<>();
+                    noTileHeaders = new MultiMap<>();
+                    noTileChecksums = new MultiMap<>();
                     metadataHeaders = new HashMap<>();
                 }
                 break;
@@ -195,26 +196,11 @@ public class ImageryReader implements Closeable {
                     newState = State.MIRROR;
                     mirrorEntry = new ImageryInfo();
                 } else if ("no-tile-header".equals(qName)) {
-                    String name = atts.getValue("name");
-                    List<String> l;
-                    if (noTileHeaders.containsKey(name)) {
-                        l = noTileHeaders.get(name);
-                    } else {
-                        l = new ArrayList<String>();
-                        noTileHeaders.put(atts.getValue("name"), l);
-                    }
-                    l.add(atts.getValue("value"));
+                    noTileHeaders.put(atts.getValue("name"), atts.getValue("value"));
                     newState = State.NO_TILE;
                 } else if ("no-tile-checksum".equals(qName)) {
                     String type = atts.getValue("type");
-                    List<String> l;
-                    if (noTileChecksums.containsKey(type)) {
-                        l = noTileChecksums.get(type);
-                    } else {
-                        l = new ArrayList<String>();
-                        noTileChecksums.put(type, l);
-                    }
-                    l.add(atts.getValue("value"));
+                    noTileChecksums.put(atts.getValue("type"), atts.getValue("value"));
                     newState = State.NO_TILESUM;
                 } else if ("metadata-header".equals(qName)) {
                     metadataHeaders.put(atts.getValue("header-name"), atts.getValue("metadata-key"));

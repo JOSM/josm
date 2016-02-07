@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +40,21 @@ public class MultiMap<A, B> {
      */
     public MultiMap(int capacity) {
         map = new HashMap<>(capacity);
+    }
+
+    /**
+     * Constructs a new {@code MultiMap} from an ordinary {@code Map}.
+     * @param map0 the {@code Map}
+     */
+    public MultiMap(Map<A, Set<B>> map0) {
+        if (map0 == null) {
+            map = new HashMap<>();
+        } else {
+            map = new HashMap<>(Utils.hashMapInitialCapacity(map0.size()));
+            for (Entry<A, Set<B>> e : map0.entrySet()) {
+                map.put(e.getKey(), new LinkedHashSet<>(e.getValue()));
+            }
+        }
     }
 
     /**
@@ -215,6 +231,18 @@ public class MultiMap<A, B> {
     @Override
     public int hashCode() {
         return Objects.hash(map);
+    }
+
+    /**
+     * Converts this {@code MultiMap} to a {@code Map} with {@code Set} values.
+     * @return the converted {@code Map}
+     */
+    public Map<A, Set<B>> toMap() {
+        Map<A, Set<B>> result = new HashMap<>();
+        for (Entry<A, Set<B>> e : map.entrySet()) {
+            result.put(e.getKey(), Collections.unmodifiableSet(e.getValue()));
+        }
+        return result;
     }
 
     @Override
