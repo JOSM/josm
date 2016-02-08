@@ -39,7 +39,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.Preferences.Setting;
+import org.openstreetmap.josm.data.preferences.Setting;
+import org.openstreetmap.josm.data.preferences.StringSetting;
 import org.openstreetmap.josm.gui.dialogs.LogShowDialog;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
@@ -240,7 +241,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
         for (PrefEntry p: table.getSelectedItems()) {
             // preferences with default values are not saved
-            if (!(p.getValue() instanceof Preferences.StringSetting)) {
+            if (!(p.getValue() instanceof StringSetting)) {
                 hasLists = true; // => append and replace differs
             }
             if (!p.isDefault()) {

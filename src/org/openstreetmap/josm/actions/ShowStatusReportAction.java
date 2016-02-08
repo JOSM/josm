@@ -22,10 +22,10 @@ import java.util.Set;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences.Setting;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
+import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.plugins.PluginHandler;

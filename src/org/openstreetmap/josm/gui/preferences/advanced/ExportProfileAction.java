@@ -19,7 +19,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.Preferences.Setting;
+import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.tools.Utils;
 
