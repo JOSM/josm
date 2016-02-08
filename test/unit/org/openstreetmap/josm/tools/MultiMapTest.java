@@ -40,7 +40,6 @@ public class MultiMapTest {
         assertEquals(null, map.get("beta"));
         assertEquals(new HashSet<>(), map.getValues("alpha"));
         assertEquals(new HashSet<>(), map.getValues("beta"));
-        assertEquals("(foo->{bar,baz},alpha->{})", map.toString());
         assertEquals("[[bar, baz], []]", map.values().toString());
         map.put("foo", "baz2");
         map.put("foo", "baz");
