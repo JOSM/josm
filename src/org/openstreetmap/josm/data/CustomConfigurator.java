@@ -41,11 +41,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences.ListListSetting;
-import org.openstreetmap.josm.data.Preferences.ListSetting;
-import org.openstreetmap.josm.data.Preferences.MapListSetting;
-import org.openstreetmap.josm.data.Preferences.Setting;
-import org.openstreetmap.josm.data.Preferences.StringSetting;
+import org.openstreetmap.josm.data.preferences.ListListSetting;
+import org.openstreetmap.josm.data.preferences.ListSetting;
+import org.openstreetmap.josm.data.preferences.MapListSetting;
+import org.openstreetmap.josm.data.preferences.Setting;
+import org.openstreetmap.josm.data.preferences.StringSetting;
 import org.openstreetmap.josm.gui.io.DownloadFileTask;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
