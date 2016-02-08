@@ -1369,34 +1369,43 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
             Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
             if (sel.isEmpty())
                 return;
-            String sep = "";
-            StringBuilder s = new StringBuilder();
-            for (OsmPrimitive p : sel) {
-                String val = p.get(key);
-                if (val == null) {
-                    continue;
-                }
-                String t = "";
-                if (!sameType) {
-                    t = "";
-                } else if (p instanceof Node) {
-                    t = "type:node ";
-                } else if (p instanceof Way) {
-                    t = "type:way ";
-                } else if (p instanceof Relation) {
-                    t = "type:relation ";
-                }
+            final SearchSetting ss = createSearchSetting(key, sel, sameType);
+            org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(ss);
+        }
+    }
+
+    static SearchSetting createSearchSetting(String key, Collection<OsmPrimitive> sel, boolean sameType) {
+        String sep = "";
+        StringBuilder s = new StringBuilder();
+        Set<String> consideredTokens = new TreeSet<>();
+        for (OsmPrimitive p : sel) {
+            String val = p.get(key);
+            if (val == null || (!sameType && consideredTokens.contains(val))) {
+                continue;
+            }
+            String t = "";
+            if (!sameType) {
+                t = "";
+            } else if (p instanceof Node) {
+                t = "type:node ";
+            } else if (p instanceof Way) {
+                t = "type:way ";
+            } else if (p instanceof Relation) {
+                t = "type:relation ";
+            }
+            String token = new StringBuilder(t).append(val).toString();
+            if (consideredTokens.add(token)) {
                 s.append(sep).append('(').append(t).append('"').append(
                         org.openstreetmap.josm.actions.search.SearchAction.escapeStringForSearch(key)).append("\"=\"").append(
                         org.openstreetmap.josm.actions.search.SearchAction.escapeStringForSearch(val)).append("\")");
                 sep = " OR ";
             }
-
-            final SearchSetting ss = new SearchSetting();
-            ss.text = s.toString();
-            ss.caseSensitive = true;
-            org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(ss);
         }
+
+        final SearchSetting ss = new SearchSetting();
+        ss.text = s.toString();
+        ss.caseSensitive = true;
+        return ss;
     }
 
     @Override
