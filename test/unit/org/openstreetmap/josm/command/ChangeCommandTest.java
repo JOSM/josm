@@ -1,7 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -14,6 +16,14 @@ import nl.jqno.equalsverifier.Warning;
  * Unit tests of {@link ChangeCommand} class.
  */
 public class ChangeCommandTest {
+
+    /**
+     * Setup test.
+     */
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        JOSMFixture.createUnitTestFixture().init(false);
+    }
 
     /**
      * Unit test of methods {@link ChangeCommand#equals} and {@link ChangeCommand#hashCode}.
