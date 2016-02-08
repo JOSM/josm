@@ -33,6 +33,7 @@ import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.control.group.GroupAttrName;
 import org.apache.commons.jcs.engine.memory.AbstractMemoryCache;
+import org.apache.commons.jcs.engine.memory.util.DefaultMemoryElementDescriptor;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
 import org.apache.commons.jcs.engine.stats.StatElement;
 import org.apache.commons.jcs.engine.stats.Stats;
@@ -96,7 +97,7 @@ public class LHMLRUMemoryCache<K, V>
         throws IOException
     {
         putCnt.incrementAndGet();
-        map.put( ce.getKey(), new MemoryElementDescriptor<K, V>(ce) );
+        map.put( ce.getKey(), new DefaultMemoryElementDescriptor<K, V>(ce) );
     }
 
     /**
