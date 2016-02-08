@@ -1,17 +1,27 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command.conflict;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
 /**
  * Unit tests of {@link ConflictResolveCommand} class.
  */
 public class ConflictResolveCommandTest {
+
+    /**
+     * Setup test.
+     */
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        JOSMFixture.createUnitTestFixture().init(false);
+    }
 
     /**
      * Unit test of methods {@link ConflictResolveCommand#equals} and {@link ConflictResolveCommand#hashCode}.
