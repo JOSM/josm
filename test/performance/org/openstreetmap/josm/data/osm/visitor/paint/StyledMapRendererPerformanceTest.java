@@ -1,17 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import javax.imageio.ImageIO;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -40,10 +44,13 @@ public class StyledMapRendererPerformanceTest {
 
     @BeforeClass
     public static void load() throws Exception {
-        JOSMFixture.createPerformanceTestFixture().init();
-        img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
+        JOSMFixture.createPerformanceTestFixture().init(true);
+        img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         g = (Graphics2D) img.getGraphics();
-        nc = new NavigatableComponent();
+        g.setClip(0, 0, IMG_WIDTH, IMG_WIDTH);
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, IMG_WIDTH, IMG_WIDTH);
+        nc = Main.map.mapView;//new NavigatableComponent();
         nc.setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
 
         // TODO Test should have it's own copy of styles because change in style can influence performance
@@ -111,5 +118,11 @@ public class StyledMapRendererPerformanceTest {
     @Test
     public void testCitySmallPart2() throws Exception {
         test(200, dsCity, new Bounds(53.56, 13.295, 53.57, 13.30));
+    }
+
+    /** run this manually to verify that the rendering is set up properly */
+    private void dumpRenderedImage() throws IOException {
+        File outputfile = new File("test-neubrandenburg.png");
+        ImageIO.write(img, "png", outputfile);
     }
 }
