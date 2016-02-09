@@ -29,13 +29,14 @@ public final class PerformanceTestUtils {
         public void setMeasurementPlotsPluginOutput(boolean active) {
             measurementPlotsPlugin = active;
         }
+
         /**
          * Prints the time since this timer was created.
          */
         public void done() {
             long dTime = (System.nanoTime() - time) / 1000000;
             if (measurementPlotsPlugin) {
-                System.out.println(String.format("<measurement><name>%s (ms)</name><value>%.1f</value></measurement>", name, (double)dTime));
+                System.out.println(String.format("<measurement><name>%s (ms)</name><value>%.1f</value></measurement>", name, (double) dTime));
             } else {
                 System.out.println("TIMER " + name + ": " + dTime + "ms");
             }
