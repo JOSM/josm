@@ -12,8 +12,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -79,7 +81,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         private int matrixHeight = -1;
     }
 
-    private static class TileMatrixSet {
+    private static class TileMatrixSetBuilder {
         SortedSet<TileMatrix> tileMatrix = new TreeSet<>(new Comparator<TileMatrix>() {
             @Override
             public int compare(TileMatrix o1, TileMatrix o2) {
@@ -90,15 +92,33 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         private String crs;
         private String identifier;
 
+        TileMatrixSet build() {
+            return new TileMatrixSet(this);
+        }
+    }
+
+    private static class TileMatrixSet {
+
+        private final List<TileMatrix> tileMatrix;
+        private final String crs;
+        private final String identifier;
+
         TileMatrixSet(TileMatrixSet tileMatrixSet) {
             if (tileMatrixSet != null) {
-                tileMatrix = new TreeSet<>(tileMatrixSet.tileMatrix);
+                tileMatrix = new ArrayList<>(tileMatrixSet.tileMatrix);
                 crs = tileMatrixSet.crs;
                 identifier = tileMatrixSet.identifier;
+            } else {
+                tileMatrix = Collections.emptyList();
+                crs = null;
+                identifier = null;
             }
         }
 
-        TileMatrixSet() {
+        TileMatrixSet(TileMatrixSetBuilder builder) {
+            tileMatrix = new ArrayList<>(builder.tileMatrix);
+            crs = builder.crs;
+            identifier = builder.identifier;
         }
 
     }
@@ -404,7 +424,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
     private static TileMatrixSet parseTileMatrixSet(XMLStreamReader reader) throws XMLStreamException {
-        TileMatrixSet matrixSet = new TileMatrixSet();
+        TileMatrixSetBuilder matrixSet = new TileMatrixSetBuilder();
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && new QName(WMTS_NS_URL, "TileMatrixSet").equals(reader.getName()));
                 event = reader.next()) {
@@ -420,7 +440,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                         }
                     }
         }
-        return matrixSet;
+        return matrixSet.build();
     }
 
     /**
@@ -636,7 +656,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         // and for different tile sizes at different zoom levels
         Collection<Layer> layers = getLayers(null, Main.getProjection().toCode());
         if (!layers.isEmpty()) {
-            return layers.iterator().next().tileMatrixSet.tileMatrix.first().tileHeight;
+            return layers.iterator().next().tileMatrixSet.tileMatrix.get(0).tileHeight;
         }
         // if no layers is found, fallback to default mercator tile size. Maybe it will work
         Main.warn("WMTS: Could not determine tile size. Using default tile size of: {0}", getDefaultTileSize());
@@ -693,7 +713,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         if (zoom < 1) {
             return null;
         }
-        return this.currentTileMatrixSet.tileMatrix.toArray(new TileMatrix[]{})[zoom - 1];
+        return this.currentTileMatrixSet.tileMatrix.get(zoom - 1);
     }
 
     @Override
