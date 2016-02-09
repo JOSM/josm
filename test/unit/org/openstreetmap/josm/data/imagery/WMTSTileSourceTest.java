@@ -177,7 +177,7 @@ public class WMTSTileSourceTest {
         testSource.initProjection(Main.getProjection());
         verifyTile(new LatLon(56, 12), testSource, 0, 0, 1);
         verifyTile(new LatLon(56, 12), testSource, 0, 0, 2);
-        verifyTile(new LatLon(51.1268639, 16.8731360), testSource, 1, 1, 2);
+        verifyTile(new LatLon(51.13231917844218, 16.867680821557823), testSource, 1, 1, 2);
 
         assertEquals("TileXMax", 2, testSource.getTileXMax(1));
         assertEquals("TileYMax", 1, testSource.getTileYMax(1));
@@ -197,8 +197,8 @@ public class WMTSTileSourceTest {
         Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
         testSource.initProjection(Main.getProjection());
-        verifyTile(new LatLon(53.5993712684958, 19.560669777688176), testSource, 12412, 3941, 14);
-        verifyTile(new LatLon(49.783096954497786, 22.79034127751704), testSource, 17714, 10206, 14);
+        verifyTile(new LatLon(53.60205873528009, 19.552206794646956), testSource, 12412, 3941, 14);
+        verifyTile(new LatLon(49.79005619189761, 22.778262259134397), testSource, 17714, 10206, 14);
     }
 
     @Test
@@ -258,7 +258,7 @@ public class WMTSTileSourceTest {
         LatLon result = new LatLon(testSource.tileXYToLatLon(x, y, z));
         LatLon expected = new LatLon(verifier.tileXYToLatLon(x, y, z + zoomOffset));
         //System.out.println(z + "/" + x + "/" + y + " - result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString());
-        assertEquals("Longitude", expected.lon(), result.lon(), 1e-04);
+        assertEquals("Longitude", LatLon.normalizeLon(expected.lon() - result.lon()), 0.0, 1e-04);
         assertEquals("Latitude", expected.lat(), result.lat(), 1e-04);
     }
 }
