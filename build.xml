@@ -8,24 +8,34 @@
 **   https://josm.openstreetmap.de/wiki/DevelopersGuide/CreateBuild
 **
 -->
-<project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
-    <property name="test.dir" location="test"/>
-    <property name="src.dir" location="src"/>
-    <property name="build.dir" location="build"/>
-    <property name="javacc.home" location="tools"/>
-    <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
-    <property name="epsg.output" location="data/projection/custom-epsg"/>
-    <property name="groovy.jar" location="tools/groovy-all-2.4.6-SNAPSHOT.jar"/>
-    <!-- build parameter: compression level (ant -Dclevel=N)
-             N ranges from 0 (no compression) to 9 (maximum compression)
-             default: 9 -->
-    <condition property="clevel" value="${clevel}" else="9">
-        <isset property="clevel"/>
-    </condition>
-    <!-- For Java9-specific stuff -->
-    <condition property="isJava9">
-        <equals arg1="${ant.java.version}" arg2="1.9" />
-    </condition>
+<project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" xmlns:jacoco="antlib:org.jacoco.ant">
+    <target name="init-properties">
+        <!-- Load properties in a target and not at top level, so this build file can be
+        imported from an IDE ant file (Netbeans) without messing up IDE properties.
+        When imported from another file, ${basedir} will point to the parent directory
+        of the importing ant file. Use ${base.dir} instead, which is always the parent
+        directory of this file. -->
+        <dirname property="base.dir" file="${ant.file.josm}"/>
+        <property name="test.dir" location="${base.dir}/test"/>
+        <property name="src.dir" location="${base.dir}/src"/>
+        <property name="build.dir" location="${base.dir}/build"/>
+        <property name="dist.dir" location="${base.dir}/dist"/>
+        <property name="javacc.home" location="${base.dir}/tools"/>
+        <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
+        <property name="proj-build.dir" location="${base.dir}/build2"/>
+        <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
+        <property name="groovy.jar" location="${base.dir}/tools/groovy-all-2.4.6-SNAPSHOT.jar"/>
+        <!-- build parameter: compression level (ant -Dclevel=N)
+                 N ranges from 0 (no compression) to 9 (maximum compression)
+                 default: 9 -->
+        <condition property="clevel" value="${clevel}" else="9">
+            <isset property="clevel"/>
+        </condition>
+        <!-- For Java9-specific stuff -->
+        <condition property="isJava9">
+            <equals arg1="${ant.java.version}" arg2="1.9" />
+        </condition>
+    </target>
 
     <!--
       ** Used by Eclipse ant builder for updating
@@ -38,8 +48,8 @@
     <!--
       ** Initializes the REVISION.XML file from SVN information
     -->
-    <target name="init-svn-revision-xml">
-        <exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false" resultproperty="svn.info.result">
+    <target name="init-svn-revision-xml" depends="init-properties">
+        <exec append="false" output="${base.dir}/REVISION.XML" executable="svn" dir="${base.dir}" failifexecutionfails="false" resultproperty="svn.info.result">
             <env key="LANG" value="C"/>
             <arg value="info"/>
             <arg value="--xml"/>
@@ -52,8 +62,8 @@
     <!--
       ** Initializes the REVISION.XML file from git information
     -->
-    <target name="init-git-revision-xml" unless="svn.info.success">
-        <exec append="false" output="REVISION.XML" executable="git" failifexecutionfails="false">
+    <target name="init-git-revision-xml" unless="svn.info.success" depends="init-properties">
+        <exec append="false" output="${base.dir}/REVISION.XML" executable="git" dir="${base.dir}" failifexecutionfails="false">
             <arg value="log"/>
             <arg value="-1"/>
             <arg value="--grep=git-svn-id"/>
@@ -65,17 +75,17 @@
             <arg value="--pretty=format:%B%n%ai"/>
             <arg value="HEAD"/>
         </exec>
-        <replaceregexp file="REVISION.XML" flags="s"
+        <replaceregexp file="${base.dir}/REVISION.XML" flags="s"
                        match=".*git-svn-id: [^@]*@([0-9]+).*(\d{4}-\d{2}-\d{2}.\d{2}\:\d{2}\:\d{2}\s*[+-]\d{2}:?\d{2})\s*$"
                        replace="&lt;info&gt;&lt;entry&gt;&lt;commit revision=&quot;\1&quot;&gt;&lt;date&gt;\2&lt;/date&gt;&lt;/commit&gt;&lt;/entry&gt;&lt;/info&gt;"/>
     </target>
     <!--
       ** Creates the REVISION file to be included in the distribution
     -->
-    <target name="create-revision" depends="init-svn-revision-xml, init-git-revision-xml">
+    <target name="create-revision" depends="init-properties,init-svn-revision-xml,init-git-revision-xml">
         <property name="revision.dir" value="${build.dir}"/>
-        <xmlproperty file="REVISION.XML" prefix="version" keepRoot="false" collapseAttributes="true"/>
-        <delete file="REVISION.XML"/>
+        <xmlproperty file="${base.dir}/REVISION.XML" prefix="version" keepRoot="false" collapseAttributes="true"/>
+        <delete file="${base.dir}/REVISION.XML"/>
         <tstamp>
             <format property="build.tstamp" pattern="yyyy-MM-dd HH:mm:ss"/>
         </tstamp>
@@ -93,7 +103,7 @@ Build-Date: ${build.tstamp}
     <!--
       ** Check internal XML files against their XSD
     -->
-    <target name="check-schemas" unless="check-schemas.notRequired">
+    <target name="check-schemas" unless="check-schemas.notRequired" depends="init-properties">
         <schemavalidate file="data/defaultpresets.xml" >
             <schema namespace="http://josm.openstreetmap.de/tagging-preset-1.0" file="data/tagging-preset.xsd" />
         </schemavalidate>
@@ -107,8 +117,8 @@ Build-Date: ${build.tstamp}
         <copy file="README" todir="build"/>
         <copy file="LICENSE" todir="build"/>
         <!-- create josm-custom.jar -->
-        <delete file="dist/josm-custom.jar"/>
-        <jar destfile="dist/josm-custom.jar" basedir="build" level="${clevel}">
+        <delete file="${dist.dir}/josm-custom.jar"/>
+        <jar destfile="${dist.dir}/josm-custom.jar" basedir="${build.dir}" level="${clevel}">
             <!-- add attribute excludes="**/*BZip2*,**/*Bzip2*" to create a non-bzip2 supporting jar -->
             <manifest>
                 <attribute name="Main-class" value="JOSM"/>
@@ -125,7 +135,7 @@ Build-Date: ${build.tstamp}
         </jar>
     </target>
     <!-- Mac OS X target -->
-    <target name="mac">
+    <target name="mac" depends="init-properties">
         <!-- Using https://bitbucket.org/infinitekind/appbundler to create mac application bundle -->
         <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="tools/appbundler-1.0ea.jar"/>
         <!-- create MacOS X application bundle -->
@@ -155,17 +165,17 @@ Build-Date: ${build.tstamp}
             <option value="-Dcom.apple.mrj.application.apple.menu.about.name=JOSM"/>
             <option value="-Dcom.apple.smallTabs=true"/>
         </bundleapp>
-        
+
         <!-- appbundler lacks the possibility of defining our own keys or using a template, so update the .plist manually -->
         <taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpath="tools/xmltask.jar"/>
-        
+
         <xmltask source="${bundle.outdir}/JOSM.app/Contents/Info.plist" dest="${bundle.outdir}/JOSM.app/Contents/Info.plist" indent="false">
             <!-- remove empty CFBundleDocumentTypes definition -->
             <remove path="/plist/dict/key[text()='CFBundleDocumentTypes']|/plist/dict/key[text()='CFBundleDocumentTypes']/following-sibling::array[1]"/>
             <!-- insert our own keys -->
             <insert position="before" path="/plist/dict/key[1]" file="macosx/JOSM.app/Contents/Info.plist_template.xml" />
         </xmltask>
-        
+
         <!-- create ZIP file with MacOS X application bundle -->
         <zip destfile="${bundle.outdir}/josm-custom-macosx.zip" update="true">
             <zipfileset dir="." includes="CONTRIBUTION README LICENSE"/>
@@ -174,8 +184,8 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="distmac" depends="dist">
         <antcall target="mac">
-            <param name="bundle.outdir" value="dist"/>
-            <param name="bundle.jar" value="dist/josm-custom.jar"/>
+            <param name="bundle.outdir" value="${dist.dir}"/>
+            <param name="bundle.jar" value="${dist.dir}/josm-custom.jar"/>
         </antcall>
     </target>
     <!-- Windows target -->
@@ -225,7 +235,7 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/logging/impl/ServletContextCleaner.java"/>
         </javac>
         <!-- JMapViewer -->
-        <javac sourcepath="" srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/josm/**,JOSM.java,gnu/**" 
+        <javac sourcepath="" srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/josm/**,JOSM.java,gnu/**"
             destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
@@ -242,7 +252,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-XDignore.symbol.file"/>
         </javac>
         <!-- JOSM -->
-        <javac sourcepath="" srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java" 
+        <javac sourcepath="" srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java"
             destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
@@ -263,17 +273,17 @@ Build-Date: ${build.tstamp}
             <fileset dir="resources"/>
         </copy>
     </target>
-    <target name="init">
+    <target name="init" depends="init-properties">
         <uptodate property="javacc.notRequired" targetfile="${mapcss.dir}/parsergen/MapCSSParser.java" >
             <srcfiles dir="${mapcss.dir}" includes="MapCSSParser.jj"/>
         </uptodate>
-        <mkdir dir="build"/>
-        <mkdir dir="dist"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
     </target>
-    <target name="javadoc">
-        <javadoc destdir="javadoc" 
+    <target name="javadoc" depends="init-properties">
+        <javadoc destdir="javadoc"
                 sourcepath="${src.dir}"
-                encoding="UTF-8"    
+                encoding="UTF-8"
                 packagenames="org.openstreetmap.josm.*,org.openstreetmap.gui.jmapviewer.*"
                 excludepackagenames="org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.*"
                 windowtitle="JOSM"
@@ -286,10 +296,10 @@ Build-Date: ${build.tstamp}
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
         </javadoc>
     </target>
-    <target name="clean">
-        <delete dir="build"/>
-        <delete dir="build2"/>
-        <delete dir="dist"/>
+    <target name="clean" depends="init-properties">
+        <delete dir="${build.dir}"/>
+        <delete dir="${proj-build.dir}"/>
+        <delete dir="${dist.dir}"/>
         <delete dir="${mapcss.dir}/parsergen"/>
         <delete file="${src.dir}/org/w3/_2001/xmlschema/Adapter1.java"/>
         <delete dir="${src.dir}/org/openstreetmap/josm/data/imagery/types"/>
@@ -299,7 +309,7 @@ Build-Date: ${build.tstamp}
         <fileset dir="${test.dir}/lib">
             <include name="**/*.jar"/>
         </fileset>
-        <pathelement path="dist/josm-custom.jar"/>
+        <pathelement path="${dist.dir}/josm-custom.jar"/>
         <pathelement path="${groovy.jar}"/>
         <pathelement path="tools/findbugs/annotations.jar"/>
     </path>
@@ -311,7 +321,7 @@ Build-Date: ${build.tstamp}
             <replace file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" encoding="UTF-8" token="@OSM_PASSWORD@" value="${osm.password}"/>
         </sequential>
     </macrodef>
-    <target name="test-init">
+    <target name="test-init" depends="init-properties">
         <mkdir dir="${test.dir}/build"/>
         <mkdir dir="${test.dir}/build/unit"/>
         <mkdir dir="${test.dir}/build/functional"/>
@@ -322,7 +332,7 @@ Build-Date: ${build.tstamp}
         <init-test-preferences testfamily="performance"/>
         <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="tools/jacocoant.jar" />
     </target>
-    <target name="test-clean">
+    <target name="test-clean" depends="init-properties">
         <delete dir="${test.dir}/build"/>
         <delete dir="${test.dir}/report"/>
         <delete file="${test.dir}/jacoco.exec" />
@@ -526,7 +536,7 @@ Build-Date: ${build.tstamp}
                 <striplinebreaks/>
                 <tokenfilter>
                     <replaceregex pattern="\|$" replace="" flags="gi"/>
-                </tokenfilter>    
+                </tokenfilter>
             </filterchain>
         </loadresource>
         <delete>
@@ -546,7 +556,7 @@ Build-Date: ${build.tstamp}
         <!-- Check plugins -->
         <as:build-signatures destfile="${dir}/api.sig">
             <path>
-                <fileset file="dist/josm-custom-optimized.jar"/>
+                <fileset file="${dist.dir}/josm-custom-optimized.jar"/>
                 <fileset file="${java.home}/lib/rt.jar"/>
                 <fileset file="${java.home}/lib/jce.jar"/>
             </path>
@@ -593,7 +603,7 @@ Build-Date: ${build.tstamp}
         <attribute name="output"/>
         <sequential>
             <echo message="Generating Taginfo for type @{type} to @{output}"/>
-            <groovy src="${taginfoextract}" classpath="dist/josm-custom.jar">
+            <groovy src="${taginfoextract}" classpath="${dist.dir}/josm-custom.jar">
                 <arg value="-t"/>
                 <arg value="@{type}"/>
                 <arg value="--noexit"/>
@@ -615,10 +625,10 @@ Build-Date: ${build.tstamp}
         <_taginfo type="external_presets" output="taginfo_external_presets.json"/>
     </target>
 
-    <target name="imageryindex">
+    <target name="imageryindex" depends="init-properties">
         <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};tools/commons-cli-1.3.1.jar"/>
         <echo message="Checking editor imagery difference"/>
-        <groovy src="scripts/sync_editor_imagery_index.groovy" classpath="dist/josm-custom.jar">
+        <groovy src="scripts/sync_editor_imagery_index.groovy" classpath="${dist.dir}/josm-custom.jar">
             <arg value="-nomissingeii"/>
         </groovy>
     </target>
@@ -639,13 +649,13 @@ Build-Date: ${build.tstamp}
         <antcall target="imageryindex"/>
     </target>
 
-    <target name="checkstyle">
-        <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties" 
+    <target name="checkstyle" depends="init-properties">
+        <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
              classpath="tools/checkstyle/checkstyle-6.15-all.jar"/>
         <checkstyle config="tools/checkstyle/josm_checks.xml">
-            <fileset dir="${basedir}/src/org/openstreetmap/josm" includes="**/*.java" 
+            <fileset dir="${base.dir}/src/org/openstreetmap/josm" includes="**/*.java"
                 excludes="gui/mappaint/mapcss/parsergen/*.java"/>
-            <fileset dir="${basedir}/test" includes="**/*.java"/>
+            <fileset dir="${base.dir}/test" includes="**/*.java"/>
             <formatter type="xml" toFile="checkstyle-josm.xml"/>
         </checkstyle>
     </target>
@@ -653,7 +663,7 @@ Build-Date: ${build.tstamp}
     <target name="findbugs" depends="dist">
         <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="tools/findbugs/findbugs-ant.jar"/>
         <path id="findbugs-classpath">
-            <fileset dir="tools/findbugs/">
+            <fileset dir="${base.dir}/tools/findbugs/">
                 <include name="*.jar"/>
             </fileset>
         </path>
@@ -665,36 +675,43 @@ Build-Date: ${build.tstamp}
                 excludeFilter="tools/findbugs/josm-filter.xml"
                 effort="max"
                 >
-            <sourcePath path="${basedir}/src" />
-            <class location="${basedir}/dist/josm-custom.jar" />
+            <sourcePath path="${base.dir}/src" />
+            <class location="${dist.dir}/josm-custom.jar" />
         </findbugs>
     </target>
     <target name="run" depends="dist">
-        <java jar="dist/josm-custom.jar" fork="true">
+        <java jar="${dist.dir}/josm-custom.jar" fork="true">
             <arg value="--set=expert=true"/>
             <arg value="--set=remotecontrol.enabled=true"/>
             <arg value="--set=debug.edt-checker.enable=false"/>
             <jvmarg value="-Djosm.home=/tmp/.josm/"/>
         </java>
     </target>
-    <!-- compile build script for generating projection list -->
-    <target name="epsg-compile" depends="compile">
-        <mkdir dir="build2"/>
-        <javac sourcepath="" srcdir="scripts" failonerror="true"
-            destdir="build2" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8" classpath="build">
+    <!--
+      ** Compile build script for generating projection list.
+    -->
+    <target name="epsg-compile">
+        <property name="proj-classpath" location="${build.dir}"/>
+        <mkdir dir="${proj-build.dir}"/>
+        <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true"
+            destdir="${proj-build.dir}" target="1.7" source="1.7" debug="on"
+            includeantruntime="false" createMissingPackageInfoClass="false"
+            encoding="UTF-8" classpath="${proj-classpath}">
         </javac>
     </target>
-    <!-- generate projection list -->
+    <!--
+      ** generate projection list.
+    -->
     <target name="epsg" depends="epsg-compile">
         <touch file="${epsg.output}"/>
         <java classname="BuildProjectionDefinitions" failonerror="true">
             <sysproperty key="java.awt.headless" value="true"/>
             <classpath>
-                <pathelement path="."/>
-                <pathelement path="build"/>
-                <pathelement path="build2"/>
+                <pathelement path="${base.dir}"/>
+                <pathelement path="${proj-classpath}"/>
+                <pathelement path="${proj-build.dir}"/>
             </classpath>
-            <arg value="${basedir}"/>
+            <arg value="${base.dir}"/>
         </java>
     </target>
 </project>
