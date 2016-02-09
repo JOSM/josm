@@ -127,7 +127,7 @@ public class TemplatedWMSTileSourceTest {
         LatLon result = getTileLatLon(source, x, y, z);
         ICoordinate expected = verifier.tileXYToLatLon(x, y, z - 1);
         assertEquals(expected.getLat(), result.lat(), 1e-4);
-        assertEquals(expected.getLon(), result.lon(), 1e-4);
+        assertEquals(LatLon.normalizeLon(expected.getLon() - result.lon()), 0.0, 1e-4);
         LatLon tileCenter = new Bounds(result, getTileLatLon(source, x+1, y+1, z)).getCenter();
         TileXY backwardsResult = source.latLonToTileXY(tileCenter.toCoordinate(), z);
         assertEquals(x, backwardsResult.getXIndex());
