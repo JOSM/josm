@@ -35,6 +35,14 @@
         <condition property="isJava9">
             <equals arg1="${ant.java.version}" arg2="1.9" />
         </condition>
+        <path id="test.classpath">
+            <fileset dir="${test.dir}/lib">
+                <include name="**/*.jar"/>
+            </fileset>
+            <pathelement path="${dist.dir}/josm-custom.jar"/>
+            <pathelement path="${groovy.jar}"/>
+            <pathelement path="tools/findbugs/annotations.jar"/>
+        </path>
     </target>
 
     <!--
@@ -305,14 +313,6 @@ Build-Date: ${build.tstamp}
         <delete dir="${src.dir}/org/openstreetmap/josm/data/imagery/types"/>
         <delete file="${epsg.output}"/>
     </target>
-    <path id="test.classpath">
-        <fileset dir="${test.dir}/lib">
-            <include name="**/*.jar"/>
-        </fileset>
-        <pathelement path="${dist.dir}/josm-custom.jar"/>
-        <pathelement path="${groovy.jar}"/>
-        <pathelement path="tools/findbugs/annotations.jar"/>
-    </path>
     <macrodef name="init-test-preferences">
         <attribute name="testfamily"/>
         <sequential>
