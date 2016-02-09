@@ -100,7 +100,7 @@ public class MapCSSStyleSourceFilterTest {
         KeyValueDataGenerator data = OsmDataGenerator.getKeyValue();
         data.generateDataSet();
         CssGenerator css = new CssGenerator(data).addKeyValueRules(TEST_RULE_COUNT);
-        runTest(data, css, "only key=value rules");
+        runTest(data, css, "only key=value rules", false);
     }
 
     /**
@@ -111,7 +111,7 @@ public class MapCSSStyleSourceFilterTest {
         KeyValueDataGenerator data = OsmDataGenerator.getKeyValue();
         data.generateDataSet();
         CssGenerator css = new CssGenerator(data).addHasKeyRules(TEST_RULE_COUNT);
-        runTest(data, css, "only has key rules");
+        runTest(data, css, "only has key rules", false);
     }
 
     /**
@@ -122,7 +122,7 @@ public class MapCSSStyleSourceFilterTest {
         KeyValueDataGenerator data = OsmDataGenerator.getKeyValue();
         data.generateDataSet();
         CssGenerator css = new CssGenerator(data).addKeyRegexpRules(TEST_RULE_COUNT);
-        runTest(data, css, "regular expressions");
+        runTest(data, css, "regular expressions", true);
     }
 
     /**
@@ -133,16 +133,21 @@ public class MapCSSStyleSourceFilterTest {
         KeyValueDataGenerator data = OsmDataGenerator.getKeyValue();
         data.generateDataSet();
         CssGenerator css = new CssGenerator(data).addIsTrueRules(TEST_RULE_COUNT);
-        runTest(data, css, "is true");
+        runTest(data, css, "is true", false);
     }
 
-    private void runTest(KeyValueDataGenerator data, CssGenerator css, String description) {
+    private void runTest(KeyValueDataGenerator data, CssGenerator css, String description, boolean measurementPlotsPlugin) {
         MapCSSStyleSource source = new MapCSSStyleSource(css.getCss());
         PerformanceTestTimer timer = PerformanceTestUtils.startTimer("MapCSSStyleSource#loadStyleSource(...) for " + description);
         source.loadStyleSource();
         timer.done();
 
-        timer = PerformanceTestUtils.startTimer(APPLY_CALLS + "x MapCSSStyleSource#apply(...) for " + description);
+        if (measurementPlotsPlugin) {
+            timer = PerformanceTestUtils.startTimer(description);
+            timer.setMeasurementPlotsPluginOutput(true);
+        } else {
+            timer = PerformanceTestUtils.startTimer(APPLY_CALLS + "x MapCSSStyleSource#apply(...) for " + description);
+        }
         for (int i = 0; i < APPLY_CALLS; i++) {
             MultiCascade mc = new MultiCascade();
             source.apply(mc, data.randomNode(), 1, false);
