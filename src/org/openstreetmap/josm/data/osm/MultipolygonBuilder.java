@@ -5,6 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Rectangle;
 import java.awt.geom.Area;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -307,6 +310,9 @@ public class MultipolygonBuilder {
 
     private static class Worker extends RecursiveTask<List<PolygonLevel>> {
 
+        // Needed for Findbugs / Coverity because parent class is serializable
+        private static final long serialVersionUID = 1L;
+
         private final transient List<JoinedPolygon> input;
         private final int from;
         private final int to;
@@ -401,6 +407,16 @@ public class MultipolygonBuilder {
                 }
             }
             return output;
+        }
+
+        private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+            // Needed for Findbugs / Coverity because parent class is serializable
+            ois.defaultReadObject();
+        }
+
+        private void writeObject(ObjectOutputStream oos) throws IOException {
+            // Needed for Findbugs / Coverity because parent class is serializable
+            oos.defaultWriteObject();
         }
     }
 }
