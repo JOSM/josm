@@ -5269,7 +5269,7 @@
             <key key="amenity" value="hunting_stand" />
             <combo key="height" text="Height" values="low,half,full,5,10,15,20" values_context="height" />
             <check key="shelter" text="Shelter" />
-            <check key="hide" text="Hide" />
+            <check key="hide" text="Hide" text_context="hunting stand" />
             <check key="lock" text="Lock" />
         </item> <!-- Hunting Stand -->
         <separator/>
