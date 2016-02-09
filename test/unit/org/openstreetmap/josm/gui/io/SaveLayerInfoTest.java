@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNull;
 
 import java.io.File;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -15,6 +17,13 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * Unit tests of {@link SaveLayerInfo} class.
  */
 public class SaveLayerInfoTest {
+    /**
+      * Setup test.
+      */
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        JOSMFixture.createUnitTestFixture().init(false);
+    }
 
     /**
      * Test of {@link SaveLayerInfo} class - null case.
