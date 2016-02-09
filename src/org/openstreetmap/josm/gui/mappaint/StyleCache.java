@@ -81,4 +81,12 @@ public final class StyleCache {
     private StyleCache intern() {
         return internPool.putUnique(this);
     }
+
+    /**
+     * Get the size of the intern pool. Only for tests!
+     * @return size of the intern pool
+     */
+    public static int getInternPoolSize() {
+        return internPool.size();
+    }
 }
