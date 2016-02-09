@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.imageio.ImageIO;
 
 import org.junit.BeforeClass;
@@ -50,7 +51,7 @@ public class StyledMapRendererPerformanceTest {
         g.setClip(0, 0, IMG_WIDTH, IMG_WIDTH);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, IMG_WIDTH, IMG_WIDTH);
-        nc = Main.map.mapView;//new NavigatableComponent();
+        nc = Main.map.mapView;
         nc.setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
 
         // TODO Test should have it's own copy of styles because change in style can influence performance
