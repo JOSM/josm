@@ -123,7 +123,7 @@ public class RelationListDialog extends ToggleDialog
 
     private final transient HighlightHelper highlightHelper = new HighlightHelper();
     private final boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
-    private RecentRelationsAction recentRelationsAction;
+    private transient RecentRelationsAction recentRelationsAction;
 
     /**
      * Constructs <code>RelationListDialog</code>
