@@ -7,11 +7,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -21,7 +19,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,25 +49,17 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.swing.JOptionPane;
-import javax.xml.XMLConstants;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.ListListSetting;
 import org.openstreetmap.josm.data.preferences.ListSetting;
 import org.openstreetmap.josm.data.preferences.MapListSetting;
+import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.data.preferences.SettingVisitor;
 import org.openstreetmap.josm.data.preferences.StringSetting;
-import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.XmlWriter;
@@ -118,11 +107,6 @@ public class Preferences {
      * @see #getPreferencesDirectory()
      */
     private File preferencesDir;
-
-    /**
-     * Version of the loaded data file, required for updates
-     */
-    private int loadedVersion = 0;
 
     /**
      * Internal storage for the cache directory.
@@ -523,7 +507,7 @@ public class Preferences {
 
         try (PrintWriter out = new PrintWriter(new OutputStreamWriter(
                 new FileOutputStream(prefFile + "_tmp"), StandardCharsets.UTF_8), false)) {
-            out.print(toXML(false));
+            out.print(toXML(settingsMap, false));
         }
 
         File tmpFile = new File(prefFile + "_tmp");
@@ -559,16 +543,21 @@ public class Preferences {
      * @throws XMLStreamException if an XML error occurs while parsing the file (after validation)
      */
     protected void load() throws IOException, SAXException, XMLStreamException {
-        settingsMap.clear();
         File pref = getPreferenceFile();
-        try (BufferedReader in = Files.newBufferedReader(pref.toPath(), StandardCharsets.UTF_8)) {
-            validateXML(in);
-        }
-        try (BufferedReader in = Files.newBufferedReader(pref.toPath(), StandardCharsets.UTF_8)) {
-            fromXML(in);
-        }
+        PreferencesReader.validateXML(pref);
+        PreferencesReader reader = new PreferencesReader();
+        reader.fromXML(pref);
+        settingsMap.clear();
+        settingsMap.putAll(reader.getSettings());
         updateSystemProperties();
-        removeObsolete();
+        removeObsolete(reader.getVersion());
+    }
+
+    public void fromXML(Reader in) throws XMLStreamException {
+        PreferencesReader reader = new PreferencesReader();
+        reader.fromXML(in);
+        settingsMap.clear();
+        settingsMap.putAll(reader.getSettings());
     }
 
     /**
@@ -1335,176 +1324,7 @@ public class Preferences {
         putCollection("pluginmanager.sites", sites);
     }
 
-    protected XMLStreamReader parser;
 
-    public static void validateXML(Reader in) throws IOException, SAXException {
-        try (InputStream xsdStream = new CachedFile("resource://data/preferences.xsd").getInputStream()) {
-            Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(new StreamSource(xsdStream));
-            Validator validator = schema.newValidator();
-            validator.validate(new StreamSource(in));
-        }
-    }
-
-    protected void fromXML(Reader in) throws XMLStreamException {
-        this.parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
-        parse();
-    }
-
-    private void parse() throws XMLStreamException {
-        int event = parser.getEventType();
-        while (true) {
-            if (event == XMLStreamConstants.START_ELEMENT) {
-                try {
-                    loadedVersion = Integer.parseInt(parser.getAttributeValue(null, "version"));
-                } catch (NumberFormatException e) {
-                    if (Main.isDebugEnabled()) {
-                        Main.debug(e.getMessage());
-                    }
-                }
-                parseRoot();
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
-                return;
-            }
-            if (parser.hasNext()) {
-                event = parser.next();
-            } else {
-                break;
-            }
-        }
-        parser.close();
-    }
-
-    private void parseRoot() throws XMLStreamException {
-        while (true) {
-            int event = parser.next();
-            if (event == XMLStreamConstants.START_ELEMENT) {
-                String localName = parser.getLocalName();
-                switch(localName) {
-                case "tag":
-                    settingsMap.put(parser.getAttributeValue(null, "key"), new StringSetting(parser.getAttributeValue(null, "value")));
-                    jumpToEnd();
-                    break;
-                case "list":
-                case "collection":
-                case "lists":
-                case "maps":
-                    parseToplevelList();
-                    break;
-                default:
-                    throwException("Unexpected element: "+localName);
-                }
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
-                return;
-            }
-        }
-    }
-
-    private void jumpToEnd() throws XMLStreamException {
-        while (true) {
-            int event = parser.next();
-            if (event == XMLStreamConstants.START_ELEMENT) {
-                jumpToEnd();
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
-                return;
-            }
-        }
-    }
-
-    private void parseToplevelList() throws XMLStreamException {
-        String key = parser.getAttributeValue(null, "key");
-        String name = parser.getLocalName();
-
-        List<String> entries = null;
-        List<List<String>> lists = null;
-        List<Map<String, String>> maps = null;
-        while (true) {
-            int event = parser.next();
-            if (event == XMLStreamConstants.START_ELEMENT) {
-                String localName = parser.getLocalName();
-                switch(localName) {
-                case "entry":
-                    if (entries == null) {
-                        entries = new ArrayList<>();
-                    }
-                    entries.add(parser.getAttributeValue(null, "value"));
-                    jumpToEnd();
-                    break;
-                case "list":
-                    if (lists == null) {
-                        lists = new ArrayList<>();
-                    }
-                    lists.add(parseInnerList());
-                    break;
-                case "map":
-                    if (maps == null) {
-                        maps = new ArrayList<>();
-                    }
-                    maps.add(parseMap());
-                    break;
-                default:
-                    throwException("Unexpected element: "+localName);
-                }
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
-                break;
-            }
-        }
-        if (entries != null) {
-            settingsMap.put(key, new ListSetting(Collections.unmodifiableList(entries)));
-        } else if (lists != null) {
-            settingsMap.put(key, new ListListSetting(Collections.unmodifiableList(lists)));
-        } else if (maps != null) {
-            settingsMap.put(key, new MapListSetting(Collections.unmodifiableList(maps)));
-        } else {
-            if ("lists".equals(name)) {
-                settingsMap.put(key, new ListListSetting(Collections.<List<String>>emptyList()));
-            } else if ("maps".equals(name)) {
-                settingsMap.put(key, new MapListSetting(Collections.<Map<String, String>>emptyList()));
-            } else {
-                settingsMap.put(key, new ListSetting(Collections.<String>emptyList()));
-            }
-        }
-    }
-
-    private List<String> parseInnerList() throws XMLStreamException {
-        List<String> entries = new ArrayList<>();
-        while (true) {
-            int event = parser.next();
-            if (event == XMLStreamConstants.START_ELEMENT) {
-                if ("entry".equals(parser.getLocalName())) {
-                    entries.add(parser.getAttributeValue(null, "value"));
-                    jumpToEnd();
-                } else {
-                    throwException("Unexpected element: "+parser.getLocalName());
-                }
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
-                break;
-            }
-        }
-        return Collections.unmodifiableList(entries);
-    }
-
-    private Map<String, String> parseMap() throws XMLStreamException {
-        Map<String, String> map = new LinkedHashMap<>();
-        while (true) {
-            int event = parser.next();
-            if (event == XMLStreamConstants.START_ELEMENT) {
-                if ("tag".equals(parser.getLocalName())) {
-                    map.put(parser.getAttributeValue(null, "key"), parser.getAttributeValue(null, "value"));
-                    jumpToEnd();
-                } else {
-                    throwException("Unexpected element: "+parser.getLocalName());
-                }
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
-                break;
-            }
-        }
-        return Collections.unmodifiableMap(map);
-    }
-
-    protected void throwException(String msg) {
-        throw new RuntimeException(msg + tr(" (at line {0}, column {1})",
-                parser.getLocation().getLineNumber(), parser.getLocation().getColumnNumber()));
-    }
 
     private class SettingToXml implements SettingVisitor {
         private final StringBuilder b;
@@ -1578,12 +1398,16 @@ public class Preferences {
     }
 
     public String toXML(boolean nopass) {
+        return toXML(settingsMap, nopass);
+    }
+
+    public String toXML(Map<String, Setting<?>> settings, boolean nopass) {
         StringBuilder b = new StringBuilder(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<preferences xmlns=\"")
                 .append(Main.getXMLBase()).append("/preferences-1.0\" version=\"")
                 .append(Version.getInstance().getVersion()).append("\">\n");
         SettingToXml toXml = new SettingToXml(b, nopass);
-        for (Entry<String, Setting<?>> e : settingsMap.entrySet()) {
+        for (Entry<String, Setting<?>> e : settings.entrySet()) {
             toXml.setKey(e.getKey());
             e.getValue().visit(toXml);
         }
@@ -1596,7 +1420,7 @@ public class Preferences {
      * setting, add it to the list here with an expiry date (written as comment). If you
      * see something with an expiry date in the past, remove it from the list.
      */
-    public void removeObsolete() {
+    private void removeObsolete(int loadedVersion) {
         // drop this block march 2016
         // update old style JOSM server links to use zip now, see #10581, #12189
         // actually also cache and mirror entries should be cleared
