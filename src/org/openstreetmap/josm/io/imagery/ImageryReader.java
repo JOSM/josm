@@ -199,7 +199,6 @@ public class ImageryReader implements Closeable {
                     noTileHeaders.put(atts.getValue("name"), atts.getValue("value"));
                     newState = State.NO_TILE;
                 } else if ("no-tile-checksum".equals(qName)) {
-                    String type = atts.getValue("type");
                     noTileChecksums.put(atts.getValue("type"), atts.getValue("value"));
                     newState = State.NO_TILESUM;
                 } else if ("metadata-header".equals(qName)) {
