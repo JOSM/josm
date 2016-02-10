@@ -36,6 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
@@ -337,6 +338,31 @@ public final class GuiHelper {
      */
     public static JScrollPane embedInVerticalScrollPane(Component panel) {
         return new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    }
+
+    /**
+     * Set the default unit increment for a {@code JScrollPane}.
+     *
+     * This fixes slow mouse wheel scrolling when the content of the {@code JScrollPane}
+     * is a {@code JPanel} or other component that does not implement the {@link Scrollable}
+     * interface.
+     * The default unit increment is 1 pixel. Multiplied by the number of unit increments
+     * per mouse wheel "click" (platform dependent, usually 3), this makes a very
+     * sluggish mouse wheel experience.
+     * This methods sets the unit increment to a larger, more reasonable value.
+     * @param sp the scroll pane
+     * @return the scroll pane (same object) with fixed unit increment
+     * @throws IllegalArgumentException if the component inside of the scroll pane
+     * implements the {@code Scrollable} interface ({@code JTree}, {@code JLayer},
+     * {@code JList}, {@code JTextComponent} and {@code JTable})
+     */
+    public static JScrollPane setDefaultIncrement(JScrollPane sp) {
+        if (sp.getViewport().getView() instanceof Scrollable) {
+            throw new IllegalArgumentException();
+        }
+        sp.getVerticalScrollBar().setUnitIncrement(10);
+        sp.getHorizontalScrollBar().setUnitIncrement(10);
+        return sp;
     }
 
     /**

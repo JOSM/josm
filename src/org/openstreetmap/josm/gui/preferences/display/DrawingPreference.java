@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -63,6 +64,7 @@ public class DrawingPreference implements SubPreferenceSetting {
 
         JScrollPane scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        GuiHelper.setDefaultIncrement(scrollpane);
         gui.getDisplayPreference().addSubTab(this, tr("GPS Points"), scrollpane);
         panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -166,6 +168,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
         scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        GuiHelper.setDefaultIncrement(scrollpane);
         gui.getDisplayPreference().addSubTab(this, tr("OSM Data"), scrollpane);
     }
 

@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -55,7 +56,7 @@ public final class AudioPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        JPanel audio = new JPanel(new GridBagLayout());
+        JPanel audio = new VerticallyScrollablePanel(new GridBagLayout());
 
         // audioMenuVisible
         audioMenuVisible.setSelected(!Main.pref.getBoolean("audio.menuinvisible"));

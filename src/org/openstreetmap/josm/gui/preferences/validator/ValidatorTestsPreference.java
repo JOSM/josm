@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -54,7 +55,7 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        JPanel testPanel = new JPanel(new GridBagLayout());
+        JPanel testPanel = new VerticallyScrollablePanel(new GridBagLayout());
         testPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         prefUseIgnore = new JCheckBox(tr("Use ignore list."), Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true));

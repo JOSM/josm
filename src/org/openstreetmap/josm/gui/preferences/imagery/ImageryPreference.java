@@ -120,7 +120,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 GBC.eol().fill(GBC.HORIZONTAL));
 
         p.add(new JPanel(), GBC.eol().fill(GBC.BOTH));
-        return new JScrollPane(p);
+        return GuiHelper.setDefaultIncrement(new JScrollPane(p));
     }
 
     @Override

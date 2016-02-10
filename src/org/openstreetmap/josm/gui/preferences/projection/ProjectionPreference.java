@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -291,7 +292,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * This is the panel holding all projection preferences
      */
-    private final JPanel projPanel = new JPanel(new GridBagLayout());
+    private final VerticallyScrollablePanel projPanel = new VerticallyScrollablePanel(new GridBagLayout());
 
     /**
      * The GridBagConstraints for the Panel containing the ProjectionSubPrefs.
@@ -345,8 +346,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         projPanel.add(unitsCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
         projPanel.add(GBC.glue(1, 1), GBC.std().fill(GBC.HORIZONTAL).weight(1.0, 1.0));
 
-        JScrollPane scrollpane = new JScrollPane(projPanel);
-        gui.getMapPreference().addSubTab(this, tr("Map Projection"), scrollpane);
+        gui.getMapPreference().addSubTab(this, tr("Map Projection"), projPanel.getVerticalScrollPane());
 
         selectedProjectionChanged(pc);
     }

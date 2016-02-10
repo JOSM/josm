@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControlHttpsServer;
@@ -80,7 +81,7 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
     @Override
     public void addGui(final PreferenceTabbedPane gui) {
 
-        JPanel remote = new JPanel(new GridBagLayout());
+        JPanel remote = new VerticallyScrollablePanel(new GridBagLayout());
 
         final JLabel descLabel = new JLabel("<html>"
                 + tr("Allows JOSM to be controlled from other applications, e.g. from a web browser.")
