@@ -14,18 +14,13 @@ public class ReferringRelationsBrowserModel extends AbstractListModel<Relation> 
 
     /** the relation */
     private transient Relation relation;
-    private transient List<Relation> referrers;
+    private final transient List<Relation> referrers = new ArrayList<>();
 
     /**
      * Constructs a new {@code ReferringRelationsBrowserModel}.
+     * @param relation relation
      */
-    public ReferringRelationsBrowserModel() {
-        relation = null;
-        referrers = new ArrayList<>();
-    }
-
     public ReferringRelationsBrowserModel(Relation relation) {
-        this();
         this.relation = relation;
     }
 
