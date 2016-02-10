@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.layer.markerlayer;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -67,10 +68,12 @@ public class ImageMarker extends ButtonMarker {
         });
         scale.setSelected(true);
         JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE);
-        JDialog dlg = pane.createDialog(Main.parent, imageUrl.toString());
-        dlg.setModal(false);
-        dlg.toFront();
-        dlg.setVisible(true);
+        if (!GraphicsEnvironment.isHeadless()) {
+            JDialog dlg = pane.createDialog(Main.parent, imageUrl.toString());
+            dlg.setModal(false);
+            dlg.toFront();
+            dlg.setVisible(true);
+        }
     }
 
     private static Icon loadScaledImage(URL u, int maxSize) {

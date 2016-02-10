@@ -53,6 +53,7 @@ public final class PlayHeadMarker extends Marker {
             try {
                 playHead = new PlayHeadMarker();
             } catch (Exception ex) {
+                Main.error(ex);
                 return null;
             }
         }
@@ -66,22 +67,24 @@ public final class PlayHeadMarker extends Marker {
         enabled = Main.pref.getBoolean("marker.traceaudio", true);
         if (!enabled) return;
         dropTolerance = Main.pref.getInteger("marker.playHeadDropTolerance", 50);
-        Main.map.mapView.addMouseListener(new MouseAdapter() {
-            @Override public void mousePressed(MouseEvent ev) {
-                Point p = ev.getPoint();
-                if (ev.getButton() != MouseEvent.BUTTON1 || p == null)
-                    return;
-                if (playHead.containsPoint(p)) {
-                    /* when we get a click on the marker, we need to switch mode to avoid
-                     * getting confused with other drag operations (like select) */
-                    oldMode = Main.map.mapMode;
-                    oldCoor = getCoor();
-                    PlayHeadDragMode playHeadDragMode = new PlayHeadDragMode(playHead);
-                    Main.map.selectMapMode(playHeadDragMode);
-                    playHeadDragMode.mousePressed(ev);
+        if (Main.isDisplayingMapView()) {
+            Main.map.mapView.addMouseListener(new MouseAdapter() {
+                @Override public void mousePressed(MouseEvent ev) {
+                    Point p = ev.getPoint();
+                    if (ev.getButton() != MouseEvent.BUTTON1 || p == null)
+                        return;
+                    if (playHead.containsPoint(p)) {
+                        /* when we get a click on the marker, we need to switch mode to avoid
+                         * getting confused with other drag operations (like select) */
+                        oldMode = Main.map.mapMode;
+                        oldCoor = getCoor();
+                        PlayHeadDragMode playHeadDragMode = new PlayHeadDragMode(playHead);
+                        Main.map.selectMapMode(playHeadDragMode);
+                        playHeadDragMode.mousePressed(ev);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
