@@ -194,7 +194,7 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
 
                         // add a listener if there are none, need to tell rca
                         // what number it is at
-                        ICache<K, V> ic = rcm.getCache( rca.getCacheName() );
+                        ICache<K, V> ic = rcm.getCache( rca );
                         if ( ic.getStatus() == CacheStatus.ALIVE )
                         {
                             // may need to do this more gracefully
@@ -320,7 +320,7 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
 
         // add a listener if there are none, need to tell rca what number it
         // is at
-        ICache<K, V> ic = rcm.getCache( rca.getCacheName() );
+        ICache<K, V> ic = rcm.getCache( rca );
         // by default the listener id should be 0, else it will be the
         // listener
         // Originally associated with the remote cache. either way is fine.

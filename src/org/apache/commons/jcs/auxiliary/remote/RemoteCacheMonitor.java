@@ -22,7 +22,6 @@ package org.apache.commons.jcs.auxiliary.remote;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheMonitor;
-import org.apache.commons.jcs.engine.CacheStatus;
 
 /**
  * Used to monitor and repair any failed connection for the remote cache service. By default the
@@ -39,13 +38,13 @@ public class RemoteCacheMonitor extends AbstractAuxiliaryCacheMonitor
     /**
      * Map of managers to monitor
      */
-    private ConcurrentHashMap<String, RemoteCacheManager> managers;
+    private ConcurrentHashMap<RemoteCacheManager, RemoteCacheManager> managers;
 
     /** Constructor for the RemoteCacheMonitor object */
     public RemoteCacheMonitor()
     {
         super("JCS-RemoteCacheMonitor");
-        this.managers = new ConcurrentHashMap<String, RemoteCacheManager>();
+        this.managers = new ConcurrentHashMap<RemoteCacheManager, RemoteCacheManager>();
         setIdlePeriod(30000L);
     }
 
@@ -56,7 +55,7 @@ public class RemoteCacheMonitor extends AbstractAuxiliaryCacheMonitor
      */
     public void addManager(RemoteCacheManager manager)
     {
-        this.managers.put(manager.getRegistryURL(), manager);
+        this.managers.put(manager, manager);
 
         // if not yet started, go ahead
         if (this.getState() == Thread.State.NEW)
@@ -86,27 +85,15 @@ public class RemoteCacheMonitor extends AbstractAuxiliaryCacheMonitor
         // Each RemoteCacheManager corresponds to one remote connection.
         for (RemoteCacheManager mgr : managers.values())
         {
-            // If any cache is in error, it strongly suggests all managers
-            // managed by the
-            // same RmicCacheManager instance are in error. So we fix
-            // them once and for all.
-            for (RemoteCacheNoWait<?, ?> c : mgr.caches.values())
+            // If we can't fix them, just skip and re-try in
+            // the next round.
+            if ( mgr.canFixCaches() )
             {
-                if ( c.getStatus() == CacheStatus.ERROR )
-                {
-                    RemoteCacheRestore repairer = new RemoteCacheRestore( mgr );
-                    // If we can't fix them, just skip and re-try in
-                    // the next round.
-                    if ( repairer.canFix() )
-                    {
-                        repairer.fix();
-                    }
-                    else
-                    {
-                        allright.set(false);
-                    }
-                    break;
-                }
+                mgr.fixCaches();
+            }
+            else
+            {
+                allright.set(false);
             }
         }
     }

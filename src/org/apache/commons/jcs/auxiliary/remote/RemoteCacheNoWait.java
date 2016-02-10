@@ -99,19 +99,28 @@ public class RemoteCacheNoWait<K, V>
     public RemoteCacheNoWait( IRemoteCacheClient<K, V> cache )
     {
         remoteCacheClient = cache;
-
-        CacheEventQueueFactory<K, V> factory = new CacheEventQueueFactory<K, V>();
-        this.cacheEventQueue = factory.createCacheEventQueue(
-            new CacheAdaptor<K, V>( remoteCacheClient ),
-            remoteCacheClient.getListenerId(),
-            remoteCacheClient.getCacheName(),
-            remoteCacheClient.getAuxiliaryCacheAttributes().getEventQueuePoolName(),
-            remoteCacheClient.getAuxiliaryCacheAttributes().getEventQueueType() );
+        this.cacheEventQueue = createCacheEventQueue(cache);
 
         if ( remoteCacheClient.getStatus() == CacheStatus.ERROR )
         {
             cacheEventQueue.destroy();
         }
+    }
+
+    /**
+     * Create a cache event queue from the parameters of the remote client
+     * @param client the remote client
+     */
+    private ICacheEventQueue<K, V> createCacheEventQueue( IRemoteCacheClient<K, V> client )
+    {
+        CacheEventQueueFactory<K, V> factory = new CacheEventQueueFactory<K, V>();
+        ICacheEventQueue<K, V> ceq = factory.createCacheEventQueue(
+            new CacheAdaptor<K, V>( client ),
+            client.getListenerId(),
+            client.getCacheName(),
+            client.getAuxiliaryCacheAttributes().getEventQueuePoolName(),
+            client.getAuxiliaryCacheAttributes().getEventQueueType() );
+        return ceq;
     }
 
     /**
@@ -416,10 +425,7 @@ public class RemoteCacheNoWait<K, V>
     {
         ICacheEventQueue<K, V> previousQueue = cacheEventQueue;
 
-        CacheEventQueueFactory<K, V> fact = new CacheEventQueueFactory<K, V>();
-        this.cacheEventQueue = fact.createCacheEventQueue( new CacheAdaptor<K, V>( remoteCacheClient ), remoteCacheClient
-            .getListenerId(), remoteCacheClient.getCacheName(), remoteCacheClient.getAuxiliaryCacheAttributes()
-            .getEventQueuePoolName(), remoteCacheClient.getAuxiliaryCacheAttributes().getEventQueueType() );
+        this.cacheEventQueue = createCacheEventQueue(this.remoteCacheClient);
 
         if ( previousQueue.isWorking() )
         {
