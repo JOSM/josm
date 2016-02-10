@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -43,8 +44,8 @@ public class PreferencesReader {
     /**
      * Validate the XML.
      * @param f the file
-     * @throws java.io.IOException
-     * @throws org.xml.sax.SAXException
+     * @throws IOException if any I/O error occurs
+     * @throws SAXException if any SAX error occurs
      */
     public static void validateXML(File f) throws IOException, SAXException {
         try (BufferedReader in = Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8)) {
@@ -55,8 +56,8 @@ public class PreferencesReader {
     /**
      * Validate the XML.
      * @param in the {@link Reader}
-     * @throws java.io.IOException
-     * @throws org.xml.sax.SAXException
+     * @throws IOException if any I/O error occurs
+     * @throws SAXException if any SAX error occurs
      */
     public static void validateXML(Reader in) throws IOException, SAXException {
         try (InputStream xsdStream = new CachedFile("resource://data/preferences.xsd").getInputStream()) {
@@ -69,8 +70,8 @@ public class PreferencesReader {
     /**
      * Parse preferences XML.
      * @param f the file
-     * @throws IOException
-     * @throws XMLStreamException
+     * @throws IOException if any I/O error occurs
+     * @throws XMLStreamException if any XML stream error occurs
      */
     public void fromXML(File f) throws IOException, XMLStreamException {
         try (BufferedReader in = Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8)) {
@@ -81,7 +82,7 @@ public class PreferencesReader {
     /**
      * Parse preferences XML.
      * @param in the {@link Reader}
-     * @throws XMLStreamException
+     * @throws XMLStreamException if any XML stream error occurs
      */
     public void fromXML(Reader in) throws XMLStreamException {
         this.parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
