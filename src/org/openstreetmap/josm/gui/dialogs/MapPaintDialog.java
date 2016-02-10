@@ -175,9 +175,7 @@ public class MapPaintDialog extends ToggleDialog {
         InputMapUtils.addSpacebarAction(tblStyles, onoffAction);
 
         JScrollPane sp = new JScrollPane(p);
-        // putting JTable directly in a JScrollPane works nicely, but with
-        // JPanel wrapper, the default scroll increment is too small
-        sp.getVerticalScrollBar().setUnitIncrement(16);
+        GuiHelper.setDefaultIncrement(sp);
         createLayout(sp, false, Arrays.asList(
                 new SideButton(onoffAction, false),
                 new SideButton(upAction, false),

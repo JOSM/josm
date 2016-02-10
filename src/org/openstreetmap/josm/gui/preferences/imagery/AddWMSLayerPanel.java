@@ -60,7 +60,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         add(new JScrollPane(tree.getLayerTree()), GBC.eol().fill().weight(1, 100));
 
         showBounds.setEnabled(false);
-        add(new JScrollPane(showBounds), GBC.eop().fill());
+        add(showBounds, GBC.eop().fill());
 
         add(new JLabel(tr("3. Select image format")), GBC.eol());
         add(formats, GBC.eol().fill());
