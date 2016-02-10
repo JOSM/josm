@@ -165,7 +165,7 @@ public class CredentialDialog extends JDialog {
             tfPassword.addFocusListener(new SelectAllOnFocusHandler());
             tfUserName.addKeyListener(new TFKeyListener(owner, tfUserName, tfPassword));
             tfPassword.addKeyListener(new TFKeyListener(owner, tfPassword, tfUserName));
-            cbSaveCredentials =  new JCheckBox(owner.saveUsernameAndPasswordCheckboxText);
+            cbSaveCredentials = new JCheckBox(owner != null ? owner.saveUsernameAndPasswordCheckboxText : "");
 
             setLayout(new GridBagLayout());
             GridBagConstraints gc = new GridBagConstraints();
