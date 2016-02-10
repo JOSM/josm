@@ -1324,8 +1324,6 @@ public class Preferences {
         putCollection("pluginmanager.sites", sites);
     }
 
-
-
     private class SettingToXml implements SettingVisitor {
         private final StringBuilder b;
         private final boolean noPassword;
