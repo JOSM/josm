@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
@@ -235,6 +236,32 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             return Float.compare(this.style.objectZIndex, other.style.objectZIndex);
         }
     }
+
+    /**
+     * Saves benchmark data for tests.
+     */
+    public static class BenchmarkData {
+        public long generateTime;
+        public long sortTime;
+        public long drawTime;
+        public Map<Class<? extends StyleElement>, Integer> styleElementCount;
+        public boolean skipDraw;
+
+        private void recordElementStats(List<StyleRecord> srs) {
+            styleElementCount = new HashMap<>();
+            for (StyleRecord r : srs) {
+                Class<? extends StyleElement> klass = r.style.getClass();
+                Integer count = styleElementCount.get(klass);
+                if (count == null) {
+                    count = 0;
+                }
+                styleElementCount.put(klass, count + 1);
+            }
+
+        }
+    }
+    /* can be set by tests, if detailed benchmark data is requested */
+    public BenchmarkData benchmarkData = null;
 
     private static Map<Font, Boolean> IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = new HashMap<>();
 
@@ -1867,13 +1894,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     public void render(final DataSet data, boolean renderVirtualNodes, Bounds bounds) {
         BBox bbox = bounds.toBBox();
         getSettings(renderVirtualNodes);
-        boolean benchmark = Main.isTraceEnabled() || Main.pref.getBoolean("mappaint.render.benchmark", false);
+        boolean benchmarkOutput = Main.isTraceEnabled() || Main.pref.getBoolean("mappaint.render.benchmark", false);
+        boolean benchmark = benchmarkOutput || benchmarkData != null;
 
         data.getReadLock().lock();
         try {
             highlightWaySegments = data.getHighlightedWaySegments();
 
-            long timeStart = 0, timePhase1 = 0, timeFinished;
+            long timeStart = 0, timeGenerateDone = 0, timeSortingDone = 0, timeFinished;
             if (benchmark) {
                 timeStart = System.currentTimeMillis();
                 System.err.print("BENCHMARK: rendering ");
@@ -1896,11 +1924,25 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     Math.max(100, (nodes.size() + ways.size()) / THREAD_POOL.getParallelism() / 3)));
 
             if (benchmark) {
-                timePhase1 = System.currentTimeMillis();
-                System.err.print("phase 1 (calculate styles): " + Utils.getDurationString(timePhase1 - timeStart));
+                timeGenerateDone = System.currentTimeMillis();
+                if (benchmarkOutput) {
+                    System.err.print("phase 1 (calculate styles): " + Utils.getDurationString(timeGenerateDone - timeStart));
+                }
+                if (benchmarkData != null) {
+                    benchmarkData.generateTime = timeGenerateDone - timeStart;
+                }
             }
 
             Collections.sort(allStyleElems); // TODO: try parallel sort when switching to Java 8
+
+            if (benchmarkData != null) {
+                timeSortingDone = System.currentTimeMillis();
+                benchmarkData.sortTime = timeSortingDone - timeGenerateDone;
+                if (benchmarkData.skipDraw) {
+                    benchmarkData.recordElementStats(allStyleElems);
+                    return;
+                }
+            }
 
             for (StyleRecord r : allStyleElems) {
                 r.style.paintPrimitive(
@@ -1915,9 +1957,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
             if (benchmark) {
                 timeFinished = System.currentTimeMillis();
-                System.err.println("; phase 2 (draw): " + Utils.getDurationString(timeFinished - timePhase1) +
-                    "; total: " + Utils.getDurationString(timeFinished - timeStart) +
-                    " (scale: " + circum + " zoom level: " + Selector.GeneralSelector.scale2level(circum) + ')');
+                if (benchmarkData != null) {
+                    benchmarkData.drawTime = timeFinished - timeGenerateDone;
+                    benchmarkData.recordElementStats(allStyleElems);
+                }
+                if (benchmarkOutput) {
+                    System.err.println("; phase 2 (draw): " + Utils.getDurationString(timeFinished - timeGenerateDone) +
+                        "; total: " + Utils.getDurationString(timeFinished - timeStart) +
+                        " (scale: " + circum + " zoom level: " + Selector.GeneralSelector.scale2level(circum) + ')');
+                }
             }
 
             drawVirtualNodes(data, bbox);

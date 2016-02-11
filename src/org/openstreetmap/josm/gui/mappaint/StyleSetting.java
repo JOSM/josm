@@ -59,12 +59,7 @@ public interface StyleSetting {
             Action a = new AbstractAction(label) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    boolean b = item.isSelected();
-                    if (b == def) {
-                        Main.pref.put(prefKey, null);
-                    } else {
-                        Main.pref.put(prefKey, b);
-                    }
+                    setValue(item.isSelected());
                     Main.worker.submit(new MapPaintStyles.MapPaintStyleLoader(Arrays.asList(parentStyle)));
                 }
             };
@@ -93,6 +88,18 @@ public interface StyleSetting {
             String val = Main.pref.get(prefKey, null);
             if (val == null) return def;
             return Boolean.valueOf(val);
+        }
+
+        public void setValue(Object o) {
+            if (o == null || !(o instanceof Boolean)) {
+                throw new IllegalArgumentException();
+            }
+            boolean b = (Boolean) o;
+            if (b == def) {
+                Main.pref.put(prefKey, null);
+            } else {
+                Main.pref.put(prefKey, b);
+            }
         }
     }
 }

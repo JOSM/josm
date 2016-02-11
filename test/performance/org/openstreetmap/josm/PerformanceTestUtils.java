@@ -3,6 +3,8 @@ package org.openstreetmap.josm;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import org.openstreetmap.josm.io.XmlWriter;
+
 /**
  * Timer utilities for performance tests.
  * @author Michael Zangl
@@ -13,8 +15,8 @@ public final class PerformanceTestUtils {
      * @author Michael Zangl
      */
     public static class PerformanceTestTimer {
-        private String name;
-        private long time;
+        private final String name;
+        private final long time;
         private boolean measurementPlotsPlugin = false;
 
         protected PerformanceTestTimer(String name) {
@@ -36,7 +38,7 @@ public final class PerformanceTestUtils {
         public void done() {
             long dTime = (System.nanoTime() - time) / 1000000;
             if (measurementPlotsPlugin) {
-                System.out.println(String.format("<measurement><name>%s (ms)</name><value>%.1f</value></measurement>", name, (double) dTime));
+                measurementPlotsPluginOutput(name + "(ms)", dTime);
             } else {
                 System.out.println("TIMER " + name + ": " + dTime + "ms");
             }
@@ -56,5 +58,18 @@ public final class PerformanceTestUtils {
         System.gc();
         System.runFinalization();
         return new PerformanceTestTimer(name);
+    }
+
+    /**
+     * Emit one data value for the Jenkins Measurement Plots Plugin.
+     * 
+     * The plugin collects the values over multiple builds and plots them in a diagram.
+     * 
+     * @see https://wiki.jenkins-ci.org/display/JENKINS/Measurement+Plots+Plugin
+     * @param name the name / title of the measurement
+     * @param value the value
+     */
+    public static void measurementPlotsPluginOutput(String name, double value) {
+        System.out.println("<measurement><name>"+XmlWriter.encode(name)+"</name><value>"+value+"</value></measurement>");
     }
 }
