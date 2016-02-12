@@ -60,8 +60,7 @@ public class CustomProjection extends AbstractProjection {
     protected String code;
     protected String cacheDir;
     protected Bounds bounds;
-    private double metersPerUnit;
-    private double metersPerUnitNoDegrees;
+    private double metersPerUnitWMTS;
     private String axis = "enu"; // default axis orientation is East, North, Up
 
     /**
@@ -297,22 +296,22 @@ public class CustomProjection extends AbstractProjection {
             if (s != null) {
                 s = Utils.strip(s, "\"");
                 if (UNITS_TO_METERS.containsKey(s)) {
-                    this.metersPerUnit = UNITS_TO_METERS.get(s);
-                    this.metersPerUnitNoDegrees = this.metersPerUnit;
+                    this.toMeter = UNITS_TO_METERS.get(s);
+                    this.metersPerUnitWMTS = this.toMeter;
                     defaultUnits = false;
                 } else {
-                    Main.warn("No metersPerUnit found for: " + s);
+                    throw new ProjectionConfigurationException(tr("No unit found for: {0}", s));
                 }
             }
             s = parameters.get(Param.to_meter.key);
             if (s != null) {
-                this.metersPerUnit = parseDouble(s, Param.to_meter.key);
-                this.metersPerUnitNoDegrees = this.metersPerUnit;
+                this.toMeter = parseDouble(s, Param.to_meter.key);
+                this.metersPerUnitWMTS = this.toMeter;
                 defaultUnits = false;
             }
             if (defaultUnits) {
-                this.metersPerUnit = proj.isGeographic() ? METER_PER_UNIT_DEGREE : 1;
-                this.metersPerUnitNoDegrees = 1;
+                this.toMeter = 1;
+                this.metersPerUnitWMTS = proj.isGeographic() ? METER_PER_UNIT_DEGREE : 1;
             }
             s = parameters.get(Param.axis.key);
             if (s != null) {
@@ -711,19 +710,18 @@ public class CustomProjection extends AbstractProjection {
         return name != null ? name : tr("Custom Projection");
     }
 
+    /**
+     * Factor to convert units of east/north coordinates to meters.
+     * 
+     * When east/north coordinates are in degrees (geographic CRS), the scale
+     * at the equator is taken, i.e. 360 degrees corresponds to the length of
+     * the equator in meters.
+     * 
+     * @return factor to convert units to meter
+     */
     @Override
     public double getMetersPerUnit() {
-        return metersPerUnit;
-    }
-
-    /**
-     * Like {@link #getMetersPerUnit()}, but has default value 1 for a
-     * geographic CRS. I.e. by default, degrees are not converted to meters,
-     * but left alone (similar to proj.4 behavior).
-     * @return meters per unit of projection
-     */
-    public double getMetersPerUnitProj() {
-        return metersPerUnitNoDegrees;
+        return metersPerUnitWMTS;
     }
 
     @Override
