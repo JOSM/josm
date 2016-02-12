@@ -6474,7 +6474,7 @@
         </item> <!-- Range -->
     </group> <!-- Military -->
     <group name="Power" icon="styles/standard/power/power.svg">
-        <item name="Power Plant" icon="styles/standard/power/plant.svg" type="closedway,multipolygon" preset_name_label="true">
+        <item name="Power Plant" icon="styles/standard/power/plant.svg" type="closedway,relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=plant"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=plant"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=plant"
