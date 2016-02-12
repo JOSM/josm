@@ -210,7 +210,10 @@ public class MapRendererPerformanceTest {
                     drawTimes.add(data.drawTime);
                     totalTimes.add(data.generateTime + data.sortTime + data.drawTime);
                 }
-                dump(data);
+                if (i == 1) {
+                    dumpElementCount(data);
+                }
+                dumpTimes(data);
                 if (dumpImage && i == noTotal) {
                     dumpRenderedImage(label);
                 }
@@ -306,13 +309,19 @@ public class MapRendererPerformanceTest {
         ImageIO.write(img, "png", outputfile);
     }
 
-    public static void dump(StyledMapRenderer.BenchmarkData bd) {
-        System.out.println("generate style elements: " + bd.generateTime);
-        System.out.println("sort style elements:     " + bd.sortTime);
-        System.out.println("draw style elements:     " + bd.drawTime);
-        System.out.print("rendered elements:");
+    public static void dumpTimes(StyledMapRenderer.BenchmarkData bd) {
+        System.out.print(String.format("gen. %3d, sort %3d, draw %3d\n", bd.generateTime, bd.sortTime, bd.drawTime));
+    }
+
+    public static void dumpElementCount(StyledMapRenderer.BenchmarkData bd) {
+        String sep = null;
         for (Map.Entry<Class<? extends StyleElement>, Integer> e : bd.styleElementCount.entrySet()) {
-            System.out.print(" "+e.getKey().getSimpleName()+"="+e.getValue());
+            if (sep == null) {
+                sep = " ";
+            } else {
+                System.out.print(sep);
+            }
+            System.out.print(e.getKey().getSimpleName().replace("Element", "") + ":" + e.getValue());
         }
         System.out.println();
     }
