@@ -70,6 +70,6 @@ public final class PerformanceTestUtils {
      * @param value the value
      */
     public static void measurementPlotsPluginOutput(String name, double value) {
-        System.out.println("<measurement><name>"+XmlWriter.encode(name)+"</name><value>"+value+"</value></measurement>");
+        System.err.println("<measurement><name>"+XmlWriter.encode(name)+"</name><value>"+value+"</value></measurement>");
     }
 }
