@@ -1904,7 +1904,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             long timeStart = 0, timeGenerateDone = 0, timeSortingDone = 0, timeFinished;
             if (benchmark) {
                 timeStart = System.currentTimeMillis();
-                System.err.print("BENCHMARK: rendering ");
+                if (benchmarkOutput) {
+                    System.err.print("BENCHMARK: rendering ");
+                }
             }
 
             List<Node> nodes = data.searchNodes(bbox);
