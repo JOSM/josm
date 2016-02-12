@@ -292,7 +292,7 @@ public class ProjectionRefTest {
                 Assert.fail("definitions for " + ref.code + " do not match");
             }
             Projection proj = Projections.getProjectionByCode(ref.code);
-            double scale = ((CustomProjection) proj).getMetersPerUnitProj();
+            double scale = ((CustomProjection) proj).getToMeter();
             for (Pair<LatLon, EastNorth> p : ref.data) {
                 LatLon ll = p.a;
                 EastNorth enRef = p.b;
@@ -302,6 +302,7 @@ public class ProjectionRefTest {
                 if (proj.switchXY()) {
                     en = new EastNorth(en.north(), en.east());
                 }
+                en = new EastNorth(en.east() * scale, en.north() * scale); // convert to meter
                 final double EPSILON_EN = 1e-2; // 1cm
                 if (!isEqual(enRef, en, EPSILON_EN, true)) {
                     String errorEN = String.format("%s (%s): Projecting latlon(%s,%s):%n" +

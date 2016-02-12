@@ -254,7 +254,6 @@ public class MultiMap<A, B> {
     }
 
     @Override
-
     public String toString() {
         List<String> entries = new ArrayList<>(map.size());
         for (Entry<A, Set<B>> entry : map.entrySet()) {

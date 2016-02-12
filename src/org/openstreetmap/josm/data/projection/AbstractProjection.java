@@ -27,11 +27,12 @@ public abstract class AbstractProjection implements Projection {
     protected Ellipsoid ellps;
     protected Datum datum;
     protected Proj proj;
-    protected double x0;       /* false easting (in meters) */
-    protected double y0;       /* false northing (in meters) */
-    protected double lon0;     /* central meridian */
-    protected double pm;       /* prime meridian */
-    protected double k0 = 1.0; /* general scale factor */
+    protected double x0;            /* false easting (in meters) */
+    protected double y0;            /* false northing (in meters) */
+    protected double lon0;          /* central meridian */
+    protected double pm;            /* prime meridian */
+    protected double k0 = 1.0;      /* general scale factor */
+    protected double toMeter = 1.0; /* switch from meters to east/north coordinate units */
 
     private volatile ProjectionBounds projectionBoundsBox;
 
@@ -67,16 +68,34 @@ public abstract class AbstractProjection implements Projection {
         return k0;
     }
 
+    /**
+     * Get the factor that converts meters to intended units of east/north coordinates.
+     *
+     * For projected coordinate systems, the semi-major axis of the ellipsoid is
+     * always given in meters, which means the preliminary projection result will
+     * be in meters as well. This factor is used to convert to the intended units
+     * of east/north coordinates (e.g. feet in the US).
+     * 
+     * For geographic coordinate systems, the preliminary "projection" result will
+     * be in degrees, so there is no reason to convert anything and this factor
+     * will by 1 by default.
+     *
+     * @return factor that converts meters to intended units of east/north coordinates
+     */
+    public final double getToMeter() {
+        return toMeter;
+    }
+
     @Override
     public EastNorth latlon2eastNorth(LatLon ll) {
         ll = datum.fromWGS84(ll);
         double[] en = proj.project(Math.toRadians(ll.lat()), Math.toRadians(LatLon.normalizeLon(ll.lon() - lon0 - pm)));
-        return new EastNorth(ellps.a * k0 * en[0] + x0, ellps.a * k0 * en[1] + y0);
+        return new EastNorth((ellps.a * k0 * en[0] + x0) / toMeter, (ellps.a * k0 * en[1] + y0) / toMeter);
     }
 
     @Override
     public LatLon eastNorth2latlon(EastNorth en) {
-        double[] latlon_rad = proj.invproject((en.east() - x0) / ellps.a / k0, (en.north() - y0) / ellps.a / k0);
+        double[] latlon_rad = proj.invproject((en.east() * toMeter - x0) / ellps.a / k0, (en.north() * toMeter - y0) / ellps.a / k0);
         LatLon ll = new LatLon(Math.toDegrees(latlon_rad[0]), LatLon.normalizeLon(Math.toDegrees(latlon_rad[1]) + lon0 + pm));
         return datum.toWGS84(ll);
     }
