@@ -9679,7 +9679,7 @@
                 <role key="inner" text="inner segment" requisite="optional" type="way,closedway" />
             </roles>
         </item> <!-- Multipolygon -->
-        <item name="Boundary" icon="presets/boundaries.png" type="relation" preset_name_label="true">
+        <item name="Boundary" icon="presets/boundaries.png" type="relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:boundary"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:boundary"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Relation:boundary"
