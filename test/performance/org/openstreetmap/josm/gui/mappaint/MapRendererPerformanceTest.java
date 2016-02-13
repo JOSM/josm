@@ -67,6 +67,7 @@ public class MapRendererPerformanceTest {
             return name().toLowerCase();
         }
     }
+
     private static final EnumMap<Feature, BooleanStyleSetting> filters = new EnumMap<>(Feature.class);
 
     /**
@@ -111,7 +112,7 @@ public class MapRendererPerformanceTest {
         }
 
         MapCSSStyleSource defaultStyle = null;
-        for (int i = 0; i< sources.size(); i++) {
+        for (int i = 0; i < sources.size(); i++) {
             StyleSource s = sources.get(i);
             if ("resource://styles/standard/elemstyles.mapcss".equals(s.url)) {
                 defaultStyle = (MapCSSStyleSource) s;
@@ -198,7 +199,9 @@ public class MapRendererPerformanceTest {
                 System.runFinalization();
                 try {
                     Thread.sleep(300);
-                } catch (InterruptedException ex) {}
+                } catch (InterruptedException ex) {
+                    Main.warn(ex);
+                }
                 StyledMapRenderer.BenchmarkData data = new StyledMapRenderer.BenchmarkData();
                 data.skipDraw = skipDraw;
                 renderer.benchmarkData = data;
