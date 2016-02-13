@@ -1085,7 +1085,7 @@ public class Preferences {
                 Entry e = (Entry) o;
                 Set evalue = (Set) e.getValue();
                 JsonArrayBuilder a = Json.createArrayBuilder();
-                for (Object evo: (Collection) evalue) {
+                for (Object evo: evalue) {
                     a.add(evo.toString());
                 }
                 object.add(e.getKey().toString(), a.build());
@@ -1417,6 +1417,7 @@ public class Preferences {
      * Removes obsolete preference settings. If you throw out a once-used preference
      * setting, add it to the list here with an expiry date (written as comment). If you
      * see something with an expiry date in the past, remove it from the list.
+     * @param loadedVersion JOSM version when the preferences file was written
      */
     private void removeObsolete(int loadedVersion) {
         // drop this block march 2016

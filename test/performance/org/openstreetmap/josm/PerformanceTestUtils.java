@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import org.openstreetmap.josm.io.XmlWriter;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Timer utilities for performance tests.
@@ -62,12 +62,12 @@ public final class PerformanceTestUtils {
 
     /**
      * Emit one data value for the Jenkins Measurement Plots Plugin.
-     * 
+     *
      * The plugin collects the values over multiple builds and plots them in a diagram.
-     * 
-     * @see https://wiki.jenkins-ci.org/display/JENKINS/Measurement+Plots+Plugin
+     *
      * @param name the name / title of the measurement
      * @param value the value
+     * @see https://wiki.jenkins-ci.org/display/JENKINS/Measurement+Plots+Plugin
      */
     public static void measurementPlotsPluginOutput(String name, double value) {
         System.err.println("<measurement><name>"+XmlWriter.encode(name)+"</name><value>"+value+"</value></measurement>");
