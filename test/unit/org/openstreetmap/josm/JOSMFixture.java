@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
@@ -111,6 +112,10 @@ public class JOSMFixture {
             }
             if (Main.map == null) {
                 Main.main.createMapFrame(null, null);
+            } else {
+                for (Layer l: Main.map.mapView.getAllLayers()) {
+                    Main.map.mapView.removeLayer(l);
+                }
             }
         }
     }

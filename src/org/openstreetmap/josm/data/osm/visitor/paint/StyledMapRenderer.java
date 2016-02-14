@@ -1964,7 +1964,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     benchmarkData.recordElementStats(allStyleElems);
                 }
                 if (benchmarkOutput) {
-                    System.err.println("; phase 2 (draw): " + Utils.getDurationString(benchmarkData.drawTime) +
+                    System.err.println("; phase 2 (draw): " + Utils.getDurationString(timeFinished - timeGenerateDone) +
                         "; total: " + Utils.getDurationString(timeFinished - timeStart) +
                         " (scale: " + circum + " zoom level: " + Selector.GeneralSelector.scale2level(circum) + ')');
                 }
