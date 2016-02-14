@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm-notes>
+  <note id="433699" lat="43.5825534" lon="1.435698" created_at="2015-09-12T23:41:20+02" >
+    <comment action="opened" timestamp="2015-09-12T23:41:20+02" is_new="false" >point d&apos;eau</comment>
+  </note>
+  <note id="498305" lat="43.3797837" lon="1.1757249" created_at="2016-01-14T20:23:22+01" closed_at="2016-02-09T10:12:38+01" >
+    <comment action="opened" timestamp="2016-01-14T20:23:22+01" is_new="false" >Place des marronniers - Boulodromes</comment>
+    <comment action="closed" timestamp="2016-02-09T10:12:38+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+  <note id="449712" lat="43.6216075" lon="1.2932539" created_at="2015-10-11T16:26:46+02" >
+    <comment action="opened" timestamp="2015-10-11T16:26:46+02" is_new="false" >Le marqueur se trouve du mauvais coté de la voie de chemin de fer, ce qui incite a prendre la rue du 19 mars. &#xA;L&apos;atelier Bricol&apos; se déroule dans le bâtiment de l&apos;ancienne gare devenue maintenant le Centre Social et Culturel de la ville de Pibrac.Veuillez donc emprunter la voie parallèle à  la rue du 19 Mars menant à la gare de Pibrac dite &quot;Impasse de la gare&quot;. </comment>
+    <comment action="commented" timestamp="2015-10-11T23:05:26+02" uid="1075986" user="the_knife" is_new="false" >qu&apos;y a-t-il à améliorer sur la carte ??</comment>
+  </note>
+  <note id="493904" lat="43.4361974" lon="1.6606881" created_at="2016-01-07T00:45:57+01" >
+    <comment action="opened" timestamp="2016-01-07T00:45:57+01" uid="2919565" user="AndreLabouche" is_new="false" >Place de la Mairie</comment>
+    <comment action="commented" timestamp="2016-01-07T15:09:35+01" uid="3506955" user="Acouphenix" is_new="false" >D&apos;après le cadastre, c&apos;est avenue de la mairie jusqu&apos;au chemin des berges. Le nom de la rue est affiché sur une panneau? </comment>
+  </note>
+  <note id="498296" lat="43.3789805" lon="1.1776078" created_at="2016-01-14T20:18:20+01" closed_at="2016-02-09T09:41:24+01" >
+    <comment action="opened" timestamp="2016-01-14T20:18:21+01" is_new="false" >Pizzeria &quot;La Tute à Pizza&quot;</comment>
+    <comment action="closed" timestamp="2016-02-09T09:41:24+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+  <note id="498282" lat="43.3724512" lon="1.1752099" created_at="2016-01-14T20:12:43+01" closed_at="2016-02-09T10:40:07+01" >
+    <comment action="opened" timestamp="2016-01-14T20:12:43+01" is_new="false" >Ecole maternelle</comment>
+    <comment action="closed" timestamp="2016-02-09T10:40:07+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+  <note id="176065" lat="43.5263896" lon="1.3832373" created_at="2014-05-29T13:20:48+02" >
+    <comment action="opened" timestamp="2014-05-29T13:20:48+02" uid="635268" user="Percherie" is_new="false" >limite 90 2 partir ici </comment>
+  </note>
+  <note id="465082" lat="43.6282884" lon="1.4825696" created_at="2015-11-09T09:44:20+01" >
+    <comment action="opened" timestamp="2015-11-09T09:44:20+01" is_new="false" >Covoiturage 1.2.3.Climat</comment>
+  </note>
+  <note id="498301" lat="43.3788596" lon="1.1765134" created_at="2016-01-14T20:20:07+01" closed_at="2016-02-09T10:30:25+01" >
+    <comment action="opened" timestamp="2016-01-14T20:20:07+01" is_new="false" >Bacs de récupération du verre</comment>
+    <comment action="closed" timestamp="2016-02-09T10:30:25+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+  <note id="498287" lat="43.378998" lon="1.1775246" created_at="2016-01-14T20:14:36+01" closed_at="2016-02-09T09:41:15+01" >
+    <comment action="opened" timestamp="2016-01-14T20:14:36+01" is_new="false" >Boulangerie Dorléac</comment>
+    <comment action="closed" timestamp="2016-02-09T09:41:15+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+  <note id="498306" lat="43.3800975" lon="1.1757115" created_at="2016-01-14T20:23:38+01" closed_at="2016-02-09T09:54:56+01" >
+    <comment action="opened" timestamp="2016-01-14T20:23:38+01" is_new="false" >WC publics</comment>
+    <comment action="closed" timestamp="2016-02-09T09:54:56+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+  <note id="250235" lat="43.5757896" lon="1.0967767" created_at="2014-10-02T10:45:31+02" >
+    <comment action="opened" timestamp="2014-10-02T10:45:31+02" uid="338299" user="derclemi" is_new="false" >This is a paved road. Length of paved part and type of road need to be checked and updated in OSM.</comment>
+    <comment action="commented" timestamp="2014-10-02T11:36:39+02" uid="704348" user="JBacc1" is_new="false" >De où à où ?</comment>
+    <comment action="commented" timestamp="2015-08-31T21:04:19+02" uid="338299" user="derclemi" is_new="false" >I don&apos;t know, anymore. Could someone local check from where to where, please?</comment>
+  </note>
+  <note id="498292" lat="43.3793021" lon="1.1768326" created_at="2016-01-14T20:16:43+01" closed_at="2016-02-09T09:46:20+01" >
+    <comment action="opened" timestamp="2016-01-14T20:16:43+01" is_new="false" >Cabinet médical</comment>
+    <comment action="closed" timestamp="2016-02-09T09:46:20+01" uid="1816335" user="SoulReaper" is_new="false" ></comment>
+  </note>
+  <note id="483073" lat="43.5526654" lon="1.1905226" created_at="2015-12-14T15:21:54+01" >
+    <comment action="opened" timestamp="2015-12-14T15:21:54+01" is_new="false" >erreur sur le nom de la rue, la route de Lias commence plus loin (à l&apos;embrachement plus haut). Avant il s&apos;agit de l&apos;Avenue du 19 Mars 1962.</comment>
+  </note>
+  <note id="424226" lat="43.6676954" lon="1.3998674" created_at="2015-08-29T17:34:48+02" >
+    <comment action="opened" timestamp="2015-08-29T17:34:48+02" uid="148173" user="orhygine" is_new="false" >Road cuted. Needs survey.</comment>
+    <comment action="closed" timestamp="2016-01-30T20:04:00+01" uid="1816335" user="SoulReaper" is_new="false" >route supprimé &#xA;</comment>
+    <comment action="reopened" timestamp="2016-01-30T21:22:01+01" uid="1816335" user="SoulReaper" is_new="false" ></comment>
+    <comment action="closed" timestamp="2016-01-30T21:22:38+01" uid="1816335" user="SoulReaper" is_new="false" >car elle est plus visible sur othophotoplan de 2015 a vérifier&#xA;</comment>
+    <comment action="reopened" timestamp="2016-01-30T21:22:48+01" uid="1816335" user="SoulReaper" is_new="false" ></comment>
+  </note>
+  <note id="498297" lat="43.3790292" lon="1.1780262" created_at="2016-01-14T20:18:34+01" closed_at="2016-02-09T09:35:10+01" >
+    <comment action="opened" timestamp="2016-01-14T20:18:34+01" is_new="false" >Kinésithérapeute</comment>
+    <comment action="closed" timestamp="2016-02-09T09:35:10+01" uid="1816335" user="SoulReaper" is_new="false" >ajout du kiné à 60m au sud sur le bord de la D28&#xA;</comment>
+  </note>
+  <note id="498283" lat="43.3731063" lon="1.1740297" created_at="2016-01-14T20:13:05+01" >
+    <comment action="opened" timestamp="2016-01-14T20:13:05+01" is_new="false" >Terrain de football et de rugby</comment>
+  </note>
+  <note id="494375" lat="43.3238703" lon="1.4971179" created_at="2016-01-07T17:32:58+01" >
+    <comment action="opened" timestamp="2016-01-07T17:32:58+01" uid="3220544" user="chuck_fr" is_new="false" >ce radar est à double sens</comment>
+  </note>
+  <note id="498302" lat="43.3842244" lon="1.1846834" created_at="2016-01-14T20:20:58+01" closed_at="2016-02-09T08:55:34+01" >
+    <comment action="opened" timestamp="2016-01-14T20:20:59+01" is_new="false" >Chausson matériaux</comment>
+    <comment action="closed" timestamp="2016-02-09T08:55:05+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+    <comment action="reopened" timestamp="2016-02-09T08:55:08+01" uid="1816335" user="SoulReaper" is_new="false" ></comment>
+    <comment action="closed" timestamp="2016-02-09T08:55:34+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté sur le batiment</comment>
+  </note>
+  <note id="498288" lat="43.3796745" lon="1.1769265" created_at="2016-01-14T20:14:54+01" closed_at="2016-02-09T09:48:08+01" >
+    <comment action="opened" timestamp="2016-01-14T20:14:54+01" is_new="false" >Salon de coiffure</comment>
+    <comment action="commented" timestamp="2016-01-16T11:22:22+01" uid="1075986" user="the_knife" is_new="false" >sûr de l&apos;endroit ?</comment>
+    <comment action="closed" timestamp="2016-02-09T09:48:08+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté a 20m au nord ouest</comment>
+  </note>
+  <note id="498274" lat="43.4527475" lon="1.3328862" created_at="2016-01-14T20:06:06+01" >
+    <comment action="opened" timestamp="2016-01-14T20:06:06+01" is_new="false" >Ecole maternelle Le Barry</comment>
+  </note>
+  <note id="480711" lat="43.5592161" lon="1.1711597" created_at="2015-12-09T21:43:55+01" >
+    <comment action="opened" timestamp="2015-12-09T21:43:55+01" is_new="false" >ENTREPRISE SELVA</comment>
+  </note>
+  <note id="498307" lat="43.3795556" lon="1.1765751" created_at="2016-01-14T20:24:13+01" >
+    <comment action="opened" timestamp="2016-01-14T20:24:13+01" is_new="false" >Cabine téléphonique</comment>
+    <comment action="commented" timestamp="2016-02-09T09:49:54+01" uid="1816335" user="SoulReaper" is_new="false" >à vérifier sur place</comment>
+  </note>
+  <note id="498293" lat="43.379384" lon="1.1775193" created_at="2016-01-14T20:17:02+01" closed_at="2016-02-09T09:38:13+01" >
+    <comment action="opened" timestamp="2016-01-14T20:17:02+01" is_new="false" >Boucherie</comment>
+    <comment action="closed" timestamp="2016-02-09T09:38:13+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+  <note id="508552" lat="43.6555269" lon="1.482929" created_at="2016-02-05T12:21:14+01" >
+    <comment action="opened" timestamp="2016-02-05T12:21:14+01" is_new="false" >École maternelle publique Belbèze les Toulouse</comment>
+    <comment action="commented" timestamp="2016-02-05T16:03:23+01" uid="1816335" user="SoulReaper" is_new="false" >école déjà présente, pouvez vous en dire plus sur votre remarque ? </comment>
+  </note>
+  <note id="498298" lat="43.3788693" lon="1.1784902" created_at="2016-01-14T20:18:53+01" >
+    <comment action="opened" timestamp="2016-01-14T20:18:53+01" is_new="false" >Coopérative agricole</comment>
+  </note>
+  <note id="498284" lat="43.3736074" lon="1.1756095" created_at="2016-01-14T20:13:24+01" >
+    <comment action="opened" timestamp="2016-01-14T20:13:24+01" is_new="false" >Skate-park</comment>
+    <comment action="commented" timestamp="2016-02-09T10:35:44+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté d&apos;un citystade, skate park a vérifier</comment>
+  </note>
+  <note id="498303" lat="43.3792183" lon="1.1770177" created_at="2016-01-14T20:22:56+01" closed_at="2016-02-09T09:42:42+01" >
+    <comment action="opened" timestamp="2016-01-14T20:22:56+01" is_new="false" >Bar &quot;Chez Jean&quot;</comment>
+    <comment action="closed" timestamp="2016-02-09T09:42:42+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+  <note id="498289" lat="43.379733" lon="1.1767522" created_at="2016-01-14T20:15:04+01" closed_at="2016-02-09T09:48:23+01" >
+    <comment action="opened" timestamp="2016-01-14T20:15:04+01" is_new="false" >Boulangerie</comment>
+    <comment action="commented" timestamp="2016-01-16T11:22:22+01" uid="1075986" user="the_knife" is_new="false" >sûr de l&apos;endroit ?</comment>
+    <comment action="closed" timestamp="2016-02-09T09:48:23+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté à 20m au nord ouest</comment>
+  </note>
+  <note id="464422" lat="43.7043535" lon="1.8105984" created_at="2015-11-07T21:01:34+01" >
+    <comment action="opened" timestamp="2015-11-07T21:01:34+01" is_new="false" >eu que ro inruedu castellou minha familia &#xA;eutenho . debora mica bina junior julia peixoto nois mos ri o u tro casa rue ducastellou</comment>
+  </note>
+  <note id="498308" lat="43.3929178" lon="1.1712563" created_at="2016-01-14T20:29:22+01" closed_at="2016-02-09T10:51:23+01" >
+    <comment action="opened" timestamp="2016-01-14T20:29:22+01" is_new="false" >LA BIERATAISE</comment>
+    <comment action="commented" timestamp="2016-01-16T12:31:41+01" uid="1075986" user="the_knife" is_new="false" >que désigne ce nom ?</comment>
+    <comment action="closed" timestamp="2016-02-09T10:51:23+01" uid="1816335" user="SoulReaper" is_new="false" >une brasserie de bière artisanal, avec un magasin, un bar et un restaurant</comment>
+  </note>
+  <note id="498294" lat="43.3795107" lon="1.1754325" created_at="2016-01-14T20:17:30+01" closed_at="2016-02-09T10:17:56+01" >
+    <comment action="opened" timestamp="2016-01-14T20:17:30+01" is_new="false" >DAB</comment>
+    <comment action="commented" timestamp="2016-01-16T11:09:26+01" uid="1075986" user="the_knife" is_new="false" >quelle banque ?</comment>
+    <comment action="closed" timestamp="2016-02-09T10:17:56+01" uid="1816335" user="SoulReaper" is_new="false" >banque postal ajouté</comment>
+  </note>
+  <note id="496387" lat="43.4340922" lon="1.6662354" created_at="2016-01-11T10:39:23+01" >
+    <comment action="opened" timestamp="2016-01-11T10:39:23+01" uid="2919565" user="AndreLabouche" is_new="false" >ce garage a fermé. </comment>
+    <comment action="commented" timestamp="2016-01-15T19:53:34+01" is_new="false" >Qu&apos;y a-t-il en remplacement?</comment>
+  </note>
+  <note id="507792" lat="43.4329595" lon="1.4436507" created_at="2016-02-03T15:42:21+01" >
+    <comment action="opened" timestamp="2016-02-03T15:42:21+01" is_new="false" >A Venerque dans le 31 ( haute-garonne ) la rue qui remonte de la rue du cloître jusqu&apos;au quai de rive d&apos;eau en passant devant l&apos;église :&#xA;Au croisement avec la D19, cette roue se prolonge en ligne droite sans s&apos;embrancher a la rue jean gillet qui se trouve embranchée a la D19 dans la même position . C&apos;est a dire que vous devez prolonger la rue du cloître jusqu&apos;au quai de la rive d&apos;eau en ligne droite en croisant la D19 sans rien modifier d&apos;autre autour . Mais le village comporte beaucoup d&apos;autres erreurs d&apos;approximations .</comment>
+  </note>
+  <note id="498299" lat="43.3788167" lon="1.1784285" created_at="2016-01-14T20:19:01+01" closed_at="2016-02-09T09:04:17+01" >
+    <comment action="opened" timestamp="2016-01-14T20:19:01+01" is_new="false" >Gamm&apos; Vert</comment>
+    <comment action="closed" timestamp="2016-02-09T09:04:17+01" uid="1816335" user="SoulReaper" is_new="false" >ajout du Point Vert situé a 40 m plus au sud sur la D28</comment>
+  </note>
+  <note id="330772" lat="43.5596981" lon="1.3601589" created_at="2015-03-13T17:07:34+01" >
+    <comment action="opened" timestamp="2015-03-13T17:07:34+01" is_new="false" >Il manque la ligne 48 créée en septembre 2014 de Basso-Cambo au lycée Françoise de Tournefeuille</comment>
+  </note>
+  <note id="498290" lat="43.3802086" lon="1.1761299" created_at="2016-01-14T20:16:08+01" closed_at="2016-02-09T09:51:49+01" >
+    <comment action="opened" timestamp="2016-01-14T20:16:08+01" is_new="false" >Presse - Tabac - Dépôt de pain</comment>
+    <comment action="closed" timestamp="2016-02-09T09:51:49+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+  <note id="498276" lat="43.4561588" lon="1.3294691" created_at="2016-01-14T20:07:03+01" >
+    <comment action="opened" timestamp="2016-01-14T20:07:03+01" is_new="false" >Centre commercial Le Barry</comment>
+  </note>
+  <note id="498309" lat="43.3736347" lon="1.1755157" created_at="2016-01-14T20:29:55+01" closed_at="2016-02-09T10:35:09+01" >
+    <comment action="opened" timestamp="2016-01-14T20:29:55+01" is_new="false" >Cours de tennis</comment>
+    <comment action="closed" timestamp="2016-02-09T10:35:09+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+  <note id="510334" lat="43.6139373" lon="1.3076735" created_at="2016-02-09T10:21:43+01" >
+    <comment action="opened" timestamp="2016-02-09T10:21:43+01" is_new="false" >Free Electrons office</comment>
+  </note>
+  <note id="498295" lat="43.3793587" lon="1.1758912" created_at="2016-01-14T20:17:43+01" closed_at="2016-02-09T10:30:18+01" >
+    <comment action="opened" timestamp="2016-01-14T20:17:43+01" is_new="false" >Place du marché</comment>
+    <comment action="closed" timestamp="2016-02-09T10:30:18+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+  <note id="498281" lat="43.3798616" lon="1.1750302" created_at="2016-01-14T20:12:16+01" closed_at="2016-02-09T10:30:10+01" >
+    <comment action="opened" timestamp="2016-01-14T20:12:16+01" is_new="false" >Ecole primaire</comment>
+    <comment action="closed" timestamp="2016-02-09T10:30:10+01" uid="1816335" user="SoulReaper" is_new="false" ></comment>
+  </note>
+  <note id="498300" lat="43.3794581" lon="1.1753467" created_at="2016-01-14T20:19:26+01" closed_at="2016-02-09T10:18:06+01" >
+    <comment action="opened" timestamp="2016-01-14T20:19:26+01" is_new="false" >Bibliothèque municipale</comment>
+    <comment action="closed" timestamp="2016-02-09T10:18:06+01" uid="1816335" user="SoulReaper" is_new="false" >ajouté</comment>
+  </note>
+</osm-notes>
