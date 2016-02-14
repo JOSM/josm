@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
@@ -109,8 +110,8 @@ public abstract class DownloadAlongAction extends JosmAction {
         msg.add(new JLabel(
                 tr("<html>This action will require {0} individual<br>" + "download requests. Do you wish<br>to continue?</html>",
                         toDownload.size())), GBC.eol());
-        if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(Main.parent, msg, title,
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)) {
+        if (!GraphicsEnvironment.isHeadless() && JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(
+                Main.parent, msg, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)) {
             return;
         }
         final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer.gpx;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 
 import javax.swing.JCheckBox;
@@ -184,8 +185,11 @@ public class DownloadAlongPanel extends JPanel {
             }
         });
 
-        int ret = HelpAwareOptionPane.showOptionDialog(Main.parent, this, title,
-                JOptionPane.QUESTION_MESSAGE, null, options, options[0], helpTopic);
+        int ret = 0;
+        if (!GraphicsEnvironment.isHeadless()) {
+            ret = HelpAwareOptionPane.showOptionDialog(Main.parent, this, title,
+                    JOptionPane.QUESTION_MESSAGE, null, options, options[0], helpTopic);
+        }
         if (0 == ret) {
             rememberSettings();
         }

@@ -553,6 +553,11 @@ public class Preferences {
         removeObsolete(reader.getVersion());
     }
 
+    /**
+     * Loads preferences from XML reader.
+     * @param in XML reader
+     * @throws XMLStreamException if any XML stream error occurs
+     */
     public void fromXML(Reader in) throws XMLStreamException {
         PreferencesReader reader = new PreferencesReader();
         reader.fromXML(in);
@@ -1395,10 +1400,21 @@ public class Preferences {
         }
     }
 
+    /**
+     * Returns XML describing these preferences.
+     * @param nopass if password must be excluded
+     * @return XML
+     */
     public String toXML(boolean nopass) {
         return toXML(settingsMap, nopass);
     }
 
+    /**
+     * Returns XML describing the given preferences.
+     * @param settings preferences settings
+     * @param nopass if password must be excluded
+     * @return XML
+     */
     public String toXML(Map<String, Setting<?>> settings, boolean nopass) {
         StringBuilder b = new StringBuilder(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<preferences xmlns=\"")

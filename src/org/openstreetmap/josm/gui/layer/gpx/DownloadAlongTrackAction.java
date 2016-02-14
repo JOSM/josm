@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
  * Action that issues a series of download requests to the API, following the GPX track.
  *
  * @author fred
+ * @since 5715
  */
 public class DownloadAlongTrackAction extends DownloadAlongAction {
 
@@ -47,15 +48,13 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
         this.data = data;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
+    PleaseWaitRunnable createTask() {
         final DownloadAlongPanel panel = new DownloadAlongPanel(
                 PREF_DOWNLOAD_ALONG_TRACK_OSM, PREF_DOWNLOAD_ALONG_TRACK_GPS,
                 PREF_DOWNLOAD_ALONG_TRACK_DISTANCE, PREF_DOWNLOAD_ALONG_TRACK_AREA, PREF_DOWNLOAD_ALONG_TRACK_NEAR);
 
         if (0 != panel.showInDownloadDialog(tr("Download from OSM along this track"), HelpUtil.ht("/Action/DownloadAlongTrack"))) {
-            return;
+            return null;
         }
 
         final int near = panel.getNear();
@@ -185,6 +184,11 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
             }
         }
 
-        Main.worker.submit(new CalculateDownloadArea());
+        return new CalculateDownloadArea();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Main.worker.submit(createTask());
     }
 }
