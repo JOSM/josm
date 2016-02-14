@@ -44,7 +44,7 @@ public final class ColorScale {
         sc.colors = new Color[count];
         for (int i = 0; i < sc.colors.length; i++) {
 
-            float angle = 4 - i / 256f * 4;
+            float angle = i / 256f * 4;
             int quadrant = (int) angle;
             angle -= quadrant;
             quadrant = Utils.mod(quadrant+1, 4);
