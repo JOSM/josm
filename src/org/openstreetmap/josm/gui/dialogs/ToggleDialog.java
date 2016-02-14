@@ -700,7 +700,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 pack();
                 setLocationRelativeTo(Main.parent);
             }
-            setTitle(titleBar.getTitle());
+            super.setTitle(titleBar.getTitle());
             HelpUtil.setHelpContext(getRootPane(), helpTopic());
         }
 

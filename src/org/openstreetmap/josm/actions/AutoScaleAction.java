@@ -60,8 +60,6 @@ public class AutoScaleAction extends JosmAction {
      */
     private final String mode;
 
-    protected transient ZoomChangeAdapter zoomChangeAdapter;
-    protected transient MapFrameAdapter mapFrameAdapter;
     /** Time of last zoom to bounds action */
     protected long lastZoomTime = -1;
     /** Last zommed bounds */
@@ -357,8 +355,8 @@ public class AutoScaleAction extends JosmAction {
         super.installAdapters();
         // make this action listen to zoom and mapframe change events
         //
-        MapView.addZoomChangeListener(zoomChangeAdapter = new ZoomChangeAdapter());
-        Main.addMapFrameListener(mapFrameAdapter = new MapFrameAdapter());
+        MapView.addZoomChangeListener(new ZoomChangeAdapter());
+        Main.addMapFrameListener(new MapFrameAdapter());
         initEnabledState();
     }
 

@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -23,7 +21,6 @@ import org.openstreetmap.josm.tools.Destroyable;
  */
 public class IconToggleButton extends JToggleButton implements HideableButton, PropertyChangeListener, Destroyable, ExpertModeChangeListener {
 
-    public boolean groupbutton;
     private transient ShowHideButtonListener listener;
     private boolean hideIfDisabled;
     private boolean isExpert;
@@ -52,12 +49,6 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
         }
 
         action.addPropertyChangeListener(this);
-
-        addMouseListener(new MouseAdapter() {
-            @Override public void mousePressed(MouseEvent e) {
-                groupbutton = e.getX() > getWidth()/2 && e.getY() > getHeight()/2;
-            }
-        });
 
         ExpertToggleAction.addExpertModeChangeListener(this);
     }
@@ -132,9 +123,10 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
         }
     }
 
-    /*
-     * This fuction should be called for plugins that want to enable auto-hiding
+    /**
+     * This function should be called for plugins that want to enable auto-hiding
      * custom buttons when they are disabled (because of incorrect layer, for example)
+     * @param b hide if disabled
      */
     public void setAutoHideDisabledButton(boolean b) {
         hideIfDisabled = b;
