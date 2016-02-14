@@ -326,15 +326,21 @@ public class LatLon extends Coordinate {
     }
 
     /**
-     * Returns the heading, in radians, that you have to use to get from this lat/lon to another.
+     * Returns the heading that you have to use to get from this lat/lon to another.
+     *
+     * Angle starts from north and increases counterclockwise (!), PI/2 means west.
+     * You can get usual clockwise angle from {@link #bearing(LatLon)} method.
+     * This method is kept as deprecated because it is called from many plugins.
      *
      * (I don't know the original source of this formula, but see
      * <a href="https://math.stackexchange.com/questions/720/how-to-calculate-a-heading-on-the-earths-surface">this question</a>
      * for some hints how it is derived.)
      *
+     * @deprecated see bearing method
      * @param other the "destination" position
-     * @return heading in the range 0 &lt;= hd &lt; 2*PI
+     * @return heading in radians in the range 0 &lt;= hd &lt; 2*PI
      */
+    @Deprecated
     public double heading(LatLon other) {
         double hd = atan2(sin(toRadians(this.lon() - other.lon())) * cos(toRadians(other.lat())),
                 cos(toRadians(this.lat())) * sin(toRadians(other.lat())) -
@@ -344,6 +350,36 @@ public class LatLon extends Coordinate {
             hd += 2 * PI;
         }
         return hd;
+    }
+
+    /**
+     * Returns bearing from this point to another.
+     *
+     * Angle starts from north and increases clockwise, PI/2 means east.
+     * Old deprecated method {@link #heading(LatLon)} used unusual reverse angle.
+     *
+     * Please note that reverse bearing (from other point to this point) should NOT be
+     * calculated from return value of this method, because great circle path
+     * between the two points have different bearings at each position.
+     *
+     * To get bearing from another point to this point call other.bearing(this)
+     *
+     * @param other the "destination" position
+     * @return heading in radians in the range 0 &lt;= hd &lt; 2*PI
+     */
+    public double bearing(LatLon other) {
+        double lat1 = toRadians(this.lat());
+        double lat2 = toRadians(other.lat());
+        double dlon = toRadians(other.lon() - this.lon());
+        double bearing = atan2(
+            sin(dlon) * cos(lat2),
+            cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dlon)
+        );
+        bearing %= 2 * PI;
+        if (bearing < 0) {
+            bearing += 2 * PI;
+        }
+        return bearing;
     }
 
     /**

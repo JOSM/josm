@@ -88,10 +88,11 @@ public class GpxDrawHelper {
     private static final int sl4 = 5;
     private static final int sl9 = 3;
     private static final int[][] dir = {
-        {+sl4, +ll0, +ll0, +sl4}, {-sl9, +ll0, +sl9, +ll0}, {-ll0, +sl4, -sl4, +ll0},
-        {-ll0, -sl9, -ll0, +sl9}, {-sl4, -ll0, -ll0, -sl4}, {+sl9, -ll0, -sl9, -ll0},
-        {+ll0, -sl4, +sl4, -ll0}, {+ll0, +sl9, +ll0, -sl9}, {+sl4, +ll0, +ll0, +sl4},
-        {-sl9, +ll0, +sl9, +ll0}, {-ll0, +sl4, -sl4, +ll0}, {-ll0, -sl9, -ll0, +sl9}};
+        {+sl4, +ll0, +ll0, +sl4}, {-sl9, +ll0, +sl9, +ll0},
+        {-ll0, +sl4, -sl4, +ll0}, {-ll0, -sl9, -ll0, +sl9},
+        {-sl4, -ll0, -ll0, -sl4}, {+sl9, -ll0, -sl9, -ll0},
+        {+ll0, -sl4, +sl4, -ll0}, {+ll0, +sl9, +ll0, -sl9}
+    };
 
     private void setupColors() {
         hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);
@@ -332,7 +333,7 @@ public class GpxDrawHelper {
                         }
                         break;
                     case DIRECTION:
-                        double dirColor = oldWp.getCoor().heading(trkPnt.getCoor());
+                        double dirColor = oldWp.getCoor().bearing(trkPnt.getCoor());
                         color = directionScale.getColor(dirColor);
                         break;
                     case TIME:
@@ -347,7 +348,8 @@ public class GpxDrawHelper {
                     }
                     if (!noDraw && (maxLineLength == -1 || dist <= maxLineLength)) {
                         trkPnt.drawLine = true;
-                        trkPnt.dir = (int) oldWp.getCoor().heading(trkPnt.getCoor());
+                        double bearing = oldWp.getCoor().bearing(trkPnt.getCoor());
+                        trkPnt.dir = ((int) (bearing / Math.PI * 4 + 1.5)) % 8;
                     } else {
                         trkPnt.drawLine = false;
                     }
