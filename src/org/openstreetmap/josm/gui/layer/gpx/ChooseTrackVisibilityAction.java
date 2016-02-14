@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -270,23 +271,27 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         JScrollPane scrollPane = new JScrollPane(table);
         msg.add(scrollPane, GBC.eol().fill(GBC.BOTH));
 
-        // build dialog
-        ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Set track visibility for {0}", layer.getName()),
-                new String[]{tr("Show all"), tr("Show selected only"), tr("Cancel")});
-        ed.setButtonIcons(new String[]{"eye", "dialogs/filter", "cancel"});
-        ed.setContent(msg, false);
-        ed.setDefaultButton(2);
-        ed.setCancelButton(3);
-        ed.configureContextsensitiveHelp("/Action/ChooseTrackVisibility", true);
-        ed.setRememberWindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(Main.parent, new Dimension(1000, 500)));
-        ed.showDialog();
-        dateFilter.saveInPrefs();
-        int v = ed.getValue();
-        // cancel for unknown buttons and copy back original settings
-        if (v != 1 && v != 2) {
-            layer.trackVisibility = Arrays.copyOf(trackVisibilityBackup, layer.trackVisibility.length);
-            Main.map.repaint();
-            return;
+        int v = 1;
+        if (!GraphicsEnvironment.isHeadless()) {
+            // build dialog
+            ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Set track visibility for {0}", layer.getName()),
+                    new String[]{tr("Show all"), tr("Show selected only"), tr("Cancel")});
+            ed.setButtonIcons(new String[]{"eye", "dialogs/filter", "cancel"});
+            ed.setContent(msg, false);
+            ed.setDefaultButton(2);
+            ed.setCancelButton(3);
+            ed.configureContextsensitiveHelp("/Action/ChooseTrackVisibility", true);
+            ed.setRememberWindowGeometry(getClass().getName() + ".geometry",
+                    WindowGeometry.centerInWindow(Main.parent, new Dimension(1000, 500)));
+            ed.showDialog();
+            dateFilter.saveInPrefs();
+            v = ed.getValue();
+            // cancel for unknown buttons and copy back original settings
+            if (v != 1 && v != 2) {
+                layer.trackVisibility = Arrays.copyOf(trackVisibilityBackup, layer.trackVisibility.length);
+                Main.map.repaint();
+                return;
+            }
         }
         // set visibility (1 = show all, 2 = filter). If no tracks are selected
         // set all of them visible and...
@@ -298,8 +303,11 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         // ...sync with layer visibility instead to avoid having two ways to hide everything
         layer.setVisible(v == 1 || !s.isSelectionEmpty());
 
-        Main.map.mapView.preferenceChanged(null);
-        Main.map.repaint();
+        if (Main.isDisplayingMapView()) {
+            Main.map.mapView.preferenceChanged(null);
+        }
+        if (Main.map != null) {
+            Main.map.repaint();
+        }
     }
-
 }
