@@ -323,6 +323,10 @@ public final class MapPaintStyles {
         } catch (IOException e) {
             Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", entry.url, e.toString()));
             Main.error(e);
+        } finally {
+            if (cf != null) {
+                cf.close();
+            }
         }
         return null;
     }

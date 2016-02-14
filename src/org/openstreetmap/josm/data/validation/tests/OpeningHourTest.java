@@ -52,8 +52,8 @@ public class OpeningHourTest extends Test.TagTest {
     public void initialize() throws Exception {
         super.initialize();
         if (ENGINE != null) {
-            try (Reader reader = new InputStreamReader(
-                    new CachedFile("resource://data/validator/opening_hours.js").getInputStream(), StandardCharsets.UTF_8)) {
+            try (CachedFile cf = new CachedFile("resource://data/validator/opening_hours.js");
+                 Reader reader = new InputStreamReader(cf.getInputStream(), StandardCharsets.UTF_8)) {
                 ENGINE.eval(reader);
                 ENGINE.eval("var opening_hours = require('opening_hours');");
                 // fake country/state to not get errors on holidays

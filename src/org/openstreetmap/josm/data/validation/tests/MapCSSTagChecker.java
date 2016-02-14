@@ -718,6 +718,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                     Main.warn(msg);
                 }
             }
+        } finally {
+            cache.close();
         }
         return result;
     }

@@ -288,7 +288,7 @@ public class XmlObjectParser implements Iterable<Object> {
      */
     public Iterable<Object> startWithValidation(final Reader in, String namespace, String schemaSource) throws SAXException {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        try (InputStream mis = new CachedFile(schemaSource).getInputStream()) {
+        try (CachedFile cf = new CachedFile(schemaSource); InputStream mis = cf.getInputStream()) {
             Schema schema = factory.newSchema(new StreamSource(mis));
             ValidatorHandler validator = schema.newValidatorHandler();
             validator.setContentHandler(parser);

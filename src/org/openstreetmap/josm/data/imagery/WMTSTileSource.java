@@ -292,12 +292,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
 
-        InputStream in = new CachedFile(baseUrl).
-                setHttpHeaders(headers).
+        try (CachedFile cf = new CachedFile(baseUrl); InputStream in = cf.setHttpHeaders(headers).
                 setMaxAge(7 * CachedFile.DAYS).
                 setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince).
-                getInputStream();
-        try {
+                getInputStream()) {
             byte[] data = Utils.readBytesFromStream(in);
             if (data == null || data.length == 0) {
                 throw new IllegalArgumentException("Could not read data from: " + baseUrl);
