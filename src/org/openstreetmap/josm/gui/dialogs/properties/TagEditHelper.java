@@ -520,7 +520,6 @@ public class TagEditHelper {
     protected abstract class AbstractTagsDialog extends ExtendedDialog {
         protected AutoCompletingComboBox keys;
         protected AutoCompletingComboBox values;
-        protected Component componentUnderMouse;
 
         AbstractTagsDialog(Component parent, String title, String[] buttonTexts) {
             super(parent, title, buttonTexts);
