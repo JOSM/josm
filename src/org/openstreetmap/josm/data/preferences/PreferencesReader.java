@@ -60,7 +60,7 @@ public class PreferencesReader {
      * @throws SAXException if any SAX error occurs
      */
     public static void validateXML(Reader in) throws IOException, SAXException {
-        try (InputStream xsdStream = new CachedFile("resource://data/preferences.xsd").getInputStream()) {
+        try (CachedFile cf = new CachedFile("resource://data/preferences.xsd"); InputStream xsdStream = cf.getInputStream()) {
             Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(new StreamSource(xsdStream));
             Validator validator = schema.newValidator();
             validator.validate(new StreamSource(in));
