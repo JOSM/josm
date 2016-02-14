@@ -242,6 +242,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     public static class BenchmarkData {
         public long generateTime;
         public long sortTime;
+        public long drawTime;
         public Map<Class<? extends StyleElement>, Integer> styleElementCount;
         public boolean skipDraw;
 
@@ -1959,10 +1960,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if (benchmark) {
                 timeFinished = System.currentTimeMillis();
                 if (benchmarkData != null) {
+                    benchmarkData.drawTime = timeFinished - timeGenerateDone;
                     benchmarkData.recordElementStats(allStyleElems);
                 }
                 if (benchmarkOutput) {
-                    System.err.println("; phase 2 (draw): " + Utils.getDurationString(timeFinished - timeGenerateDone) +
+                    System.err.println("; phase 2 (draw): " + Utils.getDurationString(benchmarkData.drawTime) +
                         "; total: " + Utils.getDurationString(timeFinished - timeStart) +
                         " (scale: " + circum + " zoom level: " + Selector.GeneralSelector.scale2level(circum) + ')');
                 }
