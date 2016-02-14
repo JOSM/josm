@@ -3,7 +3,6 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.net.URL;
 
@@ -378,10 +377,10 @@ public final class AudioPlayer extends Thread {
         else
             msg = tr(msg);
         Main.error(msg);
-        if (!GraphicsEnvironment.isHeadless()) {
+        //if (!GraphicsEnvironment.isHeadless()) {
             JOptionPane.showMessageDialog(Main.parent,
                     "<html><p>" + msg + "</p></html>",
                     tr("Error playing sound"), JOptionPane.ERROR_MESSAGE);
-        }
+        //}
     }
 }
