@@ -165,7 +165,8 @@ public class TagChecker extends TagTest {
         StringBuilder errorSources = new StringBuilder();
         for (String source : Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES)) {
             try (
-                InputStream s = new CachedFile(source).getInputStream();
+                CachedFile cf = new CachedFile(source);
+                InputStream s = cf.getInputStream();
                 BufferedReader reader = new BufferedReader(UTFInputStreamReader.create(s));
             ) {
                 String okValue = null;

@@ -322,8 +322,8 @@ public final class TaggingPresetReader {
     static Collection<TaggingPreset> readAll(String source, boolean validate, HashSetWithLast<TaggingPreset> all)
             throws SAXException, IOException {
         Collection<TaggingPreset> tp;
-        CachedFile cf = new CachedFile(source).setHttpAccept(PRESET_MIME_TYPES);
         try (
+            CachedFile cf = new CachedFile(source).setHttpAccept(PRESET_MIME_TYPES);
             // zip may be null, but Java 7 allows it: https://blogs.oracle.com/darcy/entry/project_coin_null_try_with
             InputStream zip = cf.findZipEntryInputStream("xml", "preset")
         ) {

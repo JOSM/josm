@@ -268,7 +268,8 @@ public final class Projections {
      */
     public static List<ProjectionDefinition> loadProjectionDefinitions(String path) throws IOException {
         try (
-            InputStream in = new CachedFile(path).getInputStream();
+            CachedFile cf = new CachedFile(path);
+            InputStream in = cf.getInputStream();
             BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         ) {
             return loadProjectionDefinitions(r);
