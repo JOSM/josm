@@ -68,7 +68,7 @@ public class HttpClientTest {
         assertThat(response.getHeaderField("Content-Type"), is("application/json"));
         assertThat(response.getHeaderField("Content-TYPE"), is("application/json"));
         assertThat(response.getHeaderFields().get("Content-Type"), is(Collections.singletonList("application/json")));
-        assertThat(response.getHeaderFields().get("Content-TYPE"), nullValue());
+        assertThat(response.getHeaderFields().get("Content-TYPE"), is(Collections.singletonList("application/json")));
         try (final InputStream in = response.getContent();
              final JsonReader json = JsonProvider.provider().createReader(in)) {
             final JsonObject root = json.readObject();

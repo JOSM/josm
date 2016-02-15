@@ -11,9 +11,11 @@ import java.io.OutputStream;
 import java.net.HttpRetryException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -384,12 +386,20 @@ public final class HttpClient {
 
         /**
          * Returns an unmodifiable Map mapping header keys to a List of header values.
+         * As per RFC 2616, section 4.2 header names are case insensitive, so returned map is also case insensitive
          * @return unmodifiable Map mapping header keys to a List of header values
          * @see HttpURLConnection#getHeaderFields()
          * @since 9232
          */
         public Map<String, List<String>> getHeaderFields() {
-            return connection.getHeaderFields();
+            // returned map from HttpUrlConnection is case sensitive, use case insensitive TreeMap to conform to RFC 2616
+            Map<String, List<String>> ret = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            for(Entry<String, List<String>> e: connection.getHeaderFields().entrySet()) {
+                if (e.getKey() != null) {
+                    ret.put(e.getKey(), e.getValue());
+                }
+            }
+            return Collections.unmodifiableMap(ret);
         }
 
         /**
