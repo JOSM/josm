@@ -96,7 +96,7 @@ public class GpxDrawHelperTest {
     public void testDirection() throws IOException, SAXException {
         Main.pref.putInteger("draw.rawgps.colors.layer 003", GpxDrawHelper.ColorMode.DIRECTION.toIndex());
         final List<String> colors = calculateColors("data_nodist/2094047.gpx", "003", 10);
-        assertEquals("[#FF00FF, #E8EC25, #EDEA26, #EDE625, #ECD622, #ECBC1E, #E8600E, #E73C09, #E8540C, #EA9116]", colors.toString());
+        assertEquals("[#FF00FF, #EAEC25, #EDEA26, #EDE525, #ECD322, #EBB81D, #E85A0D, #E73708, #E84D0B, #EA8A15]", colors.toString());
     }
 
     /**
