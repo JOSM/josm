@@ -394,7 +394,7 @@ public final class HttpClient {
         public Map<String, List<String>> getHeaderFields() {
             // returned map from HttpUrlConnection is case sensitive, use case insensitive TreeMap to conform to RFC 2616
             Map<String, List<String>> ret = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-            for(Entry<String, List<String>> e: connection.getHeaderFields().entrySet()) {
+            for (Entry<String, List<String>> e: connection.getHeaderFields().entrySet()) {
                 if (e.getKey() != null) {
                     ret.put(e.getKey(), e.getValue());
                 }

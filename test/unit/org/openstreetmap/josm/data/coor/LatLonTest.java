@@ -12,6 +12,9 @@ public class LatLonTest {
 
     private static final double EPSILON = 1e-6;
 
+    /**
+     * Lat/Lon sample values for unit tests
+     */
     public static final double[] SAMPLE_VALUES = new double[]{
             -180.0, -179.9, -179.6, -179.5, -179.4, -179.1, -179.0, -100.0, -99.9, -10.0, -9.9, -1.0, -0.1,
             180.0,  179.9,  179.6,  179.5,  179.4,  179.1,  179.0,  100.0,  99.9,  10.0,  9.9,  1.0,  0.1,
@@ -134,8 +137,8 @@ public class LatLonTest {
         LatLon c = new LatLon(47.000000, 19.000000);
         LatLon e = new LatLon(47.000000, 19.000001);
         LatLon n = new LatLon(47.000001, 19.000000);
-        assertEquals(  0, Math.toDegrees(c.bearing(n)), EPSILON);
-        assertEquals( 90, Math.toDegrees(c.bearing(e)), EPSILON);
+        assertEquals(0, Math.toDegrees(c.bearing(n)), EPSILON);
+        assertEquals(90, Math.toDegrees(c.bearing(e)), EPSILON);
         assertEquals(180, Math.toDegrees(n.bearing(c)), EPSILON);
         assertEquals(270, Math.toDegrees(e.bearing(c)), EPSILON);
     }
