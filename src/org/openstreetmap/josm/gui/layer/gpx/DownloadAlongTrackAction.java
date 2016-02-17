@@ -81,6 +81,9 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
                 latcnt++;
             }
         }
+        if (latcnt == 0) {
+            return null;
+        }
         double avglat = latsum / latcnt;
         double scale = Math.cos(Math.toRadians(avglat));
         /*
@@ -189,6 +192,9 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Main.worker.submit(createTask());
+        PleaseWaitRunnable task = createTask();
+        if (task != null) {
+            Main.worker.submit(task);
+        }
     }
 }
