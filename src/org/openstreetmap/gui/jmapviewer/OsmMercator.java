@@ -21,7 +21,7 @@ public class OsmMercator {
     /** minimum latitude (south) for mercator display */
     public static final double MIN_LAT = -85.05112877980659;
     /** equatorial earth radius for EPSG:3857 (Mercator) */
-    private static double EARTH_RADIUS = 6378137;
+    public static final double EARTH_RADIUS = 6378137;
 
     /**
      * instance with tile size of 256 for easy conversions
