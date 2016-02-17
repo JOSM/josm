@@ -59,6 +59,7 @@ import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
@@ -410,6 +411,10 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
 
             if (isOsmDataLayer) {
                 ((OsmDataLayer) layer).addLayerStateChangeListener(this);
+            }
+
+            if (layer instanceof NativeScaleLayer) {
+                Main.map.mapView.setNativeScaleLayer((NativeScaleLayer) layer);
             }
 
             layer.addPropertyChangeListener(this);
@@ -914,7 +919,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
      * of {@link OsmDataLayer} also sets {@link #editLayer} to <code>layer</code>.
      *
      * @param layer the layer to be activate; must be one of the layers in the list of layers
-     * @throws IllegalArgumentException if layer is not in the lis of layers
+     * @throws IllegalArgumentException if layer is not in the list of layers
      */
     public void setActiveLayer(Layer layer) {
         EnumSet<LayerListenerType> listenersToFire;

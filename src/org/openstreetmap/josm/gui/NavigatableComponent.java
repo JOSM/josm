@@ -44,11 +44,16 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.help.Helpful;
+import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
+import org.openstreetmap.josm.gui.layer.NativeScaleLayer.Scale;
+import org.openstreetmap.josm.gui.layer.NativeScaleLayer.ScaleList;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.util.CursorManager;
@@ -89,9 +94,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
     };
 
     public static final IntegerProperty PROP_SNAP_DISTANCE = new IntegerProperty("mappaint.node.snap-distance", 10);
+    public static final DoubleProperty PROP_ZOOM_RATIO = new DoubleProperty("zoom.ratio", 2.0);
+    public static final BooleanProperty PROP_ZOOM_INTERMEDIATE_STEPS = new BooleanProperty("zoom.intermediate-steps", true);
 
     public static final String PROPNAME_CENTER = "center";
     public static final String PROPNAME_SCALE  = "scale";
+
+    /**
+     * The layer which scale is set to.
+     */
+    private transient NativeScaleLayer nativeScaleLayer;
 
     /**
      * the zoom listeners
@@ -143,6 +155,113 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public NavigatableComponent() {
         setLayout(null);
+        PROP_ZOOM_RATIO.get(); // make sure it is available in preferences
+    }
+
+    /**
+     * Choose a layer that scale will be snap to its native scales.
+     * @param nativeScaleLayer layer to which scale will be snapped
+     */
+    public void setNativeScaleLayer(NativeScaleLayer nativeScaleLayer) {
+        this.nativeScaleLayer = nativeScaleLayer;
+        zoomTo(center, scaleRound(scale));
+        repaint();
+    }
+
+    /**
+     * Replies the layer which scale is set to.
+     * @return the current scale layer (may be null)
+     */
+    public NativeScaleLayer getNativeScaleLayer() {
+        return nativeScaleLayer;
+    }
+
+    /**
+     * Get a new scale that is zoomed in from previous scale
+     * and snapped to selected native scale layer.
+     * @return new scale
+     */
+    public double scaleZoomIn() {
+        return scaleZoomManyTimes(-1);
+    }
+
+    /**
+     * Get a new scale that is zoomed out from previous scale
+     * and snapped to selected native scale layer.
+     * @return new scale
+     */
+    public double scaleZoomOut() {
+        return scaleZoomManyTimes(1);
+    }
+
+    /**
+     * Get a new scale that is zoomed in/out a number of times
+     * from previous scale and snapped to selected native scale layer.
+     * @param times count of zoom operations, negative means zoom in
+     * @return new scale
+     */
+    public double scaleZoomManyTimes(int times) {
+        if (nativeScaleLayer != null) {
+            ScaleList scaleList = nativeScaleLayer.getNativeScales();
+            if (PROP_ZOOM_INTERMEDIATE_STEPS.get()) {
+                scaleList = scaleList.withIntermediateSteps(PROP_ZOOM_RATIO.get());
+            }
+            Scale scale = scaleList.scaleZoomTimes(getScale(), PROP_ZOOM_RATIO.get(), times);
+            return scale.scale;
+        } else {
+            return getScale() * Math.pow(PROP_ZOOM_RATIO.get(), times);
+        }
+    }
+
+    /**
+     * Get a scale snapped to native resolutions, use round method.
+     * It gives nearest step from scale list.
+     * Use round method.
+     * @param scale to snap
+     * @return snapped scale
+     */
+    public double scaleRound(double scale) {
+        return scaleSnap(scale, false);
+    }
+
+    /**
+     * Get a scale snapped to native resolutions.
+     * It gives nearest lower step from scale list, usable to fit objects.
+     * @param scale to snap
+     * @return snapped scale
+     */
+    public double scaleFloor(double scale) {
+        return scaleSnap(scale, true);
+    }
+
+    /**
+     * Get a scale snapped to native resolutions.
+     * It gives nearest lower step from scale list, usable to fit objects.
+     * @param scale to snap
+     * @param floor use floor instead of round, set true when fitting view to objects
+     * @return new scale
+     */
+    public double scaleSnap(double scale, boolean floor) {
+        if (nativeScaleLayer != null) {
+            ScaleList scaleList = nativeScaleLayer.getNativeScales();
+            return scaleList.getSnapScale(scale, PROP_ZOOM_RATIO.get(), floor).scale;
+        } else {
+            return scale;
+        }
+    }
+
+    /**
+     * Zoom in current view. Use configured zoom step and scaling settings.
+     */
+    public void zoomIn() {
+        zoomTo(center, scaleZoomIn());
+    }
+
+    /**
+     * Zoom out current view. Use configured zoom step and scaling settings.
+     */
+    public void zoomOut() {
+        zoomTo(center, scaleZoomOut());
     }
 
     protected DataSet getCurrentDataSet() {
@@ -435,6 +554,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
         }
 
+        // snap scale to imagery if needed
+        scale = scaleRound(scale);
+
         if (!newCenter.equals(center) || !Utils.equalsEpsilon(scale, newScale)) {
             if (!initial) {
                 pushZoomUndo(center, scale);
@@ -516,6 +638,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
+    public void zoomManyTimes(double x, double y, int times) {
+        double oldScale = scale;
+        double newScale = scaleZoomManyTimes(times);
+        zoomToFactor(x, y, newScale / oldScale);
+    }
+
     public void zoomToFactor(double x, double y, double factor) {
         double newScale = scale*factor;
         // New center position so that point under the mouse pointer stays the same place as it was before zooming
@@ -549,6 +677,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         double scaleY = (box.maxNorth-box.minNorth)/h;
         double newScale = Math.max(scaleX, scaleY);
 
+        newScale = scaleFloor(newScale);
         zoomTo(box.getCenter(), newScale);
     }
 
@@ -1503,5 +1632,17 @@ public class NavigatableComponent extends JComponent implements Helpful {
             paintPoly = null;
         }
         repaint();
+    }
+
+    /**
+     * Get a max scale for projection that describes world in 256 pixels
+     * @return max scale
+     */
+    public double getMaxScale() {
+        ProjectionBounds world = getMaxProjectionBounds();
+        return Math.max(
+            world.maxNorth-world.minNorth,
+            world.maxEast-world.minEast
+        )/256;
     }
 }

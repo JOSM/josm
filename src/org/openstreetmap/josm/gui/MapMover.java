@@ -213,7 +213,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        nc.zoomToFactor(e.getX(), e.getY(), Math.pow(Math.sqrt(2), e.getWheelRotation()));
+        nc.zoomManyTimes(e.getX(), e.getY(), e.getWheelRotation());
     }
 
     /**
