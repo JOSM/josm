@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.layer.gpx;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,22 +28,34 @@ public class DownloadAlongTrackActionTest {
         JOSMFixture.createUnitTestFixture().init(true);
     }
 
-    /**
-     * Test action.
-     * @throws Exception if an error occurs
-     */
-    @Test
-    public void testDownload() throws Exception {
-        final OsmDataLayer layer = new OsmDataLayer(new DataSet(), getClass().getName(), null);
+    private static PleaseWaitRunnable createTask(String file) throws Exception {
+        final OsmDataLayer layer = new OsmDataLayer(new DataSet(), DownloadAlongTrackActionTest.class.getName(), null);
         try {
             Main.main.addLayer(layer);
             // Perform action
-            final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "minimal.gpx");
-            PleaseWaitRunnable task = new DownloadAlongTrackAction(gpx).createTask();
-            assertNotNull(task);
+            final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + file);
+            return new DownloadAlongTrackAction(gpx).createTask();
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
             Main.main.removeLayer(layer);
         }
+    }
+
+    /**
+     * Test action with nominal data set.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testDownload() throws Exception {
+        assertNotNull(createTask("minimal.gpx"));
+    }
+
+    /**
+     * Test action with empty data set.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testDownloadEmpty() throws Exception {
+        assertNull(createTask("empty.gpx"));
     }
 }
