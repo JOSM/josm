@@ -1,70 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://josm.openstreetmap.de/preferences-1.0"
-	xmlns:tns="http://josm.openstreetmap.de/preferences-1.0" elementFormDefault="qualified">
+    xmlns:tns="http://josm.openstreetmap.de/preferences-1.0" elementFormDefault="qualified">
 
-	<element name="preferences" type="tns:root"/>
+    <element name="preferences" type="tns:root"/>
 
-	<complexType name="root">
-		<sequence>
-			<choice minOccurs="0" maxOccurs="unbounded">
-				<element name="tag" type="tns:tag" />
-				<element name="list" type="tns:list" />
-				<element name="lists" type="tns:lists" />
-				<element name="maps" type="tns:maps" />
-			</choice>
-		</sequence>
-		<attribute name="version" type="string" />
-	</complexType>
+    <complexType name="root">
+        <sequence>
+            <choice minOccurs="0" maxOccurs="unbounded">
+                <element name="tag" type="tns:tag" />
+                <element name="list" type="tns:list" />
+                <element name="lists" type="tns:lists" />
+                <element name="maps" type="tns:maps" />
+            </choice>
+        </sequence>
+        <attribute name="version" type="string" />
+    </complexType>
 
-	<complexType name="tag">
-		<attribute name="key" type="string" use="required" />
-		<attribute name="value" type="string" use="required"/>
-	</complexType>
+    <complexType name="tag">
+        <attribute name="key" type="string" use="required" />
+        <attribute name="value" type="string" use="required"/>
+    </complexType>
 
-	<complexType name="list">
-	    <choice>
+    <complexType name="list">
+        <choice>
             <sequence>
-			    <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+                <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
             </sequence>
             <!-- deprecated: remove mid 2012 -->
             <sequence>
-			    <element name="list" type="tns:slist" minOccurs="0" maxOccurs="unbounded"/>
+                <element name="list" type="tns:slist" minOccurs="0" maxOccurs="unbounded"/>
             </sequence>
             <!-- deprecated: remove mid 2012 -->
             <sequence>
-			    <element name="map" type="tns:map" minOccurs="0" maxOccurs="unbounded"/>
+                <element name="map" type="tns:map" minOccurs="0" maxOccurs="unbounded"/>
             </sequence>
         </choice>
-		<attribute name="key" type="string" use="required" />
-	</complexType>
-	
-	<complexType name="lists">
+        <attribute name="key" type="string" use="required" />
+    </complexType>
+    
+    <complexType name="lists">
         <sequence>
-		    <element name="list" type="tns:slist" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="list" type="tns:slist" minOccurs="0" maxOccurs="unbounded"/>
         </sequence>
-		<attribute name="key" type="string" use="required" />
-	</complexType>
+        <attribute name="key" type="string" use="required" />
+    </complexType>
 
-	<complexType name="maps">
+    <complexType name="maps">
         <sequence>
-		    <element name="map" type="tns:map" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="map" type="tns:map" minOccurs="0" maxOccurs="unbounded"/>
         </sequence>
-		<attribute name="key" type="string" use="required" />
-	</complexType>
+        <attribute name="key" type="string" use="required" />
+    </complexType>
 
-	<complexType name="slist">
+    <complexType name="slist">
         <sequence>
-		    <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
         </sequence>
-	</complexType>
+    </complexType>
 
-	<complexType name="map">
+    <complexType name="map">
         <sequence>
-		    <element name="tag" type="tns:tag" minOccurs="0" maxOccurs="unbounded"/>
+            <element name="tag" type="tns:tag" minOccurs="0" maxOccurs="unbounded"/>
         </sequence>
-	</complexType>
+    </complexType>
 
-	<complexType name="entry">
-		<attribute name="value" type="string" use="required"/>
-	</complexType>
+    <complexType name="entry">
+        <attribute name="value" type="string" use="required"/>
+    </complexType>
 </schema>
