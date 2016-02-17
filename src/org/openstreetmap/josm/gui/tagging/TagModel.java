@@ -4,6 +4,10 @@ package org.openstreetmap.josm.gui.tagging;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Tag model.
+ * @since 1762
+ */
 public class TagModel {
 
     /** the name of the tag */
@@ -47,11 +51,11 @@ public class TagModel {
      * @param name the tag name
      */
     public final void setName(String name) {
-        name = (name == null) ? "" : name;
-        this.name = name;
+        this.name = (name == null) ? "" : name;
     }
 
     /**
+     * returns the tag name (key).
      * @return the tag name
      */
     public String getName() {
@@ -70,27 +74,29 @@ public class TagModel {
      * @param value the value.
      */
     public final void setValue(String value) {
-        value = (value == null) ? "" : value;
         clearValues();
-        this.values.add(value);
+        this.values.add((value == null) ? "" : value);
     }
 
     /**
-     *
+     * determines if this tag model has a specific value
      * @param value the value to be checked; converted to "" if null
      * @return true, if the values of this tag include <code>value</code>; false otherwise
      */
     public boolean hasValue(String value) {
-        value = (value == null) ? "" : value;
-        return values.contains(value);
+        return values.contains((value == null) ? "" : value);
     }
 
+    /**
+     * adds a tag value
+     * @param value the value to add; converted to "" if null
+     */
     public void addValue(String value) {
-        value = (value == null) ? "" : value;
-        if (hasValue(value)) {
+        String val = (value == null) ? "" : value;
+        if (hasValue(val)) {
             return;
         }
-        values.add(value);
+        values.add(val);
     }
 
     /**
@@ -98,14 +104,21 @@ public class TagModel {
      * @param value the value
      */
     public void removeValue(String value) {
-        value = (value == null) ? "" : value;
-        values.remove(value);
+        values.remove((value == null) ? "" : value);
     }
 
+    /**
+     * returns the list of values
+     * @return the list of values
+     */
     public List<String> getValues() {
         return values;
     }
 
+    /**
+     * returns the value(s) as string
+     * @return the value(s) as string, joined with a semicolon (;) if multiple values
+     */
     public String getValue() {
         if (getValueCount() == 0) {
             return "";
@@ -123,6 +136,10 @@ public class TagModel {
         }
     }
 
+    /**
+     * returns the number of values
+     * @return the number of values
+     */
     public int getValueCount() {
         return values.size();
     }

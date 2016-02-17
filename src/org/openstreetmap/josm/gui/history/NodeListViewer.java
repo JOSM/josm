@@ -54,6 +54,15 @@ public class NodeListViewer extends JPanel {
     private transient SelectionSynchronizer selectionSynchronizer;
     private NodeListPopupMenu popupMenu;
 
+    /**
+     * Constructs a new {@code NodeListViewer}.
+     * @param model history browser model
+     */
+    public NodeListViewer(HistoryBrowserModel model) {
+        setModel(model);
+        build();
+    }
+
     protected JScrollPane embeddInScrollPane(JTable table) {
         JScrollPane pane = new JScrollPane(table);
         adjustmentSynchronizer.participateInSynchronizedScrolling(pane.getVerticalScrollBar());
@@ -95,9 +104,9 @@ public class NodeListViewer extends JPanel {
             @Override
             public void tableChanged(TableModelEvent e) {
                 if (e.getSource() instanceof DiffTableModel) {
-                    final DiffTableModel model = (DiffTableModel) e.getSource();
-                    if (reversed == null || reversed != model.isReversed()) {
-                        reversed = model.isReversed();
+                    final DiffTableModel mod = (DiffTableModel) e.getSource();
+                    if (reversed == null || reversed != mod.isReversed()) {
+                        reversed = mod.isReversed();
                         columnModel.getColumn(0).setHeaderValue(reversed ? reversedText : nonReversedText);
                         table.getTableHeader().setToolTipText(
                                 reversed ? tr("The nodes of this way are in reverse order") : null);
@@ -163,11 +172,6 @@ public class NodeListViewer extends JPanel {
         add(embeddInScrollPane(buildCurrentNodeListTable()), gc);
     }
 
-    public NodeListViewer(HistoryBrowserModel model) {
-        setModel(model);
-        build();
-    }
-
     protected void unregisterAsObserver(HistoryBrowserModel model) {
         if (currentInfoPanel != null) {
             model.deleteObserver(currentInfoPanel);
@@ -186,6 +190,10 @@ public class NodeListViewer extends JPanel {
         }
     }
 
+    /**
+     * Sets the history browser model.
+     * @param model the history browser model
+     */
     public void setModel(HistoryBrowserModel model) {
         if (this.model != null) {
             unregisterAsObserver(model);
@@ -230,7 +238,8 @@ public class NodeListViewer extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (!isEnabled()) return;
+            if (!isEnabled())
+                return;
             OsmPrimitive p = getPrimitiveToZoom();
             if (p != null) {
                 OsmDataLayer editLayer = Main.main.getEditLayer();
@@ -247,9 +256,11 @@ public class NodeListViewer extends JPanel {
         }
 
         protected OsmPrimitive getPrimitiveToZoom() {
-            if (primitiveId == null) return null;
+            if (primitiveId == null)
+                return null;
             OsmDataLayer editLayer = Main.main.getEditLayer();
-            if (editLayer == null) return null;
+            if (editLayer == null)
+                return null;
             return editLayer.data.getPrimitiveById(primitiveId);
         }
 
@@ -276,8 +287,9 @@ public class NodeListViewer extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (!isEnabled()) return;
-            run();
+            if (isEnabled()) {
+                run();
+            }
         }
 
         public void setPrimitiveId(PrimitiveId pid) {
@@ -313,8 +325,7 @@ public class NodeListViewer extends JPanel {
     private static PrimitiveId primitiveIdAtRow(TableModel model, int row) {
         DiffTableModel castedModel = (DiffTableModel) model;
         Long id = (Long) castedModel.getValueAt(row, 0).value;
-        if (id == null) return null;
-        return new SimplePrimitiveId(id, OsmPrimitiveType.NODE);
+        return id == null ? null : new SimplePrimitiveId(id, OsmPrimitiveType.NODE);
     }
 
     class InternalPopupMenuLauncher extends PopupMenuLauncher {
@@ -341,9 +352,11 @@ public class NodeListViewer extends JPanel {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() < 2) return;
+            if (e.getClickCount() < 2)
+                return;
             int row = table.rowAtPoint(e.getPoint());
-            if (row <= 0) return;
+            if (row <= 0)
+                return;
             PrimitiveId pid = primitiveIdAtRow(table.getModel(), row);
             if (pid == null || pid.isNew())
                 return;

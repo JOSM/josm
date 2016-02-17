@@ -101,7 +101,7 @@ public class TagEditorModel extends AbstractTableModel {
         return colSelectionModel;
     }
 
-    public void removeProperyChangeListener(PropertyChangeListener listener) {
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         propChangeSupport.removePropertyChangeListener(listener);
     }
 
@@ -132,31 +132,24 @@ public class TagEditorModel extends AbstractTableModel {
         if (rowIndex >= getRowCount())
             throw new IndexOutOfBoundsException("unexpected rowIndex: rowIndex=" + rowIndex);
 
-        TagModel tag = tags.get(rowIndex);
-        switch(columnIndex) {
-        case 0:
-        case 1:
-            return tag;
-
-        default:
-            throw new IndexOutOfBoundsException("unexpected columnIndex: columnIndex=" + columnIndex);
-        }
+        return tags.get(rowIndex);
     }
 
     @Override
     public void setValueAt(Object value, int row, int col) {
         TagModel tag = get(row);
-        if (tag == null) return;
-        switch(col) {
-        case 0:
-            updateTagName(tag, (String) value);
-            break;
-        case 1:
-            String v = (String) value;
-            if (tag.getValueCount() > 1 && !v.isEmpty()) {
-                updateTagValue(tag, v);
-            } else if (tag.getValueCount() <= 1) {
-                updateTagValue(tag, v);
+        if (tag != null) {
+            switch(col) {
+            case 0:
+                updateTagName(tag, (String) value);
+                break;
+            case 1:
+                String v = (String) value;
+                if (tag.getValueCount() > 1 && !v.isEmpty()) {
+                    updateTagValue(tag, v);
+                } else if (tag.getValueCount() <= 1) {
+                    updateTagValue(tag, v);
+                }
             }
         }
     }
@@ -207,19 +200,19 @@ public class TagEditorModel extends AbstractTableModel {
      * @param value the value; converted to "" if null
      */
     public void add(String name, String value) {
-        name = (name == null) ? "" : name;
-        value = (value == null) ? "" : value;
+        String key = (name == null) ? "" : name;
+        String val = (value == null) ? "" : value;
 
-        TagModel tag = get(name);
+        TagModel tag = get(key);
         if (tag == null) {
-            tag = new TagModel(name, value);
+            tag = new TagModel(key, val);
             int index = tags.size();
             while (index >= 1 && tags.get(index - 1).getName().isEmpty() && tags.get(index - 1).getValue().isEmpty()) {
                 index--; // If last line(s) is empty, add new tag before it
             }
             tags.add(index, tag);
         } else {
-            tag.addValue(value);
+            tag.addValue(val);
         }
         setDirty(true);
         fireTableDataChanged();
@@ -231,17 +224,16 @@ public class TagEditorModel extends AbstractTableModel {
      * @return the tag with name <code>name</code>; null, if no such tag exists
      */
     public TagModel get(String name) {
-        name = (name == null) ? "" : name;
+        String key = (name == null) ? "" : name;
         for (TagModel tag : tags) {
-            if (tag.getName().equals(name))
+            if (tag.getName().equals(key))
                 return tag;
         }
         return null;
     }
 
     public TagModel get(int idx) {
-        if (idx >= tags.size()) return null;
-        return tags.get(idx);
+        return idx >= tags.size() ? null : tags.get(idx);
     }
 
     @Override
@@ -292,7 +284,8 @@ public class TagEditorModel extends AbstractTableModel {
      * @param name the name. Ignored if null.
      */
     public void delete(String name) {
-        if (name == null) return;
+        if (name == null)
+            return;
         Iterator<TagModel> it = tags.iterator();
         boolean changed = false;
         while (it.hasNext()) {
@@ -473,10 +466,11 @@ public class TagEditorModel extends AbstractTableModel {
      * @return true, if the tag model includes the tag; false, otherwise
      */
     public boolean includesTag(String key) {
-        if (key == null) return false;
-        for (TagModel tag : tags) {
-            if (tag.getName().equals(key))
-                return true;
+        if (key != null) {
+            for (TagModel tag : tags) {
+                if (tag.getName().equals(key))
+                    return true;
+            }
         }
         return false;
     }
@@ -501,11 +495,11 @@ public class TagEditorModel extends AbstractTableModel {
         List<String> currentkeys = getKeys();
         List<Command> commands = new ArrayList<>();
 
-        for (OsmPrimitive primitive : primitives) {
-            for (String oldkey : primitive.keySet()) {
+        for (OsmPrimitive prim : primitives) {
+            for (String oldkey : prim.keySet()) {
                 if (!currentkeys.contains(oldkey)) {
                     ChangePropertyCommand deleteCommand =
-                        new ChangePropertyCommand(primitive, oldkey, null);
+                        new ChangePropertyCommand(prim, oldkey, null);
                     commands.add(deleteCommand);
                 }
             }
