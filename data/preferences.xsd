@@ -5,14 +5,12 @@
     <element name="preferences" type="tns:root"/>
 
     <complexType name="root">
-        <sequence>
-            <choice minOccurs="0" maxOccurs="unbounded">
-                <element name="tag" type="tns:tag" />
-                <element name="list" type="tns:list" />
-                <element name="lists" type="tns:lists" />
-                <element name="maps" type="tns:maps" />
-            </choice>
-        </sequence>
+        <choice minOccurs="0" maxOccurs="unbounded">
+            <element name="tag" type="tns:tag" />
+            <element name="list" type="tns:list" />
+            <element name="lists" type="tns:lists" />
+            <element name="maps" type="tns:maps" />
+        </choice>
         <attribute name="version" type="string" />
     </complexType>
 
@@ -22,19 +20,9 @@
     </complexType>
 
     <complexType name="list">
-        <choice>
-            <sequence>
-                <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
-            </sequence>
-            <!-- deprecated: remove mid 2012 -->
-            <sequence>
-                <element name="list" type="tns:slist" minOccurs="0" maxOccurs="unbounded"/>
-            </sequence>
-            <!-- deprecated: remove mid 2012 -->
-            <sequence>
-                <element name="map" type="tns:map" minOccurs="0" maxOccurs="unbounded"/>
-            </sequence>
-        </choice>
+        <sequence>
+            <element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
         <attribute name="key" type="string" use="required" />
     </complexType>
     
