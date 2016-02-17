@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -28,7 +27,6 @@ public class PlayHeadMarkerTest {
      * Unit test of {@link PlayHeadMarker#PlayHeadMarker}.
      */
     @Test
-    @Ignore("looks like it makes AudioPlayerTest.testPlay fail")
     public void testPlayHeadMarker() {
         PlayHeadMarker marker = PlayHeadMarker.create();
         assertNotNull(marker);

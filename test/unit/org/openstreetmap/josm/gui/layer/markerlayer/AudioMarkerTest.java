@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -34,7 +33,6 @@ public class AudioMarkerTest {
      * @throws MalformedURLException never
      */
     @Test
-    @Ignore("looks like it makes AudioPlayerTest.testPlay fail")
     public void testAudioMarker() throws MalformedURLException {
         URL url = new URL("file://something.wav");
         AudioMarker marker = new AudioMarker(
