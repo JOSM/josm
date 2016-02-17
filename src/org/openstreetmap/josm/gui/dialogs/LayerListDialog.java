@@ -59,6 +59,7 @@ import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
+import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
@@ -187,13 +188,21 @@ public class LayerListDialog extends ToggleDialog {
         layerList.getColumnModel().getColumn(0).setMaxWidth(12);
         layerList.getColumnModel().getColumn(0).setPreferredWidth(12);
         layerList.getColumnModel().getColumn(0).setResizable(false);
-        layerList.getColumnModel().getColumn(1).setCellRenderer(new LayerVisibleCellRenderer());
-        layerList.getColumnModel().getColumn(1).setCellEditor(new LayerVisibleCellEditor(new LayerVisibleCheckBox()));
-        layerList.getColumnModel().getColumn(1).setMaxWidth(16);
-        layerList.getColumnModel().getColumn(1).setPreferredWidth(16);
+
+        layerList.getColumnModel().getColumn(1).setCellRenderer(new NativeScaleLayerCellRenderer());
+        layerList.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new NativeScaleLayerCheckBox()));
+        layerList.getColumnModel().getColumn(1).setMaxWidth(12);
+        layerList.getColumnModel().getColumn(1).setPreferredWidth(12);
         layerList.getColumnModel().getColumn(1).setResizable(false);
-        layerList.getColumnModel().getColumn(2).setCellRenderer(new LayerNameCellRenderer());
-        layerList.getColumnModel().getColumn(2).setCellEditor(new LayerNameCellEditor(new DisableShortcutsOnFocusGainedTextField()));
+
+        layerList.getColumnModel().getColumn(2).setCellRenderer(new LayerVisibleCellRenderer());
+        layerList.getColumnModel().getColumn(2).setCellEditor(new LayerVisibleCellEditor(new LayerVisibleCheckBox()));
+        layerList.getColumnModel().getColumn(2).setMaxWidth(16);
+        layerList.getColumnModel().getColumn(2).setPreferredWidth(16);
+        layerList.getColumnModel().getColumn(2).setResizable(false);
+
+        layerList.getColumnModel().getColumn(3).setCellRenderer(new LayerNameCellRenderer());
+        layerList.getColumnModel().getColumn(3).setCellEditor(new LayerNameCellEditor(new DisableShortcutsOnFocusGainedTextField()));
         // Disable some default JTable shortcuts to use JOSM ones (see #5678, #10458)
         for (KeyStroke ks : new KeyStroke[] {
                 KeyStroke.getKeyStroke(KeyEvent.VK_C, GuiHelper.getMenuShortcutKeyMaskEx()),
@@ -1025,6 +1034,16 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
+    private static class NativeScaleLayerCheckBox extends JCheckBox {
+        NativeScaleLayerCheckBox() {
+            setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            ImageIcon blank = ImageProvider.get("dialogs/layerlist", "blank");
+            ImageIcon active = ImageProvider.get("dialogs/layerlist", "scale");
+            setIcon(blank);
+            setSelectedIcon(active);
+        }
+    }
+
     private static class ActiveLayerCellRenderer implements TableCellRenderer {
         private final JCheckBox cb;
 
@@ -1037,7 +1056,7 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            boolean active =  value != null && (Boolean) value;
+            boolean active = value != null && (Boolean) value;
             cb.setSelected(active);
             cb.setToolTipText(active ? tr("this layer is the active layer") : tr("this layer is not currently active (click to activate)"));
             return cb;
@@ -1074,6 +1093,34 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             cb.updateStatus((Layer) value);
+            return cb;
+        }
+    }
+
+    private static class NativeScaleLayerCellRenderer implements TableCellRenderer {
+        private final JCheckBox cb;
+
+        /**
+         * Constructs a new {@code ActiveLayerCellRenderer}.
+         */
+        NativeScaleLayerCellRenderer() {
+            cb = new NativeScaleLayerCheckBox();
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Layer layer = (Layer) value;
+            if (layer instanceof NativeScaleLayer) {
+                boolean active = layer != null && layer == Main.map.mapView.getNativeScaleLayer();
+                cb.setSelected(active);
+                cb.setToolTipText(active
+                    ? tr("scale follows native resolution of this layer")
+                    : tr("scale follows native resolution of another layer (click to set this layer)")
+                );
+            } else {
+                cb.setSelected(false);
+                cb.setToolTipText(tr("this layer has no native resolution"));
+            }
             return cb;
         }
     }
@@ -1549,6 +1596,16 @@ public class LayerListDialog extends ToggleDialog {
             return Main.map.mapView.getActiveLayer();
         }
 
+        /**
+         * Replies the scale layer. null, if no active layer is available
+         *
+         * @return the scale layer. null, if no active layer is available
+         */
+        protected NativeScaleLayer getNativeScaleLayer() {
+            if (!Main.isDisplayingMapView()) return null;
+            return Main.map.mapView.getNativeScaleLayer();
+        }
+
         /* ------------------------------------------------------------------------------ */
         /* Interface TableModel                                                           */
         /* ------------------------------------------------------------------------------ */
@@ -1562,7 +1619,7 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public int getColumnCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -1573,6 +1630,7 @@ public class LayerListDialog extends ToggleDialog {
                 case 0: return layers.get(row) == getActiveLayer();
                 case 1: return layers.get(row);
                 case 2: return layers.get(row);
+                case 3: return layers.get(row);
                 default: throw new RuntimeException();
                 }
             }
@@ -1597,9 +1655,16 @@ public class LayerListDialog extends ToggleDialog {
                     l.setVisible(true);
                     break;
                 case 1:
-                    l.setVisible((Boolean) value);
+                    if (Main.map.mapView.getNativeScaleLayer() == l) {
+                        Main.map.mapView.setNativeScaleLayer(null);
+                    } else if (l instanceof NativeScaleLayer) {
+                        Main.map.mapView.setNativeScaleLayer((NativeScaleLayer) l);
+                    }
                     break;
                 case 2:
+                    l.setVisible((Boolean) value);
+                    break;
+                case 3:
                     l.rename((String) value);
                     break;
                 default: throw new RuntimeException();

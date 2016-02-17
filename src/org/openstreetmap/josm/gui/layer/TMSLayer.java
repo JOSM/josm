@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.apache.commons.jcs.access.CacheAccess;
+import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.ScanexTileSource;
@@ -28,7 +29,7 @@ import org.openstreetmap.josm.data.projection.Projection;
  * @author Upliner &lt;upliner@gmail.com&gt;
  *
  */
-public class TMSLayer extends AbstractCachedTileSourceLayer {
+public class TMSLayer extends AbstractCachedTileSourceLayer implements NativeScaleLayer {
     private static final String CACHE_REGION_NAME = "TMS";
 
     private static final String PREFERENCE_PREFIX = "imagery.tms";
@@ -143,5 +144,15 @@ public class TMSLayer extends AbstractCachedTileSourceLayer {
      */
     public static CacheAccess<String, BufferedImageCacheEntry> getCache() {
         return AbstractCachedTileSourceLayer.getCache(CACHE_REGION_NAME);
+    }
+
+    @Override
+    public ScaleList getNativeScales() {
+        ScaleList scales = new ScaleList();
+        for (int zoom = info.getMinZoom(); zoom <= info.getMaxZoom(); zoom++) {
+            double scale = OsmMercator.EARTH_RADIUS * Math.PI * 2 / Math.pow(2, zoom) / OsmMercator.DEFAUL_TILE_SIZE;
+            scales.add(new Scale(scale));
+        }
+        return scales;
     }
 }

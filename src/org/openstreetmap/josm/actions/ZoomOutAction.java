@@ -32,7 +32,7 @@ public final class ZoomOutAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!Main.isDisplayingMapView()) return;
-        Main.map.mapView.zoomToFactor(Math.sqrt(2));
+        Main.map.mapView.zoomOut();
     }
 
     @Override

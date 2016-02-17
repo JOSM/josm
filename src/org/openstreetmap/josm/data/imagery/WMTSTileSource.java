@@ -46,6 +46,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.layer.NativeScaleLayer.Scale;
+import org.openstreetmap.josm.gui.layer.NativeScaleLayer.ScaleList;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
@@ -285,7 +287,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         return output.toString();
     }
 
-    private Collection<Layer> getCapabilities() throws IOException {
+    private Collection<Layer> getCapabilities() {
         XMLInputFactory factory = XMLInputFactory.newFactory();
         // do not try to load external entities, nor validate the XML
         factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
@@ -708,10 +710,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         if (zoom > getMaxZoom()) {
             return null;
         }
-        if (zoom < 1) {
+        if (zoom < 0) {
             return null;
         }
-        return this.currentTileMatrixSet.tileMatrix.get(zoom - 1);
+        return this.currentTileMatrixSet.tileMatrix.get(zoom);
     }
 
     @Override
@@ -829,7 +831,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     @Override
     public int getMaxZoom() {
         if (this.currentTileMatrixSet != null) {
-            return this.currentTileMatrixSet.tileMatrix.size();
+            return this.currentTileMatrixSet.tileMatrix.size()-1;
         }
         return 0;
     }
@@ -910,4 +912,19 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         EastNorth max = proj.latlon2eastNorth(proj.getWorldBoundsLatLon().getMax());
         return (int) Math.ceil(Math.abs(max.east() - min.east()) / scale);
     }
+
+    /**
+     * Get native scales of tile source.
+     * @return {@link ScaleList} of native scales
+     */
+    public ScaleList getNativeScales() {
+        ScaleList scales = new ScaleList();
+        if (currentTileMatrixSet != null) {
+            for (TileMatrix tileMatrix : currentTileMatrixSet.tileMatrix) {
+                scales.add(new Scale(tileMatrix.scaleDenominator * 0.28e-03));
+            }
+        }
+        return scales;
+    }
+
 }
