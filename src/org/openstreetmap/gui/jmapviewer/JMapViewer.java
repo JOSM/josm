@@ -46,6 +46,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     /** whether debug mode is enabled or not */
     public static boolean debug;
 
+    /** option to reverse zoom direction with mouse wheel */
+    public static boolean zoomReverseWheel;
+
     /**
      * Vectors for clock-wise tile painting
      */

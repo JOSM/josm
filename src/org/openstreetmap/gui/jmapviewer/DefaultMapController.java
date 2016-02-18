@@ -82,7 +82,8 @@ MouseWheelListener {
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (wheelZoomEnabled) {
-            map.setZoom(map.getZoom() - e.getWheelRotation(), e.getPoint());
+            int rotation = JMapViewer.zoomReverseWheel ? -e.getWheelRotation() : e.getWheelRotation();
+            map.setZoom(map.getZoom() - rotation, e.getPoint());
         }
     }
 
