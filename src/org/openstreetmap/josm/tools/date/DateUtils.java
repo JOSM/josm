@@ -311,7 +311,7 @@ public final class DateUtils {
      * Allows to override the timezone for unit tests.
      * @param zone the timezone to use
      */
-    protected static void setTimeZone(TimeZone zone) {
+    protected static synchronized void setTimeZone(TimeZone zone) {
         calendarLocale.setTimeZone(zone);
     }
 }

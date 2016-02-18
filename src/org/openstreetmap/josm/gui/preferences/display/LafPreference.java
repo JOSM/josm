@@ -22,6 +22,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.gui.MapMover;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -61,6 +62,7 @@ public class LafPreference implements SubPreferenceSetting {
     private final JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
     private final JCheckBox isoDates = new JCheckBox(tr("Display ISO dates"));
     private final JCheckBox nativeFileChoosers = new JCheckBox(tr("Use native file choosers (nicer, but do not support file filters)"));
+    private final JCheckBox zoomReverseWheel = new JCheckBox(tr("Reverse zoom with mouse wheel"));
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
@@ -140,6 +142,11 @@ public class LafPreference implements SubPreferenceSetting {
         nativeFileChoosers.setSelected(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get());
         panel.add(nativeFileChoosers, GBC.eop().insets(20, 0, 0, 0));
 
+        zoomReverseWheel.setToolTipText(
+                tr("Check if you feel opposite direction more convenient"));
+        zoomReverseWheel.setSelected(MapMover.PROP_ZOOM_REVERSE_WHEEL.get());
+        panel.add(zoomReverseWheel, GBC.eop().insets(20, 0, 0, 0));
+
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
         panel.add(new JLabel(tr("Look and Feel")), GBC.std().insets(20, 0, 0, 0));
@@ -161,6 +168,7 @@ public class LafPreference implements SubPreferenceSetting {
         Main.pref.put(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
         Main.pref.put(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
         Main.pref.put(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.getKey(), nativeFileChoosers.isSelected());
+        Main.pref.put(MapMover.PROP_ZOOM_REVERSE_WHEEL.getKey(), zoomReverseWheel.isSelected());
         mod |= Main.pref.put("laf", ((LookAndFeelInfo) lafCombo.getSelectedItem()).getClassName());
         return mod;
     }
