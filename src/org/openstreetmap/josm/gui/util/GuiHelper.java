@@ -9,7 +9,9 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.DisplayMode;
 import java.awt.Font;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -420,6 +422,33 @@ public final class GuiHelper {
      */
     public static Dimension getScreenSize() {
         return GraphicsEnvironment.isHeadless() ? new Dimension(800, 600) : Toolkit.getDefaultToolkit().getScreenSize();
+    }
+
+    /**
+     * Gets the size of the screen. On systems with multiple displays,
+     * contrary to {@link #getScreenSize()}, the biggest display is used.
+     * This method returns always 800x600 in headless mode (useful for unit tests).
+     * @return the size of maximum screen, in pixels, or 800x600
+     * @see Toolkit#getScreenSize
+     * @since 9576
+     */
+
+    public static Dimension getMaxiumScreenSize() {
+        if (GraphicsEnvironment.isHeadless()) {
+            return new Dimension(800, 600);
+        }
+
+        int height = 0;
+        int width = 0;
+        for (GraphicsDevice gd: GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+            DisplayMode dm = gd.getDisplayMode();
+            height = Math.max(height, dm.getHeight());
+            width = Math.max(width, dm.getWidth());
+        }
+        if (height == 0 || width == 0) {
+            return new Dimension(800, 600);
+        }
+        return new Dimension(width, height);
     }
 
     /**

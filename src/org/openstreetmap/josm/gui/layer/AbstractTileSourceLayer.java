@@ -670,7 +670,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     }
 
     protected int estimateTileCacheSize() {
-        Dimension screenSize = GuiHelper.getScreenSize();
+        Dimension screenSize = GuiHelper.getMaxiumScreenSize();
         int height = screenSize.height;
         int width = screenSize.width;
         int tileSize = 256; // default tile size
