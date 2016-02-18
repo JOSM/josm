@@ -20,9 +20,14 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -33,6 +38,29 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class MapMover extends MouseAdapter implements MouseMotionListener, MouseWheelListener, Destroyable {
+
+    public static final BooleanProperty PROP_ZOOM_REVERSE_WHEEL = new BooleanProperty("zoom.reverse-wheel", false);
+
+    private static final JMapViewerUpdater jMapViewerUpdater = new JMapViewerUpdater();
+
+    private static class JMapViewerUpdater implements PreferenceChangedListener {
+
+        JMapViewerUpdater() {
+            Main.pref.addPreferenceChangeListener(this);
+            updateJMapViewer();
+        }
+
+        @Override
+        public void preferenceChanged(PreferenceChangeEvent e) {
+            if (MapMover.PROP_ZOOM_REVERSE_WHEEL.getKey().equals(e.getKey())) {
+                updateJMapViewer();
+            }
+        }
+
+        private void updateJMapViewer() {
+            JMapViewer.zoomReverseWheel = MapMover.PROP_ZOOM_REVERSE_WHEEL.get();
+        }
+    }
 
     private final class ZoomerAction extends AbstractAction {
         private final String action;
@@ -213,7 +241,8 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      */
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        nc.zoomManyTimes(e.getX(), e.getY(), e.getWheelRotation());
+        int rotation = PROP_ZOOM_REVERSE_WHEEL.get() ? -e.getWheelRotation() : e.getWheelRotation();
+        nc.zoomManyTimes(e.getX(), e.getY(), rotation);
     }
 
     /**
