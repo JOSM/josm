@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.gui.layer;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
@@ -24,32 +26,24 @@ public interface NativeScaleLayer {
         /**
          * Scale factor, same unit as in {@link NavigatableComponent}
          */
-        public double scale;
+        private double scale;
 
         /**
          * True if this scale is native resolution for data source.
          */
-        public boolean isNative;
+        private boolean isNative;
 
         private int index;
 
         /**
          * Constructs a new Scale with given scale, native defaults to true.
          * @param scale as defined in WMTS (scaleDenominator)
+         * @param index zoom index for this scale
          */
-        public Scale(double scale) {
+        public Scale(double scale, int index) {
             this.scale = scale;
             this.isNative = true;
-        }
-
-        /**
-         * Constructs a new Scale with given scale and native values.
-         * @param scale as defined in WMTS (scaleDenominator)
-         * @param isNative is this scale native to the source or not
-         */
-        public Scale(double scale, boolean isNative) {
-            this.scale = scale;
-            this.isNative = isNative;
+            this.index = index;
         }
 
         /**
@@ -76,13 +70,38 @@ public interface NativeScaleLayer {
         public int getIndex() {
             return index;
         }
+
+        public double getScale() {
+            return scale;
+        }
     }
 
     /**
      * List of scales, may include intermediate steps
      * between native resolutions
      */
-    class ScaleList extends ArrayList<Scale> {
+    class ScaleList  {
+        private List<Scale> scales = new ArrayList<>();
+
+        protected ScaleList(double[] scales) {
+            for (int i = 0; i < scales.length; i++) {
+                this.scales.add(new Scale(scales[i], i));
+            }
+        }
+
+        protected ScaleList() {
+        }
+
+        public ScaleList(Collection<Double> scales) {
+            int i = 0;
+            for (Double scale: scales) {
+                this.scales.add(new Scale(scale, i++));
+            }
+        }
+
+        protected void addScale(Scale scale) {
+            scales.add(scale);
+        }
 
         /**
          * Returns a ScaleList that has intermediate steps between native scales.
@@ -93,7 +112,7 @@ public interface NativeScaleLayer {
         public ScaleList withIntermediateSteps(double ratio) {
             ScaleList result = new ScaleList();
             Scale previous = null;
-            for (Scale current: this) {
+            for (Scale current: this.scales) {
                 if (previous != null) {
                     double step = previous.scale / current.scale;
                     double factor = Math.log(step) / Math.log(ratio);
@@ -101,13 +120,23 @@ public interface NativeScaleLayer {
                     double smallStep = Math.pow(step, 1.0/steps);
                     for (int j = 1; j < steps; j++) {
                         double intermediate = previous.scale / Math.pow(smallStep, j);
-                        result.add(new Scale(intermediate, false));
+                        result.addScale(new Scale(intermediate, false, current.index));
                     }
                 }
-                result.add(current);
+                result.addScale(current);
                 previous = current;
             }
             return result;
+        }
+
+        /**
+         * Get a scale from this ScaleList or a new scale if zoomed outside.
+         * @param scale previous scale
+         * @param floor use floor instead of round, set true when fitting view to objects
+         * @return new {@link Scale}
+         */
+        public Scale getSnapScale(double scale, boolean floor) {
+            return getSnapScale(scale, NavigatableComponent.PROP_ZOOM_RATIO.get(), floor);
         }
 
         /**
@@ -118,9 +147,10 @@ public interface NativeScaleLayer {
          * @return new {@link Scale}
          */
         public Scale getSnapScale(double scale, double ratio, boolean floor) {
-            int size = size();
-            Scale first = get(0);
-            Scale last = get(size-1);
+            int size = scales.size();
+            Scale first = scales.get(0);
+            Scale last = scales.get(size-1);
+
             if (scale > first.scale) {
                 double step = scale / first.scale;
                 double factor = Math.log(step) / Math.log(ratio);
@@ -142,7 +172,7 @@ public interface NativeScaleLayer {
             } else {
                 Scale previous = null;
                 for (int i = 0; i < size; i++) {
-                    Scale current = this.get(i);
+                    Scale current = this.scales.get(i);
                     if (previous != null) {
                         if (scale <= previous.scale && scale >= current.scale) {
                             if (floor || previous.scale / scale < scale / current.scale) {
@@ -206,7 +236,7 @@ public interface NativeScaleLayer {
         @Override
         public String toString() {
             StringBuilder stringBuilder = new StringBuilder();
-            for (Scale s: this) {
+            for (Scale s: this.scales) {
                 stringBuilder.append(s + "\n");
             }
             return stringBuilder.toString();
@@ -214,20 +244,20 @@ public interface NativeScaleLayer {
 
         private Scale getNextIn(Scale scale, double ratio) {
             int nextIndex = scale.getIndex() + 1;
-            if (nextIndex <= 0 || nextIndex > size()-1) {
+            if (nextIndex <= 0 || nextIndex > this.scales.size()-1) {
                 return new Scale(scale.scale / ratio, nextIndex == 0, nextIndex);
             } else {
-                Scale nextScale = get(nextIndex);
+                Scale nextScale = this.scales.get(nextIndex);
                 return new Scale(nextScale.scale, nextScale.isNative, nextIndex);
             }
         }
 
         private Scale getNextOut(Scale scale, double ratio) {
             int nextIndex = scale.getIndex() - 1;
-            if (nextIndex < 0 || nextIndex >= size()-1) {
-                return new Scale(scale.scale * ratio, nextIndex == size()-1, nextIndex);
+            if (nextIndex < 0 || nextIndex >= this.scales.size()-1) {
+                return new Scale(scale.scale * ratio, nextIndex == this.scales.size()-1, nextIndex);
             } else {
-                Scale nextScale = get(nextIndex);
+                Scale nextScale = this.scales.get(nextIndex);
                 return new Scale(nextScale.scale, nextScale.isNative, nextIndex);
             }
         }

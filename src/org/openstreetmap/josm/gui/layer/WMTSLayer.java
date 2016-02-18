@@ -61,19 +61,13 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer implements NativeSc
     @Override
     protected int getBestZoom() {
         if (!Main.isDisplayingMapView()) return 0;
-        ScaleList scaleList = getNativeScales();
-        for (int i = scaleList.size()-1; i >= 0; i--) {
-            Scale scale = scaleList.get(i);
-            if (scale.scale >= Main.map.mapView.getScale()) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    @Override
-    protected int getMaxZoomLvl() {
-        return getNativeScales().size()-1;
+        return Math.max(
+                getMinZoomLvl(),
+                Math.min(
+                        getNativeScales().getSnapScale(Main.map.mapView.getScale(), false).getIndex(),
+                        getMaxZoomLvl()
+                        )
+                );
     }
 
     @Override
