@@ -11,17 +11,41 @@ import java.util.Objects;
  */
 public abstract class AbstractSetting<T> implements Setting<T> {
     protected final T value;
+    protected Long time;
+    protected boolean isNew;
     /**
      * Constructs a new {@code AbstractSetting} with the given value
      * @param value The setting value
      */
     public AbstractSetting(T value) {
         this.value = value;
+        this.time = null;
+        this.isNew = false;
     }
 
     @Override
     public T getValue() {
         return value;
+    }
+
+    @Override
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+    @Override
+    public Long getTime() {
+        return this.time;
+    }
+
+    @Override
+    public void setNew(boolean isNew) {
+        this.isNew = isNew;
+    }
+
+    @Override
+    public boolean isNew() {
+        return isNew;
     }
 
     @Override
