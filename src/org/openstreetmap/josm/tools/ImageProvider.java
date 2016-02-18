@@ -176,6 +176,7 @@ public class ImageProvider {
         /**
          * Returns the image size in pixels
          * @return the image size in pixels
+         * @since 9705
          */
         public int getImageSize() {
             return imageSize;
@@ -184,6 +185,7 @@ public class ImageProvider {
         /**
          * Returns the image size as dimension
          * @return the image size as dimension
+         * @since 9705
          */
         public Dimension getImageDimension() {
             return new Dimension(imageSize, imageSize);
