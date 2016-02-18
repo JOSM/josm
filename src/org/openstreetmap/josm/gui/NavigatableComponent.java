@@ -155,7 +155,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public NavigatableComponent() {
         setLayout(null);
-        PROP_ZOOM_RATIO.get(); // make sure it is available in preferences
     }
 
     /**
@@ -207,7 +206,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 scaleList = scaleList.withIntermediateSteps(PROP_ZOOM_RATIO.get());
             }
             Scale scale = scaleList.scaleZoomTimes(getScale(), PROP_ZOOM_RATIO.get(), times);
-            return scale.scale;
+            return scale.getScale();
         } else {
             return getScale() * Math.pow(PROP_ZOOM_RATIO.get(), times);
         }
@@ -244,7 +243,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public double scaleSnap(double scale, boolean floor) {
         if (nativeScaleLayer != null) {
             ScaleList scaleList = nativeScaleLayer.getNativeScales();
-            return scaleList.getSnapScale(scale, PROP_ZOOM_RATIO.get(), floor).scale;
+            return scaleList.getSnapScale(scale, PROP_ZOOM_RATIO.get(), floor).getScale();
         } else {
             return scale;
         }

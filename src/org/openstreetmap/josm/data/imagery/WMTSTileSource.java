@@ -46,7 +46,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.layer.NativeScaleLayer.Scale;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer.ScaleList;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -244,6 +243,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     private TileMatrixSet currentTileMatrixSet;
     private double crsScale;
     private TransferMode transferMode;
+
+    private ScaleList nativeScaleList;
 
     /**
      * Creates a tile source based on imagery info
@@ -630,6 +631,14 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
 
         this.crsScale = getTileSize() * 0.28e-03 / proj.getMetersPerUnit();
+
+        Collection<Double> scales = new ArrayList<>(currentTileMatrixSet.tileMatrix.size());
+        if (currentTileMatrixSet != null) {
+            for (TileMatrix tileMatrix : currentTileMatrixSet.tileMatrix) {
+                scales.add(tileMatrix.scaleDenominator * 0.28e-03);
+            }
+        }
+        this.nativeScaleList = new ScaleList(scales);
     }
 
     /**
@@ -918,13 +927,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * @return {@link ScaleList} of native scales
      */
     public ScaleList getNativeScales() {
-        ScaleList scales = new ScaleList();
-        if (currentTileMatrixSet != null) {
-            for (TileMatrix tileMatrix : currentTileMatrixSet.tileMatrix) {
-                scales.add(new Scale(tileMatrix.scaleDenominator * 0.28e-03));
-            }
-        }
-        return scales;
+        return nativeScaleList;
     }
 
 }
