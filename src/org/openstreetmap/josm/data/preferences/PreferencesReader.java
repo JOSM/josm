@@ -126,7 +126,9 @@ public class PreferencesReader {
                 String topLevelElementName = defaults ? "preferences-defaults" : "preferences";
                 String localName = parser.getLocalName();
                 if (!topLevelElementName.equals(localName)) {
-                    throw new XMLStreamException(tr("Expected element ''{0}'', but got ''{1}''", topLevelElementName, localName), parser.getLocation());
+                    throw new XMLStreamException(
+                            tr("Expected element ''{0}'', but got ''{1}''", topLevelElementName, localName),
+                            parser.getLocation());
                 }
                 try {
                     version = Integer.parseInt(parser.getAttributeValue(null, "version"));
@@ -321,7 +323,7 @@ public class PreferencesReader {
     /**
      * Check if the current element is nil (meaning the value of the setting is null).
      * @return true, if the current element is nil
-     * @see https://msdn.microsoft.com/en-us/library/2b314yt2(v=vs.85).aspx
+     * @see <a href="https://msdn.microsoft.com/en-us/library/2b314yt2(v=vs.85).aspx">Nillable Attribute on MS Developer Network</a>
      */
     private boolean isNil() {
         String nil = parser.getAttributeValue(XSI_NS, "nil");
