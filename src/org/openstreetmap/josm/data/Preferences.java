@@ -1398,7 +1398,7 @@ public class Preferences {
         putCollection("pluginmanager.sites", sites);
     }
 
-    private class SettingToXml implements SettingVisitor {
+    private static class SettingToXml implements SettingVisitor {
         private final StringBuilder b;
         private final boolean noPassword;
         private final boolean defaults;
@@ -1514,6 +1514,8 @@ public class Preferences {
      * Returns XML describing the given preferences.
      * @param settings preferences settings
      * @param nopass if password must be excluded
+     * @param defaults true, if default values are converted to XML, false for
+     * regular preferences
      * @return XML
      */
     public String toXML(Collection<Entry<String, Setting<?>>> settings, boolean nopass, boolean defaults) {
