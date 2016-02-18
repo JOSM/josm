@@ -117,7 +117,6 @@ public class PreferencesReader {
         return version;
     }
 
-
     public void parse() throws XMLStreamException, IOException {
         if (reader != null) {
             this.parser = XMLInputFactory.newInstance().createXMLStreamReader(reader);
