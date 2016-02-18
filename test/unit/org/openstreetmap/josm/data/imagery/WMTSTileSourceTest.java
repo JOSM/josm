@@ -75,12 +75,12 @@ public class WMTSTileSourceTest {
 
         verifyMercatorTile(testSource, 2 << 9 - 1, 2 << 8 - 1, 10);
 
-        assertEquals("TileXMax", 1, testSource.getTileXMax(1));
-        assertEquals("TileYMax", 1, testSource.getTileYMax(1));
-        assertEquals("TileXMax", 2, testSource.getTileXMax(2));
-        assertEquals("TileYMax", 2, testSource.getTileYMax(2));
-        assertEquals("TileXMax", 4, testSource.getTileXMax(3));
-        assertEquals("TileYMax", 4, testSource.getTileYMax(3));
+        assertEquals("TileXMax", 1, testSource.getTileXMax(0));
+        assertEquals("TileYMax", 1, testSource.getTileYMax(0));
+        assertEquals("TileXMax", 2, testSource.getTileXMax(1));
+        assertEquals("TileYMax", 2, testSource.getTileYMax(1));
+        assertEquals("TileXMax", 4, testSource.getTileXMax(2));
+        assertEquals("TileYMax", 4, testSource.getTileYMax(2));
 
     }
 
@@ -92,15 +92,15 @@ public class WMTSTileSourceTest {
 
         assertEquals("http://geoservices.wallonie.be/arcgis/rest/services/DONNEES_BASE/FOND_PLAN_ANNOTATIONS_2012_RW_NB/"
                 + "MapServer/WMTS/tile/1.0.0/DONNEES_BASE_FOND_PLAN_ANNOTATIONS_2012_RW_NB/default/default028mm/5/1219/1063.png",
-                testSource.getTileUrl(6, 1063, 1219));
+                testSource.getTileUrl(5, 1063, 1219));
 
         // +bounds=2.54,49.51,6.4,51.5
         Bounds wallonieBounds = new Bounds(
                 new LatLon(49.485372459967245, 2.840548314430268),
                 new LatLon(50.820959517561256, 6.427849693016202)
                 );
-        verifyBounds(wallonieBounds, testSource, 6, 1063, 1219);
-        verifyBounds(wallonieBounds, testSource, 11, 17724, 20324);
+        verifyBounds(wallonieBounds, testSource, 5, 1063, 1219);
+        verifyBounds(wallonieBounds, testSource, 10, 17724, 20324);
     }
 
     // XXX - disable this test, needs further working
@@ -133,7 +133,7 @@ public class WMTSTileSourceTest {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWIEN);
         testSource.initProjection(Main.getProjection());
-        int zoomOffset = 9;
+        int zoomOffset = 10;
 
         verifyMercatorTile(testSource, 0, 0, 1, zoomOffset);
         verifyMercatorTile(testSource, 1105, 709, 2, zoomOffset);
@@ -177,19 +177,19 @@ public class WMTSTileSourceTest {
         testSource.initProjection(Main.getProjection());
         verifyTile(new LatLon(56, 12), testSource, 0, 0, 1);
         verifyTile(new LatLon(56, 12), testSource, 0, 0, 2);
-        verifyTile(new LatLon(51.13231917844218, 16.867680821557823), testSource, 1, 1, 2);
+        verifyTile(new LatLon(51.13231917844218, 16.867680821557823), testSource, 1, 1, 1);
 
-        assertEquals("TileXMax", 2, testSource.getTileXMax(1));
-        assertEquals("TileYMax", 1, testSource.getTileYMax(1));
-        assertEquals("TileXMax", 3, testSource.getTileXMax(2));
-        assertEquals("TileYMax", 2, testSource.getTileYMax(2));
-        assertEquals("TileXMax", 6, testSource.getTileXMax(3));
-        assertEquals("TileYMax", 4, testSource.getTileYMax(3));
+        assertEquals("TileXMax", 2, testSource.getTileXMax(0));
+        assertEquals("TileYMax", 1, testSource.getTileYMax(0));
+        assertEquals("TileXMax", 3, testSource.getTileXMax(1));
+        assertEquals("TileYMax", 2, testSource.getTileYMax(1));
+        assertEquals("TileXMax", 6, testSource.getTileXMax(2));
+        assertEquals("TileYMax", 4, testSource.getTileYMax(2));
         assertEquals(
                 "http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/TOPO?SERVICE=WMTS&REQUEST=GetTile&"
                 + "VERSION=1.0.0&LAYER=MAPA TOPOGRAFICZNA&STYLE=default&FORMAT=image/jpeg&tileMatrixSet=EPSG:4326&"
                 + "tileMatrix=EPSG:4326:0&tileRow=1&tileCol=1",
-                testSource.getTileUrl(1,  1,  1));
+                testSource.getTileUrl(0,  1,  1));
     }
 
     @Test
@@ -197,8 +197,8 @@ public class WMTSTileSourceTest {
         Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
         testSource.initProjection(Main.getProjection());
-        verifyTile(new LatLon(53.60205873528009, 19.552206794646956), testSource, 12412, 3941, 14);
-        verifyTile(new LatLon(49.79005619189761, 22.778262259134397), testSource, 17714, 10206, 14);
+        verifyTile(new LatLon(53.60205873528009, 19.552206794646956), testSource, 12412, 3941, 13);
+        verifyTile(new LatLon(49.79005619189761, 22.778262259134397), testSource, 17714, 10206, 13);
     }
 
     @Test
@@ -207,8 +207,8 @@ public class WMTSTileSourceTest {
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
         testSource.initProjection(Main.getProjection());
 
-        verifyTile(new LatLon(53.59940948387726, 19.560544913270064), testSource, 6453, 3140, 14);
-        verifyTile(new LatLon(49.782984840526055, 22.790064966993445), testSource, 9932, 9305, 14);
+        verifyTile(new LatLon(53.59940948387726, 19.560544913270064), testSource, 6453, 3140, 13);
+        verifyTile(new LatLon(49.782984840526055, 22.790064966993445), testSource, 9932, 9305, 13);
     }
 
     @Test
@@ -218,7 +218,7 @@ public class WMTSTileSourceTest {
         testSource.initProjection(Main.getProjection());
         assertEquals(
                 "http://www.ngi.be/cartoweb/1.0.0/topo/default/3857/7/1/1.png",
-                testSource.getTileUrl(1,  1,  1));
+                testSource.getTileUrl(0,  1,  1));
     }
 
 
@@ -250,7 +250,7 @@ public class WMTSTileSourceTest {
     }
 
     private void verifyMercatorTile(WMTSTileSource testSource, int x, int y, int z) {
-        verifyMercatorTile(testSource, x, y, z, -1);
+        verifyMercatorTile(testSource, x, y, z, 0);
     }
 
     private void verifyMercatorTile(WMTSTileSource testSource, int x, int y, int z, int zoomOffset) {
