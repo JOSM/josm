@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -1096,6 +1097,11 @@ public abstract class Main {
                 for (Layer l: layers) {
                     Main.main.removeLayer(l);
                 }
+            }
+            try {
+                pref.saveDefaults();
+            } catch (IOException ex) {
+                Main.warn(tr("Failed to save default preferences."));
             }
             worker.shutdownNow();
             ImageProvider.shutdown(true);
