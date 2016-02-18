@@ -40,18 +40,38 @@ public class PreferencesReader {
     private static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
 
     private final SortedMap<String, Setting<?>> settings = new TreeMap<>();
-    private int version = 0;
     private XMLStreamReader parser;
+    private int version = 0;
+    private Reader reader;
+    private File file;
 
     private final boolean defaults;
 
     /**
      * Constructs a new {@code PreferencesReader}.
+     * @param file the file
      * @param defaults true when reading from the cache file for default preferences,
      * false for the regular preferences config file
+     * @throws IOException if any I/O error occurs
+     * @throws XMLStreamException if any XML stream error occurs
      */
-    public PreferencesReader(boolean defaults) {
+    public PreferencesReader(File file, boolean defaults) throws IOException, XMLStreamException {
         this.defaults = defaults;
+        this.reader = null;
+        this.file = file;
+    }
+
+    /**
+     * Constructs a new {@code PreferencesReader}.
+     * @param reader the {@link Reader}
+     * @param defaults true when reading from the cache file for default preferences,
+     * false for the regular preferences config file
+     * @throws XMLStreamException if any XML stream error occurs
+     */
+    public PreferencesReader(Reader reader, boolean defaults) throws XMLStreamException {
+        this.defaults = defaults;
+        this.reader = reader;
+        this.file = null;
     }
 
     /**
@@ -81,28 +101,6 @@ public class PreferencesReader {
     }
 
     /**
-     * Parse preferences XML.
-     * @param f the file
-     * @throws IOException if any I/O error occurs
-     * @throws XMLStreamException if any XML stream error occurs
-     */
-    public void fromXML(File f) throws IOException, XMLStreamException {
-        try (BufferedReader in = Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8)) {
-            fromXML(in);
-        }
-    }
-
-    /**
-     * Parse preferences XML.
-     * @param in the {@link Reader}
-     * @throws XMLStreamException if any XML stream error occurs
-     */
-    public void fromXML(Reader in) throws XMLStreamException {
-        this.parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
-        parse();
-    }
-
-    /**
      * Return the parsed preferences as a settings map
      * @return the parsed preferences as a settings map
      */
@@ -119,7 +117,20 @@ public class PreferencesReader {
         return version;
     }
 
-    private void parse() throws XMLStreamException {
+
+    public void parse() throws XMLStreamException, IOException {
+        if (reader != null) {
+            this.parser = XMLInputFactory.newInstance().createXMLStreamReader(reader);
+            doParse();
+        } else {
+            try (BufferedReader in = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+                this.parser = XMLInputFactory.newInstance().createXMLStreamReader(in);
+                doParse();
+            }
+        }
+    }
+
+    private void doParse() throws XMLStreamException {
         int event = parser.getEventType();
         while (true) {
             if (event == XMLStreamConstants.START_ELEMENT) {

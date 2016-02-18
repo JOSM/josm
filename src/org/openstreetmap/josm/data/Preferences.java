@@ -57,6 +57,7 @@ import org.openstreetmap.josm.data.preferences.ListListSetting;
 import org.openstreetmap.josm.data.preferences.ListSetting;
 import org.openstreetmap.josm.data.preferences.MapListSetting;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
+import org.openstreetmap.josm.data.preferences.PreferencesWriter;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.data.preferences.SettingVisitor;
 import org.openstreetmap.josm.data.preferences.StringSetting;
@@ -537,7 +538,8 @@ public class Preferences {
 
         try (PrintWriter out = new PrintWriter(new OutputStreamWriter(
                 new FileOutputStream(prefFile + "_tmp"), StandardCharsets.UTF_8), false)) {
-            out.print(toXML(settings, false, defaults));
+            PreferencesWriter writer = new PreferencesWriter(out, false, defaults);
+            writer.write(settings);
         }
 
         File tmpFile = new File(prefFile + "_tmp");
@@ -575,8 +577,8 @@ public class Preferences {
     protected void load() throws IOException, SAXException, XMLStreamException {
         File pref = getPreferenceFile();
         PreferencesReader.validateXML(pref);
-        PreferencesReader reader = new PreferencesReader(false);
-        reader.fromXML(pref);
+        PreferencesReader reader = new PreferencesReader(pref, false);
+        reader.parse();
         settingsMap.clear();
         settingsMap.putAll(reader.getSettings());
         updateSystemProperties();
@@ -595,8 +597,8 @@ public class Preferences {
     protected void loadDefaults() throws IOException, XMLStreamException, SAXException {
         File def = getDefaultsCacheFile();
         PreferencesReader.validateXML(def);
-        PreferencesReader reader = new PreferencesReader(true);
-        reader.fromXML(def);
+        PreferencesReader reader = new PreferencesReader(def, true);
+        reader.parse();
         defaultsMap.clear();
         long minTime = System.currentTimeMillis() / 1000 - MAX_AGE_DEFAULT_PREFERENCES;
         for (Entry<String, Setting<?>> e : reader.getSettings().entrySet()) {
@@ -610,10 +612,11 @@ public class Preferences {
      * Loads preferences from XML reader.
      * @param in XML reader
      * @throws XMLStreamException if any XML stream error occurs
+     * @throws IOException if any I/O error occurs
      */
-    public void fromXML(Reader in) throws XMLStreamException {
-        PreferencesReader reader = new PreferencesReader(false);
-        reader.fromXML(in);
+    public void fromXML(Reader in) throws XMLStreamException, IOException {
+        PreferencesReader reader = new PreferencesReader(in, false);
+        reader.parse();
         settingsMap.clear();
         settingsMap.putAll(reader.getSettings());
     }
@@ -1398,109 +1401,6 @@ public class Preferences {
         putCollection("pluginmanager.sites", sites);
     }
 
-    private static class SettingToXml implements SettingVisitor {
-        private final StringBuilder b;
-        private final boolean noPassword;
-        private final boolean defaults;
-        private String key;
-
-        SettingToXml(StringBuilder b, boolean noPassword, boolean defaults) {
-            this.b = b;
-            this.noPassword = noPassword;
-            this.defaults = defaults;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        private void addTime(Setting setting) {
-            if (defaults) {
-                Long time = setting.getTime();
-                if (time == null) throw new IllegalStateException();
-                b.append("' time='").append(time);
-            }
-        }
-
-        @Override
-        public void visit(StringSetting setting) {
-            if (noPassword && "osm-server.password".equals(key))
-                return; // do not store plain password.
-            b.append("  <tag key='");
-            b.append(XmlWriter.encode(key));
-            addTime(setting);
-            if (setting.getValue() != null) {
-                b.append("' value='");
-                b.append(XmlWriter.encode(setting.getValue()));
-                b.append("'/>\n");
-            } else if (defaults) {
-                b.append("' xsi:nil='true'/>\n");
-            } else {
-                throw new NullPointerException();
-            }
-        }
-
-        @Override
-        public void visit(ListSetting setting) {
-            b.append("  <list key='").append(XmlWriter.encode(key));
-            addTime(setting);
-            if (setting.getValue() != null) {
-                b.append("'>\n");
-                for (String s : setting.getValue()) {
-                    b.append("    <entry value='").append(XmlWriter.encode(s)).append("'/>\n");
-                }
-                b.append("  </list>\n");
-            } else if (defaults) {
-                b.append("' xsi:nil='true'/>\n");
-            } else {
-                throw new NullPointerException();
-            }
-        }
-
-        @Override
-        public void visit(ListListSetting setting) {
-            b.append("  <lists key='").append(XmlWriter.encode(key));
-            addTime(setting);
-            if (setting.getValue() != null) {
-                b.append("'>\n");
-                for (List<String> list : setting.getValue()) {
-                    b.append("    <list>\n");
-                    for (String s : list) {
-                        b.append("      <entry value='").append(XmlWriter.encode(s)).append("'/>\n");
-                    }
-                    b.append("    </list>\n");
-                }
-                b.append("  </lists>\n");
-            } else if (defaults) {
-                b.append("' xsi:nil='true'/>\n");
-            } else {
-                throw new NullPointerException();
-            }
-        }
-
-        @Override
-        public void visit(MapListSetting setting) {
-            b.append("  <maps key='").append(XmlWriter.encode(key));
-            addTime(setting);
-            if (setting.getValue() != null) {
-                b.append("'>\n");
-                for (Map<String, String> struct : setting.getValue()) {
-                    b.append("    <map>\n");
-                    for (Entry<String, String> e : struct.entrySet()) {
-                        b.append("      <tag key='").append(XmlWriter.encode(e.getKey()))
-                         .append("' value='").append(XmlWriter.encode(e.getValue())).append("'/>\n");
-                    }
-                    b.append("    </map>\n");
-                }
-                b.append("  </maps>\n");
-            } else if (defaults) {
-                b.append("' xsi:nil='true'/>\n");
-            } else {
-                throw new NullPointerException();
-            }
-        }
-    }
-
     /**
      * Returns XML describing these preferences.
      * @param nopass if password must be excluded
@@ -1519,21 +1419,13 @@ public class Preferences {
      * @return XML
      */
     public String toXML(Collection<Entry<String, Setting<?>>> settings, boolean nopass, boolean defaults) {
-        String rootElement = defaults ? "preferences-defaults" : "preferences";
-        StringBuilder b = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<")
-                .append(rootElement).append(" xmlns='")
-                .append(Main.getXMLBase()).append("/preferences-1.0'");
-        if (defaults) {
-            b.append(" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'");
-        }
-        b.append(" version='").append(Version.getInstance().getVersion()).append("'>\n");
-        SettingToXml toXml = new SettingToXml(b, nopass, defaults);
-        for (Entry<String, Setting<?>> e : settings) {
-            toXml.setKey(e.getKey());
-            e.getValue().visit(toXml);
-        }
-        b.append("</").append(rootElement).append(">\n");
-        return b.toString();
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        PreferencesWriter prefWriter = new PreferencesWriter(pw, nopass, defaults);
+        prefWriter.write(settings);
+        sw.flush();
+        StringBuffer sb = sw.getBuffer();
+        return sb.toString();
     }
 
     /**
