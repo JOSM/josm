@@ -4300,7 +4300,8 @@ node[sport=motor] {
 area[sport=multi],
 area[sport=pelota],
 area[sport=racquet],
-area[sport=skating],
+area[sport=ice_skating],
+area[sport=roller_skating],
 area[sport=skateboard] {
     fill-color: sport#bde3cb;
 }
@@ -4319,8 +4320,18 @@ node[sport=racquet] {
     set icon_z17;
     text: auto;
 }
-node[sport=skating] {
+node[sport=ice_skating] {
     icon-image: "sport/skating.png";
+    set icon_z17;
+    text: auto;
+}
+node[sport=roller_skating] {
+    icon-image: "sport/roller_skating.svg";
+    set icon_z17;
+    text: auto;
+}
+node[sport=skating] {
+    icon-image: "misc/deprecated.png";
     set icon_z17;
     text: auto;
 }

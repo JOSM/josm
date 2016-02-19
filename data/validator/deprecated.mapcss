@@ -791,3 +791,10 @@ relation[/^..$/][!to] {
 *[/.+_[0-9]$/][!/^note_[0-9]$/][!/^description[0-9]$/] {
   throwWarning: tr("questionable key (ending with a number): {0}", "{0.key}");
 }
+
+/* #12500 */
+*[sport=skating] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "sport=ice_skating";
+  suggestAlternative: "sport=roller_skating";
+}
