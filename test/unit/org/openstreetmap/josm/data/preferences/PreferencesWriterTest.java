@@ -9,6 +9,8 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.junit.Test;
 import org.openstreetmap.josm.data.Version;
@@ -102,6 +104,34 @@ public class PreferencesWriterTest {
                     // CHECKSTYLE.ON: LineLength
                     Version.getInstance().getVersion(), time),
                     out.toString());
+        }
+    }
+
+    /**
+     * Test null value in default preferences.
+     * @throws IOException
+     */
+    @Test
+    public void testNullValue() throws IOException {
+        long time = System.currentTimeMillis() / 1000;
+        // CHECKSTYLE.OFF: LineLength
+        String expected = String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>%n" +
+                "<preferences-defaults xmlns='http://josm.openstreetmap.de/preferences-1.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' version='%d'>%n" +
+                "  <list key='foo_list' time='%2$d' xsi:nil='true'/>%n" +
+                "  <lists key='foo_listlist' time='%2$d' xsi:nil='true'/>%n" +
+                "  <maps key='foo_maplist' time='%2$d' xsi:nil='true'/>%n" +
+                "  <tag key='foo_tag' time='%2$d' xsi:nil='true'/>%n" +
+                "</preferences-defaults>%n",
+                Version.getInstance().getVersion(), time);
+        // CHECKSTYLE.ON: LineLength
+        try (StringWriter out = new StringWriter(); PreferencesWriter w = new PreferencesWriter(new PrintWriter(out), true, true)) {
+            SortedMap<String, Setting<?>> map = new TreeMap<>();
+            map.put("foo_tag", setting(new StringSetting(null), time));
+            map.put("foo_list", setting(new ListSetting(null), time));
+            map.put("foo_listlist", setting(new ListListSetting(null), time));
+            map.put("foo_maplist", setting(new MapListSetting(null), time));
+            w.write(map.entrySet());
+            assertEquals(expected, out.toString());
         }
     }
 }
