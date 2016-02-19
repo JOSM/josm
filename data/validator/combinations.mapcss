@@ -213,10 +213,11 @@ way[waterway][bridge=yes] {
   fixAdd: "bridge=aqueduct";
 }
 
-/* only {0.key}, see #11104 */
+/* only {0.key}, see #11104 #12422 */
 *[area][eval(number_of_tags()) = 1],
 *[name][eval(number_of_tags()) = 1],
-*[ref][eval(number_of_tags()) = 1] {
+*[ref][eval(number_of_tags()) = 1],
+*[lit][eval(number_of_tags()) = 1] {
   throwWarning: tr("incomplete object: only {0}", "{0.key}");
 }
 /* only {0.key} and {1.key}, see #11104 */
@@ -261,8 +262,7 @@ way[highway][!postal_code]["addr:postcode"] {
 *[bridge  ][!highway][!railway][!waterway][!piste:type][public_transport != platform][man_made !~ /^(bridge|pipeline)$/][building != bridge],
 *[psv     ][!highway][!railway][!waterway][amenity !~ /^parking.*/],
 *[width   ][!highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance],
-*[maxspeed][!highway][!railway][traffic_sign !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][type != enforcement][waterway !~ /^(river|canal|lock)$/][!traffic_calming],
-*[lit     ][!highway][!railway][!piste:type][!amenity][public_transport!=platform][advertising!=billboard][!leisure][!tourism] {
+*[maxspeed][!highway][!railway][traffic_sign !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][type != enforcement][waterway !~ /^(river|canal|lock)$/][!traffic_calming] {
   throwWarning: tr("{0} on suspicious object", "{0.key}");
 }
 
