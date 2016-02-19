@@ -55,7 +55,7 @@ public class MultipolygonTest extends Test {
     public static final int INNER_WAY_OUTSIDE = 1605;
     /** Intersection between multipolygon ways */
     public static final int CROSSING_WAYS = 1606;
-    /** Style for outer way mismatches / With the currently used mappaint style(s) the style for outer way mismatches polygon */
+    /** Style for outer way mismatches / With the currently used mappaint style(s) the style for outer way mismatches the area style */
     public static final int OUTER_STYLE_MISMATCH = 1607;
     /** With the currently used mappaint style the style for inner way equals the multipolygon style */
     public static final int INNER_STYLE_MISMATCH = 1608;
@@ -272,8 +272,8 @@ public class MultipolygonTest extends Test {
                         l.add(r);
                         l.add(wOuter);
                         if (!area.equals(areaOuter)) {
-                            addError(r, new TestError(this, Severity.WARNING, !areaStyle ? tr("Style for outer way mismatches")
-                            : tr("With the currently used mappaint style(s) the style for outer way mismatches polygon"),
+                            addError(r, new TestError(this, Severity.OTHER, !areaStyle ? tr("Style for outer way mismatches")
+                            : tr("With the currently used mappaint style(s) the style for outer way mismatches the area style"),
                             OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
                         } else if (areaStyle) { /* style on outer way of multipolygon, but equal to polygon */
                             addError(r, new TestError(this, Severity.WARNING, tr("Area style on outer way"), OUTER_STYLE,
