@@ -1655,10 +1655,17 @@ public class LayerListDialog extends ToggleDialog {
                     l.setVisible(true);
                     break;
                 case 1:
-                    if (Main.map.mapView.getNativeScaleLayer() == l) {
+                    NativeScaleLayer oldLayer = Main.map.mapView.getNativeScaleLayer();
+                    if (oldLayer == l) {
                         Main.map.mapView.setNativeScaleLayer(null);
                     } else if (l instanceof NativeScaleLayer) {
                         Main.map.mapView.setNativeScaleLayer((NativeScaleLayer) l);
+                        if (oldLayer != null) {
+                            int idx = getLayers().indexOf(oldLayer);
+                            if (idx >= 0) {
+                                fireTableCellUpdated(idx, col);
+                            }
+                        }
                     }
                     break;
                 case 2:
