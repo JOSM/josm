@@ -12,6 +12,7 @@ import org.openstreetmap.josm.io.XmlWriter;
 
 /**
  * Write preferences to XML.
+ * @since 9823
  */
 public class PreferencesWriter extends XmlWriter implements SettingVisitor {
     private final boolean noPassword;
@@ -22,8 +23,7 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
      * Construct new {@code PreferencesWriter}.
      * @param out the {@link PrintWriter}
      * @param noPassword if password must be excluded
-     * @param defaults true, if default values are converted to XML, false for
-     * regular preferences
+     * @param defaults true, if default values are converted to XML, false for regular preferences
      */
     public PreferencesWriter(PrintWriter out, boolean noPassword, boolean defaults) {
         super(out);
@@ -37,45 +37,47 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
      * @param settings preferences settings to write
      */
     public void write(Collection<Map.Entry<String, Setting<?>>> settings) {
-        out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        out.write(String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>%n"));
         String rootElement = defaults ? "preferences-defaults" : "preferences";
         out.write(String.format("<%s xmlns='%s/preferences-1.0'", rootElement, Main.getXMLBase()));
         if (defaults) {
             out.write(" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'");
         }
-        out.write(String.format(" version='%d'>\n", Version.getInstance().getVersion()));
+        out.write(String.format(" version='%d'>%n", Version.getInstance().getVersion()));
         for (Map.Entry<String, Setting<?>> e : settings) {
             setKey(e.getKey());
             e.getValue().visit(this);
         }
-        out.write(String.format("</%s>\n", rootElement));
+        out.write(String.format("</%s>%n", rootElement));
     }
 
     private void setKey(String key) {
         this.key = key;
     }
 
-    private void addTime(Setting setting) {
+    private void addTime(Setting<?> setting) {
         if (defaults) {
             Long time = setting.getTime();
-            if (time == null) throw new IllegalStateException();
+            if (time == null)
+                throw new IllegalStateException();
             out.write("' time='" + time);
         }
+    }
+
+    private void addDefaults() {
+        out.write(String.format("' xsi:nil='true'/>%n"));
     }
 
     @Override
     public void visit(StringSetting setting) {
         if (noPassword && "osm-server.password".equals(key))
             return; // do not store plain password.
-        out.write("  <tag key='");
-        out.write(XmlWriter.encode(key));
+        out.write("  <tag key='" + XmlWriter.encode(key));
         addTime(setting);
         if (setting.getValue() != null) {
-            out.write("' value='");
-            out.write(XmlWriter.encode(setting.getValue()));
-            out.write("'/>\n");
+            out.write(String.format("' value='%s'/>%n", XmlWriter.encode(setting.getValue())));
         } else if (defaults) {
-            out.write("' xsi:nil='true'/>\n");
+            addDefaults();
         } else {
             throw new NullPointerException();
         }
@@ -86,13 +88,13 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
         out.write("  <list key='" + XmlWriter.encode(key));
         addTime(setting);
         if (setting.getValue() != null) {
-            out.write("'>\n");
+            out.write(String.format("'>%n"));
             for (String s : setting.getValue()) {
-                out.write("    <entry value='" + XmlWriter.encode(s) + "'/>\n");
+                out.write(String.format("    <entry value='%s'/>%n", XmlWriter.encode(s)));
             }
-            out.write("  </list>\n");
+            out.write(String.format("  </list>%n"));
         } else if (defaults) {
-            out.write("' xsi:nil='true'/>\n");
+            addDefaults();
         } else {
             throw new NullPointerException();
         }
@@ -103,17 +105,17 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
         out.write("  <lists key='" + XmlWriter.encode(key));
         addTime(setting);
         if (setting.getValue() != null) {
-            out.write("'>\n");
+            out.write(String.format("'>%n"));
             for (List<String> list : setting.getValue()) {
-                out.write("    <list>\n");
+                out.write(String.format("    <list>%n"));
                 for (String s : list) {
-                    out.write("      <entry value='" + encode(s) + "'/>\n");
+                    out.write(String.format("      <entry value='%s'/>%n", encode(s)));
                 }
-                out.write("    </list>\n");
+                out.write(String.format("    </list>%n"));
             }
-            out.write("  </lists>\n");
+            out.write(String.format("  </lists>%n"));
         } else if (defaults) {
-            out.write("' xsi:nil='true'/>\n");
+            addDefaults();
         } else {
             throw new NullPointerException();
         }
@@ -124,20 +126,19 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
         out.write("  <maps key='" + encode(key));
         addTime(setting);
         if (setting.getValue() != null) {
-            out.write("'>\n");
+            out.write(String.format("'>%n"));
             for (Map<String, String> struct : setting.getValue()) {
-                out.write("    <map>\n");
+                out.write(String.format("    <map>%n"));
                 for (Map.Entry<String, String> e : struct.entrySet()) {
-                    out.write(String.format("      <tag key='%s' value='%s'/>\n", encode(e.getKey()), encode(e.getValue())));
+                    out.write(String.format("      <tag key='%s' value='%s'/>%n", encode(e.getKey()), encode(e.getValue())));
                 }
-                out.write("    </map>\n");
+                out.write(String.format("    </map>%n"));
             }
-            out.write("  </maps>\n");
+            out.write(String.format("  </maps>%n"));
         } else if (defaults) {
-            out.write("' xsi:nil='true'/>\n");
+            addDefaults();
         } else {
             throw new NullPointerException();
         }
     }
-
 }
