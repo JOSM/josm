@@ -788,9 +788,9 @@ relation[/^..$/][!to] {
 }
 
 /* #12494 */
-*[/.+_[0-9]$/][!/^note_[0-9]$/][!/^description[0-9]$/] {
-  throwWarning: tr("questionable key (ending with a number): {0}", "{0.key}");
-}
+*[/^[^t][^i][^g].+_[0-9]$/][!/^note_[0-9]$/][!/^description_[0-9]$/] {
+  throwOther: tr("questionable key (ending with a number): {0}", "{0.key}");
+} /*should not warn for key tiger:name_base_1 */
 
 /* #12500 */
 *[sport=skating] {
