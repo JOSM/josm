@@ -292,7 +292,6 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
         selectSth.setPreferredSize(scrollPane.getSize());
         presets.setSize(scrollPane.getSize());
-        GuiHelper.setDefaultIncrement(scrollPane);
 
         editHelper.loadTagsIfNeeded();
 
