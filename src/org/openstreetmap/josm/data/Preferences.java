@@ -1417,13 +1417,17 @@ public class Preferences {
      * @return XML
      */
     public String toXML(Collection<Entry<String, Setting<?>>> settings, boolean nopass, boolean defaults) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        PreferencesWriter prefWriter = new PreferencesWriter(pw, nopass, defaults);
-        prefWriter.write(settings);
-        sw.flush();
-        StringBuffer sb = sw.getBuffer();
-        return sb.toString();
+        try (
+            StringWriter sw = new StringWriter();
+            PreferencesWriter prefWriter = new PreferencesWriter(new PrintWriter(sw), nopass, defaults);
+        ) {
+            prefWriter.write(settings);
+            sw.flush();
+            return sw.toString();
+        } catch (IOException e) {
+            Main.error(e);
+            return null;
+        }
     }
 
     /**
