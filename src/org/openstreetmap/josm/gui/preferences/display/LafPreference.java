@@ -12,17 +12,21 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JCheckBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.ListCellRenderer;
 import javax.swing.LookAndFeel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.gui.MapMover;
+import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -63,6 +67,8 @@ public class LafPreference implements SubPreferenceSetting {
     private final JCheckBox isoDates = new JCheckBox(tr("Display ISO dates"));
     private final JCheckBox nativeFileChoosers = new JCheckBox(tr("Use native file choosers (nicer, but do not support file filters)"));
     private final JCheckBox zoomReverseWheel = new JCheckBox(tr("Reverse zoom with mouse wheel"));
+    private final JCheckBox zoomIntermediateSteps = new JCheckBox(tr("Intermediate steps between native resolutions"));
+    private JSpinner spinZoomRatio;
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
@@ -147,7 +153,29 @@ public class LafPreference implements SubPreferenceSetting {
         zoomReverseWheel.setSelected(MapMover.PROP_ZOOM_REVERSE_WHEEL.get());
         panel.add(zoomReverseWheel, GBC.eop().insets(20, 0, 0, 0));
 
-        panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
+        zoomIntermediateSteps.setToolTipText(
+                tr("Divide intervals between native resolution levels to smaller steps if they are much larger than zoom ratio"));
+        zoomIntermediateSteps.setSelected(NavigatableComponent.PROP_ZOOM_INTERMEDIATE_STEPS.get());
+        ExpertToggleAction.addVisibilitySwitcher(zoomIntermediateSteps);
+        panel.add(zoomIntermediateSteps, GBC.eop().insets(20, 0, 0, 0));
+
+        panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 10, 0, 0));
+
+        double logZoomLevel = Math.log(2) / Math.log(NavigatableComponent.PROP_ZOOM_RATIO.get());
+        logZoomLevel = Math.max(1, logZoomLevel);
+        logZoomLevel = Math.min(5, logZoomLevel);
+        JLabel labelZoomRatio = new JLabel(tr("Zoom steps to get double scale"));
+        spinZoomRatio = new JSpinner(new SpinnerNumberModel(logZoomLevel, 1, 5, 1));
+        Component spinZoomRatioEditor = spinZoomRatio.getEditor();
+        JFormattedTextField jftf = ((JSpinner.DefaultEditor) spinZoomRatioEditor).getTextField();
+        jftf.setColumns(2);
+        String zoomRatioToolTipText = tr("Higher value means more steps needed, therefore zoom steps will be smaller");
+        spinZoomRatio.setToolTipText(zoomRatioToolTipText);
+        labelZoomRatio.setToolTipText(zoomRatioToolTipText);
+        labelZoomRatio.setLabelFor(spinZoomRatio);
+        panel.add(labelZoomRatio, GBC.std().insets(20, 0, 0, 0));
+        panel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        panel.add(spinZoomRatio, GBC.eol());
 
         panel.add(new JLabel(tr("Look and Feel")), GBC.std().insets(20, 0, 0, 0));
         panel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
@@ -168,7 +196,9 @@ public class LafPreference implements SubPreferenceSetting {
         Main.pref.put(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
         Main.pref.put(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
         Main.pref.put(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.getKey(), nativeFileChoosers.isSelected());
-        Main.pref.put(MapMover.PROP_ZOOM_REVERSE_WHEEL.getKey(), zoomReverseWheel.isSelected());
+        MapMover.PROP_ZOOM_REVERSE_WHEEL.put(zoomReverseWheel.isSelected());
+        NavigatableComponent.PROP_ZOOM_INTERMEDIATE_STEPS.put(zoomIntermediateSteps.isSelected());
+        NavigatableComponent.PROP_ZOOM_RATIO.put(Math.pow(2, 1/(double) spinZoomRatio.getModel().getValue()));
         mod |= Main.pref.put("laf", ((LookAndFeelInfo) lafCombo.getSelectedItem()).getClassName());
         return mod;
     }
