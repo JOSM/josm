@@ -45,6 +45,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
+import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
@@ -63,6 +64,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
@@ -873,7 +875,11 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     protected final Component createLayout(Component data, boolean scroll, Collection<SideButton> firstButtons,
             Collection<SideButton>... nextButtons) {
         if (scroll) {
-            data = new JScrollPane(data);
+            JScrollPane sp = new JScrollPane(data);
+            if (!(data instanceof Scrollable)) {
+                GuiHelper.setDefaultIncrement(sp);
+            }
+            data = sp;
         }
         LinkedList<Collection<SideButton>> buttons = new LinkedList<>();
         buttons.addFirst(firstButtons);

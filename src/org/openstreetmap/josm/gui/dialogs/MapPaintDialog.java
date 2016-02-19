@@ -174,9 +174,7 @@ public class MapPaintDialog extends ToggleDialog {
         InputMapUtils.addEnterAction(tblStyles, onoffAction);
         InputMapUtils.addSpacebarAction(tblStyles, onoffAction);
 
-        JScrollPane sp = new JScrollPane(p);
-        GuiHelper.setDefaultIncrement(sp);
-        createLayout(sp, false, Arrays.asList(
+        createLayout(p, true, Arrays.asList(
                 new SideButton(onoffAction, false),
                 new SideButton(upAction, false),
                 new SideButton(downAction, false),

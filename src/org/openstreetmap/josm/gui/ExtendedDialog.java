@@ -391,6 +391,7 @@ public class ExtendedDialog extends JDialog {
         cp.add(buttonsPanel, gc);
         if (placeContentInScrollPane) {
             JScrollPane pane = new JScrollPane(cp);
+            GuiHelper.setDefaultIncrement(pane);
             pane.setBorder(null);
             setContentPane(pane);
         } else {
