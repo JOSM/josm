@@ -2441,9 +2441,7 @@
             </optional>
         </item> <!-- Rail -->
         <item name="Narrow Gauge Rail" icon="styles/standard/transport/railway/narrow_gauge_rail.svg" type="way" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=light_rail"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=light_rail"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=light_rail" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:narrow_gauge" />
             <key key="railway" value="narrow_gauge" />
             <optional>
                 <combo key="usage" text="Usage" values="main,branch,industrial,military,tourism,freight" />
