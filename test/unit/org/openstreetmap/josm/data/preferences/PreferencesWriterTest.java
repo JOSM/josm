@@ -35,7 +35,11 @@ public class PreferencesWriterTest {
             long time = System.currentTimeMillis() / 1000;
             w.visit(setting(new ListListSetting(Arrays.asList(Arrays.asList("bar"))), time));
             assertEquals(String.format(
-                    "  <lists key='null' time='%d'>%n    <list>%n      <entry value='bar'/>%n    </list>%n  </lists>%n", time),
+                    "  <lists key='null' time='%d'>%n" +
+                    "    <list>%n" +
+                    "      <entry value='bar'/>%n" +
+                    "    </list>%n" +
+                    "  </lists>%n", time),
                     out.toString());
         }
     }
@@ -50,7 +54,9 @@ public class PreferencesWriterTest {
             long time = System.currentTimeMillis() / 1000;
             w.visit(setting(new ListSetting(Arrays.asList("bar")), time));
             assertEquals(String.format(
-                    "  <list key='null' time='%d'>%n    <entry value='bar'/>%n  </list>%n", time),
+                    "  <list key='null' time='%d'>%n" +
+                    "    <entry value='bar'/>%n" +
+                    "  </list>%n", time),
                     out.toString());
         }
     }
@@ -67,7 +73,11 @@ public class PreferencesWriterTest {
             map.put("foo", "bar");
             w.visit(setting(new MapListSetting(Arrays.asList(map)), time));
             assertEquals(String.format(
-                    "  <maps key='null' time='%d'>%n    <map>%n      <tag key='foo' value='bar'/>%n    </map>%n  </maps>%n", time),
+                    "  <maps key='null' time='%d'>%n" +
+                    "    <map>%n" +
+                    "      <tag key='foo' value='bar'/>%n" +
+                    "    </map>%n" +
+                    "  </maps>%n", time),
                     out.toString());
         }
     }
@@ -100,7 +110,10 @@ public class PreferencesWriterTest {
             w.write(map.entrySet());
             assertEquals(String.format(
                     // CHECKSTYLE.OFF: LineLength
-                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>%n<preferences-defaults xmlns='http://josm.openstreetmap.de/preferences-1.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' version='%d'>%n  <tag key='foo' time='%d' value='bar'/>%n</preferences-defaults>%n",
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>%n" +
+                    "<preferences-defaults xmlns='http://josm.openstreetmap.de/preferences-1.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' version='%d'>%n" +
+                    "  <tag key='foo' time='%d' value='bar'/>%n" +
+                    "</preferences-defaults>%n",
                     // CHECKSTYLE.ON: LineLength
                     Version.getInstance().getVersion(), time),
                     out.toString());
@@ -109,7 +122,7 @@ public class PreferencesWriterTest {
 
     /**
      * Test null value in default preferences.
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      */
     @Test
     public void testNullValue() throws IOException {
