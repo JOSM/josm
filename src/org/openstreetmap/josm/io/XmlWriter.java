@@ -57,18 +57,20 @@ public class XmlWriter implements Closeable {
      */
     public static String encode(String unencoded, boolean keepApos) {
         StringBuilder buffer = null;
-        for (int i = 0; i < unencoded.length(); ++i) {
-            String encS = null;
-            if (!keepApos || unencoded.charAt(i) != '\'') {
-                encS = XmlWriter.encoding.get(unencoded.charAt(i));
-            }
-            if (encS != null) {
-                if (buffer == null) {
-                    buffer = new StringBuilder(unencoded.substring(0, i));
+        if (unencoded != null) {
+            for (int i = 0; i < unencoded.length(); ++i) {
+                String encS = null;
+                if (!keepApos || unencoded.charAt(i) != '\'') {
+                    encS = XmlWriter.encoding.get(unencoded.charAt(i));
                 }
-                buffer.append(encS);
-            } else if (buffer != null) {
-                buffer.append(unencoded.charAt(i));
+                if (encS != null) {
+                    if (buffer == null) {
+                        buffer = new StringBuilder(unencoded.substring(0, i));
+                    }
+                    buffer.append(encS);
+                } else if (buffer != null) {
+                    buffer.append(unencoded.charAt(i));
+                }
             }
         }
         return (buffer == null) ? unencoded : buffer.toString();
