@@ -627,18 +627,14 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             if (newLayer != null) {
                 this.currentTileMatrixSet = newLayer.tileMatrixSet;
                 this.currentLayer = newLayer;
+                Collection<Double> scales = new ArrayList<>(currentTileMatrixSet.tileMatrix.size());
+                for (TileMatrix tileMatrix : currentTileMatrixSet.tileMatrix) {
+                    scales.add(tileMatrix.scaleDenominator * 0.28e-03);
+                }
+                this.nativeScaleList = new ScaleList(scales);
             }
         }
-
         this.crsScale = getTileSize() * 0.28e-03 / proj.getMetersPerUnit();
-
-        Collection<Double> scales = new ArrayList<>(currentTileMatrixSet.tileMatrix.size());
-        if (currentTileMatrixSet != null) {
-            for (TileMatrix tileMatrix : currentTileMatrixSet.tileMatrix) {
-                scales.add(tileMatrix.scaleDenominator * 0.28e-03);
-            }
-        }
-        this.nativeScaleList = new ScaleList(scales);
     }
 
     /**
