@@ -225,3 +225,16 @@ way[junction=roundabout]:righthandtraffic:clockwise,
 way[junction=roundabout]!:righthandtraffic:anticlockwise {
   throwWarning: tr("suspicious roundabout direction");
 }
+
+/* #12496 */
+area:closed[place=islet][eval(areasize()) > 1500] {
+  throwWarning: tr("{0} on a large area", "{1.tag}");
+  suggestAlternative: "place=island";
+  fixAdd: "place=island";
+}
+
+area:closed[place=island][eval(areasize()) < 500] {
+  throwWarning: tr("{0} on a small area", "{1.tag}");
+  suggestAlternative: "place=islet";
+  fixAdd: "place=islet";
+}
