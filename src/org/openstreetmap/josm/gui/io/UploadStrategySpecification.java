@@ -34,17 +34,17 @@ public class UploadStrategySpecification  {
     }
 
     /**
-     * Clones another upload strategy. If other is null,assumes default
-     * values.
+     * Clones another upload strategy. If other is null, assumes default values.
      *
      * @param other the other upload strategy
      */
     public UploadStrategySpecification(UploadStrategySpecification other) {
-        if (other == null) return;
-        this.strategy = other.strategy;
-        this.chunkSize = other.chunkSize;
-        this.policy = other.policy;
-        this.closeChangesetAfterUpload = other.closeChangesetAfterUpload;
+        if (other != null) {
+            this.strategy = other.strategy;
+            this.chunkSize = other.chunkSize;
+            this.policy = other.policy;
+            this.closeChangesetAfterUpload = other.closeChangesetAfterUpload;
+        }
     }
 
     /**
@@ -92,7 +92,8 @@ public class UploadStrategySpecification  {
     }
 
     public int getNumRequests(int numObjects) {
-        if (numObjects <= 0) return 0;
+        if (numObjects <= 0)
+            return 0;
         switch(strategy) {
         case INDIVIDUAL_OBJECTS_STRATEGY: return numObjects;
         case SINGLE_REQUEST_STRATEGY: return 1;
@@ -113,8 +114,10 @@ public class UploadStrategySpecification  {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
         UploadStrategySpecification that = (UploadStrategySpecification) obj;
         return chunkSize == that.chunkSize &&
                 closeChangesetAfterUpload == that.closeChangesetAfterUpload &&
