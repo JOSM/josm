@@ -239,7 +239,8 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     }
 
     public void setUploadStrategySpecification(UploadStrategySpecification strategy) {
-        if (strategy == null) return;
+        if (strategy == null)
+            return;
         rbStrategy.get(strategy.getStrategy()).setSelected(true);
         tfChunkSize.setEnabled(strategy.getStrategy() == UploadStrategy.CHUNKED_DATASET_STRATEGY);
         if (strategy.getStrategy().equals(UploadStrategy.CHUNKED_DATASET_STRATEGY)) {
@@ -255,14 +256,16 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         UploadStrategy strategy = getUploadStrategy();
         int chunkSize = getChunkSize();
         UploadStrategySpecification spec = new UploadStrategySpecification();
-        switch(strategy) {
-        case INDIVIDUAL_OBJECTS_STRATEGY:
-        case SINGLE_REQUEST_STRATEGY:
-            spec.setStrategy(strategy);
-            break;
-        case CHUNKED_DATASET_STRATEGY:
-            spec.setStrategy(strategy).setChunkSize(chunkSize);
-            break;
+        if (strategy != null) {
+            switch(strategy) {
+            case INDIVIDUAL_OBJECTS_STRATEGY:
+            case SINGLE_REQUEST_STRATEGY:
+                spec.setStrategy(strategy);
+                break;
+            case CHUNKED_DATASET_STRATEGY:
+                spec.setStrategy(strategy).setChunkSize(chunkSize);
+                break;
+            }
         }
         if (pnlMultiChangesetPolicyPanel.isVisible()) {
             if (rbFillOneChangeset.isSelected()) {
