@@ -127,8 +127,8 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
         String appendix = "";
 
         if (isReprojectionPossible()) {
-            appendix = ". " + tr("JOSM will use EPSG:4326 to query the server, but results may vary "
-                    + "depending on the WMS server");
+            appendix = ". <p>" + tr("JOSM will use EPSG:4326 to query the server, but results may vary "
+                    + "depending on the WMS server") + "</p>";
         }
         return ret.substring(0, ret.length()-2) + appendix;
     }
@@ -138,10 +138,10 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
         // do not call super - we need custom warning dialog
 
         if (!isProjectionSupported(newValue)) {
-            String message = tr("The layer {0} does not support the new projection {1}.\n"
-                    + " Supported projections are: {2}\n"
-                    + "Change the projection again or remove the layer.",
-                    getName(), newValue.toCode(), nameSupportedProjections());
+            String message =
+                    "<html><body><p>" + tr("The layer {0} does not support the new projection {1}.", getName(), newValue.toCode()) +
+                    "<p style='width: 450px; position: absolute; margin: 0px;'>" + tr("Supported projections are: {0}", nameSupportedProjections()) + "</p>" +
+                    "<p>" + tr("Change the projection again or remove the layer.");
 
             ExtendedDialog warningDialog = new ExtendedDialog(Main.parent, tr("Warning"), new String[]{tr("OK")}).
                     setContent(message).
