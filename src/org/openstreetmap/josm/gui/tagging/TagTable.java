@@ -23,7 +23,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.CellEditor;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -32,8 +31,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableColumn;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
@@ -52,7 +49,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is the tabular editor component for OSM tags.
- *
+ * @since 1762
  */
 public class TagTable extends JTable  {
     /** the table cell editor used by this table */
@@ -65,33 +62,6 @@ public class TagTable extends JTable  {
      */
     private final CopyOnWriteArrayList<Component> doNotStopCellEditingWhenFocused = new CopyOnWriteArrayList<>();
     private transient CellEditorRemover editorRemover;
-
-    /**
-     * The table has two columns. The first column is used for editing rendering and
-     * editing tag keys, the second for rendering and editing tag values.
-     *
-     */
-    static class TagTableColumnModel extends DefaultTableColumnModel {
-        TagTableColumnModel(DefaultListSelectionModel selectionModel) {
-            setSelectionModel(selectionModel);
-            TableColumn col = null;
-            TagCellRenderer renderer = new TagCellRenderer();
-
-            // column 0 - tag key
-            col = new TableColumn(0);
-            col.setHeaderValue(tr("Key"));
-            col.setResizable(true);
-            col.setCellRenderer(renderer);
-            addColumn(col);
-
-            // column 1 - tag value
-            col = new TableColumn(1);
-            col.setHeaderValue(tr("Value"));
-            col.setResizable(true);
-            col.setCellRenderer(renderer);
-            addColumn(col);
-        }
-    }
 
     /**
      * Action to be run when the user navigates to the next cell in the table,
@@ -436,7 +406,9 @@ public class TagTable extends JTable  {
      * @param maxCharacters maximum number of characters allowed for keys and values, 0 for unlimited
      */
     public TagTable(TagEditorModel model, final int maxCharacters) {
-        super(model, new TagTableColumnModel(model.getColumnSelectionModel()), model.getRowSelectionModel());
+        super(model, new TagTableColumnModelBuilder(new TagCellRenderer(), tr("Key"), tr("Value"))
+                  .setSelectionModel(model.getColumnSelectionModel()).build(),
+              model.getRowSelectionModel());
         this.model = model;
         init(maxCharacters);
     }

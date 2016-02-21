@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
+import org.openstreetmap.josm.gui.tagging.TagTableColumnModelBuilder;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -42,6 +43,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
     private JTable mergedTable;
     private JTable theirTable;
     private final TagMergeModel model;
+    private final String[] keyvalue;
     private transient AdjustmentSynchronizer adjustmentSynchronizer;
 
     /**
@@ -49,6 +51,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      */
     public TagMerger() {
         model = new TagMergeModel();
+        keyvalue = new String[]{tr("Key"), tr("Value")};
         build();
     }
 
@@ -70,12 +73,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      * @return the table (embedded in a scroll pane)
      */
     protected JScrollPane buildMineTagTable() {
-        mineTable = new JTable(
-                model,
-                new TagMergeColumnModel(
-                        new MineTableCellRenderer()
-                )
-        );
+        mineTable = new JTable(model, new TagTableColumnModelBuilder(new MineTableCellRenderer(), keyvalue).build());
         mineTable.setName("table.my");
         return embeddInScrollPane(mineTable);
     }
@@ -86,12 +84,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      * @return the table (embedded in a scroll pane)
      */
     protected JScrollPane buildTheirTable() {
-        theirTable = new JTable(
-                model,
-                new TagMergeColumnModel(
-                        new TheirTableCellRenderer()
-                )
-        );
+        theirTable = new JTable(model, new TagTableColumnModelBuilder(new TheirTableCellRenderer(), keyvalue).build());
         theirTable.setName("table.their");
         return embeddInScrollPane(theirTable);
     }
@@ -103,12 +96,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      */
 
     protected JScrollPane buildMergedTable() {
-        mergedTable = new JTable(
-                model,
-                new TagMergeColumnModel(
-                        new MergedTableCellRenderer()
-                )
-        );
+        mergedTable = new JTable(model, new TagTableColumnModelBuilder(new MergedTableCellRenderer(), keyvalue).build());
         mergedTable.setName("table.merged");
         return embeddInScrollPane(mergedTable);
     }
