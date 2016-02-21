@@ -117,10 +117,12 @@ public interface NativeScaleLayer {
                     double step = previous.scale / current.scale;
                     double factor = Math.log(step) / Math.log(ratio);
                     int steps = (int) Math.round(factor);
-                    double smallStep = Math.pow(step, 1.0/steps);
-                    for (int j = 1; j < steps; j++) {
-                        double intermediate = previous.scale / Math.pow(smallStep, j);
-                        result.addScale(new Scale(intermediate, false, current.index));
+                    if (steps != 0) {
+                        double smallStep = Math.pow(step, 1.0/steps);
+                        for (int j = 1; j < steps; j++) {
+                            double intermediate = previous.scale / Math.pow(smallStep, j);
+                            result.addScale(new Scale(intermediate, false, current.index));
+                        }
                     }
                 }
                 result.addScale(current);
