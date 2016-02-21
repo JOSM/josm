@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences.advanced;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -54,8 +55,10 @@ public class ExportProfileAction extends AbstractAction {
             }
         }
         if (keys.isEmpty()) {
-            JOptionPane.showMessageDialog(Main.parent,
-                    tr("All the preferences of this group are default, nothing to save"), tr("Warning"), JOptionPane.WARNING_MESSAGE);
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(Main.parent,
+                        tr("All the preferences of this group are default, nothing to save"), tr("Warning"), JOptionPane.WARNING_MESSAGE);
+            }
             return;
         }
         File f = askUserForCustomSettingsFile();
@@ -77,15 +80,18 @@ public class ExportProfileAction extends AbstractAction {
                 return tr("JOSM custom settings files (*.xml)");
             }
         };
-        AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(false, false, title, filter,
-                JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
-        if (fc != null) {
-            File sel = fc.getSelectedFile();
-            if (!sel.getName().endsWith(".xml")) sel = new File(sel.getAbsolutePath()+".xml");
-            if (!sel.getName().startsWith(schemaKey)) {
-                sel = new File(sel.getParentFile().getAbsolutePath()+'/'+schemaKey+'_'+sel.getName());
+        if (!GraphicsEnvironment.isHeadless()) {
+            AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(false, false, title, filter,
+                    JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
+            if (fc != null) {
+                File sel = fc.getSelectedFile();
+                if (!sel.getName().endsWith(".xml"))
+                    sel = new File(sel.getAbsolutePath()+".xml");
+                if (!sel.getName().startsWith(schemaKey)) {
+                    sel = new File(sel.getParentFile().getAbsolutePath()+'/'+schemaKey+'_'+sel.getName());
+                }
+                return sel;
             }
-            return sel;
         }
         return null;
     }
