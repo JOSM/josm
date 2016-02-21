@@ -140,7 +140,8 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
         if (!isProjectionSupported(newValue)) {
             String message =
                     "<html><body><p>" + tr("The layer {0} does not support the new projection {1}.", getName(), newValue.toCode()) +
-                    "<p style='width: 450px; position: absolute; margin: 0px;'>" + tr("Supported projections are: {0}", nameSupportedProjections()) + "</p>" +
+                    "<p style='width: 450px; position: absolute; margin: 0px;'>" +
+                            tr("Supported projections are: {0}", nameSupportedProjections()) + "</p>" +
                     "<p>" + tr("Change the projection again or remove the layer.");
 
             ExtendedDialog warningDialog = new ExtendedDialog(Main.parent, tr("Warning"), new String[]{tr("OK")}).
