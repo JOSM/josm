@@ -4078,6 +4078,14 @@
             <space />
             <combo key="access" text="Access" values="yes,customers,private" />
         </item> <!-- Swimming Pool -->
+        <item name="Fitness Station" icon="styles/standard/leisure/fitness_station.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=fitness_station" />
+            <space />
+            <key key="leisure" value="fitness_station" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <text key="ref" text="Reference" />
+            <text key="description" text="Description" />
+        </item> <!-- Fitness Station -->
         <item name="Sauna" icon="presets/sauna.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=sauna"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=sauna"

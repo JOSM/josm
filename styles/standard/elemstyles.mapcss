@@ -1892,11 +1892,17 @@ node[leisure=swimming_pool] {
     set icon_z17;
     text: auto;
 }
+area[leisure=fitness_station],
 area[leisure=miniature_golf],
 area[leisure=dog_park],
 area[leisure=ice_rink],
 area[leisure=sauna] {
     fill-color: leisure#c7f1a3;
+}
+node[leisure=fitness_station] {
+    icon-image: "leisure/fitness_station.svg";
+    set icon_z17;
+    text: auto;
 }
 node[leisure=miniature_golf] {
     icon-image: "sport/miniature_golf.svg";
