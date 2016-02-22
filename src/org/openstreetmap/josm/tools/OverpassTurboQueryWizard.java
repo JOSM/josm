@@ -64,7 +64,7 @@ public final class OverpassTurboQueryWizard {
                         put("outputMode", "recursive_meta");
                     } }
             );
-            if (result == Boolean.FALSE) {
+            if (Boolean.FALSE.equals(result)) {
                 throw new UncheckedParseException();
             }
             String query = (String) result;

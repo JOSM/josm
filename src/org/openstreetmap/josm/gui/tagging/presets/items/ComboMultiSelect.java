@@ -301,7 +301,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
             if (DIFFERENT.equals(value))
                 return DIFFERENT;
             String displayValue = getDisplayValue(true);
-            return displayValue != null ? displayValue.replaceAll("<.*>", "") : null; // remove additional markup, e.g. <br>
+            return displayValue != null ? displayValue.replaceAll("<.*>", "") : ""; // remove additional markup, e.g. <br>
         }
 
         @Override
