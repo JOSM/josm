@@ -64,7 +64,10 @@ public class TaggingPresetPreferenceTestIT {
                     testPresets(allMessages, source);
                 } catch (SAXException | IOException e1) {
                     e.printStackTrace();
-                    allErrors.add(e1);
+                    // ignore frequent network errors with www.freietonne.de causing too much Jenkins failures
+                    if (!source.url.contains("www.freietonne.de")) {
+                        allErrors.add(e1);
+                    }
                     System.out.println(" => KO");
                 }
             } catch (SAXException e) {
