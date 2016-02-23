@@ -3,12 +3,26 @@ package org.openstreetmap.josm.data.coor;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Locale;
+
+import org.junit.Before;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.projection.Projections;
 
 /**
  * Unit tests for class {@link LatLon}.
  */
 public class LatLonTest {
+
+    /**
+     * Setup test.
+     */
+    @Before
+    public void setUp() throws Exception {
+        Locale.setDefault(Locale.GERMAN);
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
+    }
 
     private static final double EPSILON = 1e-6;
 
@@ -25,59 +39,59 @@ public class LatLonTest {
            };
 
     /**
-     * Test of {@link LatLon#roundToOsmPrecisionStrict}
+     * Test of {@link LatLon#roundToOsmPrecision}
      */
     @Test
-    public void testRoundToOsmPrecisionStrict() {
+    public void testRoundToOsmPrecision() {
 
         for (double value : SAMPLE_VALUES) {
-            assertEquals(LatLon.roundToOsmPrecisionStrict(value), value, 0);
+            assertEquals(LatLon.roundToOsmPrecision(value), value, 0);
         }
 
-        assertEquals(LatLon.roundToOsmPrecisionStrict(0.0), 0.0, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(-0.0), 0.0, 0);
+        assertEquals(LatLon.roundToOsmPrecision(0.0), 0.0, 0);
+        assertEquals(LatLon.roundToOsmPrecision(-0.0), 0.0, 0);
 
-        assertEquals(LatLon.roundToOsmPrecisionStrict(0.12345678),  0.1234568, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(0.123456789), 0.1234568, 0);
+        assertEquals(LatLon.roundToOsmPrecision(0.12345678),  0.1234568, 0);
+        assertEquals(LatLon.roundToOsmPrecision(0.123456789), 0.1234568, 0);
 
-        assertEquals(LatLon.roundToOsmPrecisionStrict(1.12345678),  1.1234568, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(1.123456789), 1.1234568, 0);
+        assertEquals(LatLon.roundToOsmPrecision(1.12345678),  1.1234568, 0);
+        assertEquals(LatLon.roundToOsmPrecision(1.123456789), 1.1234568, 0);
 
-        assertEquals(LatLon.roundToOsmPrecisionStrict(10.12345678),  10.1234568, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(10.123456789), 10.1234568, 0);
+        assertEquals(LatLon.roundToOsmPrecision(10.12345678),  10.1234568, 0);
+        assertEquals(LatLon.roundToOsmPrecision(10.123456789), 10.1234568, 0);
 
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.12345678),  100.1234568, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.123456789), 100.1234568, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.12345678),  100.1234568, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.123456789), 100.1234568, 0);
 
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.00000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.000000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.0000000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.00000000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.000000000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.0000000000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.00000000000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.000000000000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.0000000000000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.00000000000000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.000000000000000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.0000000000000000001),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(100.00000000000000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.00000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.0000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.00000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.000000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.0000000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.00000000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.000000000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.0000000000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.00000000000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.000000000000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.0000000000000000001),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(100.00000000000000000001),  100.0000000, 0);
 
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.999999999999999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.99999999999999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.9999999999999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.999999999999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.99999999999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.9999999999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.999999999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.99999999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.9999999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.999999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.99999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.9999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.999999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.99999999),  100.0000000, 0);
-        assertEquals(LatLon.roundToOsmPrecisionStrict(99.9999999),  99.9999999, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.999999999999999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.99999999999999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.9999999999999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.999999999999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.99999999999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.9999999999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.999999999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.99999999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.9999999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.999999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.99999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.9999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.999999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.99999999),  100.0000000, 0);
+        assertEquals(LatLon.roundToOsmPrecision(99.9999999),  99.9999999, 0);
     }
 
     /**
@@ -141,5 +155,21 @@ public class LatLonTest {
         assertEquals(90, Math.toDegrees(c.bearing(e)), EPSILON);
         assertEquals(180, Math.toDegrees(n.bearing(c)), EPSILON);
         assertEquals(270, Math.toDegrees(e.bearing(c)), EPSILON);
+    }
+
+    /**
+     * Tests the methods {@link LatLon#latToString(CoordinateFormat)}, {@link LatLon#lonToString(CoordinateFormat)}.
+     */
+    @Test
+    public void testFormatting() {
+        LatLon c = new LatLon(47.000000, 19.000000);
+        assertEquals("47.0", c.latToString(CoordinateFormat.DECIMAL_DEGREES));
+        assertEquals("19.0", c.lonToString(CoordinateFormat.DECIMAL_DEGREES));
+        assertEquals("47°00'00,0\"N", c.latToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
+        assertEquals("19°00'00,0\"E", c.lonToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
+        assertEquals("47°00,000'N", c.latToString(CoordinateFormat.NAUTICAL));
+        assertEquals("19°00,000'E", c.lonToString(CoordinateFormat.NAUTICAL));
+        assertEquals("5942074.0724311", c.latToString(CoordinateFormat.EAST_NORTH));
+        assertEquals("2115070.3250722", c.lonToString(CoordinateFormat.EAST_NORTH));
     }
 }

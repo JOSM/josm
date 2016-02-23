@@ -204,7 +204,7 @@ public class LatLon extends Coordinate {
     }
 
     /**
-     * Constructs a new {@link LatLon}
+     * Constructs a new object representing the given latitude/longitude.
      * @param lat the latitude, i.e., the north-south position in degrees
      * @param lon the longitude, i.e., the east-west position in degrees
      */
@@ -216,6 +216,10 @@ public class LatLon extends Coordinate {
         super(coor.lon(), coor.lat());
     }
 
+    /**
+     * Constructs a new object for the given coordinate
+     * @param coor the coordinate
+     */
     public LatLon(ICoordinate coor) {
         this(coor.getLat(), coor.getLon());
     }
@@ -232,6 +236,11 @@ public class LatLon extends Coordinate {
     public static final String SOUTH = trc("compass", "S");
     public static final String NORTH = trc("compass", "N");
 
+    /**
+     * Formats the latitude part according to the given format
+     * @param d the coordinate format to use
+     * @return the formatted latitude
+     */
     public String latToString(CoordinateFormat d) {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(y);
@@ -253,6 +262,11 @@ public class LatLon extends Coordinate {
     public static final String WEST = trc("compass", "W");
     public static final String EAST = trc("compass", "E");
 
+    /**
+     * Formats the longitude part according to the given format
+     * @param d the coordinate format to use
+     * @return the formatted longitude
+     */
     public String lonToString(CoordinateFormat d) {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(x);
@@ -457,7 +471,9 @@ public class LatLon extends Coordinate {
      * @param value lat/lon value
      *
      * @return rounded value
+     * @deprecated Use {@link #roundToOsmPrecision(double)} instead
      */
+    @Deprecated
     public static double roundToOsmPrecisionStrict(double value) {
         return roundToOsmPrecision(value);
     }
@@ -480,12 +496,11 @@ public class LatLon extends Coordinate {
      * MAX_SERVER_PRECISION
      *
      * @return a clone of this lat LatLon
+     * @deprecated Use {@link #getRoundedToOsmPrecision()} instead
      */
+    @Deprecated
     public LatLon getRoundedToOsmPrecisionStrict() {
-        return new LatLon(
-                roundToOsmPrecisionStrict(lat()),
-                roundToOsmPrecisionStrict(lon())
-                );
+        return getRoundedToOsmPrecision();
     }
 
     @Override
@@ -502,6 +517,10 @@ public class LatLon extends Coordinate {
                 Double.compare(that.y, y) == 0;
     }
 
+    /**
+     * Converts this latitude/longitude to an instance of {@link ICoordinate}.
+     * @return a {@link ICoordinate} instance of this latitude/longitude
+     */
     public ICoordinate toCoordinate() {
         return new org.openstreetmap.gui.jmapviewer.Coordinate(lat(), lon());
     }
