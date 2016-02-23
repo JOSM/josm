@@ -2,10 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -13,6 +10,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.CachedFile;
 
 /**
  * Uses <a href="https://github.com/tyrasd/overpass-wizard/">Overpass Turbo query wizard</a> code (MIT Licensed)
@@ -39,11 +37,19 @@ public final class OverpassTurboQueryWizard {
     }
 
     private OverpassTurboQueryWizard() {
-        try (final Reader reader = new InputStreamReader(
-                getClass().getResourceAsStream("/data/overpass-wizard.js"), StandardCharsets.UTF_8)) {
+
+        try (final CachedFile file = new CachedFile("resource://data/overpass-wizard.js");
+             final Reader reader = file.getContentReader()) {
             engine.eval("var console = {error: " + Main.class.getCanonicalName() + ".warn};");
             engine.eval("var global = {};");
             engine.eval(reader);
+            engine.eval("var overpassWizard = function(query) {" +
+                    "  return global.overpassWizard(query, {" +
+                    "    comment: false," +
+                    "    outputFormat: 'xml'," +
+                    "    outputMode: 'recursive_meta'" +
+                    "  });" +
+                    "}");
         } catch (ScriptException | IOException ex) {
             throw new RuntimeException("Failed to initialize OverpassTurboQueryWizard", ex);
         }
@@ -57,13 +63,7 @@ public final class OverpassTurboQueryWizard {
      */
     public String constructQuery(String search) throws UncheckedParseException {
         try {
-            final Object result = ((Invocable) engine).invokeMethod(engine.get("global"),
-                    "overpassWizard", search, new HashMap<String, Object>() { {
-                        put("comment", false);
-                        put("outputFormat", "xml");
-                        put("outputMode", "recursive_meta");
-                    } }
-            );
+            final Object result = ((Invocable) engine).invokeFunction("overpassWizard", search);
             if (Boolean.FALSE.equals(result)) {
                 throw new UncheckedParseException();
             }
