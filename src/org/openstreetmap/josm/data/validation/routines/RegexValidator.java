@@ -27,29 +27,43 @@ import java.util.regex.Pattern;
  * are provided to allow  <i>case in-sensitive</i> validation. For example to create
  * a validator which does <i>case in-sensitive</i> validation for a set of regular
  * expressions:
+ * </p>
  * <pre>
- *         String[] regexs = new String[] {...};
- *         RegexValidator validator = new RegexValidator(regexs, false);
+ * <code>
+ * String[] regexs = new String[] {...};
+ * RegexValidator validator = new RegexValidator(regexs, false);
+ * </code>
  * </pre>
+ *
  * <ul>
- *   <li>Validate <code>true</code> or <code>false</code>:
- *   <ul>
- *     <li><code>boolean valid = validator.isValid(value);</code></li>
- *   </ul></li>
- *   <li>Validate returning an aggregated String of the matched groups:
- *   <ul>
- *     <li><code>String result = validator.validate(value);</code></li>
- *   </ul></li>
- *   <li>Validate returning the matched groups:
- *   <ul>
- *     <li><code>String[] result = validator.match(value);</code></li>
- *   </ul></li>
+ *   <li>Validate <code>true</code> or <code>false</code>:</li>
+ *   <li>
+ *     <ul>
+ *       <li><code>boolean valid = validator.isValid(value);</code></li>
+ *     </ul>
+ *   </li>
+ *   <li>Validate returning an aggregated String of the matched groups:</li>
+ *   <li>
+ *     <ul>
+ *       <li><code>String result = validator.validate(value);</code></li>
+ *     </ul>
+ *   </li>
+ *   <li>Validate returning the matched groups:</li>
+ *   <li>
+ *     <ul>
+ *       <li><code>String[] result = validator.match(value);</code></li>
+ *     </ul>
+ *   </li>
  * </ul>
+ *
+ * <b>Note that patterns are matched against the entire input.</b>
+ *
  * <p>
  * Cached instances pre-compile and re-use {@link Pattern}(s) - which according
  * to the {@link Pattern} API are safe to use in a multi-threaded environment.
+ * </p>
  *
- * @version $Revision: 1227719 $ $Date: 2012-01-05 18:45:51 +0100 (Thu, 05 Jan 2012) $
+ * @version $Revision: 1713331 $
  * @since Validator 1.4
  */
 public class RegexValidator extends AbstractValidator {

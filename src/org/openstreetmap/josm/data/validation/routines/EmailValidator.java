@@ -24,51 +24,60 @@ import java.util.regex.Pattern;
 /**
  * <p>Perform email validations.</p>
  * <p>
- * This class is a Singleton; you can retrieve the instance via the getInstance() method.
- * </p>
- * <p>
  * Based on a script by <a href="mailto:stamhankar@hotmail.com">Sandeep V. Tamhankar</a>
  * http://javascript.internet.com
  * </p>
  * <p>
  * This implementation is not guaranteed to catch all possible errors in an email address.
- * For example, an address like nobody@noplace.somedog will pass validator, even though there
- * is no TLD "somedog"
  * </p>.
  *
- * @version $Revision: 1608584 $ $Date: 2014-07-07 19:54:07 UTC (Mon, 07 Jul 2014) $
+ * @version $Revision: 1723573 $
  * @since Validator 1.4
  */
 public class EmailValidator extends AbstractValidator {
 
     private static final String SPECIAL_CHARS = "\\p{Cntrl}\\(\\)<>@,;:'\\\\\\\"\\.\\[\\]";
-    private static final String VALID_CHARS = "[^\\s" + SPECIAL_CHARS + "]";
-    private static final String QUOTED_USER = "(\"[^\"]*\")";
+    private static final String VALID_CHARS = "(\\\\.)|[^\\s" + SPECIAL_CHARS + "]";
+    private static final String QUOTED_USER = "(\"(\\\\\"|[^\"])*\")";
     private static final String WORD = "((" + VALID_CHARS + "|')+|" + QUOTED_USER + ")";
 
-    private static final String LEGAL_ASCII_REGEX = "^\\p{ASCII}+$";
     private static final String EMAIL_REGEX = "^\\s*?(.+)@(.+?)\\s*$";
     private static final String IP_DOMAIN_REGEX = "^\\[(.*)\\]$";
     private static final String USER_REGEX = "^\\s*" + WORD + "(\\." + WORD + ")*$";
 
-    private static final Pattern MATCH_ASCII_PATTERN = Pattern.compile(LEGAL_ASCII_REGEX);
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
     private static final Pattern IP_DOMAIN_PATTERN = Pattern.compile(IP_DOMAIN_REGEX);
     private static final Pattern USER_PATTERN = Pattern.compile(USER_REGEX);
 
+    private static final int MAX_USERNAME_LEN = 64;
+
     private final boolean allowLocal;
+    private final boolean allowTld;
 
     /**
      * Singleton instance of this class, which
      *  doesn't consider local addresses as valid.
      */
-    private static final EmailValidator EMAIL_VALIDATOR = new EmailValidator(false);
+    private static final EmailValidator EMAIL_VALIDATOR = new EmailValidator(false, false);
+
+    /**
+     * Singleton instance of this class, which
+     *  doesn't consider local addresses as valid.
+     */
+    private static final EmailValidator EMAIL_VALIDATOR_WITH_TLD = new EmailValidator(false, true);
 
     /**
      * Singleton instance of this class, which does
      *  consider local addresses valid.
      */
-    private static final EmailValidator EMAIL_VALIDATOR_WITH_LOCAL = new EmailValidator(true);
+    private static final EmailValidator EMAIL_VALIDATOR_WITH_LOCAL = new EmailValidator(true, false);
+
+
+    /**
+     * Singleton instance of this class, which does
+     *  consider local addresses valid.
+     */
+    private static final EmailValidator EMAIL_VALIDATOR_WITH_LOCAL_WITH_TLD = new EmailValidator(true, true);
 
     /**
      * Returns the Singleton instance of this validator.
@@ -84,13 +93,46 @@ public class EmailValidator extends AbstractValidator {
      *  with local validation as required.
      *
      * @param allowLocal Should local addresses be considered valid?
+     * @param allowTld Should TLDs be allowed?
+     * @return singleton instance of this validator
+     */
+    public static EmailValidator getInstance(boolean allowLocal, boolean allowTld) {
+        if (allowLocal) {
+            if (allowTld) {
+                return EMAIL_VALIDATOR_WITH_LOCAL_WITH_TLD;
+            } else {
+                return EMAIL_VALIDATOR_WITH_LOCAL;
+            }
+        } else {
+            if (allowTld) {
+                return EMAIL_VALIDATOR_WITH_TLD;
+            } else {
+                return EMAIL_VALIDATOR;
+            }
+        }
+    }
+
+    /**
+     * Returns the Singleton instance of this validator,
+     *  with local validation as required.
+     *
+     * @param allowLocal Should local addresses be considered valid?
      * @return singleton instance of this validator
      */
     public static EmailValidator getInstance(boolean allowLocal) {
-        if (allowLocal) {
-           return EMAIL_VALIDATOR_WITH_LOCAL;
-        }
-        return EMAIL_VALIDATOR;
+        return getInstance(allowLocal, false);
+    }
+
+    /**
+     * Protected constructor for subclasses to use.
+     *
+     * @param allowLocal Should local addresses be considered valid?
+     * @param allowTld Should TLDs be allowed?
+     */
+    protected EmailValidator(boolean allowLocal, boolean allowTld) {
+        super();
+        this.allowLocal = allowLocal;
+        this.allowTld = allowTld;
     }
 
     /**
@@ -101,6 +143,7 @@ public class EmailValidator extends AbstractValidator {
     protected EmailValidator(boolean allowLocal) {
         super();
         this.allowLocal = allowLocal;
+        this.allowTld = false;
     }
 
     /**
@@ -116,21 +159,14 @@ public class EmailValidator extends AbstractValidator {
             return false;
         }
 
-        Matcher asciiMatcher = MATCH_ASCII_PATTERN.matcher(email);
-        if (!asciiMatcher.matches()) {
-            setErrorMessage(tr("E-mail address contains non-ascii characters"));
-            setFix(email.replaceAll("[^\\p{ASCII}]+", ""));
+        if (email.endsWith(".")) { // check this first - it's cheap!
+            setErrorMessage(tr("E-mail address is invalid"));
             return false;
         }
 
         // Check the whole email address structure
         Matcher emailMatcher = EMAIL_PATTERN.matcher(email);
         if (!emailMatcher.matches()) {
-            setErrorMessage(tr("E-mail address is invalid"));
-            return false;
-        }
-
-        if (email.endsWith(".")) {
             setErrorMessage(tr("E-mail address is invalid"));
             return false;
         }
@@ -153,7 +189,7 @@ public class EmailValidator extends AbstractValidator {
     /**
      * Returns true if the domain component of an email address is valid.
      *
-     * @param domain being validated.
+     * @param domain being validated, may be in IDN format
      * @return true if the email address's domain is valid.
      */
     protected boolean isValidDomain(String domain) {
@@ -164,12 +200,14 @@ public class EmailValidator extends AbstractValidator {
             InetAddressValidator inetAddressValidator =
                     InetAddressValidator.getInstance();
             return inetAddressValidator.isValid(ipDomainMatcher.group(1));
+        }
+        // Domain is symbolic name
+        DomainValidator domainValidator =
+                DomainValidator.getInstance(allowLocal);
+        if (allowTld) {
+            return domainValidator.isValid(domain) || (!domain.startsWith(".") && domainValidator.isValidTld(domain));
         } else {
-            // Domain is symbolic name
-            DomainValidator domainValidator =
-                    DomainValidator.getInstance(allowLocal);
-            return domainValidator.isValid(domain) ||
-                    domainValidator.isValidTld(domain);
+            return domainValidator.isValid(domain);
         }
     }
 
@@ -180,6 +218,11 @@ public class EmailValidator extends AbstractValidator {
      * @return true if the user name is valid.
      */
     protected boolean isValidUser(String user) {
+
+        if (user == null || user.length() > MAX_USERNAME_LEN) {
+            return false;
+        }
+
         return USER_PATTERN.matcher(user).matches();
     }
 
