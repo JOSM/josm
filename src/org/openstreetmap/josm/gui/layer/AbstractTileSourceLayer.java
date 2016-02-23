@@ -98,7 +98,8 @@ import org.openstreetmap.josm.tools.GBC;
  * @since 3715
  * @since 8526 (copied from TMSLayer)
  */
-public abstract class AbstractTileSourceLayer<T extends AbstractTMSTileSource> extends ImageryLayer implements ImageObserver, TileLoaderListener, ZoomChangeListener {
+public abstract class AbstractTileSourceLayer<T extends AbstractTMSTileSource> extends ImageryLayer
+implements ImageObserver, TileLoaderListener, ZoomChangeListener {
     private static final String PREFERENCE_PREFIX = "imagery.generic";
 
     /** maximum zoom level supported */
@@ -1745,13 +1746,14 @@ public abstract class AbstractTileSourceLayer<T extends AbstractTMSTileSource> e
      *
      * To prevent accidental clear of the queue, new download executor is created with separate queue
      *
-     * @param progressMonitor Task responsible for precaching imagery
+     * @param progressMonitor progress monitor for download task
      * @param points lat/lon coordinates to download
      * @param bufferX how many units in current Coordinate Reference System to cover in X axis in both sides
      * @param bufferY how many units in current Coordinate Reference System to cover in Y axis in both sides
-     * @return
+     * @return precache task representing download task
      */
-    public AbstractTileSourceLayer<T>.PrecacheTask downloadAreaToCache(final ProgressMonitor progressMonitor, List<LatLon> points, double bufferX, double bufferY) {
+    public AbstractTileSourceLayer<T>.PrecacheTask downloadAreaToCache(final ProgressMonitor progressMonitor, List<LatLon> points,
+            double bufferX, double bufferY) {
         PrecacheTask precacheTask = new PrecacheTask(progressMonitor);
         final Set<Tile> requestedTiles = new ConcurrentSkipListSet<>(new Comparator<Tile>() {
             @Override
