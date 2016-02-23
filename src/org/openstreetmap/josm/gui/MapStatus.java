@@ -92,9 +92,8 @@ import org.openstreetmap.josm.tools.Predicate;
  */
 public class MapStatus extends JPanel implements Helpful, Destroyable, PreferenceChangedListener {
 
-    private static final DecimalFormat ONE_DECIMAL_PLACE = new DecimalFormat(
-            Main.pref.get("statusbar.decimal-format", "0.0")); // change of preference requires restart
-    private static final double DISTANCE_THRESHOLD = Main.pref.getDouble("statusbar.distance-threshold", 0.01);
+    private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(Main.pref.get("statusbar.decimal-format", "0.0"));
+    private final double DISTANCE_THRESHOLD = Main.pref.getDouble("statusbar.distance-threshold", 0.01);
 
     /**
      * Property for map status background color.
@@ -190,10 +189,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             null, 11, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel headingText = new ImageLabel("heading",
             tr("The (compass) heading of the line segment being drawn."),
-            ONE_DECIMAL_PLACE.format(360).length() + 1, PROP_BACKGROUND_COLOR.get());
+            DECIMAL_FORMAT.format(360).length() + 1, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel angleText = new ImageLabel("angle",
             tr("The angle between the previous and the current way segment."),
-            ONE_DECIMAL_PLACE.format(360).length() + 1, PROP_BACKGROUND_COLOR.get());
+            DECIMAL_FORMAT.format(360).length() + 1, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel distText = new ImageLabel("dist",
             tr("The length of the new way segment being drawn."), 10, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel nameText = new ImageLabel("name",
@@ -1027,11 +1026,11 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     }
 
     public void setAngle(double a) {
-        angleText.setText(a < 0 ? "--" : ONE_DECIMAL_PLACE.format(a) + " \u00B0");
+        angleText.setText(a < 0 ? "--" : DECIMAL_FORMAT.format(a) + " \u00B0");
     }
 
     public void setHeading(double h) {
-        headingText.setText(h < 0 ? "--" : ONE_DECIMAL_PLACE.format(h) + " \u00B0");
+        headingText.setText(h < 0 ? "--" : DECIMAL_FORMAT.format(h) + " \u00B0");
     }
 
     /**
@@ -1040,7 +1039,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
      */
     public void setDist(double dist) {
         distValue = dist;
-        distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist, ONE_DECIMAL_PLACE, DISTANCE_THRESHOLD));
+        distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist, DECIMAL_FORMAT, DISTANCE_THRESHOLD));
     }
 
     /**
