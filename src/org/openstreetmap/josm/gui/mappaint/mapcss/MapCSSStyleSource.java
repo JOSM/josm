@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -156,11 +157,13 @@ public class MapCSSStyleSource extends StyleSource {
 
             @Override
             public boolean hasNext() {
-                return next >= 0;
+                return next >= 0 && next < rules.size();
             }
 
             @Override
             public MapCSSRule next() {
+                if (!hasNext())
+                    throw new NoSuchElementException();
                 MapCSSRule rule = rules.get(next);
                 next = ruleCandidates.nextSetBit(next + 1);
                 return rule;

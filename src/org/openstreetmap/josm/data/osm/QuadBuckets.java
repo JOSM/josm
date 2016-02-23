@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -474,6 +475,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         return bucket != null && bucket.content != null && bucket.content.contains(t);
     }
 
+    /**
+     * Converts to list.
+     * @return elements as list
+     */
     public List<T> toList() {
         List<T> a = new ArrayList<>();
         for (T n : this) {
@@ -497,7 +502,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         private int contentIndex;
         private int iteratedOver;
 
-        final QBLevel<T> next_content_node(QBLevel<T> q) {
+        final QBLevel<T> nextContentNode(QBLevel<T> q) {
             if (q == null)
                 return null;
             QBLevel<T> orig = q;
@@ -513,7 +518,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             if (!qb.root.hasChildren() || qb.root.hasContent()) {
                 currentNode = qb.root;
             } else {
-                currentNode = next_content_node(qb.root);
+                currentNode = nextContentNode(qb.root);
             }
             iteratedOver = 0;
         }
@@ -530,7 +535,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 return null;
             while ((currentNode.content == null) || (contentIndex >= currentNode.content.size())) {
                 contentIndex = 0;
-                currentNode = next_content_node(currentNode);
+                currentNode = nextContentNode(currentNode);
                 if (currentNode == null) {
                     break;
                 }
@@ -543,6 +548,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         @Override
         public T next() {
             T ret = peek();
+            if (ret == null)
+                throw new NoSuchElementException();
             contentIndex++;
             iteratedOver++;
             return ret;
@@ -575,31 +582,31 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         return size == 0;
     }
 
-    public List<T> search(BBox search_bbox) {
+    public List<T> search(BBox searchBbox) {
         List<T> ret = new ArrayList<>();
         // Doing this cuts down search cost on a real-life data set by about 25%
         if (searchCache == null) {
             searchCache = root;
         }
         // Walk back up the tree when the last search spot can not cover the current search
-        while (searchCache != null && !searchCache.bbox().bounds(search_bbox)) {
+        while (searchCache != null && !searchCache.bbox().bounds(searchBbox)) {
             searchCache = searchCache.parent;
         }
 
         if (searchCache == null) {
             searchCache = root;
-            Main.info("bbox: " + search_bbox + " is out of the world");
+            Main.info("bbox: " + searchBbox + " is out of the world");
         }
 
         // Save parent because searchCache might change during search call
         QBLevel<T> tmp = searchCache.parent;
 
-        searchCache.search(search_bbox, ret);
+        searchCache.search(searchBbox, ret);
 
         // A way that spans this bucket may be stored in one
         // of the nodes which is a parent of the search cache
         while (tmp != null) {
-            tmp.search_contents(search_bbox, ret);
+            tmp.search_contents(searchBbox, ret);
             tmp = tmp.parent;
         }
         return ret;

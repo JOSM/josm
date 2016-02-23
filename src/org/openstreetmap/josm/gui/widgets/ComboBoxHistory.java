@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.widgets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.swing.DefaultComboBoxModel;
 
@@ -78,13 +79,13 @@ class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> imple
 
             @Override
             public boolean hasNext() {
-                if (position < getSize()-1 && getSize() > 0)
-                    return true;
-                return false;
+                return position < getSize()-1 && getSize() > 0;
             }
 
             @Override
             public AutoCompletionListItem next() {
+                if (!hasNext())
+                    throw new NoSuchElementException();
                 position++;
                 return getElementAt(position);
             }
