@@ -8,7 +8,6 @@ package org.openstreetmap.josm.data.validation.routines;
 public abstract class AbstractValidator {
 
     private String errorMessage;
-    private String fix;
 
     /**
      * Tests validity of a given value.
@@ -31,21 +30,5 @@ public abstract class AbstractValidator {
      */
     protected final void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
-    }
-
-    /**
-     * Replies the fixed value, if any.
-     * @return the fixed value or {@code null}
-     */
-    public final String getFix() {
-        return fix;
-    }
-
-    /**
-     * Sets the fixed value.
-     * @param fix the fixed value, if any
-     */
-    protected final void setFix(String fix) {
-        this.fix = fix;
     }
 }

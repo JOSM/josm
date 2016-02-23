@@ -6,12 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.net.IDN;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -136,13 +134,7 @@ public class InternetTags extends Test {
                 return doValidateTag(p, k, proto+value, validator, code);
             }
             String msg = tr("''{0}'': {1}", k, errMsg);
-            String fix = validator.getFix();
-            if (fix != null) {
-                error = new FixableTestError(this, Severity.WARNING, msg, code, p,
-                        new ChangePropertyCommand(p, k, fix));
-            } else {
-                error = new TestError(this, Severity.WARNING, msg, code, p);
-            }
+            error = new TestError(this, Severity.WARNING, msg, code, p);
         }
         return error;
     }
