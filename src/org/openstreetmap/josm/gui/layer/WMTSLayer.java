@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
-import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -26,7 +25,7 @@ import org.openstreetmap.josm.data.projection.Projection;
  * @author Wiktor NiesiobÄ™dzki
  *
  */
-public class WMTSLayer extends AbstractCachedTileSourceLayer implements NativeScaleLayer {
+public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> implements NativeScaleLayer {
     /**
      * default setting of autozoom per layer
      */
@@ -43,7 +42,7 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer implements NativeSc
     }
 
     @Override
-    protected AbstractTMSTileSource getTileSource(ImageryInfo info) {
+    protected WMTSTileSource getTileSource(ImageryInfo info) {
         try {
             if (info.getImageryType() == ImageryType.WMTS && info.getUrl() != null) {
                 WMTSTileSource.checkUrl(info.getUrl());
@@ -77,14 +76,14 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer implements NativeSc
 
     @Override
     public boolean isProjectionSupported(Projection proj) {
-        Set<String> supportedProjections = ((WMTSTileSource) tileSource).getSupportedProjections();
+        Set<String> supportedProjections = tileSource.getSupportedProjections();
         return supportedProjections.contains(proj.toCode());
     }
 
     @Override
     public String nameSupportedProjections() {
         StringBuilder ret = new StringBuilder();
-        for (String e: ((WMTSTileSource) tileSource).getSupportedProjections()) {
+        for (String e: tileSource.getSupportedProjections()) {
             ret.append(e).append(", ");
         }
         return ret.length() > 2 ? ret.substring(0, ret.length()-2) : ret.toString();
@@ -93,7 +92,7 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer implements NativeSc
     @Override
     public void projectionChanged(Projection oldValue, Projection newValue) {
         super.projectionChanged(oldValue, newValue);
-        ((WMTSTileSource) tileSource).initProjection(newValue);
+        tileSource.initProjection(newValue);
     }
 
     @Override
@@ -115,6 +114,6 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer implements NativeSc
 
     @Override
     public ScaleList getNativeScales() {
-        return ((WMTSTileSource) tileSource).getNativeScales();
+        return tileSource.getNativeScales();
     }
 }

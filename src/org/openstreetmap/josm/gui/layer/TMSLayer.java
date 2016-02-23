@@ -32,7 +32,7 @@ import org.openstreetmap.josm.data.projection.Projection;
  * @author Upliner &lt;upliner@gmail.com&gt;
  *
  */
-public class TMSLayer extends AbstractCachedTileSourceLayer implements NativeScaleLayer {
+public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> implements NativeScaleLayer {
     private static final String CACHE_REGION_NAME = "TMS";
 
     private static final String PREFERENCE_PREFIX = "imagery.tms";
@@ -77,7 +77,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer implements NativeSca
      * @throws IllegalArgumentException if url from imagery info is null or invalid
      */
     @Override
-    protected AbstractTMSTileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
+    protected TMSTileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
         return getTileSourceStatic(info, new Runnable() {
             @Override
             public void run() {
@@ -126,7 +126,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer implements NativeSca
      * @return a new TileSource instance or null if no TileSource for the ImageryInfo/ImageryType could be found.
      * @throws IllegalArgumentException if url from imagery info is null or invalid
      */
-    public static AbstractTMSTileSource getTileSourceStatic(ImageryInfo info, Runnable attributionLoadedTask) throws IllegalArgumentException {
+    public static TMSTileSource getTileSourceStatic(ImageryInfo info, Runnable attributionLoadedTask) throws IllegalArgumentException {
         if (info.getImageryType() == ImageryType.TMS) {
             TemplatedTMSTileSource.checkUrl(info.getUrl());
             TMSTileSource t = new TemplatedTMSTileSource(info);

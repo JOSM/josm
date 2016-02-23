@@ -17,8 +17,6 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -36,7 +34,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
  * fetched this way is tiled and managed to the disc to reduce server load.
  *
  */
-public class WMSLayer extends AbstractCachedTileSourceLayer {
+public class WMSLayer extends AbstractCachedTileSourceLayer<TemplatedWMSTileSource> {
     private static final String PREFERENCE_PREFIX   = "imagery.wms.";
 
     /** default tile size for WMS Layer */
@@ -74,7 +72,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
     }
 
     @Override
-    protected AbstractTMSTileSource getTileSource(ImageryInfo info) {
+    protected TemplatedWMSTileSource getTileSource(ImageryInfo info) {
         if (info.getImageryType() == ImageryType.WMS && info.getUrl() != null) {
             TemplatedWMSTileSource.checkUrl(info.getUrl());
             TemplatedWMSTileSource tileSource = new TemplatedWMSTileSource(info);
@@ -104,11 +102,8 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
     }
 
     @Override
-    protected Map<String, String> getHeaders(TileSource tileSource) {
-        if (tileSource instanceof TemplatedWMSTileSource) {
-            return ((TemplatedWMSTileSource) tileSource).getHeaders();
-        }
-        return null;
+    protected Map<String, String> getHeaders(TemplatedWMSTileSource tileSource) {
+        return tileSource.getHeaders();
     }
 
     @Override
@@ -154,8 +149,8 @@ public class WMSLayer extends AbstractCachedTileSourceLayer {
             warningDialog.showDialog();
         }
 
-        if (!newValue.equals(oldValue) && tileSource instanceof TemplatedWMSTileSource) {
-            ((TemplatedWMSTileSource) tileSource).initProjection(newValue);
+        if (!newValue.equals(oldValue)) {
+            tileSource.initProjection(newValue);
         }
     }
 
