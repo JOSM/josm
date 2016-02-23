@@ -432,4 +432,16 @@ class MapCSSParserTest {
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", -777f, Float.class) == 6
         assert mc.getCascade(Environment.DEFAULT_LAYER).get("max_split", -777f, Float.class) == 56
     }
+
+    @Test
+    public void testTicket12549() throws Exception {
+        def condition = getParser("[name =~ /^(?i)(?u)fóo\$/]").condition(Condition.Context.PRIMITIVE)
+        assert condition.applies(new Environment(OsmUtils.createPrimitive("way name=fóo")))
+        assert condition.applies(new Environment(OsmUtils.createPrimitive("way name=fÓo")))
+        condition = getParser("[name =~ /^(\\p{Lower})+\$/]").condition(Condition.Context.PRIMITIVE)
+        assert !condition.applies(new Environment(OsmUtils.createPrimitive("way name=fóo")))
+        condition = getParser("[name =~ /^(?U)(\\p{Lower})+\$/]").condition(Condition.Context.PRIMITIVE)
+        assert condition.applies(new Environment(OsmUtils.createPrimitive("way name=fóo")))
+        assert !condition.applies(new Environment(OsmUtils.createPrimitive("way name=fÓo")))
+    }
 }
