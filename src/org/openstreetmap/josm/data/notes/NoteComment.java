@@ -74,4 +74,9 @@ public class NoteComment {
     public boolean isNew() {
         return isNew;
     }
+
+    @Override
+    public String toString() {
+        return text;
+    }
 }

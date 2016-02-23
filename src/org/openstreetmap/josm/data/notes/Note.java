@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.notes;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -113,5 +115,10 @@ public class Note {
         if (obj == null || getClass() != obj.getClass()) return false;
         Note note = (Note) obj;
         return id == note.id;
+    }
+
+    @Override
+    public String toString() {
+        return tr("Note") + " " + id + ": " + getFirstComment();
     }
 }
