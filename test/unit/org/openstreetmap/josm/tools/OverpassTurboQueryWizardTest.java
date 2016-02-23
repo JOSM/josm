@@ -4,7 +4,6 @@ package org.openstreetmap.josm.tools;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 
@@ -26,7 +25,6 @@ public class OverpassTurboQueryWizardTest {
      * Test key=value.
      */
     @Test
-    @Ignore("see #12514 - Test does not work with Java 7, to enable after Java 8 migration if not fixed in the meantime")
     public void testKeyValue() {
         final String query = OverpassTurboQueryWizard.getInstance().constructQuery("amenity=drinking_water");
         assertEquals("" +
