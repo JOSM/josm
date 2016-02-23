@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
@@ -93,7 +94,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * to the way direction.
      *
      * There is no intention, to handle consecutive duplicate Nodes in a
-     * perfect way, but it is should not throw an exception.
+     * perfect way, but it should not throw an exception.
      */
     private class OffsetIterator implements Iterator<Point> {
 
@@ -121,7 +122,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         @Override
         public Point next() {
-            if (Math.abs(offset) < 0.1d) return nc.getPoint(nodes.get(idx++));
+            if (!hasNext())
+                throw new NoSuchElementException();
+
+            if (Math.abs(offset) < 0.1d)
+                return nc.getPoint(nodes.get(idx++));
 
             Point current = nc.getPoint(nodes.get(idx));
 

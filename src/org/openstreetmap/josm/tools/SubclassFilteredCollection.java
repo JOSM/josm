@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Filtered view of a collection.
@@ -50,7 +51,8 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
         @SuppressWarnings("unchecked")
         @Override
         public T next() {
-            findNext();
+            if (!hasNext())
+                throw new NoSuchElementException();
             S old = current;
             current = null;
             // we are save because predicate only accepts objects of type T

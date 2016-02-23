@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -31,10 +32,14 @@ public class GpxData extends WithAttributes implements Data {
     public File storageFile;
     public boolean fromServer;
 
+    /** Creator (usually software) */
     public String creator;
 
+    /** Tracks */
     public final Collection<GpxTrack> tracks = new LinkedList<>();
+    /** Routes */
     public final Collection<GpxRoute> routes = new LinkedList<>();
+    /** Waypoints */
     public final Collection<WayPoint> waypoints = new LinkedList<>();
 
     /**
@@ -45,6 +50,10 @@ public class GpxData extends WithAttributes implements Data {
      */
     public final Set<DataSource> dataSources = new HashSet<>();
 
+    /**
+     * Merges data from another object.
+     * @param other existing GPX data
+     */
     public void mergeFrom(GpxData other) {
         if (storageFile == null && other.storageFile != null) {
             storageFile = other.storageFile;
@@ -360,6 +369,9 @@ public class GpxData extends WithAttributes implements Data {
         };
     }
 
+    /**
+     * Resets the internal caches of east/north coordinates.
+     */
     public void resetEastNorthCache() {
         if (waypoints != null) {
             for (WayPoint wp : waypoints) {
@@ -400,6 +412,12 @@ public class GpxData extends WithAttributes implements Data {
         private Collection<WayPoint> next;
         private final boolean[] trackVisibility;
 
+        /**
+         * Constructs a new {@code LinesIterator}.
+         * @param data GPX data
+         * @param trackVisibility An array indicating which tracks should be
+         * included in the iteration. Can be null, then all tracks are included.
+         */
         public LinesIterator(GpxData data, boolean[] trackVisibility) {
             itTracks = data.tracks.iterator();
             idxTracks = -1;
@@ -415,6 +433,9 @@ public class GpxData extends WithAttributes implements Data {
 
         @Override
         public Collection<WayPoint> next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             Collection<WayPoint> current = next;
             next = getNext();
             return current;
