@@ -19,8 +19,9 @@ public class LatLonTest {
      * Setup test.
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Locale.setDefault(Locale.GERMAN);
+        Main.initApplicationPreferences();
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
     }
 
