@@ -8,11 +8,12 @@
   <suppress checks="HeaderCheck" files="NTV2GridShiftFile\.java" />
   <suppress checks="HeaderCheck" files="NTV2SubGrid\.java" />
   <suppress checks="HeaderCheck" files="NTV2Util\.java" />
-  <suppress checks="HeaderCheck" files="DomainValidator\.java" />
-  <suppress checks="HeaderCheck" files="EmailValidator\.java" />
-  <suppress checks="HeaderCheck" files="InetAddressValidator\.java" />
-  <suppress checks="HeaderCheck" files="RegexValidator\.java" />
-  <suppress checks="HeaderCheck" files="UrlValidator\.java" />
+  <suppress checks="HeaderCheck" files="DomainValidator(Test|IT)?\.java" />
+  <suppress checks="HeaderCheck" files="EmailValidator(Test)?\.java" />
+  <suppress checks="HeaderCheck" files="InetAddressValidator(Test)?\.java" />
+  <suppress checks="HeaderCheck" files="RegexValidator(Test)?\.java" />
+  <suppress checks="HeaderCheck" files="UrlValidator(Test)?\.java" />
+  <suppress checks="HeaderCheck" files="ResultPair\.java" />
   <suppress checks="HeaderCheck" files="Entities\.java" />
   <suppress checks="HeaderCheck" files="FileDrop\.java" />
   <suppress checks="HeaderCheck" files="MenuScroller\.java" />

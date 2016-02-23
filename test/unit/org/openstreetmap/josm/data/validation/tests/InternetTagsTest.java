@@ -30,12 +30,10 @@ public class InternetTagsTest {
     }
 
     /**
-     * Test of "Internet Tags" validation test.
+     * Test of valid URLs.
      */
     @Test
-    public void test() {
-
-        // Valid URLs
+    public void testValidUrls() {
         testUrl("url", "www.domain.com", true);                                // No protocol
         testUrl("url", "http://josm.openstreetmap.de", true);                  // Simple HTTP
         testUrl("url", "http://josm.openstreetmap.de/", true);                 // Simple HTTP + slash
@@ -46,16 +44,32 @@ public class InternetTagsTest {
         testUrl("website", "http://xn--80akeqobjv1b0d3a.xn--p1ai/", true);     // see #10862: IDN URL in ASCII form + slash
         testUrl("website", "http://золотаяцепь.рф", true);                     // see #10862: IDN URL in Unicode form
         testUrl("website", "http://золотаяцепь.рф/", true);                    // see #10862: IDN URL in Unicode form + slash
+        testUrl("website", "http://www.dasideenreich.online", true);           // see #12257: new TLD added August 19, 2015
+    }
 
-        // Invalid URLs
+    /**
+     * Test of invalid URLs.
+     */
+    @Test
+    public void testInvalidUrls() {
         testUrl("url", "something://www.domain.com", false);                   // invalid protocol
         testUrl("url", "http://www.domain.invalidtld", false);                 // invalid TLD
+    }
 
-        // Valid E-mails
+    /**
+     * Test of valid e-mails.
+     */
+    @Test
+    public void testValidEmails() {
         testEmail("email", "contact@www.domain.com", true);                    // Simple email
         testEmail("contact:email", "john.doe@other-domain.org", true);         // Key with : + dash in domain
+    }
 
-        // Invalid E-mails
+    /**
+     * Test of invalid e-mails.
+     */
+    @Test
+    public void testInvalidEmails() {
         testEmail("email", "contact at www.domain.com", false);                // No @
         testEmail("contact:email", "john.doe@other-domain.invalidtld", false); // invalid TLD
     }

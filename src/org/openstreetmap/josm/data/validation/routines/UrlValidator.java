@@ -18,16 +18,19 @@ package org.openstreetmap.josm.data.validation.routines;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Arrays;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * <p><b>URL Validation</b> routines.</p>
- * Behavior of validation is modified by passing in options:<ul>
+ * Behavior of validation is modified by passing in options:
+ * <ul>
  * <li>ALLOW_2_SLASHES - [FALSE]  Allows double '/' characters in the path
  * component.</li>
  * <li>NO_FRAGMENT- [FALSE]  By default fragments are allowed, if this option is
@@ -35,6 +38,7 @@ import java.util.regex.Pattern;
  * <li>ALLOW_ALL_SCHEMES - [FALSE] By default only http, https, and ftp are
  * considered valid schemes.  Enabling this option will let any scheme pass validation.</li>
  * </ul>
+ *
  * <p>Originally based in on php script by Debbie Dyer, validation.php v1.2b, Date: 03/07/02,
  * http://javascript.internet.com. However, this validation now bears little resemblance
  * to the php original.</p>
@@ -63,7 +67,7 @@ import java.util.regex.Pattern;
  *   prints out "url is valid"
  *  </pre>
  *
- * @version $Revision: 1640269 $ $Date: 2014-11-18 02:28:56 UTC (Tue, 18 Nov 2014) $
+ * @version $Revision: 1715435 $
  * @see
  * <a href="http://www.ietf.org/rfc/rfc2396.txt">
  *  Uniform Resource Identifiers (URI): Generic Syntax
@@ -95,17 +99,14 @@ public class UrlValidator extends AbstractValidator {
      *  validation requirements you should create your validator with
      *  a {@link RegexValidator} instead ({@link #UrlValidator(RegexValidator, long)})
      */
-    public static final long ALLOW_LOCAL_URLS = 1 << 3;
-
-    // Drop numeric, and  "+-." for now
-    private static final String AUTHORITY_CHARS_REGEX = "\\p{Alnum}\\-\\.";
+    public static final long ALLOW_LOCAL_URLS = 1 << 3; // CHECKSTYLE IGNORE MagicNumber
 
     /**
      * This expression derived/taken from the BNF for URI (RFC2396).
      */
     private static final String URL_REGEX =
             "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?";
-
+    //        12            3  4          5       6   7        8 9
     private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
 
     /**
@@ -125,36 +126,48 @@ public class UrlValidator extends AbstractValidator {
     private static final int PARSE_URL_FRAGMENT = 9;
 
     /**
-     * Protocol (ie. http:, ftp:,https:).
+     * Protocol scheme (e.g. http, ftp, https).
      */
     private static final String SCHEME_REGEX = "^\\p{Alpha}[\\p{Alnum}\\+\\-\\.]*";
     private static final Pattern SCHEME_PATTERN = Pattern.compile(SCHEME_REGEX);
 
-    private static final String AUTHORITY_REGEX =
-            "^([" + AUTHORITY_CHARS_REGEX + "]*)(:\\d*)?(.*)?";
+    // Drop numeric, and  "+-." for now
+    // TODO does not allow for optional userinfo.
+    // Validation of character set is done by isValidAuthority
+    private static final String AUTHORITY_CHARS_REGEX = "\\p{Alnum}\\-\\."; // allows for IPV4 but not IPV6
+    private static final String IPV6_REGEX = "[0-9a-fA-F:]+"; // do this as separate match because : could cause ambiguity with port prefix
 
+    // userinfo    = *( unreserved / pct-encoded / sub-delims / ":" )
+    // unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+    // sub-delims    = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
+    // We assume that password has the same valid chars as user info
+    private static final String USERINFO_CHARS_REGEX = "[a-zA-Z0-9%-._~!$&'()*+,;=]";
+    // since neither ':' nor '@' are allowed chars, we don't need to use non-greedy matching
+    private static final String USERINFO_FIELD_REGEX =
+            USERINFO_CHARS_REGEX + "+:" + // At least one character for the name
+            USERINFO_CHARS_REGEX + "*@"; // password may be absent
+    private static final String AUTHORITY_REGEX =
+            "(?:\\[("+IPV6_REGEX+")\\]|(?:(?:"+USERINFO_FIELD_REGEX+")?([" + AUTHORITY_CHARS_REGEX + "]*)))(:\\d*)?(.*)?";
+    //             1                          e.g. user:pass@          2                                   3       4
     private static final Pattern AUTHORITY_PATTERN = Pattern.compile(AUTHORITY_REGEX);
 
-    private static final int PARSE_AUTHORITY_HOST_IP = 1;
+    private static final int PARSE_AUTHORITY_IPV6 = 1;
 
-    private static final int PARSE_AUTHORITY_PORT = 2;
+    private static final int PARSE_AUTHORITY_HOST_IP = 2; // excludes userinfo, if present
+
+    // Not needed, because it is validated by AUTHORITY_REGEX
+//    private static final int PARSE_AUTHORITY_PORT = 3;
 
     /**
-     * Should always be empty.
+     * Should always be empty. The code currently allows spaces.
      */
-    private static final int PARSE_AUTHORITY_EXTRA = 3;
+    private static final int PARSE_AUTHORITY_EXTRA = 4;
 
     private static final String PATH_REGEX = "^(/[-\\w:@&?=+,.!/~*'%$_;\\(\\)]*)?$";
     private static final Pattern PATH_PATTERN = Pattern.compile(PATH_REGEX);
 
     private static final String QUERY_REGEX = "^(.*)$";
     private static final Pattern QUERY_PATTERN = Pattern.compile(QUERY_REGEX);
-
-    private static final String LEGAL_ASCII_REGEX = "^\\p{ASCII}+$";
-    private static final Pattern ASCII_PATTERN = Pattern.compile(LEGAL_ASCII_REGEX);
-
-    private static final String PORT_REGEX = "^:(\\d{1,5})$";
-    private static final Pattern PORT_PATTERN = Pattern.compile(PORT_REGEX);
 
     /**
      * Holds the set of current validation options.
@@ -164,7 +177,7 @@ public class UrlValidator extends AbstractValidator {
     /**
      * The set of schemes that are allowed to be in a URL.
      */
-    private final Set<String> allowedSchemes;
+    private final Set<String> allowedSchemes; // Must be lower-case
 
     /**
      * Regular expressions used to manually validate authorities if IANA
@@ -175,7 +188,7 @@ public class UrlValidator extends AbstractValidator {
     /**
      * If no schemes are provided, default to this set.
      */
-    private static final String[] DEFAULT_SCHEMES = {"http", "https", "ftp"};
+    private static final String[] DEFAULT_SCHEMES = {"http", "https", "ftp"}; // Must be lower-case
 
     /**
      * Singleton instance of this class with default schemes and options.
@@ -221,7 +234,7 @@ public class UrlValidator extends AbstractValidator {
 
     /**
      * Behavior of validation is modified by passing in options:
-     * @param schemes The set of valid schemes.
+     * @param schemes The set of valid schemes. Ignored if the ALLOW_ALL_SCHEMES option is set.
      * @param options The options should be set using the public constants declared in
      * this class.  To set multiple options you simply add them together.  For example,
      * ALLOW_2_SLASHES + NO_FRAGMENTS enables both of those options.
@@ -233,6 +246,7 @@ public class UrlValidator extends AbstractValidator {
     /**
      * Initialize a UrlValidator with the given validation options.
      * @param authorityValidator Regular expression validator used to validate the authority part
+     * This allows the user to override the standard set of domains.
      * @param options Validation options. Set using the public constants of this class.
      * To set multiple options, simply add them together:
      * <p><code>ALLOW_2_SLASHES + NO_FRAGMENTS</code></p>
@@ -244,7 +258,7 @@ public class UrlValidator extends AbstractValidator {
 
     /**
      * Customizable constructor. Validation behavior is modifed by passing in options.
-     * @param schemes the set of valid schemes
+     * @param schemes the set of valid schemes. Ignored if the ALLOW_ALL_SCHEMES option is set.
      * @param authorityValidator Regular expression validator used to validate the authority part
      * @param options Validation options. Set using the public constants of this class.
      * To set multiple options, simply add them together:
@@ -255,21 +269,25 @@ public class UrlValidator extends AbstractValidator {
         this.options = options;
 
         if (isOn(ALLOW_ALL_SCHEMES)) {
-            this.allowedSchemes = Collections.emptySet();
+            allowedSchemes = Collections.emptySet();
         } else {
             if (schemes == null) {
                 schemes = DEFAULT_SCHEMES;
             }
-            this.allowedSchemes = new HashSet<>();
-            this.allowedSchemes.addAll(Arrays.asList(schemes));
+            allowedSchemes = new HashSet<>(schemes.length);
+            for (int i = 0; i < schemes.length; i++) {
+                allowedSchemes.add(schemes[i].toLowerCase(Locale.ENGLISH));
+            }
         }
 
         this.authorityValidator = authorityValidator;
-
     }
 
     /**
      * <p>Checks if a field has a valid url address.</p>
+     *
+     * Note that the method calls #isValidAuthority()
+     * which checks that the domain is valid.
      *
      * @param value The value validation is being performed on.  A <code>null</code>
      * value is considered invalid.
@@ -278,12 +296,6 @@ public class UrlValidator extends AbstractValidator {
     @Override
     public boolean isValid(String value) {
         if (value == null) {
-            return false;
-        }
-
-        if (!ASCII_PATTERN.matcher(value).matches()) {
-            setErrorMessage(tr("URL contains non-ascii characters"));
-            setFix(value.replaceAll("[^\\p{ASCII}]+", ""));
             return false;
         }
 
@@ -301,13 +313,19 @@ public class UrlValidator extends AbstractValidator {
         }
 
         String authority = urlMatcher.group(PARSE_URL_AUTHORITY);
-        if ("file".equals(scheme) && "".equals(authority)) {
-           // Special case - file: allows an empty authority
-        } else {
-           // Validate the authority
-           if (!isValidAuthority(authority)) {
-               setErrorMessage(tr("URL contains an invalid authority: {0}", authority));
-               return false;
+        if ("file".equals(scheme)) { // Special case - file: allows an empty authority
+            if (!"".equals(authority)) {
+                if (authority.contains(":")) { // but cannot allow trailing :
+                    setErrorMessage(tr("URL contains an invalid authority: {0}", authority));
+                    return false;
+                }
+            }
+            // drop through to continue validation
+        } else { // not file:
+            // Validate the authority
+            if (!isValidAuthority(authority)) {
+                setErrorMessage(tr("URL contains an invalid authority: {0}", authority));
+                return false;
             }
         }
 
@@ -334,8 +352,9 @@ public class UrlValidator extends AbstractValidator {
 
     /**
      * Validate scheme. If schemes[] was initialized to a non null,
-     * then only those scheme's are allowed.  Note this is slightly different
-     * than for the constructor.
+     * then only those schemes are allowed.
+     * Otherwise the default schemes are "http", "https", "ftp".
+     * Matching is case-blind.
      * @param scheme The scheme to validate.  A <code>null</code> value is considered
      * invalid.
      * @return true if valid.
@@ -345,15 +364,13 @@ public class UrlValidator extends AbstractValidator {
             return false;
         }
 
+        // TODO could be removed if external schemes were checked in the ctor before being stored
         if (!SCHEME_PATTERN.matcher(scheme).matches()) {
             return false;
         }
 
-        if (isOff(ALLOW_ALL_SCHEMES)) {
-
-            if (!this.allowedSchemes.contains(scheme)) {
-                return false;
-            }
+        if (isOff(ALLOW_ALL_SCHEMES) && !allowedSchemes.contains(scheme.toLowerCase(Locale.ENGLISH))) {
+            return false;
         }
 
         return true;
@@ -362,7 +379,11 @@ public class UrlValidator extends AbstractValidator {
     /**
      * Returns true if the authority is properly formatted.  An authority is the combination
      * of hostname and port.  A <code>null</code> authority value is considered invalid.
-     * @param authority Authority value to validate.
+     * Note: this implementation validates the domain unless a RegexValidator was provided.
+     * If a RegexValidator was supplied and it matches, then the authority is regarded
+     * as valid with no further checks, otherwise the method checks against the
+     * AUTHORITY_PATTERN and the DomainValidator (ALLOW_LOCAL_URLS)
+     * @param authority Authority value to validate, alllows IDN
      * @return true if authority (hostname and port) is valid.
      */
     protected boolean isValidAuthority(String authority) {
@@ -371,35 +392,36 @@ public class UrlValidator extends AbstractValidator {
         }
 
         // check manual authority validation if specified
-        if (authorityValidator != null) {
-            if (authorityValidator.isValid(authority)) {
-                return true;
-            }
+        if (authorityValidator != null && authorityValidator.isValid(authority)) {
+            return true;
         }
+        // convert to ASCII if possible
+        final String authorityASCII = DomainValidator.unicodeToASCII(authority);
 
-        Matcher authorityMatcher = AUTHORITY_PATTERN.matcher(authority);
+        Matcher authorityMatcher = AUTHORITY_PATTERN.matcher(authorityASCII);
         if (!authorityMatcher.matches()) {
             return false;
         }
 
-        String hostLocation = authorityMatcher.group(PARSE_AUTHORITY_HOST_IP);
-        // check if authority is hostname or IP address:
-        // try a hostname first since that's much more likely
-        DomainValidator domainValidator = DomainValidator.getInstance(isOn(ALLOW_LOCAL_URLS));
-        if (!domainValidator.isValid(hostLocation)) {
-            // try an IP address
-            InetAddressValidator inetAddressValidator =
-                InetAddressValidator.getInstance();
-            if (!inetAddressValidator.isValid(hostLocation)) {
-                // isn't either one, so the URL is invalid
-                return false;
-            }
-        }
-
-        String port = authorityMatcher.group(PARSE_AUTHORITY_PORT);
-        if (port != null) {
-            if (!PORT_PATTERN.matcher(port).matches()) {
-                return false;
+        // We have to process IPV6 separately because that is parsed in a different group
+        String ipv6 = authorityMatcher.group(PARSE_AUTHORITY_IPV6);
+        if (ipv6 != null) {
+            InetAddressValidator inetAddressValidator = InetAddressValidator.getInstance();
+                if (!inetAddressValidator.isValidInet6Address(ipv6)) {
+                    return false;
+                }
+        } else {
+            String hostLocation = authorityMatcher.group(PARSE_AUTHORITY_HOST_IP);
+            // check if authority is hostname or IP address:
+            // try a hostname first since that's much more likely
+            DomainValidator domainValidator = DomainValidator.getInstance(isOn(ALLOW_LOCAL_URLS));
+            if (!domainValidator.isValid(hostLocation)) {
+                // try an IPv4 address
+                InetAddressValidator inetAddressValidator = InetAddressValidator.getInstance();
+                if (!inetAddressValidator.isValidInet4Address(hostLocation)) {
+                    // isn't IPv4, so the URL is invalid
+                    return false;
+                }
             }
         }
 
@@ -425,17 +447,20 @@ public class UrlValidator extends AbstractValidator {
             return false;
         }
 
-        int slash2Count = countToken("//", path);
-        if (isOff(ALLOW_2_SLASHES) && (slash2Count > 0)) {
+        try {
+            URI uri = new URI(null, null, path, null);
+            String norm = uri.normalize().getPath();
+            if (norm.startsWith("/../") // Trying to go via the parent dir
+             || norm.equals("/..")) {   // Trying to go to the parent dir
+                return false;
+            }
+        } catch (URISyntaxException e) {
             return false;
         }
 
-        int slashCount = countToken("/", path);
-        int dot2Count = countToken("..", path);
-        if (dot2Count > 0) {
-            if ((slashCount - slash2Count - 1) <= dot2Count) {
-                return false;
-            }
+        int slash2Count = countToken("//", path);
+        if (isOff(ALLOW_2_SLASHES) && (slash2Count > 0)) {
+            return false;
         }
 
         return true;
@@ -495,7 +520,7 @@ public class UrlValidator extends AbstractValidator {
      * @return whether the specified flag value is on.
      */
     private boolean isOn(long flag) {
-        return (this.options & flag) > 0;
+        return (options & flag) > 0;
     }
 
     /**
@@ -507,6 +532,11 @@ public class UrlValidator extends AbstractValidator {
      * @return whether the specified flag value is off.
      */
     private boolean isOff(long flag) {
-        return (this.options & flag) == 0;
+        return (options & flag) == 0;
+    }
+
+    // Unit test access to pattern matcher
+    Matcher matchURL(String value) {
+        return URL_PATTERN.matcher(value);
     }
 }
