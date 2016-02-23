@@ -60,7 +60,8 @@ public class SelectionTableCellRenderer extends JLabel implements TableCellRende
     }
 
     protected void renderPrimitive(OsmPrimitive primitive, Dimension cellSize) {
-        setIcon(ImageProvider.getPadded(primitive, cellSize));
+        int size = Math.min(cellSize.width, cellSize.height);
+        setIcon(ImageProvider.getPadded(primitive, new Dimension(size, size)));
         setText(primitive.getDisplayName(DefaultNameFormatter.getInstance()));
         setToolTipText(DefaultNameFormatter.getInstance().buildDefaultToolTip(primitive));
     }
