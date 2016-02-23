@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.jcs.access.CacheAccess;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
+import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
@@ -21,9 +22,10 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
  * Class providing cache to other layers
  *
  * @author Wiktor Niesiobędzki
+ * @param <T> Tile Source class used by this Imagery Layer
  *
  */
-public abstract class AbstractCachedTileSourceLayer extends AbstractTileSourceLayer {
+public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSource> extends AbstractTileSourceLayer<T> {
     /** loader factory responsible for loading tiles for all layers */
     private static Map<String, TileLoaderFactory> loaderFactories = new ConcurrentHashMap<>();
 

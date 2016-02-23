@@ -94,10 +94,11 @@ import org.openstreetmap.josm.tools.GBC;
  *
  * @author Upliner
  * @author Wiktor Niesiobędzki
+ * @param <T> Tile Source class used for this layer
  * @since 3715
  * @since 8526 (copied from TMSLayer)
  */
-public abstract class AbstractTileSourceLayer extends ImageryLayer implements ImageObserver, TileLoaderListener, ZoomChangeListener {
+public abstract class AbstractTileSourceLayer<T extends AbstractTMSTileSource> extends ImageryLayer implements ImageObserver, TileLoaderListener, ZoomChangeListener {
     private static final String PREFERENCE_PREFIX = "imagery.generic";
 
     /** maximum zoom level supported */
@@ -150,7 +151,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      *  Use per-layer tileCache instance, as the more layers there are, the more tiles needs to be cached
      */
     protected TileCache tileCache; // initialized together with tileSource
-    protected AbstractTMSTileSource tileSource;
+    protected T tileSource;
     protected TileLoader tileLoader;
 
     /**
@@ -172,16 +173,16 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      * @return TileSource for specified ImageryInfo
      * @throws IllegalArgumentException when Imagery is not supported by layer
      */
-    protected abstract AbstractTMSTileSource getTileSource(ImageryInfo info);
+    protected abstract T getTileSource(ImageryInfo info);
 
-    protected Map<String, String> getHeaders(TileSource tileSource) {
+    protected Map<String, String> getHeaders(T tileSource) {
         if (tileSource instanceof TemplatedTileSource) {
             return ((TemplatedTileSource) tileSource).getHeaders();
         }
         return null;
     }
 
-    protected void initTileSource(AbstractTMSTileSource tileSource) {
+    protected void initTileSource(T tileSource) {
         attribution.initialize(tileSource);
 
         currentZoomLevel = getBestZoom();
@@ -1179,6 +1180,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
     }
 
     private final TileSet nullTileSet = new TileSet((LatLon) null, (LatLon) null, 0);
+
     private final class TileSet {
         int x0, x1, y0, y1;
         int zoom;
@@ -1348,7 +1350,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         public boolean hasLoadingTiles;
     }
 
-    private static TileSetInfo getTileSetInfo(TileSet ts) {
+    private static <S extends AbstractTMSTileSource> TileSetInfo getTileSetInfo(AbstractTileSourceLayer<S>.TileSet ts) {
         List<Tile> allTiles = ts.allExistingTiles();
         TileSetInfo result = new TileSetInfo();
         result.hasLoadingTiles = allTiles.size() < ts.size();
@@ -1373,12 +1375,14 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         private final int minZoom, maxZoom;
         private final TileSet[] tileSets;
         private final TileSetInfo[] tileSetInfos;
+
+        @SuppressWarnings("unchecked")
         DeepTileSet(EastNorth topLeft, EastNorth botRight, int minZoom, int maxZoom) {
             this.topLeft = topLeft;
             this.botRight = botRight;
             this.minZoom = minZoom;
             this.maxZoom = maxZoom;
-            this.tileSets = new TileSet[maxZoom - minZoom + 1];
+            this.tileSets = new AbstractTileSourceLayer.TileSet[maxZoom - minZoom + 1];
             this.tileSetInfos = new TileSetInfo[maxZoom - minZoom + 1];
         }
 
@@ -1741,12 +1745,14 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
      *
      * To prevent accidental clear of the queue, new download executor is created with separate queue
      *
-     * @param precacheTask Task responsible for precaching imagery
+     * @param progressMonitor Task responsible for precaching imagery
      * @param points lat/lon coordinates to download
      * @param bufferX how many units in current Coordinate Reference System to cover in X axis in both sides
      * @param bufferY how many units in current Coordinate Reference System to cover in Y axis in both sides
+     * @return
      */
-    public void downloadAreaToCache(final PrecacheTask precacheTask, List<LatLon> points, double bufferX, double bufferY) {
+    public AbstractTileSourceLayer<T>.PrecacheTask downloadAreaToCache(final ProgressMonitor progressMonitor, List<LatLon> points, double bufferX, double bufferY) {
+        PrecacheTask precacheTask = new PrecacheTask(progressMonitor);
         final Set<Tile> requestedTiles = new ConcurrentSkipListSet<>(new Comparator<Tile>() {
             @Override
             public int compare(Tile o1, Tile o2) {
@@ -1779,6 +1785,7 @@ public abstract class AbstractTileSourceLayer extends ImageryLayer implements Im
         for (Tile t: requestedTiles) {
             loader.createTileLoaderJob(t).submit();
         }
+        return precacheTask;
     }
 
     @Override

@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractMergeAction.LayerListCellRenderer;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -25,7 +26,6 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
-import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer.PrecacheTask;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.progress.ProgressTaskIds;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
@@ -52,11 +52,11 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
 
     static class PrecacheWmsTask extends PleaseWaitRunnable {
 
-        private final AbstractTileSourceLayer layer;
+        private final AbstractTileSourceLayer<? extends AbstractTMSTileSource> layer;
         private final List<LatLon> points;
-        private PrecacheTask precacheTask;
+        private AbstractTileSourceLayer<? extends AbstractTMSTileSource>.PrecacheTask precacheTask;
 
-        protected PrecacheWmsTask(AbstractTileSourceLayer layer, List<LatLon> points) {
+        protected PrecacheWmsTask(AbstractTileSourceLayer<? extends AbstractTMSTileSource> layer, List<LatLon> points) {
             super(tr("Precaching WMS"));
             this.layer = layer;
             this.points = points;
@@ -64,8 +64,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            precacheTask = layer.new PrecacheTask(progressMonitor);
-            layer.downloadAreaToCache(precacheTask, points, 0, 0);
+            precacheTask = layer.downloadAreaToCache(progressMonitor, points, 0, 0);
             while (!precacheTask.isFinished() && !progressMonitor.isCanceled()) {
                 synchronized (this) {
                     try {
@@ -105,7 +104,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
         for (WayPoint p : data.waypoints) {
             points.add(p.getCoor());
         }
-        AbstractTileSourceLayer layer = askedLayer();
+        AbstractTileSourceLayer<? extends AbstractTMSTileSource> layer = askedLayer();
         return layer != null ? new PrecacheWmsTask(layer, points) : null;
     }
 
@@ -117,7 +116,8 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
         }
     }
 
-    protected AbstractTileSourceLayer askedLayer() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected AbstractTileSourceLayer<? extends AbstractTMSTileSource> askedLayer() {
         if (!Main.isDisplayingMapView()) {
             return null;
         }
