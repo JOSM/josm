@@ -24,7 +24,8 @@ public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
 
     protected void renderPrimitive(OsmPrimitive primitive, Dimension cellSize) {
         // Make icon the full height of the table cell. Icon background is square.
-        setIcon(ImageProvider.getPadded(primitive, cellSize));
+        int size = Math.min(cellSize.width, cellSize.height);
+        setIcon(ImageProvider.getPadded(primitive, new Dimension(size, size)));
         setText(primitive.getDisplayName(DefaultNameFormatter.getInstance()));
         setToolTipText(DefaultNameFormatter.getInstance().buildDefaultToolTip(primitive));
     }
