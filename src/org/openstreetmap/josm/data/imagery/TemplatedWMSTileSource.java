@@ -47,6 +47,7 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
 
     private static final Pattern PATTERN_HEADER  = Pattern.compile("\\{header\\(([^,]+),([^}]+)\\)\\}");
     private static final Pattern PATTERN_PROJ    = Pattern.compile("\\{proj\\}");
+    private static final Pattern PATTERN_WKID    = Pattern.compile("\\{wkid\\}");
     private static final Pattern PATTERN_BBOX    = Pattern.compile("\\{bbox\\}");
     private static final Pattern PATTERN_W       = Pattern.compile("\\{w\\}");
     private static final Pattern PATTERN_S       = Pattern.compile("\\{s\\}");
@@ -59,7 +60,7 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
     private static final NumberFormat latLonFormat = new DecimalFormat("###0.0000000", new DecimalFormatSymbols(Locale.US));
 
     private static final Pattern[] ALL_PATTERNS = {
-        PATTERN_HEADER, PATTERN_PROJ, PATTERN_BBOX, PATTERN_W, PATTERN_S, PATTERN_E, PATTERN_N, PATTERN_WIDTH, PATTERN_HEIGHT
+        PATTERN_HEADER, PATTERN_PROJ, PATTERN_WKID, PATTERN_BBOX, PATTERN_W, PATTERN_S, PATTERN_E, PATTERN_N, PATTERN_WIDTH, PATTERN_HEIGHT
     };
 
     /*
@@ -198,6 +199,9 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
             switch (matcher.group(1)) {
             case "proj":
                 replacement = myProjCode;
+                break;
+            case "wkid":
+                replacement = myProjCode.startsWith("EPSG:") ? myProjCode.substring(5) : myProjCode;
                 break;
             case "bbox":
                 replacement = bbox;
