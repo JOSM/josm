@@ -434,12 +434,12 @@ public class ExtendedDialog extends JDialog {
 
     /**
      * Tries to find a good value of how large the dialog should be
-     * @return Dimension Size of the parent Component or 2/3 of screen size if not available
+     * @return Dimension Size of the parent component if visible or 2/3 of screen size if not available or hidden
      */
     protected Dimension findMaxDialogSize() {
         Dimension screenSize = GuiHelper.getScreenSize();
         Dimension x = new Dimension(screenSize.width*2/3, screenSize.height*2/3);
-        if (parent != null) {
+        if (parent != null && parent.isVisible()) {
             x = JOptionPane.getFrameForComponent(parent).getSize();
         }
         return x;
