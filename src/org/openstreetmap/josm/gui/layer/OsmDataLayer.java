@@ -586,7 +586,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         actions.addAll(Arrays.asList(new Action[]{
                 SeparatorLayerAction.INSTANCE,
                 new RenameLayerAction(getAssociatedFile(), this)}));
-        if (ExpertToggleAction.isExpert() && Main.pref.getBoolean("data.layer.upload_discouragement.menu_item", false)) {
+        if (ExpertToggleAction.isExpert()) {
             actions.add(new ToggleUploadDiscouragedLayerAction(this));
         }
         actions.addAll(Arrays.asList(new Action[]{
