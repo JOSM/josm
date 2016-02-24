@@ -201,11 +201,7 @@ public class JoinNodeWayAction extends JosmAction {
 
             double distanceFirst = firstPosition.distance(refPoint);
             double distanceSecond = secondPosition.distance(refPoint);
-            double difference =  distanceFirst - distanceSecond;
-
-            if (difference > 0.0) return 1;
-            if (difference < 0.0) return -1;
-            return 0;
+            return Double.compare(distanceFirst, distanceSecond);
         }
     }
 

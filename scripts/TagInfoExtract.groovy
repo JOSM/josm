@@ -46,7 +46,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem.MatchType
 import org.openstreetmap.josm.io.CachedFile
 import org.openstreetmap.josm.tools.Utils
 
-class taginfoextract {
+class TagInfoExtract {
 
     static def options
     static String image_dir
@@ -186,7 +186,7 @@ class taginfoextract {
      */
     static main(def args) {
         parse_command_line_arguments(args)
-        def script = new taginfoextract()
+        def script = new TagInfoExtract()
         if (!options.t || options.t == 'mappaint') {
             script.run()
         } else if (options.t == 'presets') {

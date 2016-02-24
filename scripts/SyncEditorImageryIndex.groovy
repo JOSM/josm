@@ -28,7 +28,7 @@ import org.openstreetmap.josm.io.imagery.ImageryReader
 import org.openstreetmap.josm.data.imagery.ImageryInfo
 import org.openstreetmap.josm.tools.Utils
 
-class sync_editor_imagery_index {
+class SyncEditorImageryIndex {
 
     List<ImageryInfo> josmEntries;
     JsonArray eiiEntries;
@@ -50,7 +50,7 @@ class sync_editor_imagery_index {
      */
     static main(def args) {
         parse_command_line_arguments(args)
-        def script = new sync_editor_imagery_index()
+        def script = new SyncEditorImageryIndex()
         script.loadSkip()
         script.start()
         script.loadJosmEntries()

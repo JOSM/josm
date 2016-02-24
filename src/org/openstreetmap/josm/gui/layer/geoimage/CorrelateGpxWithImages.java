@@ -1477,8 +1477,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
 
         Pair<Timezone, Offset> splitOutTimezone() {
-            // In hours, rounded to two decimal places
-            double tz = (withoutDayOffset().getSeconds() * 100L / 3600.0) / 100.0;
+            // In hours
+            double tz = withoutDayOffset().getSeconds() / 3600.0;
 
             // Due to imprecise clocks we might get a "+3:28" timezone, which should obviously be 3:30 with
             // -2 minutes offset. This determines the real timezone and finds offset.

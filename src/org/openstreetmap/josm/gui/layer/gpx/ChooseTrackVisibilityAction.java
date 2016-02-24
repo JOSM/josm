@@ -99,11 +99,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
          */
         @Override
         public int compare(TrackLength l0, TrackLength l1) {
-            if (l0.value < l1.value)
-                return -1;
-            else if (l0.value > l1.value)
-                return 1;
-            return 0;
+            return Double.compare(l0.value, l1.value);
         }
     }
 
