@@ -89,7 +89,8 @@ public class MapPaintPreferenceTestIT {
                     if (!warnings.isEmpty()) {
                         allWarnings.put(source.url, warnings);
                     }
-                } else {
+                } else if (!source.url.contains("www.freietonne.de")) {
+                    // ignore frequent network errors with www.freietonne.de causing too much Jenkins failures
                     allWarnings.put(source.url, Collections.singleton("MapPaintStyles.addStyle() returned null"));
                 }
             }
