@@ -44,6 +44,8 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -307,6 +309,10 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         tagTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
         tagTable.getColumnModel().getColumn(1).setCellRenderer(cellRenderer);
         tagTable.setRowSorter(tagRowSorter);
+
+        final RemoveHiddenSelection removeHiddenSelection = new RemoveHiddenSelection();
+        tagTable.getSelectionModel().addListSelectionListener(removeHiddenSelection);
+        tagTable.getRowSorter().addRowSorterListener(removeHiddenSelection);
 
         tagRowSorter.setComparator(0, AlphanumComparator.getInstance());
         tagRowSorter.setComparator(1, new Comparator<Object>() {
@@ -1414,6 +1420,31 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         if ("display.discardable-keys".equals(e.getKey()) && Main.main.getCurrentDataSet() != null) {
             // Re-load data when display preference change
             updateSelection();
+        }
+    }
+
+    /**
+     * Clears the row selection when it is filtered away by the row sorter.
+     */
+    private class RemoveHiddenSelection implements ListSelectionListener, RowSorterListener {
+
+        void removeHiddenSelection() {
+            try {
+                tagTable.getRowSorter().convertRowIndexToModel(tagTable.getSelectedRow());
+            } catch (IndexOutOfBoundsException ignore) {
+                Main.debug("Clearing tagTable selection, {0}", ignore.toString());
+                tagTable.clearSelection();
+            }
+        }
+
+        @Override
+        public void valueChanged(ListSelectionEvent event) {
+            removeHiddenSelection();
+        }
+
+        @Override
+        public void sorterChanged(RowSorterEvent e) {
+            removeHiddenSelection();
         }
     }
 }

@@ -667,7 +667,7 @@ public class TagEditHelper {
                     itemToSelect = item;
                 }
                 for (int i = 0; i < tagData.getRowCount(); ++i) {
-                    if (item.getValue().equals(getDataKey(i))) {
+                    if (item.getValue().equals(tagData.getValueAt(i, 0) /* sic! do not use getDataKey*/)) {
                         if (itemToSelect == item) {
                             itemToSelect = null;
                         }
