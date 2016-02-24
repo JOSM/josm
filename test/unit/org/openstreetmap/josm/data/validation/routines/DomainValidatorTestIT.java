@@ -50,7 +50,7 @@ import org.junit.Test;
  *
  * @version $Revision: 1723861 $
  */
-public class DomainValidatorIT {
+public class DomainValidatorTestIT {
 
     /**
      * Download and process local copy of http://data.iana.org/TLD/tlds-alpha-by-domain.txt

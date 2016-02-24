@@ -8,7 +8,7 @@
   <suppress checks="HeaderCheck" files="NTV2GridShiftFile\.java" />
   <suppress checks="HeaderCheck" files="NTV2SubGrid\.java" />
   <suppress checks="HeaderCheck" files="NTV2Util\.java" />
-  <suppress checks="HeaderCheck" files="DomainValidator(Test|IT)?\.java" />
+  <suppress checks="HeaderCheck" files="DomainValidator(Test)?(IT)?\.java" />
   <suppress checks="HeaderCheck" files="EmailValidator(Test)?\.java" />
   <suppress checks="HeaderCheck" files="InetAddressValidator(Test)?\.java" />
   <suppress checks="HeaderCheck" files="RegexValidator(Test)?\.java" />
