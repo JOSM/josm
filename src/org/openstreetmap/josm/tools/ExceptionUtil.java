@@ -355,7 +355,7 @@ public final class ExceptionUtil {
         return tr("<html>"
                 + "Communication with the OSM server ''{0}'' timed out. Please retry later."
                 + "</html>",
-                OsmApi.getOsmApi().getBaseUrl()
+                getUrlFromException(e)
         );
     }
 
@@ -380,7 +380,7 @@ public final class ExceptionUtil {
                 + "<strong>Error code:<strong> {1}<br>"
                 + "<strong>Error message (untranslated)</strong>: {2}"
                 + "</html>",
-                OsmApi.getOsmApi().getBaseUrl(),
+                getUrlFromException(e),
                 e.getResponseCode(),
                 errMsg
         );
@@ -571,20 +571,7 @@ public final class ExceptionUtil {
      * @return The HTML formatted error message to display
      */
     public static String explainBadRequest(OsmApiException e) {
-        String url = null;
-        if (e.getAccessedUrl() != null) {
-            try {
-                url = new URL(e.getAccessedUrl()).getHost();
-            } catch (MalformedURLException e1) {
-                Main.warn(e1);
-            }
-        }
-        if (url == null && e.getUrl() != null) {
-            url = e.getUrl();
-        } else if (url == null) {
-            url = OsmApi.getOsmApi().getBaseUrl();
-        }
-        String message = tr("The OSM server ''{0}'' reported a bad request.<br>", url);
+        String message = tr("The OSM server ''{0}'' reported a bad request.<br>", getUrlFromException(e));
         String errorHeader = e.getErrorHeader();
         if (errorHeader != null && (errorHeader.startsWith("The maximum bbox") ||
                         errorHeader.startsWith("You requested too many nodes"))) {
@@ -618,12 +605,11 @@ public final class ExceptionUtil {
      * @return The HTML formatted error message to display
      */
     public static String explainNotFound(OsmApiException e) {
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
         String message = tr("The OSM server ''{0}'' does not know about an object<br>"
                 + "you tried to read, update, or delete. Either the respective object<br>"
                 + "does not exist on the server or you are using an invalid URL to access<br>"
                 + "it. Please carefully check the server''s address ''{0}'' for typos.",
-                apiUrl);
+                getUrlFromException(e));
         Main.error(e);
         return "<html>" + message + "</html>";
     }
@@ -744,6 +730,21 @@ public final class ExceptionUtil {
             return explainOsmTransferException((OsmTransferException) e);
         } else {
             return explainGeneric(e);
+        }
+    }
+
+    static String getUrlFromException(OsmApiException e) {
+        if (e.getAccessedUrl() != null) {
+            try {
+                return new URL(e.getAccessedUrl()).getHost();
+            } catch (MalformedURLException e1) {
+                Main.warn(e1);
+            }
+        }
+        if (e.getUrl() != null) {
+            return e.getUrl();
+        } else {
+            return OsmApi.getOsmApi().getBaseUrl();
         }
     }
 }
