@@ -1,11 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.io.FileInputStream;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.io.OsmReader;
 
 /**
  * Unit tests of {@link Geometry} class.
@@ -50,5 +58,35 @@ public class GeometryTest {
                 Math.abs(Math.abs(crossProduct/len1/len2) - 1) < 1e-10);
         Assert.assertTrue("scalar product != 0 : " + scalarProduct/len1/len2,
                 Math.abs(scalarProduct/len1/len2) < 1e-10);
+    }
+
+    /**
+     * Test of {@link Geometry#closedWayArea(org.openstreetmap.josm.data.osm.Way)} method.
+     *
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testClosedWayArea() throws Exception {
+        try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm")) {
+            DataSet ds = OsmReader.parseDataSet(in, null);
+            Way closedWay = (Way) Utils.filter(ds.allPrimitives(), SearchCompiler.compile("landuse=forest")).iterator().next();
+            Assert.assertEquals(5721923.660644531, Geometry.closedWayArea(closedWay), 1e-3);
+        }
+    }
+
+    /**
+     * Test of {@link Geometry#getAreaAndPerimeter(List)} method.
+     *
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testAreaAndPerimeter() throws Exception {
+        try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm")) {
+            DataSet ds = OsmReader.parseDataSet(in, null);
+            Way closedWay = (Way) Utils.filter(ds.allPrimitives(), SearchCompiler.compile("landuse=forest")).iterator().next();
+            Geometry.AreaAndPerimeter areaAndPerimeter = Geometry.getAreaAndPerimeter(closedWay.getNodes());
+            Assert.assertEquals(12495000., areaAndPerimeter.getArea(), 1e-3);
+            Assert.assertEquals(15093.201209424187, areaAndPerimeter.getPerimeter(), 1e-3);
+        }
     }
 }
