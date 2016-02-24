@@ -740,8 +740,8 @@ public class SplitWayAction extends JosmAction {
         return new SplitWayResult(
                 new SequenceCommand(
                         /* for correct i18n of plural forms - see #9110 */
-                        trn("Split way {0} into {1} part", "Split way {0} into {1} parts", newWays.size(),
-                                way.getDisplayName(DefaultNameFormatter.getInstance()), newWays.size()),
+                        trn("Split way {0} into {1} part", "Split way {0} into {1} parts", newWays.size() + 1,
+                                way.getDisplayName(DefaultNameFormatter.getInstance()), newWays.size() + 1),
                         commandList
                         ),
                         newSelection,
