@@ -129,6 +129,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("commons-imaging", tr("replaced by new {0} plugin", "apache-commons")),
             new DeprecatedPlugin("missingRoads", tr("replaced by new {0} plugin", "ImproveOsm")),
             new DeprecatedPlugin("trafficFlowDirection", tr("replaced by new {0} plugin", "ImproveOsm")),
+            new DeprecatedPlugin("kendzi3d-jogl", tr("replaced by new {0} plugin", "jogl")),
         });
     }
 
@@ -144,16 +145,6 @@ public final class PluginHandler {
         public final String name;
         /** Short explanation about deprecation, can be {@code null} */
         public final String reason;
-        /** Code to run to perform migration, can be {@code null} */
-        private final Runnable migration;
-
-        /**
-         * Constructs a new {@code DeprecatedPlugin}.
-         * @param name The plugin name
-         */
-        public DeprecatedPlugin(String name) {
-            this(name, null, null);
-        }
 
         /**
          * Constructs a new {@code DeprecatedPlugin} with a given reason.
@@ -161,33 +152,45 @@ public final class PluginHandler {
          * @param reason The reason about deprecation
          */
         public DeprecatedPlugin(String name, String reason) {
-            this(name, reason, null);
-        }
-
-        /**
-         * Constructs a new {@code DeprecatedPlugin}.
-         * @param name The plugin name
-         * @param reason The reason about deprecation
-         * @param migration The code to run to perform migration
-         */
-        public DeprecatedPlugin(String name, String reason, Runnable migration) {
             this.name = name;
             this.reason = reason;
-            this.migration = migration;
         }
 
-        /**
-         * Performs migration.
-         */
-        public void migrate() {
-            if (migration != null) {
-                migration.run();
-            }
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = prime + ((name == null) ? 0 : name.hashCode());
+            return prime * result + ((reason == null) ? 0 : reason.hashCode());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            DeprecatedPlugin other = (DeprecatedPlugin) obj;
+            if (name == null) {
+                if (other.name != null)
+                    return false;
+            } else if (!name.equals(other.name))
+                return false;
+            if (reason == null) {
+                if (other.reason != null)
+                    return false;
+            } else if (!reason.equals(other.reason))
+                return false;
+            return true;
         }
 
         @Override
         public int compareTo(DeprecatedPlugin o) {
-            return name.compareTo(o.name);
+            int d = name.compareTo(o.name);
+            if (d == 0)
+                d = reason.compareTo(o.reason);
+            return d;
         }
     }
 
@@ -216,7 +219,7 @@ public final class PluginHandler {
     /**
      * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not maintained after a few months, sadly...
      */
-    private static final String[] UNMAINTAINED_PLUGINS = new String[] {
+    static final String[] UNMAINTAINED_PLUGINS = new String[] {
         "gpsbabelgui",
         "Intersect_way",
         "CADTools",                // See #11438, #11518, https://github.com/ROTARIUANAMARIA/CADTools/issues/1
@@ -281,7 +284,6 @@ public final class PluginHandler {
                 plugins.remove(depr.name);
                 Main.pref.removeFromCollection("plugins", depr.name);
                 removedPlugins.add(depr);
-                depr.migrate();
             }
         }
         if (removedPlugins.isEmpty())
@@ -660,6 +662,7 @@ public final class PluginHandler {
     public static synchronized DynamicURLClassLoader getPluginClassLoader() {
         if (pluginClassLoader == null) {
             pluginClassLoader = AccessController.doPrivileged(new PrivilegedAction<DynamicURLClassLoader>() {
+                @Override
                 public DynamicURLClassLoader run() {
                     return new DynamicURLClassLoader(new URL[0], Main.class.getClassLoader());
                 }
@@ -852,13 +855,15 @@ public final class PluginHandler {
                 "The plugins are not going to be loaded.",
                 plugins.size()))
           .append("</html>");
-        HelpAwareOptionPane.showOptionDialog(
-                parent,
-                sb.toString(),
-                tr("Warning"),
-                JOptionPane.WARNING_MESSAGE,
-                HelpUtil.ht("/Plugin/Loading#MissingPluginInfos")
-        );
+        if (!GraphicsEnvironment.isHeadless()) {
+            HelpAwareOptionPane.showOptionDialog(
+                    parent,
+                    sb.toString(),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE,
+                    HelpUtil.ht("/Plugin/Loading#MissingPluginInfos")
+            );
+        }
     }
 
     /**
@@ -877,7 +882,7 @@ public final class PluginHandler {
         try {
             monitor.beginTask(tr("Determine plugins to load..."));
             Set<String> plugins = new HashSet<>();
-            plugins.addAll(Main.pref.getCollection("plugins",  new LinkedList<String>()));
+            plugins.addAll(Main.pref.getCollection("plugins", new LinkedList<String>()));
             if (System.getProperty("josm.plugins") != null) {
                 plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
             }
