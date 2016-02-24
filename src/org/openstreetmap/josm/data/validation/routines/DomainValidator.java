@@ -284,7 +284,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-         // Taken from Version 2016011900, Last Updated Tue Jan 19 07:07:02 2016 UTC
+         // Taken from Version 2016022400, Last Updated Wed Feb 24 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -993,6 +993,7 @@ public final class DomainValidator extends AbstractValidator {
         "sohu", // sohu Sohu.com Limited
         "solar", // solar Ruby Town, LLC
         "solutions", // solutions Silver Cover, LLC
+        "song", // song Amazon EU S.à r.l.
         "sony", // sony Sony Corporation
         "soy", // soy Charleston Road Registry Inc.
         "space", // space DotSpace Inc.
@@ -1009,6 +1010,7 @@ public final class DomainValidator extends AbstractValidator {
         "stcgroup", // stcgroup Saudi Telecom Company
         "stockholm", // stockholm Stockholms kommun
         "storage", // storage Self Storage Company LLC
+        "store", // store DotStore Inc.
         "studio", // studio United TLD Holdco Ltd.
         "study", // study OPEN UNIVERSITIES AUSTRALIA PTY LTD
         "style", // style Binky Moon, LLC
@@ -1086,6 +1088,7 @@ public final class DomainValidator extends AbstractValidator {
         "vet", // vet United TLD Holdco, Ltd
         "viajes", // viajes Black Madison, LLC
         "video", // video United TLD Holdco, Ltd
+        "viking", // viking Viking River Cruises (Bermuda) Ltd.
         "villas", // villas New Sky, LLC
         "vin", // vin Holly Shadow, LLC
         "vip", // vip Minds + Machines Group Limited
@@ -1178,6 +1181,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--io0a7i", // 网络 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
         "xn--j1aef", // ком VeriSign Sarl
         "xn--jlq61u9w7b", // 诺基亚 Nokia Corporation
+        "xn--jvr189m", // 食品 Amazon Registry Services, Inc.
         "xn--kcrx77d1x4a", // 飞利浦 Koninklijke Philips N.V.
         "xn--kpu716f", // 手表 Richemont DNS Inc.
         "xn--kput3i", // 手机 Beijing RITT-Net Technology Development Co., Ltd
