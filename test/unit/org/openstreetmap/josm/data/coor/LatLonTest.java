@@ -3,8 +3,6 @@ package org.openstreetmap.josm.data.coor;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Locale;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
