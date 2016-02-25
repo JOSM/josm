@@ -10,6 +10,7 @@ import java.util.TimeZone;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.io.GpxReaderTest;
@@ -27,6 +28,7 @@ public class CorrelateGpxWithImagesTest {
      */
     @BeforeClass
     public static void setUp() {
+        JOSMFixture.createUnitTestFixture().init();
         DateUtilsTest.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 

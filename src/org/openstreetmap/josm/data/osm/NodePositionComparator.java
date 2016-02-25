@@ -19,14 +19,7 @@ public class NodePositionComparator implements Comparator<Node>, Serializable {
         if (n1.getCoor().equalsEpsilon(n2.getCoor()))
             return 0;
 
-        double dLat = n1.getCoor().lat() - n2.getCoor().lat();
-        if (dLat > 0)
-            return 1;
-        if (dLat < 0)
-            return -1;
-        double dLon = n1.getCoor().lon() - n2.getCoor().lon();
-        if (dLon == 0)
-            return 0;
-        return dLon > 0 ? 1 : -1;
+        int dLat = Double.compare(n1.getCoor().lat(), n2.getCoor().lat());
+        return dLat != 0 ? dLat : Double.compare(n1.getCoor().lon(), n2.getCoor().lon());
     }
 }
