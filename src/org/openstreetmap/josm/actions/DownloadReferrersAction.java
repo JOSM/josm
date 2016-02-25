@@ -6,16 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadReferrersTask;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -46,39 +42,9 @@ public class DownloadReferrersAction extends JosmAction {
      * @throws IllegalArgumentException if targetLayer is null
      */
     public static void downloadReferrers(OsmDataLayer targetLayer, Collection<OsmPrimitive> children) {
-        if (children == null || children.isEmpty()) return;
+        if (children == null || children.isEmpty())
+            return;
         Main.worker.submit(new DownloadReferrersTask(targetLayer, children));
-    }
-
-    /**
-     * Downloads the primitives referring to the primitives in <code>primitives</code>
-     * into the target layer <code>targetLayer</code>.
-     * Does nothing if primitives is null or empty.
-     *
-     * @param targetLayer the target layer. Must not be null.
-     * @param children the collection of primitives, given as map of ids and types
-     * @throws IllegalArgumentException if targetLayer is null
-     */
-    public static void downloadReferrers(OsmDataLayer targetLayer, Map<Long, OsmPrimitiveType> children) {
-        if (children == null || children.isEmpty()) return;
-        Main.worker.submit(new DownloadReferrersTask(targetLayer, children));
-    }
-
-    /**
-     * Downloads the primitives referring to the primitive given by <code>id</code> and <code>type</code>.
-     *
-     * @param targetLayer the target layer. Must not be null.
-     * @param id the primitive id. id &gt; 0 required.
-     * @param type the primitive type. type != null required
-     * @throws IllegalArgumentException if targetLayer is null
-     * @throws IllegalArgumentException if id &lt;= 0
-     * @throws IllegalArgumentException if type == null
-     */
-    public static void downloadReferrers(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) {
-        if (id <= 0)
-            throw new IllegalArgumentException(MessageFormat.format("Id > 0 required, got {0}", id));
-        CheckParameterUtil.ensureParameterNotNull(type, "type");
-        Main.worker.submit(new DownloadReferrersTask(targetLayer, id, type));
     }
 
     @Override

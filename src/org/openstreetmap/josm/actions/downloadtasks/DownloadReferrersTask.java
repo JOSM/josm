@@ -75,64 +75,6 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
     /**
      * constructor
      *
-     * @param targetLayer  the target layer for the downloaded primitives. Must not be null.
-     * @param children  the collection of children for which parents are to be downloaded. Children
-     * are specified by their id and  their type.
-     */
-    public DownloadReferrersTask(OsmDataLayer targetLayer, Map<Long, OsmPrimitiveType> children) {
-        super("Download referrers", false /* don't ignore exception*/);
-        CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
-        canceled = false;
-        this.children = new HashMap<>();
-        if (children != null) {
-            for (Entry<Long, OsmPrimitiveType> entry : children.entrySet()) {
-                if (entry.getKey() > 0 && entry.getValue() != null) {
-                    children.put(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-        this.targetLayer = targetLayer;
-        parents = new DataSet();
-    }
-
-    /**
-     * constructor
-     *
-     * @param targetLayer  the target layer. Must not be null.
-     * @param id the primitive id. id &gt; 0 required.
-     * @param type the primitive type. type != null required
-     * @throws IllegalArgumentException if id &lt;= 0
-     * @throws IllegalArgumentException if type == null
-     * @throws IllegalArgumentException if targetLayer == null
-     */
-    public DownloadReferrersTask(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) {
-        super("Download referrers", false /* don't ignore exception*/);
-        CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
-        if (id <= 0)
-            throw new IllegalArgumentException(MessageFormat.format("Id > 0 required, got {0}", id));
-        CheckParameterUtil.ensureParameterNotNull(type, "type");
-        canceled = false;
-        this.children = new HashMap<>();
-        this.children.put(id, type);
-        this.targetLayer = targetLayer;
-        parents = new DataSet();
-    }
-
-    /**
-     * constructor
-     *
-     * @param targetLayer the target layer. Must not be null.
-     * @param primitiveId a PrimitiveId object.
-     * @throws IllegalArgumentException if id &lt;= 0
-     * @throws IllegalArgumentException if targetLayer == null
-     */
-    public DownloadReferrersTask(OsmDataLayer targetLayer, PrimitiveId primitiveId) {
-        this(targetLayer,  primitiveId, null);
-    }
-
-    /**
-     * constructor
-     *
      * @param targetLayer the target layer. Must not be null.
      * @param primitiveId a PrimitiveId object.
      * @param progressMonitor ProgressMonitor to use or null to create a new one.
