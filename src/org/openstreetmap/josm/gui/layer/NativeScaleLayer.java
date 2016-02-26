@@ -149,6 +149,8 @@ public interface NativeScaleLayer {
          * @return new {@link Scale}
          */
         public Scale getSnapScale(double scale, double ratio, boolean floor) {
+            if (scales.isEmpty())
+                return null;
             int size = scales.size();
             Scale first = scales.get(0);
             Scale last = scales.get(size-1);

@@ -284,7 +284,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-         // Taken from Version 2016022400, Last Updated Wed Feb 24 07:07:01 2016 UTC
+         // Taken from Version 2016022500, Last Updated Thu Feb 25 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -1039,6 +1039,7 @@ public final class DomainValidator extends AbstractValidator {
         "tech", // tech Dot Tech LLC
         "technology", // technology Auburn Falls, LLC
         "tel", // tel Telnic Ltd.
+        "telecity", // telecity TelecityGroup International Limited
         "telefonica", // telefonica Telefónica S.A.
         "temasek", // temasek Temasek Holdings (Private) Limited
         "tennis", // tennis Cotton Bloom, LLC
@@ -1072,6 +1073,7 @@ public final class DomainValidator extends AbstractValidator {
         "trv", // trv Travelers TLD, LLC
         "tube", // tube Latin American Telecom LLC
         "tui", // tui TUI AG
+        "tunes", // tunes Amazon Registry Services, Inc.
         "tushu", // tushu Amazon Registry Services, Inc.
         "tvs", // tvs T V SUNDRAM IYENGAR  &amp; SONS PRIVATE LIMITED
         "ubs", // ubs UBS AG
