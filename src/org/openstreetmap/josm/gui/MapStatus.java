@@ -184,9 +184,9 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     /** The {@link CoordinateFormat} set in the previous update */
     private transient CoordinateFormat previousCoordinateFormat = null;
     private final ImageLabel latText = new ImageLabel("lat",
-            null, 11, PROP_BACKGROUND_COLOR.get());
+            null, LatLon.SOUTH_POLE.latToString(CoordinateFormat.DEGREES_MINUTES_SECONDS).length(), PROP_BACKGROUND_COLOR.get());
     private final ImageLabel lonText = new ImageLabel("lon",
-            null, 11, PROP_BACKGROUND_COLOR.get());
+            null, new LatLon(0, 180).lonToString(CoordinateFormat.DEGREES_MINUTES_SECONDS).length(), PROP_BACKGROUND_COLOR.get());
     private final ImageLabel headingText = new ImageLabel("heading",
             tr("The (compass) heading of the line segment being drawn."),
             DECIMAL_FORMAT.format(360).length() + 1, PROP_BACKGROUND_COLOR.get());
