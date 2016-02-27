@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Stack;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -367,28 +368,39 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      */
     private static Layer parseLayer(XMLStreamReader reader) throws XMLStreamException {
         Layer layer = new Layer();
+        Stack<QName> tagStack = new Stack<>();
 
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && new QName(WMTS_NS_URL, "Layer").equals(reader.getName()));
                 event = reader.next()) {
             if (event == XMLStreamReader.START_ELEMENT) {
-                if (new QName(WMTS_NS_URL, "Format").equals(reader.getName())) {
-                    layer.format = reader.getElementText();
+                tagStack.push(reader.getName());
+                if (tagStack.size() == 2) {
+                    if (new QName(WMTS_NS_URL, "Format").equals(reader.getName())) {
+                        layer.format = reader.getElementText();
+                    } else if (new QName(OWS_NS_URL, "Identifier").equals(reader.getName())) {
+                        layer.name = reader.getElementText();
+                    } else if (new QName(WMTS_NS_URL, "ResourceURL").equals(reader.getName()) &&
+                            "tile".equals(reader.getAttributeValue("", "resourceType"))) {
+                        layer.baseUrl = reader.getAttributeValue("", "template");
+                    } else if (new QName(WMTS_NS_URL, "Style").equals(reader.getName()) &&
+                            "true".equals(reader.getAttributeValue("", "isDefault")) &&
+                            moveReaderToTag(reader, new QName[] {new QName(OWS_NS_URL, "Identifier")})) {
+                        layer.style = reader.getElementText();
+                        tagStack.push(reader.getName()); // keep tagStack in sync
+                    } else if (new QName(WMTS_NS_URL, "TileMatrixSetLink").equals(reader.getName())) {
+                        layer.tileMatrixSetLinks.add(praseTileMatrixSetLink(reader));
+                    } else {
+                        moveReaderToEndCurrentTag(reader);
+                    }
                 }
-                if (new QName(OWS_NS_URL, "Identifier").equals(reader.getName())) {
-                    layer.name = reader.getElementText();
-                }
-                if (new QName(WMTS_NS_URL, "ResourceURL").equals(reader.getName()) &&
-                        "tile".equals(reader.getAttributeValue("", "resourceType"))) {
-                    layer.baseUrl = reader.getAttributeValue("", "template");
-                }
-                if (new QName(WMTS_NS_URL, "Style").equals(reader.getName()) &&
-                        "true".equals(reader.getAttributeValue("", "isDefault")) &&
-                        moveReaderToTag(reader, new QName[] {new QName(OWS_NS_URL, "Identifier")})) {
-                    layer.style = reader.getElementText();
-                }
-                if (new QName(WMTS_NS_URL, "TileMatrixSetLink").equals(reader.getName())) {
-                    layer.tileMatrixSetLinks.add(praseTileMatrixSetLink(reader));
+            }
+            // need to get event type from reader, as parsing might have change position of reader
+            if (reader.getEventType() == XMLStreamReader.END_ELEMENT) {
+                QName start = tagStack.pop();
+                if (!start.equals(reader.getName())) {
+                    throw new IllegalStateException(tr("WMTS Parser error - start element {0} has different name than end element {2}",
+                            start, reader.getName()));
                 }
             }
         }
@@ -396,6 +408,33 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             layer.style = "";
         }
         return layer;
+    }
+
+    /**
+     * Moves the reader to the closing tag of current tag.
+     * @param reader XML stream reader positioned on XMLStreamReader.START_ELEMENT
+     * @throws XMLStreamException when parse exception occurs
+     */
+    private static void moveReaderToEndCurrentTag(XMLStreamReader reader) throws XMLStreamException {
+        int level = 0;
+        QName tag = reader.getName();
+        for (int event = reader.getEventType(); reader.hasNext(); event = reader.next()) {
+            switch (event) {
+            case XMLStreamReader.START_ELEMENT:
+                level += 1;
+                break;
+            case XMLStreamReader.END_ELEMENT:
+                level -= 1;
+                if (level == 0 && tag.equals(reader.getName())) {
+                    return;
+                }
+            }
+            if (level < 0) {
+                throw new IllegalStateException("WMTS Parser error - moveReaderToEndCurrentTag failed to find closing tag");
+            }
+        }
+        throw new IllegalStateException("WMTS Parser error - moveReaderToEndCurrentTag failed to find closing tag");
+
     }
 
     /**
