@@ -132,10 +132,11 @@ public class OpeningHourTest extends Test.TagTest {
          * @return The real test error given to JOSM validator. Can be fixable or not if a prettified values has been determined.
          */
         public TestError getTestError(final OsmPrimitive p, final String key) {
+            final String messageEn = message; // todo obtain English message for ignore functionality
             if (prettifiedValue == null || prettifiedValue.equals(p.get(key))) {
-                return new TestError(OpeningHourTest.this, severity, message, 2901, p);
+                return new TestError(OpeningHourTest.this, severity, tr("Opening hours syntax"), message, messageEn, 2901, p);
             } else {
-                return new FixableTestError(OpeningHourTest.this, severity, message, 2901, p,
+                return new FixableTestError(OpeningHourTest.this, severity, tr("Opening hours syntax"), message, messageEn, 2901, p,
                         new ChangePropertyCommand(p, key, prettifiedValue));
             }
         }
