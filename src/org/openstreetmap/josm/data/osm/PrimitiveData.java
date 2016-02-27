@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,7 +15,9 @@ import java.util.Map;
  * and OsmPrimitive is that PrimitiveData is not part of the dataset and changes in PrimitiveData are not
  * reported by events
  */
-public abstract class PrimitiveData extends AbstractPrimitive {
+public abstract class PrimitiveData extends AbstractPrimitive implements Serializable {
+
+    private static final long serialVersionUID = -1044837092478109138L;
 
     /**
      * Constructs a new {@code PrimitiveData}.

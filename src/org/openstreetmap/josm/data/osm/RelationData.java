@@ -8,6 +8,7 @@ import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 
 public class RelationData extends PrimitiveData implements IRelation {
 
+    private static final long serialVersionUID = 1163664954890478565L;
     private List<RelationMemberData> members = new ArrayList<>();
 
     /**

@@ -1,10 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class RelationMemberData implements PrimitiveId {
+public class RelationMemberData implements PrimitiveId, Serializable {
 
+    private static final long serialVersionUID = 381392198209333319L;
     private final String role;
     private final long memberId;
     private final OsmPrimitiveType memberType;

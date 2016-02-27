@@ -4,12 +4,14 @@ package org.openstreetmap.josm.gui.datatransfer;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Transferable objects for {@link RelationMemberData}.
@@ -20,10 +22,12 @@ public class RelationMemberTransferable implements Transferable {
     /**
      * A wrapper for a collection of {@link RelationMemberData}.
      */
-    public static final class Data {
+    public static final class Data implements Serializable {
+        private static final long serialVersionUID = -8432393711635811029L;
         private final Collection<RelationMemberData> relationMemberDatas;
 
         private Data(Collection<RelationMemberData> primitiveData) {
+            CheckParameterUtil.ensureThat(primitiveData instanceof Serializable, "primitiveData must be instanceof Serializable");
             this.relationMemberDatas = primitiveData;
         }
 
