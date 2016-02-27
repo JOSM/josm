@@ -188,9 +188,9 @@ node[traffic_sign][access?!] {
     icon-image: "vehicle/restriction/access.png";
     set icon_z17;
 }
-node[traffic_sign][access=permissive],
-node[traffic_sign][access=private],
-node[traffic_sign][access=destination] {
+node[traffic_sign][access=permissive][!is_prop_set(icon-image)],
+node[traffic_sign][access=private][!is_prop_set(icon-image)],
+node[traffic_sign][access=destination][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -238,8 +238,8 @@ node[traffic_sign][psv?!] {
     icon-image: "vehicle/restriction/psv.png";
     set icon_z17;
 }
-node[traffic_sign][motorboat?!],
-node[traffic_sign][boat?!] {
+node[traffic_sign][motorboat?!][!is_prop_set(icon-image)],
+node[traffic_sign][boat?!][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
 }
@@ -267,8 +267,8 @@ node[traffic_sign][minspeed] {
     icon-image: "vehicle/restriction/minspeed.png";
     set icon_z17;
 }
-node[traffic_sign][maxstay],
-node[traffic_sign][toll] {
+node[traffic_sign][maxstay][!is_prop_set(icon-image)],
+node[traffic_sign][toll][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
 }
@@ -479,14 +479,14 @@ node[barrier=spikes] {
     set icon_z17;
     text: auto;
 }
-node[barrier=fence],
-node[barrier=kissing_gate],
-node[barrier=bump_gate],
-node[barrier=portcullis],
-node[barrier=bus_trap],
-node[barrier=drawbridge],
-node[barrier=jersey_barrier],
-node[barrier=hampshire_gate] {
+node[barrier=fence][!is_prop_set(icon-image)],
+node[barrier=kissing_gate][!is_prop_set(icon-image)],
+node[barrier=bump_gate][!is_prop_set(icon-image)],
+node[barrier=portcullis][!is_prop_set(icon-image)],
+node[barrier=bus_trap][!is_prop_set(icon-image)],
+node[barrier=drawbridge][!is_prop_set(icon-image)],
+node[barrier=jersey_barrier][!is_prop_set(icon-image)],
+node[barrier=hampshire_gate][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -1545,7 +1545,7 @@ node[man_made=pipeline] {
     set icon_z17;
     text: auto;
 }
-node[man_made=petroleum_well] {
+node[man_made=petroleum_well][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -2913,7 +2913,7 @@ node[amenity=place_of_worship][religion=shinto] {
     set icon_z17;
     text: auto;
 }
-node[amenity=place_of_worship][religion=spiritualist] {
+node[amenity=place_of_worship][religion=spiritualist][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -2923,12 +2923,12 @@ node[amenity=place_of_worship][religion=taoist] {
     set icon_z17;
     text: auto;
 }
-node[amenity=place_of_worship][religion=unitarian] {
+node[amenity=place_of_worship][religion=unitarian][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[amenity=place_of_worship][religion=zoroastrian] {
+node[amenity=place_of_worship][religion=zoroastrian][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -2938,7 +2938,7 @@ node[amenity=grave_yard] {
     set icon_z17;
     text: auto;
 }
-node[amenity=crematorium] {
+node[amenity=crematorium][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -3251,31 +3251,31 @@ area[craft=upholsterer],
 area[craft=tiler] {
     fill-color: craft#999900;
 }
-node[craft=carpenter] {
+node[craft=carpenter][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=shoemaker] {
+node[craft=shoemaker][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=photographer] {
+node[craft=photographer][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=metal_construction] {
+node[craft=metal_construction][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
-}node[craft=electrician] {
+}node[craft=electrician][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=brewery] {
+node[craft=brewery][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -3285,22 +3285,22 @@ node[craft=plumber] {
     set icon_z17;
     text: auto;
 }
-node[craft=sawmill] {
+node[craft=sawmill][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=gardener] {
+node[craft=gardener][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=winery] {
+node[craft=winery][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=hvac] {
+node[craft=hvac][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -3310,12 +3310,12 @@ node[craft=painter] {
     set icon_z17;
     text: auto;
 }
-node[craft=stonemason] {
-    icon-image: "craft/stonemason.png";
+node[craft=stonemason][!is_prop_set(icon-image)] {
+    icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=handicraft] {
+node[craft=handicraft][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -3325,32 +3325,32 @@ node[craft=pottery] {
     set icon_z17;
     text: auto;
 }
-node[craft=key_cutter] {
+node[craft=key_cutter][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=caterer] {
+node[craft=caterer][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=roofer] {
+node[craft=roofer][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=beekeeper] {
+node[craft=beekeeper][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=blacksmith] {
+node[craft=blacksmith][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
 }
-node[craft=locksmith] {
+node[craft=locksmith][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -3360,7 +3360,7 @@ node[craft=window_construction] {
     set icon_z17;
     text: auto;
 }
-node[craft=upholsterer] {
+node[craft=upholsterer][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -3705,7 +3705,7 @@ node[military=bunker] {
     set icon_z17;
     text: auto;
 }
-node[military=barracks] {
+node[military=barracks][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -4369,7 +4369,7 @@ node[sport=tennis] {
     set icon_z17;
     text: auto;
 }
-node[sport=paintball] {
+node[sport=paintball][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -4387,7 +4387,7 @@ area[sport=scuba_diving],
 area[sport=badminton] {
     fill-color: sport#bde3cb;
 }
-node[sport=squash] {
+node[sport=squash][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -4428,7 +4428,7 @@ node[sport=rowing] {
     set icon_z17;
     text: auto;
 }
-node[sport=sailing] {
+node[sport=sailing][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;
@@ -4438,7 +4438,7 @@ node[sport=scuba_diving] {
     set icon_z17;
     text: auto;
 }
-node[sport=badminton] {
+node[sport=badminton][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
     set icon_z17;
     text: auto;

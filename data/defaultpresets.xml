@@ -8325,7 +8325,7 @@
         <reference ref="link_contact_address" />
     </item>
   </group> <!-- Offices -->
-  <group name="Craft" icon="styles/standard/craft/stonemason.png">
+  <group name="Craft" icon="styles/standard/craft/painter.png">
     <item name="Carpenter" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=carpenter" />
         <space />
@@ -8410,7 +8410,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Painter -->
-    <item name="Stonemason" icon="styles/standard/craft/stonemason.png" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Stonemason" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=stonemason" />
         <space />
         <key key="craft" value="stonemason" />
