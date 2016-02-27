@@ -384,9 +384,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                             "tile".equals(reader.getAttributeValue("", "resourceType"))) {
                         layer.baseUrl = reader.getAttributeValue("", "template");
                     } else if (new QName(WMTS_NS_URL, "Style").equals(reader.getName()) &&
-                            "true".equals(reader.getAttributeValue("", "isDefault")) &&
-                            moveReaderToTag(reader, new QName[] {new QName(OWS_NS_URL, "Identifier")})) {
-                        layer.style = reader.getElementText();
+                            "true".equals(reader.getAttributeValue("", "isDefault"))) {
+                        if (moveReaderToTag(reader, new QName[] {new QName(OWS_NS_URL, "Identifier")})) {
+                            layer.style = reader.getElementText();
+                        }
                         tagStack.push(reader.getName()); // keep tagStack in sync
                     } else if (new QName(WMTS_NS_URL, "TileMatrixSetLink").equals(reader.getName())) {
                         layer.tileMatrixSetLinks.add(praseTileMatrixSetLink(reader));
