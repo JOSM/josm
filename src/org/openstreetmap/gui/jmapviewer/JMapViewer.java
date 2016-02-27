@@ -479,8 +479,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * @return Integer the radius in pixels
      */
     public Integer getLatOffset(double lat, double lon, double offset, boolean checkOutside) {
-        Point p = tileSource.latLonToXY(lat, lon, zoom);
-        int y = p.y - center.y - getHeight() / 2;
+        Point p = tileSource.latLonToXY(lat + offset, lon, zoom);
+        int y = p.y - (center.y - getHeight() / 2);
         if (checkOutside && (y < 0 || y > getHeight())) {
             return null;
         }
