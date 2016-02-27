@@ -8,6 +8,7 @@ import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 
 public class WayData extends PrimitiveData implements IWay {
 
+    private static final long serialVersionUID = 106944939313286415L;
     private List<Long> nodes = new ArrayList<>();
 
     /**

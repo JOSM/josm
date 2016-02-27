@@ -8,6 +8,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 
 public class NodeData extends PrimitiveData implements INode {
 
+    private static final long serialVersionUID = 5626323599550908773L;
     /*
      * we "inline" lat/lon coordinates instead of using a LatLon => reduces memory footprint
      */
