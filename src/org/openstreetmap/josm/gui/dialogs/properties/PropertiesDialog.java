@@ -312,8 +312,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
         final RemoveHiddenSelection removeHiddenSelection = new RemoveHiddenSelection();
         tagTable.getSelectionModel().addListSelectionListener(removeHiddenSelection);
-        tagTable.getRowSorter().addRowSorterListener(removeHiddenSelection);
-
+        tagRowSorter.addRowSorterListener(removeHiddenSelection);
         tagRowSorter.setComparator(0, AlphanumComparator.getInstance());
         tagRowSorter.setComparator(1, new Comparator<Object>() {
             @Override
@@ -1430,7 +1429,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
         void removeHiddenSelection() {
             try {
-                tagTable.getRowSorter().convertRowIndexToModel(tagTable.getSelectedRow());
+                tagRowSorter.convertRowIndexToModel(tagTable.getSelectedRow());
             } catch (IndexOutOfBoundsException ignore) {
                 Main.debug("Clearing tagTable selection, {0}", ignore.toString());
                 tagTable.clearSelection();
