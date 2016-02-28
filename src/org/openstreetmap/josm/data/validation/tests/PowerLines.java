@@ -42,7 +42,8 @@ public class PowerLines extends Test {
     /** Values for {@code power} key interpreted as power stations */
     protected static final Collection<String> POWER_STATION_TAGS = Arrays.asList("station", "sub_station", "substation", "plant", "generator");
     /** Values for {@code power} key interpreted as allowed power items */
-    protected static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator", "switchgear");
+    protected static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator", "switchgear",
+            "portal", "terminal", "insulator");
 
     private final Map<Way, String> towerPoleTagMap = new HashMap<>();
 
