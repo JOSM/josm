@@ -47,7 +47,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
     public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX + ".add_to_slippymap_chooser",
             true);
 
-    private ScaleList nativeScaleList;
+    private static final ScaleList nativeScaleList = initNativeScaleList();
 
     /**
      * Create a layer based on ImageryInfo
@@ -55,12 +55,6 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
      */
     public TMSLayer(ImageryInfo info) {
         super(info);
-        Collection<Double> scales = new ArrayList<>(info.getMaxZoom());
-        for (int zoom = AbstractTileSourceLayer.MIN_ZOOM; zoom <= AbstractTileSourceLayer.MAX_ZOOM; zoom++) {
-            double scale = OsmMercator.EARTH_RADIUS * Math.PI * 2 / Math.pow(2, zoom) / OsmMercator.DEFAUL_TILE_SIZE;
-            scales.add(scale);
-        }
-        this.nativeScaleList = new ScaleList(scales);
     }
 
     /**
@@ -160,5 +154,14 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
     @Override
     public ScaleList getNativeScales() {
         return nativeScaleList;
+    }
+
+    private static ScaleList initNativeScaleList() {
+        Collection<Double> scales = new ArrayList<>(AbstractTileSourceLayer.MAX_ZOOM);
+        for (int zoom = AbstractTileSourceLayer.MIN_ZOOM; zoom <= AbstractTileSourceLayer.MAX_ZOOM; zoom++) {
+            double scale = OsmMercator.EARTH_RADIUS * Math.PI * 2 / Math.pow(2, zoom) / OsmMercator.DEFAUL_TILE_SIZE;
+            scales.add(scale);
+        }
+        return new ScaleList(scales);
     }
  }
