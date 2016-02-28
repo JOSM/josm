@@ -305,9 +305,16 @@ public class MultipolygonTest extends Test {
 
         // For painting is used Polygon class which works with ints only. For validation we need more precision
         List<PolyData> innerPolygons = polygon.getInnerPolygons();
-        List<PolyData> outerPolygons = innerPolygons.isEmpty() ? Collections.<PolyData>emptyList() : polygon.getOuterPolygons();
+        List<PolyData> outerPolygons = polygon.getOuterPolygons();
         List<GeneralPath> innerPolygonsPaths = innerPolygons.isEmpty() ? Collections.<GeneralPath>emptyList() : createPolygons(innerPolygons);
-        List<GeneralPath> outerPolygonsPaths = innerPolygons.isEmpty() ? Collections.<GeneralPath>emptyList() : createPolygons(outerPolygons);
+        List<GeneralPath> outerPolygonsPaths = createPolygons(outerPolygons);
+        for (int i = 0; i < outerPolygons.size(); i++) {
+            PolyData pdOuter = outerPolygons.get(i);
+            // Check for intersection between outer members
+            for (int j = i+1; j < outerPolygons.size(); j++) {
+                checkCrossingWays(r, outerPolygons, outerPolygonsPaths, pdOuter, j);
+            }
+        }
         for (int i = 0; i < innerPolygons.size(); i++) {
             PolyData pdInner = innerPolygons.get(i);
             // Check for intersection between inner members
