@@ -284,7 +284,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-         // Taken from Version 2016022601, Last Updated Sat Feb 27 07:07:01 2016 UTC
+         // Taken from Version 2016022800, Last Updated Sun Feb 28 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -427,6 +427,7 @@ public final class DomainValidator extends AbstractValidator {
         "cfd", // cfd DOTCFD REGISTRY LTD
         "chanel", // chanel Chanel International B.V.
         "channel", // channel Charleston Road Registry Inc.
+        "chase", // chase JPMorgan Chase &amp; Co.
         "chat", // chat Sand Fields, LLC
         "cheap", // cheap Sand Cover, LLC
         "chloe", // chloe Richemont DNS Inc.
@@ -697,6 +698,7 @@ public final class DomainValidator extends AbstractValidator {
         "joburg", // joburg ZA Central Registry NPC trading as ZA Central Registry
         "jot", // jot Amazon Registry Services, Inc.
         "joy", // joy Amazon Registry Services, Inc.
+        "jpmorgan", // jpmorgan JPMorgan Chase &amp; Co.
         "jprs", // jprs Japan Registry Services Co., Ltd.
         "juegos", // juegos Uniregistry, Corp.
         "kaufen", // kaufen United TLD Holdco Ltd.
