@@ -8,12 +8,19 @@ import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 
+/**
+ * TMS tile source.
+ */
 public class TMSTileSource extends AbstractTMSTileSource {
 
     protected int maxZoom;
     protected int minZoom;
     protected OsmMercator osmMercator;
 
+    /**
+     * Constructs a new {@code TMSTileSource}.
+     * @param info tile source information
+     */
     public TMSTileSource(TileSourceInfo info) {
         super(info);
         minZoom = info.getMinZoom();
@@ -30,6 +37,7 @@ public class TMSTileSource extends AbstractTMSTileSource {
     public int getMaxZoom() {
         return (maxZoom == 0) ? super.getMaxZoom() : maxZoom;
     }
+
     @Override
     public double getDistance(double lat1, double lon1, double lat2, double lon2) {
         return osmMercator.getDistance(lat1, lon1, lat2, lon2);
