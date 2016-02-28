@@ -56,7 +56,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
     public TMSLayer(ImageryInfo info) {
         super(info);
         Collection<Double> scales = new ArrayList<>(info.getMaxZoom());
-        for (int zoom = info.getMinZoom(); zoom <= info.getMaxZoom(); zoom++) {
+        for (int zoom = AbstractTileSourceLayer.MIN_ZOOM; zoom <= AbstractTileSourceLayer.MAX_ZOOM; zoom++) {
             double scale = OsmMercator.EARTH_RADIUS * Math.PI * 2 / Math.pow(2, zoom) / OsmMercator.DEFAUL_TILE_SIZE;
             scales.add(scale);
         }
