@@ -32,6 +32,8 @@ public class WMTSTileSourceTest {
     private ImageryInfo testImageryOntario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
     private ImageryInfo testImagery12168 = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12168-WMTSCapabilities.xml");
     private ImageryInfo testLotsOfLayers = getImagery(TestUtils.getTestDataRoot() + "wmts/getCapabilities-lots-of-layers.xml");
+    private ImageryInfo testDuplicateTags = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12573-wmts-identifier.xml");
+    private ImageryInfo testMissingStyleIdentifer = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12573-wmts-missing-style-identifier.xml");
 
     /**
      * Setup test.
@@ -240,6 +242,25 @@ public class WMTSTileSourceTest {
         WMTSTileSource testSource = new WMTSTileSource(testLotsOfLayers);
         testSource.initProjection(Main.getProjection());
 
+    }
+
+    @Test
+    public void testPraserForDuplicateTags() throws Exception {
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        WMTSTileSource testSource = new WMTSTileSource(testDuplicateTags);
+        testSource.initProjection(Main.getProjection());
+        assertEquals(
+                "http://tile.informatievlaanderen.be/ws/raadpleegdiensten/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=grb_bsk&"
+                        + "STYLE=&FORMAT=image/png&tileMatrixSet=GoogleMapsVL&tileMatrix=1&tileRow=1&tileCol=1",
+                testSource.getTileUrl(1, 1, 1)
+                );
+    }
+
+    @Test
+    public void testPraserForMissingStyleIdentifier() throws Exception {
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        WMTSTileSource testSource = new WMTSTileSource(testMissingStyleIdentifer);
+        testSource.initProjection(Main.getProjection());
     }
 
     private void verifyTile(LatLon expected, WMTSTileSource source, int x, int y, int z) {
