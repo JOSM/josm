@@ -104,6 +104,28 @@ public class PrefEntry implements Comparable<PrefEntry> {
     }
 
     @Override
+    public int hashCode() {
+        return 31 + ((key == null) ? 0 : key.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PrefEntry other = (PrefEntry) obj;
+        if (key == null) {
+            if (other.key != null)
+                return false;
+        } else if (!key.equals(other.key))
+            return false;
+        return true;
+    }
+
+    @Override
     public String toString() {
         return value.toString();
     }
