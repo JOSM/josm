@@ -194,14 +194,16 @@ public class OsmOAuthAuthorizationClient {
             Main.error(e);
             return null;
         }
+        Main.warn("No authenticity_token found in response!");
         return null;
     }
 
     protected SessionId extractOsmSession() {
         List<String> setCookies = connection.getResponse().getHeaderFields().get("Set-Cookie");
-        if (setCookies == null)
-            // no cookies set
+        if (setCookies == null) {
+            Main.warn("No 'Set-Cookie' in response header!");
             return null;
+        }
 
         for (String setCookie: setCookies) {
             String[] kvPairs = setCookie.split(";");
@@ -226,6 +228,7 @@ public class OsmOAuthAuthorizationClient {
                 }
             }
         }
+        Main.warn("No suitable 'Set-Cookie' in response header found! {0}", setCookies);
         return null;
     }
 
