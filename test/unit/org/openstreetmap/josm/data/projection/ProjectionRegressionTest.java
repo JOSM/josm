@@ -56,6 +56,11 @@ public class ProjectionRegressionTest {
         return TestUtils.getJavaVersion() >= 9 ? PROJECTION_DATA_FILE_JAVA_9 : PROJECTION_DATA_FILE;
     }
 
+    /**
+     * Program entry point to update reference projection file.
+     * @param args not used
+     * @throws IOException if any I/O errors occurs
+     */
     public static void main(String[] args) throws IOException {
         setUp();
 
@@ -154,8 +159,12 @@ public class ProjectionRegressionTest {
         JOSMFixture.createUnitTestFixture().init();
     }
 
+    /**
+     * Non-regression unit test.
+     * @throws IOException if any I/O error occurs
+     */
     @Test
-    public void regressionTest() throws IOException, FileNotFoundException {
+    public void regressionTest() throws IOException {
         List<TestData> allData = readData();
         Set<String> dataCodes = new HashSet<>();
         for (TestData data : allData) {
