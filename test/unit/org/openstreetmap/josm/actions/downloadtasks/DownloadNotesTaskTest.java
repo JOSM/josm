@@ -24,7 +24,7 @@ public class DownloadNotesTaskTest {
      */
     @BeforeClass
     public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
+        JOSMFixture.createUnitTestFixture().init(true);
     }
 
     /**

@@ -3,10 +3,10 @@ package org.openstreetmap.josm.actions.downloadtasks;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class PostDownloadHandler implements Runnable {
     private final DownloadTask task;
-    private final List<Future<?>> futures;
+    private final Future<?> future;
 
     /**
      * constructor
@@ -30,55 +30,23 @@ public class PostDownloadHandler implements Runnable {
      */
     public PostDownloadHandler(DownloadTask task, Future<?> future) {
         this.task = task;
-        this.futures = new ArrayList<>();
-        if (future != null) {
-            this.futures.add(future);
-        }
-    }
-
-    /**
-     * constructor
-     * @param task the asynchronous download task
-     * @param futures the futures on which the completion of the download task can be synchronized
-     */
-    public PostDownloadHandler(DownloadTask task, Future<?> ... futures) {
-        this.task = task;
-        this.futures = new ArrayList<>();
-        if (futures == null) return;
-        for (Future<?> future: futures) {
-            this.futures.add(future);
-        }
-    }
-
-    /**
-     * constructor
-     * @param task the asynchronous download task
-     * @param futures the futures on which the completion of the download task can be synchronized
-     */
-    public PostDownloadHandler(DownloadTask task, List<Future<?>> futures) {
-        this.task = task;
-        this.futures = new ArrayList<>();
-        if (futures == null) return;
-        this.futures.addAll(futures);
+        this.future = future;
     }
 
     @Override
     public void run() {
-        // wait for all downloads task to finish (by waiting for the futures to return a value)
+        // wait for downloads task to finish (by waiting for the future to return a value)
         //
-        for (Future<?> future: futures) {
-            try {
-                future.get();
-            } catch (Exception e) {
-                Main.error(e);
-                return;
-            }
+        try {
+            future.get();
+        } catch (Exception e) {
+            Main.error(e);
+            return;
         }
 
         // make sure errors are reported only once
         //
-        Set<Object> errors = new LinkedHashSet<>();
-        errors.addAll(task.getErrorObjects());
+        Set<Object> errors = new LinkedHashSet<>(task.getErrorObjects());
         if (errors.isEmpty())
             return;
 
@@ -86,22 +54,24 @@ public class PostDownloadHandler implements Runnable {
         //
         if (errors.size() == 1) {
             final Object error = errors.iterator().next();
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (error instanceof Exception) {
-                        ExceptionDialogUtil.explainException((Exception) error);
-                    } else if (tr("No data found in this area.").equals(error)) {
-                        new Notification(error.toString()).setIcon(JOptionPane.WARNING_MESSAGE).show();
-                    } else {
-                        JOptionPane.showMessageDialog(
-                                Main.parent,
-                                error.toString(),
-                                tr("Error during download"),
-                                JOptionPane.ERROR_MESSAGE);
+            if (!GraphicsEnvironment.isHeadless()) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (error instanceof Exception) {
+                            ExceptionDialogUtil.explainException((Exception) error);
+                        } else if (tr("No data found in this area.").equals(error)) {
+                            new Notification(error.toString()).setIcon(JOptionPane.WARNING_MESSAGE).show();
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    Main.parent,
+                                    error.toString(),
+                                    tr("Error during download"),
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
                     }
-                }
-            });
+                });
+            }
             return;
         }
 
@@ -109,7 +79,7 @@ public class PostDownloadHandler implements Runnable {
         //
         if (!errors.isEmpty()) {
             final Collection<String> items = new ArrayList<>();
-            for (Object error:errors) {
+            for (Object error : errors) {
                 if (error instanceof String) {
                     items.add((String) error);
                 } else if (error instanceof Exception) {
@@ -117,16 +87,18 @@ public class PostDownloadHandler implements Runnable {
                 }
             }
 
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            "<html>"+Utils.joinAsHtmlUnorderedList(items)+"</html>",
-                            tr("Errors during download"),
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            });
+            if (!GraphicsEnvironment.isHeadless()) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        JOptionPane.showMessageDialog(
+                                Main.parent,
+                                "<html>"+Utils.joinAsHtmlUnorderedList(items)+"</html>",
+                                tr("Errors during download"),
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                });
+            }
             return;
         }
     }
