@@ -221,8 +221,7 @@ public interface NativeScaleLayer {
          */
         public Scale scaleZoomIn(double scale, double ratio) {
             Scale snap = getSnapScale(scale, ratio, false);
-            Scale next = getNextIn(snap, ratio);
-            return next;
+            return getNextIn(snap, ratio);
         }
 
         /**
@@ -233,8 +232,7 @@ public interface NativeScaleLayer {
          */
         public Scale scaleZoomOut(double scale, double ratio) {
             Scale snap = getSnapScale(scale, ratio, false);
-            Scale next = getNextOut(snap, ratio);
-            return next;
+            return getNextOut(snap, ratio);
         }
 
         @Override
@@ -247,6 +245,8 @@ public interface NativeScaleLayer {
         }
 
         private Scale getNextIn(Scale scale, double ratio) {
+            if (scale == null)
+                return null;
             int nextIndex = scale.getIndex() + 1;
             if (nextIndex <= 0 || nextIndex > this.scales.size()-1) {
                 return new Scale(scale.scale / ratio, nextIndex == 0, nextIndex);
@@ -257,6 +257,8 @@ public interface NativeScaleLayer {
         }
 
         private Scale getNextOut(Scale scale, double ratio) {
+            if (scale == null)
+                return null;
             int nextIndex = scale.getIndex() - 1;
             if (nextIndex < 0 || nextIndex >= this.scales.size()-1) {
                 return new Scale(scale.scale * ratio, nextIndex == this.scales.size()-1, nextIndex);
