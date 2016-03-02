@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Image;
@@ -37,7 +36,6 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         // And will not work when one of the system independent LAFs is used.
         // They just insist on painting themselves...
         Utils.updateSystemProperty("apple.laf.useScreenMenuBar", "true");
-        migrateOldDirectory();
     }
 
     @Override
@@ -344,55 +342,5 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     @Override
     public File getDefaultUserDataDirectory() {
         return new File(System.getProperty("user.home")+"/Library", "JOSM");
-    }
-
-    /***
-     * Prior to r7834, JOSM used the same Unix directory ~/.josm for all local files (preferences,
-     * caches, user data). This method migrates the existing preferences and plugins to new directories
-     * if applicable. Old directory, including cache, is deleted.
-     * Method to remove end of 2015.
-     * @since 7835
-     */
-    public static void migrateOldDirectory() {
-        File oldDir = new File(System.getProperty("user.home"), ".josm");
-        if (oldDir.exists()) {
-            boolean error = false;
-
-            File oldPref = new File(oldDir, "preferences.xml");
-            if (oldPref.exists()) {
-                File newPref = Main.pref.getPreferenceFile();
-                if (!newPref.exists()) {
-                    try {
-                        Utils.mkDirs(Main.pref.getPreferencesDirectory());
-                        Main.info("Copying old preferences file to new location");
-                        Utils.copyFile(oldPref, newPref);
-                        Utils.deleteFile(oldPref, marktr("Unable to delete old preferences file {0}"));
-                    } catch (IOException e) {
-                        Main.error(e);
-                        error = true;
-                    }
-                }
-            }
-
-            File oldPlugins = new File(oldDir, "plugins");
-            if (oldPlugins.exists()) {
-                File newPlugins = Main.pref.getPluginsDirectory();
-                if (!newPlugins.exists()) {
-                    try {
-                        Utils.copyDirectory(oldPlugins, newPlugins);
-                    } catch (IOException e) {
-                        Main.error(e);
-                        error = true;
-                    }
-                }
-            }
-
-            if (!error) {
-                Main.info("Deleting old preferences directory");
-                if (!Utils.deleteDirectory(oldDir)) {
-                    Main.warn("Unable to delete old preferences directory");
-                }
-            }
-        }
     }
 }
