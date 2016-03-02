@@ -13,13 +13,15 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests of {@link SaveLayerInfo} class.
  */
 public class SaveLayerInfoTest {
     /**
-      * Setup test.
-      */
+     * Setup test.
+     */
     @BeforeClass
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init(false);
@@ -29,6 +31,7 @@ public class SaveLayerInfoTest {
      * Test of {@link SaveLayerInfo} class - null case.
      */
     @Test(expected = IllegalArgumentException.class)
+    @SuppressFBWarnings(value = "NP_NULL_PARAM_DEREF_NONVIRTUAL")
     public void testSaveLayerInfoNull() {
         new SaveLayerInfo(null);
     }
