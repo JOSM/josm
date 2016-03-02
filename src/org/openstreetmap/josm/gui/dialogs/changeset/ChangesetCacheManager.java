@@ -8,6 +8,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GraphicsEnvironment;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -47,6 +49,7 @@ import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryTask;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CloseChangesetTask;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OnlineResource;
@@ -59,7 +62,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * and detail information about an individual changeset. It also provides actions for
  * downloading, querying, closing changesets, in addition to removing changesets from
  * the local cache.
- *
+ * @since 2689
  */
 public class ChangesetCacheManager extends JFrame {
 
@@ -85,8 +88,7 @@ public class ChangesetCacheManager extends JFrame {
     }
 
     /**
-     * Hides and destroys the unique instance of the changeset cache
-     * manager.
+     * Hides and destroys the unique instance of the changeset cache manager.
      *
      */
     public static void destroyInstance() {
@@ -108,17 +110,13 @@ public class ChangesetCacheManager extends JFrame {
     private JTable tblChangesets;
 
     /**
-     * Creates the various models required
+     * Creates the various models required.
+     * @return the changeset cache model
      */
-    protected void buildModel() {
+    static ChangesetCacheManagerModel buildModel() {
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        model = new ChangesetCacheManagerModel(selectionModel);
-
-        actRemoveFromCacheAction = new RemoveFromCacheAction();
-        actCloseSelectedChangesetsAction = new CloseSelectedChangesetsAction();
-        actDownloadSelectedChangesets = new DownloadSelectedChangesetsAction();
-        actDownloadSelectedContent = new DownloadSelectedChangesetContentAction();
+        return new ChangesetCacheManagerModel(selectionModel);
     }
 
     /**
@@ -126,7 +124,7 @@ public class ChangesetCacheManager extends JFrame {
      *
      * @return the toolbar panel
      */
-    protected JPanel buildToolbarPanel() {
+    static JPanel buildToolbarPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         SideButton btn = new SideButton(new QueryAction());
@@ -142,18 +140,14 @@ public class ChangesetCacheManager extends JFrame {
      *
      * @return the button row pane
      */
-    protected JPanel buildButtonPanel() {
+    static JPanel buildButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         //-- cancel and close action
         pnl.add(new SideButton(new CancelAction()));
 
         //-- help action
-        pnl.add(new SideButton(
-                new ContextSensitiveHelpAction(
-                        HelpUtil.ht("/Dialog/ChangesetManager"))
-        )
-        );
+        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/ChangesetManager"))));
 
         return pnl;
     }
@@ -265,8 +259,8 @@ public class ChangesetCacheManager extends JFrame {
         );
         tblChangesets.addMouseListener(new MouseEventHandler());
         tblChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "showDetails");
-        tblChangesets.getActionMap().put("showDetails", new ShowDetailAction());
-        model.getSelectionModel().addListSelectionListener(new ChangesetDetailViewSynchronizer());
+        tblChangesets.getActionMap().put("showDetails", new ShowDetailAction(model));
+        model.getSelectionModel().addListSelectionListener(new ChangesetDetailViewSynchronizer(model));
 
         // activate DEL on the table
         tblChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "removeFromCache");
@@ -284,7 +278,12 @@ public class ChangesetCacheManager extends JFrame {
 
         cp.setLayout(new BorderLayout());
 
-        buildModel();
+        model = buildModel();
+        actRemoveFromCacheAction = new RemoveFromCacheAction(model);
+        actCloseSelectedChangesetsAction = new CloseSelectedChangesetsAction(model);
+        actDownloadSelectedChangesets = new DownloadSelectedChangesetsAction(model);
+        actDownloadSelectedContent = new DownloadSelectedChangesetContentAction(model);
+
         cp.add(buildToolbarPanel(), BorderLayout.NORTH);
         cp.add(buildContentPanel(), BorderLayout.CENTER);
         cp.add(buildButtonPanel(), BorderLayout.SOUTH);
@@ -339,7 +338,7 @@ public class ChangesetCacheManager extends JFrame {
         }
 
         @Override
-        public void windowActivated(WindowEvent arg0) {
+        public void windowActivated(WindowEvent e) {
             if (needsSplitPaneAdjustment) {
                 spContent.setDividerLocation(0.5);
                 needsSplitPaneAdjustment = false;
@@ -362,7 +361,7 @@ public class ChangesetCacheManager extends JFrame {
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             cancelAndClose();
         }
     }
@@ -370,7 +369,8 @@ public class ChangesetCacheManager extends JFrame {
     /**
      * The action to query and download changesets
      */
-    class QueryAction extends AbstractAction {
+    static class QueryAction extends AbstractAction {
+
         QueryAction() {
             putValue(NAME, tr("Query"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
@@ -380,19 +380,22 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            ChangesetQueryDialog dialog = new ChangesetQueryDialog(ChangesetCacheManager.this);
-            dialog.initForUserInput();
-            dialog.setVisible(true);
-            if (dialog.isCanceled())
-                return;
+            Window parent = GuiHelper.getWindowAncestorFor(evt);
+            if (!GraphicsEnvironment.isHeadless()) {
+                ChangesetQueryDialog dialog = new ChangesetQueryDialog(parent);
+                dialog.initForUserInput();
+                dialog.setVisible(true);
+                if (dialog.isCanceled())
+                    return;
 
-            try {
-                ChangesetQuery query = dialog.getChangesetQuery();
-                if (query == null) return;
-                ChangesetQueryTask task = new ChangesetQueryTask(ChangesetCacheManager.this, query);
-                ChangesetCacheManager.getInstance().runDownloadTask(task);
-            } catch (IllegalStateException e) {
-                JOptionPane.showMessageDialog(ChangesetCacheManager.this, e.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
+                try {
+                    ChangesetQuery query = dialog.getChangesetQuery();
+                    if (query != null) {
+                        ChangesetCacheManager.getInstance().runDownloadTask(new ChangesetQueryTask(parent, query));
+                    }
+                } catch (IllegalStateException e) {
+                    JOptionPane.showMessageDialog(parent, e.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
@@ -401,18 +404,20 @@ public class ChangesetCacheManager extends JFrame {
      * Removes the selected changesets from the local changeset cache
      *
      */
-    class RemoveFromCacheAction extends AbstractAction implements ListSelectionListener {
-        RemoveFromCacheAction() {
+    static class RemoveFromCacheAction extends AbstractAction implements ListSelectionListener {
+        private final ChangesetCacheManagerModel model;
+
+        RemoveFromCacheAction(ChangesetCacheManagerModel model) {
             putValue(NAME, tr("Remove from cache"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             putValue(SHORT_DESCRIPTION, tr("Remove the selected changesets from the local cache"));
+            this.model = model;
             updateEnabledState();
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            List<Changeset> selected = model.getSelectedChangesets();
-            ChangesetCache.getInstance().remove(selected);
+        public void actionPerformed(ActionEvent e) {
+            ChangesetCache.getInstance().remove(model.getSelectedChangesets());
         }
 
         protected void updateEnabledState() {
@@ -429,18 +434,20 @@ public class ChangesetCacheManager extends JFrame {
      * Closes the selected changesets
      *
      */
-    class CloseSelectedChangesetsAction extends AbstractAction implements ListSelectionListener {
-        CloseSelectedChangesetsAction() {
+    static class CloseSelectedChangesetsAction extends AbstractAction implements ListSelectionListener {
+        private final ChangesetCacheManagerModel model;
+
+        CloseSelectedChangesetsAction(ChangesetCacheManagerModel model) {
             putValue(NAME, tr("Close"));
             putValue(SMALL_ICON, ImageProvider.get("closechangeset"));
             putValue(SHORT_DESCRIPTION, tr("Close the selected changesets"));
+            this.model = model;
             updateEnabledState();
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            List<Changeset> selected = model.getSelectedChangesets();
-            Main.worker.submit(new CloseChangesetTask(selected));
+        public void actionPerformed(ActionEvent e) {
+            Main.worker.submit(new CloseChangesetTask(model.getSelectedChangesets()));
         }
 
         protected void updateEnabledState() {
@@ -471,19 +478,23 @@ public class ChangesetCacheManager extends JFrame {
      * Downloads the selected changesets
      *
      */
-    class DownloadSelectedChangesetsAction extends AbstractAction implements ListSelectionListener {
-        DownloadSelectedChangesetsAction() {
+    static class DownloadSelectedChangesetsAction extends AbstractAction implements ListSelectionListener {
+        private final ChangesetCacheManagerModel model;
+
+        DownloadSelectedChangesetsAction(ChangesetCacheManagerModel model) {
             putValue(NAME, tr("Update changeset"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "updatechangeset"));
             putValue(SHORT_DESCRIPTION, tr("Updates the selected changesets with current data from the OSM server"));
+            this.model = model;
             updateEnabledState();
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            List<Changeset> selected = model.getSelectedChangesets();
-            ChangesetHeaderDownloadTask task = ChangesetHeaderDownloadTask.buildTaskForChangesets(ChangesetCacheManager.this, selected);
-            ChangesetCacheManager.getInstance().runDownloadTask(task);
+        public void actionPerformed(ActionEvent e) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                ChangesetCacheManager.getInstance().runDownloadTask(
+                        ChangesetHeaderDownloadTask.buildTaskForChangesets(GuiHelper.getWindowAncestorFor(e), model.getSelectedChangesets()));
+            }
         }
 
         protected void updateEnabledState() {
@@ -500,18 +511,23 @@ public class ChangesetCacheManager extends JFrame {
      * Downloads the content of selected changesets from the OSM server
      *
      */
-    class DownloadSelectedChangesetContentAction extends AbstractAction implements ListSelectionListener {
-        DownloadSelectedChangesetContentAction() {
+    static class DownloadSelectedChangesetContentAction extends AbstractAction implements ListSelectionListener {
+        private final ChangesetCacheManagerModel model;
+
+        DownloadSelectedChangesetContentAction(ChangesetCacheManagerModel model) {
             putValue(NAME, tr("Download changeset content"));
             putValue(SMALL_ICON, DOWNLOAD_CONTENT_ICON);
             putValue(SHORT_DESCRIPTION, tr("Download the content of the selected changesets from the server"));
+            this.model = model;
             updateEnabledState();
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(ChangesetCacheManager.this, model.getSelectedChangesetIds());
-            ChangesetCacheManager.getInstance().runDownloadTask(task);
+        public void actionPerformed(ActionEvent e) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                ChangesetCacheManager.getInstance().runDownloadTask(
+                        new ChangesetContentDownloadTask(GuiHelper.getWindowAncestorFor(e), model.getSelectedChangesetIds()));
+            }
         }
 
         protected void updateEnabledState() {
@@ -524,21 +540,27 @@ public class ChangesetCacheManager extends JFrame {
         }
     }
 
-    class ShowDetailAction extends AbstractAction {
+    static class ShowDetailAction extends AbstractAction {
+        private final ChangesetCacheManagerModel model;
 
-        public void showDetails() {
+        ShowDetailAction(ChangesetCacheManagerModel model) {
+            this.model = model;
+        }
+
+        protected void showDetails() {
             List<Changeset> selected = model.getSelectedChangesets();
-            if (selected.size() != 1) return;
-            model.setChangesetInDetailView(selected.get(0));
+            if (selected.size() == 1) {
+                model.setChangesetInDetailView(selected.get(0));
+            }
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             showDetails();
         }
     }
 
-    class DownloadMyChangesets extends AbstractAction {
+    static class DownloadMyChangesets extends AbstractAction {
         DownloadMyChangesets() {
             putValue(NAME, tr("My changesets"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "downloadchangeset"));
@@ -546,9 +568,9 @@ public class ChangesetCacheManager extends JFrame {
             setEnabled(!Main.isOffline(OnlineResource.OSM_API));
         }
 
-        protected void alertAnonymousUser() {
+        protected void alertAnonymousUser(Component parent) {
             HelpAwareOptionPane.showOptionDialog(
-                    ChangesetCacheManager.this,
+                    parent,
                     tr("<html>JOSM is currently running with an anonymous user. It cannot download<br>"
                             + "your changesets from the OSM server unless you enter your OSM user name<br>"
                             + "in the JOSM preferences.</html>"
@@ -560,10 +582,11 @@ public class ChangesetCacheManager extends JFrame {
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
+            Window parent = GuiHelper.getWindowAncestorFor(e);
             JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
             if (im.isAnonymous()) {
-                alertAnonymousUser();
+                alertAnonymousUser(parent);
                 return;
             }
             ChangesetQuery query = new ChangesetQuery();
@@ -572,8 +595,9 @@ public class ChangesetCacheManager extends JFrame {
             } else {
                 query = query.forUser(im.getUserName());
             }
-            ChangesetQueryTask task = new ChangesetQueryTask(ChangesetCacheManager.this, query);
-            ChangesetCacheManager.getInstance().runDownloadTask(task);
+            if (!GraphicsEnvironment.isHeadless()) {
+                ChangesetCacheManager.getInstance().runDownloadTask(new ChangesetQueryTask(parent, query));
+            }
         }
     }
 
@@ -586,7 +610,7 @@ public class ChangesetCacheManager extends JFrame {
         @Override
         public void mouseClicked(MouseEvent evt) {
             if (isDoubleClick(evt)) {
-                new ShowDetailAction().showDetails();
+                new ShowDetailAction(model).showDetails();
             }
         }
     }
@@ -600,7 +624,13 @@ public class ChangesetCacheManager extends JFrame {
         }
     }
 
-    class ChangesetDetailViewSynchronizer implements ListSelectionListener {
+    static class ChangesetDetailViewSynchronizer implements ListSelectionListener {
+        private final ChangesetCacheManagerModel model;
+
+        ChangesetDetailViewSynchronizer(ChangesetCacheManagerModel model) {
+            this.model = model;
+        }
+
         @Override
         public void valueChanged(ListSelectionEvent e) {
             List<Changeset> selected = model.getSelectedChangesets();

@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -634,12 +635,12 @@ public final class Utils {
      * @return string clipboard contents if available, {@code null} otherwise.
      */
     public static String getClipboardContent() {
-        Transferable t = getTransferableContent(Toolkit.getDefaultToolkit().getSystemClipboard());
         try {
+            Transferable t = getTransferableContent(Toolkit.getDefaultToolkit().getSystemClipboard());
             if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 return (String) t.getTransferData(DataFlavor.stringFlavor);
             }
-        } catch (UnsupportedFlavorException | IOException ex) {
+        } catch (UnsupportedFlavorException | IOException | HeadlessException ex) {
             Main.error(ex);
             return null;
         }

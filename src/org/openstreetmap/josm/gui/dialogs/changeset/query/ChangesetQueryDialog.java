@@ -5,10 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -94,12 +93,7 @@ public class ChangesetQueryDialog extends JDialog {
         addWindowListener(new WindowEventHandler());
     }
 
-    public ChangesetQueryDialog(Dialog parent) {
-        super(parent, ModalityType.DOCUMENT_MODAL);
-        build();
-    }
-
-    public ChangesetQueryDialog(Frame parent) {
+    public ChangesetQueryDialog(Window parent) {
         super(parent, ModalityType.DOCUMENT_MODAL);
         build();
     }
