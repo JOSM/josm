@@ -26,6 +26,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.FilteredImageSource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
+import java.util.EventObject;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -461,5 +462,16 @@ public final class GuiHelper {
      */
     public static Clipboard getSystemSelection() {
         return GraphicsEnvironment.isHeadless() ? null : Toolkit.getDefaultToolkit().getSystemSelection();
+    }
+
+    /**
+     * Returns the first <code>Window</code> ancestor of event source, or
+     * {@code null} if event source is not a component contained inside a <code>Window</code>.
+     * @param e event object
+     * @return a Window, or {@code null}
+     * @since 9916
+     */
+    public static Window getWindowAncestorFor(EventObject e) {
+        return e != null && e.getSource() instanceof Component ? SwingUtilities.getWindowAncestor((Component) e.getSource()) : null;
     }
 }
