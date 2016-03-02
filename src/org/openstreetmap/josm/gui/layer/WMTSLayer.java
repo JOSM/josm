@@ -59,11 +59,13 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
 
     @Override
     protected int getBestZoom() {
-        if (!Main.isDisplayingMapView()) return 0;
+        if (!Main.isDisplayingMapView())
+            return 0;
+        Scale snap = getNativeScales().getSnapScale(Main.map.mapView.getScale(), false);
         return Math.max(
                 getMinZoomLvl(),
                 Math.min(
-                        getNativeScales().getSnapScale(Main.map.mapView.getScale(), false).getIndex(),
+                        snap != null ? snap.getIndex() : getMaxZoomLvl(),
                         getMaxZoomLvl()
                         )
                 );

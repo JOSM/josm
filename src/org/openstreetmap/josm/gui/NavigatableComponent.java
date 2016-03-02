@@ -205,8 +205,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
             if (PROP_ZOOM_INTERMEDIATE_STEPS.get()) {
                 scaleList = scaleList.withIntermediateSteps(PROP_ZOOM_RATIO.get());
             }
-            Scale scale = scaleList.scaleZoomTimes(getScale(), PROP_ZOOM_RATIO.get(), times);
-            return scale.getScale();
+            Scale s = scaleList.scaleZoomTimes(getScale(), PROP_ZOOM_RATIO.get(), times);
+            return s != null ? s.getScale() : 0;
         } else {
             return getScale() * Math.pow(PROP_ZOOM_RATIO.get(), times);
         }
