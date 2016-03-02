@@ -284,7 +284,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-         // Taken from Version 2016022800, Last Updated Sun Feb 28 07:07:01 2016 UTC
+         // Taken from Version 2016030200, Last Updated Wed Mar  2 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -858,6 +858,7 @@ public final class DomainValidator extends AbstractValidator {
         "partners", // partners Magic Glen, LLC
         "parts", // parts Sea Goodbye, LLC
         "party", // party Blue Sky Registry Limited
+        "passagens", // passagens Travel Reservations SRL
         "pet", // pet Afilias plc
         "pharmacy", // pharmacy National Association of Boards of Pharmacy
         "philips", // philips Koninklijke Philips N.V.
@@ -1107,6 +1108,7 @@ public final class DomainValidator extends AbstractValidator {
         "voting", // voting Valuetainment Corp.
         "voto", // voto Monolith Registry LLC
         "voyage", // voyage Ruby House, LLC
+        "vuelos", // vuelos Travel Reservations SRL
         "wales", // wales Nominet UK
         "walter", // walter Sandvik AB
         "wang", // wang Zodiac Registry Limited
