@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -107,15 +108,17 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             formats.setSelectedItem(wms.getPreferredFormats());
             formats.setToolTipText(tr("Select image format for WMS layer"));
 
-            if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")}) { {
-                final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
-                scrollPane.setPreferredSize(new Dimension(400, 400));
-                final JPanel panel = new JPanel(new GridBagLayout());
-                panel.add(scrollPane, GBC.eol().fill());
-                panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
-                setContent(panel);
-            } }.showDialog().getValue()) {
-                return null;
+            if (!GraphicsEnvironment.isHeadless()) {
+                if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")}) { {
+                    final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
+                    scrollPane.setPreferredSize(new Dimension(400, 400));
+                    final JPanel panel = new JPanel(new GridBagLayout());
+                    panel.add(scrollPane, GBC.eol().fill());
+                    panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
+                    setContent(panel);
+                } }.showDialog().getValue()) {
+                    return null;
+                }
             }
 
             final String url = wms.buildGetMapUrl(
@@ -140,14 +143,22 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             ret.setServerProjections(supportedCrs);
             return ret;
         } catch (MalformedURLException ex) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Invalid service URL."),
-                    tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(Main.parent, tr("Invalid service URL."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            }
+            Main.error(ex, false);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Could not retrieve WMS layer list."),
-                    tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(Main.parent, tr("Could not retrieve WMS layer list."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            }
+            Main.error(ex, false);
         } catch (WMSImagery.WMSGetCapabilitiesException ex) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Could not parse WMS layer list."),
-                    tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(Main.parent, tr("Could not parse WMS layer list."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            }
             Main.error("Could not parse WMS layer list. Incoming data:\n"+ex.getIncomingData());
         }
         return null;
