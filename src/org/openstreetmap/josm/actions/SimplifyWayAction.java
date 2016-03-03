@@ -77,7 +77,7 @@ public class SimplifyWayAction extends JosmAction {
                                 null
                                 )
         };
-        int ret = HelpAwareOptionPane.showOptionDialog(
+        return 0 == HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 tr(
                         "The selection contains {0} ways. Are you sure you want to simplify them all?",
@@ -90,7 +90,6 @@ public class SimplifyWayAction extends JosmAction {
                         options[0],
                         HelpUtil.ht("/Action/SimplifyWay#ConfirmSimplifyAll")
                 );
-        return ret == 0;
     }
 
     @Override

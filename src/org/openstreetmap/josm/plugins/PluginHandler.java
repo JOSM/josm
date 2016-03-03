@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -855,15 +854,13 @@ public final class PluginHandler {
                 "The plugins are not going to be loaded.",
                 plugins.size()))
           .append("</html>");
-        if (!GraphicsEnvironment.isHeadless()) {
-            HelpAwareOptionPane.showOptionDialog(
-                    parent,
-                    sb.toString(),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Plugin/Loading#MissingPluginInfos")
-            );
-        }
+        HelpAwareOptionPane.showOptionDialog(
+                parent,
+                sb.toString(),
+                tr("Warning"),
+                JOptionPane.WARNING_MESSAGE,
+                HelpUtil.ht("/Plugin/Loading#MissingPluginInfos")
+        );
     }
 
     /**
@@ -1108,9 +1105,7 @@ public final class PluginHandler {
                         null /* no specific help context */
                 )
         };
-        int ret = -1;
-        if (!GraphicsEnvironment.isHeadless()) {
-            ret = HelpAwareOptionPane.showOptionDialog(
+        return 0 == HelpAwareOptionPane.showOptionDialog(
                     parent,
                     reason,
                     tr("Disable plugin"),
@@ -1120,8 +1115,6 @@ public final class PluginHandler {
                     options[0],
                     null // FIXME: add help topic
             );
-        }
-        return ret == 0;
     }
 
     /**

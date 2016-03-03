@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dialog.ModalityType;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -240,6 +241,15 @@ public final class HelpAwareOptionPane {
                 defaultButton
         );
 
+        if (!GraphicsEnvironment.isHeadless()) {
+            doShowOptionDialog(parentComponent, title, options, defaultOption, helpTopic, buttons, pane);
+        }
+        return (Integer) pane.getValue();
+    }
+
+    private static void doShowOptionDialog(Component parentComponent, String title, final ButtonSpec[] options,
+            final ButtonSpec defaultOption, final String helpTopic, final List<JButton> buttons,
+            final JOptionPane pane) {
         final JDialog dialog = new JDialog(
                 JOptionPane.getFrameForComponent(parentComponent),
                 title,
@@ -301,7 +311,6 @@ public final class HelpAwareOptionPane {
             HelpUtil.setHelpContext(dialog.getRootPane(), helpTopic);
         }
         dialog.setVisible(true);
-        return (Integer) pane.getValue();
     }
 
     /**

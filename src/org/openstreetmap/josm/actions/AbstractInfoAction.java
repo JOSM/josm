@@ -84,7 +84,7 @@ public abstract class AbstractInfoAction extends JosmAction {
                         null // no specific help topic
                 )
         };
-        int ret = HelpAwareOptionPane.showOptionDialog(
+        return 0 == HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 msg,
                 tr("Warning"),
@@ -94,7 +94,6 @@ public abstract class AbstractInfoAction extends JosmAction {
                 spec[0],
                 HelpUtil.ht("/WarningMessages#ToManyBrowsersToOpen")
         );
-        return ret == 0;
     }
 
     protected void launchInfoBrowsersForSelectedPrimitivesAndNote() {
