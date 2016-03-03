@@ -242,7 +242,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 options,
                 options[0],
                 "/Action/Upload#NodeStillInUseInWay"
-);
+        );
         if (ret == 0) {
             DownloadReferrersAction.downloadReferrers(Main.main.getEditLayer(), Arrays.asList(conflict.a));
         }

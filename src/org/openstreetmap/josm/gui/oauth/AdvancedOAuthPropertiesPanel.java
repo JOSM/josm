@@ -170,7 +170,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
                         null /* no dedicated help topic */
                 )
         };
-        int ret = HelpAwareOptionPane.showOptionDialog(
+        return 0 == HelpAwareOptionPane.showOptionDialog(
                 this,
                 tr(
                         "<html>JOSM is about to reset the OAuth settings to default values.<br>"
@@ -183,8 +183,6 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
                 buttons[0],
                 HelpUtil.ht("/Dialog/OAuthAuthorisationWizard")
         );
-
-        return ret == 0; // OK button clicked
     }
 
     protected void resetToDefaultSettings() {
