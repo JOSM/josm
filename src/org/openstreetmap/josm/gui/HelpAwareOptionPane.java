@@ -244,7 +244,7 @@ public final class HelpAwareOptionPane {
         if (!GraphicsEnvironment.isHeadless()) {
             doShowOptionDialog(parentComponent, title, options, defaultOption, helpTopic, buttons, pane);
         }
-        return (Integer) pane.getValue();
+        return pane.getValue() instanceof Integer ? (Integer) pane.getValue() : JOptionPane.OK_OPTION;
     }
 
     private static void doShowOptionDialog(Component parentComponent, String title, final ButtonSpec[] options,

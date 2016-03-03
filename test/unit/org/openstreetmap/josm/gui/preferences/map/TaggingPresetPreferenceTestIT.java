@@ -76,8 +76,8 @@ public class TaggingPresetPreferenceTestIT {
                 System.out.println(" => KO");
             }
         }
-        assertTrue(allErrors.isEmpty());
-        assertTrue(allMessages.isEmpty());
+        assertTrue(allErrors.toString(), allErrors.isEmpty());
+        assertTrue(allMessages.toString(), allMessages.isEmpty());
     }
 
     private static void testPresets(Set<String> allMessages, ExtendedSourceEntry source) throws SAXException, IOException {
