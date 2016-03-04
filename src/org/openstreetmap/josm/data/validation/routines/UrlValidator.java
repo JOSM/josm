@@ -350,6 +350,11 @@ public class UrlValidator extends AbstractValidator {
         return true;
     }
 
+    @Override
+    public String getValidatorName() {
+        return tr("URL validator");
+    }
+
     /**
      * Validate scheme. If schemes[] was initialized to a non null,
      * then only those schemes are allowed.
