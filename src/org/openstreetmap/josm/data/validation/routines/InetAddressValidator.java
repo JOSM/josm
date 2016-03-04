@@ -75,6 +75,11 @@ public class InetAddressValidator extends AbstractValidator {
         return isValidInet4Address(inetAddress) || isValidInet6Address(inetAddress);
     }
 
+    @Override
+    public String getValidatorName() {
+        return null;
+    }
+
     /**
      * Validates an IPv4 address. Returns true if valid.
      * @param inet4Address the IPv4 address to validate

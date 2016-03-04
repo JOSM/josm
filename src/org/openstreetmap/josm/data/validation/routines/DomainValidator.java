@@ -169,6 +169,11 @@ public final class DomainValidator extends AbstractValidator {
         return allowLocal && hostnameRegex.isValid(domain);
     }
 
+    @Override
+    public String getValidatorName() {
+        return null;
+    }
+
     // package protected for unit test access
     // must agree with isValid() above
     boolean isValidDomainSyntax(String domain) {
