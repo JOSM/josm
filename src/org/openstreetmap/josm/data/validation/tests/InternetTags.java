@@ -134,7 +134,8 @@ public class InternetTags extends Test {
                 return doValidateTag(p, k, proto+value, validator, code);
             }
             String msg = tr("''{0}'': {1}", k, errMsg);
-            error = new TestError(this, Severity.WARNING, msg, code, p);
+            // todo obtain English message for ignore functionality
+            error = new TestError(this, Severity.WARNING, validator.getValidatorName(), msg, msg, code, p);
         }
         return error;
     }

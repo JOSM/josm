@@ -186,6 +186,11 @@ public class EmailValidator extends AbstractValidator {
         return true;
     }
 
+    @Override
+    public String getValidatorName() {
+        return tr("Email validator");
+    }
+
     /**
      * Returns true if the domain component of an email address is valid.
      *

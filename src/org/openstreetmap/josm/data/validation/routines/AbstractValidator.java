@@ -17,6 +17,12 @@ public abstract class AbstractValidator {
     public abstract boolean isValid(String value);
 
     /**
+     * Returns the name of this validator
+     * @return the name of this validator
+     */
+    public abstract String getValidatorName();
+
+    /**
      * Replies the error message.
      * @return the errorMessage
      */
