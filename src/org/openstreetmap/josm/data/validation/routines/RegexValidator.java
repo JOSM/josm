@@ -148,6 +148,11 @@ public class RegexValidator extends AbstractValidator {
         return false;
     }
 
+    @Override
+    public String getValidatorName() {
+        return null;
+    }
+
     /**
      * Validate a value against the set of regular expressions
      * returning the array of matched groups.
