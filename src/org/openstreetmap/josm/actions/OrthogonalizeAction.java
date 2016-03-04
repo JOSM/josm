@@ -145,43 +145,12 @@ public final class OrthogonalizeAction extends JosmAction {
                 return;
         }
 
-        final List<Node> nodeList = new ArrayList<>();
-        final List<WayData> wayDataList = new ArrayList<>();
         final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
 
         try {
-            // collect nodes and ways from the selection
-            for (OsmPrimitive p : sel) {
-                if (p instanceof Node) {
-                    nodeList.add((Node) p);
-                } else if (p instanceof Way) {
-                    wayDataList.add(new WayData((Way) p));
-                } else
-                    throw new InvalidUserInputException(tr("Selection must consist only of ways and nodes."));
-            }
-            if (wayDataList.isEmpty())
-                throw new InvalidUserInputException("usage");
-            else  {
-                if (nodeList.size() == 2 || nodeList.isEmpty()) {
-                    OrthogonalizeAction.rememberMovements.clear();
-                    final Collection<Command> commands = new LinkedList<>();
-
-                    if (nodeList.size() == 2) {  // fixed direction
-                        commands.addAll(orthogonalize(wayDataList, nodeList));
-                    } else if (nodeList.isEmpty()) {
-                        List<List<WayData>> groups = buildGroups(wayDataList);
-                        for (List<WayData> g: groups) {
-                            commands.addAll(orthogonalize(g, nodeList));
-                        }
-                    } else
-                        throw new IllegalStateException();
-
-                    Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), commands));
-                    Main.map.repaint();
-
-                } else
-                    throw new InvalidUserInputException("usage");
-            }
+            final SequenceCommand command = orthogonalize(sel);
+            Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), command));
+            Main.map.repaint();
         } catch (InvalidUserInputException ex) {
             String msg;
             if ("usage".equals(ex.getMessage())) {
@@ -193,6 +162,50 @@ public final class OrthogonalizeAction extends JosmAction {
                     .setIcon(JOptionPane.INFORMATION_MESSAGE)
                     .setDuration(Notification.TIME_DEFAULT)
                     .show();
+        }
+    }
+
+    /**
+     * Rectifies the selection
+     * @param selection the selection which should be rectified
+     * @return a rectifying command
+     * @throws InvalidUserInputException if the selection is invalid
+     */
+    static SequenceCommand orthogonalize(Iterable<OsmPrimitive> selection) throws InvalidUserInputException {
+        final List<Node> nodeList = new ArrayList<>();
+        final List<WayData> wayDataList = new ArrayList<>();
+        // collect nodes and ways from the selection
+        for (OsmPrimitive p : selection) {
+            if (p instanceof Node) {
+                nodeList.add((Node) p);
+            } else if (p instanceof Way) {
+                wayDataList.add(new WayData((Way) p));
+            } else
+                throw new InvalidUserInputException(tr("Selection must consist only of ways and nodes."));
+        }
+        if (wayDataList.isEmpty()) {
+            throw new InvalidUserInputException("usage");
+        } else  {
+            if (nodeList.size() == 2 || nodeList.isEmpty()) {
+                OrthogonalizeAction.rememberMovements.clear();
+                final Collection<Command> commands = new LinkedList<>();
+
+                if (nodeList.size() == 2) {  // fixed direction
+                    commands.addAll(orthogonalize(wayDataList, nodeList));
+                } else if (nodeList.isEmpty()) {
+                    List<List<WayData>> groups = buildGroups(wayDataList);
+                    for (List<WayData> g: groups) {
+                        commands.addAll(orthogonalize(g, nodeList));
+                    }
+                } else {
+                    throw new IllegalStateException();
+                }
+
+                return new SequenceCommand(tr("Orthogonalize"), commands);
+
+            } else {
+                throw new InvalidUserInputException("usage");
+            }
         }
     }
 
@@ -579,7 +592,7 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Exception: unsuited user input
      */
-    private static class InvalidUserInputException extends Exception {
+    protected static class InvalidUserInputException extends Exception {
         InvalidUserInputException(String message) {
             super(message);
         }
@@ -592,7 +605,7 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Exception: angle cannot be recognized as 0, 90, 180 or 270 degrees
      */
-    private static class RejectedAngleException extends Exception {
+    protected static class RejectedAngleException extends Exception {
         RejectedAngleException() {
             super();
         }
