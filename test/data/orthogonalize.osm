@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='true' generator='JOSM'>
+  <node id='-444' action='modify' visible='true' lat='8.53882631502' lon='55.72982273659' />
+  <node id='-446' action='modify' visible='true' lat='8.53692765033' lon='55.73148512506' />
+  <node id='-448' action='modify' visible='true' lat='8.53901816563' lon='55.7313279173' />
+  <node id='-450' action='modify' visible='true' lat='8.53673579867' lon='55.72997994436' />
+  <node id='-452' action='modify' visible='true' lat='8.53609408724' lon='55.73073587955' />
+  <node id='-454' action='modify' visible='true' lat='8.5381846071' lon='55.73057867179' />
+  <node id='-456' action='modify' visible='true' lat='8.534711427' lon='55.73000670312'>
+    <tag k='entrance' v='yes' />
+    <tag k='name' v='ClosedWayWithReferenceNodes' />
+  </node>
+  <node id='-458' action='modify' visible='true' lat='8.53545899034' lon='55.7305284991' />
+  <node id='-460' action='modify' visible='true' lat='8.5395738703' lon='55.73034453257' />
+  <node id='-462' action='modify' visible='true' lat='8.53490327967' lon='55.73151188383' />
+  <node id='-464' action='modify' visible='true' lat='8.53748335805' lon='55.73050174033' />
+  <node id='-466' action='modify' visible='true' lat='8.53406971216' lon='55.73076263832'>
+    <tag k='entrance' v='yes' />
+    <tag k='name' v='ClosedWayWithReferenceNodes' />
+  </node>
+  <way id='-468' action='modify' visible='true'>
+    <nd ref='-444' />
+    <nd ref='-460' />
+    <nd ref='-448' />
+    <nd ref='-454' />
+    <nd ref='-444' />
+    <tag k='building' v='yes' />
+    <tag k='name' v='ClosedWay' />
+  </way>
+  <way id='-470' action='modify' visible='true'>
+    <nd ref='-450' />
+    <nd ref='-464' />
+    <nd ref='-446' />
+    <tag k='building' v='yes' />
+    <tag k='name' v='TwoWaysFormingClosedWay' />
+  </way>
+  <way id='-472' action='modify' visible='true'>
+    <nd ref='-456' />
+    <nd ref='-458' />
+    <nd ref='-462' />
+    <nd ref='-466' />
+    <nd ref='-456' />
+    <tag k='building' v='yes' />
+    <tag k='name' v='ClosedWayWithReferenceNodes' />
+  </way>
+  <way id='-474' action='modify' visible='true'>
+    <nd ref='-446' />
+    <nd ref='-452' />
+    <nd ref='-450' />
+    <tag k='building' v='yes' />
+    <tag k='name' v='TwoWaysFormingClosedWay' />
+  </way>
+</osm>
