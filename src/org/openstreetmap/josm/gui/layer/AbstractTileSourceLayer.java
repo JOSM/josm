@@ -132,11 +132,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
 
     // needed public access for session exporter
     /** if layers changes automatically, when user zooms in */
-    public boolean autoZoom;
+    public boolean autoZoom = PROP_DEFAULT_AUTOZOOM.get();
     /** if layer automatically loads new tiles */
-    public boolean autoLoad;
+    public boolean autoLoad = PROP_DEFAULT_AUTOLOAD.get();
     /** if layer should show errors on tiles */
-    public boolean showErrors;
+    public boolean showErrors = PROP_DEFAULT_SHOWERRORS.get();
 
     /**
      * Offset between calculated zoom level and zoom level used to download and show tiles. Negative values will result in
@@ -600,10 +600,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         super.hookUpMapView();
         projectionChanged(null, Main.getProjection()); // check if projection is supported
         initTileSource(this.tileSource);
-
-        autoLoad = PROP_DEFAULT_AUTOLOAD.get();
-        autoZoom = PROP_DEFAULT_AUTOZOOM.get();
-        showErrors = PROP_DEFAULT_SHOWERRORS.get();
 
         final MouseAdapter adapter = new MouseAdapter() {
             @Override
