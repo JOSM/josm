@@ -78,8 +78,8 @@ public class PresetClassificationsTest {
         final OsmPrimitive tram = OsmUtils.createPrimitive("way railway=tram");
         assertTrue("railway=tram should match 'Railway Route' for relation creation", getMatchingPresetNames("route", tram)
                 .contains("Railway Route"));
-        assertTrue("railway=tram should match 'Public Transport Route' for relation creation", getMatchingPresetNames("route", tram)
-                .contains("Public Transport Route"));
-        assertFalse("railway=tram should not match 'Bus route'", getMatchingPresetNames("route", tram).contains("Bus route"));
+        assertTrue("railway=tram should match 'Public Transport Route (Rail)' for relation creation", getMatchingPresetNames("route", tram)
+                .contains("Public Transport Route (Rail)"));
+        assertFalse("railway=tram should not match 'Bus'", getMatchingPresetNames("route", tram).toString().contains("Bus"));
     }
 }
