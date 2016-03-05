@@ -3,8 +3,12 @@ package org.openstreetmap.josm.gui.oauth;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.util.Collections;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,5 +46,26 @@ public class OsmOAuthAuthorizationClientTest {
         System.out.println(new URL(url));
         //OAuthToken accessToken = client.getAccessToken(null);
         //assertNotNull(accessToken);
+    }
+
+    /**
+     * Unit test for correct cookie handling when logging in to the OSM website.
+     *
+     * https://josm.openstreetmap.de/ticket/12584
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testCookieHandling() throws Exception {
+        final OAuthParameters parameters = OAuthParameters.createDefault();
+        final OsmOAuthAuthorizationClient client = new OsmOAuthAuthorizationClient(parameters);
+        assertNotNull(client.fetchOsmWebsiteSessionId());
+
+        // emulate Java Web Start behaviour
+        // see https://docs.oracle.com/javase/tutorial/deployment/doingMoreWithRIA/accessingCookies.html
+        final CookieManager cm = new CookieManager();
+        cm.put(new URI(parameters.getOsmLoginUrl()),
+                Collections.singletonMap("Cookie", Collections.singletonList("_osm_session=" + String.valueOf(Math.PI).substring(2))));
+        CookieHandler.setDefault(cm);
+        assertNotNull(client.fetchOsmWebsiteSessionId());
     }
 }
