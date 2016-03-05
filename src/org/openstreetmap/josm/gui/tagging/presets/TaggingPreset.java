@@ -561,16 +561,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             return false;
         else if (!typeMatches(t))
             return false;
-        boolean atLeastOnePositiveMatch = false;
-        for (TaggingPresetItem item : data) {
-            Boolean m = item.matches(tags);
-            if (m != null && !m)
-                return false;
-            else if (m != null) {
-                atLeastOnePositiveMatch = true;
-            }
-        }
-        return atLeastOnePositiveMatch;
+        else
+            return TaggingPresetItem.matches(data, tags);
     }
 
     /**
