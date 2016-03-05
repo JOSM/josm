@@ -380,6 +380,15 @@
     <preset_link preset_name="Addresses" />
     <preset_link preset_name="Payment Methods" />
   </chunk>
+  <chunk id="public_transport_route_optionals">
+    <text key="from" text="From (initial stop)" />
+    <text key="to" text="To (terminal stop)" />
+    <text key="via" text="Via (intermediate stops)" />
+    <text key="operator" text="Operator" />
+    <text key="network" text="Network" />
+    <text key="description" text="Description" />
+    <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+  </chunk>
   <!--  Groups -->
   <group name="Highways" icon="styles/standard/transport/way/way_secondary.svg">
     <group name="Streets" icon="styles/standard/transport/way/way_secondary.svg">
@@ -3068,32 +3077,46 @@
         </item> <!-- Public Bicycle Repair Station -->
     </group> <!-- Bicycle -->
     <group name="Public Transport" icon="presets/bus.png">
-        <item name="Public Transport Route" icon="presets/path.png" type="relation" preset_name_label="true">
+        <item name="Public Transport Route (Rail)" icon="presets/path.png" type="relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Route" />
             <space />
             <key key="type" value="route" />
-            <combo key="route" text="Route type" values="train,subway,monorail,tram,light_rail,bus,trolleybus,aerialway,ferry" values_searchable="true" match="keyvalue!" />
+            <combo key="route" text="Route type" values="train,subway,monorail,tram,light_rail" values_searchable="true" match="keyvalue!" />
             <key key="public_transport:version" value="2" /> <!-- only validate marked relations in order to avoid false positives -->
             <reference ref="name_ref" />
             <optional>
-                <text key="from" text="From (initial stop)" />
-                <text key="to" text="To (terminal stop)" />
-                <text key="via" text="Via (intermediate stops)" />
-                <text key="operator" text="Operator" />
-                <text key="network" text="Network" />
-                <text key="description" text="Description" />
-                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
+                <reference ref="public_transport_route_optionals" />
             </optional>
             <roles>
-                <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position" />
-                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position" />
-                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position" />
-                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
-                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
-                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
-                <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway OR railway OR waterway OR aerialway" />
+                <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
+                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
+                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
+                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
+                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
+                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
+                <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="railway" />
             </roles>
-        </item> <!-- Public Transport Route -->
+        </item> <!-- Public Transport Route (Rail) -->
+        <item name="Public Transport Route (Bus)" icon="presets/path.png" type="relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Route" />
+            <space />
+            <key key="type" value="route" />
+            <combo key="route" text="Route type" values="bus,trolleybus" values_searchable="true" match="keyvalue!" />
+            <key key="public_transport:version" value="2" /> <!-- only validate marked relations in order to avoid false positives -->
+            <reference ref="name_ref" />
+            <optional>
+                <reference ref="public_transport_route_optionals" />
+            </optional>
+            <roles>
+                <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (bus OR trolleybus)" />
+                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position (bus OR trolleybus)" />
+                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position (bus OR trolleybus)" />
+                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform (bus OR trolleybus)" />
+                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform (bus OR trolleybus)" />
+                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform (bus OR trolleybus)" />
+                <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway" />
+            </roles>
+        </item> <!-- Public Transport Route (Bus) -->
         <item name="Route Master" icon="presets/path.png" type="relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Route_master" />
             <space />
