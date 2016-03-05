@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-         // Taken from Version 2016030200, Last Updated Wed Mar  2 07:07:01 2016 UTC
+         // Taken from Version 2016030500, Last Updated Sat Mar  5 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -708,6 +708,9 @@ public final class DomainValidator extends AbstractValidator {
         "juegos", // juegos Uniregistry, Corp.
         "kaufen", // kaufen United TLD Holdco Ltd.
         "kddi", // kddi KDDI CORPORATION
+        "kerryhotels", // kerryhotels Kerry Trading Co. Limited
+        "kerrylogistics", // kerrylogistics Kerry Trading Co. Limited
+        "kerryproperties", // kerryproperties Kerry Trading Co. Limited
         "kfh", // kfh Kuwait Finance House
         "kia", // kia KIA MOTORS CORPORATION
         "kim", // kim Afilias Limited
@@ -719,6 +722,7 @@ public final class DomainValidator extends AbstractValidator {
         "kpn", // kpn Koninklijke KPN N.V.
         "krd", // krd KRG Department of Information Technology
         "kred", // kred KredTLD Pty Ltd
+        "kuokgroup", // kuokgroup Kerry Trading Co. Limited
         "kyoto", // kyoto Academic Institution: Kyoto Jyoho Gakuen
         "lacaixa", // lacaixa CAIXA D&#39;ESTALVIS I PENSIONS DE BARCELONA
         "lamborghini", // lamborghini Automobili Lamborghini S.p.A.
@@ -1221,6 +1225,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--vermgensberatung-pwb", // VERMöGENSBERATUNG Deutsche Vermögensberatung Aktiengesellschaft DVAG
         "xn--vhquv", // 企业 Dash McCook, LLC
         "xn--vuq861b", // 信息 Beijing Tele-info Network Technology Co., Ltd.
+        "xn--w4r85el8fhu5dnra", // 嘉里大酒店 Kerry Trading Co. Limited
         "xn--xhq521b", // 广东 Guangzhou YU Wei Information Technology Co., Ltd.
         "xn--zfr164b", // 政务 China Organizational Name Administration Center
         "xperia", // xperia Sony Mobile Communications AB
