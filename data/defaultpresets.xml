@@ -3088,12 +3088,12 @@
                 <reference ref="public_transport_route_optionals" />
             </optional>
             <roles>
-                <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
-                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
-                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
-                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
-                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
-                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=stop_position (train OR subway OR monorail OR tram OR light_rail)" />
+                <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (train=yes OR subway=yes OR monorail=yes OR tram=yes OR light_rail=yes)" />
+                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position (train=yes OR subway=yes OR monorail=yes OR tram=yes OR light_rail=yes)" />
+                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position (train=yes OR subway=yes OR monorail=yes OR tram=yes OR light_rail=yes)" />
+                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform (train=yes OR subway=yes OR monorail=yes OR tram=yes OR light_rail=yes)" />
+                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform (train=yes OR subway=yes OR monorail=yes OR tram=yes OR light_rail=yes)" />
+                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform (train=yes OR subway=yes OR monorail=yes OR tram=yes OR light_rail=yes)" />
                 <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="railway" />
             </roles>
         </item> <!-- Public Transport Route (Rail) -->
@@ -3108,12 +3108,12 @@
                 <reference ref="public_transport_route_optionals" />
             </optional>
             <roles>
-                <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (bus OR trolleybus)" />
-                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position (bus OR trolleybus)" />
-                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position (bus OR trolleybus)" />
-                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform (bus OR trolleybus)" />
-                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform (bus OR trolleybus)" />
-                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform (bus OR trolleybus)" />
+                <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (bus=yes OR trolleybus=yes)" />
+                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position (bus=yes OR trolleybus=yes)" />
+                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position (bus=yes OR trolleybus=yes)" />
+                <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform (bus=yes OR trolleybus=yes)" />
+                <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform (bus=yes OR trolleybus=yes)" />
+                <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform (bus=yes OR trolleybus=yes)" />
                 <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway" />
             </roles>
         </item> <!-- Public Transport Route (Bus) -->

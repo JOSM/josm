@@ -133,4 +133,24 @@ public abstract class TaggingPresetItem {
         }
         return imgProv.get();
     }
+
+    /**
+     * Determine whether the given preset items match the tags
+     * @param data the preset items
+     * @param tags the tags to match
+     * @return whether the given preset items match the tags
+     * @sice 9932
+     */
+    public static boolean matches(Iterable<? extends TaggingPresetItem> data, Map<String, String> tags) {
+        boolean atLeastOnePositiveMatch = false;
+        for (TaggingPresetItem item : data) {
+            Boolean m = item.matches(tags);
+            if (m != null && !m)
+                return false;
+            else if (m != null) {
+                atLeastOnePositiveMatch = true;
+            }
+        }
+        return atLeastOnePositiveMatch;
+    }
 }

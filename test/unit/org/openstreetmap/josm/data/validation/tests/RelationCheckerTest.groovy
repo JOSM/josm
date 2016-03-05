@@ -117,4 +117,26 @@ class RelationCheckerTest extends GroovyTestCase {
         assert errors.size() == 1
         assert errors.get(0).getDescription() == "Role member does not match expression power in template Power Route"
     }
+
+    void testRouteMemberExpression() {
+        def r = createRelation("type=route route=tram public_transport:version=2")
+        r.addMember(new RelationMember("", createPrimitive("way railway=tram")))
+        r.addMember(new RelationMember("stop", createPrimitive("node public_transport=stop_position tram=yes")))
+        r.addMember(new RelationMember("platform", createPrimitive("node public_transport=platform tram=yes")))
+        assert testRelation(r).size() == 0
+
+        r.addMember(new RelationMember("", createPrimitive("way no-rail-way=yes")))
+        assert testRelation(r).size() == 1
+        assert testRelation(r).get(0).getDescription() == "Role member does not match expression railway in template Public Transport Route (Rail)"
+
+        r.removeMember(3)
+        r.addMember(new RelationMember("stop", createPrimitive("way no-rail-way=yes")))
+        assert testRelation(r).size() == 1
+        assert testRelation(r).get(0).getDescription() == "Role member type way does not match accepted list of node in template Public Transport Route (Rail)"
+
+        r.removeMember(3)
+        r.addMember(new RelationMember("stop", createPrimitive("node public_transport=stop_position bus=yes")))
+        assert testRelation(r).size() == 1
+        assert testRelation(r).get(0).getDescription() == "Role member does not match expression public_transport=stop_position && (train=yes || subway=yes || monorail=yes || tram=yes || light_rail=yes) in template Public Transport Route (Rail)"
+    }
 }
