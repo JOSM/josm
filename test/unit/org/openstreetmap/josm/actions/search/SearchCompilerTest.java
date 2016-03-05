@@ -3,10 +3,8 @@ package org.openstreetmap.josm.actions.search;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
@@ -96,6 +94,7 @@ public class SearchCompilerTest {
         assertTrue(c.match(newPrimitive("foobar", "true")));
         assertTrue(c.match(newPrimitive("name", "hello-foo-xy")));
         assertFalse(c.match(newPrimitive("name", "X")));
+        assertEquals("foo", c.toString());
     }
 
     /**
@@ -109,6 +108,7 @@ public class SearchCompilerTest {
         assertTrue(c.match(newPrimitive("foo", "bar")));
         assertFalse(c.match(newPrimitive("fooX", "bar")));
         assertFalse(c.match(newPrimitive("foo", "barX")));
+        assertEquals("foo=bar", c.toString());
     }
 
     /**
@@ -185,7 +185,7 @@ public class SearchCompilerTest {
      */
     @Test
     public void testNthParseNegative() throws ParseError {
-        assertThat(SearchCompiler.compile("nth:-1").toString(), CoreMatchers.is("Nth{nth=-1, modulo=false}"));
+        assertEquals("Nth{nth=-1, modulo=false}", SearchCompiler.compile("nth:-1").toString());
     }
 
     /**
@@ -406,5 +406,24 @@ public class SearchCompilerTest {
         assertTrue(search.match(n1));
         n1.setTimestamp(DateUtils.fromString("2016-01-22"));
         assertFalse(search.match(n1));
+    }
+
+    /**
+     * Tests the implementation of the Boolean logic.
+     * @throws ParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testBooleanLogic() throws ParseError {
+        final SearchCompiler.Match c1 = SearchCompiler.compile("foo AND bar AND baz");
+        assertTrue(c1.match(newPrimitive("foobar", "baz")));
+        assertEquals("foo && bar && baz", c1.toString());
+        final SearchCompiler.Match c2 = SearchCompiler.compile("foo AND (bar OR baz)");
+        assertTrue(c2.match(newPrimitive("foobar", "yes")));
+        assertTrue(c2.match(newPrimitive("foobaz", "yes")));
+        assertEquals("foo && (bar || baz)", c2.toString());
+        final SearchCompiler.Match c3 = SearchCompiler.compile("foo OR (bar baz)");
+        assertEquals("foo || (bar && baz)", c3.toString());
+        final SearchCompiler.Match c4 = SearchCompiler.compile("foo1 OR (bar1 bar2 baz1 XOR baz2) OR foo2");
+        assertEquals("foo1 || (bar1 && bar2 && (baz1 ^ baz2)) || foo2", c4.toString());
     }
 }
