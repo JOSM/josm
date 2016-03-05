@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.net.HttpRetryException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -50,6 +52,10 @@ public final class HttpClient {
     private String reasonForRequest;
     private transient HttpURLConnection connection; // to allow disconnecting before `response` is set
     private transient Response response;
+
+    static {
+        CookieHandler.setDefault(new CookieManager());
+    }
 
     private HttpClient(URL url, String requestMethod) {
         this.url = url;

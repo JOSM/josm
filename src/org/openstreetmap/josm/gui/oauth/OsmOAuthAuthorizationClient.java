@@ -6,9 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.CookieHandler;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -198,8 +201,11 @@ public class OsmOAuthAuthorizationClient {
         return null;
     }
 
-    protected SessionId extractOsmSession() {
-        List<String> setCookies = connection.getResponse().getHeaderFields().get("Set-Cookie");
+    protected SessionId extractOsmSession() throws IOException, URISyntaxException {
+        // response headers might not contain the cookie, see #12584
+        final List<String> setCookies = CookieHandler.getDefault()
+                .get(connection.getURL().toURI(), Collections.<String, List<String>>emptyMap())
+                .get("Cookie");
         if (setCookies == null) {
             Main.warn("No 'Set-Cookie' in response header!");
             return null;
@@ -266,7 +272,7 @@ public class OsmOAuthAuthorizationClient {
                 throw new OsmOAuthAuthorizationException(
                         tr("OSM website did not return a session cookie in response to ''{0}'',", url.toString()));
             return sessionId;
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new OsmOAuthAuthorizationException(e);
         } finally {
             synchronized (this) {

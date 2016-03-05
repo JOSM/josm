@@ -139,7 +139,7 @@ public abstract class TaggingPresetItem {
      * @param data the preset items
      * @param tags the tags to match
      * @return whether the given preset items match the tags
-     * @sice 9932
+     * @since 9932
      */
     public static boolean matches(Iterable<? extends TaggingPresetItem> data, Map<String, String> tags) {
         boolean atLeastOnePositiveMatch = false;
