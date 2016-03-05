@@ -452,7 +452,8 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return lhs + " && " + rhs;
+            return (lhs instanceof BinaryMatch && !(lhs instanceof And) ? "(" + lhs + ")" : lhs) + " && "
+                    + (rhs instanceof BinaryMatch && !(rhs instanceof And) ? "(" + rhs + ")" : rhs);
         }
     }
 
@@ -476,7 +477,8 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return lhs + " || " + rhs;
+            return (lhs instanceof BinaryMatch && !(lhs instanceof Or) ? "(" + lhs + ")" : lhs) + " || "
+                    + (rhs instanceof BinaryMatch && !(rhs instanceof Or) ? "(" + rhs + ")" : rhs);
         }
     }
 
@@ -500,7 +502,8 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return lhs + " ^ " + rhs;
+            return (lhs instanceof BinaryMatch && !(lhs instanceof Xor) ? "(" + lhs + ")" : lhs) + " ^ "
+                    + (rhs instanceof BinaryMatch && !(rhs instanceof Xor) ? "(" + rhs + ")" : rhs);
         }
     }
 
