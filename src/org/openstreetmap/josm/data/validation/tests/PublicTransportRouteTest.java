@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Relation;
@@ -57,7 +56,8 @@ public class PublicTransportRouteTest extends Test {
             final WayConnectionType link = links.get(i);
             final boolean hasError = !(i == 0 || link.linkPrev)
                     || !(i == links.size() - 1 || link.linkNext)
-                    || !EnumSet.of(WayConnectionType.Direction.FORWARD, WayConnectionType.Direction.BACKWARD).contains(link.direction);
+                    || link.direction == null
+                    || WayConnectionType.Direction.NONE.equals(link.direction);
             if (hasError) {
                 errors.add(new TestError(this, Severity.WARNING, tr("Route relation contains a gap"), 3602, r));
                 return;
