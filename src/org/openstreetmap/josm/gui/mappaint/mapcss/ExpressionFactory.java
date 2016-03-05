@@ -1136,7 +1136,7 @@ public final class ExpressionFactory {
                 }
             });
             final Collection<Float> nonNullList = Utils.filter(floats, Predicates.not(Predicates.isNull()));
-            return nonNullList.isEmpty() ? Float.NaN : computeMax ? Collections.max(nonNullList) : Collections.min(nonNullList);
+            return nonNullList.isEmpty() ? (Float) Float.NaN : computeMax ? Collections.max(nonNullList) : Collections.min(nonNullList);
         }
 
         @Override

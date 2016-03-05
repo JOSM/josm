@@ -40,8 +40,10 @@ public enum Severity {
     }
 
     public static void getColors() {
-        for (Severity c:values()) {
-            c.getColor();
+        for (Severity c : values()) {
+            if (Main.isDebugEnabled()) {
+                Main.debug(c.toString());
+            }
         }
     }
 
