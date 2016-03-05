@@ -35,6 +35,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.AbstractProgressMonitor;
 import org.openstreetmap.josm.gui.progress.CancelHandler;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -544,4 +549,34 @@ public final class TestUtils {
     // CHECKSTYLE.ON: ParameterNumber
     // CHECKSTYLE.ON: MethodLength
     // CHECKSTYLE.ON: AnonInnerLength
+
+    /**
+     * Creates a new way with the given tags (see {@link OsmUtils#createPrimitive(java.lang.String)}) and the nodes added
+     *
+     * @param tags  the tags to set
+     * @param nodes the nodes to add
+     * @return a new way
+     */
+    public static Way newWay(String tags, Node... nodes) {
+        final Way way = (Way) OsmUtils.createPrimitive("way " + tags);
+        for (Node node : nodes) {
+            way.addNode(node);
+        }
+        return way;
+    }
+
+    /**
+     * Creates a new relation with the given tags (see {@link OsmUtils#createPrimitive(java.lang.String)}) and the members added
+     *
+     * @param tags  the tags to set
+     * @param members the members to add
+     * @return a new relation
+     */
+    public static Relation newRelation(String tags, RelationMember... members) {
+        final Relation relation = (Relation) OsmUtils.createPrimitive("relation " + tags);
+        for (RelationMember member : members) {
+            relation.addMember(member);
+        }
+        return relation;
+    }
 }
