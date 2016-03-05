@@ -4,6 +4,8 @@ package org.openstreetmap.josm.actions;
 import static junit.framework.Assert.assertEquals;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
@@ -68,10 +71,23 @@ public class OrthogonalizeActionTest {
         verifyRectangleClockwise(way);
     }
 
-    DataSet performTest(String search) throws Exception {
+    @Test
+    public void testFourNodes() throws Exception {
+        final DataSet ds = performTest(
+                "name=NodeToRectify-01", "name=NodeToRectify-02", "name=NodeToRectify-03", "name=NodeToRectify-04");
+        final List<Node> nodes = new ArrayList<>(ds.getSelectedNodes());
+        assertEquals(new LatLon(8.532735415272217, 55.72986948949525), nodes.get(0).getCoor());
+        assertEquals(new LatLon(8.533520827858515, 55.73043325105434), nodes.get(1).getCoor());
+        assertEquals(new LatLon(8.532914283300173, 55.73129729115582), nodes.get(2).getCoor());
+        assertEquals(new LatLon(8.532055019939826, 55.73068052126457), nodes.get(3).getCoor());
+    }
+
+    DataSet performTest(String... search) throws Exception {
         try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "orthogonalize.osm")) {
             final DataSet ds = OsmReader.parseDataSet(in, null);
-            ds.setSelected(Utils.filter(ds.allPrimitives(), SearchCompiler.compile(search)));
+            for (String s : search) {
+                ds.addSelected(Utils.filter(ds.allPrimitives(), SearchCompiler.compile(s)));
+            }
             OrthogonalizeAction.orthogonalize(ds.getSelected()).executeCommand();
             return ds;
         }
