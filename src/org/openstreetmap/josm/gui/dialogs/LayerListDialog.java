@@ -114,9 +114,6 @@ public class LayerListDialog extends ToggleDialog {
     /** the list of layers (technically its a JTable, but appears like a list) */
     private final LayerList layerList;
 
-    private final SideButton opacityButton;
-    private final SideButton gammaButton;
-
     private final ActivateLayerAction activateLayerAction;
     private final ShowHideLayerAction showHideLayerAction;
 
@@ -267,14 +264,16 @@ public class LayerListDialog extends ToggleDialog {
         adaptTo(showHideLayerAction, selectionModel);
 
         // -- layer opacity action
-        LayerOpacityAction layerOpacityAction = new LayerOpacityAction();
+        LayerOpacityAction layerOpacityAction = new LayerOpacityAction(model);
         adaptTo(layerOpacityAction, selectionModel);
-        opacityButton = new SideButton(layerOpacityAction, false);
+        SideButton opacityButton = new SideButton(layerOpacityAction, false);
+        layerOpacityAction.setCorrespondingSideButton(opacityButton);
 
         // -- layer gamma action
-        LayerGammaAction layerGammaAction = new LayerGammaAction();
+        LayerGammaAction layerGammaAction = new LayerGammaAction(model);
         adaptTo(layerGammaAction, selectionModel);
-        gammaButton = new SideButton(layerGammaAction, false);
+        SideButton gammaButton = new SideButton(layerGammaAction, false);
+        layerGammaAction.setCorrespondingSideButton(gammaButton);
 
         // -- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
@@ -532,12 +531,15 @@ public class LayerListDialog extends ToggleDialog {
      * Abstract action which allows to adjust a double value using a slider
      */
     public abstract static class AbstractLayerPropertySliderAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
+        protected final LayerListModel model;
         protected final JPopupMenu popup;
         protected final JSlider slider;
         private final double factor;
+        private SideButton sideButton;
 
-        public AbstractLayerPropertySliderAction(String name, final double factor) {
+        protected AbstractLayerPropertySliderAction(LayerListModel model, String name, final double factor) {
             super(name);
+            this.model = model;
             this.factor = factor;
             updateEnabledState();
 
@@ -550,18 +552,22 @@ public class LayerListDialog extends ToggleDialog {
                 }
             });
             popup.add(slider);
-
         }
 
         protected abstract void setValue(double value);
 
         protected abstract double getValue();
 
-        protected abstract SideButton getCorrespondingSideButton();
+        /**
+         * Sets the corresponding side button.
+         * @param sideButton the corresponding side button
+         */
+        final void setCorrespondingSideButton(SideButton sideButton) {
+            this.sideButton = sideButton;
+        }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final SideButton sideButton = getCorrespondingSideButton();
             slider.setValue((int) (getValue() * factor));
             if (e.getSource() == sideButton) {
                 popup.show(sideButton, 0, sideButton.getHeight());
@@ -576,36 +582,34 @@ public class LayerListDialog extends ToggleDialog {
         public Component createMenuComponent() {
             return new JMenuItem(this);
         }
-
     }
 
     /**
      * Action which allows to change the opacity of one or more layers.
      */
-    public final class LayerOpacityAction extends AbstractLayerPropertySliderAction {
+    public static final class LayerOpacityAction extends AbstractLayerPropertySliderAction {
         private transient Layer layer;
 
         /**
-         * Creates a {@link LayerOpacityAction} which allows to change the
-         * opacity of one or more layers.
+         * Creates a {@link LayerOpacityAction} which allows to change the opacity of one or more layers.
          *
+         * @param model layer list model
          * @param layer  the layer. Must not be null.
          * @throws IllegalArgumentException if layer is null
          */
-        public LayerOpacityAction(Layer layer) {
-            this();
+        public LayerOpacityAction(LayerListModel model, Layer layer) {
+            this(model);
             CheckParameterUtil.ensureParameterNotNull(layer, "layer");
             this.layer = layer;
             updateEnabledState();
         }
 
         /**
-         * Creates a {@link ShowHideLayerAction} which will toggle the visibility of
-         * the currently selected layers
-         *
+         * Creates a {@link ShowHideLayerAction} which will toggle the visibility of the currently selected layers
+         * @param model layer list model
          */
-        public LayerOpacityAction() {
-            super(tr("Opacity"), 100);
+        public LayerOpacityAction(LayerListModel model) {
+            super(model, tr("Opacity"), 100);
             putValue(SHORT_DESCRIPTION, tr("Adjust opacity of the layer."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/layerlist", "transparency"));
         }
@@ -616,8 +620,8 @@ public class LayerListDialog extends ToggleDialog {
             if (layer != null) {
                 layer.setOpacity(value);
             } else {
-                for (Layer layer: model.getSelectedLayers()) {
-                    layer.setOpacity(value);
+                for (Layer l : model.getSelectedLayers()) {
+                    l.setOpacity(value);
                 }
             }
         }
@@ -629,22 +633,17 @@ public class LayerListDialog extends ToggleDialog {
             else {
                 double opacity = 0;
                 List<Layer> layers = model.getSelectedLayers();
-                for (Layer layer: layers) {
-                    opacity += layer.getOpacity();
+                for (Layer l : layers) {
+                    opacity += l.getOpacity();
                 }
                 return opacity / layers.size();
             }
         }
 
         @Override
-        protected SideButton getCorrespondingSideButton() {
-            return opacityButton;
-        }
-
-        @Override
         public void updateEnabledState() {
             if (layer == null) {
-                setEnabled(!getModel().getSelectedLayers().isEmpty());
+                setEnabled(!model.getSelectedLayers().isEmpty());
             } else {
                 setEnabled(true);
             }
@@ -659,10 +658,14 @@ public class LayerListDialog extends ToggleDialog {
     /**
      * Action which allows to change the gamma of one imagery layer.
      */
-    public final class LayerGammaAction extends AbstractLayerPropertySliderAction {
+    public static final class LayerGammaAction extends AbstractLayerPropertySliderAction {
 
-        public LayerGammaAction() {
-            super(tr("Gamma"), 50);
+        /**
+         * Constructs a new {@code LayerGammaAction}.
+         * @param model layer list model
+         */
+        public LayerGammaAction(LayerListModel model) {
+            super(model, tr("Gamma"), 50);
             putValue(SHORT_DESCRIPTION, tr("Adjust gamma value of the layer."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/layerlist", "gamma"));
         }
@@ -677,11 +680,6 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         protected double getValue() {
             return Utils.filteredCollection(model.getSelectedLayers(), ImageryLayer.class).iterator().next().getGamma();
-        }
-
-        @Override
-        protected SideButton getCorrespondingSideButton() {
-            return gammaButton;
         }
 
         @Override
@@ -1111,7 +1109,7 @@ public class LayerListDialog extends ToggleDialog {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Layer layer = (Layer) value;
             if (layer instanceof NativeScaleLayer) {
-                boolean active = layer != null && layer == Main.map.mapView.getNativeScaleLayer();
+                boolean active = ((NativeScaleLayer) layer) == Main.map.mapView.getNativeScaleLayer();
                 cb.setSelected(active);
                 cb.setToolTipText(active
                     ? tr("scale follows native resolution of this layer")
@@ -1270,19 +1268,24 @@ public class LayerListDialog extends ToggleDialog {
      * It also listens to {@link PropertyChangeEvent}s of every {@link Layer} it manages, in particular to
      * the properties {@link Layer#VISIBLE_PROP} and {@link Layer#NAME_PROP}.
      */
-    public final class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener, PropertyChangeListener {
+    public static final class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener, PropertyChangeListener {
         /** manages list selection state*/
         private final DefaultListSelectionModel selectionModel;
         private final CopyOnWriteArrayList<LayerListModelListener> listeners;
+        private LayerList layerList;
 
         /**
          * constructor
          *
          * @param selectionModel the list selection model
          */
-        private LayerListModel(DefaultListSelectionModel selectionModel) {
+        LayerListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
             listeners = new CopyOnWriteArrayList<>();
+        }
+
+        void setlayerList(LayerList layerList) {
+            this.layerList = layerList;
         }
 
         /**
@@ -1731,8 +1734,9 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     static class LayerList extends JTable {
-        LayerList(TableModel dataModel) {
+        LayerList(LayerListModel dataModel) {
             super(dataModel);
+            dataModel.setlayerList(this);
         }
 
         public void scrollToVisible(int row, int col) {
