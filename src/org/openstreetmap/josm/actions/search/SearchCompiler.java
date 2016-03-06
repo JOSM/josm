@@ -1744,4 +1744,24 @@ public class SearchCompiler {
 
         return searchFlags;
     }
+
+    static String escapeStringForSearch(String s) {
+        return s.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    /**
+     * Builds a search string for the given tag. If value is empty, the existence of the key is checked.
+     *
+     * @param key   the tag key
+     * @param value the tag value
+     * @return a search string for the given tag
+     */
+    public static String buildSearchStringForTag(String key, String value) {
+        final String forKey = '"' + escapeStringForSearch(key) + '"' + '=';
+        if (value == null || value.isEmpty()) {
+            return forKey + "*";
+        } else {
+            return forKey + '"' + escapeStringForSearch(value) + '"';
+        }
+    }
 }
