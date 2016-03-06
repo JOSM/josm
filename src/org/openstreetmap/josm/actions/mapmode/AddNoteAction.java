@@ -80,9 +80,7 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
             LatLon latlon = Main.map.mapView.getLatLon(e.getPoint().x, e.getPoint().y);
             noteData.createNote(latlon, input);
         } else {
-            Notification notification = new Notification(tr("You must enter a comment to create a new note"));
-            notification.setIcon(JOptionPane.WARNING_MESSAGE);
-            notification.show();
+            new Notification(tr("You must enter a comment to create a new note")).setIcon(JOptionPane.WARNING_MESSAGE).show();
         }
     }
 
