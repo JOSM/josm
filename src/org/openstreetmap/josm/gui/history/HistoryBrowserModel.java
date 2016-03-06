@@ -709,6 +709,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
     @Override
     public void dataChanged(DataChangedEvent event) {
+        if (history == null)
+            return;
         OsmPrimitive primitive = event.getDataset().getPrimitiveById(history.getId(), history.getType());
         HistoryOsmPrimitive latest;
         if (canShowAsLatest(primitive)) {

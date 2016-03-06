@@ -16,7 +16,8 @@ public abstract class AbstractDatasetChangedEvent {
         RELATION_MEMBERS_CHANGED,
         TAGS_CHANGED,
         WAY_NODES_CHANGED,
-        CHANGESET_ID_CHANGED
+        CHANGESET_ID_CHANGED,
+        PRIMITIVE_FLAGS_CHANGED,
     }
 
     protected final DataSet dataSet;

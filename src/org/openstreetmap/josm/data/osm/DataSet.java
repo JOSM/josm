@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.osm.event.ChangesetIdChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitiveFlagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
@@ -1221,6 +1222,10 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
 
     void fireChangesetIdChanged(OsmPrimitive primitive, int oldChangesetId, int newChangesetId) {
         fireEvent(new ChangesetIdChangedEvent(this, Collections.singletonList(primitive), oldChangesetId, newChangesetId));
+    }
+
+    void firePrimitiveFlagsChanged(OsmPrimitive primitive) {
+        fireEvent(new PrimitiveFlagsChangedEvent(this, primitive));
     }
 
     void fireHighlightingChanged() {

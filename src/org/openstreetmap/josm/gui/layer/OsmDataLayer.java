@@ -523,10 +523,15 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
         // if uploaded, clean the modified flags as well
         data.cleanupDeletedPrimitives();
-        for (OsmPrimitive p: data.allPrimitives()) {
-            if (processed.contains(p)) {
-                p.setModified(false);
+        data.beginUpdate();
+        try {
+            for (OsmPrimitive p: data.allPrimitives()) {
+                if (processed.contains(p)) {
+                    p.setModified(false);
+                }
             }
+        } finally {
+            data.endUpdate();
         }
     }
 

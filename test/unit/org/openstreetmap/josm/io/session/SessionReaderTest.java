@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
@@ -137,6 +138,11 @@ public class SessionReaderTest {
      */
     @Test
     public void testReadNotes() throws IOException, IllegalDataException {
+        if (Main.isDisplayingMapView()) {
+            for (NoteLayer nl : Main.map.mapView.getLayersOfType(NoteLayer.class)) {
+                Main.map.mapView.removeLayer(nl);
+            }
+        }
         final List<Layer> layers = testRead("notes.joz");
         assertSame(layers.size(), 1);
         assertTrue(layers.get(0) instanceof NoteLayer);

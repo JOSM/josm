@@ -567,6 +567,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         boolean locked = writeLock();
         try {
             super.setModified(modified);
+            if (dataSet != null) {
+                dataSet.firePrimitiveFlagsChanged(this);
+            }
             clearCachedStyle();
         } finally {
             writeUnlock(locked);
