@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.swing.AbstractAction;
@@ -56,11 +57,14 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.search.SearchAction;
+import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -70,6 +74,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.preferences.EnumProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
@@ -124,8 +129,10 @@ public class TagEditHelper {
     public static final IntegerProperty PROPERTY_RECENT_TAGS_NUMBER = new IntegerProperty("properties.recently-added-tags",
             DEFAULT_LRU_TAGS_NUMBER);
     /** The preference storage of recent tags */
-    public static final CollectionProperty COLLECTION_PROPERTY = new CollectionProperty("properties.recent-tags",
+    public static final CollectionProperty PROPERTY_RECENT_TAGS = new CollectionProperty("properties.recent-tags",
             Collections.<String>emptyList());
+    public static final StringProperty PROPERTY_TAGS_TO_IGNORE = new StringProperty("properties.recent-tags.ignore",
+            new SearchAction.SearchSetting().writeToString());
 
     /**
      * What to do with recent tags where keys already exist
@@ -158,6 +165,7 @@ public class TagEditHelper {
         "properties.refresh-recently-added-tags", RefreshRecent.class, RefreshRecent.STATUS);
 
     final RecentTagCollection recentTags = new RecentTagCollection(MAX_LRU_TAGS_NUMBER);
+    SearchAction.SearchSetting tagsToIgnore;
 
     // Copy of recently added tags, used to cache initial status
     private List<Tag> tags;
@@ -285,9 +293,35 @@ public class TagEditHelper {
      * Load recently used tags from preferences if needed.
      */
     public void loadTagsIfNeeded() {
+        loadTagsToIgnore();
         if (PROPERTY_REMEMBER_TAGS.get() && recentTags.isEmpty()) {
-            recentTags.loadFromPreference(COLLECTION_PROPERTY);
+            recentTags.loadFromPreference(PROPERTY_RECENT_TAGS);
         }
+    }
+
+    void loadTagsToIgnore() {
+        final SearchAction.SearchSetting searchSetting = Utils.firstNonNull(
+                SearchAction.SearchSetting.readFromString(PROPERTY_TAGS_TO_IGNORE.get()), new SearchAction.SearchSetting());
+        if (!Objects.equals(tagsToIgnore, searchSetting)) {
+            try {
+                tagsToIgnore = searchSetting;
+                recentTags.setTagsToIgnore(tagsToIgnore);
+            } catch (SearchCompiler.ParseError parseError) {
+                warnAboutParseError(parseError);
+                tagsToIgnore = new SearchAction.SearchSetting();
+                recentTags.setTagsToIgnore(new SearchCompiler.Never());
+            }
+        }
+    }
+
+    private void warnAboutParseError(SearchCompiler.ParseError parseError) {
+        Main.warn(parseError);
+        JOptionPane.showMessageDialog(
+                Main.parent,
+                parseError.getMessage(),
+                tr("Error"),
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 
     /**
@@ -295,7 +329,7 @@ public class TagEditHelper {
      */
     public void saveTagsIfNeeded() {
         if (PROPERTY_REMEMBER_TAGS.get() && !recentTags.isEmpty()) {
-            recentTags.saveToPreference(COLLECTION_PROPERTY);
+            recentTags.saveToPreference(PROPERTY_RECENT_TAGS);
         }
     }
 
@@ -923,7 +957,9 @@ public class TagEditHelper {
                         @Override
                         public void mouseClicked(MouseEvent e) {
                             action.actionPerformed(null);
-                            if (e.isShiftDown()) {
+                            if (SwingUtilities.isRightMouseButton(e)) {
+                                new TagPopupMenu(t).show(e.getComponent(), e.getX(), e.getY());
+                            } else if (e.isShiftDown()) {
                                 // add tags on Shift-Click
                                 performTagAdding();
                                 refreshRecentTags();
@@ -948,6 +984,56 @@ public class TagEditHelper {
             // Clear label if no tags were added
             if (count == 0) {
                 recentTagsPanel.removeAll();
+            }
+        }
+
+        class TagPopupMenu extends JPopupMenu {
+
+            TagPopupMenu(Tag t) {
+                add(new IgnoreTagAction(tr("Ignore key ''{0}''", t.getKey()), new Tag(t.getKey(), "")));
+                add(new IgnoreTagAction(tr("Ignore tag ''{0}''", t), t));
+                add(new EditIgnoreTagsAction());
+            }
+        }
+
+        class IgnoreTagAction extends AbstractAction {
+            final Tag tag;
+
+            IgnoreTagAction(String name, Tag tag) {
+                super(name);
+                this.tag = tag;
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    recentTags.ignoreTag(tag, tagsToIgnore);
+                    PROPERTY_TAGS_TO_IGNORE.put(tagsToIgnore.writeToString());
+                } catch (SearchCompiler.ParseError parseError) {
+                    throw new IllegalStateException(parseError);
+                }
+            }
+        }
+
+        class EditIgnoreTagsAction extends AbstractAction {
+
+            EditIgnoreTagsAction() {
+                super(tr("Edit ignore list"));
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final SearchAction.SearchSetting newTagsToIngore = SearchAction.showSearchDialog(tagsToIgnore);
+                if (newTagsToIngore == null) {
+                    return;
+                }
+                try {
+                    tagsToIgnore = newTagsToIngore;
+                    recentTags.setTagsToIgnore(tagsToIgnore);
+                    PROPERTY_TAGS_TO_IGNORE.put(tagsToIgnore.writeToString());
+                } catch (SearchCompiler.ParseError parseError) {
+                    warnAboutParseError(parseError);
+                }
             }
         }
 

@@ -7,12 +7,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openstreetmap.josm.actions.search.SearchAction;
+import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 
 class RecentTagCollection {
 
     private final Map<Tag, Void> recentTags;
+    private SearchCompiler.Match tagsToIgnore;
 
     RecentTagCollection(final int capacity) {
         // LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
@@ -22,6 +25,7 @@ class RecentTagCollection {
                 return size() > capacity;
             }
         };
+        tagsToIgnore = new SearchCompiler.Never();
     }
 
     public void loadFromPreference(CollectionProperty property) {
@@ -30,7 +34,7 @@ class RecentTagCollection {
         while (it.hasNext()) {
             String key = it.next();
             String value = it.next();
-            recentTags.put(new Tag(key, value), null);
+            add(new Tag(key, value));
         }
     }
 
@@ -43,8 +47,10 @@ class RecentTagCollection {
         property.put(c);
     }
 
-    public void add(Tag key) {
-        recentTags.put(key, null);
+    public void add(Tag tag) {
+        if (!tagsToIgnore.match(tag)) {
+            recentTags.put(tag, null);
+        }
     }
 
     public boolean isEmpty() {
@@ -53,5 +59,28 @@ class RecentTagCollection {
 
     public List<Tag> toList() {
         return new ArrayList<>(recentTags.keySet());
+    }
+
+    public void setTagsToIgnore(SearchCompiler.Match tagsToIgnore) {
+        this.tagsToIgnore = tagsToIgnore;
+        final Iterator<Tag> it = recentTags.keySet().iterator();
+        while (it.hasNext()) {
+            if (tagsToIgnore.match(it.next())) {
+                it.remove();
+            }
+        }
+    }
+
+    public void setTagsToIgnore(SearchAction.SearchSetting tagsToIgnore) throws SearchCompiler.ParseError {
+        setTagsToIgnore(tagsToIgnore.text.isEmpty() ? new SearchCompiler.Never() : SearchCompiler.compile(tagsToIgnore));
+    }
+
+    public SearchAction.SearchSetting ignoreTag(Tag tagToIgnore, SearchAction.SearchSetting settingToUpdate) throws SearchCompiler.ParseError {
+        final String forTag = SearchCompiler.buildSearchStringForTag(tagToIgnore.getKey(), tagToIgnore.getValue());
+        settingToUpdate.text = settingToUpdate.text.isEmpty()
+                ? forTag
+                : settingToUpdate.text + " OR " + forTag;
+        setTagsToIgnore(settingToUpdate);
+        return settingToUpdate;
     }
 }
