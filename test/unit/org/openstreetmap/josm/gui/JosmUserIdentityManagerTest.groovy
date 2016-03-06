@@ -1,14 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui
 
-import org.openstreetmap.josm.data.osm.User;
-
 import static org.junit.Assert.*
 
 import org.junit.BeforeClass
 import org.junit.Test
 import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.Main
+import org.openstreetmap.josm.data.osm.User
 import org.openstreetmap.josm.data.osm.UserInfo
 
 class JosmUserIdentityManagerTest {
@@ -38,7 +37,7 @@ class JosmUserIdentityManagerTest {
     }
 
     @Test
-    public void test_setAnonymouse() {
+    public void test_setAnonymous() {
         JosmUserIdentityManager im = JosmUserIdentityManager.getInstance()
 
         im.setPartiallyIdentified "test"
@@ -119,8 +118,7 @@ class JosmUserIdentityManagerTest {
     }
 
     /**
-     * Preferences include neither an url nor a user name => we have
-     * an anonymous user
+     * Preferences include neither an url nor a user name => we have an anonymous user
      */
     @Test
     public void initFromPreferences_1() {
@@ -139,8 +137,7 @@ class JosmUserIdentityManagerTest {
     }
 
     /**
-     * Preferences include neither an url nor a user name => we have
-     * an annoymous user
+     * Preferences include neither an url nor a user name => we have an anonymous user
      */
     @Test
     public void initFromPreferences_2() {
@@ -153,12 +150,16 @@ class JosmUserIdentityManagerTest {
         // for this test we disable the listener
         Main.pref.removePreferenceChangeListener im
 
-        Main.pref.put "osm-server.url", "http://api.openstreetmap.org"
-        Main.pref.put "osm-server.username", null
+        try {
+            Main.pref.put "osm-server.url", "http://api.openstreetmap.org"
+            Main.pref.put "osm-server.username", null
 
-        im.initFromPreferences()
+            im.initFromPreferences()
 
-        assert im.isAnonymous()
+            assert im.isAnonymous()
+        } finally {
+            Main.pref.addPreferenceChangeListener im
+        }
     }
 
     /**
@@ -171,16 +172,20 @@ class JosmUserIdentityManagerTest {
         // for this test we disable the listener
         Main.pref.removePreferenceChangeListener im
 
-        // reset it
-        im.@userName = null
-        im.@userInfo = null
+        try {
+            // reset it
+            im.@userName = null
+            im.@userInfo = null
 
-        Main.pref.put "osm-server.url", "http://api.openstreetmap.org"
-        Main.pref.put "osm-server.username", "test"
+            Main.pref.put "osm-server.url", "http://api.openstreetmap.org"
+            Main.pref.put "osm-server.username", "test"
 
-        im.initFromPreferences()
+            im.initFromPreferences()
 
-        assert im.isPartiallyIdentified()
+            assert im.isPartiallyIdentified()
+        } finally {
+            Main.pref.addPreferenceChangeListener im
+        }
     }
 
     /**
@@ -195,14 +200,18 @@ class JosmUserIdentityManagerTest {
         // for this test we disable the listener
         Main.pref.removePreferenceChangeListener im
 
-        im.setFullyIdentified "test1", new UserInfo(id: 1)
+        try {
+            im.setFullyIdentified "test1", new UserInfo(id: 1)
 
-        Main.pref.put "osm-server.url", "http://api.openstreetmap.org"
-        Main.pref.put "osm-server.username", "test2"
+            Main.pref.put "osm-server.url", "http://api.openstreetmap.org"
+            Main.pref.put "osm-server.username", "test2"
 
-        im.initFromPreferences()
+            im.initFromPreferences()
 
-        assert im.isPartiallyIdentified()
+            assert im.isPartiallyIdentified()
+        } finally {
+            Main.pref.addPreferenceChangeListener im
+        }
     }
 
     /**
@@ -217,14 +226,18 @@ class JosmUserIdentityManagerTest {
         // for this test we disable the listener
         Main.pref.removePreferenceChangeListener im
 
-        im.setFullyIdentified "test1", new UserInfo(id: 1)
+        try {
+            im.setFullyIdentified "test1", new UserInfo(id: 1)
 
-        Main.pref.put "osm-server.url", "http://api.openstreetmap.org"
-        Main.pref.put "osm-server.username", "test1"
+            Main.pref.put "osm-server.url", "http://api.openstreetmap.org"
+            Main.pref.put "osm-server.username", "test1"
 
-        im.initFromPreferences()
+            im.initFromPreferences()
 
-        assert im.isFullyIdentified()
+            assert im.isFullyIdentified()
+        } finally {
+            Main.pref.addPreferenceChangeListener im
+        }
     }
 
     @Test
