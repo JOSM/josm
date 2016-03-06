@@ -328,7 +328,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     @Override
     public void nodeMoved(NodeMovedEvent event) {
-        // Do nothing
+        filterModel.executeFilters();
     }
 
     @Override
