@@ -34,8 +34,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -69,6 +67,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.preferences.EnumProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -124,6 +123,9 @@ public class TagEditHelper {
     /** Number of recent tags */
     public static final IntegerProperty PROPERTY_RECENT_TAGS_NUMBER = new IntegerProperty("properties.recently-added-tags",
             DEFAULT_LRU_TAGS_NUMBER);
+    /** The preference storage of recent tags */
+    public static final CollectionProperty COLLECTION_PROPERTY = new CollectionProperty("properties.recent-tags",
+            Collections.<String>emptyList());
 
     /**
      * What to do with recent tags where keys already exist
@@ -155,13 +157,7 @@ public class TagEditHelper {
     public static final EnumProperty<RefreshRecent> PROPERTY_REFRESH_RECENT = new EnumProperty<>(
         "properties.refresh-recently-added-tags", RefreshRecent.class, RefreshRecent.STATUS);
 
-    // LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
-    private final Map<Tag, Void> recentTags = new LinkedHashMap<Tag, Void>(MAX_LRU_TAGS_NUMBER+1, 1.1f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<Tag, Void> eldest) {
-            return size() > MAX_LRU_TAGS_NUMBER;
-        }
-    };
+    final RecentTagCollection recentTags = new RecentTagCollection(MAX_LRU_TAGS_NUMBER);
 
     // Copy of recently added tags, used to cache initial status
     private List<Tag> tags;
@@ -290,14 +286,7 @@ public class TagEditHelper {
      */
     public void loadTagsIfNeeded() {
         if (PROPERTY_REMEMBER_TAGS.get() && recentTags.isEmpty()) {
-            recentTags.clear();
-            Collection<String> c = Main.pref.getCollection("properties.recent-tags");
-            Iterator<String> it = c.iterator();
-            while (it.hasNext()) {
-                String key = it.next();
-                String value = it.next();
-                recentTags.put(new Tag(key, value), null);
-            }
+            recentTags.loadFromPreference(COLLECTION_PROPERTY);
         }
     }
 
@@ -306,12 +295,7 @@ public class TagEditHelper {
      */
     public void saveTagsIfNeeded() {
         if (PROPERTY_REMEMBER_TAGS.get() && !recentTags.isEmpty()) {
-            List<String> c = new ArrayList<>(recentTags.size()*2);
-            for (Tag t: recentTags.keySet()) {
-                c.add(t.getKey());
-                c.add(t.getValue());
-            }
-            Main.pref.putCollection("properties.recent-tags", c);
+            recentTags.saveToPreference(COLLECTION_PROPERTY);
         }
     }
 
@@ -319,7 +303,7 @@ public class TagEditHelper {
      * Update cache of recent tags used for displaying tags.
      */
     private void cacheRecentTags() {
-        tags = new LinkedList<>(recentTags.keySet());
+        tags = recentTags.toList();
     }
 
     /**
@@ -856,8 +840,6 @@ public class TagEditHelper {
             // We store the maximum number of recent tags to allow dynamic change of number of tags shown in the preferences.
             // This implies to iterate in descending order, as the oldest elements will only be removed after we reach the maximum
             // number and not the number of tags to show.
-            // However, as Set does not allow to iterate in descending order, we need to copy its elements into a List we can access
-            // in reverse order.
             for (int i = tags.size()-1; i >= 0 && count < tagsToShow; i--) {
                 final Tag t = tags.get(i);
                 boolean keyExists = keyExists(t);
@@ -994,7 +976,7 @@ public class TagEditHelper {
             }
             lastAddKey = key;
             lastAddValue = value;
-            recentTags.put(new Tag(key, value), null);
+            recentTags.add(new Tag(key, value));
             valueCount.put(key, new TreeMap<String, Integer>());
             AutoCompletionManager.rememberUserInput(key, value, false);
             commandCount++;
