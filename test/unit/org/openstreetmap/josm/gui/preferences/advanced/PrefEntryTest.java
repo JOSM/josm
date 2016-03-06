@@ -54,6 +54,8 @@ public class PrefEntryTest {
      */
     @Test
     public void equalsContract() {
-        EqualsVerifier.forClass(PrefEntry.class).usingGetClass().verify();
+        EqualsVerifier.forClass(PrefEntry.class).usingGetClass()
+            .withIgnoredFields("value", "defaultValue", "isDefault", "changed")
+            .verify();
     }
 }
