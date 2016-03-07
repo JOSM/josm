@@ -22,22 +22,25 @@ import org.openstreetmap.josm.gui.layer.Layer.MultiLayerAction;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class CustomizeColor extends AbstractAction implements LayerAction, MultiLayerAction {
-    private transient List<Layer> layers;
+    private final transient List<Layer> layers;
 
+    /**
+     * Constructs a new {@code CustomizeColor} for a given list of layers.
+     * @param l list of layers
+     */
     public CustomizeColor(List<Layer> l) {
-        this();
+        super(tr("Customize Color"), ImageProvider.get("colorchooser"));
+        putValue("help", ht("/Action/LayerCustomizeColor"));
         layers = l;
     }
 
+    /**
+     * Constructs a new {@code CustomizeColor} for a single layer.
+     * @param l layer
+     */
     public CustomizeColor(Layer l) {
-        this();
-        layers = new LinkedList<>();
+        this(new LinkedList<Layer>());
         layers.add(l);
-    }
-
-    private CustomizeColor() {
-        super(tr("Customize Color"), ImageProvider.get("colorchooser"));
-        putValue("help", ht("/Action/LayerCustomizeColor"));
     }
 
     @Override
@@ -62,7 +65,8 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
     @Override
     public void actionPerformed(ActionEvent e) {
         Color cl = layers.get(0).getColor(false);
-        if (cl == null) cl = Color.gray;
+        if (cl == null)
+            cl = Color.gray;
         JColorChooser c = new JColorChooser(cl);
         Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
         int answer = JOptionPane.showOptionDialog(

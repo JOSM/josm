@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
-import java.net.HttpRetryException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
@@ -517,28 +516,6 @@ public final class HttpClient {
      */
     public HttpClient setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
-        return this;
-    }
-
-    /**
-     * This method is used to enable streaming of a HTTP request body without internal buffering,
-     * when the content length is known in advance.
-     * <p>
-     * An exception will be thrown if the application attempts to write more data than the indicated content-length,
-     * or if the application closes the OutputStream before writing the indicated amount.
-     * <p>
-     * When output streaming is enabled, authentication and redirection cannot be handled automatically.
-     * A {@linkplain HttpRetryException} will be thrown when reading the response if authentication or redirection
-     * are required. This exception can be queried for the details of the error.
-     *
-     * @param contentLength The number of bytes which will be written to the OutputStream
-     * @return {@code this}
-     * @see HttpURLConnection#setFixedLengthStreamingMode(long)
-     * @since 9178
-     * @deprecated Submitting data via POST, PUT, DELETE automatically sets this property on the connection
-     */
-    @Deprecated
-    public HttpClient setFixedLengthStreamingMode(long contentLength) {
         return this;
     }
 

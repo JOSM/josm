@@ -131,9 +131,9 @@ public class ImageProvider {
      * @since 7687
      */
     public enum ImageSizes {
-        /** SMALL_ICON value of on Action */
+        /** SMALL_ICON value of an Action */
         SMALLICON(Main.pref.getInteger("iconsize.smallicon", 16)),
-        /** LARGE_ICON_KEY value of on Action */
+        /** LARGE_ICON_KEY value of an Action */
         LARGEICON(Main.pref.getInteger("iconsize.largeicon", 24)),
         /** map icon */
         MAP(Main.pref.getInteger("iconsize.map", 16)),
@@ -374,18 +374,6 @@ public class ImageProvider {
         }
         overlayInfo.add(overlay);
         return this;
-    }
-
-    /**
-     * Convert enumerated size values to real numbers
-     * @param size the size enumeration
-     * @return dimension of image in pixels
-     * @since 7687
-     * @deprecated Use {@link ImageSizes#getImageDimension()} instead
-     */
-    @Deprecated
-    public static Dimension getImageSizes(ImageSizes size) {
-        return (size == null ? ImageSizes.DEFAULT : size).getImageDimension();
     }
 
     /**

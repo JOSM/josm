@@ -49,13 +49,35 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class Layer implements Destroyable, MapViewPaintable, ProjectionChangeListener {
 
+    /**
+     * Action related to a single layer.
+     */
     public interface LayerAction {
+
+        /**
+         * Determines if this action supports a given list of layers.
+         * @param layers list of layers
+         * @return {@code true} if this action supports the given list of layers, {@code false} otherwise
+         */
         boolean supportLayers(List<Layer> layers);
 
+        /**
+         * Creates and return the menu component.
+         * @return the menu component
+         */
         Component createMenuComponent();
     }
 
+    /**
+     * Action related to several layers.
+     */
     public interface MultiLayerAction {
+
+        /**
+         * Returns the action for a given list of layers.
+         * @param layers list of layers
+         * @return the action for the given list of layers
+         */
         Action getMultiLayerAction(List<Layer> layers);
     }
 
@@ -63,6 +85,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
      * Special class that can be returned by getMenuEntries when JSeparator needs to be created
      */
     public static class SeparatorLayerAction extends AbstractAction implements LayerAction {
+        /** Unique instance */
         public static final SeparatorLayerAction INSTANCE = new SeparatorLayerAction();
 
         @Override
@@ -85,8 +108,6 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     public static final String OPACITY_PROP = Layer.class.getName() + ".opacity";
     public static final String NAME_PROP = Layer.class.getName() + ".name";
     public static final String FILTER_STATE_PROP = Layer.class.getName() + ".filterstate";
-
-    public static final int ICON_SIZE = 16;
 
     /**
      * keeps track of property change listeners

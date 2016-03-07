@@ -66,6 +66,10 @@ public class LayerListPopup extends JPopupMenu {
         }
     }
 
+    /**
+     * Constructs a new {@code LayerListPopup}.
+     * @param selectedLayers list of selected layers
+     */
     public LayerListPopup(List<Layer> selectedLayers) {
 
         List<Action> actions;

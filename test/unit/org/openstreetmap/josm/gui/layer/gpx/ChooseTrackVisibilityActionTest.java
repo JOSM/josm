@@ -4,10 +4,7 @@ package org.openstreetmap.josm.gui.layer.gpx;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
-import org.openstreetmap.josm.io.GpxReaderTest;
+import org.openstreetmap.josm.gui.layer.GpxLayerTest;
 
 /**
  * Unit tests of {@link ChooseTrackVisibilityAction} class.
@@ -28,9 +25,6 @@ public class ChooseTrackVisibilityActionTest {
      */
     @Test
     public void testAction() throws Exception {
-        final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "minimal.gpx");
-        GpxLayer gpxLayer = new GpxLayer(gpx);
-        ChooseTrackVisibilityAction action = new ChooseTrackVisibilityAction(gpxLayer);
-        action.actionPerformed(null);
+        new ChooseTrackVisibilityAction(GpxLayerTest.getMinimalGpxLayer()).actionPerformed(null);
     }
 }

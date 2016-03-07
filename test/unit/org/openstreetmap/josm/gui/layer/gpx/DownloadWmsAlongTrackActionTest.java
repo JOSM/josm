@@ -10,12 +10,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.gui.layer.GpxLayerTest;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.gpx.DownloadWmsAlongTrackAction.PrecacheWmsTask;
-import org.openstreetmap.josm.io.GpxReaderTest;
 
 /**
  * Unit tests of {@link DownloadWmsAlongTrackAction} class.
@@ -51,8 +50,7 @@ public class DownloadWmsAlongTrackActionTest {
             TMSLayer.getCache().clear();
             assertTrue(TMSLayer.getCache().getMatching(".*").isEmpty());
             // Perform action
-            final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "minimal.gpx");
-            PrecacheWmsTask task = new DownloadWmsAlongTrackAction(gpx).createTask();
+            PrecacheWmsTask task = new DownloadWmsAlongTrackAction(GpxLayerTest.getMinimalGpxData()).createTask();
             assertNotNull(task);
             task.run();
             // Ensure cache is not empty

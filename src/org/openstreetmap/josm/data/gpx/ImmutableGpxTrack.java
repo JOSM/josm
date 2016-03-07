@@ -10,12 +10,21 @@ import java.util.Map;
 
 import org.openstreetmap.josm.data.Bounds;
 
+/**
+ * Immutable GPX track.
+ * @since 2907
+ */
 public class ImmutableGpxTrack extends WithAttributes implements GpxTrack {
 
     private final Collection<GpxTrackSegment> segments;
     private final double length;
     private final Bounds bounds;
 
+    /**
+     * Constructs a new {@code ImmutableGpxTrack}.
+     * @param trackSegs track segments
+     * @param attributes track attributes
+     */
     public ImmutableGpxTrack(Collection<Collection<WayPoint>> trackSegs, Map<String, Object> attributes) {
         List<GpxTrackSegment> newSegments = new ArrayList<>();
         for (Collection<WayPoint> trackSeg: trackSegs) {

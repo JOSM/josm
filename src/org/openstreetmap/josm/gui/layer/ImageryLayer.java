@@ -51,6 +51,7 @@ import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Utils;
 
 public abstract class ImageryLayer extends Layer {
@@ -90,7 +91,7 @@ public abstract class ImageryLayer extends Layer {
         this.info = info;
         if (info.getIcon() != null) {
             icon = new ImageProvider(info.getIcon()).setOptional(true).
-                    setMaxHeight(ICON_SIZE).setMaxWidth(ICON_SIZE).get();
+                    setMaxSize(ImageSizes.LAYER).get();
         }
         if (icon == null) {
             icon = ImageProvider.get("imagery_small");
