@@ -124,6 +124,7 @@ public class ProjectionTest {
         testProj("cass", 1e-3, "+lat_0=11 +bounds=-1.0,-89,1.0,89");
         testProj("laea", 3e-3, "+lat_0=34");
         testProj("merc", 1e-5, "");
+        testProj("sinu", 1e-4, "");
 
         if (error2) {
             System.err.println(text2);

@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData.Intersection;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
 
@@ -374,12 +375,18 @@ public class Multipolygon {
             return true;
         }
 
-        public AreaAndPerimeter getAreaAndPerimeter() {
-            AreaAndPerimeter ap = Geometry.getAreaAndPerimeter(nodes);
+        /**
+         * Calculate area and perimeter length in the given projection.
+         *
+         * @param projection the projection to use for the calculation, {@code null} defaults to {@link Main#getProjection()}
+         * @return area and perimeter
+         */
+        public AreaAndPerimeter getAreaAndPerimeter(Projection projection) {
+            AreaAndPerimeter ap = Geometry.getAreaAndPerimeter(nodes, projection);
             double area = ap.getArea();
             double perimeter = ap.getPerimeter();
             for (PolyData inner : inners) {
-                AreaAndPerimeter apInner = inner.getAreaAndPerimeter();
+                AreaAndPerimeter apInner = inner.getAreaAndPerimeter(projection);
                 area -= apInner.getArea();
                 perimeter += apInner.getPerimeter();
             }

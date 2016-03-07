@@ -651,7 +651,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     continue;
                 }
                 if (extent != null) {
-                    if (!usePartialFill(pd.getAreaAndPerimeter(), extent, extentThreshold)) {
+                    if (!usePartialFill(pd.getAreaAndPerimeter(null), extent, extentThreshold)) {
                         extent = null;
                     } else if (!pd.isClosed()) {
                         pfClip = getPFClip(pd, extent * scale);

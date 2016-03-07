@@ -1385,10 +1385,8 @@ public class SearchCompiler {
 
         @Override
         protected Long getNumber(OsmPrimitive osm) {
-            if (!(osm instanceof Way && ((Way) osm).isClosed()))
-                return null;
-            Way way = (Way) osm;
-            return (long) Geometry.closedWayArea(way);
+            final Double area = Geometry.computeArea(osm);
+            return area == null ? null : area.longValue();
         }
 
         @Override
