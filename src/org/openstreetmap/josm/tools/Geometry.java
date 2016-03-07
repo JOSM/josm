@@ -26,10 +26,13 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePositionComparator;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 
@@ -637,6 +640,39 @@ public final class Geometry {
      */
     public static double closedWayArea(Way way) {
         return getAreaAndPerimeter(way.getNodes(), Projections.getProjectionByCode("EPSG:54008")).getArea();
+    }
+
+    /**
+     * Returns area of a multipolygon in square meters.
+     *
+     * @param multipolygon the multipolygon to measure
+     * @return area of the multipolygon.
+     */
+    public static double multipolygonArea(Relation multipolygon) {
+        double area = 0.0;
+        final Multipolygon mp = Main.map == null || Main.map.mapView == null
+                ? new Multipolygon(multipolygon)
+                : MultipolygonCache.getInstance().get(Main.map.mapView, multipolygon);
+        for (Multipolygon.PolyData pd : mp.getCombinedPolygons()) {
+            area += pd.getAreaAndPerimeter(Projections.getProjectionByCode("EPSG:54008")).getArea();
+        }
+        return area;
+    }
+
+    /**
+     * Computes the area of a closed way and multipolygon in square meters, or {@code null} for other primitives
+     *
+     * @param osm the primitive to measure
+     * @return area of the primitive, or {@code null}
+     */
+    public static Double computeArea(OsmPrimitive osm) {
+        if (osm instanceof Way && ((Way) osm).isClosed()) {
+            return closedWayArea((Way) osm);
+        } else if (osm instanceof Relation && ((Relation) osm).isMultipolygon() && !((Relation) osm).hasIncompleteMembers()) {
+            return multipolygonArea((Relation) osm);
+        } else {
+            return null;
+        }
     }
 
     /**

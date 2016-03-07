@@ -530,17 +530,14 @@ public final class ExpressionFactory {
         }
 
         /**
-         * Returns the area of a closed way in square meters or {@code null}.
+         * Returns the area of a closed way or multipolygon in square meters or {@code null}.
          * @param env the environment
-         * @return the area of a closed way in square meters or {@code null}
-         * @see Geometry#closedWayArea(Way)
+         * @return the area of a closed way or multipolygon in square meters or {@code null}
+         * @see Geometry#computeArea(OsmPrimitive)
          */
         public static Float areasize(final Environment env) {
-            if (env.osm instanceof Way && ((Way) env.osm).isClosed()) {
-                return (float) Geometry.closedWayArea((Way) env.osm);
-            } else {
-                return null;
-            }
+            final Double area = Geometry.computeArea(env.osm);
+            return area == null ? null : area.floatValue();
         }
 
         /**

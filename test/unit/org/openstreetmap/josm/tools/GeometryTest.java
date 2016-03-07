@@ -12,6 +12,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.io.OsmReader;
 
@@ -71,6 +72,22 @@ public class GeometryTest {
             DataSet ds = OsmReader.parseDataSet(in, null);
             Way closedWay = (Way) Utils.filter(ds.allPrimitives(), SearchCompiler.compile("landuse=forest")).iterator().next();
             Assert.assertEquals(5760015.7353515625, Geometry.closedWayArea(closedWay), 1e-3);
+            Assert.assertEquals(5760015.7353515625, Geometry.computeArea(closedWay), 1e-3);
+        }
+    }
+
+    /**
+     * Test of {@link Geometry#multipolygonArea(Relation)}} method.
+     *
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testMultipolygonArea() throws Exception {
+        try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "multipolygon.osm")) {
+            DataSet ds = OsmReader.parseDataSet(in, null);
+            final Relation r = ds.getRelations().iterator().next();
+            Assert.assertEquals(4401735.20703125, Geometry.multipolygonArea(r), 1e-3);
+            Assert.assertEquals(4401735.20703125, Geometry.computeArea(r), 1e-3);
         }
     }
 
