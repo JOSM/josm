@@ -202,14 +202,15 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public double scaleZoomManyTimes(int times) {
         if (nativeScaleLayer != null) {
             ScaleList scaleList = nativeScaleLayer.getNativeScales();
-            if (PROP_ZOOM_INTERMEDIATE_STEPS.get()) {
-                scaleList = scaleList.withIntermediateSteps(PROP_ZOOM_RATIO.get());
+            if (scaleList != null) {
+                if ( PROP_ZOOM_INTERMEDIATE_STEPS.get()) {
+                    scaleList = scaleList.withIntermediateSteps(PROP_ZOOM_RATIO.get());
+                }
+                Scale s = scaleList.scaleZoomTimes(getScale(), PROP_ZOOM_RATIO.get(), times);
+                return s != null ? s.getScale() : 0;
             }
-            Scale s = scaleList.scaleZoomTimes(getScale(), PROP_ZOOM_RATIO.get(), times);
-            return s != null ? s.getScale() : 0;
-        } else {
-            return getScale() * Math.pow(PROP_ZOOM_RATIO.get(), times);
         }
+        return getScale() * Math.pow(PROP_ZOOM_RATIO.get(), times);
     }
 
     /**
@@ -243,11 +244,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public double scaleSnap(double scale, boolean floor) {
         if (nativeScaleLayer != null) {
             ScaleList scaleList = nativeScaleLayer.getNativeScales();
-            Scale snapscale = scaleList.getSnapScale(scale, PROP_ZOOM_RATIO.get(), floor);
-            return snapscale != null ? snapscale.getScale() : scale;
-        } else {
-            return scale;
+            if (scaleList != null) {
+                Scale snapscale = scaleList.getSnapScale(scale, PROP_ZOOM_RATIO.get(), floor);
+                return snapscale != null ? snapscale.getScale() : scale;
+            }
         }
+        return scale;
     }
 
     /**
