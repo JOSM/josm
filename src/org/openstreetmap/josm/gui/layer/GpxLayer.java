@@ -51,8 +51,9 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 
 public class GpxLayer extends Layer {
 
+    /** GPX data */
     public GpxData data;
-    private boolean isLocalFile;
+    private final boolean isLocalFile;
     // used by ChooseTrackVisibilityAction to determine which tracks to show/hide
     public boolean[] trackVisibility = new boolean[0];
 
@@ -61,22 +62,36 @@ public class GpxLayer extends Layer {
 
     private final GpxDrawHelper drawHelper;
 
+    /**
+     * Constructs a new {@code GpxLayer} without name.
+     * @param d GPX data
+     */
     public GpxLayer(GpxData d) {
+        this(d, null, false);
+    }
+
+    /**
+     * Constructs a new {@code GpxLayer} with a given name.
+     * @param d GPX data
+     * @param name layer name
+     */
+    public GpxLayer(GpxData d, String name) {
+        this(d, name, false);
+    }
+
+    /**
+     * Constructs a new {@code GpxLayer} with a given name, thah can be attached to a local file.
+     * @param d GPX data
+     * @param name layer name
+     * @param isLocal whether data is attached to a local file
+     */
+    public GpxLayer(GpxData d, String name, boolean isLocal) {
         super(d.getString(GpxConstants.META_NAME));
         data = d;
         drawHelper = new GpxDrawHelper(data);
         ensureTrackVisibilityLength();
-    }
-
-    public GpxLayer(GpxData d, String name) {
-        this(d);
-        this.setName(name);
-    }
-
-    public GpxLayer(GpxData d, String name, boolean isLocal) {
-        this(d);
-        this.setName(name);
-        this.isLocalFile = isLocal;
+        setName(name);
+        isLocalFile = isLocal;
     }
 
     @Override
@@ -203,6 +218,10 @@ public class GpxLayer extends Layer {
                 new LayerListPopup.InfoAction(this) };
     }
 
+    /**
+     * Determines if data is attached to a local file.
+     * @return {@code true} if data is attached to a local file, {@code false} otherwise
+     */
     public boolean isLocalFile() {
         return isLocalFile;
     }
