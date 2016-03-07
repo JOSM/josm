@@ -120,6 +120,7 @@ class TagInfoExtract {
             super(tag)
         }
 
+        @Override
         def find_url(boolean generate_image) {
             osm = new Node(LatLon.ZERO)
             def env = apply_stylesheet(osm)
@@ -139,6 +140,7 @@ class TagInfoExtract {
             super(tag)
         }
 
+        @Override
         def find_url(boolean generate_image) {
             osm = new Way()
             def nc = new NavigatableComponent()
@@ -160,6 +162,7 @@ class TagInfoExtract {
             super(tag)
         }
 
+        @Override
         def find_url(boolean generate_image) {
             osm = new Way()
             def nc = new NavigatableComponent()

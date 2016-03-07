@@ -16,17 +16,13 @@
  *
  * Add option "-h" to show the available command line flags.
  */
-import java.io.FileReader
-import java.util.List
-
 import javax.json.Json
 import javax.json.JsonArray
 import javax.json.JsonObject
 import javax.json.JsonReader
 
-import org.openstreetmap.josm.io.imagery.ImageryReader
 import org.openstreetmap.josm.data.imagery.ImageryInfo
-import org.openstreetmap.josm.tools.Utils
+import org.openstreetmap.josm.io.imagery.ImageryReader
 
 class SyncEditorImageryIndex {
 
@@ -426,5 +422,4 @@ class SyncEditorImageryIndex {
         }
         return d
     }
-
 }

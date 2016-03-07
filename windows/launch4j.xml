@@ -16,7 +16,7 @@
     <minVersion>1.7.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
-	<runtimeBits>%RTBITS%</runtimeBits>
+    <runtimeBits>%RTBITS%</runtimeBits>
     <initialHeapSize>%INIHEAP%</initialHeapSize>
     <maxHeapSize>%MAXHEAP%</maxHeapSize>
   </jre>
