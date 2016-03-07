@@ -40,6 +40,7 @@ import org.openstreetmap.josm.data.projection.proj.ObliqueMercator;
 import org.openstreetmap.josm.data.projection.proj.PolarStereographic;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjFactory;
+import org.openstreetmap.josm.data.projection.proj.Sinusoidal;
 import org.openstreetmap.josm.data.projection.proj.SwissObliqueMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
@@ -94,6 +95,7 @@ public final class Projections {
         registerBaseProjection("merc", Mercator.class, "core");
         registerBaseProjection("omerc", ObliqueMercator.class, "core");
         registerBaseProjection("somerc", SwissObliqueMercator.class, "core");
+        registerBaseProjection("sinu", Sinusoidal.class, "core");
         registerBaseProjection("stere", PolarStereographic.class, "core");
         registerBaseProjection("sterea", DoubleStereographic.class, "core");
         registerBaseProjection("tmerc", TransverseMercator.class, "core");
