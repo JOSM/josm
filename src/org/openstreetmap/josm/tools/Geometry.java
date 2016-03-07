@@ -30,6 +30,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 
 /**
  * Some tools for geometry related tasks.
@@ -629,62 +631,12 @@ public final class Geometry {
 
     /**
      * Returns area of a closed way in square meters.
-     * (approximate(?), but should be OK for small areas)
-     *
-     * Relies on the current projection: Works correctly, when
-     * one unit in projected coordinates corresponds to one meter.
-     * This is true for most projections, but not for WGS84 and
-     * Mercator (EPSG:3857).
      *
      * @param way Way to measure, should be closed (first node is the same as last node)
      * @return area of the closed way.
      */
     public static double closedWayArea(Way way) {
-
-        //http://local.wasp.uwa.edu.au/~pbourke/geometry/polyarea/
-        double area = 0;
-        Node lastN = null;
-        for (Node n : way.getNodes()) {
-            if (lastN != null) {
-                area += (calcX(n) * calcY(lastN)) - (calcY(n) * calcX(lastN));
-            }
-            lastN = n;
-        }
-        return Math.abs(area/2);
-    }
-
-    protected static double calcX(Node p1) {
-        double lat1, lon1, lat2, lon2;
-        double dlon, dlat;
-
-        lat1 = p1.getCoor().lat() * Math.PI / 180.0;
-        lon1 = p1.getCoor().lon() * Math.PI / 180.0;
-        lat2 = lat1;
-        lon2 = 0;
-
-        dlon = lon2 - lon1;
-        dlat = lat2 - lat1;
-
-        double a = Math.pow(Math.sin(dlat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon/2), 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        return 6367000 * c;
-    }
-
-    protected static double calcY(Node p1) {
-        double lat1, lon1, lat2, lon2;
-        double dlon, dlat;
-
-        lat1 = p1.getCoor().lat() * Math.PI / 180.0;
-        lon1 = p1.getCoor().lon() * Math.PI / 180.0;
-        lat2 = 0;
-        lon2 = lon1;
-
-        dlon = lon2 - lon1;
-        dlat = lat2 - lat1;
-
-        double a = Math.pow(Math.sin(dlat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon/2), 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        return 6367000 * c;
+        return getAreaAndPerimeter(way.getNodes(), Projections.getProjectionByCode("EPSG:54008")).getArea();
     }
 
     /**
@@ -985,14 +937,27 @@ public final class Geometry {
      * @return area and perimeter
      */
     public static AreaAndPerimeter getAreaAndPerimeter(List<Node> nodes) {
+        return getAreaAndPerimeter(nodes, null);
+    }
+
+    /**
+     * Calculate area and perimeter length of a polygon in the given projection.
+     *
+     * @param nodes the list of nodes representing the polygon
+     * @param projection the projection to use for the calculation, {@code null} defaults to {@link Main#getProjection()}
+     * @return area and perimeter
+     */
+    public static AreaAndPerimeter getAreaAndPerimeter(List<Node> nodes, Projection projection) {
+        CheckParameterUtil.ensureParameterNotNull(nodes, "nodes");
         double area = 0;
         double perimeter = 0;
         if (!nodes.isEmpty()) {
             boolean closed = nodes.get(0) == nodes.get(nodes.size() - 1);
             int numSegments = closed ? nodes.size() - 1 : nodes.size();
-            EastNorth p1 = nodes.get(0).getEastNorth();
+            EastNorth p1 = projection == null ? nodes.get(0).getEastNorth() : projection.latlon2eastNorth(nodes.get(0).getCoor());
             for (int i = 1; i <= numSegments; i++) {
-                EastNorth p2 = nodes.get(i == numSegments ? 0 : i).getEastNorth();
+                final Node node = nodes.get(i == numSegments ? 0 : i);
+                final EastNorth p2 = projection == null ? node.getEastNorth() : projection.latlon2eastNorth(node.getCoor());
                 area += p1.east() * p2.north() - p2.east() * p1.north();
                 perimeter += p1.distance(p2);
                 p1 = p2;

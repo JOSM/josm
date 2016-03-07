@@ -70,7 +70,7 @@ public class GeometryTest {
         try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm")) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             Way closedWay = (Way) Utils.filter(ds.allPrimitives(), SearchCompiler.compile("landuse=forest")).iterator().next();
-            Assert.assertEquals(5721923.660644531, Geometry.closedWayArea(closedWay), 1e-3);
+            Assert.assertEquals(5760015.7353515625, Geometry.closedWayArea(closedWay), 1e-3);
         }
     }
 
