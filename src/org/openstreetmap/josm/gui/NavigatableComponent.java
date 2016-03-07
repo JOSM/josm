@@ -1637,7 +1637,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * Get a max scale for projection that describes world in 256 pixels
+     * Get a max scale for projection that describes world in 1/512 of the projection unit
      * @return max scale
      */
     public double getMaxScale() {
@@ -1645,6 +1645,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return Math.max(
             world.maxNorth-world.minNorth,
             world.maxEast-world.minEast
-        )/256;
+        )/512;
     }
 }
