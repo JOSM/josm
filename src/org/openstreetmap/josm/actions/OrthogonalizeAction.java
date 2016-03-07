@@ -184,7 +184,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 throw new InvalidUserInputException(tr("Selection must consist only of ways and nodes."));
             }
         }
-        if (wayDataList.isEmpty() && !nodeList.isEmpty()) {
+        if (wayDataList.isEmpty() && nodeList.size() > 2) {
             final WayData data = new WayData(nodeList);
             final Collection<Command> commands = orthogonalize(Collections.singletonList(data), Collections.<Node>emptyList());
             return new SequenceCommand(tr("Orthogonalize"), commands);
