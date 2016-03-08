@@ -131,7 +131,7 @@ public class ProjectionRefTest {
      */
     private static Collection<RefEntry> updateData(Collection<RefEntry> refs) {
         Set<String> failed = new LinkedHashSet<>();
-        final int N_POINTS = 20;
+        final int N_POINTS = 8;
 
         Map<String, RefEntry> refsMap = new HashMap<>();
         for (RefEntry ref : refs) {
