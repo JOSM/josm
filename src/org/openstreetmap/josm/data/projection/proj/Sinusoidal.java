@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.Bounds;
 
 /**
  * Sinusoidal projection (aka. Sanson–Flamsteed, Mercator equal-area projection)
- * <p/>
+ * <p>
  * This class has been derived from the implementation of the <a href="https://github.com/geotools/geotools">Geotools</a> project;
  * git 577dd2d, org.geotools.referencing.operation.projection.Sinusoidal at the time of migration.
  */
