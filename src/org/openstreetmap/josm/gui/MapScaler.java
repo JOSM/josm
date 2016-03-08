@@ -8,17 +8,28 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 
+import javax.accessibility.Accessible;
+import javax.accessibility.AccessibleContext;
+import javax.accessibility.AccessibleValue;
 import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.Helpful;
 
-public class MapScaler extends JComponent implements Helpful {
+/**
+ * Map scale bar, displaying the distance in meter that correspond to 100 px on screen.
+ * @since 115
+ */
+public class MapScaler extends JComponent implements Helpful, Accessible {
 
     private final NavigatableComponent mv;
 
     private static final int PADDING_RIGHT = 100;
 
+    /**
+     * Constructs a new {@code MapScaler}.
+     * @param mv map view
+     */
     public MapScaler(NavigatableComponent mv) {
         this.mv = mv;
         setSize(100+PADDING_RIGHT, 30);
@@ -40,6 +51,10 @@ public class MapScaler extends JComponent implements Helpful {
         g.drawString("0", 0, 23);
     }
 
+    /**
+     * Returns the color of map scaler.
+     * @return the color of map scaler
+     */
     public static Color getColor() {
         return Main.pref.getColor(marktr("scale"), Color.white);
     }
@@ -47,5 +62,36 @@ public class MapScaler extends JComponent implements Helpful {
     @Override
     public String helpTopic() {
         return ht("/MapView/Scaler");
+    }
+
+    @Override
+    public AccessibleContext getAccessibleContext() {
+        if (accessibleContext == null) {
+            accessibleContext = new AccessibleMapScaler();
+        }
+        return accessibleContext;
+    }
+
+    class AccessibleMapScaler extends AccessibleJComponent implements AccessibleValue {
+
+        @Override
+        public Number getCurrentAccessibleValue() {
+            return mv.getDist100Pixel();
+        }
+
+        @Override
+        public boolean setCurrentAccessibleValue(Number n) {
+            return false;
+        }
+
+        @Override
+        public Number getMinimumAccessibleValue() {
+            return null;
+        }
+
+        @Override
+        public Number getMaximumAccessibleValue() {
+            return null;
+        }
     }
 }

@@ -203,7 +203,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (nativeScaleLayer != null) {
             ScaleList scaleList = nativeScaleLayer.getNativeScales();
             if (scaleList != null) {
-                if ( PROP_ZOOM_INTERMEDIATE_STEPS.get()) {
+                if (PROP_ZOOM_INTERMEDIATE_STEPS.get()) {
                     scaleList = scaleList.withIntermediateSteps(PROP_ZOOM_RATIO.get());
                 }
                 Scale s = scaleList.scaleZoomTimes(getScale(), PROP_ZOOM_RATIO.get(), times);
@@ -322,6 +322,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return SystemOfMeasurement.getSystemOfMeasurement().getAreaText(area, format, threshold);
     }
 
+    /**
+     * Returns the text describing the distance in meter that correspond to 100 px on screen.
+     * @return the text describing the distance in meter that correspond to 100 px on screen
+     */
     public String getDist100PixelText() {
         return getDistText(getDist100Pixel());
     }
