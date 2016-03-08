@@ -91,6 +91,8 @@ public final class Utils {
 
     private static final char[] DEFAULT_STRIP = {'\u200B', '\uFEFF'};
 
+    private static final String[] SIZE_UNITS = {"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
+
     /**
      * Tests whether {@code predicate} applies to at least one element from {@code collection}.
      * @param <T> type of items
@@ -1041,19 +1043,18 @@ public final class Utils {
         if (bytes < 0) {
             throw new IllegalArgumentException("bytes must be >= 0");
         }
-        final String[] units = {"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
         int unitIndex = 0;
         double value = bytes;
-        while (value >= 1024 && unitIndex < units.length) {
+        while (value >= 1024 && unitIndex < SIZE_UNITS.length) {
             value /= 1024;
             unitIndex++;
         }
         if (value > 100 || unitIndex == 0) {
-            return String.format(locale, "%.0f %s", value, units[unitIndex]);
+            return String.format(locale, "%.0f %s", value, SIZE_UNITS[unitIndex]);
         } else if (value > 10) {
-            return String.format(locale, "%.1f %s", value, units[unitIndex]);
+            return String.format(locale, "%.1f %s", value, SIZE_UNITS[unitIndex]);
         } else {
-            return String.format(locale, "%.2f %s", value, units[unitIndex]);
+            return String.format(locale, "%.2f %s", value, SIZE_UNITS[unitIndex]);
         }
     }
 

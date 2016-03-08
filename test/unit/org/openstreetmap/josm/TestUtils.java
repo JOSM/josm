@@ -473,7 +473,7 @@ public final class TestUtils {
 
             @Override
             public FontRenderContext getFontRenderContext() {
-                return null;
+                return new FontRenderContext(null, false, false);
             }
 
             @Override
