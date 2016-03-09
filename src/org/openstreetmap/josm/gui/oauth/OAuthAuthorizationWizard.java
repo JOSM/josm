@@ -121,7 +121,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.gridwidth = 2;
-        ImageProvider logoProv = new ImageProvider("oauth", "oauth-logo");
+        ImageProvider logoProv = new ImageProvider("oauth", "oauth-logo").setMaxHeight(100);
         JLabel lbl = new JLabel(logoProv.get());
         lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         lbl.setOpaque(true);
