@@ -1433,38 +1433,6 @@ public class Preferences {
      * @param loadedVersion JOSM version when the preferences file was written
      */
     private void removeObsolete(int loadedVersion) {
-        // drop this block march 2016
-        // update old style JOSM server links to use zip now, see #10581, #12189
-        // actually also cache and mirror entries should be cleared
-        if (loadedVersion < 9216) {
-            for (String key: new String[]{"mappaint.style.entries", "taggingpreset.entries"}) {
-                Collection<Map<String, String>> data = getListOfStructs(key, (Collection<Map<String, String>>) null);
-                if (data != null) {
-                    List<Map<String, String>> newlist = new ArrayList<>();
-                    boolean modified = false;
-                    for (Map<String, String> map : data) {
-                         Map<String, String> newmap = new LinkedHashMap<>();
-                         for (Entry<String, String> entry : map.entrySet()) {
-                             String val = entry.getValue();
-                             String mkey = entry.getKey();
-                             if ("url".equals(mkey) && val.contains("josm.openstreetmap.de/josmfile") && !val.contains("zip=1")) {
-                                 val += "&zip=1";
-                                 modified = true;
-                             }
-                             if ("url".equals(mkey) && val.contains("http://josm.openstreetmap.de/josmfile")) {
-                                 val = val.replace("http://", "https://");
-                                 modified = true;
-                             }
-                             newmap.put(mkey, val);
-                         }
-                         newlist.add(newmap);
-                    }
-                    if (modified) {
-                        putListOfStructs(key, newlist);
-                    }
-                }
-            }
-        }
         /* drop in October 2016 */
         if (loadedVersion < 9715) {
             Setting<?> setting = settingsMap.get("imagery.entries");
@@ -1487,6 +1455,25 @@ public class Preferences {
                 }
                 if (modified) {
                     putListOfStructs("imagery.entries", l);
+                }
+            }
+        }
+        // drop in November 2016
+        if (loadedVersion < 9965) {
+            Setting<?> setting = settingsMap.get("mappaint.style.entries");
+            if (setting != null && setting instanceof MapListSetting) {
+                List<Map<String, String>> l = new LinkedList<>();
+                boolean modified = false;
+                for (Map<String, String> map: ((MapListSetting) setting).getValue()) {
+                    String url = map.get("url");
+                    if (url != null && url.contains("josm.openstreetmap.de/josmfile?page=Styles/LegacyStandard")) {
+                        modified = true;
+                    } else {
+                        l.add(map);
+                    }
+                }
+                if (modified) {
+                    putListOfStructs("mappaint.style.entries", l);
                 }
             }
         }

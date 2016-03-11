@@ -38,7 +38,6 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
-import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
@@ -46,7 +45,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.gui.mappaint.StyleElementList;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
-import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
+import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.GBC;
@@ -422,9 +421,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     }
 
     private static String getSort(StyleSource s) {
-        if (s instanceof XmlStyleSource) {
-            return tr("xml");
-        } else if (s instanceof MapCSSStyleSource) {
+        if (s instanceof MapCSSStyleSource) {
             return tr("mapcss");
         } else {
             return tr("unknown");
