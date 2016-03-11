@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-         // Taken from Version 2016030500, Last Updated Sat Mar  5 07:07:01 2016 UTC
+         // Taken from Version 2016031001, Last Updated Fri Mar 11 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -337,6 +337,7 @@ public final class DomainValidator extends AbstractValidator {
         "author", // author Amazon Registry Services, Inc.
         "auto", // auto Uniregistry, Corp.
         "autos", // autos DERAutos, LLC
+        "avianca", // avianca Aerovias del Continente Americano S.A. Avianca
         "axa", // axa AXA SA
         "azure", // azure Microsoft Corporation
         "baidu", // baidu Baidu, Inc.
@@ -351,6 +352,7 @@ public final class DomainValidator extends AbstractValidator {
         "bayern", // bayern Bayern Connect GmbH
         "bbc", // bbc British Broadcasting Corporation
         "bbva", // bbva BANCO BILBAO VIZCAYA ARGENTARIA, S.A.
+        "bcg", // bcg The Boston Consulting Group, Inc.
         "bcn", // bcn Municipi de Barcelona
         "beats", // beats Beats Electronics, LLC
         "beer", // beer Top Level Domain Holdings Limited
@@ -615,6 +617,7 @@ public final class DomainValidator extends AbstractValidator {
         "global", // global Dot Global Domain Registry Limited
         "globo", // globo Globo Comunicação e Participações S.A
         "gmail", // gmail Charleston Road Registry Inc.
+        "gmbh", // gmbh Extra Dynamite, LLC
         "gmo", // gmo GMO Internet, Inc.
         "gmx", // gmx 1&amp;1 Mail &amp; Media GmbH
         "gold", // gold June Edge, LLC
@@ -759,6 +762,7 @@ public final class DomainValidator extends AbstractValidator {
         "lixil", // lixil LIXIL Group Corporation
         "loan", // loan dot Loan Limited
         "loans", // loans June Woods, LLC
+        "locus", // locus Locus Analytics LLC
         "lol", // lol Uniregistry, Corp.
         "london", // london Dot London Domains Limited
         "lotte", // lotte Lotte Holdings Co., Ltd.
@@ -1070,6 +1074,7 @@ public final class DomainValidator extends AbstractValidator {
         "top", // top Jiangsu Bangning Science &amp; Technology Co.,Ltd.
         "toray", // toray Toray Industries, Inc.
         "toshiba", // toshiba TOSHIBA Corporation
+        "total", // total Total SA
         "tours", // tours Sugar Station, LLC
         "town", // town Koko Moon, LLC
         "toyota", // toyota TOYOTA MOTOR CORPORATION
