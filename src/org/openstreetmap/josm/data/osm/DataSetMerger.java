@@ -356,7 +356,7 @@ public class DataSetMerger {
         } else if (target.isModified() && !source.isModified() && target.getVersion() == source.getVersion()) {
             // target is same as source but target is modified
             // => keep target and reset modified flag if target and source are semantically equal
-            if (target.hasEqualSemanticAttributes(source)) {
+            if (target.hasEqualSemanticAttributes(source, false)) {
                 target.setModified(false);
             }
         } else if (source.isDeleted() != target.isDeleted()) {

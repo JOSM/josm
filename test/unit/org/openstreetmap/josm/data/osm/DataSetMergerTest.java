@@ -992,4 +992,45 @@ public class DataSetMergerTest {
         assertEquals(1, w.getNode(0).getId());
         assertEquals(2, w.getNode(1).getId());
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12599">Bug #12599</a>.
+     */
+    @Test
+    public void testTicket12599() {
+        // Server node: no modifications
+        Node n1 = new Node(1, 1);
+        n1.setCoor(LatLon.ZERO);
+        assertFalse(n1.isModified());
+        their.addPrimitive(n1);
+
+        // Local node: one modification: addition of an uninteresting tag
+        Node n1b = new Node(n1);
+        n1b.setModified(true);
+        n1b.put("note", "something");
+        assertTrue(n1b.isModified());
+        assertEquals(0, n1b.getInterestingTags().size());
+        my.addPrimitive(n1b);
+
+        // Merge
+        DataSetMerger visitor = new DataSetMerger(my, their);
+        visitor.merge();
+
+        // Check that modification is still here
+        Node n = (Node) my.getPrimitiveById(1, OsmPrimitiveType.NODE);
+        assertNotNull(n);
+        assertEquals("something", n.get("note"));
+        assertTrue(n.isModified());
+
+        // Merge again
+        visitor = new DataSetMerger(my, their);
+        visitor.merge();
+
+        // Check that modification is still here
+        n = (Node) my.getPrimitiveById(1, OsmPrimitiveType.NODE);
+        assertNotNull(n);
+        assertEquals("something", n.get("note"));
+        assertTrue(n.isModified());
+    }
+
 }
