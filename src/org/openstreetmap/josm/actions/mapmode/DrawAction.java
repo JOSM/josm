@@ -534,7 +534,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // Ok we know now that we'll insert a line segment, but will it connect to an
                 // existing way or make a new way of its own? The "alt" modifier means that the
                 // user wants a new way.
-                Way way = alt ? null : (selectedWay != null) ? selectedWay : getWayForNode(n0);
+                Way way = alt ? null : (selectedWay != null ? selectedWay : getWayForNode(n0));
                 Way wayToSelect;
 
                 // Don't allow creation of self-overlapping ways
@@ -1564,7 +1564,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     double phi;
                     e0 = p0.east();
                     n0 = p0.north();
-                    buildLabelText((nearestAngle <= 180) ? nearestAngle : nearestAngle-360);
+                    buildLabelText((nearestAngle <= 180) ? nearestAngle : (nearestAngle-360));
 
                     phi = (nearestAngle + activeBaseHeading) * Math.PI / 180;
                     // (pe,pn) - direction of snapping line
