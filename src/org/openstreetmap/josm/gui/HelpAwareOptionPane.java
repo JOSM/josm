@@ -229,7 +229,7 @@ public final class HelpAwareOptionPane {
         }
 
         if (msg instanceof String) {
-            msg = new JMultilineLabel(((String) msg), true);
+            msg = new JMultilineLabel((String) msg, true);
         }
 
         final JOptionPane pane = new JOptionPane(

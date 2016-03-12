@@ -335,7 +335,7 @@ public class MultiSplitPane extends JPanel {
         if (show) {
             MultiSplitLayout.Divider divider = getMultiSplitLayout().dividerAt(x, y);
             if (divider != null) {
-                cursorID  = (divider.isVertical()) ?
+                cursorID  = divider.isVertical() ?
                     Cursor.E_RESIZE_CURSOR :
                     Cursor.N_RESIZE_CURSOR;
             }

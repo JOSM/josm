@@ -24,9 +24,9 @@ public class ModifiersSpec {
         char s = str.charAt(1);
         char c = str.charAt(2);
         // @formatter:off
-        alt   = (a == '?' ? UNKNOWN : (a == 'A' ? ON : OFF));
-        shift = (s == '?' ? UNKNOWN : (s == 'S' ? ON : OFF));
-        ctrl  = (c == '?' ? UNKNOWN : (c == 'C' ? ON : OFF));
+        alt   = a == '?' ? UNKNOWN : (a == 'A' ? ON : OFF);
+        shift = s == '?' ? UNKNOWN : (s == 'S' ? ON : OFF);
+        ctrl  = c == '?' ? UNKNOWN : (c == 'C' ? ON : OFF);
         // @formatter:on
     }
 

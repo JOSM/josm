@@ -136,12 +136,12 @@ public class TransverseMercator extends AbstractProj {
         double n = eb2 * cosphi*cosphi;
 
         /* NOTE: meridinal distance at latitudeOfOrigin is always 0 */
-        y = (mlfn(y, sinphi, cosphi) - ml0 +
+        y = mlfn(y, sinphi, cosphi) - ml0 +
             sinphi * al * x *
             FC2 * (1.0 +
             FC4 * als * (5.0 - t + n*(9.0 + 4.0*n) +
             FC6 * als * (61.0 + t * (t - 58.0) + n*(270.0 - 330.0*t) +
-            FC8 * als * (1385.0 + t * (t*(543.0 - t) - 3111.0))))));
+            FC8 * als * (1385.0 + t * (t*(543.0 - t) - 3111.0)))));
 
         x = al*(FC1 + FC3 * als*(1.0 - t + n +
             FC5 * als * (5.0 + t*(t - 18.0) + n*(14.0 - 58.0*t) +

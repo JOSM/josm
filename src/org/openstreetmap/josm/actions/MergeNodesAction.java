@@ -174,7 +174,7 @@ public class MergeNodesAction extends JosmAction {
             lastNode = n;
         }
         if (targetNode == null) {
-            targetNode = (oldestNode != null ? oldestNode : lastNode);
+            targetNode = oldestNode != null ? oldestNode : lastNode;
         }
         return targetNode;
     }

@@ -6,10 +6,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
+import org.openstreetmap.josm.tools.HttpClient;
+
 import oauth.signpost.AbstractOAuthConsumer;
 import oauth.signpost.AbstractOAuthProvider;
-
-import org.openstreetmap.josm.tools.HttpClient;
 
 /**
  * Adapters to make {@code oauth.signpost} work with {@link HttpClient}.
@@ -53,7 +53,7 @@ public final class SignpostAdapters {
 
         @Override
         protected HttpRequest wrap(Object request) {
-            return new HttpRequest(((HttpClient) request));
+            return new HttpRequest((HttpClient) request);
         }
     }
 

@@ -109,7 +109,7 @@ public class AlbersEqualArea extends AbstractProj {
         double  sinphi = Math.sin(phi1);
         double  cosphi = Math.cos(phi1);
         double  n      = sinphi;
-        boolean secant = (Math.abs(phi1 - phi2) >= EPSILON);
+        boolean secant = Math.abs(phi1 - phi2) >= EPSILON;
         double m1 = msfn(sinphi, cosphi);
         double q1 = qsfn(sinphi);
         if (secant) { // secant cone
@@ -205,8 +205,8 @@ public class AlbersEqualArea extends AbstractProj {
         final double one_es = 1 - e2;
         if (e >= EPSILON) {
             final double con = e * sinphi;
-            return (one_es * (sinphi / (1. - con*con) -
-                    (0.5/e) * Math.log((1.-con) / (1.+con))));
+            return one_es * (sinphi / (1. - con*con) -
+                    (0.5/e) * Math.log((1.-con) / (1.+con)));
         } else {
             return sinphi + sinphi;
         }
