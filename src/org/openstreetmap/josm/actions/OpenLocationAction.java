@@ -38,7 +38,6 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -237,7 +236,7 @@ public class OpenLocationAction extends JosmAction {
         final String details = findSummaryDocumentation();    // Explain what patterns are supported
         HelpAwareOptionPane.showMessageDialogInEDT(Main.parent, "<html><p>" + tr(
                 "Cannot open URL ''{0}''<br>The following download tasks accept the URL patterns shown:<br>{1}",
-                url, details) + "</p></html>", tr("Download Location"), JOptionPane.ERROR_MESSAGE, HelpUtil.ht("/Action/OpenLocation"));
+                url, details) + "</p></html>", tr("Download Location"), JOptionPane.ERROR_MESSAGE, ht("/Action/OpenLocation"));
     }
 
     /**

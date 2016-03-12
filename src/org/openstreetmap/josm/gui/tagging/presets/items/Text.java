@@ -134,7 +134,7 @@ public class Text extends KeyedItem {
             for (final String ai : auto_increment.split(",")) {
                 JToggleButton aibutton = new JToggleButton(ai);
                 aibutton.setToolTipText(tr("Select auto-increment of {0} for this field", ai));
-                aibutton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+                aibutton.setMargin(new Insets(0, 0, 0, 0));
                 aibutton.setFocusable(false);
                 saveHorizontalSpace(aibutton);
                 bg.add(aibutton);
@@ -164,7 +164,7 @@ public class Text extends KeyedItem {
             // of the X remaining selected
             JButton releasebutton = new JButton("X");
             releasebutton.setToolTipText(tr("Cancel auto-increment for this field"));
-            releasebutton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+            releasebutton.setMargin(new Insets(0, 0, 0, 0));
             releasebutton.setFocusable(false);
             releasebutton.addActionListener(new ActionListener() {
                 @Override

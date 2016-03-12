@@ -32,7 +32,6 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileImporter;
@@ -202,7 +201,7 @@ public class OpenFileAction extends DiskAccessAction {
                     msg.toString(),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Action/Open#ImporterCantImportFiles")
+                    ht("/Action/Open#ImporterCantImportFiles")
             );
         }
 
@@ -228,7 +227,7 @@ public class OpenFileAction extends DiskAccessAction {
                     msg.toString(),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Action/Open#MissingImporterForFiles")
+                    ht("/Action/Open#MissingImporterForFiles")
             );
         }
 
