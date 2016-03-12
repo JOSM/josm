@@ -91,7 +91,7 @@ public interface StyleSetting {
         }
 
         public void setValue(Object o) {
-            if (o == null || !(o instanceof Boolean)) {
+            if (!(o instanceof Boolean)) {
                 throw new IllegalArgumentException();
             }
             boolean b = (Boolean) o;
