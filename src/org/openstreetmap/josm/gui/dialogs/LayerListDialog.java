@@ -887,7 +887,7 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public boolean supportLayers(List<Layer> layers) {
-            if (layers.size() < 1) {
+            if (layers.isEmpty()) {
                 return false;
             } else {
                 final Layer firstLayer = layers.get(0);

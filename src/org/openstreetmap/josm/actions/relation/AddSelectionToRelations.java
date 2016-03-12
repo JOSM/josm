@@ -48,7 +48,7 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
             new Notification(
                     tr("<html><strong>Add selection to relation</strong>: Control every single relation to avoid damage!"))
                     .setIcon(JOptionPane.WARNING_MESSAGE)
-                    .show();;
+                    .show();
         }
     }
 

@@ -158,18 +158,18 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
     /**
      * Constants used in the transformation.
      */
-    private double B, A, E;
+    private double b, a, e;
 
     /**
-     * Convenience values equal to {@link #A} / {@link #B},
-     * {@link #A}&times;{@link #B}, and {@link #B} / {@link #A}.
+     * Convenience values equal to {@link #a} / {@link #b},
+     * {@link #a}&times;{@link #b}, and {@link #b} / {@link #a}.
      */
-    private double ArB, AB, BrA;
+    private double arb, ab, bra;
 
     /**
      * <var>v</var> values when the input latitude is a pole.
      */
-    private double v_pole_n, v_pole_s;
+    private double vPoleN, vPoleS;
 
     /**
      * Sine and Cosine values for gamma0 (the angle between the meridian
@@ -188,7 +188,7 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
      * <var>u</var> value (in (U,V) coordinate system) of the central point. Used in
      * the oblique mercator case. The <var>v</var> value of the central point is 0.0.
      */
-    private double u_c;
+    private double uc;
 
     /**
      * Central longitude in <u>radians</u>. Default value is 0, the Greenwich meridian.
@@ -226,20 +226,20 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
         double cosph0 = Math.cos(latCenter);
         final double con = 1. - e2 * sinph0 * sinph0;
         double temp = cosph0 * cosph0;
-        B = Math.sqrt(1.0 + e2 * (temp * temp) / (1.0 - e2));
-        A = B * com / con;
-        final double D = B * com / (cosph0 * Math.sqrt(con));
-        double F = D * D - 1.0;
-        if (F < 0.0) {
-            F = 0.0;
+        b = Math.sqrt(1.0 + e2 * (temp * temp) / (1.0 - e2));
+        a = b * com / con;
+        final double d = b * com / (cosph0 * Math.sqrt(con));
+        double f = d * d - 1.0;
+        if (f < 0.0) {
+            f = 0.0;
         } else {
-            F = Math.sqrt(F);
+            f = Math.sqrt(f);
             if (latCenter < 0.0) {
-                F = -F;
+                f = -f;
             }
         }
-        E = F += D;
-        E = F * Math.pow(tsfn(latCenter, sinph0), B);
+        e = f += d;
+        e = f * Math.pow(tsfn(latCenter, sinph0), b);
 
         /*
          * Computes the constants that depend on the "twoPoint" vs "azimuth" case. In the
@@ -275,12 +275,12 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
             /*
              * The coefficients for the "two points" case.
              */
-            final double H = Math.pow(tsfn(lat1, Math.sin(lat1)), B);
-            final double L = Math.pow(tsfn(lat2, Math.sin(lat2)), B);
-            final double Fp = E / H;
-            final double P = (L - H) / (L + H);
-            double J = E * E;
-            J = (J - L * H) / (J + L * H);
+            final double h = Math.pow(tsfn(lat1, Math.sin(lat1)), b);
+            final double l = Math.pow(tsfn(lat2, Math.sin(lat2)), b);
+            final double fp = e / h;
+            final double p = (l - h) / (l + h);
+            double j = e * e;
+            j = (j - l * h) / (j + l * h);
             double diff = lon1 - lon2;
             if (diff < -Math.PI) {
                 lon2 -= 2.0 * Math.PI;
@@ -288,10 +288,10 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
                 lon2 += 2.0 * Math.PI;
             }
             centralMeridian = normalizeLonRad(0.5 * (lon1 + lon2) -
-                     Math.atan(J * Math.tan(0.5 * B * (lon1 - lon2)) / P) / B);
-            gamma0 = Math.atan(2.0 * Math.sin(B * normalizeLonRad(lon1 - centralMeridian)) /
-                     (Fp - 1.0 / Fp));
-            azimuth = Math.asin(D * Math.sin(gamma0));
+                     Math.atan(j * Math.tan(0.5 * b * (lon1 - lon2)) / p) / b);
+            gamma0 = Math.atan(2.0 * Math.sin(b * normalizeLonRad(lon1 - centralMeridian)) /
+                     (fp - 1.0 / fp));
+            azimuth = Math.asin(d * Math.sin(gamma0));
             rectifiedGridAngle = azimuth;
         } else {
             if (params.lonc == null)
@@ -314,16 +314,16 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
             } else {
                 rectifiedGridAngle = azimuth;
             }
-            gamma0 = Math.asin(Math.sin(azimuth) / D);
+            gamma0 = Math.asin(Math.sin(azimuth) / d);
             // Check for asin(+-1.00000001)
-            temp = 0.5 * (F - 1.0 / F) * Math.tan(gamma0);
+            temp = 0.5 * (f - 1.0 / f) * Math.tan(gamma0);
             if (Math.abs(temp) > 1.0) {
                 if (Math.abs(Math.abs(temp) - 1.0) > EPSILON) {
                     throw new ProjectionConfigurationException(tr("error in initialization"));
                 }
                 temp = (temp > 0) ? 1.0 : -1.0;
             }
-            centralMeridian = lonCenter - Math.asin(temp) / B;
+            centralMeridian = lonCenter - Math.asin(temp) / b;
         }
 
         /*
@@ -333,27 +333,27 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
         cosgamma0 = Math.cos(gamma0);
         sinrot    = Math.sin(rectifiedGridAngle);
         cosrot    = Math.cos(rectifiedGridAngle);
-        ArB       = A / B;
-        AB        = A * B;
-        BrA       = B / A;
-        v_pole_n  = ArB * Math.log(Math.tan(0.5 * (Math.PI/2.0 - gamma0)));
-        v_pole_s  = ArB * Math.log(Math.tan(0.5 * (Math.PI/2.0 + gamma0)));
+        arb       = a / b;
+        ab        = a * b;
+        bra       = b / a;
+        vPoleN  = arb * Math.log(Math.tan(0.5 * (Math.PI/2.0 - gamma0)));
+        vPoleS  = arb * Math.log(Math.tan(0.5 * (Math.PI/2.0 + gamma0)));
         boolean hotine = params.no_off != null && params.no_off;
         if (hotine) {
-            u_c = 0.0;
+            uc = 0.0;
         } else {
             if (Math.abs(Math.abs(azimuth) - Math.PI/2.0) < EPSILON_LATITUDE) {
                 // lonCenter == null in twoPoint, but azimuth cannot be 90 here (lat1 != lat2)
                 if (lonCenter == null) {
                     throw new ProjectionConfigurationException("assertion error");
                 }
-                u_c = A * (lonCenter - centralMeridian);
+                uc = a * (lonCenter - centralMeridian);
             } else {
-                double u_c = Math.abs(ArB * Math.atan2(Math.sqrt(D * D - 1.0), Math.cos(azimuth)));
+                double uC = Math.abs(arb * Math.atan2(Math.sqrt(d * d - 1.0), Math.cos(azimuth)));
                 if (latCenter < 0.0) {
-                    u_c = -u_c;
+                    uC = -uC;
                 }
-                this.u_c = u_c;
+                this.uc = uC;
             }
         }
     }
@@ -366,27 +366,27 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
     public double[] project(double y, double x) {
         double u, v;
         if (Math.abs(Math.abs(y) - Math.PI/2.0) > EPSILON) {
-            double Q = E / Math.pow(tsfn(y, Math.sin(y)), B);
-            double temp = 1.0 / Q;
-            double S = 0.5 * (Q - temp);
-            double V = Math.sin(B * x);
-            double U = (S * singamma0 - V * cosgamma0) / (0.5 * (Q + temp));
+            double q = e / Math.pow(tsfn(y, Math.sin(y)), b);
+            double temp = 1.0 / q;
+            double s = 0.5 * (q - temp);
+            double V = Math.sin(b * x);
+            double U = (s * singamma0 - V * cosgamma0) / (0.5 * (q + temp));
             if (Math.abs(Math.abs(U) - 1.0) < EPSILON) {
                 v = 0; // this is actually an error and should be reported to the caller somehow
             } else {
-                v = 0.5 * ArB * Math.log((1.0 - U) / (1.0 + U));
+                v = 0.5 * arb * Math.log((1.0 - U) / (1.0 + U));
             }
-            temp = Math.cos(B * x);
+            temp = Math.cos(b * x);
             if (Math.abs(temp) < EPSILON_LATITUDE) {
-                u = AB * x;
+                u = ab * x;
             } else {
-                u = ArB * Math.atan2(S * cosgamma0 + V * singamma0, temp);
+                u = arb * Math.atan2(s * cosgamma0 + V * singamma0, temp);
             }
         } else {
-            v = y > 0 ? v_pole_n : v_pole_s;
-            u = ArB * y;
+            v = y > 0 ? vPoleN : vPoleS;
+            u = arb * y;
         }
-        u -= u_c;
+        u -= uc;
         x = v * cosrot + u * sinrot;
         y = u * cosrot - v * sinrot;
         return new double[] {x, y};
@@ -395,19 +395,19 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
     @Override
     public double[] invproject(double x, double y) {
         double v = x * cosrot - y * sinrot;
-        double u = y * cosrot + x * sinrot + u_c;
-        double Qp = Math.exp(-BrA * v);
-        double temp = 1.0 / Qp;
-        double Sp = 0.5 * (Qp - temp);
-        double Vp = Math.sin(BrA * u);
-        double Up = (Vp * cosgamma0 + Sp * singamma0) / (0.5 * (Qp + temp));
-        if (Math.abs(Math.abs(Up) - 1.0) < EPSILON) {
+        double u = y * cosrot + x * sinrot + uc;
+        double qp = Math.exp(-bra * v);
+        double temp = 1.0 / qp;
+        double sp = 0.5 * (qp - temp);
+        double vp = Math.sin(bra * u);
+        double up = (vp * cosgamma0 + sp * singamma0) / (0.5 * (qp + temp));
+        if (Math.abs(Math.abs(up) - 1.0) < EPSILON) {
             x = 0.0;
-            y = Up < 0.0 ? -Math.PI / 2.0 : Math.PI / 2.0;
+            y = up < 0.0 ? -Math.PI / 2.0 : Math.PI / 2.0;
         } else {
-            y = Math.pow(E / Math.sqrt((1. + Up) / (1. - Up)), 1.0 / B);  //calculate t
+            y = Math.pow(e / Math.sqrt((1. + up) / (1. - up)), 1.0 / b);  //calculate t
             y = cphi2(y);
-            x = -Math.atan2(Sp * cosgamma0 - Vp * singamma0, Math.cos(BrA * u)) / B;
+            x = -Math.atan2(sp * cosgamma0 - vp * singamma0, Math.cos(bra * u)) / b;
         }
         return new double[] {y, x};
     }

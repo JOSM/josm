@@ -56,7 +56,7 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
     private double sinb1, cosb1, xmf, ymf, mmf, qp, dd, rq;
 
     /** Coefficients for authalic latitude. */
-    private double APA0, APA1, APA2;
+    private double aPA0, aPA1, aPA2;
 
     private double latitudeOfOrigin;
 
@@ -94,9 +94,9 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
          */
         final double es2 = e2 * e2;
         final double es3 = e2 * es2;
-        APA0 = P02 * es3 + P01 * es2 + P00 * e2;
-        APA1 = P11 * es3 + P10 * es2;
-        APA2 = P20 * es3;
+        aPA0 = P02 * es3 + P01 * es2 + P00 * e2;
+        aPA1 = P11 * es3 + P10 * es2;
+        aPA2 = P20 * es3;
 
         final double sinphi;
         qp     = qsfn(1);
@@ -271,7 +271,7 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
      */
     private double authlat(final double beta) {
         final double t = beta + beta;
-        return beta + APA0 * Math.sin(t) + APA1 * Math.sin(t+t) + APA2 * Math.sin(t+t+t);
+        return beta + aPA0 * Math.sin(t) + aPA1 * Math.sin(t+t) + aPA2 * Math.sin(t+t+t);
     }
 
     @Override
