@@ -97,7 +97,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     = Shortcut.registerShortcut("core_multikey:hidingFilter", tr("Multikey: {0}", tr("Hide filter")),
             KeyEvent.VK_H, Shortcut.ALT_CTRL);
 
-    protected final String[] columnToolTips = {
+    protected static final String[] COLUMN_TOOLTIPS = {
             Main.platform.makeTooltip(tr("Enable filter"), ENABLE_FILTER_SHORTCUT),
             Main.platform.makeTooltip(tr("Hiding filter"), HIDING_FILTER_SHORTCUT),
             null,
@@ -115,7 +115,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        return columnToolTips[realIndex];
+                        return COLUMN_TOOLTIPS[realIndex];
                     }
                 };
             }
