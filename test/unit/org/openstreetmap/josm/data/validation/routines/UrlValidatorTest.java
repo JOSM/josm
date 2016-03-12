@@ -401,14 +401,6 @@ public class UrlValidatorTest {
    }
 
    /**
-    * Test validate URL
-    */
-   @Test
-   public void testValidateUrl() {
-      assertTrue(true);
-   }
-
-   /**
     * Non-regression test for VALIDATOR-290
     */
    @Test
