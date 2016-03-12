@@ -17,7 +17,9 @@
 package org.openstreetmap.josm.data.validation.routines;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -55,16 +57,16 @@ public class RegexValidatorTest {
         RegexValidator insensitive = new RegexValidator(REGEX, false);
 
         // isValid()
-        assertEquals("Sensitive isValid() valid",     true,   sensitive.isValid("ac-DE-1"));
-        assertEquals("Sensitive isValid() invalid",   false,  sensitive.isValid("AB-de-1"));
-        assertEquals("Insensitive isValid() valid",   true,   insensitive.isValid("AB-de-1"));
-        assertEquals("Insensitive isValid() invalid", false,  insensitive.isValid("ABd-de-1"));
+        assertTrue("Sensitive isValid() valid",      sensitive.isValid("ac-DE-1"));
+        assertFalse("Sensitive isValid() invalid",   sensitive.isValid("AB-de-1"));
+        assertTrue("Insensitive isValid() valid",    insensitive.isValid("AB-de-1"));
+        assertFalse("Insensitive isValid() invalid", insensitive.isValid("ABd-de-1"));
 
         // validate()
-        assertEquals("Sensitive validate() valid",     "acDE1", sensitive.validate("ac-DE-1"));
-        assertEquals("Sensitive validate() invalid",   null,    sensitive.validate("AB-de-1"));
-        assertEquals("Insensitive validate() valid",   "ABde1", insensitive.validate("AB-de-1"));
-        assertEquals("Insensitive validate() invalid", null,    insensitive.validate("ABd-de-1"));
+        assertEquals("Sensitive validate() valid",   "acDE1", sensitive.validate("ac-DE-1"));
+        assertNull("Sensitive validate() invalid",   sensitive.validate("AB-de-1"));
+        assertEquals("Insensitive validate() valid", "ABde1", insensitive.validate("AB-de-1"));
+        assertNull("Insensitive validate() invalid", insensitive.validate("ABd-de-1"));
 
         // match()
         checkArray("Sensitive match() valid",     new String[] {"ac", "DE", "1"}, sensitive.match("ac-DE-1"));
@@ -93,16 +95,16 @@ public class RegexValidatorTest {
         String[] array = new String[] {"aac", "FDE", "321"};
 
         // isValid()
-        assertEquals("Sensitive isValid() Multiple", true,  multiple.isValid(value));
-        assertEquals("Sensitive isValid() 1st",      false, single1.isValid(value));
-        assertEquals("Sensitive isValid() 2nd",      true,  single2.isValid(value));
-        assertEquals("Sensitive isValid() 3rd",      false, single3.isValid(value));
+        assertTrue("Sensitive isValid() Multiple", multiple.isValid(value));
+        assertFalse("Sensitive isValid() 1st",     single1.isValid(value));
+        assertTrue("Sensitive isValid() 2nd",      single2.isValid(value));
+        assertFalse("Sensitive isValid() 3rd",     single3.isValid(value));
 
         // validate()
         assertEquals("Sensitive validate() Multiple", expect, multiple.validate(value));
-        assertNull("Sensitive validate() 1st",      single1.validate(value));
+        assertNull("Sensitive validate() 1st",        single1.validate(value));
         assertEquals("Sensitive validate() 2nd",      expect, single2.validate(value));
-        assertNull("Sensitive validate() 3rd",      single3.validate(value));
+        assertNull("Sensitive validate() 3rd",        single3.validate(value));
 
         // match()
         checkArray("Sensitive match() Multiple", array, multiple.match(value));
@@ -112,7 +114,7 @@ public class RegexValidatorTest {
 
         // All invalid
         value = "AAC*FDE*321";
-        assertEquals("isValid() Invalid",  false, multiple.isValid(value));
+        assertFalse("isValid() Invalid", multiple.isValid(value));
         assertNull("validate() Invalid", multiple.validate(value));
         assertNull("match() Multiple",   multiple.match(value));
     }
@@ -135,16 +137,16 @@ public class RegexValidatorTest {
         String[] array = new String[] {"AAC", "FDE", "321"};
 
         // isValid()
-        assertEquals("isValid() Multiple", true,  multiple.isValid(value));
-        assertEquals("isValid() 1st",      false, single1.isValid(value));
-        assertEquals("isValid() 2nd",      true,  single2.isValid(value));
-        assertEquals("isValid() 3rd",      false, single3.isValid(value));
+        assertTrue("isValid() Multiple", multiple.isValid(value));
+        assertFalse("isValid() 1st",     single1.isValid(value));
+        assertTrue("isValid() 2nd",      single2.isValid(value));
+        assertFalse("isValid() 3rd",     single3.isValid(value));
 
         // validate()
         assertEquals("validate() Multiple", expect, multiple.validate(value));
-        assertNull("validate() 1st",      single1.validate(value));
+        assertNull("validate() 1st",        single1.validate(value));
         assertEquals("validate() 2nd",      expect, single2.validate(value));
-        assertNull("validate() 3rd",      single3.validate(value));
+        assertNull("validate() 3rd",        single3.validate(value));
 
         // match()
         checkArray("match() Multiple", array, multiple.match(value));
@@ -154,7 +156,7 @@ public class RegexValidatorTest {
 
         // All invalid
         value = "AAC*FDE*321";
-        assertEquals("isValid() Invalid",  false, multiple.isValid(value));
+        assertFalse("isValid() Invalid", multiple.isValid(value));
         assertNull("validate() Invalid", multiple.validate(value));
         assertNull("match() Multiple",   multiple.match(value));
     }
@@ -164,9 +166,8 @@ public class RegexValidatorTest {
      */
     @Test
     public void testNullValue() {
-
         RegexValidator validator = new RegexValidator(REGEX);
-        assertEquals("Instance isValid()",  false, validator.isValid(null));
+        assertFalse("Instance isValid()", validator.isValid(null));
         assertNull("Instance validate()", validator.validate(null));
         assertNull("Instance match()",    validator.match(null));
     }
