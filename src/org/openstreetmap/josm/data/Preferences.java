@@ -152,7 +152,7 @@ public class Preferences {
      * Indicates whether {@link #init(boolean)} completed successfully.
      * Used to decide whether to write backup preference file in {@link #save()}
      */
-    protected boolean initSuccessful = false;
+    protected boolean initSuccessful;
 
     /**
      * Event triggered when a preference entry value changes.

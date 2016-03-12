@@ -1564,7 +1564,7 @@ public final class DomainValidator extends AbstractValidator {
      * This field does not need to be volatile since it is only accessed from
      * synchronized methods.
      */
-    private static boolean inUse = false;
+    private static boolean inUse;
 
     /*
      * These arrays are mutable, but they don't need to be volatile.

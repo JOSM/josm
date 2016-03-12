@@ -128,7 +128,7 @@ public class QuadStateCheckBox extends JCheckBox {
 
     private final class QuadStateDecorator implements ButtonModel {
         private final ButtonModel other;
-        private String propertyText = null;
+        private String propertyText;
 
         private QuadStateDecorator(ButtonModel other) {
             this.other = other;

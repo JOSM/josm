@@ -37,14 +37,14 @@ public class FileChooserManager {
     private final String lastDirProperty;
     private final String curDir;
 
-    private boolean multiple = false;
-    private String title = null;
+    private boolean multiple;
+    private String title;
     private Collection<? extends FileFilter> filters;
     private FileFilter defaultFilter;
     private int selectionMode = JFileChooser.FILES_ONLY;
-    private String extension = null;
-    private boolean allTypes = false;
-    private File file = null;
+    private String extension;
+    private boolean allTypes;
+    private File file;
 
     private AbstractFileChooser fc;
 

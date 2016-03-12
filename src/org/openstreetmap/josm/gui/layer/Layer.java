@@ -137,7 +137,7 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     /**
      * This is set if user renamed this layer.
      */
-    private boolean renamed = false;
+    private boolean renamed;
 
     /**
      * If a file is associated with this layer, this variable should be set to it.

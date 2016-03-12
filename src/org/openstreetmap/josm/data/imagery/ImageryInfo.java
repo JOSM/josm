@@ -187,11 +187,11 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     /** country code of the imagery (for country specific imagery) */
     private String countryCode = "";
     /** mirrors of different type for this entry */
-    private List<ImageryInfo> mirrors = null;
+    private List<ImageryInfo> mirrors;
     /** icon used in menu */
     private String icon;
-    private boolean isGeoreferenceValid = false;
-    private boolean isEpsg4326To3857Supported = false;
+    private boolean isGeoreferenceValid;
+    private boolean isEpsg4326To3857Supported;
     // when adding a field, also adapt the ImageryInfo(ImageryInfo)
     // and ImageryInfo(ImageryPreferenceEntry) constructor, equals method, and ImageryPreferenceEntry
 
