@@ -1322,14 +1322,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * @param osm node to check
      * @param p point clicked
-     * @param use_selected whether to prefer selected nodes
+     * @param useSelected whether to prefer selected nodes
      * @return true, if the node fulfills the properties of the function body
      */
-    private boolean isPrecedenceNode(Node osm, Point p, boolean use_selected) {
+    private boolean isPrecedenceNode(Node osm, Point p, boolean useSelected) {
         if (osm != null) {
-            if (!(p.distanceSq(getPoint2D(osm)) > (4)*(4))) return true;
+            if (p.distanceSq(getPoint2D(osm)) <= (4*4)) return true;
             if (osm.isTagged()) return true;
-            if (use_selected && osm.isSelected()) return true;
+            if (useSelected && osm.isSelected()) return true;
         }
         return false;
     }
