@@ -613,13 +613,7 @@ public class SplitWayAction extends JosmAction {
                         /* this code assumes the restriction is correct. No real error checking done */
                         String role = rm.getRole();
                         if ("from".equals(role) || "to".equals(role)) {
-                            OsmPrimitive via = null;
-                            for (RelationMember rmv : r.getMembers()) {
-                                if ("restriction".equals(type) && "via".equals(rmv.getRole())
-                                        || "destination_sign".equals(type) && rmv.hasRole("sign", "intersection")) {
-                                    via = rmv.getMember();
-                                }
-                            }
+                            OsmPrimitive via = findVia(r, type);
                             List<Node> nodes = new ArrayList<>();
                             if (via != null) {
                                 if (via instanceof Node) {
@@ -748,6 +742,16 @@ public class SplitWayAction extends JosmAction {
                         way,
                         newWays
                 );
+    }
+
+    static OsmPrimitive findVia(Relation r, String type) {
+        for (RelationMember rmv : r.getMembers()) {
+            if (("restriction".equals(type) && "via".equals(rmv.getRole()))
+             || ("destination_sign".equals(type) && rmv.hasRole("sign", "intersection"))) {
+                return rmv.getMember();
+            }
+        }
+        return null;
     }
 
     /**

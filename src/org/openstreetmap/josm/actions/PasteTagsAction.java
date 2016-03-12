@@ -75,9 +75,9 @@ public final class PasteTagsAction extends JosmAction {
          */
         protected boolean isHeterogeneousSource() {
             int count = 0;
-            count = !getSourcePrimitivesByType(OsmPrimitiveType.NODE).isEmpty() ? count + 1 : count;
-            count = !getSourcePrimitivesByType(OsmPrimitiveType.WAY).isEmpty() ? count + 1 : count;
-            count = !getSourcePrimitivesByType(OsmPrimitiveType.RELATION).isEmpty() ? count + 1 : count;
+            count = !getSourcePrimitivesByType(OsmPrimitiveType.NODE).isEmpty() ? (count + 1) : count;
+            count = !getSourcePrimitivesByType(OsmPrimitiveType.WAY).isEmpty() ? (count + 1) : count;
+            count = !getSourcePrimitivesByType(OsmPrimitiveType.RELATION).isEmpty() ? (count + 1) : count;
             return count > 1;
         }
 

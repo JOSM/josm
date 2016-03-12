@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -101,6 +102,41 @@ public final class SplitWayActionTest {
         }
     }
 
+    /**
+     * Unit test of {@link SplitWayAction#findVia}.
+     */
+    @Test
+    public void testFindVia() {
+        // empty relation
+        assertNull(SplitWayAction.findVia(new Relation(), null));
+        // restriction relation without via member
+        Relation r = new Relation();
+        r.addMember(new RelationMember("", new Node()));
+        assertNull(SplitWayAction.findVia(r, "restriction"));
+        // restriction relation with via member
+        r = new Relation();
+        OsmPrimitive via = new Node();
+        r.addMember(new RelationMember("via", via));
+        assertEquals(via, SplitWayAction.findVia(r, "restriction"));
+        // destination_sign relation without sign nor intersection
+        r = new Relation();
+        r.addMember(new RelationMember("", new Node()));
+        assertNull(SplitWayAction.findVia(r, "destination_sign"));
+        // destination_sign with sign
+        r = new Relation();
+        via = new Node();
+        r.addMember(new RelationMember("sign", via));
+        assertEquals(via, SplitWayAction.findVia(r, "destination_sign"));
+        // destination_sign with intersection
+        r = new Relation();
+        via = new Node();
+        r.addMember(new RelationMember("intersection", via));
+        assertEquals(via, SplitWayAction.findVia(r, "destination_sign"));
+    }
+
+    /**
+     * Unit tests of route relations.
+     */
     @Test
     public void testRouteRelation() {
         doTestRouteRelation(false, 0);
@@ -142,7 +178,6 @@ public final class SplitWayActionTest {
         route.addMember(new RelationMember("", w3));
         dataSet.setSelected(Arrays.asList(w2, n3, n4, n5));
 
-
         final SplitWayAction.Strategy strategy = new SplitWayAction.Strategy() {
 
             @Override
@@ -173,7 +208,6 @@ public final class SplitWayActionTest {
         assertFirstLastNodeIs(((Way) route.getMemberPrimitivesList().get(4)), n6);
         assertFirstLastNodeIs(((Way) route.getMemberPrimitivesList().get(5)), n6);
         assertFirstLastNodeIs(((Way) route.getMemberPrimitivesList().get(5)), n7);
-
     }
 
     static void assertFirstLastNodeIs(Way way, Node node) {

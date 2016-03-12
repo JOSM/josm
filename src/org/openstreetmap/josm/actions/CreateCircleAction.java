@@ -197,7 +197,7 @@ public final class CreateCircleAction extends JosmAction {
         }
         Arrays.sort(angles, new PolarNodeComparator());
         int[] count = distributeNodes(angles,
-                numberOfNodesInCircle >= nodes.size() ? numberOfNodesInCircle - nodes.size() : 0);
+                numberOfNodesInCircle >= nodes.size() ? (numberOfNodesInCircle - nodes.size()) : 0);
 
         // now we can start doing things to OSM data
         Collection<Command> cmds = new LinkedList<>();
