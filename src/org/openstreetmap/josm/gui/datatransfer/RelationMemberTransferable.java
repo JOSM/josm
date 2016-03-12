@@ -77,11 +77,11 @@ public class RelationMemberTransferable implements Transferable {
     protected String getStringData() {
         final StringBuilder sb = new StringBuilder();
         for (RelationMember member : members) {
-            sb.append(member.getType());
-            sb.append(" ").append(member.getUniqueId());
-            sb.append(" ").append(member.getRole());
-            sb.append(" # ").append(member.getMember().getDisplayName(DefaultNameFormatter.getInstance()));
-            sb.append("\n");
+            sb.append(member.getType())
+              .append(' ').append(member.getUniqueId())
+              .append(' ').append(member.getRole())
+              .append(" # ").append(member.getMember().getDisplayName(DefaultNameFormatter.getInstance()))
+              .append('\n');
         }
         return sb.toString().replace("\u200E", "").replace("\u200F", "");
     }
