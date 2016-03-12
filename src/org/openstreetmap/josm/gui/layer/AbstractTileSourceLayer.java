@@ -1614,7 +1614,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
 
     @Override
     public Action[] getMenuEntries() {
-        ArrayList<Action> actions = new ArrayList<Action>();
+        ArrayList<Action> actions = new ArrayList<>();
         actions.addAll(Arrays.asList(getLayerListEntries()));
         actions.addAll(Arrays.asList(getCommonEntries()));
         actions.add(SeparatorLayerAction.INSTANCE);

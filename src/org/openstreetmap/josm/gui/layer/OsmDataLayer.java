@@ -145,7 +145,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * @since 9668
      */
     public ArrayList<Relation> getRecentRelations() {
-        ArrayList<Relation> list = new ArrayList<Relation>(recentRelations.keySet());
+        ArrayList<Relation> list = new ArrayList<>(recentRelations.keySet());
         Collections.reverse(list);
         return list;
     }
