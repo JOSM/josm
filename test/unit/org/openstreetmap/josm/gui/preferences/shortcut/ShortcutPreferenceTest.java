@@ -34,6 +34,6 @@ public class ShortcutPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new ShortcutPreference.Factory(), null);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new ShortcutPreference.Factory(), null);
     }
 }

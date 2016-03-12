@@ -34,6 +34,6 @@ public class ValidatorTestsPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new ValidatorTestsPreference.Factory(), ValidatorPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new ValidatorTestsPreference.Factory(), ValidatorPreference.class);
     }
 }

@@ -35,6 +35,6 @@ public class ProjectionPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new ProjectionPreference.Factory(), MapPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new ProjectionPreference.Factory(), MapPreference.class);
     }
 }

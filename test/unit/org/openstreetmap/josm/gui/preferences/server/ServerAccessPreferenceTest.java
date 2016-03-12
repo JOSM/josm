@@ -34,6 +34,6 @@ public class ServerAccessPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new ServerAccessPreference.Factory(), null);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new ServerAccessPreference.Factory(), null);
     }
 }

@@ -34,6 +34,6 @@ public class ImageryPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new ImageryPreference.Factory(), null);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new ImageryPreference.Factory(), null);
     }
 }

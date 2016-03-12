@@ -88,6 +88,6 @@ public class PluginPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new PluginPreference.Factory(), null);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new PluginPreference.Factory(), null);
     }
 }

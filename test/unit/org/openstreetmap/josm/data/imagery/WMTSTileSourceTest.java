@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.JOSMFixture;
@@ -83,7 +84,6 @@ public class WMTSTileSourceTest {
         assertEquals("TileYMax", 2, testSource.getTileYMax(1));
         assertEquals("TileXMax", 4, testSource.getTileXMax(2));
         assertEquals("TileYMax", 4, testSource.getTileYMax(2));
-
     }
 
     @Test
@@ -105,8 +105,8 @@ public class WMTSTileSourceTest {
         verifyBounds(wallonieBounds, testSource, 10, 17724, 20324);
     }
 
-    // XXX - disable this test, needs further working
-    // @Test
+    @Test
+    @Ignore("disable this test, needs further working") // XXX
     public void testWALLONIENoMatrixDimension() throws MalformedURLException, IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(getImagery("test/data/wmts/WMTSCapabilities-Wallonie-nomatrixdimension.xml"));
@@ -223,9 +223,8 @@ public class WMTSTileSourceTest {
                 testSource.getTileUrl(0,  1,  1));
     }
 
-
-    // XXX: disabled as this needs user action
-    //@Test
+    @Test
+    @Ignore("disabled as this needs user action") // XXX
     public void testTwoTileSetsForOneProjection() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryOntario);
@@ -235,8 +234,8 @@ public class WMTSTileSourceTest {
 
     }
 
-    // XXX: disabled as this needs user action
-    // @Test
+    @Test
+    @Ignore("disabled as this needs user action") // XXX
     public void testManyLayersScrollbars() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testLotsOfLayers);
@@ -245,7 +244,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testPraserForDuplicateTags() throws Exception {
+    public void testParserForDuplicateTags() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testDuplicateTags);
         testSource.initProjection(Main.getProjection());
@@ -257,7 +256,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testPraserForMissingStyleIdentifier() throws Exception {
+    public void testParserForMissingStyleIdentifier() throws Exception {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testMissingStyleIdentifer);
         testSource.initProjection(Main.getProjection());
@@ -267,7 +266,6 @@ public class WMTSTileSourceTest {
         LatLon ll = new LatLon(source.tileXYToLatLon(x, y, z));
         assertEquals("Latitude", expected.lat(), ll.lat(), 1e-05);
         assertEquals("Longitude", expected.lon(), ll.lon(), 1e-05);
-
     }
 
     private void verifyMercatorTile(WMTSTileSource testSource, int x, int y, int z) {

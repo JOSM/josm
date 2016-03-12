@@ -23,15 +23,16 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
 public class PropertiesMergeModelTest {
 
-    public abstract static class TestObserver implements Observer {
+    private abstract static class TestObserver implements Observer {
         public int numInvocations;
 
+        @Override
         public void update(Observable o, Object arg) {
             numInvocations++;
-            test();
+            doTest();
         }
 
-        public abstract void test();
+        public abstract void doTest();
 
         public void assertNumInvocations(int count) {
             assertEquals(count, numInvocations);
@@ -99,7 +100,6 @@ public class PropertiesMergeModelTest {
         populate(n1, n2);
         assertTrue(model.hasCoordConflict());
 
-
         n1.cloneFrom(new Node(1));
         n2.setCoor(new LatLon(2, 2));
         populate(n1, n2);
@@ -116,7 +116,7 @@ public class PropertiesMergeModelTest {
         model.addObserver(
                 observerTest = new TestObserver() {
                     @Override
-                    public void test() {
+                    public void doTest() {
                         assertTrue(model.isCoordMergeDecision(MergeDecisionType.KEEP_MINE));
                     }
                 }
@@ -131,7 +131,7 @@ public class PropertiesMergeModelTest {
         model.addObserver(
                 observerTest = new TestObserver() {
                     @Override
-                    public void test() {
+                    public void doTest() {
                         assertTrue(model.isCoordMergeDecision(MergeDecisionType.KEEP_THEIR));
                     }
                 }

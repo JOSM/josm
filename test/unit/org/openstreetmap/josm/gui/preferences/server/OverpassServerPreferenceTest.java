@@ -34,6 +34,6 @@ public class OverpassServerPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new OverpassServerPreference.Factory(), ServerAccessPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new OverpassServerPreference.Factory(), ServerAccessPreference.class);
     }
 }
