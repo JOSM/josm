@@ -34,7 +34,7 @@ public class DoubleStereographic extends AbstractProj {
     private double n;
     private double c;
     private double chi0;
-    private double R;
+    private double r;
 
     private static final double EPSILON = 1e-12;
 
@@ -60,7 +60,7 @@ public class DoubleStereographic extends AbstractProj {
     private void initialize(double lat_0) {
         double phi0 = toRadians(lat_0);
         double e2 = ellps.e2;
-        R = sqrt(1-e2) / (1 - e2*pow(sin(phi0), 2));
+        r = sqrt(1-e2) / (1 - e2*pow(sin(phi0), 2));
         n = sqrt(1 + ellps.eb2 * pow(cos(phi0), 4));
         double S1 = (1 + sin(phi0)) / (1 - sin(phi0));
         double S2 = (1 - e * sin(phi0)) / (1 + e * sin(phi0));
@@ -79,19 +79,19 @@ public class DoubleStereographic extends AbstractProj {
         double w = c * pow(Sa * pow(Sb, e), n);
         double chi = asin((w - 1) / (w + 1));
         double B = 1 + sin(chi) * sin(chi0) + cos(chi) * cos(chi0) * cos(Lambda);
-        double x = 2 * R * cos(chi) * sin(Lambda) / B;
-        double y = 2 * R * (sin(chi) * cos(chi0) - cos(chi) * sin(chi0) * cos(Lambda)) / B;
+        double x = 2 * r * cos(chi) * sin(Lambda) / B;
+        double y = 2 * r * (sin(chi) * cos(chi0) - cos(chi) * sin(chi0) * cos(Lambda)) / B;
         return new double[] {x, y};
     }
 
     @Override
     public double[] invproject(double x, double y) {
         double e2 = ellps.e2;
-        double g = 2 * R * tan(PI/4 - chi0/2);
-        double h = 4 * R * tan(chi0) + g;
+        double g = 2 * r * tan(PI/4 - chi0/2);
+        double h = 4 * r * tan(chi0) + g;
         double i = atan(x/(h + y));
         double j = atan(x/(g - y)) - i;
-        double chi = chi0 + 2 * atan((y - x * tan(j/2)) / (2 * R));
+        double chi = chi0 + 2 * atan((y - x * tan(j/2)) / (2 * r));
         double Lambda = j + 2*i;
         double lambda = Lambda / n;
         double psi = 0.5 * log((1 + sin(chi)) / (c*(1 - sin(chi)))) / n;
