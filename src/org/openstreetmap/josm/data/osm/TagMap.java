@@ -233,14 +233,14 @@ public class TagMap extends AbstractMap<String, String> {
         boolean first = true;
         for (java.util.Map.Entry<String, String> e : entrySet()) {
             if (!first) {
-                stringBuilder.append(",");
+                stringBuilder.append(',');
             }
             stringBuilder.append(e.getKey());
-            stringBuilder.append("=");
+            stringBuilder.append('=');
             stringBuilder.append(e.getValue());
             first = false;
         }
-        stringBuilder.append("]");
+        stringBuilder.append(']');
         return stringBuilder.toString();
     }
 
