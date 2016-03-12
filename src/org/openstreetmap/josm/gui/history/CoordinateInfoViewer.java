@@ -190,7 +190,7 @@ public class CoordinateInfoViewer extends JPanel {
     }
 
     private static class Updater {
-        private final transient HistoryBrowserModel model;
+        private final HistoryBrowserModel model;
         private final PointInTimeType role;
 
         protected Updater(HistoryBrowserModel model, PointInTimeType role) {

@@ -1342,8 +1342,8 @@ public abstract class SourceEditor extends JPanel {
     class SourceLoader extends PleaseWaitRunnable {
         private final String url;
         private final List<SourceProvider> sourceProviders;
-        private transient CachedFile cachedFile;
-        private transient boolean canceled;
+        private CachedFile cachedFile;
+        private boolean canceled;
         private final List<ExtendedSourceEntry> sources = new ArrayList<>();
 
         SourceLoader(String url, List<SourceProvider> sourceProviders) {

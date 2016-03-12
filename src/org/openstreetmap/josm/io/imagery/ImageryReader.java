@@ -32,8 +32,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public class ImageryReader implements Closeable {
 
     private final String source;
-    private transient CachedFile cachedFile;
-    private transient boolean fastFail;
+    private CachedFile cachedFile;
+    private boolean fastFail;
 
     private enum State {
         INIT,               // initial state, should always be at the bottom of the stack
