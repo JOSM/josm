@@ -34,6 +34,6 @@ public class AudioPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new AudioPreference.Factory(), null);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new AudioPreference.Factory(), null);
     }
 }

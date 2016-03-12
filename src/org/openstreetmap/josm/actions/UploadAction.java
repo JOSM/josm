@@ -21,7 +21,6 @@ import org.openstreetmap.josm.actions.upload.ValidateUploadHook;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
@@ -154,7 +153,7 @@ public class UploadAction extends JosmAction {
                 ),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE,
-                HelpUtil.ht("/Action/Upload#PrimitivesParticipateInConflicts")
+                ht("/Action/Upload#PrimitivesParticipateInConflicts")
         );
     }
 

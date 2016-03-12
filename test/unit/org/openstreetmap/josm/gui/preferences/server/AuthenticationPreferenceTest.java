@@ -34,6 +34,6 @@ public class AuthenticationPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new AuthenticationPreference.Factory(), ServerAccessPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new AuthenticationPreference.Factory(), ServerAccessPreference.class);
     }
 }

@@ -34,6 +34,6 @@ public class LanguagePreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new LanguagePreference.Factory(), null);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new LanguagePreference.Factory(), null);
     }
 }

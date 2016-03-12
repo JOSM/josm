@@ -71,20 +71,20 @@ public class JCSCachedTileLoaderJobTest {
 
     @Test
     public void testStatusCodes() throws Exception {
-        testStatusCode(200);
+        doTestStatusCode(200);
         // can't test for 3xx, as httpstat.us redirects finally to 200 page
-        testStatusCode(401);
-        testStatusCode(402);
-        testStatusCode(403);
-        testStatusCode(404);
-        testStatusCode(405);
-        testStatusCode(500);
-        testStatusCode(501);
-        testStatusCode(502);
+        doTestStatusCode(401);
+        doTestStatusCode(402);
+        doTestStatusCode(403);
+        doTestStatusCode(404);
+        doTestStatusCode(405);
+        doTestStatusCode(500);
+        doTestStatusCode(501);
+        doTestStatusCode(502);
     }
 
     @Test
-    public void testUnkownHost() throws Exception {
+    public void testUnknownHost() throws Exception {
         TestCachedTileLoaderJob job = new TestCachedTileLoaderJob("http://unkownhost.unkownhost/unkown");
         Listener listener = new Listener();
         job.submit(listener, true);
@@ -96,7 +96,7 @@ public class JCSCachedTileLoaderJobTest {
         assertEquals("java.net.UnknownHostException: unkownhost.unkownhost", listener.attributes.getErrorMessage());
     }
 
-    public void testStatusCode(int responseCode) throws Exception {
+    private void doTestStatusCode(int responseCode) throws Exception {
         TestCachedTileLoaderJob job = getStatusLoaderJob(responseCode);
         Listener listener = new Listener();
         job.submit(listener, true);

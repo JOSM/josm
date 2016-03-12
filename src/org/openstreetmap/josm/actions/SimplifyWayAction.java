@@ -30,7 +30,6 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.Notification;
-import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -58,7 +57,7 @@ public class SimplifyWayAction extends JosmAction {
                 tr("Please select at least one way to simplify."))
                 .setIcon(JOptionPane.WARNING_MESSAGE)
                 .setDuration(Notification.TIME_SHORT)
-                .setHelpTopic(HelpUtil.ht("/Action/SimplifyWay#SelectAWayToSimplify"))
+                .setHelpTopic(ht("/Action/SimplifyWay#SelectAWayToSimplify"))
                 .show();
     }
 
@@ -88,7 +87,7 @@ public class SimplifyWayAction extends JosmAction {
                         null, // no special icon
                         options,
                         options[0],
-                        HelpUtil.ht("/Action/SimplifyWay#ConfirmSimplifyAll")
+                        ht("/Action/SimplifyWay#ConfirmSimplifyAll")
                 );
     }
 

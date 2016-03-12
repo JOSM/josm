@@ -34,6 +34,6 @@ public class AdvancedPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new AdvancedPreference.Factory(), null);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new AdvancedPreference.Factory(), null);
     }
 }

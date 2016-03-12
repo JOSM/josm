@@ -54,7 +54,6 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
-import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -517,7 +516,7 @@ public final class PluginHandler {
                 null, /* no special icon */
                 specs,
                 specs[0],
-                HelpUtil.ht("/Plugin/Loading#MissingRequiredPlugin"))) {
+                ht("/Plugin/Loading#MissingRequiredPlugin"))) {
             downloadRequiredPluginsAndRestart(parent, missingRequiredPlugin);
         }
     }
@@ -579,7 +578,7 @@ public final class PluginHandler {
                 ),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE,
-                HelpUtil.ht("/Plugin/Loading#JOSMUpdateRequired")
+                ht("/Plugin/Loading#JOSMUpdateRequired")
         );
     }
 
@@ -859,7 +858,7 @@ public final class PluginHandler {
                 sb.toString(),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE,
-                HelpUtil.ht("/Plugin/Loading#MissingPluginInfos")
+                ht("/Plugin/Loading#MissingPluginInfos")
         );
     }
 
@@ -927,7 +926,7 @@ public final class PluginHandler {
                 sb.toString(),
                 tr("Plugin update failed"),
                 JOptionPane.ERROR_MESSAGE,
-                HelpUtil.ht("/Plugin/Loading#FailedPluginUpdated")
+                ht("/Plugin/Loading#FailedPluginUpdated")
         );
     }
 

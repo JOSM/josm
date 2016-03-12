@@ -274,7 +274,7 @@ public class PlaceSelection implements DownloadSelection {
          * Read characters for description.
          */
         @Override
-        public void characters(char[] data, int start, int length) throws org.xml.sax.SAXException {
+        public void characters(char[] data, int start, int length) throws SAXException {
             if (description != null) {
                 description.append(data, start, length);
             }

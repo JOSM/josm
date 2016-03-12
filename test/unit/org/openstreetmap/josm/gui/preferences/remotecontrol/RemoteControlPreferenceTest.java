@@ -34,6 +34,6 @@ public class RemoteControlPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new RemoteControlPreference.Factory(), null);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new RemoteControlPreference.Factory(), null);
     }
 }

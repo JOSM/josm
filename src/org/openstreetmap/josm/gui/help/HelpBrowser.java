@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.help;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.buildAbsoluteHelpTopic;
 import static org.openstreetmap.josm.gui.help.HelpUtil.getHelpTopicEditUrl;
+import static org.openstreetmap.josm.gui.help.HelpUtil.getHelpTopicUrl;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
@@ -297,16 +298,16 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
      * @param relativeHelpTopic the relative help topic
      */
     protected void loadRelativeHelpTopic(String relativeHelpTopic) {
-        String url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.DEFAULTNOTENGLISH));
+        String url = getHelpTopicUrl(buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.DEFAULTNOTENGLISH));
         String content = null;
         try {
             content = reader.fetchHelpTopicContent(url, true);
         } catch (MissingHelpContentException e) {
-            url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.BASELANGUAGE));
+            url = getHelpTopicUrl(buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.BASELANGUAGE));
             try {
                 content = reader.fetchHelpTopicContent(url, true);
             } catch (MissingHelpContentException e1) {
-                url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.ENGLISH));
+                url = getHelpTopicUrl(buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.ENGLISH));
                 try {
                     content = reader.fetchHelpTopicContent(url, true);
                 } catch (MissingHelpContentException e2) {
@@ -340,7 +341,7 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
      * @param absoluteHelpTopic the absolute help topic name
      */
     protected void loadAbsoluteHelpTopic(String absoluteHelpTopic) {
-        String url = HelpUtil.getHelpTopicUrl(absoluteHelpTopic);
+        String url = getHelpTopicUrl(absoluteHelpTopic);
         String content = null;
         try {
             content = reader.fetchHelpTopicContent(url, true);

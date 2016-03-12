@@ -34,6 +34,6 @@ public class DrawingPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.testPreferenceSettingAddGui(new DrawingPreference.Factory(), DisplayPreference.class, 2);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new DrawingPreference.Factory(), DisplayPreference.class, 2);
     }
 }
