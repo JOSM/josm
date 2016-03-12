@@ -257,8 +257,8 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
     private double qsfn(final double sinphi) {
         if (e >= EPSILON) {
             final double con = e * sinphi;
-            return ((1.0 - e2) * (sinphi / (1.0 - con*con) -
-                    (0.5 / e) * Math.log((1.0 - con) / (1.0 + con))));
+            return (1.0 - e2) * (sinphi / (1.0 - con*con) -
+                    (0.5 / e) * Math.log((1.0 - con) / (1.0 + con)));
         } else {
             return sinphi + sinphi;
         }

@@ -19,6 +19,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 public abstract class AbstractRelationAction extends AbstractAction implements OsmPrimitiveAction {
     protected transient Collection<Relation> relations = Collections.<Relation>emptySet();
 
+    @SuppressWarnings("unused")
     protected static final Collection<Relation> getRelations(Collection<? extends OsmPrimitive> primitives) {
         if (primitives == null || primitives.isEmpty()) {
             return Collections.<Relation>emptySet();

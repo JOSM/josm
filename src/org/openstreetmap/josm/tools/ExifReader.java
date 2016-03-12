@@ -189,7 +189,7 @@ public final class ExifReader {
             if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
                 throw new IllegalArgumentException("deg, min and sec are NaN");
 
-            value = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
+            value = Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600));
 
             if (dirGps.getString(gpsTagRef).charAt(0) == cRef) {
                 value = -value;

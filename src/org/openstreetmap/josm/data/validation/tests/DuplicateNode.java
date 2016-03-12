@@ -382,6 +382,7 @@ public class DuplicateNode extends Test {
     public Command fixError(TestError testError) {
         if (!isFixable(testError)) return null;
         // Diamond operator does not work with Java 9 here
+        @SuppressWarnings("unused")
         Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>(testError.getPrimitives());
         Set<Node> nodes = new LinkedHashSet<>(OsmPrimitive.getFilteredList(sel, Node.class));
 

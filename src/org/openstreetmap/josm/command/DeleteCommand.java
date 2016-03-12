@@ -369,6 +369,7 @@ public class DeleteCommand extends Command {
             return null;
 
         // Diamond operator does not work with Java 9 here
+        @SuppressWarnings("unused")
         Set<OsmPrimitive> primitivesToDelete = new HashSet<OsmPrimitive>(selection);
 
         Collection<Relation> relationsToDelete = Utils.filteredCollection(primitivesToDelete, Relation.class);

@@ -392,7 +392,7 @@ public final class Entities {
                             }
                         }
                         String value = mapNameToValue.get(entityContent);
-                        entityValue = (value == null ? -1 : Integer.parseInt(value));
+                        entityValue = value == null ? -1 : Integer.parseInt(value);
                     }
                 }
 

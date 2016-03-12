@@ -55,7 +55,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     protected OsmWriter(PrintWriter out, boolean osmConform, String version) {
         super(out);
         this.osmConform = osmConform;
-        this.version = (version == null ? DEFAULT_API_VERSION : version);
+        this.version = version == null ? DEFAULT_API_VERSION : version;
     }
 
     public void setWithBody(boolean wb) {

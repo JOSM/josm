@@ -291,7 +291,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     protected OsmPrimitive(long id, int version, boolean allowNegativeId) {
         this(id, allowNegativeId);
-        this.version = (id > 0 ? version : 0);
+        this.version = id > 0 ? version : 0;
         setIncomplete(id > 0 && version == 0);
     }
 

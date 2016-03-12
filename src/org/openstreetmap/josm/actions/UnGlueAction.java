@@ -696,7 +696,7 @@ public class UnGlueAction extends JosmAction {
         for (Way way : ways) {
             for (OsmPrimitive ref : way.getReferrers()) {
                 if (ref instanceof Relation && ref.isUsable()) {
-                    affectedRelations.add((ref.getDisplayName(DefaultNameFormatter.getInstance())));
+                    affectedRelations.add(ref.getDisplayName(DefaultNameFormatter.getInstance()));
                 }
             }
         }

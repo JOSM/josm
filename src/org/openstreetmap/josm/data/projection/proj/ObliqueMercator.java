@@ -380,7 +380,7 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
             if (Math.abs(temp) < EPSILON_LATITUDE) {
                 u = AB * x;
             } else {
-                u = ArB * Math.atan2((S * cosgamma0 + V * singamma0), temp);
+                u = ArB * Math.atan2(S * cosgamma0 + V * singamma0, temp);
             }
         } else {
             v = y > 0 ? v_pole_n : v_pole_s;
@@ -407,7 +407,7 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
         } else {
             y = Math.pow(E / Math.sqrt((1. + Up) / (1. - Up)), 1.0 / B);  //calculate t
             y = cphi2(y);
-            x = -Math.atan2((Sp * cosgamma0 - Vp * singamma0), Math.cos(BrA * u)) / B;
+            x = -Math.atan2(Sp * cosgamma0 - Vp * singamma0, Math.cos(BrA * u)) / B;
         }
         return new double[] {y, x};
     }

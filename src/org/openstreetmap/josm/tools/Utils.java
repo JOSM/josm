@@ -144,6 +144,7 @@ public final class Utils {
         return null;
     }
 
+    @SuppressWarnings("unused")
     public static <T> Collection<T> filter(Collection<? extends T> collection, Predicate<? super T> predicate) {
         // Diamond operator does not work with Java 9 here
         return new FilteredCollection<T>(collection, predicate);

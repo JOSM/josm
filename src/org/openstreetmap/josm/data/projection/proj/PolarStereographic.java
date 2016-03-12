@@ -160,7 +160,7 @@ public class PolarStereographic extends AbstractProj {
             final double phi = (Math.PI/2) - 2.0*Math.atan(t*Math.pow((1-esinphi)/(1+esinphi), halfe));
             if (Math.abs(phi-phi0) < ITERATION_TOLERANCE) {
                 x = (Math.abs(rho) < EPSILON) ? 0.0 : Math.atan2(x, -y);
-                y = (southPole) ? -phi : phi;
+                y = southPole ? -phi : phi;
                 break;
             }
             phi0 = phi;
