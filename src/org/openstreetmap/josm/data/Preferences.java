@@ -1436,7 +1436,7 @@ public class Preferences {
         /* drop in October 2016 */
         if (loadedVersion < 9715) {
             Setting<?> setting = settingsMap.get("imagery.entries");
-            if (setting != null && setting instanceof MapListSetting) {
+            if (setting instanceof MapListSetting) {
                 List<Map<String, String>> l = new LinkedList<>();
                 boolean modified = false;
                 for (Map<String, String> map: ((MapListSetting) setting).getValue()) {
@@ -1461,7 +1461,7 @@ public class Preferences {
         // drop in November 2016
         if (loadedVersion < 9965) {
             Setting<?> setting = settingsMap.get("mappaint.style.entries");
-            if (setting != null && setting instanceof MapListSetting) {
+            if (setting instanceof MapListSetting) {
                 List<Map<String, String>> l = new LinkedList<>();
                 boolean modified = false;
                 for (Map<String, String> map: ((MapListSetting) setting).getValue()) {
