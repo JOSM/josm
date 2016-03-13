@@ -107,7 +107,6 @@ public class CoordinateInfoViewer extends JPanel {
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        gc.insets = new Insets(5, 5, 5, 5);
         add(mapViewer = new MapViewer(model), gc);
         mapViewer.setZoomContolsVisible(false);
     }
