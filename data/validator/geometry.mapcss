@@ -238,3 +238,8 @@ area:closed[place=island][eval(areasize()) < 500] {
   suggestAlternative: "place=islet";
   fixAdd: "place=islet";
 }
+
+/* 12561 - building larger than Aalsmeer Flower Auction */
+area:closed[building][eval(areasize()) > 500000] {
+  throwWarning: tr("Too large building");
+}
