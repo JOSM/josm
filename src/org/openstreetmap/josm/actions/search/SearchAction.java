@@ -66,7 +66,14 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     private static final String SEARCH_EXPRESSION = "searchExpression";
 
     public enum SearchMode {
-        replace('R'), add('A'), remove('D'), in_selection('S');
+        /** replace selection */
+        replace('R'),
+        /** add to selection */
+        add('A'),
+        /** remove from selection */
+        remove('D'),
+        /** find in selection */
+        in_selection('S');
 
         private final char code;
 
@@ -74,10 +81,19 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             this.code = code;
         }
 
+        /**
+         * Returns the unique character code of this mode.
+         * @return the unique character code of this mode
+         */
         public char getCode() {
             return code;
         }
 
+        /**
+         * Returns the search mode matching the given character code.
+         * @param code character code
+         * @return search mode matching the given character code
+         */
         public static SearchMode fromCode(char code) {
             for (SearchMode mode: values()) {
                 if (mode.getCode() == code)
