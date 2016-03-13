@@ -266,7 +266,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     /* can be set by tests, if detailed benchmark data is requested */
-    public BenchmarkData benchmarkData = null;
+    public BenchmarkData benchmarkData;
 
     private static Map<Font, Boolean> IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = new HashMap<>();
 

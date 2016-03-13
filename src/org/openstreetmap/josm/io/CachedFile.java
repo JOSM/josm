@@ -68,8 +68,8 @@ public class CachedFile implements Closeable {
     protected String httpAccept;
     protected CachingStrategy cachingStrategy;
 
-    private transient boolean fastFail;
-    private transient HttpClient activeConnection;
+    private boolean fastFail;
+    private HttpClient activeConnection;
     protected File cacheFile;
     protected boolean initialized;
 

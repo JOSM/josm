@@ -152,12 +152,8 @@ public class BBox {
      * @return {@code true} if {@code b} lies completely inside this bbox
      */
     public boolean bounds(BBox b) {
-        if (!(xmin <= b.xmin) ||
-                !(xmax >= b.xmax) ||
-                !(ymin <= b.ymin) ||
-                !(ymax >= b.ymax))
-            return false;
-        return true;
+        return xmin <= b.xmin && xmax >= b.xmax
+            && ymin <= b.ymin && ymax >= b.ymax;
     }
 
     /**
@@ -166,12 +162,8 @@ public class BBox {
      * @return {@code true} if {@code c} lies within the bbox
      */
     public boolean bounds(LatLon c) {
-        if ((xmin <= c.lon()) &&
-                (xmax >= c.lon()) &&
-                (ymin <= c.lat()) &&
-                (ymax >= c.lat()))
-            return true;
-        return false;
+        return xmin <= c.lon() && xmax >= c.lon()
+            && ymin <= c.lat() && ymax >= c.lat();
     }
 
     /**

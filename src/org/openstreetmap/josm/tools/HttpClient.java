@@ -49,8 +49,8 @@ public final class HttpClient {
     private int maxRedirects = Main.pref.getInteger("socket.maxredirects", 5);
     private boolean useCache;
     private String reasonForRequest;
-    private transient HttpURLConnection connection; // to allow disconnecting before `response` is set
-    private transient Response response;
+    private HttpURLConnection connection; // to allow disconnecting before `response` is set
+    private Response response;
 
     static {
         CookieHandler.setDefault(new CookieManager());

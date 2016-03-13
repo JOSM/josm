@@ -18,7 +18,7 @@ public final class CompileSearchTextDecorator implements DocumentListener {
 
     private final JTextComponent textComponent;
     private final String originalToolTipText;
-    private SearchCompiler.Match filter = null;
+    private SearchCompiler.Match filter;
 
     private CompileSearchTextDecorator(JTextComponent textComponent) {
         this.textComponent = textComponent;

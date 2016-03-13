@@ -242,7 +242,7 @@ public class CacheContentsPanel extends JPanel {
     }
 
     private static DefaultTableModel getTableModel(final CacheAccess<String, BufferedImageCacheEntry> cache) {
-        final DefaultTableModel tableModel = new DefaultTableModel(
+        return new DefaultTableModel(
                 getCacheStats(cache),
                 new String[]{tr("Cache name"), tr("Object Count"), tr("Clear")}) {
             @Override
@@ -250,6 +250,5 @@ public class CacheContentsPanel extends JPanel {
                 return column == 2;
             }
         };
-        return tableModel;
     }
 }

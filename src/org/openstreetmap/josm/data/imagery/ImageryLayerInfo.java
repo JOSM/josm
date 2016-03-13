@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,8 +25,6 @@ import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Manages the list of imagery entries that are shown in the imagery menu.
@@ -112,8 +112,8 @@ public class ImageryLayerInfo {
         private final boolean clearCache;
         private final boolean fastFail;
         private final List<ImageryInfo> newLayers = new ArrayList<>();
-        private transient ImageryReader reader;
-        private transient boolean canceled;
+        private ImageryReader reader;
+        private boolean canceled;
 
         DefaultEntryLoader(boolean clearCache, boolean fastFail) {
             super(tr("Update default entries"));

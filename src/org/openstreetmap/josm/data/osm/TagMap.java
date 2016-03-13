@@ -36,7 +36,7 @@ public class TagMap extends AbstractMap<String, String> {
         /**
          * Current tag index. Always a multiple of 2.
          */
-        private int currentIndex = 0;
+        private int currentIndex;
 
         /**
          * Create a new {@link TagEntryInterator}
