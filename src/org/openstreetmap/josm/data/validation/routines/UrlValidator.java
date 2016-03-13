@@ -539,9 +539,4 @@ public class UrlValidator extends AbstractValidator {
     private boolean isOff(long flag) {
         return (options & flag) == 0;
     }
-
-    // Unit test access to pattern matcher
-    Matcher matchURL(String value) {
-        return URL_PATTERN.matcher(value);
-    }
 }

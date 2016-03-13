@@ -286,14 +286,6 @@ public class CombineWayAction extends JosmAction {
         }
 
         /**
-         * Constructs a new {@code NodePair}.
-         * @param other An existing {@code NodePair}
-         */
-        public NodePair(NodePair other) {
-            this(other.a, other.b);
-        }
-
-        /**
          * Replies the first node.
          * @return The first node
          */
@@ -307,14 +299,6 @@ public class CombineWayAction extends JosmAction {
          */
         public Node getB() {
             return b;
-        }
-
-        public boolean isAdjacentToA(NodePair other) {
-            return other.getA() == a || other.getB() == a;
-        }
-
-        public boolean isAdjacentToB(NodePair other) {
-            return other.getA() == b || other.getB() == b;
         }
 
         public boolean isSuccessorOf(NodePair other) {

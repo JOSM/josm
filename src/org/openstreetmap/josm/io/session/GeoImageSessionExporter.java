@@ -28,7 +28,7 @@ public class GeoImageSessionExporter extends AbstractSessionExporter<GeoImageLay
      * Constructs a new {@code GeoImageSessionExporter}.
      * @param layer GeoImage layer to export
      */
-    public GeoImageSessionExporter(GeoImageLayer layer) {
+    public GeoImageSessionExporter(GeoImageLayer layer) { // NO_UCD (unused code)
         super(layer);
     }
 

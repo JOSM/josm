@@ -56,8 +56,6 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
 
     /** Small icon size for use in graphics calculations */
     public static final int ICON_SMALL_SIZE = 16;
-    /** Large icon size for use in graphics calculations */
-    public static final int ICON_LARGE_SIZE = 24;
     /** 24x24 icon for unresolved notes */
     public static final ImageIcon ICON_OPEN = ImageProvider.get("dialogs/notes", "note_open");
     /** 16x16 icon for unresolved notes */

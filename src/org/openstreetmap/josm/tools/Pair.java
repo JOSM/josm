@@ -1,7 +1,5 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -44,19 +42,6 @@ public final class Pair<A, B> {
         Pair<?, ?> pair = (Pair<?, ?>) other;
         return Objects.equals(a, pair.a) &&
                 Objects.equals(b, pair.b);
-    }
-
-    /**
-     * Converts a single-typed pair to a list.
-     * @param <T> type of both elements
-     * @param p pair
-     * @return list containing a and b
-     */
-    public static <T> List<T> toList(Pair<T, T> p) {
-        List<T> l = new ArrayList<>(2);
-        l.add(p.a);
-        l.add(p.b);
-        return l;
     }
 
     /**

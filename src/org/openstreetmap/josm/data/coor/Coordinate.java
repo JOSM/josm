@@ -92,16 +92,6 @@ abstract class Coordinate implements Serializable {
     }
 
     /**
-     * Converts to single point BBox.
-     *
-     * @return single point BBox defined by this coordinate.
-     * @since 6203
-     */
-    public BBox toBBox() {
-        return new BBox(x, y);
-    }
-
-    /**
      * Creates bbox around this coordinate. Coordinate defines
      * center of bbox, its edge will be 2*r.
      *

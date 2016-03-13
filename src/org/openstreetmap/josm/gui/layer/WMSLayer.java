@@ -43,9 +43,6 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<TemplatedWMSTileSour
     /** should WMS layer autozoom in default mode */
     public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty(PREFERENCE_PREFIX + "default_autozoom", true);
 
-    /** limit of concurrent connections to WMS tile source (per source) */
-    public static final IntegerProperty THREAD_LIMIT = new IntegerProperty(PREFERENCE_PREFIX + "simultaneousConnections", 3);
-
     private static final String CACHE_REGION_NAME = "WMS";
 
     private final Set<String> supportedProjections;

@@ -14,10 +14,15 @@ import javax.swing.table.TableColumnModel;
  */
 public class VersionTableColumnModel extends DefaultTableColumnModel {
 
+    /** Column index for version */
     public static final int COL_VERSION = 0;
+    /** Column index for reference */
     public static final int COL_REFERENCE = 1;
+    /** Column index for current */
     public static final int COL_CURRENT = 2;
+    /** Column index for date */
     public static final int COL_DATE = 3;
+    /** Column index for user */
     public static final int COL_USER = 4;
 
     protected void createColumns() {
@@ -25,33 +30,33 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
         VersionTable.RadioButtonRenderer bRenderer = new VersionTable.RadioButtonRenderer();
 
         // column 0 - Version
-        col = new TableColumn(0);
+        col = new TableColumn(COL_VERSION);
         /* translation note: 3 letter abbr. for "Version" */
         col.setHeaderValue(tr("Ver"));
         col.setCellRenderer(new VersionTable.AlignedRenderer(SwingConstants.CENTER));
         col.setResizable(false);
         addColumn(col);
         // column 1 - Reference
-        col = new TableColumn(1);
+        col = new TableColumn(COL_REFERENCE);
         col.setHeaderValue(tr("A"));
         col.setCellRenderer(bRenderer);
         col.setCellEditor(new VersionTable.RadioButtonEditor());
         col.setResizable(false);
         addColumn(col);
         // column 2 - Current
-        col = new TableColumn(2);
+        col = new TableColumn(COL_CURRENT);
         col.setHeaderValue(tr("B"));
         col.setCellRenderer(bRenderer);
         col.setCellEditor(new VersionTable.RadioButtonEditor());
         col.setResizable(false);
         addColumn(col);
         // column 3 - Date
-        col = new TableColumn(3);
+        col = new TableColumn(COL_DATE);
         col.setHeaderValue(tr("Date"));
         col.setResizable(false);
         addColumn(col);
         // column 4 - User
-        col = new TableColumn(4);
+        col = new TableColumn(COL_USER);
         col.setHeaderValue(tr("User"));
         col.setResizable(false);
         addColumn(col);

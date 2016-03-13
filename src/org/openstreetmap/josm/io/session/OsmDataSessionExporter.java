@@ -21,7 +21,7 @@ public class OsmDataSessionExporter extends GenericSessionExporter<OsmDataLayer>
      * Constructs a new {@code OsmDataSessionExporter}.
      * @param layer Data layer to export
      */
-    public OsmDataSessionExporter(OsmDataLayer layer) {
+    public OsmDataSessionExporter(OsmDataLayer layer) { // NO_UCD (test only)
         super(layer, "osm-data", "0.1", "osm");
     }
 

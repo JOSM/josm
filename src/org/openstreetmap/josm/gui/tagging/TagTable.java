@@ -11,7 +11,6 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -484,13 +483,6 @@ public class TagTable extends JTable  {
 
     public TagCellEditor getTableCellEditor() {
         return editor;
-    }
-
-    public void addOKAccelatorListener(KeyListener l) {
-        addKeyListener(l);
-        if (editor != null) {
-            editor.getEditor().addKeyListener(l);
-        }
     }
 
     /**

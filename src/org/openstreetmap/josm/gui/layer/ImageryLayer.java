@@ -7,27 +7,17 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Transparency;
 import java.awt.event.ActionEvent;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineBreakMeasurer;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.awt.image.LookupOp;
 import java.awt.image.ShortLookupTable;
-import java.text.AttributedCharacterIterator;
-import java.text.AttributedString;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
@@ -384,62 +374,6 @@ public abstract class ImageryLayer extends Layer {
             img = processor.process(img);
         }
         return img;
-    }
-
-    /**
-     * Draws a red error tile when imagery tile cannot be fetched.
-     * @param img The buffered image
-     * @param message Additional error message to display
-     */
-    public void drawErrorTile(BufferedImage img, String message) {
-        Graphics2D g = (Graphics2D) img.getGraphics();
-        g.setColor(Color.RED);
-        g.fillRect(0, 0, img.getWidth(), img.getHeight());
-        g.setFont(g.getFont().deriveFont(Font.PLAIN).deriveFont(24.0f));
-        g.setColor(Color.BLACK);
-
-        String text = tr("ERROR");
-        g.drawString(text, (img.getWidth() - g.getFontMetrics().stringWidth(text)) / 2, g.getFontMetrics().getHeight()+5);
-        if (message != null) {
-            float drawPosY = 2.5f*g.getFontMetrics().getHeight()+10;
-            if (!message.contains(" ")) {
-                g.setFont(g.getFont().deriveFont(Font.PLAIN).deriveFont(18.0f));
-                g.drawString(message, 5, (int) drawPosY);
-            } else {
-                // Draw message on several lines
-                Map<TextAttribute, Object> map = new HashMap<>();
-                map.put(TextAttribute.FAMILY, "Serif");
-                map.put(TextAttribute.SIZE, new Float(18.0));
-                AttributedString vanGogh = new AttributedString(message, map);
-                // Create a new LineBreakMeasurer from the text
-                AttributedCharacterIterator paragraph = vanGogh.getIterator();
-                int paragraphStart = paragraph.getBeginIndex();
-                int paragraphEnd = paragraph.getEndIndex();
-                FontRenderContext frc = g.getFontRenderContext();
-                LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(paragraph, frc);
-                // Set break width to width of image with some margin
-                float breakWidth = img.getWidth()-10;
-                // Set position to the index of the first character in the text
-                lineMeasurer.setPosition(paragraphStart);
-                // Get lines until the entire paragraph has been displayed
-                while (lineMeasurer.getPosition() < paragraphEnd) {
-                    // Retrieve next layout
-                    TextLayout layout = lineMeasurer.nextLayout(breakWidth);
-
-                    // Compute pen x position
-                    float drawPosX = layout.isLeftToRight() ? 0 : breakWidth - layout.getAdvance();
-
-                    // Move y-coordinate by the ascent of the layout
-                    drawPosY += layout.getAscent();
-
-                    // Draw the TextLayout at (drawPosX, drawPosY)
-                    layout.draw(g, drawPosX, drawPosY);
-
-                    // Move y-coordinate in preparation for next layout
-                    drawPosY += layout.getDescent() + layout.getLeading();
-                }
-            }
-        }
     }
 
     @Override

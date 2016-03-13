@@ -36,7 +36,7 @@ public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> 
      * Constructs a new {@code MarkerSessionExporter}.
      * @param layer marker layer to export
      */
-    public MarkerSessionExporter(MarkerLayer layer) {
+    public MarkerSessionExporter(MarkerLayer layer) { // NO_UCD (unused code)
         super(layer);
     }
 

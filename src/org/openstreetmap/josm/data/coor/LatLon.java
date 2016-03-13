@@ -47,7 +47,6 @@ public class LatLon extends Coordinate {
      */
     public static final double MAX_SERVER_PRECISION = 1e-7;
     public static final double MAX_SERVER_INV_PRECISION = 1e7;
-    public static final int    MAX_SERVER_DIGITS = 7;
 
     /**
      * The (0,0) coordinates.
