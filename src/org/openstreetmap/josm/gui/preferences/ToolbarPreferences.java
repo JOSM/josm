@@ -954,14 +954,6 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         }
     }
 
-    public Action getAction(String s) {
-        Action e = actions.get(s);
-        if (e == null) {
-            e = regactions.get(s);
-        }
-        return e;
-    }
-
     private void loadActions() {
         rootActionsNode.removeAllChildren();
         loadAction(rootActionsNode, Main.main.menu);

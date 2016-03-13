@@ -94,8 +94,6 @@ public final class I18n {
 
     private static volatile PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
     private static volatile String loadedCode = "en";
-    /** store the original system locale for further use */
-    public static final Locale SystemLocale = Locale.getDefault();
 
     /* Localization keys for file chooser (and color chooser). */
     private static final String[] javaInternalMessageKeys = new String[] {

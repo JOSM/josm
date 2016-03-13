@@ -32,7 +32,7 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
      * Constructs a new {@code ImagerySessionExporter}.
      * @param layer imagery layer to export
      */
-    public ImagerySessionExporter(ImageryLayer layer) {
+    public ImagerySessionExporter(ImageryLayer layer) { // NO_UCD (unused code)
         super(layer);
     }
 
@@ -40,7 +40,7 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
      * Constructs a new {@code ImagerySessionExporter}.
      * @param layer TMS layer to export
      */
-    public ImagerySessionExporter(TMSLayer layer) {
+    public ImagerySessionExporter(TMSLayer layer) { // NO_UCD (unused code)
         super(layer);
     }
 
@@ -48,7 +48,7 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
      * Constructs a new {@code ImagerySessionExporter}.
      * @param layer WMS layer to export
      */
-    public ImagerySessionExporter(WMSLayer layer) {
+    public ImagerySessionExporter(WMSLayer layer) { // NO_UCD (unused code)
         super(layer);
     }
 
@@ -56,7 +56,7 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
      * Constructs a new {@code ImagerySessionExporter}.
      * @param layer WMTS layer to export
      */
-    public ImagerySessionExporter(WMTSLayer layer) {
+    public ImagerySessionExporter(WMTSLayer layer) { // NO_UCD (unused code)
         super(layer);
     }
 

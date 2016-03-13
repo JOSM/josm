@@ -17,7 +17,7 @@ public class NoteSessionExporter extends GenericSessionExporter<NoteLayer> {
      * Constructs a new {@code NoteSessionExporter}.
      * @param layer Note layer to export
      */
-    public NoteSessionExporter(NoteLayer layer) {
+    public NoteSessionExporter(NoteLayer layer) { // NO_UCD (unused code)
         super(layer, "osm-notes", "0.1", "osn");
     }
 

@@ -86,10 +86,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
             }
             return sources;
         }
-
-        public static void addExistingSlippyMapUrl(String url) {
-            existingSlippyMapUrls.add(url);
-        }
     }
 
     /**

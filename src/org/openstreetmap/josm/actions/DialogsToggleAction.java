@@ -42,15 +42,6 @@ public class DialogsToggleAction extends ToggleAction {
         setMode();
     }
 
-    /**
-     * To call if this action must be initially run at JOSM startup.
-     */
-    public void initial() {
-        if (isSelected()) {
-            setMode();
-        }
-    }
-
     protected void setMode() {
         if (Main.isDisplayingMapView()) {
             boolean selected = isSelected();

@@ -20,7 +20,7 @@ public class GpxTracksSessionExporter extends GenericSessionExporter<GpxLayer> {
      * Constructs a new {@code GpxTracksSessionExporter}.
      * @param layer GPX layer to export
      */
-    public GpxTracksSessionExporter(GpxLayer layer) {
+    public GpxTracksSessionExporter(GpxLayer layer) { // NO_UCD (test only)
         super(layer, "tracks", "0.1", "gpx");
     }
 

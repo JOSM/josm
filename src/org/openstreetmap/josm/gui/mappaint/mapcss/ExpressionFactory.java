@@ -121,7 +121,7 @@ public final class ExpressionFactory {
          * @param o any object
          * @return {@code o} unchanged
          */
-        public static Object eval(Object o) {
+        public static Object eval(Object o) { // NO_UCD (unused code)
             return o;
         }
 
@@ -130,7 +130,7 @@ public final class ExpressionFactory {
          * @param args arguments
          * @return Sum of arguments
          */
-        public static float plus(float... args) {
+        public static float plus(float... args) { // NO_UCD (unused code)
             float res = 0;
             for (float f : args) {
                 res += f;
@@ -143,7 +143,7 @@ public final class ExpressionFactory {
          * @param args arguments
          * @return Substraction of arguments
          */
-        public static Float minus(float... args) {
+        public static Float minus(float... args) { // NO_UCD (unused code)
             if (args.length == 0) {
                 return 0.0F;
             }
@@ -162,7 +162,7 @@ public final class ExpressionFactory {
          * @param args arguments
          * @return Multiplication of arguments
          */
-        public static float times(float... args) {
+        public static float times(float... args) { // NO_UCD (unused code)
             float res = 1;
             for (float f : args) {
                 res *= f;
@@ -175,7 +175,7 @@ public final class ExpressionFactory {
          * @param args arguments
          * @return Division of arguments
          */
-        public static Float divided_by(float... args) {
+        public static Float divided_by(float... args) { // NO_UCD (unused code)
             if (args.length == 0) {
                 return 1.0F;
             }
@@ -195,7 +195,7 @@ public final class ExpressionFactory {
          * @return list of values
          * @see Arrays#asList(Object[])
          */
-        public static List<Object> list(Object... args) {
+        public static List<Object> list(Object... args) { // NO_UCD (unused code)
             return Arrays.asList(args);
         }
 
@@ -204,7 +204,7 @@ public final class ExpressionFactory {
          * @param lst the list
          * @return length of the list
          */
-        public static Integer count(List<?> lst) {
+        public static Integer count(List<?> lst) { // NO_UCD (unused code)
             return lst.size();
         }
 
@@ -216,7 +216,7 @@ public final class ExpressionFactory {
          * @see Utils#firstNonNull(Object[])
          */
         @NullableArguments
-        public static Object any(Object... args) {
+        public static Object any(Object... args) { // NO_UCD (unused code)
             return Utils.firstNonNull(args);
         }
 
@@ -227,7 +227,7 @@ public final class ExpressionFactory {
          * @return {@code n}th element of the list, or {@code null} if index out of range
          * @since 5699
          */
-        public static Object get(List<?> lst, float n) {
+        public static Object get(List<?> lst, float n) { // NO_UCD (unused code)
             int idx = Math.round(n);
             if (idx >= 0 && idx < lst.size()) {
                 return lst.get(idx);
@@ -243,7 +243,7 @@ public final class ExpressionFactory {
          * @see String#split(String)
          * @since 5699
          */
-        public static List<String> split(String sep, String toSplit) {
+        public static List<String> split(String sep, String toSplit) { // NO_UCD (unused code)
             return Arrays.asList(toSplit.split(Pattern.quote(sep), -1));
         }
 
@@ -255,7 +255,7 @@ public final class ExpressionFactory {
          * @return color matching the given components
          * @see Color#Color(float, float, float)
          */
-        public static Color rgb(float r, float g, float b) {
+        public static Color rgb(float r, float g, float b) { // NO_UCD (unused code)
             try {
                 return new Color(r, g, b);
             } catch (IllegalArgumentException e) {
@@ -273,7 +273,7 @@ public final class ExpressionFactory {
          * @return color matching the given components
          * @see Color#Color(float, float, float, float)
          */
-        public static Color rgba(float r, float g, float b, float alpha) {
+        public static Color rgba(float r, float g, float b, float alpha) { // NO_UCD (unused code)
             try {
                 return new Color(r, g, b, alpha);
             } catch (IllegalArgumentException e) {
@@ -288,7 +288,7 @@ public final class ExpressionFactory {
          * @param b brightness
          * @return the corresponding color
          */
-        public static Color hsb_color(float h, float s, float b) {
+        public static Color hsb_color(float h, float s, float b) { // NO_UCD (unused code)
             try {
                 return Color.getHSBColor(h, s, b);
             } catch (IllegalArgumentException e) {
@@ -301,7 +301,7 @@ public final class ExpressionFactory {
          * @param html HTML notation
          * @return color matching the given notation
          */
-        public static Color html2color(String html) {
+        public static Color html2color(String html) { // NO_UCD (unused code)
             return ColorHelper.html2color(html);
         }
 
@@ -310,7 +310,7 @@ public final class ExpressionFactory {
          * @param c color
          * @return HTML notation matching the given color
          */
-        public static String color2html(Color c) {
+        public static String color2html(Color c) { // NO_UCD (unused code)
             return ColorHelper.color2html(c);
         }
 
@@ -320,7 +320,7 @@ public final class ExpressionFactory {
          * @return the red color channel in the range [0;1]
          * @see java.awt.Color#getRed()
          */
-        public static float red(Color c) {
+        public static float red(Color c) { // NO_UCD (unused code)
             return Utils.color_int2float(c.getRed());
         }
 
@@ -330,7 +330,7 @@ public final class ExpressionFactory {
          * @return the green color channel in the range [0;1]
          * @see java.awt.Color#getGreen()
          */
-        public static float green(Color c) {
+        public static float green(Color c) { // NO_UCD (unused code)
             return Utils.color_int2float(c.getGreen());
         }
 
@@ -340,7 +340,7 @@ public final class ExpressionFactory {
          * @return the blue color channel in the range [0;1]
          * @see java.awt.Color#getBlue()
          */
-        public static float blue(Color c) {
+        public static float blue(Color c) { // NO_UCD (unused code)
             return Utils.color_int2float(c.getBlue());
         }
 
@@ -350,7 +350,7 @@ public final class ExpressionFactory {
          * @return the alpha channel in the range [0;1]
          * @see java.awt.Color#getAlpha()
          */
-        public static float alpha(Color c) {
+        public static float alpha(Color c) { // NO_UCD (unused code)
             return Utils.color_int2float(c.getAlpha());
         }
 
@@ -361,7 +361,7 @@ public final class ExpressionFactory {
          * @see Utils#join
          */
         @NullableArguments
-        public static String concat(Object... args) {
+        public static String concat(Object... args) { // NO_UCD (unused code)
             return Utils.join("", Arrays.asList(args));
         }
 
@@ -372,7 +372,7 @@ public final class ExpressionFactory {
          * @see Utils#join
          */
         @NullableArguments
-        public static String join(String... args) {
+        public static String join(String... args) { // NO_UCD (unused code)
             return Utils.join(args[0], Arrays.asList(args).subList(1, args.length));
         }
 
@@ -383,7 +383,7 @@ public final class ExpressionFactory {
          * @return assembled string
          * @see Utils#join
          */
-        public static String join_list(final String separator, final List<String> values) {
+        public static String join_list(final String separator, final List<String> values) { // NO_UCD (unused code)
             return Utils.join(separator, values);
         }
 
@@ -393,7 +393,7 @@ public final class ExpressionFactory {
          * @param key the property key
          * @return the property value
          */
-        public static Object prop(final Environment env, String key) {
+        public static Object prop(final Environment env, String key) { // NO_UCD (unused code)
             return prop(env, key, null);
         }
 
@@ -414,7 +414,7 @@ public final class ExpressionFactory {
          * @param key the property key
          * @return {@code true} if the property is set, {@code false} otherwise
          */
-        public static Boolean is_prop_set(final Environment env, String key) {
+        public static Boolean is_prop_set(final Environment env, String key) { // NO_UCD (unused code)
             return is_prop_set(env, key, null);
         }
 
@@ -435,7 +435,7 @@ public final class ExpressionFactory {
          * @param key the OSM key
          * @return the value for given key
          */
-        public static String tag(final Environment env, String key) {
+        public static String tag(final Environment env, String key) { // NO_UCD (unused code)
             return env.osm == null ? null : env.osm.get(key);
         }
 
@@ -445,7 +445,7 @@ public final class ExpressionFactory {
          * @param key the OSM key
          * @return first non-null value of the key {@code key} from the object's parent(s)
          */
-        public static String parent_tag(final Environment env, String key) {
+        public static String parent_tag(final Environment env, String key) { // NO_UCD (unused code)
             if (env.parent == null) {
                 if (env.osm != null) {
                     // we don't have a matched parent, so just search all referrers
@@ -469,7 +469,7 @@ public final class ExpressionFactory {
          * @param key the OSM key
          * @return a list of non-null values of the key {@code key} from the object's parent(s)
          */
-        public static List<String> parent_tags(final Environment env, String key) {
+        public static List<String> parent_tags(final Environment env, String key) { // NO_UCD (unused code)
             if (env.parent == null) {
                 if (env.osm != null) {
                     final Collection<String> tags = new TreeSet<>(AlphanumComparator.getInstance());
@@ -493,7 +493,7 @@ public final class ExpressionFactory {
          * @param key the OSM key
          * @return the value of the key {@code key} from the object's child, or {@code null} if there is no child
          */
-        public static String child_tag(final Environment env, String key) {
+        public static String child_tag(final Environment env, String key) { // NO_UCD (unused code)
             return env.child == null ? null : env.child.get(key);
         }
 
@@ -503,7 +503,7 @@ public final class ExpressionFactory {
          * @param key the OSM key
          * @return {@code true} if the object has a tag with the given key, {@code false} otherwise
          */
-        public static boolean has_tag_key(final Environment env, String key) {
+        public static boolean has_tag_key(final Environment env, String key) { // NO_UCD (unused code)
             return env.osm.hasKey(key);
         }
 
@@ -512,7 +512,7 @@ public final class ExpressionFactory {
          * @param env the environment
          * @return the index as float. Starts at 1
          */
-        public static Float index(final Environment env) {
+        public static Float index(final Environment env) { // NO_UCD (unused code)
             if (env.index == null) {
                 return null;
             }
@@ -525,7 +525,7 @@ public final class ExpressionFactory {
          * @return role of current object in parent relation, or role of child if current object is a relation
          * @see Environment#getRole()
          */
-        public static String role(final Environment env) {
+        public static String role(final Environment env) { // NO_UCD (unused code)
             return env.getRole();
         }
 
@@ -535,7 +535,7 @@ public final class ExpressionFactory {
          * @return the area of a closed way or multipolygon in square meters or {@code null}
          * @see Geometry#computeArea(OsmPrimitive)
          */
-        public static Float areasize(final Environment env) {
+        public static Float areasize(final Environment env) { // NO_UCD (unused code)
             final Double area = Geometry.computeArea(env.osm);
             return area == null ? null : area.floatValue();
         }
@@ -546,7 +546,7 @@ public final class ExpressionFactory {
          * @return the length of the way in metres or {@code null}.
          * @see Way#getLength()
          */
-        public static Float waylength(final Environment env) {
+        public static Float waylength(final Environment env) { // NO_UCD (unused code)
             if (env.osm instanceof Way) {
                 return (float) ((Way) env.osm).getLength();
             } else {
@@ -559,7 +559,7 @@ public final class ExpressionFactory {
          * @param b boolean value
          * @return {@code true} if {@code !b}
          */
-        public static boolean not(boolean b) {
+        public static boolean not(boolean b) { // NO_UCD (unused code)
             return !b;
         }
 
@@ -569,7 +569,7 @@ public final class ExpressionFactory {
          * @param b second value
          * @return {@code true} if {@code a &gt;= b}
          */
-        public static boolean greater_equal(float a, float b) {
+        public static boolean greater_equal(float a, float b) { // NO_UCD (unused code)
             return a >= b;
         }
 
@@ -579,7 +579,7 @@ public final class ExpressionFactory {
          * @param b second value
          * @return {@code true} if {@code a &lt;= b}
          */
-        public static boolean less_equal(float a, float b) {
+        public static boolean less_equal(float a, float b) { // NO_UCD (unused code)
             return a <= b;
         }
 
@@ -589,7 +589,7 @@ public final class ExpressionFactory {
          * @param b second value
          * @return {@code true} if {@code a &gt; b}
          */
-        public static boolean greater(float a, float b) {
+        public static boolean greater(float a, float b) { // NO_UCD (unused code)
             return a > b;
         }
 
@@ -599,7 +599,7 @@ public final class ExpressionFactory {
          * @param b second value
          * @return {@code true} if {@code a &lt; b}
          */
-        public static boolean less(float a, float b) {
+        public static boolean less(float a, float b) { // NO_UCD (unused code)
             return a < b;
         }
 
@@ -609,7 +609,7 @@ public final class ExpressionFactory {
          * @return the angle in radians
          * @see Math#toRadians(double)
          */
-        public static double degree_to_radians(double degree) {
+        public static double degree_to_radians(double degree) { // NO_UCD (unused code)
             return Math.toRadians(degree);
         }
 
@@ -622,7 +622,7 @@ public final class ExpressionFactory {
          * @return the angle in radians
          * @see RotationAngle#parseCardinalRotation(String)
          */
-        public static Double cardinal_to_radians(String cardinal) {
+        public static Double cardinal_to_radians(String cardinal) { // NO_UCD (unused code)
             try {
                 return RotationAngle.parseCardinalRotation(cardinal);
             } catch (IllegalArgumentException ignore) {
@@ -650,7 +650,7 @@ public final class ExpressionFactory {
          * @return {@code false} if objects are equal, {@code true} otherwise
          * @see Object#equals(Object)
          */
-        public static boolean not_equal(Object a, Object b) {
+        public static boolean not_equal(Object a, Object b) { // NO_UCD (unused code)
             return !equal(a, b);
         }
 
@@ -661,7 +661,7 @@ public final class ExpressionFactory {
          * @return {@code true} if the JOSM search with {@code searchStr} applies to the object
          * @see SearchCompiler
          */
-        public static Boolean JOSM_search(final Environment env, String searchStr) {
+        public static Boolean JOSM_search(final Environment env, String searchStr) { // NO_UCD (unused code)
             Match m;
             try {
                 m = SearchCompiler.compile(searchStr);
@@ -679,7 +679,7 @@ public final class ExpressionFactory {
          * @param def Default value
          * @return value for key, or default value if not found
          */
-        public static String JOSM_pref(Environment env, String key, String def) {
+        public static String JOSM_pref(Environment env, String key, String def) { // NO_UCD (unused code)
             return MapPaintStyles.getStyles().getPreferenceCached(key, def);
         }
 
@@ -691,7 +691,7 @@ public final class ExpressionFactory {
          * @see Pattern#matches(String, CharSequence)
          * @since 5699
          */
-        public static boolean regexp_test(String pattern, String target) {
+        public static boolean regexp_test(String pattern, String target) { // NO_UCD (unused code)
             return Pattern.matches(pattern, target);
         }
 
@@ -706,7 +706,7 @@ public final class ExpressionFactory {
          * @see Pattern#MULTILINE
          * @since 5699
          */
-        public static boolean regexp_test(String pattern, String target, String flags) {
+        public static boolean regexp_test(String pattern, String target, String flags) { // NO_UCD (unused code)
             int f = 0;
             if (flags.contains("i")) {
                 f |= Pattern.CASE_INSENSITIVE;
@@ -733,7 +733,7 @@ public final class ExpressionFactory {
          * @see Pattern#MULTILINE
          * @since 5701
          */
-        public static List<String> regexp_match(String pattern, String target, String flags) {
+        public static List<String> regexp_match(String pattern, String target, String flags) { // NO_UCD (unused code)
             int f = 0;
             if (flags.contains("i")) {
                 f |= Pattern.CASE_INSENSITIVE;
@@ -756,7 +756,7 @@ public final class ExpressionFactory {
          * @return a list of capture groups if {@link Matcher#matches()}, or {@code null}.
          * @since 5701
          */
-        public static List<String> regexp_match(String pattern, String target) {
+        public static List<String> regexp_match(String pattern, String target) { // NO_UCD (unused code)
             return Utils.getMatches(Pattern.compile(pattern).matcher(target));
         }
 
@@ -766,7 +766,7 @@ public final class ExpressionFactory {
          * @return the OSM id of the current object
          * @see OsmPrimitive#getUniqueId()
          */
-        public static long osm_id(final Environment env) {
+        public static long osm_id(final Environment env) { // NO_UCD (unused code)
             return env.osm.getUniqueId();
         }
 
@@ -777,7 +777,7 @@ public final class ExpressionFactory {
          * @return the translated string
          */
         @NullableArguments
-        public static String tr(String... args) {
+        public static String tr(String... args) { // NO_UCD (unused code)
             final String text = args[0];
             System.arraycopy(args, 1, args, 0, args.length - 1);
             return org.openstreetmap.josm.tools.I18n.tr(text, (Object[]) args);
@@ -790,7 +790,7 @@ public final class ExpressionFactory {
          * @return the substring
          * @see String#substring(int)
          */
-        public static String substring(String s, /* due to missing Cascade.convertTo for int*/ float begin) {
+        public static String substring(String s, /* due to missing Cascade.convertTo for int*/ float begin) { // NO_UCD (unused code)
             return s == null ? null : s.substring((int) begin);
         }
 
@@ -803,7 +803,7 @@ public final class ExpressionFactory {
          * @return the substring
          * @see String#substring(int, int)
          */
-        public static String substring(String s, float begin, float end) {
+        public static String substring(String s, float begin, float end) { // NO_UCD (unused code)
             return s == null ? null : s.substring((int) begin, (int) end);
         }
 
@@ -815,7 +815,7 @@ public final class ExpressionFactory {
          * @return The resulting string
          * @see String#replace(CharSequence, CharSequence)
          */
-        public static String replace(String s, String target, String replacement) {
+        public static String replace(String s, String target, String replacement) { // NO_UCD (unused code)
             return s == null ? null : s.replace(target, replacement);
         }
 
@@ -826,7 +826,7 @@ public final class ExpressionFactory {
          * @param s arbitrary string
          * @return the encoded string
          */
-        public static String URL_encode(String s) {
+        public static String URL_encode(String s) { // NO_UCD (unused code)
             return s == null ? null : Utils.encodeUrl(s);
         }
 
@@ -837,7 +837,7 @@ public final class ExpressionFactory {
          * @param s arbitrary string
          * @return the encoded string
          */
-        public static String XML_encode(String s) {
+        public static String XML_encode(String s) { // NO_UCD (unused code)
             return s == null ? null : XmlWriter.encode(s);
         }
 
@@ -846,7 +846,7 @@ public final class ExpressionFactory {
          * @param s the string
          * @return long value from 0 to 2^32-1
          */
-        public static long CRC32_checksum(String s) {
+        public static long CRC32_checksum(String s) { // NO_UCD (unused code)
             CRC32 cs = new CRC32();
             cs.update(s.getBytes(StandardCharsets.UTF_8));
             return cs.getValue();
@@ -902,7 +902,7 @@ public final class ExpressionFactory {
          * @return the same object, unchanged
          */
         @NullableArguments
-        public static Object print(Object o) {
+        public static Object print(Object o) { // NO_UCD (unused code)
             System.out.print(o == null ? "none" : o.toString());
             return o;
         }
@@ -914,7 +914,7 @@ public final class ExpressionFactory {
          * @return the same object, unchanged
          */
         @NullableArguments
-        public static Object println(Object o) {
+        public static Object println(Object o) { // NO_UCD (unused code)
             System.out.println(o == null ? "none" : o.toString());
             return o;
         }
@@ -924,7 +924,7 @@ public final class ExpressionFactory {
          * @param env the environment
          * @return number of tags
          */
-        public static int number_of_tags(Environment env) {
+        public static int number_of_tags(Environment env) { // NO_UCD (unused code)
             return env.osm.getNumKeys();
         }
 
@@ -934,7 +934,7 @@ public final class ExpressionFactory {
          * @param key setting key (given as layer identifier, e.g. setting::mykey {...})
          * @return the value of the setting (calculated when the style is loaded)
          */
-        public static Object setting(Environment env, String key) {
+        public static Object setting(Environment env, String key) { // NO_UCD (unused code)
             return env.source.settingValues.get(key);
         }
     }

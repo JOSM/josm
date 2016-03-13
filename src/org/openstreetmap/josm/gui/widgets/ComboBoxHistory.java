@@ -17,8 +17,6 @@ class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> imple
 
     private final int maxSize;
 
-    private final transient List<HistoryChangedListener> listeners = new ArrayList<>();
-
     /**
      * Constructs a {@code ComboBoxHistory} keeping track of {@code maxSize} items
      * @param size the history size
@@ -62,8 +60,6 @@ class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> imple
 
         // set selected item to the one just added
         setSelectedItem(o);
-
-        fireHistoryChanged();
     }
 
     @Override
@@ -114,19 +110,5 @@ class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> imple
             list.add(item.getValue());
         }
         return list;
-    }
-
-    public void addHistoryChangedListener(HistoryChangedListener l) {
-        listeners.add(l);
-    }
-
-    public void removeHistoryChangedListener(HistoryChangedListener l) {
-        listeners.remove(l);
-    }
-
-    private void fireHistoryChanged() {
-        for (HistoryChangedListener l : listeners) {
-            l.historyChanged(asStringList());
-        }
     }
 }

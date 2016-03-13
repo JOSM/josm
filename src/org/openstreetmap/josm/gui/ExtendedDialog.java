@@ -544,16 +544,6 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
-     * Call this if you "accidentally" called toggleEnable. This doesn't need
-     * to be called for every dialog, as it's the default anyway.
-     * @return {@code this}
-     */
-    public ExtendedDialog toggleDisable() {
-        this.toggleable = false;
-        return this;
-    }
-
-    /**
      * Sets the button that will react to ENTER.
      * @param defaultButtonIdx The button index (starts to 1)
      * @return {@code this}

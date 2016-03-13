@@ -110,7 +110,7 @@ public class PluginInformation {
      */
     public PluginInformation(File file, String name) throws PluginException {
         if (!PluginHandler.isValidJar(file)) {
-            throw new PluginException(name, tr("Invalid jar file ''{0}''", file));
+            throw new PluginException(tr("Invalid jar file ''{0}''", file));
         }
         this.name = name;
         this.file = file;
@@ -120,7 +120,7 @@ public class PluginInformation {
         ) {
             Manifest manifest = jar.getManifest();
             if (manifest == null)
-                throw new PluginException(name, tr("The plugin file ''{0}'' does not include a Manifest.", file.toString()));
+                throw new PluginException(tr("The plugin file ''{0}'' does not include a Manifest.", file.toString()));
             scanManifest(manifest, false);
             libraries.add(0, Utils.fileToURL(file));
         } catch (IOException e) {

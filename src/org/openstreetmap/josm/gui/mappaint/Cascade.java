@@ -19,8 +19,6 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class Cascade implements Cloneable {
 
-    public static final Cascade EMPTY_CASCADE = new Cascade();
-
     private Map<String, Object> prop = new HashMap<>();
 
     private boolean defaultSelectedHandling = true;

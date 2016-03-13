@@ -240,10 +240,6 @@ public class XmlObjectParser implements Iterable<Object> {
         parser = new Parser();
     }
 
-    public XmlObjectParser(DefaultHandler handler) {
-        parser = handler;
-    }
-
     private Iterable<Object> start(final Reader in, final ContentHandler contentHandler) throws SAXException, IOException {
         try {
             XMLReader reader = Utils.newSafeSAXParser().getXMLReader();

@@ -25,11 +25,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class RelationMemberListTableCellRenderer extends JLabel implements TableCellRenderer {
 
-    public static final Color BGCOLOR_EMPTY_ROW = new Color(234, 234, 234);
-    public static final Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255, 197, 197);
-    public static final Color BGCOLOR_IN_OPPOSITE = new Color(255, 234, 213);
-    public static final Color BGCOLOR_SELECTED = new Color(143, 170, 255);
-
     private final transient Map<OsmPrimitiveType, ImageIcon> icons;
 
     /**

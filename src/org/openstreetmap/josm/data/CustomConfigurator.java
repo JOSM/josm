@@ -327,10 +327,6 @@ public final class CustomConfigurator {
         }
     }
 
-    public static void deleteFileOrDirectory(String path) {
-        deleteFileOrDirectory(new File(path));
-    }
-
     public static void deleteFileOrDirectory(File f) {
         if (f.isDirectory()) {
             File[] files = f.listFiles();

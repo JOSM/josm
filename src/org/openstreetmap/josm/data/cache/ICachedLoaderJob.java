@@ -10,7 +10,7 @@ import java.net.URL;
  *
  * @param <K> cache key type
  */
-public interface ICachedLoaderJob<K> {
+public interface ICachedLoaderJob<K> extends Runnable {
     /**
      * returns cache entry key
      *
@@ -25,11 +25,6 @@ public interface ICachedLoaderJob<K> {
      *
      */
     URL getUrl() throws IOException;
-
-    /**
-     * implements the main algorithm for fetching
-     */
-    void run();
 
     /**
      * fetches object from cache, or returns null when object is not found
