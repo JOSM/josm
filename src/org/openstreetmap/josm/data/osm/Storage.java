@@ -143,7 +143,8 @@ public class Storage<T> extends AbstractSet<T> {
     public Storage(Hash<? super T, ? super T> ha, int capacity, boolean safeIterator) {
         this.hash = ha;
         int cap = 1 << (int) (Math.ceil(Math.log(capacity/LOAD_FACTOR) / Math.log(2)));
-        @SuppressWarnings("unchecked") T[] newData = (T[]) new Object[cap];
+        @SuppressWarnings("unchecked")
+        T[] newData = (T[]) new Object[cap];
         data = newData;
         mask = data.length - 1;
         this.safeIterator = safeIterator;
@@ -174,7 +175,8 @@ public class Storage<T> extends AbstractSet<T> {
 
     @Override
     public synchronized boolean contains(Object o) {
-        @SuppressWarnings("unchecked") T t = (T) o;
+        @SuppressWarnings("unchecked")
+        T t = (T) o;
         int bucket = getBucket(hash, t);
         return bucket >= 0;
     }
@@ -187,7 +189,8 @@ public class Storage<T> extends AbstractSet<T> {
 
     @Override
     public synchronized boolean remove(Object o) {
-        @SuppressWarnings("unchecked") T t = (T) o;
+        @SuppressWarnings("unchecked")
+        T t = (T) o;
         T tOrig = removeElem(t);
         return tOrig != null;
     }
@@ -328,7 +331,8 @@ public class Storage<T> extends AbstractSet<T> {
 
     private void ensureSpace() {
         if (size > data.length*LOAD_FACTOR) { // rehash
-            @SuppressWarnings("unchecked") T[] big = (T[]) new Object[data.length * 2];
+            @SuppressWarnings("unchecked")
+            T[] big = (T[]) new Object[data.length * 2];
             int nMask = big.length - 1;
 
             for (T o : data) {
@@ -386,7 +390,8 @@ public class Storage<T> extends AbstractSet<T> {
 
         @Override
         public boolean containsKey(Object o) {
-            @SuppressWarnings("unchecked") K key = (K) o;
+            @SuppressWarnings("unchecked")
+            K key = (K) o;
             int bucket = getBucket(fHash, key);
             return bucket >= 0;
         }
@@ -398,7 +403,8 @@ public class Storage<T> extends AbstractSet<T> {
 
         @Override
         public T get(Object o) {
-            @SuppressWarnings("unchecked") K key = (K) o;
+            @SuppressWarnings("unchecked")
+            K key = (K) o;
             int bucket = getBucket(fHash, key);
             return bucket < 0 ? null : data[bucket];
         }
@@ -413,7 +419,8 @@ public class Storage<T> extends AbstractSet<T> {
         public T remove(Object o) {
             synchronized (Storage.this) {
                 modCount++;
-                @SuppressWarnings("unchecked") K key = (K) o;
+                @SuppressWarnings("unchecked")
+                K key = (K) o;
                 int bucket = getBucket(fHash, key);
 
                 return bucket < 0 ? null : doRemove(bucket);

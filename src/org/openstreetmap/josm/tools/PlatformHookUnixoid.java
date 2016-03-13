@@ -65,13 +65,15 @@ public class PlatformHookUnixoid implements PlatformHook {
         /**
          * Platform font name.
          */
-        @pref @writeExplicitly
+        @pref
+        @writeExplicitly
         public String name = "";
 
         /**
          * File name.
          */
-        @pref @writeExplicitly
+        @pref
+        @writeExplicitly
         public String file = "";
 
         /**

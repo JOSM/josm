@@ -10,12 +10,29 @@ import org.openstreetmap.josm.data.Preferences.writeExplicitly;
  * Data class representing one entry in the filter dialog.
  *
  * @author Petr_Dlouhý
+ * @since 2125
  */
 public class Filter extends SearchSetting {
     private static final String version = "1";
 
+    /**
+     * Enabled status.
+     * @see FilterPreferenceEntry#enable
+     */
     public boolean enable = true;
+
+    /**
+     * If this option is activated, the chosen objects are completely hidden.
+     * Otherwise they are disabled and shown in a shade of gray.
+     * @see FilterPreferenceEntry#hiding
+     */
     public boolean hiding;
+
+    /**
+     * Normally, the specified objects are hidden and the rest is shown.
+     * If this option is activated, only the specified objects are shown and the rest is hidden.
+     * @see FilterPreferenceEntry#inverted
+     */
     public boolean inverted;
 
     /**
@@ -26,6 +43,10 @@ public class Filter extends SearchSetting {
         mode = SearchMode.add;
     }
 
+    /**
+     * Constructs a new {@code Filter} from a preference entry.
+     * @param e preference entry
+     */
     public Filter(FilterPreferenceEntry e) {
         this();
         text = e.text;
@@ -47,17 +68,57 @@ public class Filter extends SearchSetting {
     }
 
     public static class FilterPreferenceEntry {
-        @pref @writeExplicitly public String version = "1";
+        @writeExplicitly
+        @pref public String version = "1";
+
         @pref public String text;
-        @pref @writeExplicitly public String mode = "add";
+
+        /**
+         * Mode selector which defines how a filter is combined with the previous one:<ul>
+         * <li>replace: replace selection</li>
+         * <li>add: add to selection</li>
+         * <li>remove: remove from selection</li>
+         * <li>in_selection: find in selection</li>
+         * </ul>
+         * @see SearchMode
+         */
+        @writeExplicitly
+        @pref public String mode = "add";
+
         @pref public boolean case_sensitive;
+
         @pref public boolean regex_search;
+
         @pref public boolean mapCSS_search;
-        @pref @writeExplicitly public boolean enable = true;
-        @pref @writeExplicitly public boolean hiding;
-        @pref @writeExplicitly public boolean inverted;
+
+        /**
+         * Enabled status.
+         * @see Filter#enable
+         */
+        @writeExplicitly
+        @pref public boolean enable = true;
+
+        /**
+         * If this option is activated, the chosen objects are completely hidden.
+         * Otherwise they are disabled and shown in a shade of gray.
+         * @see Filter#hiding
+         */
+        @writeExplicitly
+        @pref public boolean hiding;
+
+        /**
+         * Normally, the specified objects are hidden and the rest is shown.
+         * If this option is activated, only the specified objects are shown and the rest is hidden.
+         * @see Filter#inverted
+         */
+        @writeExplicitly
+        @pref public boolean inverted;
     }
 
+    /**
+     * Returns a new preference entry for this filter.
+     * @return preference entry
+     */
     public FilterPreferenceEntry getPreferenceEntry() {
         FilterPreferenceEntry e = new FilterPreferenceEntry();
         e.version = version;
