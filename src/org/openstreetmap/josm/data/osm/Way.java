@@ -330,10 +330,10 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     @Override
-    public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
+    public boolean hasEqualSemanticAttributes(OsmPrimitive other, boolean testInterestingTagsOnly) {
         if (!(other instanceof Way))
             return false;
-        if (!super.hasEqualSemanticAttributes(other))
+        if (!super.hasEqualSemanticAttributes(other, testInterestingTagsOnly))
             return false;
         Way w = (Way) other;
         if (getNodesCount() != w.getNodesCount()) return false;

@@ -1236,7 +1236,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @param other other primitive to compare
      * @return true if this primitive and other are equal with respect to their semantic attributes.
      */
-    public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
+    public final boolean hasEqualSemanticAttributes(OsmPrimitive other) {
         return hasEqualSemanticAttributes(other, true);
     }
 

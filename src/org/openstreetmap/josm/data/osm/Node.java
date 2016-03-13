@@ -280,10 +280,10 @@ public final class Node extends OsmPrimitive implements INode {
     }
 
     @Override
-    public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
+    public boolean hasEqualSemanticAttributes(OsmPrimitive other, boolean testInterestingTagsOnly) {
         if (!(other instanceof Node))
             return false;
-        if (!super.hasEqualSemanticAttributes(other))
+        if (!super.hasEqualSemanticAttributes(other, testInterestingTagsOnly))
             return false;
         Node n = (Node) other;
         LatLon coor = getCoor();
