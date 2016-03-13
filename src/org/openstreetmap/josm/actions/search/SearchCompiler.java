@@ -322,7 +322,7 @@ public class SearchCompiler {
             if (match == null) {
                 // "operator" (null) should mean the same as "operator()"
                 // (Always). I.e. match everything
-                this.match = new Always();
+                this.match = Always.INSTANCE;
             } else {
                 this.match = match;
             }
@@ -371,6 +371,8 @@ public class SearchCompiler {
      * Never matches any OsmPrimitive.
      */
     public static class Never extends TaggedMatch {
+        /** The unique instance/ */
+        public static final Never INSTANCE = new Never();
         @Override
         public boolean match(Tagged osm) {
             return false;
@@ -1611,7 +1613,7 @@ public class SearchCompiler {
         if (!tokenizer.readIfEqual(Token.EOF))
             throw new ParseError(tr("Unexpected token: {0}", tokenizer.nextToken()));
         if (m == null)
-            m = new Always();
+            m = Always.INSTANCE;
         Main.debug("Parsed search expression is {0}", m);
         return m;
     }

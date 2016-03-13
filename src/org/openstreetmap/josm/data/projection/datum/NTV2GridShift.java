@@ -334,21 +334,4 @@ public class NTV2GridShift implements Serializable {
     public void setSubGridName(String string) {
         subGridName = string;
     }
-
-    /**
-     * Make this object a copy of the supplied GridShift
-     * @param gs grid to copy data from
-     */
-    public void copy(NTV2GridShift gs) {
-        this.lon = gs.lon;
-        this.lat = gs.lat;
-        this.lonShift = gs.lonShift;
-        this.latShift = gs.latShift;
-        this.lonAccuracy = gs.lonAccuracy;
-        this.latAccuracy = gs.latAccuracy;
-        this.latAccuracyAvailable = gs.latAccuracyAvailable;
-        this.lonAccuracyAvailable = gs.lonAccuracyAvailable;
-        this.subGridName = gs.subGridName;
-    }
-
 }
