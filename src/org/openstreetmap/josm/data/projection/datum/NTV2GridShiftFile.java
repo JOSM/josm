@@ -60,7 +60,7 @@ import org.openstreetmap.josm.Main;
  * arrangement) or in decimal Degrees using Positive East Longitude.
  *
  * @author Peter Yuill
- * Modifified for JOSM :
+ * Modified for JOSM :
  * - removed the RandomAccessFile mode (Pieren)
  */
 public class NTV2GridShiftFile implements Serializable {
@@ -268,14 +268,6 @@ public class NTV2GridShiftFile implements Serializable {
         return sub;
     }
 
-    public boolean isLoaded() {
-        return topLevelSubGrid != null;
-    }
-
-    public void unload() {
-        topLevelSubGrid = null;
-    }
-
     @Override
     public String toString() {
         StringBuilder buff = new StringBuilder("Headers  : ");
@@ -301,19 +293,6 @@ public class NTV2GridShiftFile implements Serializable {
             .append("\nTo Min Ax: ")
             .append(toSemiMinorAxis);
         return buff.toString();
-    }
-
-    /**
-     * Get a copy of the SubGrid tree for this file.
-     *
-     * @return a deep clone of the current SubGrid tree
-     */
-    public NTV2SubGrid[] getSubGridTree() {
-        NTV2SubGrid[] clone = new NTV2SubGrid[topLevelSubGrid.length];
-        for (int i = 0; i < topLevelSubGrid.length; i++) {
-            clone[i] = (NTV2SubGrid) topLevelSubGrid[i].clone();
-        }
-        return clone;
     }
 
     public String getFromEllipsoid() {

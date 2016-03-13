@@ -44,7 +44,7 @@ public final class CompileSearchTextDecorator implements DocumentListener {
         } catch (SearchCompiler.ParseError ex) {
             textComponent.setBackground(new Color(255, 224, 224));
             textComponent.setToolTipText(ex.getMessage());
-            filter = new SearchCompiler.Always();
+            filter = SearchCompiler.Always.INSTANCE;
         }
         textComponent.firePropertyChange("filter", 0, 1);
     }

@@ -25,7 +25,7 @@ class RecentTagCollection {
                 return size() > capacity;
             }
         };
-        tagsToIgnore = new SearchCompiler.Never();
+        tagsToIgnore = SearchCompiler.Never.INSTANCE;
     }
 
     public void loadFromPreference(CollectionProperty property) {
@@ -72,7 +72,7 @@ class RecentTagCollection {
     }
 
     public void setTagsToIgnore(SearchAction.SearchSetting tagsToIgnore) throws SearchCompiler.ParseError {
-        setTagsToIgnore(tagsToIgnore.text.isEmpty() ? new SearchCompiler.Never() : SearchCompiler.compile(tagsToIgnore));
+        setTagsToIgnore(tagsToIgnore.text.isEmpty() ? SearchCompiler.Never.INSTANCE : SearchCompiler.compile(tagsToIgnore));
     }
 
     public SearchAction.SearchSetting ignoreTag(Tag tagToIgnore, SearchAction.SearchSetting settingToUpdate) throws SearchCompiler.ParseError {

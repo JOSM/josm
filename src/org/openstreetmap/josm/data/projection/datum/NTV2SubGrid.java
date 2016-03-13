@@ -35,8 +35,9 @@ import org.openstreetmap.josm.tools.Utils;
  * - removed the RandomAccessFile mode (Pieren)
  * - read grid file by single bytes. Workaround for a bug in some VM not supporting
  *   file reading by group of 4 bytes from a jar file.
+ * - removed the Cloneable interface
  */
-public class NTV2SubGrid implements Cloneable, Serializable {
+public class NTV2SubGrid implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -275,10 +276,6 @@ public class NTV2SubGrid implements Cloneable, Serializable {
         return (subGrid == null) ? 0 : subGrid.length;
     }
 
-    public NTV2SubGrid getSubGrid(int index) {
-        return (subGrid == null) ? null : subGrid[index];
-    }
-
     /**
      * Set an array of Sub Grids of this sub grid
      * @param subGrid subgrids
@@ -320,27 +317,6 @@ public class NTV2SubGrid implements Cloneable, Serializable {
             .append("\nNode Cnt : ")
             .append(nodeCount);
         return buff.toString();
-    }
-
-    /**
-     * Make a deep clone of this Sub Grid
-     */
-    @Override
-    public Object clone() {
-        NTV2SubGrid clone = null;
-        try {
-            clone = (NTV2SubGrid) super.clone();
-            // Do a deep clone of the sub grids
-            if (subGrid != null) {
-                clone.subGrid = new NTV2SubGrid[subGrid.length];
-                for (int i = 0; i < subGrid.length; i++) {
-                    clone.subGrid[i] = (NTV2SubGrid) subGrid[i].clone();
-                }
-            }
-        } catch (CloneNotSupportedException cnse) {
-            Main.warn(cnse);
-        }
-        return clone;
     }
 
     /**

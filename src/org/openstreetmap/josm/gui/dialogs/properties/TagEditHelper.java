@@ -309,7 +309,7 @@ public class TagEditHelper {
             } catch (SearchCompiler.ParseError parseError) {
                 warnAboutParseError(parseError);
                 tagsToIgnore = new SearchAction.SearchSetting();
-                recentTags.setTagsToIgnore(new SearchCompiler.Never());
+                recentTags.setTagsToIgnore(SearchCompiler.Never.INSTANCE);
             }
         }
     }
