@@ -365,19 +365,33 @@ public class TestError implements Comparable<TestError>, DataSetListener {
         }
     }
 
-    @Override public void primitivesAdded(PrimitivesAddedEvent event) {}
+    @Override public void primitivesAdded(PrimitivesAddedEvent event) {
+        // Do nothing
+    }
 
-    @Override public void tagsChanged(TagsChangedEvent event) {}
+    @Override public void tagsChanged(TagsChangedEvent event) {
+        // Do nothing
+    }
 
-    @Override public void nodeMoved(NodeMovedEvent event) {}
+    @Override public void nodeMoved(NodeMovedEvent event) {
+        // Do nothing
+    }
 
-    @Override public void wayNodesChanged(WayNodesChangedEvent event) {}
+    @Override public void wayNodesChanged(WayNodesChangedEvent event) {
+        // Do nothing
+    }
 
-    @Override public void relationMembersChanged(RelationMembersChangedEvent event) {}
+    @Override public void relationMembersChanged(RelationMembersChangedEvent event) {
+        // Do nothing
+    }
 
-    @Override public void otherDatasetChange(AbstractDatasetChangedEvent event) {}
+    @Override public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        // Do nothing
+    }
 
-    @Override public void dataChanged(DataChangedEvent event) {}
+    @Override public void dataChanged(DataChangedEvent event) {
+        // Do nothing
+    }
 
     @Override
     public String toString() {

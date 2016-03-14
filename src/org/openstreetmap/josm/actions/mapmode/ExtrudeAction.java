@@ -349,6 +349,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     @Override
     public void doKeyPressed(KeyEvent e) {
+        // Do nothing
     }
 
     @Override

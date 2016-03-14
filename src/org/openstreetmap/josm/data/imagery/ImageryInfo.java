@@ -231,6 +231,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
          * Constructs a new empty WMS {@code ImageryPreferenceEntry}.
          */
         public ImageryPreferenceEntry() {
+            // Do nothing
         }
 
         /**
@@ -295,7 +296,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
             valid_georeference = i.isGeoreferenceValid();
             supports_epsg_4326_to_3857_conversion = i.isEpsg4326To3857Supported();
-
         }
 
         @Override

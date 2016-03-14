@@ -211,6 +211,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
 
         @Override
         public void historyDataSetCleared(HistoryDataSet source) {
+            // Do nothing
         }
     }
 }

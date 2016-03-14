@@ -318,6 +318,7 @@ public final class Node extends OsmPrimitive implements INode {
 
     @Override
     public void updatePosition() {
+        // Do nothing
     }
 
     @Override

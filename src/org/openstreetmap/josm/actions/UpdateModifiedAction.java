@@ -33,8 +33,7 @@ public class UpdateModifiedAction extends UpdateSelectionAction {
     }
 
     // FIXME: overrides the behaviour of UpdateSelectionAction. Doesn't update
-    // the enabled state based on the current selection because
-    // it doesn't depend on it.
+    // the enabled state based on the current selection because it doesn't depend on it.
     // The action should be enabled/disabled based on whether there is a least
     // one modified object in the current dataset. Unfortunately, there is no
     // efficient way to find out here. getDataSet().allModifiedPrimitives() is
@@ -50,6 +49,7 @@ public class UpdateModifiedAction extends UpdateSelectionAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        // Do nothing
     }
 
     @Override

@@ -652,8 +652,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     }
 
     public static class SearchSetting {
-        public String text = "";
-        public SearchMode mode = SearchMode.replace;
+        public String text;
+        public SearchMode mode;
         public boolean caseSensitive;
         public boolean regexSearch;
         public boolean mapCSSSearch;
@@ -663,6 +663,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
          * Constructs a new {@code SearchSetting}.
          */
         public SearchSetting() {
+            text = "";
+            mode = SearchMode.replace;
         }
 
         /**

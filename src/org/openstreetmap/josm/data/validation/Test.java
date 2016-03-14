@@ -226,13 +226,19 @@ public class Test extends AbstractVisitor {
     }
 
     @Override
-    public void visit(Node n) {}
+    public void visit(Node n) {
+        // To be overridden in subclasses
+    }
 
     @Override
-    public void visit(Way w) {}
+    public void visit(Way w) {
+        // To be overridden in subclasses
+    }
 
     @Override
-    public void visit(Relation r) {}
+    public void visit(Relation r) {
+        // To be overridden in subclasses
+    }
 
     /**
      * Allow the tester to manage its own preferences
