@@ -96,7 +96,7 @@ public class LoadDataHandler extends RequestHandler {
         }
     }
 
-    protected class LoadDataTask extends DownloadOsmTask.AbstractInternalTask {
+    protected static class LoadDataTask extends DownloadOsmTask.AbstractInternalTask {
 
         protected final String layerName;
 

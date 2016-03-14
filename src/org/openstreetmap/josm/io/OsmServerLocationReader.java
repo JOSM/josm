@@ -32,7 +32,7 @@ public class OsmServerLocationReader extends OsmServerReader {
         this.url = url;
     }
 
-    protected abstract class Parser<T> {
+    protected abstract static class Parser<T> {
         protected final ProgressMonitor progressMonitor;
         protected final Compression compression;
         protected InputStream in;

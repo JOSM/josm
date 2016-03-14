@@ -84,7 +84,7 @@ public abstract class ListProjectionChoice extends AbstractProjectionChoice {
         this.index = idx;
     }
 
-    protected class CBPanel extends JPanel {
+    protected static class CBPanel extends JPanel {
         public JosmComboBox<String> prefcb;
 
         public CBPanel(String[] entries, int initialIndex, String label, final ActionListener listener) {
