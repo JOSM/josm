@@ -128,29 +128,11 @@ public class FileDrop {
             final boolean recursive,
             final Listener listener) {
 
-        if (supportsDnD()) {
-            // Make a drop listener
-            dropListener = new DropListener(listener, dragBorder, c);
+        // Make a drop listener
+        dropListener = new DropListener(listener, dragBorder, c);
 
-            // Make the component (and possibly children) drop targets
-            makeDropTarget(c, recursive);
-        } else {
-            Main.info("FileDrop: Drag and drop is not supported with this JVM");
-        }
-    }
-
-    private static synchronized boolean supportsDnD() {
-        if (supportsDnD == null) {
-            boolean support = false;
-            try {
-                Class.forName("java.awt.dnd.DnDConstants");
-                support = true;
-            } catch (Exception e) {
-                support = false;
-            }
-            supportsDnD = support;
-        }
-        return supportsDnD.booleanValue();
+        // Make the component (and possibly children) drop targets
+        makeDropTarget(c, recursive);
     }
 
     // BEGIN 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
@@ -285,17 +267,13 @@ public class FileDrop {
      * @return {@code true} if at least one item has been removed, {@code false} otherwise
      */
     public static boolean remove(Component c, boolean recursive) {
-        // Make sure we support dnd.
-        if (supportsDnD()) {
-            Main.trace("FileDrop: Removing drag-and-drop hooks.");
-            c.setDropTarget(null);
-            if (recursive && (c instanceof Container)) {
-                for (Component comp : ((Container) c).getComponents()) {
-                    remove(comp, recursive);
-                }
-                return true;
-            } else
-                return false;
+        Main.trace("FileDrop: Removing drag-and-drop hooks.");
+        c.setDropTarget(null);
+        if (recursive && (c instanceof Container)) {
+            for (Component comp : ((Container) c).getComponents()) {
+                remove(comp, recursive);
+            }
+            return true;
         } else
             return false;
     }
