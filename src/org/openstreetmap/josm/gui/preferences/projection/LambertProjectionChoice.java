@@ -30,7 +30,7 @@ public class LambertProjectionChoice extends ListProjectionChoice {
         super(tr("Lambert 4 Zones (France)"), /* NO-ICON */ "core:lambert", lambert4zones, tr("Lambert CC Zone"));
     }
 
-    private class LambertCBPanel extends CBPanel {
+    private static class LambertCBPanel extends CBPanel {
         LambertCBPanel(String[] entries, int initialIndex, String label, ActionListener listener) {
             super(entries, initialIndex, label, listener);
             this.add(new JLabel(ImageProvider.get("data/projection", "Departements_Lambert4Zones.png")), GBC.eol().fill(GBC.HORIZONTAL));
