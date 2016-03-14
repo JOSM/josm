@@ -33,7 +33,6 @@ import javax.swing.border.Border;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction;
-import org.openstreetmap.josm.gui.FileDrop.TransferableObject;
 
 // CHECKSTYLE.OFF: HideUtilityClassConstructor
 
@@ -82,9 +81,6 @@ public class FileDrop {
 
     private Border normalBorder;
     private DropTargetListener dropListener;
-
-    /** Discover if the running JVM is modern enough to have drag and drop. */
-    private static Boolean supportsDnD;
 
     // Default border color
     private static Color defaultBorderColor = new Color(0f, 0f, 1f, 0.25f);

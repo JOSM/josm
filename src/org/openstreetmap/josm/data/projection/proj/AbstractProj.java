@@ -38,18 +38,18 @@ public abstract class AbstractProj implements Proj {
      * Constants used to calculate {@link #en0}, {@link #en1},
      * {@link #en2}, {@link #en3}, {@link #en4}.
      */
-    private static final double C00 = 1.0,
-                                C02 = 0.25,
-                                C04 = 0.046875,
-                                C06 = 0.01953125,
-                                C08 = 0.01068115234375,
-                                C22 = 0.75,
-                                C44 = 0.46875,
-                                C46 = 0.01302083333333333333,
-                                C48 = 0.00712076822916666666,
-                                C66 = 0.36458333333333333333,
-                                C68 = 0.00569661458333333333,
-                                C88 = 0.3076171875;
+    private static final double C00 = 1.0;
+    private static final double C02 = 0.25;
+    private static final double C04 = 0.046875;
+    private static final double C06 = 0.01953125;
+    private static final double C08 = 0.01068115234375;
+    private static final double C22 = 0.75;
+    private static final double C44 = 0.46875;
+    private static final double C46 = 0.01302083333333333333;
+    private static final double C48 = 0.00712076822916666666;
+    private static final double C66 = 0.36458333333333333333;
+    private static final double C68 = 0.00569661458333333333;
+    private static final double C88 = 0.3076171875;
 
     /**
      * Constant needed for the <code>mlfn</code> method.

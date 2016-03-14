@@ -29,7 +29,7 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
     /**
      * default setting of autozoom per layer
      */
-    public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty("imagery.wmts.default_autozoom", true);
+    public static final BooleanProperty PROP_DEFAULT_AUTOZOOM_WMTS = new BooleanProperty("imagery.wmts.default_autozoom", true);
     private static final String CACHE_REGION_NAME = "WMTS";
 
     /**
@@ -38,7 +38,7 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
      */
     public WMTSLayer(ImageryInfo info) {
         super(info);
-        autoZoom = PROP_DEFAULT_AUTOZOOM.get();
+        autoZoom = PROP_DEFAULT_AUTOZOOM_WMTS.get();
     }
 
     @Override
@@ -62,11 +62,10 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
         if (!Main.isDisplayingMapView())
             return 0;
         ScaleList scaleList = getNativeScales();
-        Scale snap = null;
         if (scaleList == null) {
             return getMaxZoomLvl();
         }
-        snap = scaleList.getSnapScale(Main.map.mapView.getScale(), false);
+        Scale snap = scaleList.getSnapScale(Main.map.mapView.getScale(), false);
         return Math.max(
                 getMinZoomLvl(),
                 Math.min(

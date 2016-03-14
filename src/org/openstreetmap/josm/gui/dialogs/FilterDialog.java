@@ -97,7 +97,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     = Shortcut.registerShortcut("core_multikey:hidingFilter", tr("Multikey: {0}", tr("Hide filter")),
             KeyEvent.VK_H, Shortcut.ALT_CTRL);
 
-    protected static final String[] COLUMN_TOOLTIPS = {
+    private static final String[] COLUMN_TOOLTIPS = {
             Main.platform.makeTooltip(tr("Enable filter"), ENABLE_FILTER_SHORTCUT),
             Main.platform.makeTooltip(tr("Hiding filter"), HIDING_FILTER_SHORTCUT),
             null,
@@ -179,8 +179,9 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if (index < 0) return;
-                filterModel.removeFilter(index);
+                if (index >= 0) {
+                    filterModel.removeFilter(index);
+                }
             }
         });
         SideButton upButton = new SideButton(new AbstractAction() {
@@ -193,11 +194,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if (index < 0) return;
-                filterModel.moveUpFilter(index);
-                userTable.getSelectionModel().setSelectionInterval(index-1, index-1);
+                if (index >= 0) {
+                    filterModel.moveUpFilter(index);
+                    userTable.getSelectionModel().setSelectionInterval(index-1, index-1);
+                }
             }
-
         });
         SideButton downButton = new SideButton(new AbstractAction() {
             {
@@ -209,9 +210,10 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectionModel().getMinSelectionIndex();
-                if (index < 0) return;
-                filterModel.moveDownFilter(index);
-                userTable.getSelectionModel().setSelectionInterval(index+1, index+1);
+                if (index >= 0) {
+                    filterModel.moveDownFilter(index);
+                    userTable.getSelectionModel().setSelectionInterval(index+1, index+1);
+                }
             }
         });
 
@@ -220,9 +222,10 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectedRow();
-                if (index < 0) return;
-                Filter filter = filterModel.getFilter(index);
-                filterModel.setValueAt(!filter.enable, index, FilterTableModel.COL_ENABLED);
+                if (index >= 0) {
+                    Filter filter = filterModel.getFilter(index);
+                    filterModel.setValueAt(!filter.enable, index, FilterTableModel.COL_ENABLED);
+                }
             }
         });
 
@@ -231,9 +234,10 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = userTable.getSelectedRow();
-                if (index < 0) return;
-                Filter filter = filterModel.getFilter(index);
-                filterModel.setValueAt(!filter.hiding, index, FilterTableModel.COL_HIDING);
+                if (index >= 0) {
+                    Filter filter = filterModel.getFilter(index);
+                    filterModel.setValueAt(!filter.hiding, index, FilterTableModel.COL_HIDING);
+                }
             }
         });
 
