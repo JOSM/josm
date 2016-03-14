@@ -117,6 +117,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         add(jepMessage, BorderLayout.CENTER);
         lblWarning = new JLabel("");
         lblWarning.setVisible(false);
+        lblWarning.setLabelFor(jepMessage);
         lblWarning.setIcon(ImageProvider.get("warning-small"));
         lblWarning.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         JPanel pnl = new JPanel(new BorderLayout());

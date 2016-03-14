@@ -19,7 +19,7 @@ public class CertificateAmendmentTest {
 
     /**
      * Setup test.
-     * @throws java.io.IOException in case of I/O exception
+     * @throws IOException in case of I/O error
      */
     @BeforeClass
     public static void setUp() throws IOException {
@@ -27,12 +27,20 @@ public class CertificateAmendmentTest {
         CertificateAmendment.addMissingCertificates();
     }
 
+    /**
+     * Test a well-known certificate.
+     * @throws IOException in case of I/O error
+     */
     @Test
     public void testDefault() throws IOException {
         // something that is neither DST nor StartSSL
         connect("https://google.com", true);
     }
 
+    /**
+     * Test <a href="https://letsencrypt.org">Let's Encrypt</a>.
+     * @throws IOException in case of I/O error
+     */
     @Test
     public void testLetsEncrypt() throws IOException {
         // signed by letsencrypt
@@ -41,12 +49,20 @@ public class CertificateAmendmentTest {
         connect("https://letsencrypt.org", true);
     }
 
+    /**
+     * Test <a href="https://www.startssl.com">StartSSL</a>.
+     * @throws IOException in case of I/O error
+     */
     @Test
     public void testStartSSL() throws IOException {
         connect("https://map.dgpsonline.eu", true);
         connect("https://www.startssl.com", true);
     }
 
+    /**
+     * Test a broken certificate.
+     * @throws IOException in case of I/O error
+     */
     @Test
     public void testBrokenCert() throws IOException {
         // broken at the moment (may get fixed some day)

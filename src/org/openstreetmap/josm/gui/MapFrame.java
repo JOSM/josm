@@ -136,6 +136,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public ValidatorDialog validatorDialog;
     public SelectionListDialog selectionListDialog;
     public PropertiesDialog propertiesDialog;
+    public MapPaintDialog mapPaintDialog;
     public NotesDialog noteDialog;
 
     // Map modes
@@ -245,7 +246,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addToggleDialog(validatorDialog = new ValidatorDialog());
         addToggleDialog(filterDialog = new FilterDialog());
         addToggleDialog(new ChangesetDialog(), true);
-        addToggleDialog(new MapPaintDialog());
+        addToggleDialog(mapPaintDialog = new MapPaintDialog());
         addToggleDialog(noteDialog = new NotesDialog());
         toolBarToggle.setFloatable(false);
 
