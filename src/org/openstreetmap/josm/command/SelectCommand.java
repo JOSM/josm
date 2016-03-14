@@ -32,6 +32,7 @@ public class SelectCommand extends Command {
 
     @Override
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+        // Do nothing
     }
 
     @Override

@@ -153,8 +153,8 @@ public class DeleteCommand extends Command {
     }
 
     @Override
-    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
-            Collection<OsmPrimitive> added) {
+    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+        // Do nothing
     }
 
     private Set<OsmPrimitiveType> getTypesToDelete() {

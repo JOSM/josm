@@ -666,6 +666,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
     @Override
     public void doKeyReleased(KeyEvent e) {
+        // Do nothing
     }
 
     /**

@@ -93,5 +93,6 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
 
     @Override
     public void doKeyReleased(KeyEvent e) {
+        // Do nothing
     }
 }

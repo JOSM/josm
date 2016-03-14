@@ -343,10 +343,12 @@ public class OsmValidator implements LayerChangeListener {
     /* -------------------------------------------------------------------------- */
     @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        // Do nothing
     }
 
     @Override
     public void layerAdded(Layer newLayer) {
+        // Do nothing
     }
 
     @Override

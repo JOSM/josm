@@ -415,7 +415,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     /**
      * Base class of all other Copy* inner classes.
      */
-    abstract class CopyAction extends AbstractAction implements ListSelectionListener {
+    abstract static class CopyAction extends AbstractAction implements ListSelectionListener {
 
         protected CopyAction(String icon_name, String action_name, String short_description) {
             ImageIcon icon = ImageProvider.get("dialogs/conflict", icon_name);
