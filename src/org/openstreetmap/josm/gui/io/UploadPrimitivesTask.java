@@ -261,7 +261,9 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                     //
                     recoverFromGoneOnServer(e, getProgressMonitor());
                 } catch (ChangesetClosedException e) {
-                    processedPrimitives.addAll(writer.getProcessedPrimitives()); // OsmPrimitive in => OsmPrimitive out
+                    if (writer != null) {
+                        processedPrimitives.addAll(writer.getProcessedPrimitives()); // OsmPrimitive in => OsmPrimitive out
+                    }
                     changeset.setOpen(false);
                     switch(e.getSource()) {
                     case UNSPECIFIED:
