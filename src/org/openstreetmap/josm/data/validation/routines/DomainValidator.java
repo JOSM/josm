@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-         // Taken from Version 2016031001, Last Updated Fri Mar 11 07:07:01 2016 UTC
+        // Taken from Version 2016031001, Last Updated Fri Mar 11 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -1261,7 +1261,7 @@ public final class DomainValidator extends AbstractValidator {
         "ai",                 // Anguilla
         "al",                 // Albania
         "am",                 // Armenia
-//        "an",                 // Netherlands Antilles (retired)
+        //"an",               // Netherlands Antilles (retired)
         "ao",                 // Angola
         "aq",                 // Antarctica
         "ar",                 // Argentina
@@ -1476,7 +1476,7 @@ public final class DomainValidator extends AbstractValidator {
         "tm",                 // Turkmenistan
         "tn",                 // Tunisia
         "to",                 // Tonga
-//        "tp",                 // East Timor (Retired)
+        //"tp",               // East Timor (Retired)
         "tr",                 // Turkey
         "tt",                 // Trinidad and Tobago
         "tv",                 // Tuvalu

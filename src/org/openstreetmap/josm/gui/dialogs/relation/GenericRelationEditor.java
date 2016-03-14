@@ -230,11 +230,10 @@ public class GenericRelationEditor extends RelationEditor  {
                     }
                 }
         );
-        registerCopyPasteAction(tagEditorPanel.getPasteAction(),
-                "PASTE_TAGS",
-                // CHECKSTYLE.OFF: LineLength
+        // CHECKSTYLE.OFF: LineLength
+        registerCopyPasteAction(tagEditorPanel.getPasteAction(), "PASTE_TAGS",
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.CTRL_SHIFT).getKeyStroke());
-                // CHECKSTYLE.ON: LineLength
+        // CHECKSTYLE.ON: LineLength
 
         registerCopyPasteAction(new PasteMembersAction(memberTableModel, getLayer(), this) {
             @Override
