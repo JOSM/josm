@@ -16,9 +16,9 @@ import org.openstreetmap.josm.gui.progress.ProgressRenderer;
 
 class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, PropertyChangeListener {
 
-    private JLabel lblTaskTitle;
-    private JLabel lblCustomText;
-    private JProgressBar progressBar;
+    private final JLabel lblTaskTitle = new JLabel("");
+    private final JLabel lblCustomText = new JLabel("");
+    private final JProgressBar progressBar = new JProgressBar(JProgressBar.HORIZONTAL);
 
     /**
      * Constructs a new {@code UploadAndSaveProgressRenderer}.
@@ -38,23 +38,15 @@ class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, 
         gc.weightx = 1.0;
         gc.weighty = 0.0;
         gc.insets = new Insets(5, 0, 0, 5);
-        add(lblTaskTitle = new JLabel(""), gc);
+        add(lblTaskTitle, gc);
+        lblTaskTitle.setLabelFor(lblCustomText);
 
-        gc.gridx = 0;
         gc.gridy = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
-        gc.insets = new Insets(5, 0, 0, 5);
-        add(lblCustomText = new JLabel(""), gc);
+        add(lblCustomText, gc);
+        lblCustomText.setLabelFor(progressBar);
 
-        gc.gridx = 0;
         gc.gridy = 2;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
-        gc.insets = new Insets(5, 0, 0, 5);
-        add(progressBar = new JProgressBar(JProgressBar.HORIZONTAL), gc);
+        add(progressBar, gc);
     }
 
     @Override
@@ -90,11 +82,7 @@ class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
-            Mode mode = (Mode) evt.getNewValue();
-            switch(mode) {
-                case EDITING_DATA: setVisible(false); break;
-                case UPLOADING_AND_SAVING: setVisible(true); break;
-            }
+            setVisible(Mode.UPLOADING_AND_SAVING.equals(evt.getNewValue()));
         }
         getParent().validate();
     }

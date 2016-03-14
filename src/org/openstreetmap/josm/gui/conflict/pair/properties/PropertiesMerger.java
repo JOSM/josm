@@ -83,6 +83,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.insets = new Insets(10, 0, 0, 0);
         JLabel lblMyVersion = new JLabel(tr("My version"));
         lblMyVersion.setToolTipText(tr("Properties in my dataset, i.e. the local dataset"));
+        lblMyVersion.setLabelFor(mineVersionInfo);
         add(lblMyVersion, gc);
 
         gc.gridx = 3;
@@ -94,6 +95,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.gridx = 5;
         JLabel lblTheirVersion = new JLabel(tr("Their version"));
         lblTheirVersion.setToolTipText(tr("Properties in their dataset, i.e. the server dataset"));
+        lblMyVersion.setLabelFor(theirVersionInfo);
         add(lblTheirVersion, gc);
 
         gc.gridx = 1;
@@ -105,7 +107,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
 
         gc.gridx = 5;
         add(theirVersionInfo, gc);
-
     }
 
     protected void buildCoordinateConflictRows() {

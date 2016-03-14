@@ -387,10 +387,10 @@ public abstract class ComboMultiSelect extends KeyedItem {
         label.setToolTipText(getKeyTooltipText());
         p.add(label, GBC.std().insets(0, 0, 10, 0));
         addToPanelAnchor(p, default_, presetInitiallyMatches);
+        label.setLabelFor(component);
         component.setToolTipText(getKeyTooltipText());
 
         return true;
-
     }
 
     private void initListEntries() {

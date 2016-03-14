@@ -571,8 +571,8 @@ public class MapPaintDialog extends ToggleDialog {
 
             final JTabbedPane tabs = new JTabbedPane();
 
-            tabs.add("Info", buildInfoPanel(s));
             JLabel lblInfo = new JLabel(tr("Info"));
+            lblInfo.setLabelFor(tabs.add("Info", buildInfoPanel(s)));
             lblInfo.setFont(lblInfo.getFont().deriveFont(Font.PLAIN));
             tabs.setTabComponentAt(0, lblInfo);
 
@@ -582,8 +582,8 @@ public class MapPaintDialog extends ToggleDialog {
                     s.getWarnings(), marktr("Warnings"), 2, ImageProvider.get("warning-small"));
 
             final JPanel pSource = new JPanel(new GridBagLayout());
-            tabs.addTab("Source", pSource);
             JLabel lblSource = new JLabel(tr("Source"));
+            lblSource.setLabelFor(tabs.add("Source", pSource));
             lblSource.setFont(lblSource.getFont().deriveFont(Font.PLAIN));
             tabs.setTabComponentAt(3, lblSource);
 
@@ -614,12 +614,14 @@ public class MapPaintDialog extends ToggleDialog {
             tabs.add(title, pErrors);
             if (items.isEmpty()) {
                 JLabel lblErrors = new JLabel(tr(title));
+                lblErrors.setLabelFor(pErrors);
                 lblErrors.setFont(lblInfo.getFont().deriveFont(Font.PLAIN));
                 lblErrors.setEnabled(false);
                 tabs.setTabComponentAt(pos, lblErrors);
                 tabs.setEnabledAt(pos, false);
             } else {
                 JLabel lblErrors = new JLabel(tr(title), icon, JLabel.HORIZONTAL);
+                lblErrors.setLabelFor(pErrors);
                 tabs.setTabComponentAt(pos, lblErrors);
             }
             return pErrors;
