@@ -57,6 +57,7 @@ import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.MessageNotifier;
 import org.openstreetmap.josm.io.OnlineResource;
@@ -400,6 +401,12 @@ public class MainApplication extends Main {
             }
         }
 
+        try {
+            CertificateAmendment.addMissingCertificates();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            Main.warn(getErrorMessage(Utils.getRootCause(ex)));
+        }
         Authenticator.setDefault(DefaultAuthenticator.getInstance());
         DefaultProxySelector proxySelector = new DefaultProxySelector(ProxySelector.getDefault());
         ProxySelector.setDefault(proxySelector);

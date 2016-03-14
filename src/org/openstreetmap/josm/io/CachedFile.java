@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -209,6 +210,24 @@ public class CachedFile implements Closeable {
             }
         }
         return new FileInputStream(file);
+    }
+
+    /**
+     * Get the full content of the requested resource as a byte array.
+     * @return the full content of the requested resource as byte array
+     * @throws IOException in case of an I/O error
+     */
+    public byte[] getByteContent() throws IOException {
+        try (InputStream is = getInputStream()) {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            int nRead;
+            byte[] data = new byte[8192];
+            while ((nRead = is.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+            buffer.flush();
+            return buffer.toByteArray();
+        }
     }
 
     /**
