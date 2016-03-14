@@ -1470,7 +1470,7 @@ public final class Utils {
      * @param loadFactor the load factor
      * @return the initial capacity for the HashMap constructor
      */
-    public static int hashMapInitialCapacity(int nEntries, float loadFactor) {
+    public static int hashMapInitialCapacity(int nEntries, double loadFactor) {
         return (int) Math.ceil(nEntries / loadFactor);
     }
 
@@ -1489,7 +1489,7 @@ public final class Utils {
      * @return the initial capacity for the HashMap constructor
      */
     public static int hashMapInitialCapacity(int nEntries) {
-        return hashMapInitialCapacity(nEntries, 0.75f);
+        return hashMapInitialCapacity(nEntries, 0.75d);
     }
 
     /**
