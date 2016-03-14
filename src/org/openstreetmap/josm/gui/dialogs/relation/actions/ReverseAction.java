@@ -25,7 +25,6 @@ public class ReverseAction extends AbstractRelationEditorAction {
         putValue(SHORT_DESCRIPTION, tr("Reverse the order of the relation members"));
         putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "reverse"));
         putValue(NAME, tr("Reverse"));
-    //  Shortcut.register Shortcut("relationeditor:reverse", tr("Relation Editor: Reverse"), KeyEvent.VK_END, Shortcut.ALT)
         updateEnabledState();
     }
 

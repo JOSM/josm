@@ -543,7 +543,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * @param p the primitive
      * @return {@code true} if this preset matches the primitive
      */
-     @Override
+    @Override
     public boolean evaluate(OsmPrimitive p) {
         return matches(EnumSet.of(TaggingPresetType.forPrimitive(p)), p.getKeys(), false);
     }

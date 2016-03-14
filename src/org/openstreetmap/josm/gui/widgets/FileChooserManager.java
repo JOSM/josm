@@ -209,7 +209,7 @@ public class FileChooserManager {
      * @param value The string that goes in the dialog window's title bar
      * @return this
      */
-     public FileChooserManager title(String value) {
+    public FileChooserManager title(String value) {
         title = value;
         return this;
     }

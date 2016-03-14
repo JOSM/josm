@@ -66,7 +66,7 @@ public class ImageryLayerInfo {
      * Loads the custom as well as default imagery entries.
      * @param fastFail whether opening HTTP connections should fail fast, see {@link ImageryReader#setFastFail(boolean)}
      */
-     public void load(boolean fastFail) {
+    public void load(boolean fastFail) {
         clear();
         List<ImageryPreferenceEntry> entries = Main.pref.getListOfStructs("imagery.entries", null, ImageryPreferenceEntry.class);
         if (entries != null) {
