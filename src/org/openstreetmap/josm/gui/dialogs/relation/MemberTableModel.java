@@ -459,13 +459,15 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         return new RelationMember(role == null ? "" : role, primitive);
     }
 
-    void addMembersAtIndex(final Iterable<RelationMember> newMembers, final int index) {
+    void addMembersAtIndexKeepingOldSelection(final Iterable<RelationMember> newMembers, final int index) {
         int idx = index;
         for (RelationMember member : newMembers) {
             members.add(idx++, member);
         }
         invalidateConnectionType();
+        final List<Integer> selection = getSelectedIndices();
         fireTableRowsInserted(index, idx - 1);
+        setSelectedMembersIdx(selection);
     }
 
     public void addMembersAtBeginning(List<? extends OsmPrimitive> primitives) {

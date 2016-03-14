@@ -106,7 +106,7 @@ class MemberTransferHandler extends TransferHandler {
                 membersToAdd.add(member);
             }
         }
-        destination.getMemberTableModel().addMembersAtIndex(membersToAdd, insertRow);
+        destination.getMemberTableModel().addMembersAtIndexKeepingOldSelection(membersToAdd, insertRow);
     }
 
     @Override
