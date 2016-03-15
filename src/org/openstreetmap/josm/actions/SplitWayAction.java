@@ -585,9 +585,9 @@ public class SplitWayAction extends JosmAction {
         final int indexOfWayToKeep = newWays.indexOf(wayToKeep);
         newWays.remove(wayToKeep);
 
+        newSelection.addAll(newWays);
         for (Way wayToAdd : newWays) {
             commandList.add(new AddCommand(layer, wayToAdd));
-            newSelection.add(wayToAdd);
         }
 
         boolean warnmerole = false;

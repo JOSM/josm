@@ -11,7 +11,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -164,12 +163,9 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable {
                 visitor.merge();
 
                 // copy the merged layer's data source info
-                for (DataSource src : referrers.dataSources) {
-                    getLayer().data.dataSources.add(src);
-                }
+                getLayer().data.dataSources.addAll(referrers.dataSources);
                 // FIXME: this is necessary because there are  dialogs listening
-                // for DataChangeEvents which manipulate Swing components on this
-                // thread.
+                // for DataChangeEvents which manipulate Swing components on this thread.
                 //
                 SwingUtilities.invokeLater(
                         new Runnable() {

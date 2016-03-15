@@ -55,11 +55,11 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
-import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.JpgImporter;
@@ -977,14 +977,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
      * @return List of images in layer
      */
     public List<ImageEntry> getImages() {
-        if (data == null) {
-            return Collections.emptyList();
-        }
-        List<ImageEntry> copy = new ArrayList<>(data.size());
-        for (ImageEntry ie : data) {
-            copy.add(ie);
-        }
-        return copy;
+        return data == null ? Collections.<ImageEntry>emptyList() : new ArrayList<>(data);
     }
 
     /**
