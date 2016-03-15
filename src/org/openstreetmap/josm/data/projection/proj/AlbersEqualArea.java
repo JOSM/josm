@@ -70,16 +70,6 @@ public class AlbersEqualArea extends AbstractProj {
      */
     private double ec;
 
-    /**
-     * Standards parallel 1 in radians.
-     */
-    private double phi1;
-
-    /**
-     * Standards parallel 2 in radians.
-     */
-    private double phi2;
-
     @Override
     public String getName() {
         return tr("Albers Equal Area");
@@ -99,8 +89,9 @@ public class AlbersEqualArea extends AbstractProj {
             throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_1"));
 
         double lat0 = Math.toRadians(params.lat0);
-        phi1 = Math.toRadians(params.lat1);
-        phi2 = params.lat2 == null ? phi1 : Math.toRadians(params.lat2);
+        // Standards parallels in radians.
+        double phi1 = Math.toRadians(params.lat1);
+        double phi2 = params.lat2 == null ? phi1 : Math.toRadians(params.lat2);
 
         // Compute Constants
         if (Math.abs(phi1 + phi2) < EPSILON) {

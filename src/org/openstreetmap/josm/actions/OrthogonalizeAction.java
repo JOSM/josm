@@ -304,9 +304,7 @@ public final class OrthogonalizeAction extends JosmAction {
         // put the nodes of all ways in a set
         final Set<Node> allNodes = new HashSet<>();
         for (WayData w : wayDataList) {
-            for (Node n : w.wayNodes) {
-                allNodes.add(n);
-            }
+            allNodes.addAll(w.wayNodes);
         }
 
         // the new x and y value for each node

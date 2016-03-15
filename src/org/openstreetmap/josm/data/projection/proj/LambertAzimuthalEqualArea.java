@@ -53,7 +53,7 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
     private Mode mode;
 
     /** Constant parameters. */
-    private double sinb1, cosb1, xmf, ymf, mmf, qp, dd, rq;
+    private double sinb1, cosb1, xmf, ymf, qp, dd, rq;
 
     /** Coefficients for authalic latitude. */
     private double aPA0, aPA1, aPA2;
@@ -101,7 +101,6 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
         final double sinphi;
         qp     = qsfn(1);
         rq     = Math.sqrt(0.5 * qp);
-        mmf    = 0.5 / (1 - e2);
         sinphi = Math.sin(latitudeOfOrigin);
         sinb1 = qsfn(sinphi) / qp;
         cosb1 = Math.sqrt(1.0 - sinb1 * sinb1);

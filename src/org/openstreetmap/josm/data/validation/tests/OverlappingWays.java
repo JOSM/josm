@@ -147,9 +147,7 @@ public class OverlappingWays extends Test {
                                     errortype, type, prims, duplicated));
                     seenWays.put(currentWays, duplicated);
                 } else { /* way seen, mark highlight layer only */
-                    for (WaySegment ws : duplicated) {
-                        highlight.add(ws);
-                    }
+                    highlight.addAll(duplicated);
                 }
             }
         }

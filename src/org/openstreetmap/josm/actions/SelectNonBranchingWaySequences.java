@@ -146,10 +146,7 @@ public class SelectNonBranchingWaySequences {
             return;
 
         boolean selectionChanged = false;
-        Collection<OsmPrimitive> selection = new LinkedList<>();
-        for (OsmPrimitive primitive : currentSelection) {
-            selection.add(primitive);
-        }
+        Collection<OsmPrimitive> selection = new LinkedList<>(currentSelection);
 
         do {
             if (!selection.add(way))
