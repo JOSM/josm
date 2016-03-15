@@ -78,11 +78,6 @@ public class PolarStereographic extends AbstractProj {
     private double k0;
 
     /**
-     * Latitude of true scale, in radians
-     */
-    private double latitudeTrueScale;
-
-    /**
      * {@code true} if this projection is for the south pole, or {@code false}
      * if it is for the north pole.
      */
@@ -106,6 +101,8 @@ public class PolarStereographic extends AbstractProj {
         if (params.lat0 != 90.0 && params.lat0 != -90.0)
             throw new ProjectionConfigurationException(
                     tr("Polar Stereographic: Parameter ''{0}'' must be 90 or -90.", "lat_0"));
+        // Latitude of true scale, in radians;
+        double latitudeTrueScale;
         if (params.lat_ts == null) {
             latitudeTrueScale = (params.lat0 < 0) ? -Math.PI/2 : Math.PI/2;
         } else {

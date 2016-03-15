@@ -161,10 +161,19 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
     private double b, a, e;
 
     /**
-     * Convenience values equal to {@link #a} / {@link #b},
-     * {@link #a}&times;{@link #b}, and {@link #b} / {@link #a}.
+     * Convenience value equal to {@link #a} / {@link #b}.
      */
-    private double arb, ab, bra;
+    private double arb;
+
+    /**
+     * Convenience value equal to {@link #a}&times;{@link #b}.
+     */
+    private double ab;
+
+    /**
+     * Convenience value equal to {@link #b} / {@link #a}.
+     */
+    private double bra;
 
     /**
      * <var>v</var> values when the input latitude is a pole.
