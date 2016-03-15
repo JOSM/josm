@@ -71,10 +71,9 @@ public final class OverpassTurboQueryWizard {
             query = query.replace("[bbox:{{bbox}}]", "");
             return query;
         } catch (NoSuchMethodException e) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(e);
         } catch (ScriptException e) {
             throw new RuntimeException("Failed to execute OverpassTurboQueryWizard", e);
         }
     }
-
 }

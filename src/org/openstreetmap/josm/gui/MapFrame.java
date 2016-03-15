@@ -130,19 +130,33 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     }
 
     // Toggle dialogs
+
+    /** Conflict dialog */
     public ConflictDialog conflictDialog;
+    /** Filter dialog */
     public FilterDialog filterDialog;
+    /** Relation list dialog */
     public RelationListDialog relationListDialog;
+    /** Validator dialog */
     public ValidatorDialog validatorDialog;
+    /** Selection list dialog */
     public SelectionListDialog selectionListDialog;
+    /** Properties dialog */
     public PropertiesDialog propertiesDialog;
+    /** Map paint dialog */
     public MapPaintDialog mapPaintDialog;
+    /** Notes dialog */
     public NotesDialog noteDialog;
 
     // Map modes
+
+    /** Select mode */
     public final SelectAction mapModeSelect;
+    /** Draw mode */
     public final DrawAction mapModeDraw;
+    /** Zoom mode */
     public final ZoomAction mapModeZoom;
+    /** Select Lasso mode */
     public LassoModeAction mapModeSelectLasso;
 
     private final transient Map<Layer, MapMode> lastMapMode = new HashMap<>();

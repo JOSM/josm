@@ -136,17 +136,6 @@ public class EmailValidator extends AbstractValidator {
     }
 
     /**
-     * Protected constructor for subclasses to use.
-     *
-     * @param allowLocal Should local addresses be considered valid?
-     */
-    protected EmailValidator(boolean allowLocal) {
-        super();
-        this.allowLocal = allowLocal;
-        this.allowTld = false;
-    }
-
-    /**
      * <p>Checks if a field has a valid e-mail address.</p>
      *
      * @param email The value validation is being performed on.  A <code>null</code>

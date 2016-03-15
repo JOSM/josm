@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -104,8 +103,7 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
                 Method m = e.getMethod("canEdit", Relation.class);
                 Boolean canEdit = (Boolean) m.invoke(null, r);
                 if (canEdit) {
-                    Constructor<RelationEditor> con = e.getConstructor(Relation.class, Collection.class);
-                    return con.newInstance(layer, r, selectedMembers);
+                    return e.getConstructor(Relation.class, Collection.class).newInstance(layer, r, selectedMembers);
                 }
             } catch (Exception ex) {
                 Main.warn(ex);
