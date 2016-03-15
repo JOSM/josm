@@ -1390,7 +1390,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 }
             } catch (NumberFormatException nfe) {
                 // Invalid timezone
-                throw new ParseException(error, 0);
+                throw (ParseException) new ParseException(error, 0).initCause(nfe);
             }
 
             if (h > 12 || m > 59)
@@ -1458,7 +1458,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     }
                     return Offset.milliseconds(Math.round(Double.parseDouble(offset) * 1000));
                 } catch (NumberFormatException nfe) {
-                    throw new ParseException(error, 0);
+                    throw (ParseException) new ParseException(error, 0).initCause(nfe);
                 }
             } else {
                 return Offset.ZERO;

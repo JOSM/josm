@@ -136,7 +136,7 @@ public final class DateUtils {
         try {
             return XML_DATE.newXMLGregorianCalendar(str).toGregorianCalendar().getTimeInMillis();
         } catch (Exception ex) {
-            throw new UncheckedParseException("The date string (" + str + ") could not be parsed.");
+            throw new UncheckedParseException("The date string (" + str + ") could not be parsed.", ex);
         }
     }
 

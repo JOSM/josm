@@ -37,17 +37,23 @@ import org.openstreetmap.josm.tools.Utils;
  * operating systems, but not included in some distributions of Java.
  *
  * The certificates are added in-memory at each start, nothing is written to disk.
+ * @since 9995
  */
-public class CertificateAmendment {
+public final class CertificateAmendment {
 
-    public static final String[] CERT_AMEND = { 
+    private static final String[] CERT_AMEND = {
         "resource://data/security/DST_Root_CA_X3.pem",
         "resource://data/security/StartCom_Certification_Authority.pem"
     };
-    public static final String[] SHA_HASHES = {
+
+    private static final String[] SHA_HASHES = {
         "139a5e4a4e0fa505378c72c5f700934ce8333f4e6b1b508886c4b0eb14f4be99",
         "916a8f9232328192968c81c8edb672fa539f726861dfe379ca722050e19962cd"
     };
+
+    private CertificateAmendment() {
+        // Hide default constructor for utility classes
+    }
 
     /**
      * Add missing root certificates to the list of trusted certificates for TLS connections.
@@ -80,13 +86,13 @@ public class CertificateAmendment {
         boolean certificateAdded = false;
         for (int i = 0; i < CERT_AMEND.length; i++) {
             CachedFile certCF = new CachedFile(CERT_AMEND[i]);
-            byte[] certBytes = certCF.getByteContent();
             MessageDigest md;
             try {
                 md = MessageDigest.getInstance("SHA-256");
             } catch (NoSuchAlgorithmException ex) {
                 throw new RuntimeException(ex);
             }
+            byte[] certBytes = certCF.getByteContent();
             byte[] sha = md.digest(certBytes);
             if (!SHA_HASHES[i].equals(Utils.toHexString(sha)))
                 throw new RuntimeException(tr("certificate hash mismatch"));
@@ -130,7 +136,6 @@ public class CertificateAmendment {
      * @return true, if the certificate is not contained in the keystore
      */
     private static boolean certificateIsMissing(KeyStore keyStore, X509Certificate crt) {
-        String id = crt.getSubjectX500Principal().getName();
         PKIXParameters params;
         try {
             params = new PKIXParameters(keyStore);
@@ -139,6 +144,7 @@ public class CertificateAmendment {
         } catch (InvalidAlgorithmParameterException ex) {
             throw new RuntimeException(ex);
         }
+        String id = crt.getSubjectX500Principal().getName();
         for (TrustAnchor ta : params.getTrustAnchors()) {
             X509Certificate cert = ta.getTrustedCert();
             if (Objects.equals(id, cert.getSubjectX500Principal().getName()))

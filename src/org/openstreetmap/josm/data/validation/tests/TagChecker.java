@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -127,11 +128,11 @@ public class TagChecker extends TagTest {
     protected static final int MISSPELLED_VALUE  = 1212;
     protected static final int MISSPELLED_KEY    = 1213;
     protected static final int MULTIPLE_SPACES   = 1214;
-    /** 1250 and up is used by tagcheck */
+    // 1250 and up is used by tagcheck
 
     protected EditableList sourcesList;
 
-    private static final List<String> DEFAULT_SOURCES = Arrays.asList(/*DATA_FILE, */IGNORE_FILE, SPELL_FILE);
+    private static final Set<String> DEFAULT_SOURCES = new HashSet<>(Arrays.asList(/*DATA_FILE, */IGNORE_FILE, SPELL_FILE));
 
     /**
      * Constructor
