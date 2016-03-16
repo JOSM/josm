@@ -314,7 +314,7 @@ public class TagEditHelper {
         }
     }
 
-    private void warnAboutParseError(SearchCompiler.ParseError parseError) {
+    private static void warnAboutParseError(SearchCompiler.ParseError parseError) {
         Main.warn(parseError);
         JOptionPane.showMessageDialog(
                 Main.parent,

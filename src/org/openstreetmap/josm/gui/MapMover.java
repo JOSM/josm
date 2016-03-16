@@ -21,13 +21,12 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
-import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -57,7 +56,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
             }
         }
 
-        private void updateJMapViewer() {
+        private static void updateJMapViewer() {
             JMapViewer.zoomReverseWheel = MapMover.PROP_ZOOM_REVERSE_WHEEL.get();
         }
     }

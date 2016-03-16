@@ -454,8 +454,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
     }
 
-    private String getRelationName(IRelation relation) {
-        String nameTag = null;
+    private static String getRelationName(IRelation relation) {
+        String nameTag;
         for (String n : getNamingtagsForRelations()) {
             nameTag = getNameTagValue(relation, n);
             if (nameTag != null)

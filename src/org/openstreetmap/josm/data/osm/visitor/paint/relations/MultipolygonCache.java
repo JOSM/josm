@@ -188,7 +188,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         return maps;
     }
 
-    private void processEvent(AbstractDatasetChangedEvent event, Relation r, Collection<Map<Relation, Multipolygon>> maps) {
+    private static void processEvent(AbstractDatasetChangedEvent event, Relation r, Collection<Map<Relation, Multipolygon>> maps) {
         if (event instanceof NodeMovedEvent || event instanceof WayNodesChangedEvent) {
             dispatchEvent(event, r, maps);
         } else if (event instanceof PrimitivesRemovedEvent) {

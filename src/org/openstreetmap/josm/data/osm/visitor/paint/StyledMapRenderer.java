@@ -390,7 +390,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private Polygon buildPolygon(Point center, int radius, int sides) {
+    private static Polygon buildPolygon(Point center, int radius, int sides) {
         return buildPolygon(center, radius, sides, 0.0);
     }
 
