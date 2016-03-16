@@ -70,7 +70,6 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @param registerInToolbar register this action for the toolbar preferences?
      * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
-     * TODO: do not pass Icon, pass ImageProvider instead
      */
     public JosmAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut, boolean registerInToolbar,
             String toolbarId, boolean installAdapters) {

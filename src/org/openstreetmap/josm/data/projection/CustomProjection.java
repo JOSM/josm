@@ -570,7 +570,7 @@ public class CustomProjection extends AbstractProjection {
             projParams.lon2 = parseAngle(s, Param.lon_2.key);
         }
         if (parameters.containsKey(Param.no_off.key) || parameters.containsKey(Param.no_uoff.key)) {
-            projParams.no_off = true;
+            projParams.no_off = Boolean.TRUE;
         }
         proj.initialize(projParams);
         return proj;
@@ -712,11 +712,11 @@ public class CustomProjection extends AbstractProjection {
 
     /**
      * Factor to convert units of east/north coordinates to meters.
-     * 
+     *
      * When east/north coordinates are in degrees (geographic CRS), the scale
      * at the equator is taken, i.e. 360 degrees corresponds to the length of
      * the equator in meters.
-     * 
+     *
      * @return factor to convert units to meter
      */
     @Override
@@ -779,7 +779,7 @@ public class CustomProjection extends AbstractProjection {
         return ret;
     }
 
-    private EastNorth getPointAlong(int i, int N, ProjectionBounds r) {
+    private static EastNorth getPointAlong(int i, int N, ProjectionBounds r) {
         double dEast = (r.maxEast - r.minEast) / N;
         double dNorth = (r.maxNorth - r.minNorth) / N;
         if (i < N) {

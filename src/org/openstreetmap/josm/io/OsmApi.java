@@ -858,13 +858,13 @@ public class OsmApi extends OsmConnection {
      * @return the resulting Note
      * @throws OsmTransferException if the API response cannot be parsed
      */
-    private Note parseSingleNote(String xml) throws OsmTransferException {
+    private static Note parseSingleNote(String xml) throws OsmTransferException {
         try {
             List<Note> newNotes = new NoteReader(xml).parse();
             if (newNotes.size() == 1) {
                 return newNotes.get(0);
             }
-            //Shouldn't ever execute. Server will either respond with an error (caught elsewhere) or one note
+            // Shouldn't ever execute. Server will either respond with an error (caught elsewhere) or one note
             throw new OsmTransferException(tr("Note upload failed"));
         } catch (SAXException | IOException e) {
             Main.error(e, true);

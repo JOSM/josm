@@ -265,7 +265,7 @@ public class RequestProcessor extends Thread {
      * @throws IOException
      *             If the error can not be written
      */
-    private void sendError(Writer out) throws IOException {
+    private static void sendError(Writer out) throws IOException {
         sendHeader(out, "500 Internal Server Error", "text/html", true);
         out.write("<HTML>\r\n");
         out.write("<HEAD><TITLE>Internal Error</TITLE>\r\n");
@@ -284,7 +284,7 @@ public class RequestProcessor extends Thread {
      * @throws IOException
      *             If the error can not be written
      */
-    private void sendNotImplemented(Writer out) throws IOException {
+    private static void sendNotImplemented(Writer out) throws IOException {
         sendHeader(out, "501 Not Implemented", "text/html", true);
         out.write("<HTML>\r\n");
         out.write("<HEAD><TITLE>Not Implemented</TITLE>\r\n");
@@ -305,7 +305,7 @@ public class RequestProcessor extends Thread {
      * @throws IOException
      *             If the error can not be written
      */
-    private void sendForbidden(Writer out, String help) throws IOException {
+    private static void sendForbidden(Writer out, String help) throws IOException {
         sendHeader(out, "403 Forbidden", "text/html", true);
         out.write("<HTML>\r\n");
         out.write("<HEAD><TITLE>Forbidden</TITLE>\r\n");
@@ -329,7 +329,7 @@ public class RequestProcessor extends Thread {
      * @throws IOException
      *             If the error can not be written
      */
-    private void sendBadRequest(Writer out, String help) throws IOException {
+    private static void sendBadRequest(Writer out, String help) throws IOException {
         sendHeader(out, "400 Bad Request", "text/html", true);
         out.write("<HTML>\r\n");
         out.write("<HEAD><TITLE>Bad Request</TITLE>\r\n");

@@ -113,7 +113,7 @@ public class MultipolygonTest extends Test {
         return result;
     }
 
-    private List<GeneralPath> createPolygons(List<Multipolygon.PolyData> joinedWays) {
+    private static List<GeneralPath> createPolygons(List<Multipolygon.PolyData> joinedWays) {
         List<GeneralPath> result = new ArrayList<>();
         for (Multipolygon.PolyData way : joinedWays) {
             result.add(createPath(way.getNodes()));

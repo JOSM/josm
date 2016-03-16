@@ -7,14 +7,13 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
 
 /**
  * A UI component for resolving conflicts in the node lists of two {@link Way}s.
  * @since 1622
  */
-public class NodeListMerger extends ListMerger<Node> implements IConflictResolver {
+public class NodeListMerger extends ListMerger<Node> {
 
     /**
      * Constructs a new {@code NodeListMerger}.

@@ -96,7 +96,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 false, new JTabbedPane());
     }
 
-    private void addSettingsSection(final JPanel p, String name, JPanel section) {
+    private static void addSettingsSection(final JPanel p, String name, JPanel section) {
         addSettingsSection(p, name, section, GBC.eol());
     }
 

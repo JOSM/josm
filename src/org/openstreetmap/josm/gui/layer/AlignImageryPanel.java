@@ -60,7 +60,7 @@ public class AlignImageryPanel extends JPanel {
                 if (Main.isDisplayingMapView()) {
                     Main.map.removeTopPanel(AlignImageryPanel.class);
                     if (doNotShowAgain.isSelected()) {
-                        showAgain.put(false);
+                        showAgain.put(Boolean.FALSE);
                     }
                 }
             }

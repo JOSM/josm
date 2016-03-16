@@ -48,7 +48,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @see ListMergeModel
  * @since 1631
  */
-public abstract class ListMerger<T extends PrimitiveId> extends JPanel implements PropertyChangeListener, Observer {
+public abstract class ListMerger<T extends PrimitiveId> extends JPanel implements PropertyChangeListener, Observer, IConflictResolver {
     protected OsmPrimitivesTable myEntriesTable;
     protected OsmPrimitivesTable mergedEntriesTable;
     protected OsmPrimitivesTable theirEntriesTable;

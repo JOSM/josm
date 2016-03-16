@@ -367,7 +367,7 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
         }
     }
 
-    private double normalizeLonRad(double a) {
+    private static double normalizeLonRad(double a) {
         return Math.toRadians(LatLon.normalizeLon(Math.toDegrees(a)));
     }
 

@@ -293,7 +293,7 @@ public class MapCSSStyleSource extends StyleSource {
          * @param conds The conditions to search through.
          * @return An arbitrary key this rule depends on or <code>null</code> if there is no such key.
          */
-        private String findAnyRequiredKey(List<Condition> conds) {
+        private static String findAnyRequiredKey(List<Condition> conds) {
             String key = null;
             for (Condition c : conds) {
                 if (c instanceof KeyCondition) {

@@ -7,14 +7,13 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
 
 /**
  * A UI component for resolving conflicts in the member lists of two {@link Relation}s.
  * @since 1631
  */
-public class RelationMemberMerger extends ListMerger<RelationMember> implements IConflictResolver {
+public class RelationMemberMerger extends ListMerger<RelationMember> {
 
     /**
      * Constructs a new {@code RelationMemberMerger}.

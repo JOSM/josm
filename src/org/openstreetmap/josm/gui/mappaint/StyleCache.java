@@ -52,7 +52,7 @@ public final class StyleCache {
         return states[idx].getWithRange(scale);
     }
 
-    private int getIndex(boolean selected) {
+    private static int getIndex(boolean selected) {
         return selected ? SELECTED : PLAIN;
     }
 
