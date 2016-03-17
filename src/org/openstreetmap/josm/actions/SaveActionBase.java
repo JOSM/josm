@@ -27,7 +27,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 290
  */
 public abstract class SaveActionBase extends DiskAccessAction {
-    private File file;
 
     /**
      * Constructs a new {@code SaveActionBase}.
@@ -69,8 +68,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
     public boolean doSave(Layer layer) {
         if (!layer.checkSaveConditions())
             return false;
-        file = getFile(layer);
-        return doInternalSave(layer, file);
+        return doInternalSave(layer, getFile(layer));
     }
 
     /**
