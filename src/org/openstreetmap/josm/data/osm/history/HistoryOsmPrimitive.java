@@ -179,10 +179,18 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         return Collections.unmodifiableMap(tags);
     }
 
+    /**
+     * Returns the changeset for this history primitive.
+     * @return the changeset for this history primitive
+     */
     public Changeset getChangeset() {
         return changeset;
     }
 
+    /**
+     * Sets the changeset for this history primitive.
+     * @param changeset the changeset for this history primitive
+     */
     public void setChangeset(Changeset changeset) {
         this.changeset = changeset;
     }

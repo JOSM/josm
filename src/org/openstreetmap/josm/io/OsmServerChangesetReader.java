@@ -72,7 +72,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
             sb.append("changesets?").append(query.getQueryString());
             try (InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true))) {
                 if (in == null)
-                    return null;
+                    return Collections.emptyList();
                 monitor.indeterminateSubTask(tr("Downloading changesets ..."));
                 result = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
             } catch (IOException e) {
