@@ -1836,6 +1836,7 @@ node[leisure=slipway] {
     text: auto;
 }
 area[leisure=fishing],
+area[leisure=bird_hide],
 area[leisure=nature_reserve],
 area[leisure=park],
 area[leisure=playground],
@@ -1846,6 +1847,11 @@ area[leisure=firepit] {
 }
 node[leisure=fishing] {
     icon-image: "sport/fishing.png";
+    set icon_z17;
+    text: auto;
+}
+node[leisure=bird_hide] {
+    icon-image: "leisure/bird_hide.svg";
     set icon_z17;
     text: auto;
 }

@@ -4199,6 +4199,12 @@
             <key key="leisure" value="fishing" />
             <text key="name" text="Name" />
         </item> <!-- Fishing -->
+        <item name="Bird Hide" icon="styles/standard/leisure/bird_hide.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=bird_hide" />
+            <space />
+            <key key="leisure" value="bird_hide" />
+            <reference ref="name_ref_operator" />
+        </item> <!-- Bird Hide -->
         <separator/>
         <item name="Night Club" icon="styles/standard/leisure/discoball.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nightclub"
