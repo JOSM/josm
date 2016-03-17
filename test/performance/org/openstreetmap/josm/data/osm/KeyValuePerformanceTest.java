@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.data.osm;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -76,19 +78,19 @@ public class KeyValuePerformanceTest {
 
         timer = PerformanceTestUtils.startTimer("str1 == str2 succeeds");
         for (int i = 0; i < STRING_INTERN_TESTS; i++) {
-            assertTrue(str1Interned == str1InternedB);
+            assertSame(str1Interned, str1InternedB);
         }
         timer.done();
 
         timer = PerformanceTestUtils.startTimer("str1 == str2.intern() succeeds");
         for (int i = 0; i < STRING_INTERN_TESTS; i++) {
-            assertTrue(str1Interned == str1.intern());
+            assertSame(str1Interned, str1.intern());
         }
         timer.done();
 
         timer = PerformanceTestUtils.startTimer("str1 == str2.intern() succeeds for interned string");
         for (int i = 0; i < STRING_INTERN_TESTS; i++) {
-            assertTrue(str1Interned == str1InternedB.intern());
+            assertSame(str1Interned, str1InternedB.intern());
         }
         timer.done();
 
@@ -100,13 +102,13 @@ public class KeyValuePerformanceTest {
 
         timer = PerformanceTestUtils.startTimer("str1 == str2 fails");
         for (int i = 0; i < STRING_INTERN_TESTS; i++) {
-            assertFalse(str1Interned == str2Interned);
+            assertNotSame(str1Interned, str2Interned);
         }
         timer.done();
 
         timer = PerformanceTestUtils.startTimer("str1 == str2.intern() fails");
         for (int i = 0; i < STRING_INTERN_TESTS; i++) {
-            assertFalse(str1Interned == str2.intern());
+            assertNotSame(str1Interned, str2.intern());
         }
         timer.done();
     }
