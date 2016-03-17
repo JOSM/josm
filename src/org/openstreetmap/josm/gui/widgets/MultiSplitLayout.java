@@ -1096,14 +1096,13 @@ public class MultiSplitLayout implements LayoutManager {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder("MultiSplitLayout.Leaf");
-            sb.append(" \"")
+            return new StringBuilder("MultiSplitLayout.Leaf \"")
               .append(getName())
               .append("\" weight=")
               .append(getWeight())
               .append(' ')
-              .append(getBounds());
-            return sb.toString();
+              .append(getBounds())
+              .toString();
         }
     }
 
