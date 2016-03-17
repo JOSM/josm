@@ -31,7 +31,8 @@ import org.apache.commons.compress.compressors.CompressorOutputStream;
  */
 public class DeflateCompressorOutputStream extends CompressorOutputStream {
     private final DeflaterOutputStream out;
-   
+    private final Deflater deflater;
+
     /**
      * Creates a Deflate compressed output stream with the default parameters.
      * @param outputStream the stream to wrap
@@ -49,7 +50,8 @@ public class DeflateCompressorOutputStream extends CompressorOutputStream {
      */
     public DeflateCompressorOutputStream(OutputStream outputStream,
                                          DeflateParameters parameters) throws IOException {
-        this.out = new DeflaterOutputStream(outputStream, new Deflater(parameters.getCompressionLevel(), !parameters.withZlibHeader()));
+        this.deflater = new Deflater(parameters.getCompressionLevel(), !parameters.withZlibHeader());
+        this.out = new DeflaterOutputStream(outputStream, deflater);
     }
 
     @Override
@@ -83,6 +85,10 @@ public class DeflateCompressorOutputStream extends CompressorOutputStream {
 
     @Override
     public void close() throws IOException {
-        out.close();
+        try {
+            out.close();
+        } finally {
+            deflater.end();
+        }
     }
 }

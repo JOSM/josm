@@ -37,6 +37,7 @@ public class DeflateCompressorInputStream extends CompressorInputStream {
     private static final int MAGIC_2d = 0xda;
     
     private final InputStream in;
+    private final Inflater inflater;
 
     /**
      * Creates a new input stream that decompresses Deflate-compressed data
@@ -58,7 +59,8 @@ public class DeflateCompressorInputStream extends CompressorInputStream {
      */
     public DeflateCompressorInputStream(InputStream inputStream,
                                         DeflateParameters parameters) {
-        in = new InflaterInputStream(inputStream, new Inflater(!parameters.withZlibHeader()));
+        inflater = new Inflater(!parameters.withZlibHeader());
+        in = new InflaterInputStream(inputStream, inflater);
     }
     
     /** {@inheritDoc} */
@@ -92,7 +94,11 @@ public class DeflateCompressorInputStream extends CompressorInputStream {
     /** {@inheritDoc} */
     @Override
     public void close() throws IOException {
-        in.close();
+        try {
+            in.close();
+        } finally {
+            inflater.end();
+        }
     }
     
     /**
