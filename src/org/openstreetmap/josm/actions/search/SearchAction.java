@@ -259,12 +259,12 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         JRadioButton replace = new JRadioButton(tr("replace selection"), initialValues.mode == SearchMode.replace);
         JRadioButton add = new JRadioButton(tr("add to selection"), initialValues.mode == SearchMode.add);
         JRadioButton remove = new JRadioButton(tr("remove from selection"), initialValues.mode == SearchMode.remove);
-        JRadioButton in_selection = new JRadioButton(tr("find in selection"), initialValues.mode == SearchMode.in_selection);
+        JRadioButton inSelection = new JRadioButton(tr("find in selection"), initialValues.mode == SearchMode.in_selection);
         ButtonGroup bg = new ButtonGroup();
         bg.add(replace);
         bg.add(add);
         bg.add(remove);
-        bg.add(in_selection);
+        bg.add(inSelection);
 
         final JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
         JCheckBox allElements = new JCheckBox(tr("all objects"), initialValues.allElements);
@@ -285,7 +285,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         left.add(replace, GBC.eol());
         left.add(add, GBC.eol());
         left.add(remove, GBC.eol());
-        left.add(in_selection, GBC.eop());
+        left.add(inSelection, GBC.eop());
         left.add(caseSensitive, GBC.eol());
         if (Main.pref.getBoolean("expert", false)) {
             left.add(allElements, GBC.eol());

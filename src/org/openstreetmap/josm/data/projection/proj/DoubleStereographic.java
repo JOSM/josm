@@ -57,14 +57,14 @@ public class DoubleStereographic extends AbstractProj {
         initialize(params.lat0);
     }
 
-    private void initialize(double lat_0) {
-        double phi0 = toRadians(lat_0);
+    private void initialize(double lat0) {
+        double phi0 = toRadians(lat0);
         double e2 = ellps.e2;
         r = sqrt(1-e2) / (1 - e2*pow(sin(phi0), 2));
         n = sqrt(1 + ellps.eb2 * pow(cos(phi0), 4));
-        double S1 = (1 + sin(phi0)) / (1 - sin(phi0));
-        double S2 = (1 - e * sin(phi0)) / (1 + e * sin(phi0));
-        double w1 = pow(S1 * pow(S2, e), n);
+        double s1 = (1 + sin(phi0)) / (1 - sin(phi0));
+        double s2 = (1 - e * sin(phi0)) / (1 + e * sin(phi0));
+        double w1 = pow(s1 * pow(s2, e), n);
         double sinchi00 = (w1 - 1) / (w1 + 1);
         c = (n + sin(phi0)) * (1 - sinchi00) / ((n - sin(phi0)) * (1 + sinchi00));
         double w2 = c * w1;
@@ -73,14 +73,14 @@ public class DoubleStereographic extends AbstractProj {
 
     @Override
     public double[] project(double phi, double lambda) {
-        double Lambda = n * lambda;
-        double Sa = (1 + sin(phi)) / (1 - sin(phi));
-        double Sb = (1 - e * sin(phi)) / (1 + e * sin(phi));
-        double w = c * pow(Sa * pow(Sb, e), n);
+        double nLambda = n * lambda;
+        double sa = (1 + sin(phi)) / (1 - sin(phi));
+        double sb = (1 - e * sin(phi)) / (1 + e * sin(phi));
+        double w = c * pow(sa * pow(sb, e), n);
         double chi = asin((w - 1) / (w + 1));
-        double B = 1 + sin(chi) * sin(chi0) + cos(chi) * cos(chi0) * cos(Lambda);
-        double x = 2 * r * cos(chi) * sin(Lambda) / B;
-        double y = 2 * r * (sin(chi) * cos(chi0) - cos(chi) * sin(chi0) * cos(Lambda)) / B;
+        double b = 1 + sin(chi) * sin(chi0) + cos(chi) * cos(chi0) * cos(nLambda);
+        double x = 2 * r * cos(chi) * sin(nLambda) / b;
+        double y = 2 * r * (sin(chi) * cos(chi0) - cos(chi) * sin(chi0) * cos(nLambda)) / b;
         return new double[] {x, y};
     }
 
@@ -92,8 +92,7 @@ public class DoubleStereographic extends AbstractProj {
         double i = atan(x/(h + y));
         double j = atan(x/(g - y)) - i;
         double chi = chi0 + 2 * atan((y - x * tan(j/2)) / (2 * r));
-        double Lambda = j + 2*i;
-        double lambda = Lambda / n;
+        double lambda = (j + 2*i) / n;
         double psi = 0.5 * log((1 + sin(chi)) / (c*(1 - sin(chi)))) / n;
         double phiprev = -1000;
         int iteration = 0;

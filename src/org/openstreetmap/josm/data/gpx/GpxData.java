@@ -239,15 +239,15 @@ public class GpxData extends WithAttributes implements Data {
     }
 
     /**
-     * Makes a WayPoint at the projection of point P onto the track providing P is less than
+     * Makes a WayPoint at the projection of point p onto the track providing p is less than
      * tolerance away from the track
      *
-     * @param P : the point to determine the projection for
+     * @param p : the point to determine the projection for
      * @param tolerance : must be no further than this from the track
-     * @return the closest point on the track to P, which may be the first or last point if off the
+     * @return the closest point on the track to p, which may be the first or last point if off the
      * end of a segment, or may be null if nothing close enough
      */
-    public WayPoint nearestPointOnTrack(EastNorth P, double tolerance) {
+    public WayPoint nearestPointOnTrack(EastNorth p, double tolerance) {
         /*
          * assume the coordinates of P are xp,yp, and those of a section of track between two
          * trackpoints are R=xr,yr and S=xs,ys. Let N be the projected point.
@@ -271,76 +271,76 @@ public class GpxData extends WithAttributes implements Data {
          * where RN = sqrt(PR^2 - PN^2)
          */
 
-        double PNminsq = tolerance * tolerance;
+        double pnminsq = tolerance * tolerance;
         EastNorth bestEN = null;
         double bestTime = 0.0;
-        double px = P.east();
-        double py = P.north();
+        double px = p.east();
+        double py = p.north();
         double rx = 0.0, ry = 0.0, sx, sy, x, y;
         if (tracks == null)
             return null;
         for (GpxTrack track : tracks) {
             for (GpxTrackSegment seg : track.getSegments()) {
-                WayPoint R = null;
+                WayPoint r = null;
                 for (WayPoint S : seg.getWayPoints()) {
-                    EastNorth c = S.getEastNorth();
-                    if (R == null) {
-                        R = S;
-                        rx = c.east();
-                        ry = c.north();
+                    EastNorth en = S.getEastNorth();
+                    if (r == null) {
+                        r = S;
+                        rx = en.east();
+                        ry = en.north();
                         x = px - rx;
                         y = py - ry;
-                        double PRsq = x * x + y * y;
-                        if (PRsq < PNminsq) {
-                            PNminsq = PRsq;
-                            bestEN = c;
-                            bestTime = R.time;
+                        double pRsq = x * x + y * y;
+                        if (pRsq < pnminsq) {
+                            pnminsq = pRsq;
+                            bestEN = en;
+                            bestTime = r.time;
                         }
                     } else {
-                        sx = c.east();
-                        sy = c.north();
-                        double A = sy - ry;
-                        double B = rx - sx;
-                        double C = -A * rx - B * ry;
-                        double RSsq = A * A + B * B;
-                        if (RSsq == 0) {
+                        sx = en.east();
+                        sy = en.north();
+                        double a = sy - ry;
+                        double b = rx - sx;
+                        double c = -a * rx - b * ry;
+                        double rssq = a * a + b * b;
+                        if (rssq == 0) {
                             continue;
                         }
-                        double PNsq = A * px + B * py + C;
-                        PNsq = PNsq * PNsq / RSsq;
-                        if (PNsq < PNminsq) {
+                        double pnsq = a * px + b * py + c;
+                        pnsq = pnsq * pnsq / rssq;
+                        if (pnsq < pnminsq) {
                             x = px - rx;
                             y = py - ry;
-                            double PRsq = x * x + y * y;
+                            double prsq = x * x + y * y;
                             x = px - sx;
                             y = py - sy;
-                            double PSsq = x * x + y * y;
-                            if (PRsq - PNsq <= RSsq && PSsq - PNsq <= RSsq) {
-                                double RNoverRS = Math.sqrt((PRsq - PNsq) / RSsq);
-                                double nx = rx - RNoverRS * B;
-                                double ny = ry + RNoverRS * A;
+                            double pssq = x * x + y * y;
+                            if (prsq - pnsq <= rssq && pssq - pnsq <= rssq) {
+                                double rnoverRS = Math.sqrt((prsq - pnsq) / rssq);
+                                double nx = rx - rnoverRS * b;
+                                double ny = ry + rnoverRS * a;
                                 bestEN = new EastNorth(nx, ny);
-                                bestTime = R.time + RNoverRS * (S.time - R.time);
-                                PNminsq = PNsq;
+                                bestTime = r.time + rnoverRS * (S.time - r.time);
+                                pnminsq = pnsq;
                             }
                         }
-                        R = S;
+                        r = S;
                         rx = sx;
                         ry = sy;
                     }
                 }
-                if (R != null) {
-                    EastNorth c = R.getEastNorth();
+                if (r != null) {
+                    EastNorth c = r.getEastNorth();
                     /* if there is only one point in the seg, it will do this twice, but no matter */
                     rx = c.east();
                     ry = c.north();
                     x = px - rx;
                     y = py - ry;
-                    double PRsq = x * x + y * y;
-                    if (PRsq < PNminsq) {
-                        PNminsq = PRsq;
+                    double prsq = x * x + y * y;
+                    if (prsq < pnminsq) {
+                        pnminsq = prsq;
                         bestEN = c;
-                        bestTime = R.time;
+                        bestTime = r.time;
                     }
                 }
             }

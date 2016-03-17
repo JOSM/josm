@@ -614,25 +614,25 @@ public class CustomProjection extends AbstractProjection {
             neg = true;
             s = s.substring(m.end());
         }
-        final String FLOAT = "(\\d+(\\.\\d*)?)";
+        final String floatPattern = "(\\d+(\\.\\d*)?)";
         boolean dms = false;
         double deg = 0.0, min = 0.0, sec = 0.0;
         // degrees
-        m = Pattern.compile("^"+FLOAT+"d").matcher(s);
+        m = Pattern.compile("^"+floatPattern+"d").matcher(s);
         if (m.find()) {
             s = s.substring(m.end());
             deg = Double.parseDouble(m.group(1));
             dms = true;
         }
         // minutes
-        m = Pattern.compile("^"+FLOAT+"'").matcher(s);
+        m = Pattern.compile("^"+floatPattern+"'").matcher(s);
         if (m.find()) {
             s = s.substring(m.end());
             min = Double.parseDouble(m.group(1));
             dms = true;
         }
         // seconds
-        m = Pattern.compile("^"+FLOAT+"\"").matcher(s);
+        m = Pattern.compile("^"+floatPattern+"\"").matcher(s);
         if (m.find()) {
             s = s.substring(m.end());
             sec = Double.parseDouble(m.group(1));
@@ -642,7 +642,7 @@ public class CustomProjection extends AbstractProjection {
         if (dms) {
             value = deg + (min/60.0) + (sec/3600.0);
         } else {
-            m = Pattern.compile("^"+FLOAT).matcher(s);
+            m = Pattern.compile("^"+floatPattern).matcher(s);
             if (m.find()) {
                 s = s.substring(m.end());
                 value += Double.parseDouble(m.group(1));
@@ -779,19 +779,19 @@ public class CustomProjection extends AbstractProjection {
         return ret;
     }
 
-    private static EastNorth getPointAlong(int i, int N, ProjectionBounds r) {
-        double dEast = (r.maxEast - r.minEast) / N;
-        double dNorth = (r.maxNorth - r.minNorth) / N;
-        if (i < N) {
+    private static EastNorth getPointAlong(int i, int n, ProjectionBounds r) {
+        double dEast = (r.maxEast - r.minEast) / n;
+        double dNorth = (r.maxNorth - r.minNorth) / n;
+        if (i < n) {
             return new EastNorth(r.minEast + i * dEast, r.minNorth);
-        } else if (i < 2*N) {
-            i -= N;
+        } else if (i < 2*n) {
+            i -= n;
             return new EastNorth(r.maxEast, r.minNorth + i * dNorth);
-        } else if (i < 3*N) {
-            i -= 2*N;
+        } else if (i < 3*n) {
+            i -= 2*n;
             return new EastNorth(r.maxEast - i * dEast, r.maxNorth);
-        } else if (i < 4*N) {
-            i -= 3*N;
+        } else if (i < 4*n) {
+            i -= 3*n;
             return new EastNorth(r.minEast, r.maxNorth - i * dNorth);
         } else {
             throw new AssertionError();
@@ -823,12 +823,12 @@ public class CustomProjection extends AbstractProjection {
 
     @Override
     public Bounds getLatLonBoundsBox(ProjectionBounds r) {
-        final int N = 10;
+        final int n = 10;
         Bounds result = new Bounds(eastNorth2latlon(r.getMin()));
         result.extend(eastNorth2latlon(r.getMax()));
         LatLon llPrev = null;
-        for (int i = 0; i < 4*N; i++) {
-            LatLon llNow = eastNorth2latlon(getPointAlong(i, N, r));
+        for (int i = 0; i < 4*n; i++) {
+            LatLon llNow = eastNorth2latlon(getPointAlong(i, n, r));
             result.extend(llNow);
             // check if segment crosses 180th meridian and if so, make sure
             // to extend bounds to +/-180 degrees longitude

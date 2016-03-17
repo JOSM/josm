@@ -55,8 +55,8 @@ public class SwissObliqueMercator extends AbstractProj {
         initialize(params.lat0);
     }
 
-    private void initialize(double lat_0) {
-        phi0 = toRadians(lat_0);
+    private void initialize(double lat0) {
+        phi0 = toRadians(lat0);
         kR = sqrt(1 - ellps.e2) / (1 - (ellps.e2 * pow(sin(phi0), 2)));
         alpha = sqrt(1 + (ellps.eb2 * pow(cos(phi0), 4)));
         b0 = asin(sin(phi0) / alpha);
@@ -77,9 +77,9 @@ public class SwissObliqueMercator extends AbstractProj {
 
     @Override
     public double[] project(double phi, double lambda) {
-        double S = alpha * log(tan(PI / 4 + phi / 2)) - alpha * ellps.e / 2
+        double s = alpha * log(tan(PI / 4 + phi / 2)) - alpha * ellps.e / 2
             * log((1 + ellps.e * sin(phi)) / (1 - ellps.e * sin(phi))) + k;
-        double b = 2 * (atan(exp(S)) - PI / 4);
+        double b = 2 * (atan(exp(s)) - PI / 4);
         double l = alpha * lambda;
 
         double lb = atan2(sin(l), sin(b0) * tan(b) + cos(b0) * cos(l));

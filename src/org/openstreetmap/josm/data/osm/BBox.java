@@ -51,22 +51,22 @@ public class BBox {
         this.ymax = copy.ymax;
     }
 
-    public BBox(double a_x, double a_y, double b_x, double b_y)  {
+    public BBox(double ax, double ay, double bx, double by)  {
 
-        if (a_x > b_x) {
-            xmax = a_x;
-            xmin = b_x;
+        if (ax > bx) {
+            xmax = ax;
+            xmin = bx;
         } else {
-            xmax = b_x;
-            xmin = a_x;
+            xmax = bx;
+            xmin = ax;
         }
 
-        if (a_y > b_y) {
-            ymax = a_y;
-            ymin = b_y;
+        if (ay > by) {
+            ymax = ay;
+            ymin = by;
         } else {
-            ymax = b_y;
-            ymin = a_y;
+            ymax = by;
+            ymin = ay;
         }
 
         sanity();

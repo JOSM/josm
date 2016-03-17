@@ -90,19 +90,19 @@ public class LambertConformalConic extends AbstractProj {
     /**
      * Initialize for LCC with 2 standard parallels.
      *
-     * @param lat_0 latitude of false origin (in degrees)
-     * @param lat_1 latitude of first standard parallel (in degrees)
-     * @param lat_2 latitude of second standard parallel (in degrees)
+     * @param lat0 latitude of false origin (in degrees)
+     * @param lat1 latitude of first standard parallel (in degrees)
+     * @param lat2 latitude of second standard parallel (in degrees)
      */
-    private void initialize2SP(double lat_0, double lat_1, double lat_2) {
-        this.params = new Parameters2SP(lat_0, lat_1, lat_2);
+    private void initialize2SP(double lat0, double lat1, double lat2) {
+        this.params = new Parameters2SP(lat0, lat1, lat2);
 
-        final double m1 = m(toRadians(lat_1));
-        final double m2 = m(toRadians(lat_2));
+        final double m1 = m(toRadians(lat1));
+        final double m2 = m(toRadians(lat2));
 
-        final double t1 = t(toRadians(lat_1));
-        final double t2 = t(toRadians(lat_2));
-        final double tf = t(toRadians(lat_0));
+        final double t1 = t(toRadians(lat1));
+        final double t2 = t(toRadians(lat2));
+        final double tf = t(toRadians(lat0));
 
         n  = (log(m1) - log(m2)) / (log(t1) - log(t2));
         f  = m1 / (n * pow(t1, n));
@@ -112,37 +112,37 @@ public class LambertConformalConic extends AbstractProj {
     /**
      * Initialize for LCC with 1 standard parallel.
      *
-     * @param lat_0 latitude of natural origin (in degrees)
+     * @param lat0 latitude of natural origin (in degrees)
      */
-    private void initialize1SP(double lat_0) {
-        this.params = new Parameters1SP(lat_0);
-        final double lat_0_rad = toRadians(lat_0);
+    private void initialize1SP(double lat0) {
+        this.params = new Parameters1SP(lat0);
+        final double lat0rad = toRadians(lat0);
 
-        final double m0 = m(lat_0_rad);
-        final double t0 = t(lat_0_rad);
+        final double m0 = m(lat0rad);
+        final double t0 = t(lat0rad);
 
-        n = sin(lat_0_rad);
+        n = sin(lat0rad);
         f  = m0 / (n * pow(t0, n));
         r0 = f * pow(t0, n);
     }
 
     /**
      * auxiliary function t
-     * @param lat_rad latitude in radians
+     * @param latRad latitude in radians
      * @return result
      */
-    protected double t(double lat_rad) {
-        return tan(PI/4 - lat_rad / 2.0)
-            / pow((1.0 - e * sin(lat_rad)) / (1.0 + e * sin(lat_rad)), e/2);
+    protected double t(double latRad) {
+        return tan(PI/4 - latRad / 2.0)
+            / pow((1.0 - e * sin(latRad)) / (1.0 + e * sin(latRad)), e/2);
     }
 
     /**
      * auxiliary function m
-     * @param lat_rad latitude in radians
+     * @param latRad latitude in radians
      * @return result
      */
-    protected double m(double lat_rad) {
-        return cos(lat_rad) / (sqrt(1 - e * e * pow(sin(lat_rad), 2)));
+    protected double m(double latRad) {
+        return cos(latRad) / (sqrt(1 - e * e * pow(sin(latRad), 2)));
     }
 
     @Override

@@ -172,12 +172,12 @@ public class NmeaReader {
 
         try (BufferedReader rd = new BufferedReader(new InputStreamReader(source, StandardCharsets.UTF_8))) {
             StringBuilder sb = new StringBuilder(1024);
-            int loopstart_char = rd.read();
+            int loopstartChar = rd.read();
             ps = new NMEAParserState();
-            if (loopstart_char == -1)
+            if (loopstartChar == -1)
                 //TODO tell user about the problem?
                 return;
-            sb.append((char) loopstart_char);
+            sb.append((char) loopstartChar);
             ps.pDate = "010100"; // TODO date problem
             while (true) {
                 // don't load unparsable files completely to memory

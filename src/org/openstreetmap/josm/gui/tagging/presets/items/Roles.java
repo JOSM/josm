@@ -51,10 +51,10 @@ public class Roles extends TaggingPresetItem {
                 throw new SAXException(tr("Unknown requisite: {0}", str));
         }
 
-        public void setMember_expression(String member_expression) throws SAXException {
+        public void setMember_expression(String memberExpression) throws SAXException {
             try {
                 final SearchAction.SearchSetting searchSetting = new SearchAction.SearchSetting();
-                searchSetting.text = member_expression;
+                searchSetting.text = memberExpression;
                 searchSetting.caseSensitive = true;
                 searchSetting.regexSearch = true;
                 this.memberExpression = SearchCompiler.compile(searchSetting);

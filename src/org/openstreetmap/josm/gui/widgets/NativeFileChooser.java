@@ -98,8 +98,9 @@ public class NativeFileChooser extends AbstractFileChooser {
     @Override
     public void setFileFilter(final FileFilter cff) {
         FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File Directory, String fileName) {
-                return cff.accept(new File(Directory.getAbsolutePath() + fileName));
+            @Override
+            public boolean accept(File directory, String fileName) {
+                return cff.accept(new File(directory.getAbsolutePath() + fileName));
             }
         };
         fileDialog.setFilenameFilter(filter);

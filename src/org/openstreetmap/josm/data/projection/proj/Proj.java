@@ -49,12 +49,12 @@ public interface Proj {
     /**
      * Convert lat/lon to east/north.
      *
-     * @param lat_rad the latitude in radians
-     * @param lon_rad the longitude in radians
+     * @param latRad the latitude in radians
+     * @param lonRad the longitude in radians
      * @return array of length 2, containing east and north value in meters,
      * divided by the semi major axis of the ellipsoid.
      */
-    double[] project(double lat_rad, double lon_rad);
+    double[] project(double latRad, double lonRad);
 
     /**
      * Convert east/north to lat/lon.

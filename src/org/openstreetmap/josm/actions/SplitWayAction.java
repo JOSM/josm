@@ -604,7 +604,8 @@ public class SplitWayAction extends JosmAction {
                 type = "";
             }
 
-            int i_c = 0, i_r = 0;
+            int ic = 0;
+            int ir = 0;
             List<RelationMember> relationMembers = r.getMembers();
             for (RelationMember rm: relationMembers) {
                 if (rm.isWay() && rm.getMember() == way) {
@@ -665,9 +666,9 @@ public class SplitWayAction extends JosmAction {
 
                         Boolean backwards = null;
                         int k = 1;
-                        while (i_r - k >= 0 || i_r + k < relationMembers.size()) {
-                            if ((i_r - k >= 0) && relationMembers.get(i_r - k).isWay()) {
-                                Way w = relationMembers.get(i_r - k).getWay();
+                        while (ir - k >= 0 || ir + k < relationMembers.size()) {
+                            if ((ir - k >= 0) && relationMembers.get(ir - k).isWay()) {
+                                Way w = relationMembers.get(ir - k).getWay();
                                 if ((w.lastNode() == way.firstNode()) || w.firstNode() == way.firstNode()) {
                                     backwards = Boolean.FALSE;
                                 } else if ((w.firstNode() == way.lastNode()) || w.lastNode() == way.lastNode()) {
@@ -675,8 +676,8 @@ public class SplitWayAction extends JosmAction {
                                 }
                                 break;
                             }
-                            if ((i_r + k < relationMembers.size()) && relationMembers.get(i_r + k).isWay()) {
-                                Way w = relationMembers.get(i_r + k).getWay();
+                            if ((ir + k < relationMembers.size()) && relationMembers.get(ir + k).isWay()) {
+                                Way w = relationMembers.get(ir + k).getWay();
                                 if ((w.lastNode() == way.firstNode()) || w.firstNode() == way.firstNode()) {
                                     backwards = Boolean.TRUE;
                                 } else if ((w.firstNode() == way.lastNode()) || w.lastNode() == way.lastNode()) {
@@ -687,13 +688,13 @@ public class SplitWayAction extends JosmAction {
                             k++;
                         }
 
-                        int j = i_c;
+                        int j = ic;
                         final List<Way> waysToAddBefore = newWays.subList(0, indexOfWayToKeep);
                         for (Way wayToAdd : waysToAddBefore) {
                             RelationMember em = new RelationMember(rm.getRole(), wayToAdd);
                             j++;
                             if (Boolean.TRUE.equals(backwards)) {
-                                c.addMember(i_c + 1, em);
+                                c.addMember(ic + 1, em);
                             } else {
                                 c.addMember(j - 1, em);
                             }
@@ -703,16 +704,16 @@ public class SplitWayAction extends JosmAction {
                             RelationMember em = new RelationMember(rm.getRole(), wayToAdd);
                             j++;
                             if (Boolean.TRUE.equals(backwards)) {
-                                c.addMember(i_c, em);
+                                c.addMember(ic, em);
                             } else {
                                 c.addMember(j, em);
                             }
                         }
-                        i_c = j;
+                        ic = j;
                     }
                 }
-                i_c++;
-                i_r++;
+                ic++;
+                ir++;
             }
 
             if (c != null) {

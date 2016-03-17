@@ -106,7 +106,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
      */
     public void reconstruct(Action action, ToggleDialog triggeredBy) {
 
-        final int N = allDialogs.size();
+        final int n = allDialogs.size();
 
         /**
          * reset the panels
@@ -125,13 +125,13 @@ public class DialogsPanel extends JPanel implements Destroyable {
          * If there are no dialogs in default view, show the collapsed ones
          * in the last panel anyway.
          */
-        JPanel p = panels.get(N-1); // current Panel (start with last one)
+        JPanel p = panels.get(n-1); // current Panel (start with last one)
         int k = -1;                 // indicates that current Panel index is N-1, but no default-view-Dialog has been added to this Panel yet.
-        for (int i = N-1; i >= 0; --i) {
+        for (int i = n-1; i >= 0; --i) {
             final ToggleDialog dlg = allDialogs.get(i);
             if (dlg.isDialogInDefaultView()) {
                 if (k == -1) {
-                    k = N-1;
+                    k = n-1;
                 } else {
                     --k;
                     p = panels.get(k);
@@ -145,15 +145,15 @@ public class DialogsPanel extends JPanel implements Destroyable {
         }
 
         if (k == -1) {
-            k = N-1;
+            k = n-1;
         }
-        final int numPanels = N - k;
+        final int numPanels = n - k;
 
         /**
          * Determine the panel geometry
          */
         if (action == Action.ELEMENT_SHRINKS) {
-            for (int i = 0; i < N; ++i) {
+            for (int i = 0; i < n; ++i) {
                 final ToggleDialog dlg = allDialogs.get(i);
                 if (dlg.isDialogInDefaultView()) {
                     final int ph = dlg.getPreferredHeight();
@@ -190,54 +190,54 @@ public class DialogsPanel extends JPanel implements Destroyable {
             }
 
             /** total Height */
-            final int H = mSpltPane.getMultiSplitLayout().getModel().getBounds().getSize().height;
+            final int h = mSpltPane.getMultiSplitLayout().getModel().getBounds().getSize().height;
 
             /** space, that is available for dialogs in default view (after the reconfiguration) */
-            final int s2 = H - (numPanels - 1) * DIVIDER_SIZE - sumC;
+            final int s2 = h - (numPanels - 1) * DIVIDER_SIZE - sumC;
 
-            final int hp_trig = triggeredBy.getPreferredHeight();
-            if (hp_trig <= 0) throw new IllegalStateException(); // Must be positive
+            final int hpTrig = triggeredBy.getPreferredHeight();
+            if (hpTrig <= 0) throw new IllegalStateException(); // Must be positive
 
             /** The new dialog gets a fair share */
-            final int hn_trig = hp_trig * s2 / (hp_trig + sumP);
-            triggeredBy.setPreferredSize(new Dimension(Integer.MAX_VALUE, hn_trig));
+            final int hnTrig = hpTrig * s2 / (hpTrig + sumP);
+            triggeredBy.setPreferredSize(new Dimension(Integer.MAX_VALUE, hnTrig));
 
             /** This is remainig for the other default view dialogs */
-            final int R = s2 - hn_trig;
+            final int r = s2 - hnTrig;
 
             /**
              * Take space only from dialogs that are relatively large
              */
-            int D_m = 0;        // additional space needed by the small dialogs
-            int D_p = 0;        // available space from the large dialogs
-            for (int i = 0; i < N; ++i) {
+            int dm = 0;        // additional space needed by the small dialogs
+            int dp = 0;        // available space from the large dialogs
+            for (int i = 0; i < n; ++i) {
                 final ToggleDialog dlg = allDialogs.get(i);
                 if (dlg.isDialogInDefaultView() && dlg != triggeredBy) {
                     final int ha = dlg.getSize().height;                              // current
-                    final int h0 = ha * R / sumA;                                     // proportional shrinking
-                    final int he = dlg.getPreferredHeight() * s2 / (sumP + hp_trig);  // fair share
+                    final int h0 = ha * r / sumA;                                     // proportional shrinking
+                    final int he = dlg.getPreferredHeight() * s2 / (sumP + hpTrig);  // fair share
                     if (h0 < he) {                  // dialog is relatively small
                         int hn = Math.min(ha, he);  // shrink less, but do not grow
-                        D_m += hn - h0;
+                        dm += hn - h0;
                     } else {                        // dialog is relatively large
-                        D_p += h0 - he;
+                        dp += h0 - he;
                     }
                 }
             }
             /** adjust, without changing the sum */
-            for (int i = 0; i < N; ++i) {
+            for (int i = 0; i < n; ++i) {
                 final ToggleDialog dlg = allDialogs.get(i);
                 if (dlg.isDialogInDefaultView() && dlg != triggeredBy) {
                     final int ha = dlg.getHeight();
-                    final int h0 = ha * R / sumA;
-                    final int he = dlg.getPreferredHeight() * s2 / (sumP + hp_trig);
+                    final int h0 = ha * r / sumA;
+                    final int he = dlg.getPreferredHeight() * s2 / (sumP + hpTrig);
                     if (h0 < he) {
                         int hn = Math.min(ha, he);
                         dlg.setPreferredSize(new Dimension(Integer.MAX_VALUE, hn));
                     } else {
                         int d;
                         try {
-                            d = (h0-he) * D_m / D_p;
+                            d = (h0-he) * dm / dp;
                         } catch (ArithmeticException e) { /* D_p may be zero - nothing wrong with that. */
                             d = 0;
                         }
@@ -252,7 +252,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
          */
         final List<Node> ch = new ArrayList<>();
 
-        for (int i = k; i <= N-1; ++i) {
+        for (int i = k; i <= n-1; ++i) {
             if (i != k) {
                 ch.add(new Divider());
             }
@@ -278,7 +278,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
         /**
          * Hide the Panel, if there is nothing to show
          */
-        if (numPanels == 1 && panels.get(N-1).getComponents().length == 0) {
+        if (numPanels == 1 && panels.get(n-1).getComponents().length == 0) {
             parent.setDividerSize(0);
             this.setVisible(false);
         } else {

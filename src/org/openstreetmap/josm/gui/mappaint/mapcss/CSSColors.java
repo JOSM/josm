@@ -8,7 +8,7 @@ import java.util.Map;
 public final class CSSColors {
     private static final Map<String, Color> CSS_COLORS = new HashMap<>();
     static {
-        Object[][] CSSCOLORS_INIT = new Object[][] {
+        for (Object[] pair : new Object[][] {
             {"aliceblue", 0xf0f8ff},
             {"antiquewhite", 0xfaebd7},
             {"aqua", 0x00ffff},
@@ -156,8 +156,7 @@ public final class CSSColors {
             {"whitesmoke", 0xf5f5f5},
             {"yellow", 0xffff00},
             {"yellowgreen", 0x9acd32}
-        };
-        for (Object[] pair : CSSCOLORS_INIT) {
+        }) {
             CSS_COLORS.put((String) pair[0], new Color((Integer) pair[1]));
         }
     }

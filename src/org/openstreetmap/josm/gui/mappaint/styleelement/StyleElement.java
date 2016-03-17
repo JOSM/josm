@@ -34,16 +34,16 @@ public abstract class StyleElement implements StyleKeys {
     // primitive; true, if it is a highlight or modifier
     public boolean defaultSelectedHandling;
 
-    public StyleElement(float major_z_index, float z_index, float object_z_index, boolean isModifier, boolean defaultSelectedHandling) {
-        this.majorZIndex = major_z_index;
-        this.zIndex = z_index;
-        this.objectZIndex = object_z_index;
+    public StyleElement(float majorZindex, float zIndex, float objectZindex, boolean isModifier, boolean defaultSelectedHandling) {
+        this.majorZIndex = majorZindex;
+        this.zIndex = zIndex;
+        this.objectZIndex = objectZindex;
         this.isModifier = isModifier;
         this.defaultSelectedHandling = defaultSelectedHandling;
     }
 
-    protected StyleElement(Cascade c, float default_major_z_index) {
-        majorZIndex = c.get(MAJOR_Z_INDEX, default_major_z_index, Float.class);
+    protected StyleElement(Cascade c, float defaultMajorZindex) {
+        majorZIndex = c.get(MAJOR_Z_INDEX, defaultMajorZindex, Float.class);
         zIndex = c.get(Z_INDEX, 0f, Float.class);
         objectZIndex = c.get(OBJECT_Z_INDEX, 0f, Float.class);
         isModifier = c.get(MODIFIER, Boolean.FALSE, Boolean.class);
@@ -85,9 +85,9 @@ public abstract class StyleElement implements StyleKeys {
             if (Keyword.DEFAULT.equals(widthKW))
                 return (float) MapPaintSettings.INSTANCE.getDefaultSegmentWidth();
             if (relativeTo != null) {
-                RelativeFloat width_rel = c.get(key, null, RelativeFloat.class, true);
-                if (width_rel != null)
-                    return relativeTo + width_rel.val;
+                RelativeFloat widthRel = c.get(key, null, RelativeFloat.class, true);
+                if (widthRel != null)
+                    return relativeTo + widthRel.val;
             }
         }
         return null;

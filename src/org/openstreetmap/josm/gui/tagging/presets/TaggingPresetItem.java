@@ -102,11 +102,11 @@ public abstract class TaggingPresetItem {
         return s == null ? s : s.replaceAll("'", "''");
     }
 
-    protected static String getLocaleText(String text, String text_context, String defaultText) {
+    protected static String getLocaleText(String text, String textContext, String defaultText) {
         if (text == null) {
             return defaultText;
-        } else if (text_context != null) {
-            return trc(text_context, fixPresetString(text));
+        } else if (textContext != null) {
+            return trc(textContext, fixPresetString(text));
         } else {
             return tr(fixPresetString(text));
         }

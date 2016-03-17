@@ -352,11 +352,11 @@ public final class Ellipsoid {
         double phi = Math.toRadians(coord.lat());
         double lambda = Math.toRadians(coord.lon());
 
-        double Rn = a / Math.sqrt(1 - e2 * Math.pow(Math.sin(phi), 2));
+        double rn = a / Math.sqrt(1 - e2 * Math.pow(Math.sin(phi), 2));
         double[] xyz = new double[3];
-        xyz[0] = Rn * Math.cos(phi) * Math.cos(lambda);
-        xyz[1] = Rn * Math.cos(phi) * Math.sin(lambda);
-        xyz[2] = Rn * (1 - e2) * Math.sin(phi);
+        xyz[0] = rn * Math.cos(phi) * Math.cos(lambda);
+        xyz[1] = rn * Math.cos(phi) * Math.sin(lambda);
+        xyz[2] = rn * (1 - e2) * Math.sin(phi);
 
         return xyz;
     }

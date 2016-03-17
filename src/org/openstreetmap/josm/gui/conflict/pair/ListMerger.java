@@ -417,13 +417,13 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
      */
     abstract static class CopyAction extends AbstractAction implements ListSelectionListener {
 
-        protected CopyAction(String icon_name, String action_name, String short_description) {
-            ImageIcon icon = ImageProvider.get("dialogs/conflict", icon_name);
+        protected CopyAction(String iconName, String actionName, String shortDescription) {
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", iconName);
             putValue(Action.SMALL_ICON, icon);
             if (icon == null) {
-                putValue(Action.NAME, action_name);
+                putValue(Action.NAME, actionName);
             }
-            putValue(Action.SHORT_DESCRIPTION, short_description);
+            putValue(Action.SHORT_DESCRIPTION, shortDescription);
             setEnabled(false);
         }
     }

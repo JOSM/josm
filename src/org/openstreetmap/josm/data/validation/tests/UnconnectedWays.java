@@ -388,10 +388,10 @@ public abstract class UnconnectedWays extends Test {
             // overlap a bit and can return duplicate nodes.
             nearbyNodeCache = null;
             List<LatLon> bounds = this.getBounds(dist);
-            List<Node> found_nodes = endnodesHighway.search(new BBox(bounds.get(0), bounds.get(1)));
-            found_nodes.addAll(endnodes.search(new BBox(bounds.get(0), bounds.get(1))));
+            List<Node> foundNodes = endnodesHighway.search(new BBox(bounds.get(0), bounds.get(1)));
+            foundNodes.addAll(endnodes.search(new BBox(bounds.get(0), bounds.get(1))));
 
-            for (Node n : found_nodes) {
+            for (Node n : foundNodes) {
                 if (!nearby(n, dist) || !n.getCoor().isIn(dsArea)) {
                     continue;
                 }

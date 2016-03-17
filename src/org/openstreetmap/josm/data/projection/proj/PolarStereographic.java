@@ -170,11 +170,11 @@ public class PolarStereographic extends AbstractProj {
 
     @Override
     public Bounds getAlgorithmBounds() {
-        final double CUT = 60;
+        final double cut = 60;
         if (southPole) {
-            return new Bounds(-90, -180, CUT, 180, false);
+            return new Bounds(-90, -180, cut, 180, false);
         } else {
-            return new Bounds(-CUT, -180, 90, 180, false);
+            return new Bounds(-cut, -180, 90, 180, false);
         }
     }
 }

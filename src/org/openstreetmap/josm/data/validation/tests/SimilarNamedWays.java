@@ -118,8 +118,8 @@ public class SimilarNamedWays extends Test {
         int m; // length of t
         int i; // iterates through s
         int j; // iterates through t
-        char s_i; // ith character of s
-        char t_j; // jth character of t
+        char si; // ith character of s
+        char tj; // jth character of t
         int cost; // cost
 
         // Step 1
@@ -142,15 +142,15 @@ public class SimilarNamedWays extends Test {
         // Step 3
         for (i = 1; i <= n; i++) {
 
-            s_i = s.charAt(i - 1);
+            si = s.charAt(i - 1);
 
             // Step 4
             for (j = 1; j <= m; j++) {
 
-                t_j = t.charAt(j - 1);
+                tj = t.charAt(j - 1);
 
                 // Step 5
-                if (s_i == t_j) {
+                if (si == tj) {
                     cost = 0;
                 } else {
                     cost = 1;

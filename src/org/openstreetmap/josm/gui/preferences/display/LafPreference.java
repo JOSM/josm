@@ -77,11 +77,11 @@ public class LafPreference implements SubPreferenceSetting {
         // let's try to load additional LookAndFeels and put them into the list
         if (Main.isPlatformOsx()) {
             try {
-                Class<?> Cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-                Object Oquaqua = Cquaqua.getConstructor((Class[]) null).newInstance((Object[]) null);
+                Class<?> cquaqua = Class.forName("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+                Object oquaqua = cquaqua.getConstructor((Class[]) null).newInstance((Object[]) null);
                 // no exception? Then Go!
                 lafCombo.addItem(
-                        new UIManager.LookAndFeelInfo(((LookAndFeel) Oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
+                        new UIManager.LookAndFeelInfo(((LookAndFeel) oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
                 );
             } catch (Exception ex) {
                 // just debug, Quaqua may not even be installed...

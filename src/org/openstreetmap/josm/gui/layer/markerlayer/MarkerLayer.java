@@ -93,15 +93,15 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         for (WayPoint wpt : indata.waypoints) {
             /* calculate time differences in waypoints */
             double time = wpt.time;
-            boolean wpt_has_link = wpt.attr.containsKey(GpxConstants.META_LINKS);
-            if (firstTime < 0 && wpt_has_link) {
+            boolean wptHasLink = wpt.attr.containsKey(GpxConstants.META_LINKS);
+            if (firstTime < 0 && wptHasLink) {
                 firstTime = time;
                 for (GpxLink oneLink : wpt.<GpxLink>getCollection(GpxConstants.META_LINKS)) {
                     lastLinkedFile = oneLink.uri;
                     break;
                 }
             }
-            if (wpt_has_link) {
+            if (wptHasLink) {
                 for (GpxLink oneLink : wpt.<GpxLink>getCollection(GpxConstants.META_LINKS)) {
                     String uri = oneLink.uri;
                     if (uri != null) {

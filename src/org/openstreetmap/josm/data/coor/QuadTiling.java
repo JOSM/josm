@@ -22,11 +22,10 @@ public final class QuadTiling {
 
     public static LatLon tile2LatLon(long quad) {
         // The world is divided up into X_PARTS,Y_PARTS.
-        // The question is how far we move for each bit
-        // being set.  In the case of the top level, we
-        // move half of the world.
-        double x_unit = X_PARTS/2;
-        double y_unit = Y_PARTS/2;
+        // The question is how far we move for each bit being set.
+        // In the case of the top level, we move half of the world.
+        double xUnit = X_PARTS/2;
+        double yUnit = Y_PARTS/2;
         long shift = (NR_LEVELS*2)-2;
 
         double x = 0;
@@ -35,13 +34,13 @@ public final class QuadTiling {
             long bits = (quad >> shift) & 0x3;
             // remember x is the MSB
             if ((bits & 0x2) != 0) {
-                x += x_unit;
+                x += xUnit;
             }
             if ((bits & 0x1) != 0) {
-                y += y_unit;
+                y += yUnit;
             }
-            x_unit /= 2;
-            y_unit /= 2;
+            xUnit /= 2;
+            yUnit /= 2;
             shift -= 2;
         }
         x += X_BIAS;
@@ -60,10 +59,6 @@ public final class QuadTiling {
             tile |= (xbit << 1) | ybit;
         }
         return tile;
-    }
-
-    static long coorToTile(LatLon coor) {
-        return quadTile(coor);
     }
 
     static long lon2x(double lon) {
@@ -88,8 +83,8 @@ public final class QuadTiling {
 
     public static int index(int level, long quad) {
         long mask = 0x00000003;
-        int total_shift = TILES_PER_LEVEL_SHIFT*(NR_LEVELS-level-1);
-        return (int) (mask & (quad >> total_shift));
+        int totalShift = TILES_PER_LEVEL_SHIFT*(NR_LEVELS-level-1);
+        return (int) (mask & (quad >> totalShift));
     }
 
     /**

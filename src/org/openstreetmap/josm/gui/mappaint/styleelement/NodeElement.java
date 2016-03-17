@@ -92,8 +92,8 @@ public class NodeElement extends StyleElement {
     public static final StyleElementList DEFAULT_NODE_STYLELIST_TEXT = new StyleElementList(NodeElement.SIMPLE_NODE_ELEMSTYLE,
             BoxTextElement.SIMPLE_NODE_TEXT_ELEMSTYLE);
 
-    protected NodeElement(Cascade c, MapImage mapImage, Symbol symbol, float default_major_z_index, RotationAngle rotationAngle) {
-        super(c, default_major_z_index);
+    protected NodeElement(Cascade c, MapImage mapImage, Symbol symbol, float defaultMajorZindex, RotationAngle rotationAngle) {
+        super(c, defaultMajorZindex);
         this.mapImage = mapImage;
         this.symbol = symbol;
         this.mapImageAngle = rotationAngle;
@@ -103,7 +103,7 @@ public class NodeElement extends StyleElement {
         return create(env, 4f, false);
     }
 
-    private static NodeElement create(Environment env, float default_major_z_index, boolean allowDefault) {
+    private static NodeElement create(Environment env, float defaultMajorZindex, boolean allowDefault) {
         Cascade c = env.mc.getCascade(env.layer);
 
         MapImage mapImage = createIcon(env, ICON_KEYS);
@@ -137,7 +137,7 @@ public class NodeElement extends StyleElement {
         // have to allocate a node element style.
         if (!allowDefault && symbol == null && mapImage == null) return null;
 
-        return new NodeElement(c, mapImage, symbol, default_major_z_index, rotationAngle);
+        return new NodeElement(c, mapImage, symbol, defaultMajorZindex, rotationAngle);
     }
 
     public static MapImage createIcon(final Environment env, final String[] keys) {
@@ -147,15 +147,15 @@ public class NodeElement extends StyleElement {
         if (iconRef == null)
             return null;
 
-        Cascade c_def = env.mc.getCascade("default");
+        Cascade cDef = env.mc.getCascade("default");
 
-        Float widthOnDefault = c_def.get(keys[ICON_WIDTH_IDX], null, Float.class);
+        Float widthOnDefault = cDef.get(keys[ICON_WIDTH_IDX], null, Float.class);
         if (widthOnDefault != null && widthOnDefault <= 0) {
             widthOnDefault = null;
         }
         Float widthF = getWidth(c, keys[ICON_WIDTH_IDX], widthOnDefault);
 
-        Float heightOnDefault = c_def.get(keys[ICON_HEIGHT_IDX], null, Float.class);
+        Float heightOnDefault = cDef.get(keys[ICON_HEIGHT_IDX], null, Float.class);
         if (heightOnDefault != null && heightOnDefault <= 0) {
             heightOnDefault = null;
         }
@@ -188,7 +188,7 @@ public class NodeElement extends StyleElement {
 
     private static Symbol createSymbol(Environment env) {
         Cascade c = env.mc.getCascade(env.layer);
-        Cascade c_def = env.mc.getCascade("default");
+        Cascade cDef = env.mc.getCascade("default");
 
         SymbolShape shape;
         Keyword shapeKW = c.get("symbol-shape", null, Keyword.class);
@@ -215,7 +215,7 @@ public class NodeElement extends StyleElement {
         } else
             return null;
 
-        Float sizeOnDefault = c_def.get("symbol-size", null, Float.class);
+        Float sizeOnDefault = cDef.get("symbol-size", null, Float.class);
         if (sizeOnDefault != null && sizeOnDefault <= 0) {
             sizeOnDefault = null;
         }
@@ -228,7 +228,7 @@ public class NodeElement extends StyleElement {
         if (size <= 0)
             return null;
 
-        Float strokeWidthOnDefault = getWidth(c_def, "symbol-stroke-width", null);
+        Float strokeWidthOnDefault = getWidth(cDef, "symbol-stroke-width", null);
         Float strokeWidth = getWidth(c, "symbol-stroke-width", strokeWidthOnDefault);
 
         Color strokeColor = c.get("symbol-stroke-color", null, Color.class);

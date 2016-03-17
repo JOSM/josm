@@ -153,12 +153,9 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser {
         if (bbox == null) return;
 
         // calc the screen coordinates for the new selection rectangle
-        MapMarkerDot xmin_ymin = new MapMarkerDot(bbox.getMinLat(), bbox.getMinLon());
-        MapMarkerDot xmax_ymax = new MapMarkerDot(bbox.getMaxLat(), bbox.getMaxLon());
-
         List<MapMarker> marker = new ArrayList<>(2);
-        marker.add(xmin_ymin);
-        marker.add(xmax_ymax);
+        marker.add(new MapMarkerDot(bbox.getMinLat(), bbox.getMinLon()));
+        marker.add(new MapMarkerDot(bbox.getMaxLat(), bbox.getMaxLon()));
         mapViewer.setBoundingBox(bbox);
         mapViewer.setMapMarkerList(marker);
         mapViewer.setDisplayToFitMapMarkers();
@@ -703,18 +700,18 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser {
                 if (min == null || max == null) return;
                 int zoomDiff = MAX_ZOOM - zoom;
                 Point tlc = getTopLeftCoordinates();
-                int x_min = (min.x >> zoomDiff) - tlc.x;
-                int y_min = (min.y >> zoomDiff) - tlc.y;
-                int x_max = (max.x >> zoomDiff) - tlc.x;
-                int y_max = (max.y >> zoomDiff) - tlc.y;
+                int xMin = (min.x >> zoomDiff) - tlc.x;
+                int yMin = (min.y >> zoomDiff) - tlc.y;
+                int xMax = (max.x >> zoomDiff) - tlc.x;
+                int yMax = (max.y >> zoomDiff) - tlc.y;
 
-                int w = x_max - x_min;
-                int h = y_max - y_min;
+                int w = xMax - xMin;
+                int h = yMax - yMin;
                 g.setColor(new Color(0.9f, 0.7f, 0.7f, 0.6f));
-                g.fillRect(x_min, y_min, w, h);
+                g.fillRect(xMin, yMin, w, h);
 
                 g.setColor(Color.BLACK);
-                g.drawRect(x_min, y_min, w, h);
+                g.drawRect(xMin, yMin, w, h);
             } catch (Exception e) {
                 Main.error(e);
             }
