@@ -417,9 +417,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         if (name == null) {
             name = tr("relation");
         }
-        String admin_level = relation.get("admin_level");
-        if (admin_level != null) {
-            name += '['+admin_level+']';
+        String adminLevel = relation.get("admin_level");
+        if (adminLevel != null) {
+            name += '['+adminLevel+']';
         }
 
         for (NameFormatterHook hook: formatHooks) {

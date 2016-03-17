@@ -55,15 +55,15 @@ public class LineElement extends StyleElement {
         public final String prefix;
         public final float defaultMajorZIndex;
 
-        LineType(String prefix, float default_major_z_index) {
+        LineType(String prefix, float defaultMajorZindex) {
             this.prefix = prefix;
-            this.defaultMajorZIndex = default_major_z_index;
+            this.defaultMajorZIndex = defaultMajorZindex;
         }
     }
 
-    protected LineElement(Cascade c, float default_major_z_index, BasicStroke line, Color color, BasicStroke dashesLine,
+    protected LineElement(Cascade c, float defaultMajorZindex, BasicStroke line, Color color, BasicStroke dashesLine,
             Color dashesBackground, float offset, float realWidth, boolean wayDirectionArrows) {
-        super(c, default_major_z_index);
+        super(c, defaultMajorZindex);
         this.line = line;
         this.color = color;
         this.dashesLine = dashesLine;
@@ -103,23 +103,23 @@ public class LineElement extends StyleElement {
 
     private static LineElement createImpl(Environment env, LineType type) {
         Cascade c = env.mc.getCascade(env.layer);
-        Cascade c_def = env.mc.getCascade("default");
+        Cascade cDef = env.mc.getCascade("default");
         Float width;
         switch (type) {
             case NORMAL:
-                width = getWidth(c, WIDTH, getWidth(c_def, WIDTH, null));
+                width = getWidth(c, WIDTH, getWidth(cDef, WIDTH, null));
                 break;
             case CASING:
                 Float casingWidth = c.get(type.prefix + WIDTH, null, Float.class, true);
                 if (casingWidth == null) {
-                    RelativeFloat rel_casingWidth = c.get(type.prefix + WIDTH, null, RelativeFloat.class, true);
-                    if (rel_casingWidth != null) {
-                        casingWidth = rel_casingWidth.val / 2;
+                    RelativeFloat relCasingWidth = c.get(type.prefix + WIDTH, null, RelativeFloat.class, true);
+                    if (relCasingWidth != null) {
+                        casingWidth = relCasingWidth.val / 2;
                     }
                 }
                 if (casingWidth == null)
                     return null;
-                width = getWidth(c, WIDTH, getWidth(c_def, WIDTH, null));
+                width = getWidth(c, WIDTH, getWidth(cDef, WIDTH, null));
                 if (width == null) {
                     width = 0f;
                 }
@@ -161,7 +161,7 @@ public class LineElement extends StyleElement {
                 break;
             case LEFT_CASING:
             case RIGHT_CASING:
-                Float baseWidthOnDefault = getWidth(c_def, WIDTH, null);
+                Float baseWidthOnDefault = getWidth(cDef, WIDTH, null);
                 Float baseWidth = getWidth(c, WIDTH, baseWidthOnDefault);
                 if (baseWidth == null || baseWidth < 2f) {
                     baseWidth = 2f;

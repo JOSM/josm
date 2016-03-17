@@ -166,7 +166,7 @@ public class AlbersEqualArea extends AbstractProj {
      * @return the latitude
      */
     public double phi1(final double qs) {
-        final double tone_es = 1 - e2;
+        final double toneEs = 1 - e2;
         double phi = Math.asin(0.5 * qs);
         if (e < EPSILON) {
             return phi;
@@ -177,7 +177,7 @@ public class AlbersEqualArea extends AbstractProj {
             final double con   = e * sinpi;
             final double com   = 1.0 - con*con;
             final double dphi  = 0.5 * com*com / cospi *
-                    (qs/tone_es - sinpi / com + 0.5/e * Math.log((1. - con) / (1. + con)));
+                    (qs/toneEs - sinpi / com + 0.5/e * Math.log((1. - con) / (1. + con)));
             phi += dphi;
             if (Math.abs(dphi) <= ITERATION_TOLERANCE) {
                 return phi;
@@ -193,10 +193,10 @@ public class AlbersEqualArea extends AbstractProj {
      * @return q from Snyder equation (3-12)
      */
     private double qsfn(final double sinphi) {
-        final double one_es = 1 - e2;
+        final double oneEs = 1 - e2;
         if (e >= EPSILON) {
             final double con = e * sinphi;
-            return one_es * (sinphi / (1. - con*con) -
+            return oneEs * (sinphi / (1. - con*con) -
                     (0.5/e) * Math.log((1.-con) / (1.+con)));
         } else {
             return sinphi + sinphi;

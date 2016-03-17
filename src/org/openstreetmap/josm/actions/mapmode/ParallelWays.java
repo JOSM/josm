@@ -142,23 +142,23 @@ public class ParallelWays {
         EastNorth prevA = pts[0].add(normals[0].scale(d));
         EastNorth prevB = pts[1].add(normals[0].scale(d));
         for (int i = 1; i < nodeCount - 1; i++) {
-            EastNorth A = pts[i].add(normals[i].scale(d));
-            EastNorth B = pts[i + 1].add(normals[i].scale(d));
-            if (Geometry.segmentsParallel(A, B, prevA, prevB)) {
-                ppts[i] = A;
+            EastNorth a = pts[i].add(normals[i].scale(d));
+            EastNorth b = pts[i + 1].add(normals[i].scale(d));
+            if (Geometry.segmentsParallel(a, b, prevA, prevB)) {
+                ppts[i] = a;
             } else {
-                ppts[i] = Geometry.getLineLineIntersection(A, B, prevA, prevB);
+                ppts[i] = Geometry.getLineLineIntersection(a, b, prevA, prevB);
             }
-            prevA = A;
-            prevB = B;
+            prevA = a;
+            prevB = b;
         }
         if (isClosedPath()) {
-            EastNorth A = pts[0].add(normals[0].scale(d));
-            EastNorth B = pts[1].add(normals[0].scale(d));
-            if (Geometry.segmentsParallel(A, B, prevA, prevB)) {
-                ppts[0] = A;
+            EastNorth a = pts[0].add(normals[0].scale(d));
+            EastNorth b = pts[1].add(normals[0].scale(d));
+            if (Geometry.segmentsParallel(a, b, prevA, prevB)) {
+                ppts[0] = a;
             } else {
-                ppts[0] = Geometry.getLineLineIntersection(A, B, prevA, prevB);
+                ppts[0] = Geometry.getLineLineIntersection(a, b, prevA, prevB);
             }
             ppts[nodeCount - 1] = ppts[0];
         } else {

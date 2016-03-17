@@ -118,22 +118,22 @@ public final class OsmChangesetParser {
             }
 
             // -- min_lon and min_lat
-            String min_lon = atts.getValue("min_lon");
-            String min_lat = atts.getValue("min_lat");
-            String max_lon = atts.getValue("max_lon");
-            String max_lat = atts.getValue("max_lat");
-            if (min_lon != null && min_lat != null && max_lon != null && max_lat != null) {
+            String minLonStr = atts.getValue("min_lon");
+            String minLatStr = atts.getValue("min_lat");
+            String maxLonStr = atts.getValue("max_lon");
+            String maxLatStr = atts.getValue("max_lat");
+            if (minLonStr != null && minLatStr != null && maxLonStr != null && maxLatStr != null) {
                 double minLon = 0;
                 try {
-                    minLon = Double.parseDouble(min_lon);
+                    minLon = Double.parseDouble(minLonStr);
                 } catch (NumberFormatException e) {
-                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "min_lon", min_lon));
+                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "min_lon", minLonStr));
                 }
                 double minLat = 0;
                 try {
-                    minLat = Double.parseDouble(min_lat);
+                    minLat = Double.parseDouble(minLatStr);
                 } catch (NumberFormatException e) {
-                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "min_lat", min_lat));
+                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "min_lat", minLatStr));
                 }
                 current.setMin(new LatLon(minLat, minLon));
 
@@ -141,15 +141,15 @@ public final class OsmChangesetParser {
 
                 double maxLon = 0;
                 try {
-                    maxLon = Double.parseDouble(max_lon);
+                    maxLon = Double.parseDouble(maxLonStr);
                 } catch (NumberFormatException e) {
-                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "max_lon", max_lon));
+                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "max_lon", maxLonStr));
                 }
                 double maxLat = 0;
                 try {
-                    maxLat = Double.parseDouble(max_lat);
+                    maxLat = Double.parseDouble(maxLatStr);
                 } catch (NumberFormatException e) {
-                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "max_lat", max_lat));
+                    throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "max_lat", maxLatStr));
                 }
                 current.setMax(new LatLon(maxLon, maxLat));
             }

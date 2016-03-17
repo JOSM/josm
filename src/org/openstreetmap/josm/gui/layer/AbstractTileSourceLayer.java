@@ -1012,15 +1012,15 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         double imageXScaling = sourceImg.getWidth(this) / source.getWidth();
 
         // How many pixels into the 'source' rectangle are we drawing?
-        int screen_x_offset = target.x - source.x;
-        int screen_y_offset = target.y - source.y;
+        int screenXoffset = target.x - source.x;
+        int screenYoffset = target.y - source.y;
         // And how many pixels into the image itself does that correlate to?
-        int img_x_offset = (int) (screen_x_offset * imageXScaling + 0.5);
-        int img_y_offset = (int) (screen_y_offset * imageYScaling + 0.5);
+        int imgXoffset = (int) (screenXoffset * imageXScaling + 0.5);
+        int imgYoffset = (int) (screenYoffset * imageYScaling + 0.5);
         // Now calculate the other corner of the image that we need
         // by scaling the 'target' rectangle's dimensions.
-        int img_x_end = img_x_offset + (int) (target.getWidth() * imageXScaling + 0.5);
-        int img_y_end = img_y_offset + (int) (target.getHeight() * imageYScaling + 0.5);
+        int imgXend = imgXoffset + (int) (target.getWidth() * imageXScaling + 0.5);
+        int imgYend = imgYoffset + (int) (target.getHeight() * imageYScaling + 0.5);
 
         if (Main.isDebugEnabled()) {
             Main.debug("drawing image into target rect: " + target);
@@ -1028,8 +1028,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         g.drawImage(sourceImg,
                 target.x, target.y,
                 target.x + target.width, target.y + target.height,
-                img_x_offset, img_y_offset,
-                img_x_end, img_y_end,
+                imgXoffset, imgYoffset,
+                imgXend, imgYend,
                 this);
         if (PROP_FADE_AMOUNT.get() != 0) {
             // dimm by painting opaque rect...

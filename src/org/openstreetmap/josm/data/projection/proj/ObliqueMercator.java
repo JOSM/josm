@@ -378,18 +378,18 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
             double q = e / Math.pow(tsfn(y, Math.sin(y)), b);
             double temp = 1.0 / q;
             double s = 0.5 * (q - temp);
-            double V = Math.sin(b * x);
-            double U = (s * singamma0 - V * cosgamma0) / (0.5 * (q + temp));
-            if (Math.abs(Math.abs(U) - 1.0) < EPSILON) {
+            double v2 = Math.sin(b * x);
+            double u2 = (s * singamma0 - v2 * cosgamma0) / (0.5 * (q + temp));
+            if (Math.abs(Math.abs(u2) - 1.0) < EPSILON) {
                 v = 0; // this is actually an error and should be reported to the caller somehow
             } else {
-                v = 0.5 * arb * Math.log((1.0 - U) / (1.0 + U));
+                v = 0.5 * arb * Math.log((1.0 - u2) / (1.0 + u2));
             }
             temp = Math.cos(b * x);
             if (Math.abs(temp) < EPSILON_LATITUDE) {
                 u = ab * x;
             } else {
-                u = arb * Math.atan2(s * cosgamma0 + V * singamma0, temp);
+                u = arb * Math.atan2(s * cosgamma0 + v2 * singamma0, temp);
             }
         } else {
             v = y > 0 ? vPoleN : vPoleS;

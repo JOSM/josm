@@ -148,23 +148,23 @@ public abstract class Condition {
                 return testString != null && testString.contains(prototypeString);
             }
 
-            float test_float;
+            float testFloat;
             try {
-                test_float = Float.parseFloat(testString);
+                testFloat = Float.parseFloat(testString);
             } catch (NumberFormatException e) {
                 return false;
             }
-            float prototype_float = Float.parseFloat(prototypeString);
+            float prototypeFloat = Float.parseFloat(prototypeString);
 
             switch (this) {
             case GREATER_OR_EQUAL:
-                return test_float >= prototype_float;
+                return testFloat >= prototypeFloat;
             case GREATER:
-                return test_float > prototype_float;
+                return testFloat > prototypeFloat;
             case LESS_OR_EQUAL:
-                return test_float <= prototype_float;
+                return testFloat <= prototypeFloat;
             case LESS:
-                return test_float < prototype_float;
+                return testFloat < prototypeFloat;
             default:
                 throw new AssertionError();
             }

@@ -67,12 +67,12 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
     }
 
     @Override
-    public Future<?> loadUrl(boolean new_layer, String url, ProgressMonitor progressMonitor) {
+    public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
         final Matcher matcher = Pattern.compile(OSM_WEBSITE_PATTERN).matcher(url);
         if (matcher.matches()) {
             url = OsmApi.getOsmApi().getBaseUrl() + "changeset/" + Long.parseLong(matcher.group(2)) + "/download";
         }
-        downloadTask = new DownloadTask(new_layer, new OsmServerLocationReader(url), progressMonitor);
+        downloadTask = new DownloadTask(newLayer, new OsmServerLocationReader(url), progressMonitor);
         // Extract .osc filename from URL to set the new layer name
         extractOsmFilename("https?://.*/(.*\\.osc)", url);
         return Main.worker.submit(downloadTask);

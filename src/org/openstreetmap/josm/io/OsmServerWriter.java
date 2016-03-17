@@ -60,22 +60,22 @@ public class OsmServerWriter {
 
     private long uploadStartTime;
 
-    public String timeLeft(int progress, int list_size) {
+    public String timeLeft(int progress, int listSize) {
         long now = System.currentTimeMillis();
         long elapsed = now - uploadStartTime;
         if (elapsed == 0) {
             elapsed = 1;
         }
-        double uploads_per_ms = (double) progress / elapsed;
-        double uploads_left = list_size - progress;
-        long ms_left = (long) (uploads_left / uploads_per_ms);
-        long minutes_left = ms_left / MSECS_PER_MINUTE;
-        long seconds_left = (ms_left / MSECS_PER_SECOND) % SECONDS_PER_MINUTE;
-        StringBuilder time_left_str = new StringBuilder().append(minutes_left).append(':');
-        if (seconds_left < 10) {
-            time_left_str.append('0');
+        double uploadsPerMs = (double) progress / elapsed;
+        double uploadsLeft = listSize - progress;
+        long msLeft = (long) (uploadsLeft / uploadsPerMs);
+        long minutesLeft = msLeft / MSECS_PER_MINUTE;
+        long secondsLeft = (msLeft / MSECS_PER_SECOND) % SECONDS_PER_MINUTE;
+        StringBuilder timeLeftStr = new StringBuilder().append(minutesLeft).append(':');
+        if (secondsLeft < 10) {
+            timeLeftStr.append('0');
         }
-        return time_left_str.append(seconds_left).toString();
+        return timeLeftStr.append(secondsLeft).toString();
     }
 
     /**
@@ -93,7 +93,7 @@ public class OsmServerWriter {
             uploadStartTime = System.currentTimeMillis();
             for (OsmPrimitive osm : primitives) {
                 int progress = progressMonitor.getTicks();
-                String time_left_str = timeLeft(progress, primitives.size());
+                String timeLeftStr = timeLeft(progress, primitives.size());
                 String msg = "";
                 switch(OsmPrimitiveType.from(osm)) {
                 case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
@@ -105,7 +105,7 @@ public class OsmServerWriter {
                                 Math.round(100.0*progress/primitives.size()),
                                 progress,
                                 primitives.size(),
-                                time_left_str,
+                                timeLeftStr,
                                 osm.getName() == null ? osm.getId() : osm.getName(),
                                         osm.getId()));
                 makeApiRequest(osm, progressMonitor);

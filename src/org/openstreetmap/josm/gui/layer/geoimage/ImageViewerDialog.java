@@ -90,21 +90,21 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnPrevious.setPreferredSize(buttonDim);
         Shortcut scPrev = Shortcut.registerShortcut(
                 "geoimage:previous", tr("Geoimage: {0}", tr("Show previous Image")), KeyEvent.VK_PAGE_UP, Shortcut.DIRECT);
-        final String APREVIOUS = "Previous Image";
+        final String previousImage = "Previous Image";
         Main.registerActionShortcut(prevAction, scPrev);
-        btnPrevious.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scPrev.getKeyStroke(), APREVIOUS);
-        btnPrevious.getActionMap().put(APREVIOUS, prevAction);
+        btnPrevious.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scPrev.getKeyStroke(), previousImage);
+        btnPrevious.getActionMap().put(previousImage, prevAction);
         btnPrevious.setEnabled(false);
 
-        final String DELETE_TEXT = tr("Remove photo from layer");
-        ImageAction delAction = new ImageAction(COMMAND_REMOVE, ImageProvider.get("dialogs", "delete"), DELETE_TEXT);
+        final String removePhoto = tr("Remove photo from layer");
+        ImageAction delAction = new ImageAction(COMMAND_REMOVE, ImageProvider.get("dialogs", "delete"), removePhoto);
         JButton btnDelete = new JButton(delAction);
         btnDelete.setPreferredSize(buttonDim);
         Shortcut scDelete = Shortcut.registerShortcut(
                 "geoimage:deleteimagefromlayer", tr("Geoimage: {0}", tr("Remove photo from layer")), KeyEvent.VK_DELETE, Shortcut.SHIFT);
         Main.registerActionShortcut(delAction, scDelete);
-        btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDelete.getKeyStroke(), DELETE_TEXT);
-        btnDelete.getActionMap().put(DELETE_TEXT, delAction);
+        btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDelete.getKeyStroke(), removePhoto);
+        btnDelete.getActionMap().put(removePhoto, delAction);
 
         ImageAction delFromDiskAction = new ImageAction(COMMAND_REMOVE_FROM_DISK,
                 ImageProvider.get("dialogs", "geoimage/deletefromdisk"), tr("Delete image file from disk"));
@@ -112,30 +112,30 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnDeleteFromDisk.setPreferredSize(buttonDim);
         Shortcut scDeleteFromDisk = Shortcut.registerShortcut(
                 "geoimage:deletefilefromdisk", tr("Geoimage: {0}", tr("Delete File from disk")), KeyEvent.VK_DELETE, Shortcut.CTRL_SHIFT);
-        final String ADELFROMDISK = "Delete image file from disk";
+        final String deleteImage = "Delete image file from disk";
         Main.registerActionShortcut(delFromDiskAction, scDeleteFromDisk);
-        btnDeleteFromDisk.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDeleteFromDisk.getKeyStroke(), ADELFROMDISK);
-        btnDeleteFromDisk.getActionMap().put(ADELFROMDISK, delFromDiskAction);
+        btnDeleteFromDisk.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDeleteFromDisk.getKeyStroke(), deleteImage);
+        btnDeleteFromDisk.getActionMap().put(deleteImage, delFromDiskAction);
 
         ImageAction copyPathAction = new ImageAction(COMMAND_COPY_PATH, ImageProvider.get("copy"), tr("Copy image path"));
         JButton btnCopyPath = new JButton(copyPathAction);
         btnCopyPath.setPreferredSize(buttonDim);
         Shortcut scCopyPath = Shortcut.registerShortcut(
                 "geoimage:copypath", tr("Geoimage: {0}", tr("Copy image path")), KeyEvent.VK_C, Shortcut.ALT_CTRL_SHIFT);
-        final String ACOPYPATH = "Copy image path";
+        final String copyImage = "Copy image path";
         Main.registerActionShortcut(copyPathAction, scCopyPath);
-        btnCopyPath.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scCopyPath.getKeyStroke(), ACOPYPATH);
-        btnCopyPath.getActionMap().put(ACOPYPATH, copyPathAction);
+        btnCopyPath.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scCopyPath.getKeyStroke(), copyImage);
+        btnCopyPath.getActionMap().put(copyImage, copyPathAction);
 
         ImageAction nextAction = new ImageAction(COMMAND_NEXT, ImageProvider.get("dialogs", "next"), tr("Next"));
         btnNext = new JButton(nextAction);
         btnNext.setPreferredSize(buttonDim);
         Shortcut scNext = Shortcut.registerShortcut(
                 "geoimage:next", tr("Geoimage: {0}", tr("Show next Image")), KeyEvent.VK_PAGE_DOWN, Shortcut.DIRECT);
-        final String ANEXT = "Next Image";
+        final String nextImage = "Next Image";
         Main.registerActionShortcut(nextAction, scNext);
-        btnNext.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scNext.getKeyStroke(), ANEXT);
-        btnNext.getActionMap().put(ANEXT, nextAction);
+        btnNext.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scNext.getKeyStroke(), nextImage);
+        btnNext.getActionMap().put(nextImage, nextAction);
         btnNext.setEnabled(false);
 
         Main.registerActionShortcut(

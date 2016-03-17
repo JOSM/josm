@@ -95,21 +95,21 @@ public class ColorPreference implements SubPreferenceSetting {
         }
         // fill model with colors:
         Map<String, String> colorKeyList = new TreeMap<>();
-        Map<String, String> colorKeyList_mappaint = new TreeMap<>();
-        Map<String, String> colorKeyList_layer = new TreeMap<>();
+        Map<String, String> colorKeyListMappaint = new TreeMap<>();
+        Map<String, String> colorKeyListLayer = new TreeMap<>();
         for (String key : colorMap.keySet()) {
             if (key.startsWith("layer ")) {
-                colorKeyList_layer.put(getName(key), key);
+                colorKeyListLayer.put(getName(key), key);
             } else if (key.startsWith("mappaint.")) {
                 // use getName(key)+key, as getName() may be ambiguous
-                colorKeyList_mappaint.put(getName(key)+key, key);
+                colorKeyListMappaint.put(getName(key)+key, key);
             } else {
                 colorKeyList.put(getName(key), key);
             }
         }
         addColorRows(colorMap, colorKeyList);
-        addColorRows(colorMap, colorKeyList_mappaint);
-        addColorRows(colorMap, colorKeyList_layer);
+        addColorRows(colorMap, colorKeyListMappaint);
+        addColorRows(colorMap, colorKeyListLayer);
         if (this.colors != null) {
             this.colors.repaint();
         }

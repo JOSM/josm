@@ -319,11 +319,11 @@ public class ExtendedDialog extends JDialog {
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
 
         for (int i = 0; i < bTexts.length; i++) {
-            final int final_i = i;
+            final int finalI = i;
             Action action = new AbstractAction(bTexts[i]) {
                 @Override
                 public void actionPerformed(ActionEvent evt) {
-                    buttonAction(final_i, evt);
+                    buttonAction(finalI, evt);
                 }
             };
 

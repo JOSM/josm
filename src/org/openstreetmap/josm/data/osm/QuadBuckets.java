@@ -97,10 +97,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             this.buckets = buckets;
         }
 
-        QBLevel(QBLevel<T> parent, int parent_index, final QuadBuckets<T> buckets) {
+        QBLevel(QBLevel<T> parent, int parentIndex, final QuadBuckets<T> buckets) {
             this.parent = parent;
             this.level = parent.level + 1;
-            this.index = parent_index;
+            this.index = parentIndex;
             this.buckets = buckets;
 
             int shift = (QuadTiling.NR_LEVELS - level) * 2;
@@ -110,16 +110,16 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 shift -= 30;
                 mult = 1 << 30;
             }
-            long this_quadpart = mult * (parent_index << shift);
-            this.quad = parent.quad | this_quadpart;
+            long quadpart = mult * (parentIndex << shift);
+            this.quad = parent.quad | quadpart;
             this.bbox = calculateBBox(); // calculateBBox reference quad
         }
 
         private BBox calculateBBox() {
-            LatLon bottom_left = this.coor();
-            double lat = bottom_left.lat() + parent.height() / 2;
-            double lon = bottom_left.lon() + parent.width() / 2;
-            return new BBox(bottom_left.lon(), bottom_left.lat(), lon, lat);
+            LatLon bottomLeft = this.coor();
+            double lat = bottomLeft.lat() + parent.height() / 2;
+            double lon = bottomLeft.lon() + parent.width() / 2;
+            return new BBox(bottomLeft.lon(), bottomLeft.lat(), lon, lat);
         }
 
         QBLevel<T> findBucket(BBox bbox) {
@@ -180,16 +180,16 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             return content.add(o);
         }
 
-        boolean matches(final T o, final BBox search_bbox) {
+        boolean matches(final T o, final BBox searchBbox) {
             if (o instanceof Node) {
                 final LatLon latLon = ((Node) o).getCoor();
                 // node without coords -> bbox[0,0,0,0]
-                return search_bbox.bounds(latLon != null ? latLon : LatLon.ZERO);
+                return searchBbox.bounds(latLon != null ? latLon : LatLon.ZERO);
             }
-            return o.getBBox().intersects(search_bbox);
+            return o.getBBox().intersects(searchBbox);
         }
 
-        private void search_contents(BBox search_bbox, List<T> result) {
+        private void search_contents(BBox searchBbox, List<T> result) {
             /*
              * It is possible that this was created in a split
              * but never got any content populated.
@@ -198,7 +198,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 return;
 
             for (T o : content) {
-                if (matches(o, search_bbox)) {
+                if (matches(o, searchBbox)) {
                     result.add(o);
                 }
             }
@@ -298,30 +298,30 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             findBucket(o.getBBox()).doAdd(o);
         }
 
-        private void search(BBox search_bbox, List<T> result) {
-            if (!this.bbox().intersects(search_bbox))
+        private void search(BBox searchBbox, List<T> result) {
+            if (!this.bbox().intersects(searchBbox))
                 return;
-            else if (bbox().bounds(search_bbox)) {
+            else if (bbox().bounds(searchBbox)) {
                 buckets.searchCache = this;
             }
 
             if (this.hasContent()) {
-                search_contents(search_bbox, result);
+                search_contents(searchBbox, result);
             }
 
             //TODO Coincidence vector should be calculated here and only buckets that match search_bbox should be checked
 
             if (nw != null) {
-                nw.search(search_bbox, result);
+                nw.search(searchBbox, result);
             }
             if (ne != null) {
-                ne.search(search_bbox, result);
+                ne.search(searchBbox, result);
             }
             if (se != null) {
-                se.search(search_bbox, result);
+                se.search(searchBbox, result);
             }
             if (sw != null) {
-                sw.search(search_bbox, result);
+                sw.search(searchBbox, result);
             }
         }
 
@@ -329,10 +329,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             return Long.toHexString(quad);
         }
 
-        int index_of(QBLevel<T> find_this) {
+        int index_of(QBLevel<T> findThis) {
             QBLevel<T>[] children = getChildren();
             for (int i = 0; i < QuadTiling.TILES_PER_LEVEL; i++) {
-                if (children[i] == find_this)
+                if (children[i] == findThis)
                     return i;
             }
             return -1;

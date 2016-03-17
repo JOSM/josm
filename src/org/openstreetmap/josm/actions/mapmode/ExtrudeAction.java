@@ -572,9 +572,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
         if (ws != null) {
             Node n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
-            EastNorth A = ws.getFirstNode().getEastNorth();
-            EastNorth B = ws.getSecondNode().getEastNorth();
-            n.setEastNorth(Geometry.closestPointToSegment(A, B, n.getEastNorth()));
+            EastNorth a = ws.getFirstNode().getEastNorth();
+            EastNorth b = ws.getSecondNode().getEastNorth();
+            n.setEastNorth(Geometry.closestPointToSegment(a, b, n.getEastNorth()));
             Way wnew = new Way(ws.way);
             wnew.addNode(ws.lowerIndex+1, n);
             SequenceCommand cmds = new SequenceCommand(tr("Add a new node to an existing way"),

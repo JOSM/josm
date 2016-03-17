@@ -211,8 +211,8 @@ public class WayConnectionTypeCalculator {
         return dir;
     }
 
-    private Direction determineDirection(int ref_i, Direction ref_direction, int k) {
-        return determineDirection(ref_i, ref_direction, k, false);
+    private Direction determineDirection(int refI, Direction refDirection, int k) {
+        return determineDirection(refI, refDirection, k, false);
     }
 
     /**
@@ -224,46 +224,46 @@ public class WayConnectionTypeCalculator {
      * Else the direction is given as follows:
      * Let the relation be a route of oneway streets, and someone travels them in the given order.
      * Direction is FORWARD if it is legal and BACKWARD if it is illegal to do so for the given way.
-     * @param ref_i way key
-     * @param ref_direction direction of ref_i
+     * @param refI way key
+     * @param refDirection direction of ref_i
      * @param k successor of ref_i
      * @param reversed if {@code true} determine reverse direction
      * @return direction of way {@code k}
      */
-    private Direction determineDirection(int ref_i, final Direction ref_direction, int k, boolean reversed) {
-        if (ref_i < 0 || k < 0 || ref_i >= members.size() || k >= members.size())
+    private Direction determineDirection(int refI, final Direction refDirection, int k, boolean reversed) {
+        if (refI < 0 || k < 0 || refI >= members.size() || k >= members.size())
             return NONE;
-        if (ref_direction == NONE)
+        if (refDirection == NONE)
             return NONE;
 
-        final RelationMember m_ref = members.get(ref_i);
+        final RelationMember mRef = members.get(refI);
         final RelationMember m = members.get(k);
-        Way way_ref = null;
+        Way wayRef = null;
         Way way = null;
 
-        if (m_ref.isWay()) {
-            way_ref = m_ref.getWay();
+        if (mRef.isWay()) {
+            wayRef = mRef.getWay();
         }
         if (m.isWay()) {
             way = m.getWay();
         }
 
-        if (way_ref == null || way == null)
+        if (wayRef == null || way == null)
             return NONE;
 
         /** the list of nodes the way k can dock to */
         List<Node> refNodes = new ArrayList<>();
 
-        switch (ref_direction) {
+        switch (refDirection) {
         case FORWARD:
-            refNodes.add(way_ref.lastNode());
+            refNodes.add(wayRef.lastNode());
             break;
         case BACKWARD:
-            refNodes.add(way_ref.firstNode());
+            refNodes.add(wayRef.firstNode());
             break;
         case ROUNDABOUT_LEFT:
         case ROUNDABOUT_RIGHT:
-            refNodes = way_ref.getNodes();
+            refNodes = wayRef.getNodes();
             break;
         }
 

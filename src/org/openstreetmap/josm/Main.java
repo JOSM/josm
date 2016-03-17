@@ -1344,10 +1344,10 @@ public abstract class Main {
                 gbc.weightx = 1.0;
                 panel.add(ho, gbc);
                 panel.add(link, gbc);
-                final String EXIT = tr("Exit JOSM");
-                final String CONTINUE = tr("Continue, try anyway");
+                final String exitStr = tr("Exit JOSM");
+                final String continueStr = tr("Continue, try anyway");
                 int ret = JOptionPane.showOptionDialog(null, panel, tr("Error"), JOptionPane.YES_NO_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, new String[] {EXIT, CONTINUE}, EXIT);
+                        JOptionPane.ERROR_MESSAGE, null, new String[] {exitStr, continueStr}, exitStr);
                 if (ret == 0) {
                     System.exit(0);
                 }

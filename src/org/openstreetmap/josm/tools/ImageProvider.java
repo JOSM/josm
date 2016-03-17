@@ -752,8 +752,9 @@ public class ImageProvider {
             } else {
                 extensions = new String[] {".png", ".svg"};
             }
-            final int ARCHIVE = 0, LOCAL = 1;
-            for (int place : new Integer[] {ARCHIVE, LOCAL}) {
+            final int typeArchive = 0;
+            final int typeLocal = 1;
+            for (int place : new Integer[] {typeArchive, typeLocal}) {
                 for (String ext : extensions) {
 
                     if (".svg".equals(ext)) {
@@ -776,7 +777,7 @@ public class ImageProvider {
                     if (ir != null) return ir;
 
                     switch (place) {
-                    case ARCHIVE:
+                    case typeArchive:
                         if (archive != null) {
                             ir = getIfAvailableZip(fullName, archive, inArchiveDir, type);
                             if (ir != null) {
@@ -785,7 +786,7 @@ public class ImageProvider {
                             }
                         }
                         break;
-                    case LOCAL:
+                    case typeLocal:
                         // getImageUrl() does a ton of "stat()" calls and gets expensive
                         // and redundant when you have a whole ton of objects. So,
                         // index the cache by the name of the icon we're looking for
@@ -923,8 +924,8 @@ public class ImageProvider {
                     continue;
                 }
             } else {
-                final String fn_md5 = Utils.md5Hex(fn);
-                url = b + fn_md5.substring(0, 1) + '/' + fn_md5.substring(0, 2) + "/" + fn;
+                final String fnMD5 = Utils.md5Hex(fn);
+                url = b + fnMD5.substring(0, 1) + '/' + fnMD5.substring(0, 2) + "/" + fn;
             }
             result = getIfAvailableHttp(url, type);
             if (result != null) {

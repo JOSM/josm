@@ -176,7 +176,7 @@ public class Diff {
 
         for (int c = 1;; ++c) {
             int d;          /* Active diagonal. */
-            boolean big_snake = false;
+            boolean bigSnake = false;
 
             /* Extend the top-down search by an edit step in each diagonal. */
             if (fmin > dmin) {
@@ -203,7 +203,7 @@ public class Diff {
                     ++x; ++y;
                 }
                 if (x - oldx > SNAKE_LIMIT) {
-                    big_snake = true;
+                    bigSnake = true;
                 }
                 fd[fdiagoff + d] = x;
                 if (odd && bmin <= d && d <= bmax && bd[bdiagoff + d] <= fd[fdiagoff + d]) {
@@ -237,7 +237,7 @@ public class Diff {
                     --x; --y;
                 }
                 if (oldx - x > SNAKE_LIMIT) {
-                    big_snake = true;
+                    bigSnake = true;
                 }
                 bd[bdiagoff + d] = x;
                 if (!odd && fmin <= d && d <= fmax && bd[bdiagoff + d] <= fd[fdiagoff + d]) {
@@ -254,7 +254,7 @@ public class Diff {
        With this heuristic, for files with a constant small density
        of changes, the algorithm is linear in the file size.  */
 
-            if (c > 200 && big_snake && heuristic) {
+            if (c > 200 && bigSnake && heuristic) {
                 int best = 0;
                 int bestpos = -1;
 
@@ -617,11 +617,11 @@ public class Diff {
          * @return the array of equivalence class counts.
          */
         int[] equivCount() {
-            int[] equiv_count = new int[equivMax];
+            int[] equivCount = new int[equivMax];
             for (int i = 0; i < bufferedLines; ++i) {
-                ++equiv_count[equivs[i]];
+                ++equivCount[equivs[i]];
             }
-            return equiv_count;
+            return equivCount;
         }
 
         /**
@@ -852,39 +852,39 @@ public class Diff {
          */
         void shift_boundaries(FileData f) {
             final boolean[] changed = changedFlag;
-            final boolean[] other_changed = f.changedFlag;
+            final boolean[] otherChanged = f.changedFlag;
             int i = 0;
             int j = 0;
-            int i_end = bufferedLines;
+            int iEnd = bufferedLines;
             int preceding = -1;
-            int other_preceding = -1;
+            int otherPreceding = -1;
 
             for (;;) {
-                int start, end, other_start;
+                int start, end, otherStart;
 
                 /* Scan forwards to find beginning of another run of changes.
                    Also keep track of the corresponding point in the other file.  */
 
-                while (i < i_end && !changed[1+i]) {
-                    while (other_changed[1+j++]) {
+                while (i < iEnd && !changed[1+i]) {
+                    while (otherChanged[1+j++]) {
                         /* Non-corresponding lines in the other file
                            will count as the preceding batch of changes.  */
-                        other_preceding = j;
+                        otherPreceding = j;
                     }
                     i++;
                 }
 
-                if (i == i_end) {
+                if (i == iEnd) {
                     break;
                 }
 
                 start = i;
-                other_start = j;
+                otherStart = j;
 
                 for (;;) {
                     /* Now find the end of this run of changes.  */
 
-                    while (i < i_end && changed[1+i]) {
+                    while (i < iEnd && changed[1+i]) {
                         i++;
                     }
                     end = i;
@@ -898,8 +898,8 @@ public class Diff {
                     /* You might ask, how could this run follow right after another?
                        Only because the previous run was shifted here.  */
 
-                    if (end != i_end && equivs[start] == equivs[end] && !other_changed[1+j]
-                         && !((preceding >= 0 && start == preceding) || (other_preceding >= 0 && other_start == other_preceding))) {
+                    if (end != iEnd && equivs[start] == equivs[end] && !otherChanged[1+j]
+                         && !((preceding >= 0 && start == preceding) || (otherPreceding >= 0 && otherStart == otherPreceding))) {
                         changed[1+end++] = true;
                         changed[1+start++] = false;
                         ++i;
@@ -913,7 +913,7 @@ public class Diff {
                 }
 
                 preceding = i;
-                other_preceding = j;
+                otherPreceding = j;
             }
         }
 

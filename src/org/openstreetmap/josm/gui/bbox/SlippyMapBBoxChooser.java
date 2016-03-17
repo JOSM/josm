@@ -239,11 +239,11 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         if (aStart == null || aEnd == null || aStart.x == aEnd.x || aStart.y == aEnd.y)
             return;
 
-        Point p_max = new Point(Math.max(aEnd.x, aStart.x), Math.max(aEnd.y, aStart.y));
-        Point p_min = new Point(Math.min(aEnd.x, aStart.x), Math.min(aEnd.y, aStart.y));
+        Point pMax = new Point(Math.max(aEnd.x, aStart.x), Math.max(aEnd.y, aStart.y));
+        Point pMin = new Point(Math.min(aEnd.x, aStart.x), Math.min(aEnd.y, aStart.y));
 
-        iSelectionRectStart = getPosition(p_min);
-        iSelectionRectEnd =   getPosition(p_max);
+        iSelectionRectStart = getPosition(pMin);
+        iSelectionRectEnd =   getPosition(pMax);
 
         Bounds b = new Bounds(
                 new LatLon(

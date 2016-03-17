@@ -266,15 +266,15 @@ public class JoinAreasAction extends JosmAction {
 
         /**
          * Returns oriented angle (N1N2, N1N3) in range [0; 2*Math.PI[
-         * @param N1 first node
-         * @param N2 second node
-         * @param N3 third node
+         * @param n1 first node
+         * @param n2 second node
+         * @param n3 third node
          * @return oriented angle (N1N2, N1N3) in range [0; 2*Math.PI[
          */
-        private static double getAngle(Node N1, Node N2, Node N3) {
-            EastNorth en1 = N1.getEastNorth();
-            EastNorth en2 = N2.getEastNorth();
-            EastNorth en3 = N3.getEastNorth();
+        private static double getAngle(Node n1, Node n2, Node n3) {
+            EastNorth en1 = n1.getEastNorth();
+            EastNorth en2 = n2.getEastNorth();
+            EastNorth en3 = n3.getEastNorth();
             double angle = Math.atan2(en3.getY() - en1.getY(), en3.getX() - en1.getX()) -
                     Math.atan2(en2.getY() - en1.getY(), en2.getX() - en1.getX());
             while (angle >= 2*Math.PI) {

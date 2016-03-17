@@ -38,13 +38,13 @@ public class DownloadOsmCompressedTask extends DownloadOsmTask {
 
     /**
      * Loads a given URL
-     * @param new_layer {@code true} if the data should be saved to a new layer
+     * @param newLayer {@code true} if the data should be saved to a new layer
      * @param url The URL as String
      * @param progressMonitor progress monitor for user interaction
      */
     @Override
-    public Future<?> loadUrl(boolean new_layer, final String url, ProgressMonitor progressMonitor) {
-        downloadTask = new DownloadTask(new_layer, new OsmServerLocationReader(url), progressMonitor) {
+    public Future<?> loadUrl(boolean newLayer, final String url, ProgressMonitor progressMonitor) {
+        downloadTask = new DownloadTask(newLayer, new OsmServerLocationReader(url), progressMonitor) {
             @Override
             protected DataSet parseDataSet() throws OsmTransferException {
                 ProgressMonitor subTaskMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);

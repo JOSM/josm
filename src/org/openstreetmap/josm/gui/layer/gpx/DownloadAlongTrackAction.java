@@ -92,13 +92,13 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
          * soon as you touch any built-up area, that kind of bounding box will download forever
          * and then stop because it has more than 50k nodes.
          */
-        final double buffer_dist = panel.getDistance();
-        final double max_area = panel.getArea() / 10000.0 / scale;
-        final double buffer_y = buffer_dist / 100000.0;
-        final double buffer_x = buffer_y / scale;
+        final double bufferDist = panel.getDistance();
+        final double maxArea = panel.getArea() / 10000.0 / scale;
+        final double bufferY = bufferDist / 100000.0;
+        final double bufferX = bufferY / scale;
         final int totalTicks = latcnt;
         // guess if a progress bar might be useful.
-        final boolean displayProgress = totalTicks > 2000 && buffer_y < 0.01;
+        final boolean displayProgress = totalTicks > 2000 && bufferY < 0.01;
 
         class CalculateDownloadArea extends PleaseWaitRunnable {
 
@@ -125,7 +125,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
                 if (cancel) {
                     return;
                 }
-                confirmAndDownloadAreas(a, max_area, panel.isDownloadOsmData(), panel.isDownloadGpxData(),
+                confirmAndDownloadAreas(a, maxArea, panel.isDownloadOsmData(), panel.isDownloadGpxData(),
                         tr("Download from OSM along this track"), progressMonitor);
             }
 
@@ -146,9 +146,9 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
             private LatLon calcAreaForWayPoint(WayPoint p, LatLon previous) {
                 tick();
                 LatLon c = p.getCoor();
-                if (previous == null || c.greatCircleDistance(previous) > buffer_dist) {
+                if (previous == null || c.greatCircleDistance(previous) > bufferDist) {
                     // we add a buffer around the point.
-                    r.setRect(c.lon() - buffer_x, c.lat() - buffer_y, 2 * buffer_x, 2 * buffer_y);
+                    r.setRect(c.lon() - bufferX, c.lat() - bufferY, 2 * bufferX, 2 * bufferY);
                     a.add(new Area(r));
                     return c;
                 }

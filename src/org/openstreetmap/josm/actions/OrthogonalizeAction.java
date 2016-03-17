@@ -327,20 +327,20 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         // orthogonalize
-        final Direction[] HORIZONTAL = {Direction.RIGHT, Direction.LEFT};
-        final Direction[] VERTICAL = {Direction.UP, Direction.DOWN};
-        final Direction[][] ORIENTATIONS = {HORIZONTAL, VERTICAL};
-        for (Direction[] orientation : ORIENTATIONS) {
+        final Direction[] horizontal = {Direction.RIGHT, Direction.LEFT};
+        final Direction[] vertical = {Direction.UP, Direction.DOWN};
+        final Direction[][] orientations = {horizontal, vertical};
+        for (Direction[] orientation : orientations) {
             final Set<Node> s = new HashSet<>(allNodes);
-            int s_size = s.size();
-            for (int dummy = 0; dummy < s_size; ++dummy) {
+            int size = s.size();
+            for (int dummy = 0; dummy < size; ++dummy) {
                 if (s.isEmpty()) {
                     break;
                 }
-                final Node dummy_n = s.iterator().next();     // pick arbitrary element of s
+                final Node dummyN = s.iterator().next();     // pick arbitrary element of s
 
-                final Set<Node> cs = new HashSet<>(); // will contain each node that can be reached from dummy_n
-                cs.add(dummy_n);                      // walking only on horizontal / vertical segments
+                final Set<Node> cs = new HashSet<>(); // will contain each node that can be reached from dummyN
+                cs.add(dummyN);                      // walking only on horizontal / vertical segments
 
                 boolean somethingHappened = true;
                 while (somethingHappened) {
@@ -363,7 +363,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     }
                 }
 
-                final Map<Node, Double> nC = (orientation == HORIZONTAL) ? nY : nX;
+                final Map<Node, Double> nC = (orientation == horizontal) ? nY : nX;
 
                 double average = 0;
                 for (Node n : cs) {
@@ -384,7 +384,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 // of segments. This can still happen in some pathological cases (see #7889). To avoid
                 // both heading nodes collapsing to one point, we simply skip this segment string and
                 // don't touch the node coordinates.
-                if (orientation == VERTICAL && headingNodes.size() == 2 && cs.containsAll(headingNodes)) {
+                if (orientation == vertical && headingNodes.size() == 2 && cs.containsAll(headingNodes)) {
                     continue;
                 }
 
@@ -403,9 +403,9 @@ public final class OrthogonalizeAction extends JosmAction {
             final double dx = tmp.east()  - n.getEastNorth().east();
             final double dy = tmp.north() - n.getEastNorth().north();
             if (headingNodes.contains(n)) { // The heading nodes should not have changed
-                final double EPSILON = 1E-6;
-                if (Math.abs(dx) > Math.abs(EPSILON * tmp.east()) ||
-                        Math.abs(dy) > Math.abs(EPSILON * tmp.east()))
+                final double epsilon = 1E-6;
+                if (Math.abs(dx) > Math.abs(epsilon * tmp.east()) ||
+                        Math.abs(dy) > Math.abs(epsilon * tmp.east()))
                     throw new AssertionError();
             } else {
                 OrthogonalizeAction.rememberMovements.put(n, new EastNorth(dx, dy));
@@ -571,15 +571,15 @@ public final class OrthogonalizeAction extends JosmAction {
      */
     private static int angleToDirectionChange(double a, double deltaMax) throws RejectedAngleException {
         a = standard_angle_mPI_to_PI(a);
-        double d0    = Math.abs(a);
-        double d90   = Math.abs(a - Math.PI / 2);
-        double d_m90 = Math.abs(a + Math.PI / 2);
+        double d0   = Math.abs(a);
+        double d90  = Math.abs(a - Math.PI / 2);
+        double dm90 = Math.abs(a + Math.PI / 2);
         int dirChange;
         if (d0 < deltaMax) {
             dirChange =  0;
         } else if (d90 < deltaMax) {
             dirChange =  1;
-        } else if (d_m90 < deltaMax) {
+        } else if (dm90 < deltaMax) {
             dirChange = -1;
         } else {
             a = standard_angle_0_to_2PI(a);
