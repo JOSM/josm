@@ -580,4 +580,17 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
     protected long estimateMemoryUsage() {
         return 0;
     }
+
+    /**
+     * Gets the strategy that specifies where this layer should be inserted in a layer list.
+     * @return That strategy.
+     * @since 10008
+     */
+    public LayerPositionStrategy getDefaultLayerPosition() {
+        if (isBackgroundLayer()) {
+            return LayerPositionStrategy.BEFORE_FIRST_BACKGROUND_LAYER;
+        } else {
+            return LayerPositionStrategy.AFTER_LAST_VALIDATION_LAYER;
+        }
+    }
 }
