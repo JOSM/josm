@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.sort.RelationSorter;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -327,6 +328,11 @@ public class CreateMultipolygonAction extends JosmAction {
         for (JoinedPolygon jway:pol.innerWays) {
             addMembers(jway, rel, "inner");
         }
+
+        if (clone == null) {
+            rel.setMembers(RelationSorter.sortMembersByConnectivity(rel.getMembers()));
+        }
+
         return rel;
     }
 
