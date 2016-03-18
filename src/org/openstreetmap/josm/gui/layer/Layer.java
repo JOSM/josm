@@ -360,10 +360,19 @@ public abstract class Layer implements Destroyable, MapViewPaintable, Projection
         return visible && opacity != 0;
     }
 
+    /**
+     * Gets the opacity of the layer, in range 0...1
+     * @return The opacity
+     */
     public double getOpacity() {
         return opacity;
     }
 
+    /**
+     * Sets the opacity of the layer, in range 0...1
+     * @param opacity The opacity
+     * @throws IllegalArgumentException if the opacity is out of range
+     */
     public void setOpacity(double opacity) {
         if (!(opacity >= 0 && opacity <= 1))
             throw new IllegalArgumentException("Opacity value must be between 0 and 1");
