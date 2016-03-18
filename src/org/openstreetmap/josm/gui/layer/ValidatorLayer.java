@@ -159,4 +159,9 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
             OsmValidator.errorLayer = null;
         }
     }
+
+    @Override
+    public LayerPositionStrategy getDefaultLayerPosition() {
+        return LayerPositionStrategy.IN_FRONT;
+    }
 }

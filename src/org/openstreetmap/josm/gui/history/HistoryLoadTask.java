@@ -6,21 +6,21 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.io.IOException;
-import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
@@ -29,29 +29,27 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
 
 /**
- * Loads the object history of an collection of objects from the
- * server.
+ * Loads the object history of a collection of objects from the server.
  *
  * It provides a fluent API for configuration.
  *
  * Sample usage:
  *
  * <pre>
- *   HistoryLoadTask task  = new HistoryLoadTask()
- *      .add(1, OsmPrimitiveType.NODE)
- *      .add(1233, OsmPrimitiveType.WAY)
- *      .add(37234, OsmPrimitveType.RELATION)
+ *   HistoryLoadTask task = new HistoryLoadTask()
+ *      .add(node)
+ *      .add(way)
+ *      .add(relation)
  *      .add(aHistoryItem);
  *
  *   Main.worker.execute(task);
- *
  * </pre>
  */
 public class HistoryLoadTask extends PleaseWaitRunnable {
 
     private boolean canceled;
     private Exception lastException;
-    private final Set<PrimitiveId> toLoad;
+    private final Set<PrimitiveId> toLoad = new HashSet<>();
     private HistoryDataSet loadedData;
     private OsmServerHistoryReader reader;
 
@@ -60,7 +58,6 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      */
     public HistoryLoadTask() {
         super(tr("Load history"), true);
-        toLoad = new HashSet<>();
     }
 
     /**
@@ -74,23 +71,6 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     public HistoryLoadTask(Component parent) {
         super(parent, tr("Load history"), true);
         CheckParameterUtil.ensureParameterNotNull(parent, "parent");
-        toLoad = new HashSet<>();
-    }
-
-    /**
-     * Adds an object whose history is to be loaded.
-     *
-     * @param id the object id
-     * @param type the object type
-     * @return this task
-     */
-    public HistoryLoadTask add(long id, OsmPrimitiveType type) {
-        if (id <= 0)
-            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got {1}.", "id", id));
-        CheckParameterUtil.ensureParameterNotNull(type, "type");
-        SimplePrimitiveId pid = new SimplePrimitiveId(id, type);
-        toLoad.add(pid);
-        return this;
     }
 
     /**
@@ -114,8 +94,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      */
     public HistoryLoadTask add(HistoryOsmPrimitive primitive) {
         CheckParameterUtil.ensureParameterNotNull(primitive, "primitive");
-        toLoad.add(primitive.getPrimitiveId());
-        return this;
+        return add(primitive.getPrimitiveId());
     }
 
     /**
@@ -127,8 +106,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      */
     public HistoryLoadTask add(History history) {
         CheckParameterUtil.ensureParameterNotNull(history, "history");
-        toLoad.add(history.getPrimitiveId());
-        return this;
+        return add(history.getPrimitiveId());
     }
 
     /**
@@ -141,8 +119,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      */
     public HistoryLoadTask add(OsmPrimitive primitive) {
         CheckParameterUtil.ensureValidPrimitiveId(primitive, "primitive");
-        toLoad.add(primitive.getPrimitiveId());
-        return this;
+        return add(primitive.getPrimitiveId());
     }
 
     /**
@@ -193,24 +170,13 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
                 if (canceled) {
                     break;
                 }
-                String msg = "";
-                switch(pid.getType()) {
-                case NODE: msg = marktr("Loading history for node {0}"); break;
-                case WAY: msg = marktr("Loading history for way {0}"); break;
-                case RELATION: msg = marktr("Loading history for relation {0}"); break;
-                }
-                progressMonitor.indeterminateSubTask(tr(msg,
-                        Long.toString(pid.getUniqueId())));
+                String msg = getLoadingMessage(pid);
+                progressMonitor.indeterminateSubTask(tr(msg, Long.toString(pid.getUniqueId())));
                 reader = null;
-                HistoryDataSet ds = null;
+                HistoryDataSet ds;
                 try {
                     reader = new OsmServerHistoryReader(pid.getType(), pid.getUniqueId());
-                    ds = reader.parseHistory(progressMonitor.createSubTaskMonitor(1, false));
-                    // load corresponding changesets (mostly for changeset comment)
-                    for (final Changeset i : new OsmServerChangesetReader().queryChangesets(
-                            new ChangesetQuery().forChangesetIds(ds.getChangesetIds()), progressMonitor.createSubTaskMonitor(1, false))) {
-                        ds.putChangeset(i);
-                    }
+                    ds = loadHistory(reader, progressMonitor);
                 } catch (OsmTransferException e) {
                     if (canceled)
                         return;
@@ -224,10 +190,50 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
         }
     }
 
+    protected static HistoryDataSet loadHistory(OsmServerHistoryReader reader, ProgressMonitor progressMonitor) throws OsmTransferException {
+        HistoryDataSet ds = reader.parseHistory(progressMonitor.createSubTaskMonitor(1, false));
+        // load corresponding changesets (mostly for changeset comment)
+        OsmServerChangesetReader changesetReader = new OsmServerChangesetReader();
+        List<Long> changesetIds = new ArrayList<>(ds.getChangesetIds());
+
+        // query changesets 100 by 100 (OSM API limit)
+        int n = ChangesetQuery.MAX_CHANGESETS_NUMBER;
+        for (int i = 0; i < changesetIds.size(); i += n) {
+            for (Changeset c : changesetReader.queryChangesets(
+                    new ChangesetQuery().forChangesetIds(changesetIds.subList(i, Math.min(i + n, changesetIds.size()))),
+                    progressMonitor.createSubTaskMonitor(1, false))) {
+                ds.putChangeset(c);
+            }
+        }
+
+        return ds;
+    }
+
+    protected static String getLoadingMessage(PrimitiveId pid) {
+        switch (pid.getType()) {
+        case NODE:
+            return marktr("Loading history for node {0}");
+        case WAY:
+            return marktr("Loading history for way {0}");
+        case RELATION:
+            return marktr("Loading history for relation {0}");
+        default:
+            return "";
+        }
+    }
+
+    /**
+     * Determines if this task has ben canceled.
+     * @return {@code true} if this task has ben canceled
+     */
     public boolean isCanceled() {
         return canceled;
     }
 
+    /**
+     * Returns the last exception that occured during loading, if any.
+     * @return the last exception that occured during loading, or {@code null}
+     */
     public Exception getLastException() {
         return lastException;
     }

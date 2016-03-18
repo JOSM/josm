@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -22,6 +23,11 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 public class ChangesetQuery {
+
+    /**
+     * Maximum number of changesets returned by the OSM API call "/changesets?"
+     */
+    public static int MAX_CHANGESETS_NUMBER = 100;
 
     /**
      * Replies a changeset query object from the query part of a OSM API URL for querying changesets.
@@ -233,6 +239,9 @@ public class ChangesetQuery {
      */
     public ChangesetQuery forChangesetIds(Collection<Long> changesetIds) {
         CheckParameterUtil.ensureParameterNotNull(changesetIds, "changesetIds");
+        if (changesetIds.size() > MAX_CHANGESETS_NUMBER) {
+            Main.warn("Changeset query built with more than " + MAX_CHANGESETS_NUMBER + " changeset ids (" + changesetIds.size() + ")");
+        }
         this.changesetIds = changesetIds;
         return this;
     }

@@ -57,9 +57,10 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerPositionStrategy;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
@@ -346,33 +347,6 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
     }
 
     /**
-     * Adds a GPX layer. A GPX layer is added below the lowest data layer.
-     * <p>
-     * Does not call {@link #fireLayerAdded(Layer)}.
-     *
-     * @param layer the GPX layer
-     */
-    protected void addGpxLayer(GpxLayer layer) {
-        synchronized (layers) {
-            if (layers.isEmpty()) {
-                layers.add(layer);
-                return;
-            }
-            for (int i = layers.size()-1; i >= 0; i--) {
-                if (layers.get(i) instanceof OsmDataLayer) {
-                    if (i == layers.size()-1) {
-                        layers.add(layer);
-                    } else {
-                        layers.add(i+1, layer);
-                    }
-                    return;
-                }
-            }
-            layers.add(0, layer);
-        }
-    }
-
-    /**
      * Add a layer to the current MapView. The layer will be added at topmost
      * position.
      * @param layer The layer to add
@@ -388,21 +362,10 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
                 playHeadMarker = PlayHeadMarker.create();
             }
 
-            if (layer instanceof GpxLayer) {
-                addGpxLayer((GpxLayer) layer);
-            } else if (layers.isEmpty()) {
-                layers.add(layer);
-            } else if (layer.isBackgroundLayer()) {
-                int i = 0;
-                for (; i < layers.size(); i++) {
-                    if (layers.get(i).isBackgroundLayer()) {
-                        break;
-                    }
-                }
-                layers.add(i, layer);
-            } else {
-                layers.add(0, layer);
-            }
+            LayerPositionStrategy positionStrategy = layer.getDefaultLayerPosition();
+            int position = positionStrategy.getPosition(this);
+            checkPosition(position);
+            insertLayerAt(layer, position);
 
             if (isOsmDataLayer || oldActiveLayer == null) {
                 // autoselect the new layer
@@ -426,6 +389,30 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
 
         if (!listenersToFire.isEmpty()) {
             repaint();
+        }
+    }
+
+    /**
+     * Check if the (new) position is valid
+     * @param position The position index
+     * @throws IndexOutOfBoundsException if it is not.
+     */
+    private void checkPosition(int position) {
+        if (position < 0 || position > layers.size()) {
+            throw new IndexOutOfBoundsException("Position " + position + " out of range.");
+        }
+    }
+
+    /**
+     * Insert a layer at a given position.
+     * @param layer The layer to add.
+     * @param position The position on which we should add it.
+     */
+    private void insertLayerAt(Layer layer, int position) {
+        if (position == layers.size()) {
+            layers.add(layer);
+        } else {
+            layers.add(position, layer);
         }
     }
 
