@@ -54,7 +54,9 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 
-        renderNode((TwoColumnDiff.Item) value, isSelected);
+        if (value != null) {
+            renderNode((TwoColumnDiff.Item) value, isSelected);
+        }
         return this;
     }
 }

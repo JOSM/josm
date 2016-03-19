@@ -318,6 +318,11 @@ public class VersionTable extends JTable implements Observer {
             setHorizontalAlignment(hAlignment);
         }
 
+        // for unit tests
+        private AlignedRenderer() {
+            this(SwingConstants.LEFT);
+        }
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
                 int row, int column) {

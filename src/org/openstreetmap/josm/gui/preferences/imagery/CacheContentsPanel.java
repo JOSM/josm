@@ -70,6 +70,10 @@ public class CacheContentsPanel extends JPanel {
         private final JButton editButton;
         private Object editorValue;
 
+        private ButtonColumn() {
+            this(null);
+        }
+
         private ButtonColumn(Action action) {
             this.action = action;
             renderButton = new JButton();
