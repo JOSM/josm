@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -18,11 +19,13 @@ import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ImageIcon;
@@ -30,6 +33,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
 import javax.swing.JTable;
@@ -66,6 +70,7 @@ import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.MultikeyActionsHandler;
@@ -263,17 +268,10 @@ public class LayerListDialog extends ToggleDialog {
         MultikeyActionsHandler.getInstance().addAction(showHideLayerAction);
         adaptTo(showHideLayerAction, selectionModel);
 
-        // -- layer opacity action
-        LayerOpacityAction layerOpacityAction = new LayerOpacityAction(model);
-        adaptTo(layerOpacityAction, selectionModel);
-        SideButton opacityButton = new SideButton(layerOpacityAction, false);
-        layerOpacityAction.setCorrespondingSideButton(opacityButton);
-
-        // -- layer gamma action
-        LayerGammaAction layerGammaAction = new LayerGammaAction(model);
-        adaptTo(layerGammaAction, selectionModel);
-        SideButton gammaButton = new SideButton(layerGammaAction, false);
-        layerGammaAction.setCorrespondingSideButton(gammaButton);
+        LayerVisibilityAction visibilityAction = new LayerVisibilityAction(model);
+        adaptTo(visibilityAction, selectionModel);
+        SideButton visibilityButton = new SideButton(visibilityAction, false);
+        visibilityAction.setCorrespondingSideButton(visibilityButton);
 
         // -- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
@@ -300,9 +298,7 @@ public class LayerListDialog extends ToggleDialog {
                 new SideButton(moveUpAction, false),
                 new SideButton(moveDownAction, false),
                 new SideButton(activateLayerAction, false),
-                new SideButton(showHideLayerAction, false),
-                opacityButton,
-                gammaButton,
+                visibilityButton,
                 new SideButton(deleteLayerAction, false)
         ));
 
@@ -528,47 +524,107 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /**
-     * Abstract action which allows to adjust a double value using a slider
+     * This is a menu that includes all settings for the layer visibility. It combines gamma/opacity sliders and the visible-checkbox.
+     *
+     * @author Michael Zangl
      */
-    public abstract static class AbstractLayerPropertySliderAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
-        protected final LayerListModel model;
-        protected final JPopupMenu popup;
-        protected final JSlider slider;
-        private final double factor;
+    public static final class LayerVisibilityAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
+        protected static final int SLIDER_STEPS = 100;
+        private static final double MAX_GAMMA_FACTOR = 2;
+        private final LayerListModel model;
+        private final JPopupMenu popup;
+        private JSlider opacitySlider;
+        private JSlider gammaSlider;
         private SideButton sideButton;
-
-        protected AbstractLayerPropertySliderAction(LayerListModel model, String name, final double factor) {
-            super(name);
-            this.model = model;
-            this.factor = factor;
-            updateEnabledState();
-
-            popup = new JPopupMenu();
-            slider = new JSlider(JSlider.VERTICAL);
-            slider.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    setValue(slider.getValue() / factor);
-                }
-            });
-            popup.add(slider);
-        }
-
-        protected abstract void setValue(double value);
-
-        protected abstract double getValue();
+        private JCheckBox visibilityCheckbox;
 
         /**
-         * Sets the corresponding side button.
-         * @param sideButton the corresponding side button
+         * Creates a new {@link LayerVisibilityAction}
+         * @param model The list to get the selection from.
          */
-        final void setCorrespondingSideButton(SideButton sideButton) {
-            this.sideButton = sideButton;
+        public LayerVisibilityAction(LayerListModel model) {
+            this.model = model;
+            popup = new JPopupMenu();
+
+            // just to add a border
+            JPanel content = new JPanel();
+            popup.add(content);
+            content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            content.setLayout(new GridBagLayout());
+
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/layerlist", "visibility"));
+            putValue(SHORT_DESCRIPTION, tr("Change visibility of the selected layer."));
+
+            visibilityCheckbox = new JCheckBox(tr("Show layer"));
+            visibilityCheckbox.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    setVisible(visibilityCheckbox.isSelected());
+                }
+            });
+            content.add(visibilityCheckbox, GBC.eop());
+
+            content.add(new JLabel(ImageProvider.get("dialogs/layerlist", "transparency")), GBC.std().span(1, 2).insets(0, 0, 5, 0));
+            content.add(new JLabel(tr("Opacity")), GBC.eol());
+            opacitySlider = new JSlider(JSlider.HORIZONTAL);
+            opacitySlider.setMaximum(SLIDER_STEPS);
+            opacitySlider.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    setOpacityValue(readOpacityValue(), opacitySlider.getValueIsAdjusting());
+                }
+            });
+            opacitySlider.setToolTipText(tr("Adjust opacity of the layer."));
+            content.add(opacitySlider, GBC.eop());
+
+            content.add(new JLabel(ImageProvider.get("dialogs/layerlist", "gamma")), GBC.std().span(1, 2).insets(0, 0, 5, 0));
+            content.add(new JLabel(tr("Gamma")), GBC.eol());
+            gammaSlider = new JSlider(JSlider.HORIZONTAL);
+            gammaSlider.setMaximum(SLIDER_STEPS);
+            gammaSlider.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    setGammaValue(readGammaValue());
+                }
+            });
+            gammaSlider.setToolTipText(tr("Adjust gamma value of the layer."));
+            content.add(gammaSlider, GBC.eol());
+        }
+
+        protected double readOpacityValue() {
+            return (double) opacitySlider.getValue() / SLIDER_STEPS;
+        }
+
+        protected double readGammaValue() {
+            return (double) gammaSlider.getValue() / SLIDER_STEPS * MAX_GAMMA_FACTOR;
+        }
+
+        protected void setVisible(boolean visible) {
+            for (Layer l : model.getSelectedLayers()) {
+                l.setVisible(visible);
+            }
+            updateValues();
+        }
+
+        protected void setOpacityValue(double value, boolean adjusting) {
+            if (value <= 0 && !adjusting) {
+                setVisible(false);
+            } else {
+                for (Layer l : model.getSelectedLayers()) {
+                    l.setOpacity(value);
+                }
+            }
+        }
+
+        protected void setGammaValue(double value) {
+            for (ImageryLayer imageryLayer : Utils.filteredCollection(model.getSelectedLayers(), ImageryLayer.class)) {
+                imageryLayer.setGamma(value);
+            }
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            slider.setValue((int) (getValue() * factor));
+            updateValues();
             if (e.getSource() == sideButton) {
                 popup.show(sideButton, 0, sideButton.getHeight());
             } else {
@@ -578,118 +634,74 @@ public class LayerListDialog extends ToggleDialog {
             }
         }
 
+        protected void updateValues() {
+            List<Layer> layers = model.getSelectedLayers();
+
+            visibilityCheckbox.setEnabled(!layers.isEmpty());
+            boolean allVisible = true;
+            boolean allHidden = true;
+            for (Layer l : layers) {
+                allVisible &= l.isVisible();
+                allHidden &= !l.isVisible();
+            }
+            // TODO: Indicate tristate.
+            visibilityCheckbox.setSelected(allVisible && !allHidden);
+
+            updateOpacitySlider(layers, allHidden);
+
+            updateGammaSlider(layers, allHidden);
+        }
+
+        private void updateGammaSlider(List<Layer> layers, boolean allHidden) {
+            Collection<ImageryLayer> gammaLayers = Utils.filteredCollection(layers, ImageryLayer.class);
+            if (gammaLayers.isEmpty() || allHidden) {
+                gammaSlider.setEnabled(false);
+            } else {
+                gammaSlider.setEnabled(true);
+                double gamma = gammaLayers.iterator().next().getGamma();
+                gammaSlider.setValue((int) (gamma * SLIDER_STEPS / MAX_GAMMA_FACTOR));
+            }
+        }
+
+        private void updateOpacitySlider(List<Layer> layers, boolean allHidden) {
+            if (layers.isEmpty() || allHidden) {
+                opacitySlider.setEnabled(false);
+            } else {
+                opacitySlider.setEnabled(true);
+                double opacity = 0;
+                for (Layer l : layers) {
+                    opacity += l.getOpacity();
+                }
+                opacity /= layers.size();
+                if (opacity == 0) {
+                    opacity = 1;
+                    setOpacityValue(opacity, false);
+                }
+                opacitySlider.setValue((int) (opacity * SLIDER_STEPS));
+            }
+        }
+
+        @Override
+        public boolean supportLayers(List<Layer> layers) {
+            return !layers.isEmpty();
+        }
+
         @Override
         public Component createMenuComponent() {
             return new JMenuItem(this);
         }
-    }
-
-    /**
-     * Action which allows to change the opacity of one or more layers.
-     */
-    public static final class LayerOpacityAction extends AbstractLayerPropertySliderAction {
-        private transient Layer layer;
-
-        /**
-         * Creates a {@link LayerOpacityAction} which allows to change the opacity of one or more layers.
-         *
-         * @param model layer list model
-         * @param layer  the layer. Must not be null.
-         * @throws IllegalArgumentException if layer is null
-         */
-        public LayerOpacityAction(LayerListModel model, Layer layer) {
-            this(model);
-            CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-            this.layer = layer;
-            updateEnabledState();
-        }
-
-        /**
-         * Creates a {@link ShowHideLayerAction} which will toggle the visibility of the currently selected layers
-         * @param model layer list model
-         */
-        public LayerOpacityAction(LayerListModel model) {
-            super(model, tr("Opacity"), 100);
-            putValue(SHORT_DESCRIPTION, tr("Adjust opacity of the layer."));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/layerlist", "transparency"));
-        }
-
-        @Override
-        protected void setValue(double value) {
-            if (!isEnabled()) return;
-            if (layer != null) {
-                layer.setOpacity(value);
-            } else {
-                for (Layer l : model.getSelectedLayers()) {
-                    l.setOpacity(value);
-                }
-            }
-        }
-
-        @Override
-        protected double getValue() {
-            if (layer != null)
-                return layer.getOpacity();
-            else {
-                double opacity = 0;
-                List<Layer> layers = model.getSelectedLayers();
-                for (Layer l : layers) {
-                    opacity += l.getOpacity();
-                }
-                return opacity / layers.size();
-            }
-        }
 
         @Override
         public void updateEnabledState() {
-            if (layer == null) {
-                setEnabled(!model.getSelectedLayers().isEmpty());
-            } else {
-                setEnabled(true);
-            }
+            setEnabled(!model.getSelectedLayers().isEmpty());
         }
-
-        @Override
-        public boolean supportLayers(List<Layer> layers) {
-            return true;
-        }
-    }
-
-    /**
-     * Action which allows to change the gamma of one imagery layer.
-     */
-    public static final class LayerGammaAction extends AbstractLayerPropertySliderAction {
 
         /**
-         * Constructs a new {@code LayerGammaAction}.
-         * @param model layer list model
+         * Sets the corresponding side button.
+         * @param sideButton the corresponding side button
          */
-        public LayerGammaAction(LayerListModel model) {
-            super(model, tr("Gamma"), 50);
-            putValue(SHORT_DESCRIPTION, tr("Adjust gamma value of the layer."));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/layerlist", "gamma"));
-        }
-
-        @Override
-        protected void setValue(double value) {
-            for (ImageryLayer imageryLayer : Utils.filteredCollection(model.getSelectedLayers(), ImageryLayer.class)) {
-                imageryLayer.setGamma(value);
-            }
-        }
-
-        @Override
-        protected double getValue() {
-            return Utils.filteredCollection(model.getSelectedLayers(), ImageryLayer.class).iterator().next().getGamma();
-        }
-
-        @Override
-        public void updateEnabledState() {
-            setEnabled(!Utils.filteredCollection(model.getSelectedLayers(), ImageryLayer.class).isEmpty());
-        }
-
-        @Override
-        public boolean supportLayers(List<Layer> layers) {
-            return !Utils.filteredCollection(layers, ImageryLayer.class).isEmpty();
+        void setCorrespondingSideButton(SideButton sideButton) {
+            this.sideButton = sideButton;
         }
     }
 

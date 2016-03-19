@@ -2,15 +2,15 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerGammaAction;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
-import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerOpacityAction;
+import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerVisibilityAction;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayerTest;
 
@@ -28,42 +28,62 @@ public class LayerListDialogTest {
     }
 
     /**
-     * Unit test of {@link LayerGammaAction} class.
+     * Unit test of {@link LayerVisibilityAction} class.
      */
     @Test
-    public void testLayerGammaAction() {
+    public void testLayerVisibilityAction() {
         TMSLayer layer = TMSLayerTest.createTmsLayer();
         try {
-            Main.map.mapView.addLayer(layer);
             LayerListModel model = LayerListDialog.getInstance().getModel();
-            LayerGammaAction action = new LayerGammaAction(model);
+            LayerVisibilityAction action = new LayerVisibilityAction(model);
             action.updateEnabledState();
-            assertTrue(action.isEnabled());
-            assertTrue(action.supportLayers(model.getSelectedLayers()));
-            assertEquals(1.0, action.getValue(), 1e-15);
-            action.setValue(0.5);
-            assertEquals(0.5, action.getValue(), 1e-15);
-        } finally {
-            Main.map.mapView.removeLayer(layer);
-        }
-    }
+            assertFalse(action.isEnabled());
 
-    /**
-     * Unit test of {@link LayerOpacityAction} class.
-     */
-    @Test
-    public void testLayerOpacityAction() {
-        TMSLayer layer = TMSLayerTest.createTmsLayer();
-        try {
             Main.map.mapView.addLayer(layer);
-            LayerListModel model = LayerListDialog.getInstance().getModel();
-            LayerOpacityAction action = new LayerOpacityAction(model);
             action.updateEnabledState();
             assertTrue(action.isEnabled());
             assertTrue(action.supportLayers(model.getSelectedLayers()));
-            assertEquals(1.0, action.getValue(), 1e-15);
-            action.setValue(0.5);
-            assertEquals(0.5, action.getValue(), 1e-15);
+
+            // now check values
+            action.updateValues();
+            assertEquals(1.0, action.readOpacityValue(), 1e-15);
+            assertEquals(1.0, action.readGammaValue(), 1e-15);
+
+            action.setOpacityValue(.5, false);
+            action.setGammaValue(1.5);
+            action.updateValues();
+
+            assertEquals(0.5, action.readOpacityValue(), 1e-15);
+            assertEquals(1.5, action.readGammaValue(), 1e-15);
+
+            action.setVisible(false);
+            action.updateValues();
+            assertFalse(layer.isVisible());
+
+            action.setVisible(true);
+            action.updateValues();
+            assertTrue(layer.isVisible());
+
+            // layer stays visible during adjust
+            action.setOpacityValue(0, true);
+            assertEquals(0, layer.getOpacity(), 1e-15);
+            layer.setOpacity(.1); // to make layer.isVisible work
+            assertTrue(layer.isVisible());
+            layer.setOpacity(0);
+
+            action.setOpacityValue(0, false);
+            assertEquals(0, layer.getOpacity(), 1e-15);
+            layer.setOpacity(.1); // to make layer.isVisible work
+            assertFalse(layer.isVisible());
+            layer.setOpacity(0);
+            action.updateValues();
+
+            // Opacity reset when it was 0 and user set layer to visible.
+            action.setVisible(true);
+            action.updateValues();
+            assertEquals(1.0, action.readOpacityValue(), 1e-15);
+            assertEquals(1.0, layer.getOpacity(), 1e-15);
+
         } finally {
             Main.map.mapView.removeLayer(layer);
         }
