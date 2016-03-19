@@ -84,6 +84,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
         removeAll();
+        if (value == null) return this;
         SaveLayerInfo info = (SaveLayerInfo) value;
         StringBuilder sb = new StringBuilder();
         sb.append("<html>")

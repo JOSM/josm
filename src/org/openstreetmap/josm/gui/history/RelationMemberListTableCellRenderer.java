@@ -78,6 +78,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 
+        if (value == null) return this;
         Item member = (TwoColumnDiff.Item) value;
         renderIcon((RelationMemberData) member.value);
         switch(column) {
