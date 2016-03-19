@@ -413,6 +413,8 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
+                <text key="destination" text="Destination" />
+                <text key="destination:ref" text="Destination reference" />
                 <text key="width" text="Width (meters)" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <checkgroup columns="4">
@@ -440,6 +442,8 @@
             <key key="highway" value="motorway_link" />
             <optional>
                 <reference ref="highway_base" />
+                <text key="destination" text="Destination" />
+                <text key="destination:ref" text="Destination reference" />
                 <text key="width" text="Width (meters)" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <checkgroup columns="4">
@@ -474,6 +478,8 @@
             <optional>
                 <text key="name" text="Name" />
                 <reference ref="highway_base" />
+                <text key="destination" text="Destination" />
+                <text key="destination:ref" text="Destination reference" />
                 <text key="width" text="Width (meters)" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <checkgroup columns="4">
@@ -497,6 +503,8 @@
             <text key="ref" text="Reference" />
             <optional>
                 <reference ref="highway_base" />
+                <text key="destination" text="Destination" />
+                <text key="destination:ref" text="Destination reference" />
                 <text key="width" text="Width (meters)" />
                 <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
                 <checkgroup columns="4">
@@ -1194,7 +1202,6 @@
             <key key="highway" value="motorway_junction" />
             <text key="name" text="Name" />
             <text key="ref" text="Number" />
-            <text key="exit_to" text="Exit to" />
         </item> <!-- Motorway Junction -->
         <item name="Services" icon="styles/standard/vehicle/services.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=services"

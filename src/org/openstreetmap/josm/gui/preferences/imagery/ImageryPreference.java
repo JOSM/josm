@@ -276,9 +276,11 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     isSelected, boolean hasFocus, int row, int column) {
                 ImageryInfo info = (ImageryInfo) value;
                 JLabel label = (JLabel) super.getTableCellRendererComponent(
-                        table, info.getName(), isSelected, hasFocus, row, column);
+                        table, info == null ? null : info.getName(), isSelected, hasFocus, row, column);
                 GuiHelper.setBackgroundReadable(label, UIManager.getColor("Table.background"));
-                label.setToolTipText(info.getToolTipText());
+                if (info != null) {
+                    label.setToolTipText(info.getToolTipText());
+                }
                 return label;
             }
         }
