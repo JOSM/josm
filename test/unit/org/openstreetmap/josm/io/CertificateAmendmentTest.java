@@ -24,7 +24,6 @@ public class CertificateAmendmentTest {
     @BeforeClass
     public static void setUp() throws IOException {
         JOSMFixture.createUnitTestFixture().init();
-        CertificateAmendment.addMissingCertificates();
     }
 
     /**
@@ -69,12 +68,22 @@ public class CertificateAmendmentTest {
         connect("https://www.pcwebshop.co.uk", false);
     }
 
-    private void connect(String url, boolean shouldWork) throws IOException {
+    /**
+     * Test overpass API.
+     * @throws IOException in case of I/O error
+     */
+    @Test
+    public void testOverpass() throws IOException {
+        connect("https://overpass-api.de", true);
+    }
+
+    private static void connect(String url, boolean shouldWork) throws IOException {
         URLConnection connection = new URL(url).openConnection();
         try {
             connection.connect();
         } catch (SSLHandshakeException e) {
             if (shouldWork) {
+                e.printStackTrace();
                 Assert.fail("Untrusted: " + url);
             } else {
                 return;

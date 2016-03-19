@@ -4,6 +4,7 @@ package org.openstreetmap.josm;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 
@@ -11,6 +12,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
 
@@ -91,6 +93,12 @@ public class JOSMFixture {
 
         Main.pref.init(false);
         I18n.set(Main.pref.get("language", "en"));
+
+        try {
+            CertificateAmendment.addMissingCertificates();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
 
         // init projection
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
