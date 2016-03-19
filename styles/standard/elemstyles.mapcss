@@ -4432,8 +4432,17 @@ node[place=continent],
 node[place=country],
 node[place=state],
 node[place=region],
-node[place=county] {
-    icon-image: "place/settlement/capital.png";
+node[place=county],
+node[place=city],
+node[place=town],
+node[place=suburb],
+node[place=village],
+node[place=neighbourhood],
+node[place=hamlet],
+node[place=isolated_dwelling],
+node[place=farm],
+node[place=island],
+node[place=islet] {
     set icon_z0;
     set text_z0;
     font-size: 10;
@@ -4441,94 +4450,46 @@ node[place=county] {
     text-color:black;
     text-halo-color: white;
     text-halo-radius: 1;
+}
+
+node[place=continent],
+node[place=country],
+node[place=state],
+node[place=region],
+node[place=county] {
+    icon-image: "place/settlement/capital.png";
     z-index: 2.9;
 }
 node[place=city] {
     icon-image: "place/settlement/city.png";
-    set icon_z0;
-    set text_z0;
-    font-size: 10;
-    font-weight: bold;
-    text-color:black;
-    text-halo-color: white;
-    text-halo-radius: 1;
     z-index: 2.8;
 }
 node[place=town] {
     icon-image: "place/settlement/town.png";
-    set icon_z0;
-    set text_z0;
-    font-size: 10;
-    font-weight: bold;
-    text-color:black;
-    text-halo-color: white;
-    text-halo-radius: 1;
     z-index: 2.7;
 }
 node[place=suburb] {
     icon-image: "place/settlement/suburb.png";
-    set icon_z0;
-    set text_z0;
-    font-size: 10;
-    font-weight: bold;
-    text-color:black;
-    text-halo-color: white;
-    text-halo-radius: 1;
     z-index: 2.6;
 }
 node[place=village] {
     icon-image: "place/settlement/village.png";
-    set icon_z0;
-    set text_z0;
-    font-size: 10;
-    font-weight: bold;
-    text-color:black;
-    text-halo-color: white;
-    text-halo-radius: 1;
     z-index: 2.5;
 }
 node[place=neighbourhood] {
     icon-image: "place/settlement/neighbourhood.png";
-    set icon_z0;
-    set text_z0;
-    font-size: 10;
-    font-weight: bold;
-    text-color:black;
-    text-halo-color: white;
-    text-halo-radius: 1;
     z-index: 2.4;
 }
 node[place=hamlet] {
     icon-image: "place/settlement/hamlet.png";
-    set icon_z0;
-    set text_z0;
-    font-size: 10;
-    font-weight: bold;
-    text-color:black;
-    text-halo-color: white;
-    text-halo-radius: 1;
     z-index: 2.3;
 }
 node[place=isolated_dwelling] {
     icon-image: "place/settlement/isolated_dwelling.png";
-    set icon_z0;
-    set text_z0;
-    font-size: 10;
-    font-weight: bold;
-    text-color:black;
-    text-halo-color: white;
-    text-halo-radius: 1;
     z-index: 2.2;
 }
 node[place=farm] {
     icon-image: "place/settlement/farm.png";
-    set icon_z0;
-    set text_z0;
-    font-size: 10;
-    font-weight: bold;
-    text-color:black;
-    text-halo-color: white;
-    text-halo-radius: 1;
     z-index: 2.1;
 }
 node|z15-[place=locality],
@@ -4542,23 +4503,9 @@ node|z-14[place=locality][!setting("hide_icons")] {
 }
 node[place=island] {
     icon-image: "place/island.png";
-    set icon_z0;
-    set text_z0;
-    font-size: 10;
-    font-weight: bold;
-    text-color:black;
-    text-halo-color: white;
-    text-halo-radius: 1;
 }
 node[place=islet] {
     icon-image: "place/islet.png";
-    set icon_z0;
-    set text_z0;
-    font-size: 10;
-    font-weight: bold;
-    text-color:black;
-    text-halo-color: white;
-    text-halo-radius: 1;
 }
 
 /***************************/
