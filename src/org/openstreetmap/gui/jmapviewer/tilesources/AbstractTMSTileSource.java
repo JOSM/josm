@@ -185,7 +185,7 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
                 }
             }
         }
-        if (noTileChecksums != null) {
+        if (noTileChecksums != null && content != null) {
             for (Entry<String, Set<String>> searchEntry: noTileChecksums.entrySet()) {
                 MessageDigest md = null;
                 try {
