@@ -733,6 +733,7 @@ node[highway=incline], node[highway=incline_steep] {
 node[highway=motorway_junction] {
     icon-image: "vehicle/motorway_junction.svg";
     set icon_z17;
+    text: eval(cond(has_tag_key(ref), concat(tag(name), " (", tag(ref), ")"), tag(name)));
 }
 area[highway=services] {
     fill-color: services#c0c0c0;
