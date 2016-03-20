@@ -2251,7 +2251,7 @@
             <space />
             <key key="natural" value="wetland" />
             <text key="name" text="Name" />
-            <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" values_searchable="true" />
+            <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove,wet_meadow,string_bog,saltern" values_searchable="true" />
             <check key="seasonal" text="Seasonal" disable_off="true" />
         </item> <!-- Wetland -->
         <item name="Mud" icon="styles/standard/misc/landuse/mud.svg" type="closedway,multipolygon" preset_name_label="true">
