@@ -135,6 +135,7 @@ public abstract class SourceEditor extends JPanel {
         this.lstAvailableSources.setSelectionModel(selectionModel);
         final SourceEntryListCellRenderer listCellRenderer = new SourceEntryListCellRenderer();
         this.lstAvailableSources.setCellRenderer(listCellRenderer);
+        GuiHelper.extendTooltipDelay(lstAvailableSources);
         this.availableSourcesUrl = availableSourcesUrl;
         this.sourceProviders = sourceProviders;
 
