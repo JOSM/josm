@@ -26,6 +26,7 @@ import java.rmi.server.UnicastRemoteObject;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
+import org.apache.commons.jcs.engine.behavior.IElementSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,9 +41,6 @@ public class RemoteCacheListener<K, V>
     extends AbstractRemoteCacheListener<K, V>
     implements IRemoteCacheConstants
 {
-    /** Don't change */
-    private static final long serialVersionUID = 25345252345322345L;
-
     /** The logger */
     private static final Log log = LogFactory.getLog( RemoteCacheListener.class );
 
@@ -55,12 +53,13 @@ public class RemoteCacheListener<K, V>
      * The constructor exports this object, making it available to receive incoming calls. The
      * callback port is anonymous unless a local port value was specified in the configuration.
      * <p>
-     * @param irca
-     * @param cacheMgr
+     * @param irca cache configuration
+     * @param cacheMgr the cache hub
+     * @param elementSerializer a custom serializer
      */
-    public RemoteCacheListener( IRemoteCacheAttributes irca, ICompositeCacheManager cacheMgr )
+    public RemoteCacheListener( IRemoteCacheAttributes irca, ICompositeCacheManager cacheMgr, IElementSerializer elementSerializer )
     {
-        super( irca, cacheMgr );
+        super( irca, cacheMgr, elementSerializer );
 
         // Export this remote object to make it available to receive incoming
         // calls.

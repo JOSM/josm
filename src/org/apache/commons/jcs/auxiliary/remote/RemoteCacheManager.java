@@ -265,7 +265,7 @@ public class RemoteCacheManager
                     RemoteCacheListener<K, V> listener = null;
                     try
                     {
-                        listener = new RemoteCacheListener<K, V>( cattr, cacheMgr );
+                        listener = new RemoteCacheListener<K, V>( cattr, cacheMgr, elementSerializer );
                         addRemoteCacheListener( cattr, listener );
                     }
                     catch ( IOException ioe )

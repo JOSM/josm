@@ -182,6 +182,28 @@ public class RemoteCacheFactory
      * <p>
      * Host and Port uniquely identify a manager instance.
      * <p>
+     * @param cattr
+     *
+     * @return The instance value or null if no such manager exists
+     */
+    public static RemoteCacheManager getManager( IRemoteCacheAttributes cattr )
+    {
+        if ( cattr.getRemoteLocation() == null )
+        {
+            cattr.setRemoteLocation("", Registry.REGISTRY_PORT);
+        }
+
+        RemoteLocation loc = cattr.getRemoteLocation();
+        RemoteCacheManager ins = managers.get( loc );
+
+        return ins;
+    }
+
+    /**
+     * Returns an instance of RemoteCacheManager for the given connection parameters.
+     * <p>
+     * Host and Port uniquely identify a manager instance.
+     * <p>
      * If the connection cannot be established, zombie objects will be used for future recovery
      * purposes.
      * <p>
@@ -189,7 +211,7 @@ public class RemoteCacheFactory
      * @param cacheMgr
      * @param cacheEventLogger
      * @param elementSerializer
-     * @return The instance value
+     * @return The instance value, never null
      */
     public static RemoteCacheManager getManager( IRemoteCacheAttributes cattr, ICompositeCacheManager cacheMgr,
                                                   ICacheEventLogger cacheEventLogger,

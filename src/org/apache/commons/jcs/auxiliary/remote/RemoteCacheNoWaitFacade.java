@@ -80,8 +80,7 @@ public class RemoteCacheNoWaitFacade<K, V>
             if ( rcnw.getStatus() == CacheStatus.ERROR )
             {
                 // start failover, primary recovery process
-                RemoteCacheFailoverRunner<K, V> runner =
-                    new RemoteCacheFailoverRunner<K, V>( this, getCompositeCacheManager() );
+                RemoteCacheFailoverRunner<K, V> runner = new RemoteCacheFailoverRunner<K, V>( this );
                 runner.setDaemon( true );
                 runner.start();
                 runner.notifyError();
