@@ -27,7 +27,6 @@ import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheMonitor;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 import org.apache.commons.jcs.engine.CacheStatus;
 import org.apache.commons.jcs.engine.behavior.ICache;
-import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 
 /**
  * The RemoteCacheFailoverRunner tries to establish a connection with a failover
@@ -53,22 +52,16 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
     /** The facade returned to the composite cache. */
     private final RemoteCacheNoWaitFacade<K, V> facade;
 
-    /** The cache manager */
-    private final ICompositeCacheManager cacheMgr;
-
     /**
      * Constructor for the RemoteCacheFailoverRunner object. This allows the
      * FailoverRunner to modify the facade that the CompositeCache references.
      *
-     * @param facade
-     *            the facade the CompositeCache talks to.
-     * @param cacheMgr
+     * @param facade the facade the CompositeCache talks to.
      */
-    public RemoteCacheFailoverRunner( RemoteCacheNoWaitFacade<K, V> facade, ICompositeCacheManager cacheMgr )
+    public RemoteCacheFailoverRunner( RemoteCacheNoWaitFacade<K, V> facade )
     {
         super("JCS-RemoteCacheFailoverRunner");
         this.facade = facade;
-        this.cacheMgr = cacheMgr;
         setIdlePeriod(20000L);
     }
 
@@ -187,42 +180,44 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
 
                     RemoteCacheAttributes rca = (RemoteCacheAttributes) rca0.clone();
                     rca.setRemoteLocation(server);
-                    RemoteCacheManager rcm = RemoteCacheFactory.getManager( rca, cacheMgr,
-                        facade.getCacheEventLogger(), facade.getElementSerializer() );
+                    RemoteCacheManager rcm = RemoteCacheFactory.getManager( rca );
 
                     if ( log.isDebugEnabled() )
                     {
                         log.debug( "RemoteCacheAttributes for failover = " + rca.toString() );
                     }
 
-                    // add a listener if there are none, need to tell rca
-                    // what number it is at
-                    ICache<K, V> ic = rcm.getCache( rca );
-                    if ( ic.getStatus() == CacheStatus.ALIVE )
+                    if (rcm != null)
                     {
-                        // may need to do this more gracefully
-                        log.debug( "resetting no wait" );
-                        facade.restorePrimaryServer((RemoteCacheNoWait<K, V>) ic);
-                        rca0.setFailoverIndex( i.nextIndex() );
-
-                        if ( log.isDebugEnabled() )
+                        // add a listener if there are none, need to tell rca
+                        // what number it is at
+                        ICache<K, V> ic = rcm.getCache( rca );
+                        if ( ic.getStatus() == CacheStatus.ALIVE )
                         {
-                            log.debug( "setting ALLRIGHT to true" );
-                            if ( i.hasPrevious() )
-                            {
-                                log.debug( "Moving to Primary Recovery Mode, failover index = " + i.nextIndex() );
-                            }
-                            else
-                            {
-                                log.debug( "No need to connect to failover, the primary server is back up." );
-                            }
-                        }
+                            // may need to do this more gracefully
+                            log.debug( "resetting no wait" );
+                            facade.restorePrimaryServer((RemoteCacheNoWait<K, V>) ic);
+                            rca0.setFailoverIndex( i.nextIndex() );
 
-                        allright.set(true);
+                            if ( log.isDebugEnabled() )
+                            {
+                                log.debug( "setting ALLRIGHT to true" );
+                                if ( i.hasPrevious() )
+                                {
+                                    log.debug( "Moving to Primary Recovery Mode, failover index = " + i.nextIndex() );
+                                }
+                                else
+                                {
+                                    log.debug( "No need to connect to failover, the primary server is back up." );
+                                }
+                            }
 
-                        if ( log.isInfoEnabled() )
-                        {
-                            log.info( "CONNECTED to host = [" + rca.getRemoteLocation() + "]" );
+                            allright.set(true);
+
+                            if ( log.isInfoEnabled() )
+                            {
+                                log.info( "CONNECTED to host = [" + rca.getRemoteLocation() + "]" );
+                            }
                         }
                     }
                 }
@@ -299,107 +294,108 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
 
         RemoteCacheAttributes rca = (RemoteCacheAttributes) rca0.clone();
         rca.setRemoteLocation(server);
-        RemoteCacheManager rcm = RemoteCacheFactory.getManager( rca, cacheMgr,
-            facade.getCacheEventLogger(), facade.getElementSerializer() );
+        RemoteCacheManager rcm = RemoteCacheFactory.getManager( rca );
 
-        // add a listener if there are none, need to tell rca what number it
-        // is at
-        ICache<K, V> ic = rcm.getCache( rca );
-        // by default the listener id should be 0, else it will be the
-        // listener
-        // Originally associated with the remote cache. either way is fine.
-        // We just don't want the listener id from a failover being used.
-        // If the remote server was rebooted this could be a problem if new
-        // locals were also added.
-
-        if ( ic.getStatus() == CacheStatus.ALIVE )
+        if (rcm != null)
         {
-            try
+            // add a listener if there are none, need to tell rca what number it
+            // is at
+            ICache<K, V> ic = rcm.getCache( rca );
+            // by default the listener id should be 0, else it will be the
+            // listener
+            // Originally associated with the remote cache. either way is fine.
+            // We just don't want the listener id from a failover being used.
+            // If the remote server was rebooted this could be a problem if new
+            // locals were also added.
+
+            if ( ic.getStatus() == CacheStatus.ALIVE )
             {
-                // we could have more than one listener registered right
-                // now.
-                // this will not result in a loop, only duplication
-                // stop duplicate listening.
-                if ( facade.getPrimaryServer() != null && facade.getPrimaryServer().getStatus() == CacheStatus.ALIVE )
+                try
                 {
-                    int fidx = rca0.getFailoverIndex();
-
-                    if ( fidx > 0 )
+                    // we could have more than one listener registered right
+                    // now.
+                    // this will not result in a loop, only duplication
+                    // stop duplicate listening.
+                    if ( facade.getPrimaryServer() != null && facade.getPrimaryServer().getStatus() == CacheStatus.ALIVE )
                     {
-                        RemoteLocation serverOld = rca0.getFailovers().get(fidx);
+                        int fidx = rca0.getFailoverIndex();
 
-                        if ( log.isDebugEnabled() )
+                        if ( fidx > 0 )
                         {
-                            log.debug( "Failover Index = " + fidx + " the server at that index is ["
-                                + serverOld + "]" );
-                        }
+                            RemoteLocation serverOld = rca0.getFailovers().get(fidx);
 
-                        if ( serverOld != null )
-                        {
-                            // create attributes that reflect the
-                            // previous failed over configuration.
-                            RemoteCacheAttributes rcaOld = (RemoteCacheAttributes) rca0.clone();
-                            rcaOld.setRemoteLocation(serverOld);
-                            RemoteCacheManager rcmOld = RemoteCacheFactory.getManager( rcaOld, cacheMgr,
-                                facade.getCacheEventLogger(), facade.getElementSerializer() );
-
-                            if ( rcmOld != null )
+                            if ( log.isDebugEnabled() )
                             {
-                                // manager can remove by name if
-                                // necessary
-                                rcmOld.removeRemoteCacheListener( rcaOld );
+                                log.debug( "Failover Index = " + fidx + " the server at that index is ["
+                                    + serverOld + "]" );
                             }
-                            if ( log.isInfoEnabled() )
+
+                            if ( serverOld != null )
                             {
-                                log.info( "Successfully deregistered from FAILOVER remote server = "
-                                    + serverOld );
+                                // create attributes that reflect the
+                                // previous failed over configuration.
+                                RemoteCacheAttributes rcaOld = (RemoteCacheAttributes) rca0.clone();
+                                rcaOld.setRemoteLocation(serverOld);
+                                RemoteCacheManager rcmOld = RemoteCacheFactory.getManager( rcaOld );
+
+                                if ( rcmOld != null )
+                                {
+                                    // manager can remove by name if
+                                    // necessary
+                                    rcmOld.removeRemoteCacheListener( rcaOld );
+                                }
+                                if ( log.isInfoEnabled() )
+                                {
+                                    log.info( "Successfully deregistered from FAILOVER remote server = "
+                                        + serverOld );
+                                }
                             }
                         }
-                    }
-                    else if ( fidx == 0 )
-                    {
-                        // this should never happen. If there are no
-                        // failovers this shouldn't get called.
-                        if ( log.isDebugEnabled() )
+                        else if ( fidx == 0 )
                         {
-                            log.debug( "No need to restore primary, it is already restored." );
-                            return true;
+                            // this should never happen. If there are no
+                            // failovers this shouldn't get called.
+                            if ( log.isDebugEnabled() )
+                            {
+                                log.debug( "No need to restore primary, it is already restored." );
+                                return true;
+                            }
                         }
-                    }
-                    else if ( fidx < 0 )
-                    {
-                        // this should never happen
-                        log.warn( "Failover index is less than 0, this shouldn't happen" );
+                        else if ( fidx < 0 )
+                        {
+                            // this should never happen
+                            log.warn( "Failover index is less than 0, this shouldn't happen" );
+                        }
                     }
                 }
-            }
-            catch ( IOException e )
-            {
-                // TODO, should try again, or somehow stop the listener
-                log.error("Trouble trying to deregister old failover listener prior to restoring the primary = "
-                       + server, e );
-            }
-
-            // Restore primary
-            // may need to do this more gracefully, letting the failover finish in the background
-            RemoteCacheNoWait<K, V> failoverNoWait = facade.getPrimaryServer();
-
-            // swap in a new one
-            facade.restorePrimaryServer((RemoteCacheNoWait<K, V>) ic);
-            rca0.setFailoverIndex( 0 );
-
-            if ( log.isInfoEnabled() )
-            {
-                String message = "Successfully reconnected to PRIMARY remote server.  Substituted primary for failoverNoWait ["
-                    + failoverNoWait + "]";
-                log.info( message );
-
-                if ( facade.getCacheEventLogger() != null )
+                catch ( IOException e )
                 {
-                    facade.getCacheEventLogger().logApplicationEvent( "RemoteCacheFailoverRunner", "RestoredPrimary", message );
+                    // TODO, should try again, or somehow stop the listener
+                    log.error("Trouble trying to deregister old failover listener prior to restoring the primary = "
+                           + server, e );
                 }
+
+                // Restore primary
+                // may need to do this more gracefully, letting the failover finish in the background
+                RemoteCacheNoWait<K, V> failoverNoWait = facade.getPrimaryServer();
+
+                // swap in a new one
+                facade.restorePrimaryServer((RemoteCacheNoWait<K, V>) ic);
+                rca0.setFailoverIndex( 0 );
+
+                if ( log.isInfoEnabled() )
+                {
+                    String message = "Successfully reconnected to PRIMARY remote server.  Substituted primary for failoverNoWait ["
+                        + failoverNoWait + "]";
+                    log.info( message );
+
+                    if ( facade.getCacheEventLogger() != null )
+                    {
+                        facade.getCacheEventLogger().logApplicationEvent( "RemoteCacheFailoverRunner", "RestoredPrimary", message );
+                    }
+                }
+                return true;
             }
-            return true;
         }
 
         // else all right

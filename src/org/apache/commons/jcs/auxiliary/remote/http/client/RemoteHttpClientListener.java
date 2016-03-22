@@ -22,26 +22,25 @@ package org.apache.commons.jcs.auxiliary.remote.http.client;
 import org.apache.commons.jcs.auxiliary.remote.AbstractRemoteCacheListener;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
+import org.apache.commons.jcs.engine.behavior.IElementSerializer;
 
 /** Does nothing */
 public class RemoteHttpClientListener<K, V>
     extends AbstractRemoteCacheListener<K, V>
 {
-    /** Serial version */
-    private static final long serialVersionUID = -9078366610772128010L;
-
     /**
      * Only need one since it does work for all regions, just reference by multiple region names.
      * <p>
      * The constructor exports this object, making it available to receive incoming calls. The
      * callback port is anonymous unless a local port value was specified in the configuration.
      * <p>
-     * @param irca
-     * @param cacheMgr
+     * @param irca cache configuration
+     * @param cacheMgr the cache hub
+     * @param elementSerializer a custom serializer
      */
-    public RemoteHttpClientListener( IRemoteCacheAttributes irca, ICompositeCacheManager cacheMgr )
+    public RemoteHttpClientListener( IRemoteCacheAttributes irca, ICompositeCacheManager cacheMgr, IElementSerializer elementSerializer )
     {
-        super( irca, cacheMgr );
+        super( irca, cacheMgr, elementSerializer );
     }
 
     /** Nothing */

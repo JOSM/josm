@@ -20,7 +20,6 @@ package org.apache.commons.jcs.auxiliary.remote;
  */
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.UnknownHostException;
 
 import org.apache.commons.jcs.access.exception.CacheException;
@@ -31,21 +30,16 @@ import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.ICacheElementSerialized;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
-import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.control.CompositeCacheManager;
 import org.apache.commons.jcs.utils.net.HostNameUtil;
 import org.apache.commons.jcs.utils.serialization.SerializationConversionUtil;
-import org.apache.commons.jcs.utils.serialization.StandardSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /** Shared listener base. */
 public abstract class AbstractRemoteCacheListener<K, V>
-    implements IRemoteCacheListener<K, V>, Serializable
+    implements IRemoteCacheListener<K, V>
 {
-    /** Don't change */
-    private static final long serialVersionUID = 32442324243243L;
-
     /** The logger */
     private static final Log log = LogFactory.getLog( AbstractRemoteCacheListener.class );
 
@@ -56,22 +50,16 @@ public abstract class AbstractRemoteCacheListener<K, V>
      * The cache manager used to put items in different regions. This is set lazily and should not
      * be sent to the remote server.
      */
-    private transient ICompositeCacheManager cacheMgr;
+    private ICompositeCacheManager cacheMgr;
 
     /** The remote cache configuration object. */
     private final IRemoteCacheAttributes irca;
 
-    /** Number of put requests received. For debugging only. */
-    protected int puts = 0;
-
-    /** Number of remove requests received. For debugging only. */
-    protected int removes = 0;
-
     /** This is set by the remote cache server. */
     private long listenerId = 0;
 
-    /** Custom serializer. Standard by default. */
-    private transient IElementSerializer elementSerializer = new StandardSerializer();
+    /** Custom serializer. */
+    private IElementSerializer elementSerializer;
 
     /**
      * Only need one since it does work for all regions, just reference by multiple region names.
@@ -79,13 +67,15 @@ public abstract class AbstractRemoteCacheListener<K, V>
      * The constructor exports this object, making it available to receive incoming calls. The
      * callback port is anonymous unless a local port value was specified in the configuration.
      * <p>
-     * @param irca
-     * @param cacheMgr
+     * @param irca cache configuration
+     * @param cacheMgr the cache hub
+     * @param elementSerializer a custom serializer
      */
-    public AbstractRemoteCacheListener( IRemoteCacheAttributes irca, ICompositeCacheManager cacheMgr )
+    public AbstractRemoteCacheListener( IRemoteCacheAttributes irca, ICompositeCacheManager cacheMgr, IElementSerializer elementSerializer )
     {
         this.irca = irca;
         this.cacheMgr = cacheMgr;
+        this.elementSerializer = elementSerializer;
     }
 
     /**
@@ -167,19 +157,11 @@ public abstract class AbstractRemoteCacheListener<K, V>
         }
         else
         {
-            puts++;
             if ( log.isDebugEnabled() )
             {
                 log.debug( "PUTTING ELEMENT FROM REMOTE, ( updating ) " );
                 log.debug( "cb = " + cb );
-
-                if ( puts % 100 == 0 )
-                {
-                    log.debug( "puts = " + puts );
-                }
             }
-
-            CompositeCache<K, V> cache = getCacheManager().getCache( cb.getCacheName() );
 
             // Eventually the instance of will not be necessary.
             if ( cb instanceof ICacheElementSerialized )
@@ -207,7 +189,7 @@ public abstract class AbstractRemoteCacheListener<K, V>
                 }
             }
 
-            cache.localUpdate( cb );
+            getCacheManager().<K, V>getCache( cb.getCacheName() ).localUpdate( cb );
         }
     }
 
@@ -222,20 +204,12 @@ public abstract class AbstractRemoteCacheListener<K, V>
     public void handleRemove( String cacheName, K key )
         throws IOException
     {
-        removes++;
         if ( log.isDebugEnabled() )
         {
-            if ( removes % 100 == 0 )
-            {
-                log.debug( "removes = " + removes );
-            }
-
             log.debug( "handleRemove> cacheName=" + cacheName + ", key=" + key );
         }
 
-        CompositeCache<K, V> cache = getCacheManager().getCache( cacheName );
-
-        cache.localRemove( key );
+        getCacheManager().<K, V>getCache( cacheName ).localRemove( key );
     }
 
     /**
@@ -253,8 +227,7 @@ public abstract class AbstractRemoteCacheListener<K, V>
             log.debug( "handleRemoveAll> cacheName=" + cacheName );
         }
 
-        CompositeCache<K, V> cache = getCacheManager().getCache( cacheName );
-        cache.localRemoveAll();
+        getCacheManager().<K, V>getCache( cacheName ).localRemoveAll();
     }
 
     /**

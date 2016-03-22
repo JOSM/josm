@@ -19,6 +19,9 @@ package org.apache.commons.jcs.auxiliary.remote.http.client;
  * under the License.
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.jcs.auxiliary.remote.RemoteCacheNoWait;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheClient;
@@ -30,9 +33,6 @@ import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
 import org.apache.commons.jcs.utils.config.OptionConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is a very crude copy of the RMI remote manager. It needs a lot of work!
@@ -172,7 +172,7 @@ public class RemoteHttpCacheManager
             remoteCacheNoWait = remoteCacheNoWait2;
             if ( remoteCacheNoWait == null )
             {
-                RemoteHttpClientListener<K, V> listener = new RemoteHttpClientListener<K, V>( cattr, cacheMgr );
+                RemoteHttpClientListener<K, V> listener = new RemoteHttpClientListener<K, V>( cattr, cacheMgr, elementSerializer );
 
                 IRemoteHttpCacheClient<K, V> remoteService = createRemoteHttpCacheClientForAttributes( cattr );
 

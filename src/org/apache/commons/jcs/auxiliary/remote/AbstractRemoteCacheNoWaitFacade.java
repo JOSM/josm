@@ -55,9 +55,6 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     /** holds failover and cluster information */
     private IRemoteCacheAttributes remoteCacheAttributes;
 
-    /** A cache manager */
-    private ICompositeCacheManager compositeCacheManager;
-
     /**
      * Constructs with the given remote cache, and fires events to any listeners.
      * <p>
@@ -81,7 +78,6 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
             this.noWaits.add((RemoteCacheNoWait<K,V>) nw);
         }
         this.remoteCacheAttributes = rca;
-        setCompositeCacheManager( cacheMgr );
         setCacheEventLogger( cacheEventLogger );
         setElementSerializer( elementSerializer );
     }
@@ -442,21 +438,5 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     public String getEventLoggingExtraInfo()
     {
         return "Remote Cache No Wait Facade";
-    }
-
-    /**
-     * @param compositeCacheManager the compositeCacheManager to set
-     */
-    private void setCompositeCacheManager( ICompositeCacheManager compositeCacheManager )
-    {
-        this.compositeCacheManager = compositeCacheManager;
-    }
-
-    /**
-     * @return the compositeCacheManager
-     */
-    protected ICompositeCacheManager getCompositeCacheManager()
-    {
-        return compositeCacheManager;
     }
 }
