@@ -802,3 +802,14 @@ relation[/^..$/][!to] {
   suggestAlternative: "sport=ice_skating";
   suggestAlternative: "sport=roller_skating";
 }
+
+way[barrier=wall][type=noise_barrier][!wall],
+way[barrier=wall][type=noise_barrier][wall=noise_barrier] {
+  throwWarning: tr("{0} is deprecated", "{1.tag}");
+  suggestAlternative: "wall=noise_barrier";
+  fixChangeKey: "type => wall";
+}
+way[barrier=wall][type=noise_barrier][wall][wall!=noise_barrier] {
+  throwWarning: tr("{0} is deprecated", "{1.tag}");
+  suggestAlternative: "wall=noise_barrier";
+}

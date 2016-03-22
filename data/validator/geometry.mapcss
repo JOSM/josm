@@ -221,6 +221,16 @@ way[waterway] > node.node_in_bridge {
   throwWarning: tr("node connects waterway and bridge");
 }
 
+/*see #11128*/
+way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking)$/],
+way[highway] > node[building][!entrance],
+way[highway] > node[leisure][!entrance],
+way[highway] > node[office][!entrance],
+way[highway] > node[shop][!entrance],
+way[highway] > node[tourism][!entrance][tourism!=viewpoint] {
+        throwWarning: tr("{0} node connected to a highway", "{0.key}");
+}
+
 way[junction=roundabout]:righthandtraffic:clockwise,
 way[junction=roundabout]!:righthandtraffic:anticlockwise {
   throwWarning: tr("suspicious roundabout direction");
