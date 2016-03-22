@@ -228,7 +228,7 @@ way[highway] > node[leisure][!entrance],
 way[highway] > node[office][!entrance],
 way[highway] > node[shop][!entrance],
 way[highway] > node[tourism][!entrance][tourism!=viewpoint] {
-        throwWarning: tr("{0} node connected to a highway", "{0.key}");
+  throwWarning: tr("{0} node connected to a highway", "{0.key}");
 }
 
 way[junction=roundabout]:righthandtraffic:clockwise,
@@ -252,4 +252,13 @@ area:closed[place=island][eval(areasize()) < 500] {
 /* 12561 - building larger than Aalsmeer Flower Auction */
 area:closed[building][eval(areasize()) > 500000] {
   throwWarning: tr("Too large building");
+}
+
+/* #12577 */
+way[power=line] > node,
+way[power=minor_line] > node,
+way[power=cable] > node {
+  set node_in_power_way;
+way[!power][!building] > node.node_in_power_way {
+  throwWarning: tr("Node connects a power line or cable with an object which is not related to the power infrastructure.");
 }
