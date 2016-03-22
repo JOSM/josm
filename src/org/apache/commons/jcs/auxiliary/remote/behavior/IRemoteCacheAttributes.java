@@ -1,5 +1,7 @@
 package org.apache.commons.jcs.auxiliary.remote.behavior;
 
+import java.util.List;
+
 import org.apache.commons.jcs.auxiliary.remote.RemoteLocation;
 
 /*
@@ -65,14 +67,14 @@ public interface IRemoteCacheAttributes
      * <p>
      * @return The failovers value
      */
-    RemoteLocation[] getFailovers();
+    List<RemoteLocation> getFailovers();
 
     /**
      * Sets the failovers attribute of the IRemoteCacheAttributes object
      * <p>
-     * @param f The new failovers value
+     * @param failovers The new failovers value
      */
-    void setFailovers( RemoteLocation[] f );
+    void setFailovers( List<RemoteLocation> failovers );
 
     /**
      * Gets the localPort attribute of the IRemoteCacheAttributes object

@@ -19,11 +19,18 @@ package org.apache.commons.jcs.auxiliary.remote;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCache;
-import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
-import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 import org.apache.commons.jcs.engine.CacheStatus;
+import org.apache.commons.jcs.engine.behavior.ICache;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
@@ -35,13 +42,6 @@ import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /** An abstract base for the No Wait Facade.  Different implementations will failover differently. */
 public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     extends AbstractAuxiliaryCache<K, V>
@@ -50,10 +50,7 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     private static final Log log = LogFactory.getLog( AbstractRemoteCacheNoWaitFacade.class );
 
     /** The connection to a remote server, or a zombie. */
-    public RemoteCacheNoWait<K, V>[] noWaits; // TODO privatise if possible
-
-    /** The cache name */
-    private final String cacheName;
+    private List<RemoteCacheNoWait<K, V>> noWaits;
 
     /** holds failover and cluster information */
     private IRemoteCacheAttributes remoteCacheAttributes;
@@ -70,7 +67,7 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
      * @param cacheEventLogger
      * @param elementSerializer
      */
-    public AbstractRemoteCacheNoWaitFacade( RemoteCacheNoWait<K, V>[] noWaits, RemoteCacheAttributes rca,
+    public AbstractRemoteCacheNoWaitFacade( List<ICache<K, V>> noWaits, RemoteCacheAttributes rca,
                                     ICompositeCacheManager cacheMgr, ICacheEventLogger cacheEventLogger,
                                     IElementSerializer elementSerializer )
     {
@@ -78,9 +75,12 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
         {
             log.debug( "CONSTRUCTING NO WAIT FACADE" );
         }
-        this.noWaits = noWaits;
+        this.noWaits = new ArrayList<RemoteCacheNoWait<K,V>>();
+        for (ICache<K, V> nw : noWaits)
+        {
+            this.noWaits.add((RemoteCacheNoWait<K,V>) nw);
+        }
         this.remoteCacheAttributes = rca;
-        this.cacheName = rca.getCacheName();
         setCompositeCacheManager( cacheMgr );
         setCacheEventLogger( cacheEventLogger );
         setElementSerializer( elementSerializer );
@@ -98,43 +98,42 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     {
         if ( log.isDebugEnabled() )
         {
-            log.debug( "updating through cache facade, noWaits.length = " + noWaits.length );
+            log.debug( "updating through cache facade, noWaits.length = " + noWaits.size() );
         }
-        int i = 0;
-        try
+
+        for (RemoteCacheNoWait<K, V> nw : noWaits)
         {
-            for ( ; i < noWaits.length; i++ )
+            try
             {
-                noWaits[i].update( ce );
+                nw.update( ce );
                 // an initial move into a zombie will lock this to primary
                 // recovery. will not discover other servers until primary
                 // reconnect
                 // and subsequent error
             }
-        }
-        catch ( Exception ex )
-        {
-            String message = "Problem updating no wait.  Will initiate failover if the noWait is in error.";
-            log.error( message, ex );
-
-            if ( getCacheEventLogger() != null )
+            catch ( IOException ex )
             {
-                getCacheEventLogger().logError(
-                                                "RemoteCacheNoWaitFacade",
-                                                ICacheEventLogger.UPDATE_EVENT,
-                                                message + ":" + ex.getMessage() + " REGION: " + ce.getCacheName()
-                                                    + " ELEMENT: " + ce );
-            }
+                String message = "Problem updating no wait. Will initiate failover if the noWait is in error.";
+                log.error( message, ex );
 
-            // can handle failover here? Is it safe to try the others?
-            // check to see it the noWait is now a zombie
-            // if it is a zombie, then move to the next in the failover list
-            // will need to keep them in order or a count
-            failover( i );
-            // should start a failover thread
-            // should probably only failover if there is only one in the noWait
-            // list
-            // Should start a background thread to restore the original primary if we are in failover state.
+                if ( getCacheEventLogger() != null )
+                {
+                    getCacheEventLogger().logError( "RemoteCacheNoWaitFacade",
+                                                    ICacheEventLogger.UPDATE_EVENT,
+                                                    message + ":" + ex.getMessage() + " REGION: " + ce.getCacheName()
+                                                        + " ELEMENT: " + ce );
+                }
+
+                // can handle failover here? Is it safe to try the others?
+                // check to see it the noWait is now a zombie
+                // if it is a zombie, then move to the next in the failover list
+                // will need to keep them in order or a count
+                failover( nw );
+                // should start a failover thread
+                // should probably only failover if there is only one in the noWait
+                // list
+                // Should start a background thread to restore the original primary if we are in failover state.
+            }
         }
     }
 
@@ -147,11 +146,11 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     @Override
     public ICacheElement<K, V> get( K key )
     {
-        for ( int i = 0; i < noWaits.length; i++ )
+        for (RemoteCacheNoWait<K, V> nw : noWaits)
         {
             try
             {
-                ICacheElement<K, V> obj = noWaits[i].get( key );
+                ICacheElement<K, V> obj = nw.get( key );
                 if ( obj != null )
                 {
                     return obj;
@@ -177,11 +176,11 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     public Map<K, ICacheElement<K, V>> getMatching( String pattern )
         throws IOException
     {
-        for ( int i = 0; i < noWaits.length; i++ )
+        for (RemoteCacheNoWait<K, V> nw : noWaits)
         {
             try
             {
-                return noWaits[i].getMatching( pattern );
+                return nw.getMatching( pattern );
             }
             catch ( IOException ex )
             {
@@ -203,11 +202,11 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     {
         if ( keys != null && !keys.isEmpty() )
         {
-            for ( int i = 0; i < noWaits.length; i++ )
+            for (RemoteCacheNoWait<K, V> nw : noWaits)
             {
                 try
                 {
-                    return noWaits[i].getMultiple( keys );
+                    return nw.getMultiple( keys );
                 }
                 catch ( IOException ex )
                 {
@@ -228,12 +227,11 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     public Set<K> getKeySet() throws IOException
     {
         HashSet<K> allKeys = new HashSet<K>();
-        for ( int i = 0; i < noWaits.length; i++ )
+        for (RemoteCacheNoWait<K, V> nw : noWaits)
         {
-            AuxiliaryCache<K, V> aux = noWaits[i];
-            if ( aux != null )
+            if ( nw != null )
             {
-                Set<K> keys = aux.getKeySet();
+                Set<K> keys = nw.getKeySet();
                 if(keys != null)
                 {
                     allKeys.addAll( keys );
@@ -254,12 +252,12 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     {
         try
         {
-            for ( int i = 0; i < noWaits.length; i++ )
+            for (RemoteCacheNoWait<K, V> nw : noWaits)
             {
-                noWaits[i].remove( key );
+                nw.remove( key );
             }
         }
-        catch ( Exception ex )
+        catch ( IOException ex )
         {
             log.error( ex );
         }
@@ -274,12 +272,12 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     {
         try
         {
-            for ( int i = 0; i < noWaits.length; i++ )
+            for (RemoteCacheNoWait<K, V> nw : noWaits)
             {
-                noWaits[i].removeAll();
+                nw.removeAll();
             }
         }
-        catch ( Exception ex )
+        catch ( IOException ex )
         {
             log.error( ex );
         }
@@ -289,16 +287,9 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     @Override
     public void dispose()
     {
-        try
+        for (RemoteCacheNoWait<K, V> nw : noWaits)
         {
-            for ( int i = 0; i < noWaits.length; i++ )
-            {
-                noWaits[i].dispose();
-            }
-        }
-        catch ( Exception ex )
-        {
-            log.error( "Problem in dispose.", ex );
+            nw.dispose();
         }
     }
 
@@ -346,9 +337,9 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     @Override
     public CacheStatus getStatus()
     {
-        for ( int i = 0; i < noWaits.length; i++ )
+        for (RemoteCacheNoWait<K, V> nw : noWaits)
         {
-            if ( noWaits[i].getStatus() == CacheStatus.ALIVE )
+            if ( nw.getStatus() == CacheStatus.ALIVE )
             {
                 return CacheStatus.ALIVE;
             }
@@ -365,22 +356,41 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     @Override
     public String toString()
     {
-        return "RemoteCacheNoWaitFacade: " + cacheName + ", rca = " + remoteCacheAttributes;
+        return "RemoteCacheNoWaitFacade: " + remoteCacheAttributes.getCacheName() + ", rca = " + remoteCacheAttributes;
     }
 
     /**
      * Begin the failover process if this is a local cache. Clustered remote caches do not failover.
      * <p>
-     * @param i The no wait in error.
+     * @param rcnw The no wait in error.
      */
-    abstract void failover( int i );
+    protected abstract void failover( RemoteCacheNoWait<K, V> rcnw );
 
+    /**
+     * Get the primary server from the list of failovers
+     *
+     * @return a no wait
+     */
+    public RemoteCacheNoWait<K, V> getPrimaryServer()
+    {
+        return noWaits.get(0);
+    }
+
+    /**
+     * restore the primary server in the list of failovers
+     *
+     */
+    public void restorePrimaryServer(RemoteCacheNoWait<K, V> rcnw)
+    {
+        noWaits.clear();
+        noWaits.add(rcnw);
+    }
 
     /**
      * @return Returns the AuxiliaryCacheAttributes.
      */
     @Override
-    public AuxiliaryCacheAttributes getAuxiliaryCacheAttributes()
+    public IRemoteCacheAttributes getAuxiliaryCacheAttributes()
     {
         return this.remoteCacheAttributes;
     }
@@ -408,7 +418,7 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
 
         if ( noWaits != null )
         {
-            elems.add(new StatElement<Integer>( "Number of No Waits", Integer.valueOf(noWaits.length) ) );
+            elems.add(new StatElement<Integer>( "Number of No Waits", Integer.valueOf(noWaits.size()) ) );
 
             for ( RemoteCacheNoWait<K, V> rcnw : noWaits )
             {
@@ -435,29 +445,9 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     }
 
     /**
-     * Gets the remoteCacheAttributes attribute of the RemoteCacheNoWaitFacade object
-     * <p>
-     * @return The remoteCacheAttributes value
-     */
-    public IRemoteCacheAttributes getRemoteCacheAttributes()
-    {
-        return remoteCacheAttributes;
-    }
-
-    /**
-     * Sets the remoteCacheAttributes attribute of the RemoteCacheNoWaitFacade object.
-     * <p>
-     * @param rca The new remoteCacheAttributes value
-     */
-    public void setRemoteCacheAttributes( IRemoteCacheAttributes rca )
-    {
-        this.remoteCacheAttributes = rca;
-    }
-
-    /**
      * @param compositeCacheManager the compositeCacheManager to set
      */
-    protected void setCompositeCacheManager( ICompositeCacheManager compositeCacheManager )
+    private void setCompositeCacheManager( ICompositeCacheManager compositeCacheManager )
     {
         this.compositeCacheManager = compositeCacheManager;
     }

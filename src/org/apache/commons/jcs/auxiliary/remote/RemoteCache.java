@@ -136,7 +136,7 @@ public class RemoteCache<K, V>
             log.debug( "Initiating failover, rcnwf = " + rcnwf );
         }
 
-        if ( rcnwf != null && rcnwf.getRemoteCacheAttributes().getRemoteType() == RemoteType.LOCAL )
+        if ( rcnwf != null && rcnwf.getAuxiliaryCacheAttributes().getRemoteType() == RemoteType.LOCAL )
         {
             if ( log.isDebugEnabled() )
             {
@@ -144,7 +144,7 @@ public class RemoteCache<K, V>
             }
             // may need to remove the noWait index here. It will be 0 if it is
             // local since there is only 1 possible listener.
-            rcnwf.failover( 0 );
+            rcnwf.failover( rcnwf.getPrimaryServer() );
         }
 
         if ( ex instanceof IOException )

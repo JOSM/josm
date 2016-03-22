@@ -19,6 +19,8 @@ package org.apache.commons.jcs.auxiliary.remote;
  * under the License.
  */
 
+import java.util.List;
+
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 
 /**
@@ -44,8 +46,8 @@ public class RemoteCacheAttributes
     /** what failover server we are connected to. */
     private int failoverIndex = 0;
 
-    /** Array of failover server addresses */
-    private RemoteLocation[] failovers;
+    /** List of failover server addresses */
+    private List<RemoteLocation> failovers;
 
     /** default name is remote_cache_client */
     private String threadPoolName = "remote_cache_client";
@@ -96,7 +98,7 @@ public class RemoteCacheAttributes
      * @return The failovers value
      */
     @Override
-    public RemoteLocation[] getFailovers()
+    public List<RemoteLocation> getFailovers()
     {
         return this.failovers;
     }
@@ -104,12 +106,12 @@ public class RemoteCacheAttributes
     /**
      * Sets the failovers attribute of the RemoteCacheAttributes object.
      * <p>
-     * @param f The new failovers value
+     * @param failovers The new failovers value
      */
     @Override
-    public void setFailovers( RemoteLocation[] f )
+    public void setFailovers( List<RemoteLocation> failovers )
     {
-        this.failovers = f;
+        this.failovers = failovers;
     }
 
     /**

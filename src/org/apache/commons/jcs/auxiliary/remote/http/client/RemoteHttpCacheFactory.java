@@ -19,19 +19,18 @@ package org.apache.commons.jcs.auxiliary.remote.http.client;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheFactory;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
-import org.apache.commons.jcs.auxiliary.remote.RemoteCacheNoWait;
 import org.apache.commons.jcs.auxiliary.remote.RemoteCacheNoWaitFacade;
 import org.apache.commons.jcs.auxiliary.remote.server.behavior.RemoteType;
 import org.apache.commons.jcs.engine.behavior.ICache;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
 import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * The RemoteCacheFactory creates remote caches for the cache hub. It returns a no wait facade which
@@ -73,10 +72,8 @@ public class RemoteHttpCacheFactory
         ICache<K, V> ic = rcm.getCache( rca );
         noWaits.add( ic );
 
-        @SuppressWarnings("unchecked") // No generic arrays in java
-        RemoteCacheNoWait<K, V>[] rcnwArray = noWaits.toArray( new RemoteCacheNoWait[0] );
         RemoteCacheNoWaitFacade<K, V> rcnwf =
-            new RemoteCacheNoWaitFacade<K, V>(rcnwArray, rca, cacheMgr, cacheEventLogger, elementSerializer );
+            new RemoteCacheNoWaitFacade<K, V>(noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer );
 
         getFacades().put( rca.getCacheName(), rcnwf );
 
