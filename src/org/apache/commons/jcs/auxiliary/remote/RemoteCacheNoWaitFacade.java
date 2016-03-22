@@ -19,8 +19,11 @@ package org.apache.commons.jcs.auxiliary.remote;
  * under the License.
  */
 
+import java.util.List;
+
 import org.apache.commons.jcs.auxiliary.remote.server.behavior.RemoteType;
 import org.apache.commons.jcs.engine.CacheStatus;
+import org.apache.commons.jcs.engine.behavior.ICache;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
 import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
@@ -50,7 +53,7 @@ public class RemoteCacheNoWaitFacade<K, V>
      * @param cacheEventLogger
      * @param elementSerializer
      */
-    public RemoteCacheNoWaitFacade( RemoteCacheNoWait<K, V>[] noWaits,
+    public RemoteCacheNoWaitFacade( List<ICache<K, V>> noWaits,
                                     RemoteCacheAttributes rca,
                                     ICompositeCacheManager cacheMgr,
                                     ICacheEventLogger cacheEventLogger,
@@ -62,19 +65,19 @@ public class RemoteCacheNoWaitFacade<K, V>
     /**
      * Begin the failover process if this is a local cache. Clustered remote caches do not failover.
      * <p>
-     * @param i The no wait in error.
+     * @param rcnw The no wait in error.
      */
     @Override
-    protected void failover( int i )
+    protected void failover( RemoteCacheNoWait<K, V> rcnw )
     {
         if ( log.isDebugEnabled() )
         {
-            log.debug( "in failover for " + i );
+            log.debug( "in failover for " + rcnw );
         }
 
-        if ( getRemoteCacheAttributes().getRemoteType() == RemoteType.LOCAL )
+        if ( getAuxiliaryCacheAttributes().getRemoteType() == RemoteType.LOCAL )
         {
-            if ( noWaits[i].getStatus() == CacheStatus.ERROR )
+            if ( rcnw.getStatus() == CacheStatus.ERROR )
             {
                 // start failover, primary recovery process
                 RemoteCacheFailoverRunner<K, V> runner =
@@ -86,7 +89,7 @@ public class RemoteCacheNoWaitFacade<K, V>
                 if ( getCacheEventLogger() != null )
                 {
                     getCacheEventLogger().logApplicationEvent( "RemoteCacheNoWaitFacade", "InitiatedFailover",
-                                                               noWaits[i] + " was in error." );
+                                                               rcnw + " was in error." );
                 }
             }
             else

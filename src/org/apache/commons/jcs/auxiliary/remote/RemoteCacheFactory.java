@@ -132,7 +132,7 @@ public class RemoteCacheFactory
                 }
                 // end if failoverList != null
 
-                rca.setFailovers( failovers.toArray( new RemoteLocation[0] ) );
+                rca.setFailovers( failovers );
                 break;
 
             case CLUSTER:
@@ -155,10 +155,8 @@ public class RemoteCacheFactory
                 break;
         }
 
-        @SuppressWarnings("unchecked") // No generic arrays in java
-        RemoteCacheNoWait<K, V>[] rcnwArray = noWaits.toArray( new RemoteCacheNoWait[0] );
         RemoteCacheNoWaitFacade<K, V> rcnwf =
-            new RemoteCacheNoWaitFacade<K, V>(rcnwArray, rca, cacheMgr, cacheEventLogger, elementSerializer );
+            new RemoteCacheNoWaitFacade<K, V>(noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer );
 
         facades.put( rca.getCacheName(), rcnwf );
 
@@ -257,6 +255,7 @@ public class RemoteCacheFactory
 		}
 
 		managers.clear();
+		facades.clear();
 
         if (monitor != null)
         {

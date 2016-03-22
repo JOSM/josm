@@ -118,8 +118,6 @@ public class HSQLDiskCacheFactory
         // ""
         String password = attributes.getPassword();
 
-        new org.hsqldb.jdbcDriver();
-
         try
         {
             Class.forName( driver ).newInstance();
