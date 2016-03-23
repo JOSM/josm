@@ -47,7 +47,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public abstract class Layer implements Destroyable, MapViewPaintable, ProjectionChangeListener {
+public abstract class Layer extends AbstractMapViewPaintable implements Destroyable, ProjectionChangeListener {
 
     /**
      * Action related to a single layer.

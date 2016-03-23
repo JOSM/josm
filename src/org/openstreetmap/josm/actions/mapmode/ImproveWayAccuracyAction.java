@@ -38,8 +38,8 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.ModifierListener;
@@ -50,7 +50,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * @author Alexander Kachkaev &lt;alexander@kachkaev.ru&gt;, 2011
  */
-public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintable,
+public class ImproveWayAccuracyAction extends MapMode implements
         SelectionChangedListener, ModifierListener {
 
     enum State {
@@ -89,6 +89,13 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     private boolean selectionChangedBlocked;
 
     protected String oldModeHelpText;
+
+    private final AbstractMapViewPaintable temporaryLayer = new AbstractMapViewPaintable() {
+        @Override
+        public void paint(Graphics2D g, MapView mv, Bounds bbox) {
+            ImproveWayAccuracyAction.this.paint(g, mv, bbox);;
+        }
+    };
 
     /**
      * Constructs a new {@code ImproveWayAccuracyAction}.
@@ -135,7 +142,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
 
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
-        Main.map.mapView.addTemporaryLayer(this);
+        Main.map.mapView.addTemporaryLayer(temporaryLayer);
         DataSet.addSelectionListener(this);
 
         Main.map.keyDetector.addModifierListener(this);
@@ -160,11 +167,11 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
 
         Main.map.mapView.removeMouseListener(this);
         Main.map.mapView.removeMouseMotionListener(this);
-        Main.map.mapView.removeTemporaryLayer(this);
+        Main.map.mapView.removeTemporaryLayer(temporaryLayer);
         DataSet.removeSelectionListener(this);
 
         Main.map.keyDetector.removeModifierListener(this);
-        Main.map.mapView.repaint();
+        temporaryLayer.invalidate();
     }
 
     @Override
@@ -212,8 +219,10 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     /**
      * Redraws temporary layer. Highlights targetWay in select mode. Draws
      * preview lines in improve mode and highlights the candidateNode
+     * @param g The graphics
+     * @param mv The map view
+     * @param bbox The bounding box
      */
-    @Override
     public void paint(Graphics2D g, MapView mv, Bounds bbox) {
         if (mousePos == null) {
             return;
@@ -356,7 +365,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         updateCursorDependentObjectsIfNeeded();
         updateCursor();
         updateStatusLine();
-        Main.map.mapView.repaint();
+        temporaryLayer.invalidate();
     }
 
     @Override
@@ -385,7 +394,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         updateCursorDependentObjectsIfNeeded();
         updateCursor();
         updateStatusLine();
-        Main.map.mapView.repaint();
+        temporaryLayer.invalidate();
     }
 
     @Override
@@ -511,7 +520,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         mousePos = null;
         updateCursor();
         updateStatusLine();
-        Main.map.mapView.repaint();
+        temporaryLayer.invalidate();
     }
 
     @Override
@@ -523,7 +532,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         if (!dragging) {
             mousePos = null;
         }
-        Main.map.mapView.repaint();
+        temporaryLayer.invalidate();
     }
 
     // -------------------------------------------------------------------------
@@ -597,7 +606,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
 
         targetWay = null;
 
-        mv.repaint();
+        temporaryLayer.invalidate();
         updateStatusLine();
     }
 
@@ -622,7 +631,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         this.candidateNode = null;
         this.candidateSegment = null;
 
-        mv.repaint();
+        temporaryLayer.invalidate();
         updateStatusLine();
     }
 

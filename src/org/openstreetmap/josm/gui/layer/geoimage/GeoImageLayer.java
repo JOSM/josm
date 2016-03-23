@@ -969,7 +969,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
 
     public void updateBufferAndRepaint() {
         updateOffscreenBuffer = true;
-        Main.map.mapView.repaint();
+        invalidate();
     }
 
     /**

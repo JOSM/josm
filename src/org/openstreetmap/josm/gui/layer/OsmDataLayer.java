@@ -916,14 +916,20 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     @Override
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
-        isChanged = true;
+        invalidate();
         setRequiresSaveToFile(true);
         setRequiresUploadToServer(true);
     }
 
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        invalidate();
+    }
+
+    @Override
+    public void invalidate() {
         isChanged = true;
+        super.invalidate();
     }
 
     @Override
