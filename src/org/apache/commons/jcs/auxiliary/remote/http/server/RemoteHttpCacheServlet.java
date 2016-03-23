@@ -19,25 +19,37 @@ package org.apache.commons.jcs.auxiliary.remote.http.server;
  * under the License.
  */
 
-import org.apache.commons.jcs.access.exception.CacheException;
-import org.apache.commons.jcs.auxiliary.remote.value.RemoteCacheRequest;
-import org.apache.commons.jcs.auxiliary.remote.value.RemoteCacheResponse;
-import org.apache.commons.jcs.engine.control.CompositeCacheManager;
-import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
-import org.apache.commons.jcs.utils.serialization.StandardSerializer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
+
+import org.apache.commons.jcs.access.exception.CacheException;
+import org.apache.commons.jcs.auxiliary.AuxiliaryCacheConfigurator;
+import org.apache.commons.jcs.auxiliary.remote.http.behavior.IRemoteHttpCacheConstants;
+import org.apache.commons.jcs.auxiliary.remote.value.RemoteCacheRequest;
+import org.apache.commons.jcs.auxiliary.remote.value.RemoteCacheResponse;
+import org.apache.commons.jcs.engine.behavior.ICacheElement;
+import org.apache.commons.jcs.engine.behavior.ICacheServiceNonLocal;
+import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
+import org.apache.commons.jcs.engine.control.CompositeCacheManager;
+import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
+import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
+import org.apache.commons.jcs.utils.config.PropertySetter;
+import org.apache.commons.jcs.utils.serialization.StandardSerializer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This servlet simply reads and writes objects. The requests are packaged in a general wrapper. The
@@ -55,8 +67,8 @@ public class RemoteHttpCacheServlet
     /** The cache manager */
     private static CompositeCacheManager cacheMgr;
 
-    /** Processes requests */
-    private RemoteCacheServiceAdaptor<Serializable, Serializable> remoteHttpCacheServiceAdaptor;
+    /** The service that does the work. */
+    private static ICacheServiceNonLocal<Serializable, Serializable> remoteCacheService;
 
     /** This needs to be standard, since the other side is standard */
     private final StandardSerializer serializer = new StandardSerializer();
@@ -81,14 +93,14 @@ public class RemoteHttpCacheServlet
     {
         try
         {
-            ensureCacheManager();
+            cacheMgr = CompositeCacheManager.getInstance();
         }
         catch (CacheException e)
         {
             throw new ServletException(e);
         }
 
-        setRemoteHttpCacheServiceAdaptor( new RemoteCacheServiceAdaptor<Serializable, Serializable>( cacheMgr ) );
+        remoteCacheService = createRemoteHttpCacheService( cacheMgr );
 
         super.init( config );
     }
@@ -112,8 +124,7 @@ public class RemoteHttpCacheServlet
         }
 
         RemoteCacheRequest<Serializable, Serializable> remoteRequest = readRequest( request );
-        RemoteCacheResponse<Serializable> cacheResponse =
-            getRemoteHttpCacheServiceAdaptor().processRequest( remoteRequest );
+        RemoteCacheResponse<Object> cacheResponse = processRequest( remoteRequest );
 
         writeResponse( response, cacheResponse );
     }
@@ -170,7 +181,7 @@ public class RemoteHttpCacheServlet
      * @param response
      * @param cacheResponse
      */
-    protected void writeResponse( HttpServletResponse response, RemoteCacheResponse<Serializable> cacheResponse )
+    protected void writeResponse( HttpServletResponse response, RemoteCacheResponse<Object> cacheResponse )
     {
         try
         {
@@ -189,10 +200,157 @@ public class RemoteHttpCacheServlet
             outputStream.flush();
             outputStream.close();
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
             log.error( "Problem writing response. " + cacheResponse, e );
         }
+    }
+
+    /**
+     * Processes the request. It will call the appropriate method on the service
+     * <p>
+     * @param request
+     * @return RemoteHttpCacheResponse, never null
+     */
+    protected RemoteCacheResponse<Object> processRequest( RemoteCacheRequest<Serializable, Serializable> request )
+    {
+        RemoteCacheResponse<Object> response = new RemoteCacheResponse<Object>();
+
+        if ( request == null )
+        {
+            String message = "The request is null. Cannot process";
+            log.warn( message );
+            response.setSuccess( false );
+            response.setErrorMessage( message );
+        }
+        else
+        {
+            try
+            {
+                switch ( request.getRequestType() )
+                {
+                    case GET:
+                        ICacheElement<Serializable, Serializable> element =
+                            remoteCacheService.get( request.getCacheName(), request.getKey(), request.getRequesterId() );
+                        response.setPayload(element);
+                        break;
+                    case GET_MULTIPLE:
+                        Map<Serializable, ICacheElement<Serializable, Serializable>> elementMap =
+                            remoteCacheService.getMultiple( request.getCacheName(), request.getKeySet(), request.getRequesterId() );
+                        if ( elementMap != null )
+                        {
+                            Map<Serializable, ICacheElement<Serializable, Serializable>> map = new HashMap<Serializable, ICacheElement<Serializable, Serializable>>();
+                            map.putAll(elementMap);
+                            response.setPayload(map);
+                        }
+                        break;
+                    case GET_MATCHING:
+                        Map<Serializable, ICacheElement<Serializable, Serializable>> elementMapMatching =
+                            remoteCacheService.getMatching( request.getCacheName(), request.getPattern(), request.getRequesterId() );
+                        if ( elementMapMatching != null )
+                        {
+                            Map<Serializable, ICacheElement<Serializable, Serializable>> map = new HashMap<Serializable, ICacheElement<Serializable, Serializable>>();
+                            map.putAll(elementMapMatching);
+                            response.setPayload(map);
+                        }
+                        break;
+                    case REMOVE:
+                        remoteCacheService.remove( request.getCacheName(), request.getKey(), request.getRequesterId() );
+                        break;
+                    case REMOVE_ALL:
+                        remoteCacheService.removeAll( request.getCacheName(), request.getRequesterId() );
+                        break;
+                    case UPDATE:
+                        remoteCacheService.update( request.getCacheElement(), request.getRequesterId() );
+                        break;
+                    case ALIVE_CHECK:
+                    case DISPOSE:
+                        response.setSuccess( true );
+                        // DO NOTHING
+                        break;
+                    case GET_KEYSET:
+                        Set<Serializable> keys = remoteCacheService.getKeySet( request.getCacheName() );
+                        response.setPayload( keys );
+                        break;
+                    default:
+                        String message = "Unknown event type.  Cannot process " + request;
+                        log.warn( message );
+                        response.setSuccess( false );
+                        response.setErrorMessage( message );
+                        break;
+                }
+            }
+            catch ( IOException e )
+            {
+                String message = "Problem processing request. " + request + " Error: " + e.getMessage();
+                log.error( message, e );
+                response.setSuccess( false );
+                response.setErrorMessage( message );
+            }
+        }
+
+        return response;
+    }
+
+    /**
+     * Configures the attributes and the event logger and constructs a service.
+     * <p>
+     * @param cacheManager
+     * @return RemoteHttpCacheService
+     */
+    protected <K, V> RemoteHttpCacheService<K, V> createRemoteHttpCacheService( ICompositeCacheManager cacheManager )
+    {
+        Properties props = cacheManager.getConfigurationProperties();
+        ICacheEventLogger cacheEventLogger = configureCacheEventLogger( props );
+        RemoteHttpCacheServerAttributes attributes = configureRemoteHttpCacheServerAttributes( props );
+
+        RemoteHttpCacheService<K, V> service = new RemoteHttpCacheService<K, V>( cacheManager, attributes, cacheEventLogger );
+        if ( log.isInfoEnabled() )
+        {
+            log.info( "Created new RemoteHttpCacheService " + service );
+        }
+        return service;
+    }
+
+    /**
+     * Tries to get the event logger.
+     * <p>
+     * @param props
+     * @return ICacheEventLogger
+     */
+    protected ICacheEventLogger configureCacheEventLogger( Properties props )
+    {
+        ICacheEventLogger cacheEventLogger = AuxiliaryCacheConfigurator
+            .parseCacheEventLogger( props, IRemoteHttpCacheConstants.HTTP_CACHE_SERVER_PREFIX );
+
+        return cacheEventLogger;
+    }
+
+    /**
+     * Configure.
+     * <p>
+     * jcs.remotehttpcache.serverattributes.ATTRIBUTENAME=ATTRIBUTEVALUE
+     * <p>
+     * @param prop
+     * @return RemoteCacheServerAttributesconfigureRemoteCacheServerAttributes
+     */
+    protected RemoteHttpCacheServerAttributes configureRemoteHttpCacheServerAttributes( Properties prop )
+    {
+        RemoteHttpCacheServerAttributes rcsa = new RemoteHttpCacheServerAttributes();
+
+        // configure automatically
+        PropertySetter.setProperties( rcsa, prop,
+                                      IRemoteHttpCacheConstants.HTTP_CACHE_SERVER_ATTRIBUTES_PROPERTY_PREFIX + "." );
+
+        return rcsa;
+    }
+
+    /**
+     * @param remoteCacheService the remoteCacheService to set
+     */
+    protected void setRemoteCacheService(ICacheServiceNonLocal<Serializable, Serializable> rcs)
+    {
+        remoteCacheService = rcs;
     }
 
     /**
@@ -211,19 +369,6 @@ public class RemoteHttpCacheServlet
         }
     }
 
-    /**
-     * Make sure we have a cache manager. This should have happened in the init method.
-     *
-     * @throws CacheException if the configuration cannot be loaded
-     */
-    protected synchronized void ensureCacheManager() throws CacheException
-    {
-        if ( cacheMgr == null || !cacheMgr.isInitialized() )
-        {
-            cacheMgr = CompositeCacheManager.getInstance();
-        }
-    }
-
     /** Release the cache manager. */
     @Override
     public void destroy()
@@ -232,6 +377,7 @@ public class RemoteHttpCacheServlet
         {
             log.info( "Servlet Destroyed, shutting down JCS." );
         }
+
         cacheMgr.shutDown();
     }
 
@@ -244,21 +390,5 @@ public class RemoteHttpCacheServlet
     public String getServletInfo()
     {
         return "RemoteHttpCacheServlet";
-    }
-
-    /**
-     * @param remoteHttpCacheProcessor the remoteHttpCacheProcessor to set
-     */
-    public void setRemoteHttpCacheServiceAdaptor( RemoteCacheServiceAdaptor<Serializable, Serializable> remoteHttpCacheProcessor )
-    {
-        this.remoteHttpCacheServiceAdaptor = remoteHttpCacheProcessor;
-    }
-
-    /**
-     * @return the remoteHttpCacheProcessor
-     */
-    public RemoteCacheServiceAdaptor<Serializable, Serializable> getRemoteHttpCacheServiceAdaptor()
-    {
-        return remoteHttpCacheServiceAdaptor;
     }
 }

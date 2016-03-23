@@ -19,6 +19,12 @@ package org.apache.commons.jcs.access;
  * under the License.
  */
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.jcs.JCS;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.apache.commons.jcs.access.exception.CacheException;
@@ -30,13 +36,6 @@ import org.apache.commons.jcs.engine.stats.behavior.ICacheStats;
 import org.apache.commons.jcs.utils.props.AbstractPropertyContainer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * TODO:  Add new methods that will allow you to provide a partition indicator for all major calls.  Add an interface as well.
@@ -56,7 +55,7 @@ import java.util.Set;
  * <p>
  * @author Aaron Smuts
  */
-public class PartitionedCacheAccess<K extends Serializable, V extends Serializable>
+public class PartitionedCacheAccess<K, V>
     extends AbstractPropertyContainer
     implements ICacheAccess<K, V>
 {

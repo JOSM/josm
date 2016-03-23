@@ -19,17 +19,17 @@ package org.apache.commons.jcs.auxiliary.lateral.socket.tcp;
  * under the License.
  */
 
-import org.apache.commons.jcs.auxiliary.lateral.LateralElementDescriptor;
-import org.apache.commons.jcs.auxiliary.lateral.socket.tcp.behavior.ITCPLateralCacheAttributes;
-import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+
+import org.apache.commons.jcs.auxiliary.lateral.LateralElementDescriptor;
+import org.apache.commons.jcs.auxiliary.lateral.socket.tcp.behavior.ITCPLateralCacheAttributes;
+import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is based on the log4j SocketAppender class. I'm using a different repair structure, so
@@ -228,23 +228,32 @@ public class LateralTCPSender
             // write object to listener
             oos.writeUnshared( led );
             oos.flush();
+            ObjectInputStream ois = null;
 
             try
             {
                 socket.setSoTimeout( socketSoTimeOut );
-                ObjectInputStream ois = new ObjectInputStreamClassLoaderAware( socket.getInputStream(), null );
+                ois = new ObjectInputStreamClassLoaderAware( socket.getInputStream(), null );
                 response = ois.readObject();
             }
             catch ( IOException ioe )
             {
-                String message = "Could not open ObjectInputStream to " + socket;
-                message += " SoTimeout [" + socket.getSoTimeout() + "] Connected [" + socket.isConnected() + "]";
+                String message = "Could not open ObjectInputStream to " + socket +
+                    " SoTimeout [" + socket.getSoTimeout() +
+                    "] Connected [" + socket.isConnected() + "]";
                 log.error( message, ioe );
                 throw ioe;
             }
             catch ( Exception e )
             {
                 log.error( e );
+            }
+            finally
+            {
+                if (ois != null)
+                {
+                    ois.close();
+                }
             }
         }
 

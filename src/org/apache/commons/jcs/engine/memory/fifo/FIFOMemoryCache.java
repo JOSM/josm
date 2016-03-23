@@ -19,17 +19,16 @@ package org.apache.commons.jcs.engine.memory.fifo;
  * under the License.
  */
 
+import java.io.IOException;
+
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.memory.AbstractDoubleLinkedListMemoryCache;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
 
-import java.io.IOException;
-import java.io.Serializable;
-
 /**
  * The items are spooled in the order they are added. No adjustments to the list are made on get.
  */
-public class FIFOMemoryCache<K extends Serializable, V extends Serializable>
+public class FIFOMemoryCache<K, V>
     extends AbstractDoubleLinkedListMemoryCache<K, V>
 {
     /**

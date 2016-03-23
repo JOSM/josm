@@ -19,15 +19,14 @@ package org.apache.commons.jcs.auxiliary.remote.http.server;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This does the work. It's called by the processor. The base class wraps the processing calls in
@@ -36,7 +35,7 @@ import java.util.Set;
  * For now we assume that all clients are non-cluster clients. And listener notification is not
  * supported.
  */
-public class RemoteHttpCacheService<K extends Serializable, V extends Serializable>
+public class RemoteHttpCacheService<K, V>
     extends AbstractRemoteCacheService<K, V>
 {
     /** The name used in the event logs. */

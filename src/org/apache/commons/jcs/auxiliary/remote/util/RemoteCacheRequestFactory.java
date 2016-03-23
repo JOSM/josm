@@ -19,13 +19,13 @@ package org.apache.commons.jcs.auxiliary.remote.util;
  * under the License.
  */
 
+import java.util.Set;
+
 import org.apache.commons.jcs.auxiliary.remote.value.RemoteCacheRequest;
 import org.apache.commons.jcs.auxiliary.remote.value.RemoteRequestType;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Set;
 
 /**
  * This creates request objects. You could write your own client and use the objects from this
@@ -37,6 +37,28 @@ public class RemoteCacheRequestFactory
     private static final Log log = LogFactory.getLog( RemoteCacheRequestFactory.class );
 
     /**
+     * Create generic request
+     * @param cacheName cache name
+     * @param requestType type of request
+     * @param requesterId id of requester
+     * @return
+     */
+    private static <K, V> RemoteCacheRequest<K, V> createRequest(String cacheName, RemoteRequestType requestType, long requesterId)
+    {
+        RemoteCacheRequest<K, V> request = new RemoteCacheRequest<K, V>();
+        request.setCacheName( cacheName );
+        request.setRequestType( requestType );
+        request.setRequesterId( requesterId );
+
+        if ( log.isDebugEnabled() )
+        {
+            log.debug( "Created: " + request );
+        }
+
+        return request;
+    }
+
+    /**
      * Creates a get Request.
      * <p>
      * @param cacheName
@@ -46,16 +68,8 @@ public class RemoteCacheRequestFactory
      */
     public static <K, V> RemoteCacheRequest<K, V> createGetRequest( String cacheName, K key, long requesterId )
     {
-        RemoteCacheRequest<K, V> request = new RemoteCacheRequest<K, V>();
-        request.setCacheName( cacheName );
+        RemoteCacheRequest<K, V> request = createRequest(cacheName, RemoteRequestType.GET, requesterId);
         request.setKey( key );
-        request.setRequesterId( requesterId );
-        request.setRequestType( RemoteRequestType.GET );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Created: " + request );
-        }
 
         return request;
     }
@@ -70,16 +84,8 @@ public class RemoteCacheRequestFactory
      */
     public static <K, V> RemoteCacheRequest<K, V> createGetMatchingRequest( String cacheName, String pattern, long requesterId )
     {
-        RemoteCacheRequest<K, V> request = new RemoteCacheRequest<K, V>();
-        request.setCacheName( cacheName );
+        RemoteCacheRequest<K, V> request = createRequest(cacheName, RemoteRequestType.GET_MATCHING, requesterId);
         request.setPattern( pattern );
-        request.setRequesterId( requesterId );
-        request.setRequestType( RemoteRequestType.GET_MATCHING );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Created: " + request );
-        }
 
         return request;
     }
@@ -94,16 +100,8 @@ public class RemoteCacheRequestFactory
      */
     public static <K, V> RemoteCacheRequest<K, V> createGetMultipleRequest( String cacheName, Set<K> keys, long requesterId )
     {
-        RemoteCacheRequest<K, V> request = new RemoteCacheRequest<K, V>();
-        request.setCacheName( cacheName );
-        request.setKeySet( keys );
-        request.setRequesterId( requesterId );
-        request.setRequestType( RemoteRequestType.GET_MULTIPLE );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Created: " + request );
-        }
+        RemoteCacheRequest<K, V> request = createRequest(cacheName, RemoteRequestType.GET_MULTIPLE, requesterId);
+        request.setKeySet(keys);
 
         return request;
     }
@@ -118,16 +116,8 @@ public class RemoteCacheRequestFactory
      */
     public static <K, V> RemoteCacheRequest<K, V> createRemoveRequest( String cacheName, K key, long requesterId )
     {
-        RemoteCacheRequest<K, V> request = new RemoteCacheRequest<K, V>();
-        request.setCacheName( cacheName );
+        RemoteCacheRequest<K, V> request = createRequest(cacheName, RemoteRequestType.REMOVE, requesterId);
         request.setKey( key );
-        request.setRequesterId( requesterId );
-        request.setRequestType( RemoteRequestType.REMOVE );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Created: " + request );
-        }
 
         return request;
     }
@@ -141,16 +131,8 @@ public class RemoteCacheRequestFactory
      */
     public static RemoteCacheRequest<String, String> createGetKeySetRequest( String cacheName, long requesterId )
     {
-        RemoteCacheRequest<String, String> request = new RemoteCacheRequest<String, String>();
-        request.setCacheName( cacheName );
+        RemoteCacheRequest<String, String> request = createRequest(cacheName, RemoteRequestType.GET_KEYSET, requesterId);
         request.setKey( cacheName );
-        request.setRequesterId( requesterId );
-        request.setRequestType( RemoteRequestType.GET_KEYSET );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Created: " + request );
-        }
 
         return request;
     }
@@ -164,15 +146,7 @@ public class RemoteCacheRequestFactory
      */
     public static <K, V> RemoteCacheRequest<K, V> createRemoveAllRequest( String cacheName, long requesterId )
     {
-        RemoteCacheRequest<K, V> request = new RemoteCacheRequest<K, V>();
-        request.setCacheName( cacheName );
-        request.setRequesterId( requesterId );
-        request.setRequestType( RemoteRequestType.REMOVE_ALL );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Created: " + request );
-        }
+        RemoteCacheRequest<K, V> request = createRequest(cacheName, RemoteRequestType.REMOVE_ALL, requesterId);
 
         return request;
     }
@@ -186,15 +160,7 @@ public class RemoteCacheRequestFactory
      */
     public static <K, V> RemoteCacheRequest<K, V> createDisposeRequest( String cacheName, long requesterId )
     {
-        RemoteCacheRequest<K, V> request = new RemoteCacheRequest<K, V>();
-        request.setCacheName( cacheName );
-        request.setRequesterId( requesterId );
-        request.setRequestType( RemoteRequestType.DISPOSE );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Created: " + request );
-        }
+        RemoteCacheRequest<K, V> request = createRequest(cacheName, RemoteRequestType.DISPOSE, requesterId);
 
         return request;
     }
@@ -208,7 +174,7 @@ public class RemoteCacheRequestFactory
      */
     public static <K, V> RemoteCacheRequest<K, V> createUpdateRequest( ICacheElement<K, V> cacheElement, long requesterId )
     {
-        RemoteCacheRequest<K, V> request = new RemoteCacheRequest<K, V>();
+        RemoteCacheRequest<K, V> request = createRequest(null, RemoteRequestType.UPDATE, requesterId);
         if ( cacheElement != null )
         {
             request.setCacheName( cacheElement.getCacheName() );
@@ -218,13 +184,6 @@ public class RemoteCacheRequestFactory
         else
         {
             log.error( "Can't create a proper update request for a null cache element." );
-        }
-        request.setRequesterId( requesterId );
-        request.setRequestType( RemoteRequestType.UPDATE );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Created: " + request );
         }
 
         return request;
@@ -238,17 +197,8 @@ public class RemoteCacheRequestFactory
      */
     public static <K, V> RemoteCacheRequest<K, V> createAliveCheckRequest( long requesterId )
     {
-        RemoteCacheRequest<K, V> request = new RemoteCacheRequest<K, V>();
-        request.setRequesterId( requesterId );
-        request.setRequestType( RemoteRequestType.ALIVE_CHECK );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Created: " + request );
-        }
+        RemoteCacheRequest<K, V> request = createRequest(null, RemoteRequestType.ALIVE_CHECK, requesterId);
 
         return request;
     }
-
-
 }
