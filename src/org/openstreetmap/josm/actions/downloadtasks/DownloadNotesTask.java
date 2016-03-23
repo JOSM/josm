@@ -105,11 +105,7 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
         @Override
         protected void finish() {
             rememberDownloadedData(new NoteData(notesData));
-            if (isCanceled() || isFailed()) {
-                return;
-            }
-
-            if (notesData == null) {
+            if (isCanceled() || isFailed() || notesData == null || notesData.isEmpty()) {
                 return;
             }
             if (Main.isDebugEnabled()) {
@@ -120,13 +116,10 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             if (Main.map != null) {
                 noteLayers = Main.map.mapView.getLayersOfType(NoteLayer.class);
             }
-            NoteLayer layer;
             if (noteLayers != null && !noteLayers.isEmpty()) {
-                layer = noteLayers.get(0);
-                layer.getNoteData().addNotes(notesData);
+                noteLayers.get(0).getNoteData().addNotes(notesData);
             } else {
-                layer = new NoteLayer(notesData, tr("Notes"));
-                Main.main.addLayer(layer);
+                Main.main.addLayer(new NoteLayer(notesData, tr("Notes")));
             }
         }
 
