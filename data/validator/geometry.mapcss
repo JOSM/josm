@@ -222,7 +222,7 @@ way[waterway] > node.node_in_bridge {
 }
 
 /*see #11128*/
-way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking)$/],
+way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking|bus_station)$/],
 way[highway] > node[building][!entrance],
 way[highway] > node[leisure][!entrance],
 way[highway] > node[office][!entrance],
