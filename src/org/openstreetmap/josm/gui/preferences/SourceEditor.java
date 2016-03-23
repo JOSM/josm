@@ -903,7 +903,7 @@ public abstract class SourceEditor extends JPanel {
                 FileChooserManager fcm = new FileChooserManager(true)
                         .createFileChooser(true, null, Arrays.asList(ff, FileFilterAllFiles.getInstance()), ff, JFileChooser.FILES_ONLY);
                 prepareFileChooser(tfURL.getText(), fcm.getFileChooser());
-                AbstractFileChooser fc = fcm.openFileChooser(JOptionPane.getFrameForComponent(SourceEditor.this));
+                AbstractFileChooser fc = fcm.openFileChooser(GuiHelper.getFrameForComponent(SourceEditor.this));
                 if (fc != null) {
                     tfURL.setText(fc.getSelectedFile().toString());
                 }
@@ -1633,7 +1633,7 @@ public abstract class SourceEditor extends JPanel {
                     fcm.getFileChooser().setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 }
                 prepareFileChooser(tfFileName.getText(), fcm.getFileChooser());
-                AbstractFileChooser fc = fcm.openFileChooser(JOptionPane.getFrameForComponent(SourceEditor.this));
+                AbstractFileChooser fc = fcm.openFileChooser(GuiHelper.getFrameForComponent(SourceEditor.this));
                 if (fc != null) {
                     tfFileName.setText(fc.getSelectedFile().toString());
                 }

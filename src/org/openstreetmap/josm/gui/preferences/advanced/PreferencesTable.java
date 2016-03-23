@@ -104,6 +104,7 @@ public class PreferencesTable extends JTable {
         }
         final PrefEntry e = (PrefEntry) model.getValueAt(getSelectedRow(), 1);
         Setting<?> stg = e.getValue();
+        boolean ok = false;
         if (stg instanceof StringSetting) {
             editCellAt(getSelectedRow(), 1);
             Component editor = getEditorComponent();
@@ -111,37 +112,49 @@ public class PreferencesTable extends JTable {
                 editor.requestFocus();
             }
         } else if (stg instanceof ListSetting) {
-            ListSetting lSetting = (ListSetting) stg;
-            ListEditor lEditor = new ListEditor(gui, e, lSetting);
-            lEditor.showDialog();
-            if (lEditor.getValue() == 1) {
-                List<String> data = lEditor.getData();
-                if (!lSetting.equalVal(data)) {
-                    e.setValue(new ListSetting(data));
-                    return true;
-                }
-            }
+            ok = doEditList(gui, e, (ListSetting) stg);
         } else if (stg instanceof ListListSetting) {
-            ListListSetting llSetting = (ListListSetting) stg;
-            ListListEditor llEditor = new ListListEditor(gui, e, llSetting);
-            llEditor.showDialog();
-            if (llEditor.getValue() == 1) {
-                List<List<String>> data = llEditor.getData();
-                if (!llSetting.equalVal(data)) {
-                    e.setValue(new ListListSetting(data));
-                    return true;
-                }
-            }
+            ok = doEditListList(gui, e, (ListListSetting) stg);
         } else if (stg instanceof MapListSetting) {
-            MapListSetting mlSetting = (MapListSetting) stg;
-            MapListEditor mlEditor = new MapListEditor(gui, e, mlSetting);
-            mlEditor.showDialog();
-            if (mlEditor.getValue() == 1) {
-                List<Map<String, String>> data = mlEditor.getData();
-                if (!mlSetting.equalVal(data)) {
-                    e.setValue(new MapListSetting(data));
-                    return true;
-                }
+            ok = doEditMapList(gui, e, (MapListSetting) stg);
+        }
+        return ok;
+    }
+
+    static boolean doEditList(final JComponent gui, final PrefEntry e, ListSetting lSetting) {
+        ListEditor lEditor = new ListEditor(gui, e, lSetting);
+        lEditor.showDialog();
+        if (lEditor.getValue() == 1) {
+            List<String> data = lEditor.getData();
+            if (!lSetting.equalVal(data)) {
+                e.setValue(new ListSetting(data));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean doEditListList(final JComponent gui, final PrefEntry e, ListListSetting llSetting) {
+        ListListEditor llEditor = new ListListEditor(gui, e, llSetting);
+        llEditor.showDialog();
+        if (llEditor.getValue() == 1) {
+            List<List<String>> data = llEditor.getData();
+            if (!llSetting.equalVal(data)) {
+                e.setValue(new ListListSetting(data));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean doEditMapList(final JComponent gui, final PrefEntry e, MapListSetting mlSetting) {
+        MapListEditor mlEditor = new MapListEditor(gui, e, mlSetting);
+        mlEditor.showDialog();
+        if (mlEditor.getValue() == 1) {
+            List<Map<String, String>> data = mlEditor.getData();
+            if (!mlSetting.equalVal(data)) {
+                e.setValue(new MapListSetting(data));
+                return true;
             }
         }
         return false;
@@ -189,57 +202,74 @@ public class PreferencesTable extends JTable {
             if (rbString.isSelected()) {
                 StringSetting sSetting = new StringSetting(null);
                 pe = new PrefEntry(tkey.getText(), sSetting, sSetting, false);
-                StringEditor sEditor = new StringEditor(gui, pe, sSetting);
-                sEditor.showDialog();
-                if (sEditor.getValue() == 1) {
-                    String data = sEditor.getData();
-                    if (!Objects.equals(sSetting.getValue(), data)) {
-                        pe.setValue(new StringSetting(data));
-                        ok = true;
-                    }
-                }
+                ok = doAddSimple(gui, pe, sSetting);
             } else if (rbList.isSelected()) {
                 ListSetting lSetting = new ListSetting(null);
                 pe = new PrefEntry(tkey.getText(), lSetting, lSetting, false);
-                ListEditor lEditor = new ListEditor(gui, pe, lSetting);
-                lEditor.showDialog();
-                if (lEditor.getValue() == 1) {
-                    List<String> data = lEditor.getData();
-                    if (!lSetting.equalVal(data)) {
-                        pe.setValue(new ListSetting(data));
-                        ok = true;
-                    }
-                }
+                ok = doAddList(gui, pe, lSetting);
             } else if (rbListList.isSelected()) {
                 ListListSetting llSetting = new ListListSetting(null);
                 pe = new PrefEntry(tkey.getText(), llSetting, llSetting, false);
-                ListListEditor llEditor = new ListListEditor(gui, pe, llSetting);
-                llEditor.showDialog();
-                if (llEditor.getValue() == 1) {
-                    List<List<String>> data = llEditor.getData();
-                    if (!llSetting.equalVal(data)) {
-                        pe.setValue(new ListListSetting(data));
-                        ok = true;
-                    }
-                }
+                ok = doAddListList(gui, pe, llSetting);
             } else if (rbMapList.isSelected()) {
                 MapListSetting mlSetting = new MapListSetting(null);
                 pe = new PrefEntry(tkey.getText(), mlSetting, mlSetting, false);
-                MapListEditor mlEditor = new MapListEditor(gui, pe, mlSetting);
-                mlEditor.showDialog();
-                if (mlEditor.getValue() == 1) {
-                    List<Map<String, String>> data = mlEditor.getData();
-                    if (!mlSetting.equalVal(data)) {
-                        pe.setValue(new MapListSetting(data));
-                        ok = true;
-                    }
-                }
+                ok = doAddMapList(gui, pe, mlSetting);
             }
         }
-        if (ok)
-            return pe;
-        else
-            return null;
+        return ok ? pe : null;
+    }
+
+    static boolean doAddSimple(final JComponent gui, PrefEntry pe, StringSetting sSetting) {
+        StringEditor sEditor = new StringEditor(gui, pe, sSetting);
+        sEditor.showDialog();
+        if (sEditor.getValue() == 1) {
+            String data = sEditor.getData();
+            if (!Objects.equals(sSetting.getValue(), data)) {
+                pe.setValue(new StringSetting(data));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean doAddList(final JComponent gui, PrefEntry pe, ListSetting lSetting) {
+        ListEditor lEditor = new ListEditor(gui, pe, lSetting);
+        lEditor.showDialog();
+        if (lEditor.getValue() == 1) {
+            List<String> data = lEditor.getData();
+            if (!lSetting.equalVal(data)) {
+                pe.setValue(new ListSetting(data));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean doAddListList(final JComponent gui, PrefEntry pe, ListListSetting llSetting) {
+        ListListEditor llEditor = new ListListEditor(gui, pe, llSetting);
+        llEditor.showDialog();
+        if (llEditor.getValue() == 1) {
+            List<List<String>> data = llEditor.getData();
+            if (!llSetting.equalVal(data)) {
+                pe.setValue(new ListListSetting(data));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static boolean doAddMapList(final JComponent gui, PrefEntry pe, MapListSetting mlSetting) {
+        MapListEditor mlEditor = new MapListEditor(gui, pe, mlSetting);
+        mlEditor.showDialog();
+        if (mlEditor.getValue() == 1) {
+            List<Map<String, String>> data = mlEditor.getData();
+            if (!mlSetting.equalVal(data)) {
+                pe.setValue(new MapListSetting(data));
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

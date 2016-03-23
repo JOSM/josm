@@ -542,7 +542,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String s = JOptionPane.showInputDialog(
-                            JOptionPane.getFrameForComponent(PluginConfigurationSitesPanel.this),
+                            GuiHelper.getFrameForComponent(PluginConfigurationSitesPanel.this),
                             tr("Add JOSM Plugin description URL."),
                             tr("Enter URL"),
                             JOptionPane.QUESTION_MESSAGE
@@ -557,7 +557,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 public void actionPerformed(ActionEvent e) {
                     if (list.getSelectedValue() == null) {
                         JOptionPane.showMessageDialog(
-                                JOptionPane.getFrameForComponent(PluginConfigurationSitesPanel.this),
+                                GuiHelper.getFrameForComponent(PluginConfigurationSitesPanel.this),
                                 tr("Please select an entry."),
                                 tr("Warning"),
                                 JOptionPane.WARNING_MESSAGE
@@ -583,7 +583,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 public void actionPerformed(ActionEvent event) {
                     if (list.getSelectedValue() == null) {
                         JOptionPane.showMessageDialog(
-                                JOptionPane.getFrameForComponent(PluginConfigurationSitesPanel.this),
+                                GuiHelper.getFrameForComponent(PluginConfigurationSitesPanel.this),
                                 tr("Please select an entry."),
                                 tr("Warning"),
                                 JOptionPane.WARNING_MESSAGE

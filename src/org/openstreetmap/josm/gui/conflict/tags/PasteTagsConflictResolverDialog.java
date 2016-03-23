@@ -27,7 +27,6 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -39,6 +38,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.tagging.TagTableColumnModelBuilder;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -72,7 +72,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
      * @param owner parent component
      */
     public PasteTagsConflictResolverDialog(Component owner) {
-        super(JOptionPane.getFrameForComponent(owner), ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(owner), ModalityType.DOCUMENT_MODAL);
         build();
         iconResolved = ImageProvider.get("dialogs/conflict", "tagconflictresolved");
         iconUnresolved = ImageProvider.get("dialogs/conflict", "tagconflictunresolved");

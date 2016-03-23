@@ -217,7 +217,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      * @param parent The parent component in which this dialog will be displayed.
      */
     public CombinePrimitiveResolverDialog(Component parent) {
-        super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         build();
     }
 

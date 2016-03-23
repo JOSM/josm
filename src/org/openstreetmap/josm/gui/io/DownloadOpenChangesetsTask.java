@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
@@ -58,7 +59,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
     protected void finish() {
         if (JosmUserIdentityManager.getInstance().isAnonymous()) {
             JOptionPane.showMessageDialog(
-                    JOptionPane.getFrameForComponent(parent),
+                    GuiHelper.getFrameForComponent(parent),
                     "<html>" + tr("Could not retrieve the list of your open changesets because<br>"
                             + "JOSM does not know your identity.<br>"
                             + "You have either chosen to work anonymously or you are not entitled<br>"

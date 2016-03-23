@@ -251,7 +251,7 @@ public final class HelpAwareOptionPane {
             final ButtonSpec defaultOption, final String helpTopic, final List<JButton> buttons,
             final JOptionPane pane) {
         final JDialog dialog = new JDialog(
-                JOptionPane.getFrameForComponent(parentComponent),
+                GuiHelper.getFrameForComponent(parentComponent),
                 title,
                 ModalityType.DOCUMENT_MODAL
         );

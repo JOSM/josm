@@ -28,7 +28,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -255,7 +254,7 @@ public class OAuthAuthorizationWizard extends JDialog {
      * @throws IllegalArgumentException if apiUrl is null
      */
     public OAuthAuthorizationWizard(Component parent, String apiUrl, Executor executor) {
-        super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
         this.apiUrl = apiUrl;
         this.executor = executor;

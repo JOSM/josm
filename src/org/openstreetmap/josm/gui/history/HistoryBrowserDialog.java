@@ -16,7 +16,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
@@ -28,6 +27,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryDataSetListener;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -48,7 +48,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
      * @param history the history to be displayed
      */
     public HistoryBrowserDialog(History history) {
-        super(JOptionPane.getFrameForComponent(Main.parent), false);
+        super(GuiHelper.getFrameForComponent(Main.parent), false);
         build();
         setHistory(history);
         setTitle(buildTitle(history));

@@ -9,13 +9,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapStatus.BackgroundProgressMonitor;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
@@ -123,7 +123,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         if (GraphicsEnvironment.isHeadless()) {
             this.dialogParent = dialogParent;
         } else {
-            this.dialogParent = JOptionPane.getFrameForComponent(dialogParent);
+            this.dialogParent = GuiHelper.getFrameForComponent(dialogParent);
         }
         this.cancelable = true;
     }
@@ -134,7 +134,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
      * @param windowTitle window title
      */
     public PleaseWaitProgressMonitor(Component dialogParent, String windowTitle) {
-        this(JOptionPane.getFrameForComponent(dialogParent));
+        this(GuiHelper.getFrameForComponent(dialogParent));
         this.windowTitle = windowTitle;
     }
 
