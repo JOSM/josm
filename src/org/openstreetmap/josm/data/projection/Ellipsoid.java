@@ -101,7 +101,6 @@ public final class Ellipsoid {
      */
     public static final Ellipsoid WGS84 = Ellipsoid.create_a_rf(6378137.0, 298.257223563);
 
-
     /**
      * half long axis
      */
