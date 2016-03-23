@@ -19,7 +19,6 @@ package org.apache.commons.jcs.utils.access;
  * under the License.
  */
 
-import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -92,7 +91,7 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * @author Travis Savo
  */
-public class JCSWorker<K extends Serializable, V extends Serializable>
+public class JCSWorker<K, V>
 {
     /** The logger */
     private static final Log logger = LogFactory.getLog( JCSWorker.class );

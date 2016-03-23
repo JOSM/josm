@@ -19,6 +19,11 @@ package org.apache.commons.jcs.auxiliary.remote.http.server;
  * under the License.
  */
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.ICacheServiceNonLocal;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
@@ -29,16 +34,11 @@ import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * This class contains common methods for remote cache services. Eventually I hope to extract out
  * much of the RMI server to use this as well. I'm starting with the Http service.
  */
-public abstract class AbstractRemoteCacheService<K extends Serializable, V extends Serializable>
+public abstract class AbstractRemoteCacheService<K, V>
     implements ICacheServiceNonLocal<K, V>
 {
     /** An optional event logger */
@@ -511,7 +511,7 @@ public abstract class AbstractRemoteCacheService<K extends Serializable, V exten
      * @param eventName
      * @return ICacheEvent
      */
-    protected <T extends Serializable> ICacheEvent<T> createICacheEvent( String cacheName, T key, long requesterId, String eventName )
+    protected <T> ICacheEvent<T> createICacheEvent( String cacheName, T key, long requesterId, String eventName )
     {
         if ( cacheEventLogger == null )
         {
@@ -541,7 +541,7 @@ public abstract class AbstractRemoteCacheService<K extends Serializable, V exten
      * <p>
      * @param cacheEvent
      */
-    protected <T extends Serializable> void logICacheEvent( ICacheEvent<T> cacheEvent )
+    protected <T> void logICacheEvent( ICacheEvent<T> cacheEvent )
     {
         if ( cacheEventLogger != null )
         {
