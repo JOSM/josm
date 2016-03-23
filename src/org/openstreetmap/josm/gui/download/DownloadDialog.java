@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
@@ -228,7 +229,7 @@ public class DownloadDialog extends JDialog  {
      * @param helpTopic the help topic to assign
      */
     public DownloadDialog(Component parent, String helpTopic) {
-        super(JOptionPane.getFrameForComponent(parent), tr("Download"), ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(parent), tr("Download"), ModalityType.DOCUMENT_MODAL);
         HelpUtil.setHelpContext(getRootPane(), helpTopic);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(buildMainPanel(), BorderLayout.CENTER);

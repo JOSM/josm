@@ -139,7 +139,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     }
 
     public SaveLayersDialog(Component parent) {
-        super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         build();
     }
 

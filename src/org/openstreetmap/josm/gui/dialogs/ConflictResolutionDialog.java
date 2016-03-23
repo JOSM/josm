@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -133,7 +134,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
      * @param parent parent component
      */
     public ConflictResolutionDialog(Component parent) {
-        super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         build();
         pack();
         if (getInsets().top > 0) {

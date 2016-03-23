@@ -21,7 +21,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
@@ -78,7 +77,7 @@ public class PreferenceDialog extends JDialog {
     }
 
     public PreferenceDialog(Component parent) {
-        super(JOptionPane.getFrameForComponent(parent), tr("Preferences"), ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(parent), tr("Preferences"), ModalityType.DOCUMENT_MODAL);
         build();
         this.setMinimumSize(new Dimension(600, 350));
         // set the maximum width to the current screen. If the dialog is opened on a

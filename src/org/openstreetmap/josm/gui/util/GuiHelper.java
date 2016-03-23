@@ -11,6 +11,7 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
@@ -507,5 +508,22 @@ public final class GuiHelper {
                 ToolTipManager.sharedInstance().setDismissDelay(defaultDismissTimeout);
             }
         });
+    }
+
+    /**
+     * Returns the specified component's <code>Frame</code> without throwing exception in headless mode.
+     *
+     * @param parentComponent the <code>Component</code> to check for a <code>Frame</code>
+     * @return the <code>Frame</code> that contains the component, or <code>getRootFrame</code>
+     *         if the component is <code>null</code>, or does not have a valid <code>Frame</code> parent
+     * @see JOptionPane#getFrameForComponent
+     * @see GraphicsEnvironment#isHeadless
+     * @since 10035
+     */
+    public static Frame getFrameForComponent(Component parentComponent) {
+        if (parentComponent == null && GraphicsEnvironment.isHeadless()) {
+            return null;
+        }
+        return JOptionPane.getFrameForComponent(parentComponent);
     }
 }

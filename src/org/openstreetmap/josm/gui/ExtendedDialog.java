@@ -145,7 +145,7 @@ public class ExtendedDialog extends JDialog {
     }
 
     public ExtendedDialog(Component parent, String title, String[] buttonTexts, boolean modal, boolean disposeOnClose) {
-        super(JOptionPane.getFrameForComponent(parent), title, modal ? ModalityType.DOCUMENT_MODAL : ModalityType.MODELESS);
+        super(GuiHelper.getFrameForComponent(parent), title, modal ? ModalityType.DOCUMENT_MODAL : ModalityType.MODELESS);
         this.parent = parent;
         this.modal = modal;
         bTexts = Utils.copyArray(buttonTexts);
@@ -440,7 +440,7 @@ public class ExtendedDialog extends JDialog {
         Dimension screenSize = GuiHelper.getScreenSize();
         Dimension x = new Dimension(screenSize.width*2/3, screenSize.height*2/3);
         if (parent != null && parent.isVisible()) {
-            x = JOptionPane.getFrameForComponent(parent).getSize();
+            x = GuiHelper.getFrameForComponent(parent).getSize();
         }
         return x;
     }

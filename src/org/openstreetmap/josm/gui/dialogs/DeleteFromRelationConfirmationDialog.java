@@ -21,7 +21,6 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -40,6 +39,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -131,7 +131,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
      * Constructs a new {@code DeleteFromRelationConfirmationDialog}.
      */
     public DeleteFromRelationConfirmationDialog() {
-        super(JOptionPane.getFrameForComponent(Main.parent), "", ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(Main.parent), "", ModalityType.DOCUMENT_MODAL);
         build();
     }
 

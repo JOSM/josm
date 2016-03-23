@@ -15,7 +15,6 @@ import javax.swing.BoundedRangeModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -23,6 +22,7 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -89,7 +89,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
      * @param parent the {@code Component} from which the dialog is displayed. Can be {@code null}.
      */
     public PleaseWaitDialog(Component parent) {
-        super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
+        super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         initDialog();
     }
 
