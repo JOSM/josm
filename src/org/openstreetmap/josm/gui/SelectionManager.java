@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
-import org.openstreetmap.josm.gui.layer.MapViewPaintable;
+import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -88,7 +88,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      *
      * @author Michael Zangl
      */
-    private class SelectionHintLayer implements MapViewPaintable {
+    private class SelectionHintLayer extends AbstractMapViewPaintable {
         @Override
         public void paint(Graphics2D g, MapView mv, Bounds bbox) {
             if (mousePos == null || mousePosStart == null || mousePos == mousePosStart)
@@ -367,10 +367,8 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         }
     }
 
-    private static void selectionAreaChanged() {
-        // Trigger a redraw of the map view.
-        // A nicer way would be to provide change events for the temporary layer.
-        Main.map.mapView.repaint();
+    private void selectionAreaChanged() {
+        selectionHintLayer.invalidate();
     }
 
     /**
@@ -382,7 +380,6 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      * @return The collection of selected objects.
      */
     public Collection<OsmPrimitive> getSelectedObjects(boolean alt) {
-
         Collection<OsmPrimitive> selection = new LinkedList<>();
 
         // whether user only clicked, not dragged.

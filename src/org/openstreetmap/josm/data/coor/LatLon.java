@@ -8,6 +8,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
+import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.geom.Area;
@@ -324,10 +325,9 @@ public class LatLon extends Coordinate {
      * @return distance in metres.
      */
     public double greatCircleDistance(LatLon other) {
-        double R = 6378135;
         double sinHalfLat = sin(toRadians(other.lat() - this.lat()) / 2);
         double sinHalfLon = sin(toRadians(other.lon() - this.lon()) / 2);
-        double d = 2 * R * asin(
+        double d = 2 * WGS84.a * asin(
                 sqrt(sinHalfLat*sinHalfLat +
                         cos(toRadians(this.lat()))*cos(toRadians(other.lat()))*sinHalfLon*sinHalfLon));
         // For points opposite to each other on the sphere,
@@ -335,7 +335,7 @@ public class LatLon extends Coordinate {
         // (This should almost never happen.)
         if (java.lang.Double.isNaN(d)) {
             Main.error("NaN in greatCircleDistance");
-            d = PI * R;
+            d = PI * WGS84.a;
         }
         return d;
     }

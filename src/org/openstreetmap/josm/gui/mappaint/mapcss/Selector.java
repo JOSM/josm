@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -636,20 +638,18 @@ public interface Selector {
             return new Range(lower, upper);
         }
 
-        private static final double R = 6378135;
-
         public static double level2scale(int lvl) {
             if (lvl < 0)
                 throw new IllegalArgumentException("lvl must be >= 0 but is "+lvl);
             // preliminary formula - map such that mapnik imagery tiles of the same
             // or similar level are displayed at the given scale
-            return 2.0 * Math.PI * R / Math.pow(2.0, lvl) / 2.56;
+            return 2.0 * Math.PI * WGS84.a / Math.pow(2.0, lvl) / 2.56;
         }
 
         public static int scale2level(double scale) {
             if (scale < 0)
                 throw new IllegalArgumentException("scale must be >= 0 but is "+scale);
-            return (int) Math.floor(Math.log(2 * Math.PI * R / 2.56 / scale) / Math.log(2));
+            return (int) Math.floor(Math.log(2 * Math.PI * WGS84.a / 2.56 / scale) / Math.log(2));
         }
 
         @Override

@@ -157,7 +157,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                     return;
                 mousePressed  = true;
                 if (isVisible()) {
-                    Main.map.mapView.repaint();
+                    invalidate();
                 }
             }
 
@@ -175,7 +175,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                         }
                     }
                 }
-                Main.map.mapView.repaint();
+                invalidate();
             }
         });
     }
