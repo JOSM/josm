@@ -222,12 +222,16 @@ way[waterway] > node.node_in_bridge {
 }
 
 /*see #11128*/
+way[highway] > node[tourism=information][information=guidepost] {
+  set guidepost;
+  throwOther: tr("{0} node connected to a highway", "{1.tag}");
+}
 way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking|bus_station)$/],
 way[highway] > node[building][!entrance],
 way[highway] > node[leisure][!entrance],
 way[highway] > node[office][!entrance],
 way[highway] > node[shop][!entrance],
-way[highway] > node[tourism][!entrance][tourism!=viewpoint] {
+way[highway] > node!.guidepost[tourism][!entrance][tourism!=viewpoint] {
   throwWarning: tr("{0} node connected to a highway", "{0.key}");
 }
 
