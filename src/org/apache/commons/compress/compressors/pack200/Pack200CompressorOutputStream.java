@@ -45,6 +45,7 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
      * memory.
      *
      * @param out the stream to write to
+     * @throws IOException if writing fails
      */
     public Pack200CompressorOutputStream(final OutputStream out)
         throws IOException {
@@ -57,6 +58,7 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
      *
      * @param out the stream to write to
      * @param mode the strategy to use
+     * @throws IOException if writing fails
      */
     public Pack200CompressorOutputStream(final OutputStream out,
                                          final Pack200Strategy mode)
@@ -70,6 +72,7 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
      *
      * @param out the stream to write to
      * @param props Pack200 properties to use
+     * @throws IOException if writing fails
      */
     public Pack200CompressorOutputStream(final OutputStream out,
                                          final Map<String, String> props)
@@ -84,6 +87,7 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
      * @param out the stream to write to
      * @param mode the strategy to use
      * @param props Pack200 properties to use
+     * @throws IOException if writing fails
      */
     public Pack200CompressorOutputStream(final OutputStream out,
                                          final Pack200Strategy mode,

@@ -88,17 +88,24 @@ public abstract class LZWInputStream extends CompressorInputStream {
 
     /**
      * Read the next code and expand it.
+     * @return the expanded next code
+     * @throws IOException on error
      */
     protected abstract int decompressNextSymbol() throws IOException;
 
     /**
      * Add a new entry to the dictionary.
+     * @param previousCode the previous code
+     * @param character the next character to append
+     * @return the new code
+     * @throws IOException on error
      */
     protected abstract int addEntry(int previousCode, byte character)
         throws IOException;
 
     /**
      * Sets the clear code based on the code size.
+     * @param codeSize code size
      */
     protected void setClearCode(int codeSize) {
         clearCode = (1 << (codeSize - 1));
@@ -106,6 +113,7 @@ public abstract class LZWInputStream extends CompressorInputStream {
 
     /**
      * Initializes the arrays based on the maximum code size.
+     * @param maxCodeSize maximum code size
      */
     protected void initializeTables(int maxCodeSize) {
         final int maxTableSize = 1 << maxCodeSize;
@@ -122,6 +130,8 @@ public abstract class LZWInputStream extends CompressorInputStream {
 
     /**
      * Reads the next code from the stream.
+     * @return the next code
+     * @throws IOException on error
      */
     protected int readNextCode() throws IOException {
         if (codeSize > 31) {
@@ -133,6 +143,10 @@ public abstract class LZWInputStream extends CompressorInputStream {
     /**
      * Adds a new entry if the maximum table size hasn't been exceeded
      * and returns the new index.
+     * @param previousCode the previous code
+     * @param character the character to append
+     * @param maxTableSize the maximum table size
+     * @return the new code
      */
     protected int addEntry(int previousCode, byte character, int maxTableSize) {
         if (tableSize < maxTableSize) {
@@ -145,6 +159,8 @@ public abstract class LZWInputStream extends CompressorInputStream {
 
     /**
      * Add entry for repeat of previousCode we haven't added, yet.
+     * @return new code for a repeat of the previous code
+     * @throws IOException on error
      */
     protected int addRepeatOfPreviousCode() throws IOException {
         if (previousCode == -1) {
@@ -157,6 +173,10 @@ public abstract class LZWInputStream extends CompressorInputStream {
     /**
      * Expands the entry with index code to the output stack and may
      * create a new entry
+     * @param code the code
+     * @param addedUnfinishedEntry whether unfinished entries have been added
+     * @return the new location of the output stack
+     * @throws IOException on error
      */
     protected int expandCodeToOutputStack(int code, boolean addedUnfinishedEntry)
         throws IOException {

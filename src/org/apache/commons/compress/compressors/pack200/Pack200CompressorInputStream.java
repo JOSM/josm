@@ -52,6 +52,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * provide better performance.</p>
      *
      * @param in the InputStream from which this object should be created
+     * @throws IOException if reading fails
      */
     public Pack200CompressorInputStream(final InputStream in)
         throws IOException {
@@ -67,6 +68,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      *
      * @param in the InputStream from which this object should be created
      * @param mode the strategy to use
+     * @throws IOException if reading fails
      */
     public Pack200CompressorInputStream(final InputStream in,
                                         final Pack200Strategy mode)
@@ -83,6 +85,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      *
      * @param in the InputStream from which this object should be created
      * @param props Pack200 properties to use
+     * @throws IOException if reading fails
      */
     public Pack200CompressorInputStream(final InputStream in,
                                         final Map<String, String> props)
@@ -100,6 +103,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * @param in the InputStream from which this object should be created
      * @param mode the strategy to use
      * @param props Pack200 properties to use
+     * @throws IOException if reading fails
      */
     public Pack200CompressorInputStream(final InputStream in,
                                         final Pack200Strategy mode,
@@ -113,6 +117,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * memory.
      *
      * @param f the file to decompress
+     * @throws IOException if reading fails
      */
     public Pack200CompressorInputStream(final File f) throws IOException {
         this(f, Pack200Strategy.IN_MEMORY);
@@ -124,6 +129,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      *
      * @param f the file to decompress
      * @param mode the strategy to use
+     * @throws IOException if reading fails
      */
     public Pack200CompressorInputStream(final File f, final Pack200Strategy mode)
         throws IOException {
@@ -136,6 +142,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      *
      * @param f the file to decompress
      * @param props Pack200 properties to use
+     * @throws IOException if reading fails
      */
     public Pack200CompressorInputStream(final File f,
                                         final Map<String, String> props)
@@ -150,6 +157,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
      * @param f the file to decompress
      * @param mode the strategy to use
      * @param props Pack200 properties to use
+     * @throws IOException if reading fails
      */
     public Pack200CompressorInputStream(final File f, final Pack200Strategy mode,
                                         final Map<String, String> props)

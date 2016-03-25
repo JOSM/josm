@@ -84,6 +84,8 @@ public class LZMAUtils {
 
     /**
      * Are the classes required to support LZMA compression available?
+     * @return true if the classes required to support LZMA
+     * compression are available
      */
     public static boolean isLZMACompressionAvailable() {
         final CachedAvailability cachedResult = cachedLZMAAvailability;

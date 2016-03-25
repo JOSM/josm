@@ -33,6 +33,7 @@ public class DeflateParameters {
     /**
      * Whether or not the zlib header shall be written (when
      * compressing) or expected (when decompressing).
+     * @return true if zlib header shall be written
      */
     public boolean withZlibHeader() {
         return zlibHeader;
@@ -44,7 +45,7 @@ public class DeflateParameters {
      * <p>This affects whether or not the zlib header will be written
      * (when compressing) or expected (when decompressing).</p>
      *
-     * @param zlibHeader
+     * @param zlibHeader true if zlib header shall be written
      */
     public void setWithZlibHeader(boolean zlibHeader) {
         this.zlibHeader = zlibHeader;
@@ -53,6 +54,7 @@ public class DeflateParameters {
     /**
      * The compression level.
      * @see #setCompressionLevel
+     * @return the compression level
      */
     public int getCompressionLevel() {
         return compressionLevel;
