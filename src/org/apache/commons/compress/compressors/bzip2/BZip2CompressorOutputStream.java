@@ -605,6 +605,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
     /**
      * Returns the blocksize parameter specified at construction time.
+     * @return the blocksize parameter specified at construction time
      */
     public final int getBlockSize() {
         return this.blockSize100k;

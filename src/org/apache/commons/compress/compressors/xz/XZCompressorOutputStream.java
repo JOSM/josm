@@ -88,6 +88,7 @@ public class XZCompressorOutputStream extends CompressorOutputStream {
     /**
      * Finishes compression without closing the underlying stream.
      * No more data can be written to this stream after finishing.
+     * @throws IOException on error
      */
     public void finish() throws IOException {
         out.finish();

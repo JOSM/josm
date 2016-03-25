@@ -78,7 +78,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      * @param is
      *            An InputStream to read compressed data from
      * 
-     * @throws IOException
+     * @throws IOException if reading fails
      */
     public SnappyCompressorInputStream(final InputStream is) throws IOException {
         this(is, DEFAULT_BLOCK_SIZE);
@@ -92,7 +92,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      * @param blockSize
      *            The block size used in compression
      * 
-     * @throws IOException
+     * @throws IOException if reading fails
      */
     public SnappyCompressorInputStream(final InputStream is, final int blockSize)
             throws IOException {

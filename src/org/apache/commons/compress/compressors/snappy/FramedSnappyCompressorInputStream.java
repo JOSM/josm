@@ -73,6 +73,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
      * Constructs a new input stream that decompresses snappy-framed-compressed data
      * from the specified input stream.
      * @param in  the InputStream from which to read the compressed data
+     * @throws IOException if reading fails
      */
     public FramedSnappyCompressorInputStream(InputStream in) throws IOException {
         this.in = new PushbackInputStream(in, 1);

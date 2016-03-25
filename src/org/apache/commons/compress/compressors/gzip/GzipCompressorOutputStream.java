@@ -63,6 +63,8 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
 
     /**
      * Creates a gzip compressed output stream with the default parameters.
+     * @param out the stream to compress to
+     * @throws IOException if writing fails
      */
     public GzipCompressorOutputStream(OutputStream out) throws IOException {
         this(out, new GzipParameters());
@@ -70,6 +72,9 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
 
     /**
      * Creates a gzip compressed output stream with the specified parameters.
+     * @param out the stream to compress to
+     * @param parameters the parameters to use
+     * @throws IOException if writing fails
      * 
      * @since 1.7
      */
@@ -172,6 +177,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
      * Finishes writing compressed data to the underlying stream without closing it.
      * 
      * @since 1.7
+     * @throws IOException on error
      */
     public void finish() throws IOException {
         if (!deflater.finished()) {

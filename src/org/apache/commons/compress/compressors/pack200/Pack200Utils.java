@@ -53,6 +53,7 @@ public class Pack200Utils {
      * -1.</p>
      *
      * @param jar the JAR archive to normalize
+     * @throws IOException if reading or writing fails
      */
     public static void normalize(File jar)
         throws IOException {
@@ -73,6 +74,7 @@ public class Pack200Utils {
      * @param jar the JAR archive to normalize
      * @param props properties to set for the pack operation.  This
      * method will implicitly set the segment limit to -1.
+     * @throws IOException if reading or writing fails
      */
     public static void normalize(File jar, Map<String, String> props)
         throws IOException {
@@ -97,6 +99,7 @@ public class Pack200Utils {
      *
      * @param from the JAR archive to normalize
      * @param to the normalized archive
+     * @throws IOException if reading or writing fails
      */
     public static void normalize(File from, File to)
         throws IOException {
@@ -120,6 +123,7 @@ public class Pack200Utils {
      * @param to the normalized archive
      * @param props properties to set for the pack operation.  This
      * method will implicitly set the segment limit to -1.
+     * @throws IOException if reading or writing fails
      */
     public static void normalize(File from, File to, Map<String, String> props)
         throws IOException {
