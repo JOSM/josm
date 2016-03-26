@@ -409,7 +409,7 @@ public class GpxReader implements GpxConstants {
                     try {
                         currentWayPoint.put(localName, Float.valueOf(accumulator.toString()));
                     } catch (Exception e) {
-                        currentWayPoint.put(localName, new Float(0));
+                        currentWayPoint.put(localName, 0f);
                     }
                     break;
                 case "time":
