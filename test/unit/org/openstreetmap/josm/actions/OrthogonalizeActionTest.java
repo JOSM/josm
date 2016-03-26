@@ -43,10 +43,10 @@ public class OrthogonalizeActionTest {
     public void testClosedWay() throws Exception {
         final DataSet ds = performTest("name=ClosedWay");
         final Way way = ds.getSelectedWays().iterator().next();
-        assertEquals(new LatLon(8.538808176881814, 55.72978898396922), way.getNode(0).getCoor());
-        assertEquals(new LatLon(8.539618224318104, 55.73039799489563), way.getNode(1).getCoor());
-        assertEquals(new LatLon(8.538993302766201, 55.73124794515577), way.getNode(2).getCoor());
-        assertEquals(new LatLon(8.538183254003354, 55.730638934229376), way.getNode(3).getCoor());
+        assertEquals(new LatLon(8.5388082, 55.7297890), way.getNode(0).getCoor().getRoundedToOsmPrecision());
+        assertEquals(new LatLon(8.5396182, 55.7303980), way.getNode(1).getCoor().getRoundedToOsmPrecision());
+        assertEquals(new LatLon(8.5389933, 55.7312479), way.getNode(2).getCoor().getRoundedToOsmPrecision());
+        assertEquals(new LatLon(8.5381833, 55.7306389), way.getNode(3).getCoor().getRoundedToOsmPrecision());
         verifyRectangleClockwise(way);
     }
 
@@ -64,10 +64,10 @@ public class OrthogonalizeActionTest {
     public void testClosedWayWithReferenceNodes() throws Exception {
         final DataSet ds = performTest("name=ClosedWayWithReferenceNodes");
         final Way way = ds.getSelectedWays().iterator().next();
-        assertEquals(new LatLon(8.534711427, 55.73000670312), way.getNode(0).getCoor());
-        assertEquals(new LatLon(8.53547720918594, 55.73067141759374), way.getNode(1).getCoor());
-        assertEquals(new LatLon(8.534835495633061, 55.73142735279376), way.getNode(2).getCoor());
-        assertEquals(new LatLon(8.53406971216, 55.73076263832), way.getNode(3).getCoor());
+        assertEquals(new LatLon(8.5347114, 55.7300067), way.getNode(0).getCoor().getRoundedToOsmPrecision());
+        assertEquals(new LatLon(8.5354772, 55.7306714), way.getNode(1).getCoor().getRoundedToOsmPrecision());
+        assertEquals(new LatLon(8.5348355, 55.7314274), way.getNode(2).getCoor().getRoundedToOsmPrecision());
+        assertEquals(new LatLon(8.5340697, 55.7307626), way.getNode(3).getCoor().getRoundedToOsmPrecision());
         verifyRectangleClockwise(way);
     }
 
@@ -76,10 +76,10 @@ public class OrthogonalizeActionTest {
         final DataSet ds = performTest(
                 "name=NodeToRectify-01", "name=NodeToRectify-02", "name=NodeToRectify-03", "name=NodeToRectify-04");
         final List<Node> nodes = new ArrayList<>(ds.getSelectedNodes());
-        assertEquals(new LatLon(8.532735415272217, 55.72986948949525), nodes.get(0).getCoor());
-        assertEquals(new LatLon(8.533520827858515, 55.73043325105434), nodes.get(1).getCoor());
-        assertEquals(new LatLon(8.532914283300173, 55.73129729115582), nodes.get(2).getCoor());
-        assertEquals(new LatLon(8.532055019939826, 55.73068052126457), nodes.get(3).getCoor());
+        assertEquals(new LatLon(8.5327354, 55.7298695), nodes.get(0).getCoor().getRoundedToOsmPrecision());
+        assertEquals(new LatLon(8.5335208, 55.7304333), nodes.get(1).getCoor().getRoundedToOsmPrecision());
+        assertEquals(new LatLon(8.5329143, 55.7312973), nodes.get(2).getCoor().getRoundedToOsmPrecision());
+        assertEquals(new LatLon(8.5320550, 55.7306805), nodes.get(3).getCoor().getRoundedToOsmPrecision());
     }
 
     DataSet performTest(String... search) throws Exception {
