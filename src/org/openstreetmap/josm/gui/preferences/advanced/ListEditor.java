@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class ListEditor extends AbstractListEditor<String> {
 
-    private final List<String> data;
+    private final ListSettingTableModel model;
 
     /**
      * Constructs a new {@code ListEditor}.
@@ -37,18 +37,13 @@ public class ListEditor extends AbstractListEditor<String> {
      */
     public ListEditor(final JComponent gui, PrefEntry entry, ListSetting setting) {
         super(gui, tr("Change list setting"), entry);
-        List<String> orig = setting.getValue();
-        if (orig != null) {
-            data = new ArrayList<>(orig);
-        } else {
-            data = new ArrayList<>();
-        }
+        model = new ListSettingTableModel(setting.getValue());
         setContent(build(), false);
     }
 
     @Override
     public List<String> getData() {
-        return new ArrayList<>(Utils.filter(data, new Predicate<String>() {
+        return new ArrayList<>(Utils.filter(model.getData(), new Predicate<String>() {
             @Override
             public boolean evaluate(String object) {
                 return object != null && !object.isEmpty();
@@ -60,8 +55,7 @@ public class ListEditor extends AbstractListEditor<String> {
     protected final JPanel build() {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.eol().insets(0, 0, 5, 0));
-        ListSettingTableModel listModel = new ListSettingTableModel();
-        JTable table = new JTable(listModel);
+        JTable table = new JTable(model);
         table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         table.setTableHeader(null);
 
@@ -74,7 +68,17 @@ public class ListEditor extends AbstractListEditor<String> {
         return p;
     }
 
-    class ListSettingTableModel extends AbstractTableModel {
+    static class ListSettingTableModel extends AbstractTableModel {
+
+        private final List<String> data;
+
+        ListSettingTableModel(List<String> orig) {
+            if (orig != null) {
+                data = new ArrayList<>(orig);
+            } else {
+                data = new ArrayList<>();
+            }
+        }
 
         public List<String> getData() {
             return data;
