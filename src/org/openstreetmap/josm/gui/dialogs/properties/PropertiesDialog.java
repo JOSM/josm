@@ -565,7 +565,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         ).setVisible(true);
     }
 
-    private int findViewRow(JTable table, TableModel model, Object value) {
+    private static int findViewRow(JTable table, TableModel model, Object value) {
         for (int i = 0; i < model.getRowCount(); i++) {
             if (model.getValueAt(i, 0).equals(value))
                 return table.convertRowIndexToView(i);

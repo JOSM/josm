@@ -260,7 +260,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             throw new IllegalArgumentException(tr("No layers defined by getCapabilities document: {0}", info.getUrl()));
     }
 
-    private Layer userSelectLayer(Collection<Layer> layers) {
+    private static Layer userSelectLayer(Collection<Layer> layers) {
         if (layers.size() == 1)
             return layers.iterator().next();
         Layer ret = null;

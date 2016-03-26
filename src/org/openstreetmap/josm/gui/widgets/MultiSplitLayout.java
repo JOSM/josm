@@ -344,7 +344,7 @@ public class MultiSplitLayout implements LayoutManager {
         return r;
     }
 
-    private void minimizeSplitBounds(Split split, Rectangle bounds) {
+    private static void minimizeSplitBounds(Split split, Rectangle bounds) {
         Rectangle splitBounds = new Rectangle(bounds.x, bounds.y, 0, 0);
         List<Node> splitChildren = split.getChildren();
         Node lastChild = splitChildren.get(splitChildren.size() - 1);
@@ -709,7 +709,7 @@ public class MultiSplitLayout implements LayoutManager {
         }
     }
 
-    private void throwInvalidLayout(String msg, Node node) {
+    private static void throwInvalidLayout(String msg, Node node) {
         throw new InvalidLayoutException(msg, node);
     }
 
@@ -758,7 +758,7 @@ public class MultiSplitLayout implements LayoutManager {
         layout2(getModel(), bounds);
     }
 
-    private Divider dividerAt(Node root, int x, int y) {
+    private static Divider dividerAt(Node root, int x, int y) {
         if (root instanceof Divider) {
             Divider divider = (Divider) root;
             return divider.getBounds().contains(x, y) ? divider : null;
@@ -784,7 +784,7 @@ public class MultiSplitLayout implements LayoutManager {
         return dividerAt(getModel(), x, y);
     }
 
-    private boolean nodeOverlapsRectangle(Node node, Rectangle r2) {
+    private static boolean nodeOverlapsRectangle(Node node, Rectangle r2) {
         Rectangle r1 = node.getBounds();
         return
         (r1.x <= (r2.x + r2.width)) && ((r1.x + r1.width) >= r2.x) &&

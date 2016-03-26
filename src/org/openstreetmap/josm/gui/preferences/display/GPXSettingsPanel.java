@@ -445,7 +445,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         return savePreferences(null, false);
     }
 
-    private void updateWaypointLabelCombobox(JosmComboBox<String> cb, JosmTextField tf, TemplateEntryProperty property) {
+    private static void updateWaypointLabelCombobox(JosmComboBox<String> cb, JosmTextField tf, TemplateEntryProperty property) {
         String labelPattern = property.getAsString();
         boolean found = false;
         for (int i = 0; i < LABEL_PATTERN_TEMPLATE.length; i++) {
@@ -462,7 +462,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         }
     }
 
-    private void updateWaypointPattern(JosmComboBox<String> cb, JosmTextField tf) {
+    private static void updateWaypointPattern(JosmComboBox<String> cb, JosmTextField tf) {
         if (cb.getSelectedIndex() == WAYPOINT_LABEL_CUSTOM) {
             tf.setEnabled(true);
         } else {

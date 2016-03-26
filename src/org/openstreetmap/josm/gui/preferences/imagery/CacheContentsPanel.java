@@ -227,7 +227,7 @@ public class CacheContentsPanel extends JPanel {
         return ret;
     }
 
-    private JTable getTableForCache(final CacheAccess<String, BufferedImageCacheEntry> cache, final TableModel tableModel) {
+    private static JTable getTableForCache(final CacheAccess<String, BufferedImageCacheEntry> cache, final TableModel tableModel) {
         final JTable ret = new JTable(tableModel);
 
         ButtonColumn buttonColumn = new ButtonColumn(

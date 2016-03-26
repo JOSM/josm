@@ -68,7 +68,7 @@ public final class CreateCircleAction extends JosmAction {
      * @param nodesCount Number of nodes to be distributed
      * @return Array of number of nodes to put in each arc
      */
-    private int[] distributeNodes(PolarNode[] angles, int nodesCount) {
+    private static int[] distributeNodes(PolarNode[] angles, int nodesCount) {
         int[] count = new int[angles.length];
         double[] width = new double[angles.length];
         double[] remainder = new double[angles.length];

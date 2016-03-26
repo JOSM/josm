@@ -30,7 +30,7 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
 
     private final Collection<TableCellRenderer> customRenderer = new CopyOnWriteArrayList<>();
 
-    private void setColors(Component c, String key, boolean isSelected) {
+    private static void setColors(Component c, String key, boolean isSelected) {
         UIDefaults defaults = javax.swing.UIManager.getDefaults();
         if (OsmPrimitive.getDiscardableKeys().contains(key)) {
             if (isSelected) {

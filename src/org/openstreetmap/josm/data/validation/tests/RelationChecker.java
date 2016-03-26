@@ -125,7 +125,7 @@ public class RelationChecker extends Test {
         }
     }
 
-    private Map<String, RoleInfo> buildRoleInfoMap(Relation n) {
+    private static Map<String, RoleInfo> buildRoleInfoMap(Relation n) {
         Map<String, RoleInfo> map = new HashMap<>();
         for (RelationMember m : n.getMembers()) {
             String role = m.getRole();
@@ -140,7 +140,7 @@ public class RelationChecker extends Test {
     }
 
     // return Roles grouped by key
-    private Map<String, RolePreset> buildAllRoles(Relation n) {
+    private static Map<String, RolePreset> buildAllRoles(Relation n) {
         Map<String, RolePreset> allroles = new HashMap<>();
 
         for (TaggingPreset p : relationpresets) {

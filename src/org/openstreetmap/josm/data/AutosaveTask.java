@@ -323,7 +323,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         return result;
     }
 
-    private boolean jvmPerfDataFileExists(final String jvmId) {
+    private static boolean jvmPerfDataFileExists(final String jvmId) {
         File jvmDir = new File(System.getProperty("java.io.tmpdir") + File.separator + "hsperfdata_" + System.getProperty("user.name"));
         if (jvmDir.exists() && jvmDir.canRead()) {
             File[] files = jvmDir.listFiles(new FileFilter() {

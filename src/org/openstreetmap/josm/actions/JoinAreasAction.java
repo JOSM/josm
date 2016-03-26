@@ -776,7 +776,7 @@ public class JoinAreasAction extends JosmAction {
      * @return list of parts, marked with the inside orientation.
      * @throws IllegalArgumentException if parts is empty
      */
-    private List<WayInPolygon> markWayInsideSide(List<Way> parts, boolean isInner) {
+    private static List<WayInPolygon> markWayInsideSide(List<Way> parts, boolean isInner) {
 
         //prepare next map
         Map<Way, Way> nextWayMap = new HashMap<>();
@@ -1025,7 +1025,7 @@ public class JoinAreasAction extends JosmAction {
      * @param boundaryWays list of joined boundaries to search in
      * @return the outermost Way.
      */
-    private List<PolygonLevel> findOuterWaysImpl(int level, Collection<AssembledPolygon> boundaryWays) {
+    private static List<PolygonLevel> findOuterWaysImpl(int level, Collection<AssembledPolygon> boundaryWays) {
 
         //TODO: bad performance for deep nestings...
         List<PolygonLevel> result = new ArrayList<>();
@@ -1292,7 +1292,7 @@ public class JoinAreasAction extends JosmAction {
      * @param selectedWays the selected ways
      * @return list of polygons, or null if too complex relation encountered.
      */
-    private List<Multipolygon> collectMultipolygons(Collection<Way> selectedWays) {
+    private static List<Multipolygon> collectMultipolygons(Collection<Way> selectedWays) {
 
         List<Multipolygon> result = new ArrayList<>();
 

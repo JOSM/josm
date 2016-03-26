@@ -770,7 +770,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             }
         }
 
-        private boolean confirmEulaAcceptance(PreferenceTabbedPane gui, String eulaUrl) {
+        private static boolean confirmEulaAcceptance(PreferenceTabbedPane gui, String eulaUrl) {
             URL url = null;
             try {
                 url = new URL(eulaUrl.replaceAll("\\{lang\\}", LanguageInfo.getWikiLanguagePrefix()));

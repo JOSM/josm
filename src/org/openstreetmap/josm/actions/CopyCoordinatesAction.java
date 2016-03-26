@@ -46,7 +46,7 @@ public class CopyCoordinatesAction extends JosmAction {
         updateEnabledState();
     }
 
-    private Collection<Node> getSelectedNodes() {
+    private static Collection<Node> getSelectedNodes() {
         if (getCurrentDataSet() == null || getCurrentDataSet().getSelected() == null) {
             return Collections.emptyList();
         } else {

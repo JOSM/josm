@@ -81,7 +81,7 @@ public class SelectionEventManager implements SelectionChangedListener {
         SwingUtilities.invokeLater(edtRunnable);
     }
 
-    private void fireEvents(List<ListenerInfo> listeners, Collection<? extends OsmPrimitive> newSelection) {
+    private static void fireEvents(List<ListenerInfo> listeners, Collection<? extends OsmPrimitive> newSelection) {
         for (ListenerInfo listener: listeners) {
             listener.listener.selectionChanged(newSelection);
         }
@@ -95,5 +95,4 @@ public class SelectionEventManager implements SelectionChangedListener {
             }
         }
     };
-
 }

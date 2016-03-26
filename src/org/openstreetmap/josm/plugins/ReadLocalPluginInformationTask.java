@@ -72,7 +72,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         }
     }
 
-    private File[] listFiles(File pluginsDirectory, final String regex) {
+    private static File[] listFiles(File pluginsDirectory, final String regex) {
         return pluginsDirectory.listFiles(
                 new FilenameFilter() {
                     @Override

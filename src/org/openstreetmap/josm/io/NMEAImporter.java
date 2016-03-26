@@ -66,7 +66,7 @@ public class NMEAImporter extends FileImporter {
         }
     }
 
-    private void showNmeaInfobox(boolean success, NmeaReader r) {
+    private static void showNmeaInfobox(boolean success, NmeaReader r) {
         final StringBuilder msg = new StringBuilder(160).append("<html>");
         msg.append(tr("Coordinates imported: {0}", r.getNumberOfCoordinates())).append("<br>")
            .append(tr("Malformed sentences: {0}", r.getParserMalformed())).append("<br>")
