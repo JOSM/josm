@@ -8,7 +8,7 @@
 **   https://josm.openstreetmap.de/wiki/DevelopersGuide/CreateBuild
 **
 -->
-<project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" xmlns:jacoco="antlib:org.jacoco.ant">
+<project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" xmlns:jacoco="antlib:org.jacoco.ant" xmlns:if="ant:if">
     <target name="init-properties">
         <!-- Load properties in a target and not at top level, so this build file can be
         imported from an IDE ant file (Netbeans) without messing up IDE properties.
@@ -387,6 +387,7 @@ Build-Date: ${build.tstamp}
             <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec">
                 <junit printsummary="yes" fork="true" forkmode="once">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
+                	<jvmarg value="-XaddExports:java.base/sun.security.x509=ALL-UNNAMED" if:true="isJava9" />
                     <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
                     <sysproperty key="josm.test.data" value="${test.dir}/data"/>
                     <sysproperty key="java.awt.headless" value="true"/>
