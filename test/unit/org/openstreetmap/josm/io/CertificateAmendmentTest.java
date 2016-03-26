@@ -19,10 +19,9 @@ public class CertificateAmendmentTest {
 
     /**
      * Setup test.
-     * @throws IOException in case of I/O error
      */
     @BeforeClass
-    public static void setUp() throws IOException {
+    public static void setUp() {
         JOSMFixture.createUnitTestFixture().init();
     }
 

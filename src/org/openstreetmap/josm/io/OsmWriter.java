@@ -238,10 +238,9 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     }
 
     public void visit(Changeset cs) {
-        out.print("  <changeset ");
-        out.print(" id='"+cs.getId()+'\'');
+        out.print("  <changeset id='"+cs.getId()+'\'');
         if (cs.getUser() != null) {
-            out.print(" user='"+cs.getUser().getName() +'\'');
+            out.print(" user='"+ XmlWriter.encode(cs.getUser().getName()) +'\'');
             out.print(" uid='"+cs.getUser().getId() +'\'');
         }
         if (cs.getCreatedAt() != null) {

@@ -280,7 +280,7 @@ public class OsmApi extends OsmConnection {
      * @param addBody true to generate the full XML, false to only generate the encapsulating tag
      * @return XML string
      */
-    private String toXml(IPrimitive o, boolean addBody) {
+    protected final String toXml(IPrimitive o, boolean addBody) {
         StringWriter swriter = new StringWriter();
         try (OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version)) {
             swriter.getBuffer().setLength(0);
@@ -301,7 +301,7 @@ public class OsmApi extends OsmConnection {
      * @param s the changeset
      * @return XML string
      */
-    private String toXml(Changeset s) {
+    protected final String toXml(Changeset s) {
         StringWriter swriter = new StringWriter();
         try (OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(swriter), true, version)) {
             swriter.getBuffer().setLength(0);
