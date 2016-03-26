@@ -14,7 +14,7 @@ import java.awt.event.WindowListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -213,7 +213,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
                 }
             }));
             tfId.tryToPasteFrom(parsedText);
-            final Set<OsmPrimitiveType> types = new HashSet<>(Utils.transform(ids, new Utils.Function<SimplePrimitiveId, OsmPrimitiveType>() {
+            final Set<OsmPrimitiveType> types = EnumSet.copyOf(Utils.transform(ids, new Utils.Function<SimplePrimitiveId, OsmPrimitiveType>() {
                 @Override
                 public OsmPrimitiveType apply(SimplePrimitiveId x) {
                     return x.getType();

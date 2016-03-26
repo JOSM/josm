@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -231,7 +231,7 @@ public abstract class Main {
     // First lines of last 5 error and warning messages, used for bug reports
     private static final List<String> ERRORS_AND_WARNINGS = Collections.<String>synchronizedList(new ArrayList<String>());
 
-    private static final Set<OnlineResource> OFFLINE_RESOURCES = new HashSet<>();
+    private static final Set<OnlineResource> OFFLINE_RESOURCES = EnumSet.noneOf(OnlineResource.class);
 
     /**
      * Logging level (5 = trace, 4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
@@ -1824,6 +1824,6 @@ public abstract class Main {
      * @since 7434
      */
     public static Set<OnlineResource> getOfflineResources() {
-        return new HashSet<>(OFFLINE_RESOURCES);
+        return EnumSet.copyOf(OFFLINE_RESOURCES);
     }
 }
