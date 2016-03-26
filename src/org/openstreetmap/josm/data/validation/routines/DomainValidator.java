@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016032201, Last Updated Wed Mar 23 07:07:01 2016 UTC
+        // Taken from Version 2016032401, Last Updated Fri Mar 25 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -315,6 +315,7 @@ public final class DomainValidator extends AbstractValidator {
         "alibaba", // alibaba Alibaba Group Holding Limited
         "alipay", // alipay Alibaba Group Holding Limited
         "allfinanz", // allfinanz Allfinanz Deutsche Vermögensberatung Aktiengesellschaft
+        "ally", // ally Ally Financial Inc.
         "alsace", // alsace REGION D ALSACE
         "amica", // amica Amica Mutual Insurance Company
         "amsterdam", // amsterdam Gemeente Amsterdam
@@ -347,6 +348,7 @@ public final class DomainValidator extends AbstractValidator {
         "barcelona", // barcelona Municipi de Barcelona
         "barclaycard", // barclaycard Barclays Bank PLC
         "barclays", // barclays Barclays Bank PLC
+        "barefoot", // barefoot Gallo Vineyards, Inc.
         "bargains", // bargains Half Hallow, LLC
         "bauhaus", // bauhaus Werkhaus GmbH
         "bayern", // bayern Bayern Connect GmbH
