@@ -40,7 +40,7 @@ public class JosmImageView extends ImageView {
      * @throws SecurityException see {@link Class#getDeclaredField} for details
      * @throws NoSuchFieldException see {@link Class#getDeclaredField} for details
      */
-    public JosmImageView(Element elem) throws NoSuchFieldException, SecurityException {
+    public JosmImageView(Element elem) throws NoSuchFieldException {
         super(elem);
         imageField = ImageView.class.getDeclaredField("image");
         stateField = ImageView.class.getDeclaredField("state");
@@ -55,11 +55,11 @@ public class JosmImageView extends ImageView {
     /**
      * Makes sure the necessary properties and image is loaded.
      */
-    private void sync() {
+    private void doSync() {
         try {
             int s = (int) stateField.get(this);
             if ((s & RELOAD_IMAGE_FLAG) != 0) {
-                refreshImage();
+                doRefreshImage();
             }
             s = (int) stateField.get(this);
             if ((s & RELOAD_FLAG) != 0) {
@@ -84,8 +84,7 @@ public class JosmImageView extends ImageView {
      * @throws NoSuchMethodException see {@link Class#getDeclaredMethod} for details
      * @throws SecurityException see {@link Class#getDeclaredMethod} for details
      */
-    private void refreshImage() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException,
-        NoSuchMethodException, SecurityException {
+    private void doRefreshImage() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         synchronized (this) {
             // clear out width/height/reloadimage flag and set loading flag
             stateField.set(this, ((int) stateField.get(this) | LOADING_FLAG | RELOAD_IMAGE_FLAG | WIDTH_FLAG |
@@ -98,7 +97,7 @@ public class JosmImageView extends ImageView {
 
         try {
             // Load the image
-            loadImage();
+            doLoadImage();
 
             // And update the size params
             Method updateImageSize = ImageView.class.getDeclaredMethod("updateImageSize");
@@ -121,8 +120,7 @@ public class JosmImageView extends ImageView {
      * @throws NoSuchMethodException see {@link Class#getDeclaredMethod} for details
      * @throws SecurityException see {@link Class#getDeclaredMethod} for details
      */
-    private void loadImage() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException,
-        NoSuchMethodException, SecurityException {
+    private void doLoadImage() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         URL src = getImageURL();
         if (src != null) {
             String urlStr = src.toExternalForm();
@@ -141,31 +139,31 @@ public class JosmImageView extends ImageView {
 
     @Override
     public Image getImage() {
-        sync();
+        doSync();
         return super.getImage();
     }
 
     @Override
     public AttributeSet getAttributes() {
-        sync();
+        doSync();
         return super.getAttributes();
     }
 
     @Override
     public void paint(Graphics g, Shape a) {
-        sync();
+        doSync();
         super.paint(g, a);
     }
 
     @Override
     public float getPreferredSpan(int axis) {
-        sync();
+        doSync();
         return super.getPreferredSpan(axis);
     }
 
     @Override
     public void setSize(float width, float height) {
-        sync();
+        doSync();
         super.setSize(width, height);
     }
 }
