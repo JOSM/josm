@@ -148,6 +148,7 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
                 ((AbstractMapViewPaintable) p).addInvalidationListener(this);
             }
         }
+
         /**
          * Temporary until all {@link MapViewPaintable}s support this.
          * @param p The paintable.
