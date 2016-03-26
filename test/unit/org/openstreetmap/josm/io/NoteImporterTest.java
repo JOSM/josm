@@ -17,10 +17,9 @@ public class NoteImporterTest {
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12531">Bug #12531</a>.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket12531() throws Exception {
+    public void testTicket12531() {
         assertNull(Main.map);
         assertTrue(new NoteImporter().importDataHandleExceptions(
                 new File(TestUtils.getRegressionDataFile(12531, "notes.osn")), null));
