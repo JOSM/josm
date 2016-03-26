@@ -190,8 +190,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
     @Override
     public Color getColor(boolean ignoreCustom) {
-        String name = getName();
-        return Main.pref.getColor(marktr("gps marker"), name != null ? "layer "+name : null, DEFAULT_COLOR);
+        return Main.pref.getColor(marktr("gps marker"), "layer "+getName(), DEFAULT_COLOR);
     }
 
     /* for preferences */
@@ -222,7 +221,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
     @Override
     public String getToolTipText() {
-        return data.size()+' '+trn("marker", "markers", data.size());
+        return data.size()+" "+trn("marker", "markers", data.size());
     }
 
     @Override
