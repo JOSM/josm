@@ -46,7 +46,9 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
         if (!cmds.isEmpty()) {
             Main.main.undoRedo.add(new SequenceCommand(tr("Add selection to relation"), cmds));
             new Notification(
-                    tr("<html><strong>Add selection to relation</strong>: Control every single relation to avoid damage!"))
+                    "<html>"+
+                    tr("{0}Add selection to relation{1}: Verify every single relation to avoid damage!", "<strong>", "</strong>")+
+                    "</html>")
                     .setIcon(JOptionPane.WARNING_MESSAGE)
                     .show();
         }
