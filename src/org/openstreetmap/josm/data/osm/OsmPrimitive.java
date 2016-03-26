@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
@@ -170,7 +171,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
-     * Some predicates, that describe conditions on primitives.
+     * A predicate that filters primitives that are usable.
+     * @see OsmPrimitive#isUsable()
      */
     public static final Predicate<OsmPrimitive> isUsablePredicate = new Predicate<OsmPrimitive>() {
         @Override
@@ -179,6 +181,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
     };
 
+    /**
+     * A predicate filtering primitives that are selectable.
+     */
     public static final Predicate<OsmPrimitive> isSelectablePredicate = new Predicate<OsmPrimitive>() {
         @Override
         public boolean evaluate(OsmPrimitive primitive) {
@@ -186,60 +191,71 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
     };
 
+    /**
+     * A predicate filtering primitives that are not deleted.
+     */
     public static final Predicate<OsmPrimitive> nonDeletedPredicate = new Predicate<OsmPrimitive>() {
         @Override public boolean evaluate(OsmPrimitive primitive) {
             return !primitive.isDeleted();
         }
     };
 
+    /**
+     * A predicate filtering primitives that are not deleted and not incomplete.
+     */
     public static final Predicate<OsmPrimitive> nonDeletedCompletePredicate = new Predicate<OsmPrimitive>() {
         @Override public boolean evaluate(OsmPrimitive primitive) {
             return !primitive.isDeleted() && !primitive.isIncomplete();
         }
     };
 
+    /**
+     * A predicate filtering primitives that are not deleted and not incomplete and that are not a relation.
+     */
     public static final Predicate<OsmPrimitive> nonDeletedPhysicalPredicate = new Predicate<OsmPrimitive>() {
         @Override public boolean evaluate(OsmPrimitive primitive) {
             return !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation);
         }
     };
 
+    /**
+     * A predicate filtering primitives that are modified
+     */
     public static final Predicate<OsmPrimitive> modifiedPredicate = new Predicate<OsmPrimitive>() {
         @Override public boolean evaluate(OsmPrimitive primitive) {
             return primitive.isModified();
         }
     };
 
-    public static final Predicate<OsmPrimitive> nodePredicate = new Predicate<OsmPrimitive>() {
-        @Override public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.getClass() == Node.class;
-        }
-    };
+    /**
+     * A predicate filtering nodes.
+     */
+    public static final Predicate<OsmPrimitive> nodePredicate = Predicates.<OsmPrimitive>isOfClass(Node.class);
 
-    public static final Predicate<OsmPrimitive> wayPredicate = new Predicate<OsmPrimitive>() {
-        @Override public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.getClass() == Way.class;
-        }
-    };
+    /**
+     * A predicate filtering ways.
+     */
+    public static final Predicate<OsmPrimitive> wayPredicate = Predicates.<OsmPrimitive>isOfClass(Way.class);
 
-    public static final Predicate<OsmPrimitive> relationPredicate = new Predicate<OsmPrimitive>() {
-        @Override public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.getClass() == Relation.class;
-        }
-    };
+    /**
+     * A predicate filtering relations.
+     */
+    public static final Predicate<OsmPrimitive> relationPredicate = Predicates.<OsmPrimitive>isOfClass(Relation.class);
 
+    /**
+     * A predicate filtering multipolygon relations.
+     */
     public static final Predicate<OsmPrimitive> multipolygonPredicate = new Predicate<OsmPrimitive>() {
         @Override public boolean evaluate(OsmPrimitive primitive) {
             return primitive.getClass() == Relation.class && ((Relation) primitive).isMultipolygon();
         }
     };
 
-    public static final Predicate<OsmPrimitive> allPredicate = new Predicate<OsmPrimitive>() {
-        @Override public boolean evaluate(OsmPrimitive primitive) {
-            return true;
-        }
-    };
-
+    /**
+     * This matches all ways that have a direction
+     *
+     * @see #FLAG_HAS_DIRECTIONS
+     */
     public static final Predicate<Tag> directionalKeyPredicate = new Predicate<Tag>() {
         @Override
         public boolean evaluate(Tag tag) {
@@ -676,6 +692,10 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         return false;
     }
 
+    /**
+     * Updates the highlight flag for this primitive.
+     * @param highlighted The new highlight flag.
+     */
     public void setHighlighted(boolean highlighted) {
         if (isHighlighted() != highlighted) {
             updateFlags(FLAG_HIGHLIGHTED, highlighted);
@@ -685,6 +705,10 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
     }
 
+    /**
+     * Checks if the highlight flag for this primitive was set
+     * @return The highlight flag.
+     */
     public boolean isHighlighted() {
         return (flags & FLAG_HIGHLIGHTED) != 0;
     }
@@ -819,14 +843,20 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         return result;
     }
 
+    /**
+     * A tagged way that matches this pattern has a direction.
+     * @see #FLAG_HAS_DIRECTIONS
+     */
     private static volatile Match directionKeys;
-    private static volatile Match reversedDirectionKeys;
 
     /**
-     * Contains a list of direction-dependent keys that make an object
-     * direction dependent.
-     * Initialized by checkDirectionTagged()
+     * A tagged way that matches this pattern has a direction that is reversed.
+     * <p>
+     * This pattern should be a subset of {@link #directionKeys}
+     * @see #FLAG_DIRECTION_REVERSED
      */
+    private static volatile Match reversedDirectionKeys;
+
     static {
         String reversedDirectionDefault = "oneway=\"-1\"";
 
@@ -836,27 +866,21 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
                 "junction=roundabout | (highway=motorway & -oneway=no & -oneway=reversible) | "+
                 "(highway=motorway_link & -oneway=no & -oneway=reversible)";
 
-        try {
-            reversedDirectionKeys = SearchCompiler.compile(Main.pref.get("tags.reversed_direction", reversedDirectionDefault));
-        } catch (ParseError e) {
-            Main.error("Unable to compile pattern for tags.reversed_direction, trying default pattern: " + e.getMessage());
+        reversedDirectionKeys = compileDirectionKeys("tags.reversed_direction", reversedDirectionDefault);
+        directionKeys = compileDirectionKeys("tags.direction", directionDefault);
+    }
 
-            try {
-                reversedDirectionKeys = SearchCompiler.compile(reversedDirectionDefault);
-            } catch (ParseError e2) {
-                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage(), e2);
-            }
+    private static Match compileDirectionKeys(String prefName, String defaultValue) throws AssertionError {
+        try {
+            return SearchCompiler.compile(Main.pref.get(prefName, defaultValue));
+        } catch (ParseError e) {
+            Main.error("Unable to compile pattern for " + prefName + ", trying default pattern: " + e.getMessage());
         }
-        try {
-            directionKeys = SearchCompiler.compile(Main.pref.get("tags.direction", directionDefault));
-        } catch (ParseError e) {
-            Main.error("Unable to compile pattern for tags.direction, trying default pattern: " + e.getMessage());
 
-            try {
-                directionKeys = SearchCompiler.compile(directionDefault);
-            } catch (ParseError e2) {
-                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage(), e2);
-            }
+        try {
+            return SearchCompiler.compile(defaultValue);
+        } catch (ParseError e2) {
+            throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage(), e2);
         }
     }
 

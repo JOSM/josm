@@ -16,6 +16,36 @@ public final class Predicates {
     }
 
     /**
+     * Creates a predicate that returns true every time.
+     * @param <T> The type of the predicate.
+     * @return A predicate returning <code>true</code>
+     * @since 10040
+     */
+    public static <T> Predicate<T> alwaysTrue() {
+        return new Predicate<T>() {
+            @Override
+            public boolean evaluate(T object) {
+                return true;
+            }
+        };
+    }
+
+    /**
+     * Creates a predicate that returns false every time.
+     * @param <T> The type of the predicate.
+     * @return A predicate returning <code>false</code>
+     * @since 10040
+     */
+    public static <T> Predicate<T> alwaysFalse() {
+        return new Predicate<T>() {
+            @Override
+            public boolean evaluate(T object) {
+                return false;
+            }
+        };
+    }
+
+    /**
      * Returns the negation of {@code predicate}.
      * @param <T> type of items
      * @param predicate the predicate to negate
@@ -41,6 +71,21 @@ public final class Predicates {
             @Override
             public boolean evaluate(T obj) {
                 return Objects.equals(obj, ref);
+            }
+        };
+    }
+
+    /**
+     * Creates a new predicate that checks if elements are exactly of that class.
+     * @param <T> The predicate type.
+     * @param clazz The class the elements must have.
+     * @return A predicate.
+     */
+    public static <T> Predicate<T> isOfClass(final Class<? extends T> clazz) {
+        return new Predicate<T>() {
+            @Override
+            public boolean evaluate(T obj) {
+                return obj != null && obj.getClass() == clazz;
             }
         };
     }

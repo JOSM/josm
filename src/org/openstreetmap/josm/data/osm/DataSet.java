@@ -47,6 +47,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -263,7 +264,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      */
     private final QuadBuckets<Node> nodes = new QuadBuckets<>();
 
-    private <T extends OsmPrimitive> Collection<T> getPrimitives(Predicate<OsmPrimitive> predicate) {
+    private <T extends OsmPrimitive> Collection<T> getPrimitives(Predicate<? super OsmPrimitive> predicate) {
         return new SubclassFilteredCollection<>(allPrimitives, predicate);
     }
 
@@ -401,7 +402,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return A collection containing all primitives of the dataset. Data is not ordered
      */
     public Collection<OsmPrimitive> allPrimitives() {
-        return getPrimitives(OsmPrimitive.allPredicate);
+        return getPrimitives(Predicates.alwaysTrue());
     }
 
     /**
