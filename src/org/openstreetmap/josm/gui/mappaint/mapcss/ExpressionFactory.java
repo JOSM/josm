@@ -516,7 +516,7 @@ public final class ExpressionFactory {
             if (env.index == null) {
                 return null;
             }
-            return new Float(env.index + 1);
+            return Float.valueOf(env.index + 1f);
         }
 
         /**

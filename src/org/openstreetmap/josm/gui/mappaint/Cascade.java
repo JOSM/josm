@@ -89,7 +89,7 @@ public final class Cascade implements Cloneable {
         if (klass == double.class || klass == Double.class) {
             o = toFloat(o);
             if (o != null) {
-                o = new Double((Float) o);
+                o = Double.valueOf((Float) o);
             }
             return (T) o;
         }
@@ -112,7 +112,6 @@ public final class Cascade implements Cloneable {
                 if (alpha != 255)
                     return (T) String.format("#%06x%02x", ((Color) o).getRGB() & 0x00ffffff, alpha);
                 return (T) String.format("#%06x", ((Color) o).getRGB() & 0x00ffffff);
-
             }
 
             return (T) o.toString();

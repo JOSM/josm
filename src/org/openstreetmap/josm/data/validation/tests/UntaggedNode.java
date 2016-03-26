@@ -4,6 +4,8 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Locale;
+
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
@@ -51,7 +53,7 @@ public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisi
 
     @Override
     public void visitKeyValue(AbstractPrimitive n, String key, String value) {
-        if (key.toLowerCase().contains("fixme") || value.toLowerCase().contains("fixme")) {
+        if (key.toLowerCase(Locale.ENGLISH).contains("fixme") || value.toLowerCase(Locale.ENGLISH).contains("fixme")) {
             /* translation note: don't translate quoted words */
             String msg = marktr("Has tag containing ''fixme'' or ''FIXME''");
             errors.add(new TestError(this, Severity.WARNING, ERROR_MESSAGE, tr(msg), msg, UNTAGGED_NODE_FIXME, (OsmPrimitive) n));
