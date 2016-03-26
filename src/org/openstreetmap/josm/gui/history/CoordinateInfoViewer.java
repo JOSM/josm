@@ -12,6 +12,7 @@ import java.util.Observer;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
@@ -21,6 +22,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Pair;
 
@@ -188,6 +190,16 @@ public class CoordinateInfoViewer extends JPanel {
         mapViewer.setDisplayToFitMapMarkers();
     }
 
+    private static JosmTextArea newTextArea() {
+        JosmTextArea area = new JosmTextArea();
+        GuiHelper.setBackgroundReadable(area, Color.WHITE);
+        area.setEditable(false);
+        area.setOpaque(true);
+        area.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        area.setFont(UIManager.getFont("Label.font"));
+        return area;
+    }
+
     private static class Updater {
         private final HistoryBrowserModel model;
         private final PointInTimeType role;
@@ -219,18 +231,15 @@ public class CoordinateInfoViewer extends JPanel {
 
             return Pair.create(node.getCoords(), oppositeNode.getCoords());
         }
-
     }
 
     /**
-     * A UI widgets which displays the Lan/Lon-coordinates of a
-     * {@link HistoryNode}.
-     *
+     * A UI widgets which displays the Lan/Lon-coordinates of a {@link HistoryNode}.
      */
     private static class LatLonViewer extends JPanel implements Observer {
 
-        private JLabel lblLat;
-        private JLabel lblLon;
+        private final JosmTextArea lblLat = newTextArea();
+        private final JosmTextArea lblLon = newTextArea();
         private final Updater updater;
         private final Color modifiedColor;
 
@@ -253,10 +262,7 @@ public class CoordinateInfoViewer extends JPanel {
             gc.gridy = 0;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
-            add(lblLat = new JLabel(), gc);
-            GuiHelper.setBackgroundReadable(lblLat, Color.WHITE);
-            lblLat.setOpaque(true);
-            lblLat.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+            add(lblLat, gc);
 
             // --------
             gc.gridx = 0;
@@ -271,14 +277,11 @@ public class CoordinateInfoViewer extends JPanel {
             gc.gridy = 1;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
-            add(lblLon = new JLabel(), gc);
-            GuiHelper.setBackgroundReadable(lblLon, Color.WHITE);
-            lblLon.setOpaque(true);
-            lblLon.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+            add(lblLon, gc);
         }
 
         /**
-         *
+         * Constrcuts a new {@code LatLonViewer}.
          * @param model a model
          * @param role the role for this viewer.
          */
@@ -356,7 +359,7 @@ public class CoordinateInfoViewer extends JPanel {
 
     private static class DistanceViewer extends JPanel implements Observer {
 
-        private JLabel lblDistance;
+        private final JosmTextArea lblDistance = newTextArea();
         private final Updater updater;
 
         DistanceViewer(HistoryBrowserModel model) {
@@ -383,10 +386,7 @@ public class CoordinateInfoViewer extends JPanel {
             gc.gridy = 0;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
-            add(lblDistance = new JLabel(), gc);
-            GuiHelper.setBackgroundReadable(lblDistance, Color.WHITE);
-            lblDistance.setOpaque(true);
-            lblDistance.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+            add(lblDistance, gc);
         }
 
         protected void refresh() {
