@@ -93,7 +93,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
     private final AbstractMapViewPaintable temporaryLayer = new AbstractMapViewPaintable() {
         @Override
         public void paint(Graphics2D g, MapView mv, Bounds bbox) {
-            ImproveWayAccuracyAction.this.paint(g, mv, bbox);;
+            ImproveWayAccuracyAction.this.paint(g, mv, bbox);
         }
     };
 
