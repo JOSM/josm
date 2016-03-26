@@ -230,7 +230,7 @@ public class OpeningHourTest extends Test.TagTest {
      * @param o error/warnign message
      * @return translated/shortened error/warnign message
      */
-    private String getErrorMessage(String key, Object o) {
+    private static String getErrorMessage(String key, Object o) {
         String msg = o.toString().trim()
         .replace("Unexpected token:", tr("Unexpected token:"))
         .replace("Unexpected token (school holiday parser):", tr("Unexpected token (school holiday parser):"))

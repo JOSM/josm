@@ -331,7 +331,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return result;
     }
 
-    private StringBuilder formatRelationNameAndType(Relation relation, StringBuilder result, TaggingPreset preset) {
+    private static StringBuilder formatRelationNameAndType(Relation relation, StringBuilder result, TaggingPreset preset) {
         if (preset == null) {
             result.append(getRelationTypeName(relation));
             String relationName = getRelationName(relation);

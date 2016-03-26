@@ -868,7 +868,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         }
     }
 
-    private boolean movesHiddenWay() {
+    private static boolean movesHiddenWay() {
         final Collection<OsmPrimitive> elementsToTest = new HashSet<>(getCurrentDataSet().getSelected());
         for (Way osm : Utils.filteredCollection(getCurrentDataSet().getSelected(), Way.class)) {
             elementsToTest.addAll(osm.getNodes());

@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016032401, Last Updated Fri Mar 25 07:07:01 2016 UTC
+        // Taken from Version 2016032600, Last Updated Sat Mar 26 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -339,6 +339,7 @@ public final class DomainValidator extends AbstractValidator {
         "auto", // auto Uniregistry, Corp.
         "autos", // autos DERAutos, LLC
         "avianca", // avianca Aerovias del Continente Americano S.A. Avianca
+        "aws", // aws Amazon Registry Services, Inc.
         "axa", // axa AXA SA
         "azure", // azure Microsoft Corporation
         "baidu", // baidu Baidu, Inc.
@@ -555,6 +556,7 @@ public final class DomainValidator extends AbstractValidator {
         "expert", // expert Magic Pass, LLC
         "exposed", // exposed Victor Beach, LLC
         "express", // express Sea Sunset, LLC
+        "extraspace", // extraspace Extra Space Storage LLC
         "fage", // fage Fage International S.A.
         "fail", // fail Atomic Pipe, LLC
         "fairwinds", // fairwinds FairWinds Partners, LLC
@@ -1048,6 +1050,7 @@ public final class DomainValidator extends AbstractValidator {
         "systems", // systems Dash Cypress, LLC
         "tab", // tab Tabcorp Holdings Limited
         "taipei", // taipei Taipei City Government
+        "talk", // talk Amazon Registry Services, Inc.
         "taobao", // taobao Alibaba Group Holding Limited
         "tatamotors", // tatamotors Tata Motors Ltd
         "tatar", // tatar Limited Liability Company "Coordination Center of Regional Domain of Tatarstan Republic"
@@ -1192,6 +1195,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--eckvdtc9d", // ポイント Amazon Registry Services, Inc.
         "xn--efvy88h", // 新闻 Xinhua News Agency Guangdong Branch 新华通讯社广东分社
         "xn--estv75g", // 工行 Industrial and Commercial Bank of China Limited
+        "xn--fct429k", // 家電 Amazon Registry Services, Inc.
         "xn--fhbei", // كوم VeriSign Sarl
         "xn--fiq228c5hs", // 中文网 TLD REGISTRY LIMITED
         "xn--fiq64b", // 中信 CITIC Group Corporation
@@ -1248,6 +1252,7 @@ public final class DomainValidator extends AbstractValidator {
         "yodobashi", // yodobashi YODOBASHI CAMERA CO.,LTD.
         "yoga", // yoga Top Level Domain Holdings Limited
         "yokohama", // yokohama GMO Registry, Inc.
+        "you", // you Amazon Registry Services, Inc.
         "youtube", // youtube Charleston Road Registry Inc.
         "zara", // zara Industria de Diseño Textil, S.A. (INDITEX, S.A.)
         "zero", // zero Amazon Registry Services, Inc.

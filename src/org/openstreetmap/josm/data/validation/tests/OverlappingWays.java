@@ -66,7 +66,7 @@ public class OverlappingWays extends Test {
         nodePairs = new MultiMap<>(1000);
     }
 
-    private boolean parentMultipolygonConcernsArea(OsmPrimitive p) {
+    private static boolean parentMultipolygonConcernsArea(OsmPrimitive p) {
         for (Relation r : OsmPrimitive.getFilteredList(p.getReferrers(), Relation.class)) {
             if (r.concernsArea()) {
                 return true;

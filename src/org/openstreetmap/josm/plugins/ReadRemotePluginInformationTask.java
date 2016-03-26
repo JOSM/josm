@@ -195,7 +195,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         }
     }
 
-    private void displayErrorMessage(final ProgressMonitor monitor, final String msg, final String details, final String title,
+    private static void displayErrorMessage(final ProgressMonitor monitor, final String msg, final String details, final String title,
             final String firstMessage) {
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override public void run() {

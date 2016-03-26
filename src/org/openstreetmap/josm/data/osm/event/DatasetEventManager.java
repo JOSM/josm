@@ -183,7 +183,7 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
         }
     }
 
-    private void fireEvents(List<ListenerInfo> listeners, AbstractDatasetChangedEvent event) {
+    private static void fireEvents(List<ListenerInfo> listeners, AbstractDatasetChangedEvent event) {
         for (ListenerInfo listener: listeners) {
             if (!listener.consolidate) {
                 event.fire(listener.listener);
@@ -191,7 +191,7 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
         }
     }
 
-    private void fireConsolidatedEvents(List<ListenerInfo> listeners, AbstractDatasetChangedEvent event) {
+    private static void fireConsolidatedEvents(List<ListenerInfo> listeners, AbstractDatasetChangedEvent event) {
         for (ListenerInfo listener: listeners) {
             if (listener.consolidate) {
                 event.fire(listener.listener);

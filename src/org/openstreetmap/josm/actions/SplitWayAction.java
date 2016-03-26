@@ -366,7 +366,7 @@ public class SplitWayAction extends JosmAction {
      * @param selectedNodes List of user selected nodes.
      * @return List of ways to split
      */
-    private List<Way> getApplicableWays(List<Way> selectedWays, List<Node> selectedNodes) {
+    private static List<Way> getApplicableWays(List<Way> selectedWays, List<Node> selectedNodes) {
         if (selectedNodes.isEmpty())
             return null;
 

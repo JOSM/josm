@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.tagging.presets;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,7 +54,7 @@ public final class TaggingPresetNameTemplateList implements TaggingPresetListene
     public TaggingPreset findPresetTemplate(OsmPrimitive primitive) {
         synchronized (this) {
             for (TaggingPreset t : presetsWithPattern) {
-                Collection<TaggingPresetType> type = Collections.singleton(TaggingPresetType.forPrimitive(primitive));
+                Collection<TaggingPresetType> type = EnumSet.of(TaggingPresetType.forPrimitive(primitive));
                 if (t.typeMatches(type)) {
                     if (t.nameTemplateFilter != null) {
                         if (t.nameTemplateFilter.match(primitive))

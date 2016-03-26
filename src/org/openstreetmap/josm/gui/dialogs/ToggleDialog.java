@@ -445,7 +445,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         destroyComponents(this, false);
     }
 
-    private void destroyComponents(Component component, boolean destroyItself) {
+    private static void destroyComponents(Component component, boolean destroyItself) {
         if (component instanceof Container) {
             for (Component c: ((Container) component).getComponents()) {
                 destroyComponents(c, true);

@@ -279,7 +279,7 @@ public class RelationNodeMap {
         return j;
     }
 
-    private Integer findAdjacentWay(NodesWays nw, Node n) {
+    private static Integer findAdjacentWay(NodesWays nw, Node n) {
         Set<Integer> adj = nw.nodes.get(n);
         if (adj == null || adj.isEmpty()) return null;
         return adj.iterator().next();

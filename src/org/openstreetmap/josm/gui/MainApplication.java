@@ -3,8 +3,6 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
 
 import java.awt.Dimension;
 import java.awt.Image;
@@ -74,6 +72,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Utils;
+
+import gnu.getopt.Getopt;
+import gnu.getopt.LongOpt;
 
 /**
  * Main window class application.
@@ -650,7 +651,7 @@ public class MainApplication extends Main {
             }
         }
 
-        private boolean handleNetworkOrProxyErrors(boolean hasErrors, String title, String message) {
+        private static boolean handleNetworkOrProxyErrors(boolean hasErrors, String title, String message) {
             if (hasErrors) {
                 ExtendedDialog ed = new ExtendedDialog(
                         Main.parent, title,
