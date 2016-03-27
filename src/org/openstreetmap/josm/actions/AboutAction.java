@@ -17,7 +17,6 @@ import java.io.InputStreamReader;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -25,6 +24,7 @@ import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -33,8 +33,6 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
  * Nice about screen.
@@ -95,9 +93,6 @@ public class AboutAction extends JosmAction {
         info.add(new JLabel(tr("Homepage")), GBC.std().insets(10, 0, 10, 0));
         info.add(new UrlLabel(Main.getJOSMWebsite(), 2), GBC.eol().fill(GBC.HORIZONTAL));
         info.add(GBC.glue(0, 5), GBC.eol());
-        info.add(new JLabel(tr("Bug Reports")), GBC.std().insets(10, 0, 10, 0));
-        info.add(BugReportExceptionHandler.getBugReportUrlLabel(Utils.strip(ShowStatusReportAction.getReportHeader())),
-                GBC.eol().fill(GBC.HORIZONTAL));
 
         about.addTab(tr("Info"), info);
         about.addTab(tr("Readme"), createScrollPane(readme));
@@ -108,12 +103,19 @@ public class AboutAction extends JosmAction {
 
         // Intermediate panel to allow proper optionPane resizing
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setPreferredSize(new Dimension(600, 300));
+        panel.setPreferredSize(new Dimension(890, 300));
+        panel.add(new JLabel("", new ImageIcon(ImageProvider.get("logo.svg").getImage().getScaledInstance(256, 258, Image.SCALE_SMOOTH)),
+                JLabel.CENTER), GBC.std().insets(0, 5, 0, 0));
         panel.add(about, GBC.std().fill());
 
         GuiHelper.prepareResizeableOptionPane(panel, panel.getPreferredSize());
-        JOptionPane.showMessageDialog(Main.parent, panel, tr("About JOSM..."), JOptionPane.INFORMATION_MESSAGE,
-                new ImageIcon(ImageProvider.get("logo.svg").getImage().getScaledInstance(256, 258, Image.SCALE_SMOOTH)));
+        int ret = new ExtendedDialog(Main.parent, tr("About JOSM..."), new String[] {tr("OK"), tr("Report bug")})
+            .setButtonIcons(new String[] {"ok", "bug"})
+            .setContent(panel, false)
+            .showDialog().getValue();
+        if (2 == ret) {
+            Main.main.menu.reportbug.actionPerformed(null);
+        }
     }
 
     /**
