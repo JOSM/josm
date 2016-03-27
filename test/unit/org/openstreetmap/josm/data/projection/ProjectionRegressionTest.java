@@ -43,17 +43,12 @@ import org.openstreetmap.josm.tools.Pair;
 public class ProjectionRegressionTest {
 
     private static final String PROJECTION_DATA_FILE = "data_nodist/projection/projection-regression-test-data";
-    private static final String PROJECTION_DATA_FILE_JAVA_9 = "data_nodist/projection/projection-regression-test-data-java9";
 
     private static class TestData {
         public String code;
         public LatLon ll;
         public EastNorth en;
         public LatLon ll2;
-    }
-
-    private static String getProjectionDataFile() {
-        return TestUtils.getJavaVersion() >= 9 ? PROJECTION_DATA_FILE_JAVA_9 : PROJECTION_DATA_FILE;
     }
 
     /**
@@ -70,7 +65,7 @@ public class ProjectionRegressionTest {
         }
 
         List<TestData> prevData = new ArrayList<>();
-        if (new File(getProjectionDataFile()).exists()) {
+        if (new File(PROJECTION_DATA_FILE).exists()) {
             prevData = readData();
         }
         Map<String, TestData> prevCodesMap = new HashMap<>();
@@ -92,7 +87,7 @@ public class ProjectionRegressionTest {
 
         Random rand = new Random();
         try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(getProjectionDataFile()), StandardCharsets.UTF_8))) {
+                new FileOutputStream(PROJECTION_DATA_FILE), StandardCharsets.UTF_8))) {
             out.write("# Data for test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java\n");
             out.write("# Format: 1. Projection code; 2. lat/lon; 3. lat/lon projected -> east/north; 4. east/north (3.) inverse projected\n");
             for (String code : codesToWrite) {
@@ -117,7 +112,7 @@ public class ProjectionRegressionTest {
     }
 
     private static List<TestData> readData() throws IOException, FileNotFoundException {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(getProjectionDataFile()),
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(PROJECTION_DATA_FILE),
                 StandardCharsets.UTF_8))) {
             List<TestData> result = new ArrayList<>();
             String line;
@@ -135,6 +130,11 @@ public class ProjectionRegressionTest {
                 next.ll = new LatLon(ll.a, ll.b);
                 next.en = new EastNorth(en.a, en.b);
                 next.ll2 = new LatLon(ll2.a, ll2.b);
+                if (TestUtils.getJavaVersion() >= 9) {
+                    next.ll = next.ll.getRoundedToOsmPrecision();
+                    next.en = new EastNorth(LatLon.roundToOsmPrecision(en.a), LatLon.roundToOsmPrecision(en.b));
+                    next.ll2 = next.ll2.getRoundedToOsmPrecision();
+                }
 
                 result.add(next);
             }

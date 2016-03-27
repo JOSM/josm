@@ -457,7 +457,7 @@ public class LatLon extends Coordinate {
     }
 
     /**
-     * Returns the value rounded to OSM precisions, i.e. to {@link LatLon#MAX_SERVER_PRECISION}.
+     * Returns the value rounded to OSM precisions, i.e. to {@link #MAX_SERVER_PRECISION}.
      * @param value lat/lon value
      *
      * @return rounded value
@@ -467,21 +467,7 @@ public class LatLon extends Coordinate {
     }
 
     /**
-     * Returns the value rounded to OSM precision. This function is now the same as
-     * {@link #roundToOsmPrecision(double)}, since the rounding error has been fixed.
-     * @param value lat/lon value
-     *
-     * @return rounded value
-     * @deprecated Use {@link #roundToOsmPrecision(double)} instead
-     */
-    @Deprecated
-    public static double roundToOsmPrecisionStrict(double value) {
-        return roundToOsmPrecision(value);
-    }
-
-    /**
-     * Replies a clone of this lat LatLon, rounded to OSM precisions, i.e. to
-     * MAX_SERVER_PRECISION
+     * Replies a clone of this lat LatLon, rounded to OSM precisions, i.e. to {@link #MAX_SERVER_PRECISION}
      *
      * @return a clone of this lat LatLon
      */
@@ -490,18 +476,6 @@ public class LatLon extends Coordinate {
                 roundToOsmPrecision(lat()),
                 roundToOsmPrecision(lon())
                 );
-    }
-
-    /**
-     * Replies a clone of this lat LatLon, rounded to OSM precisions, i.e. to
-     * MAX_SERVER_PRECISION
-     *
-     * @return a clone of this lat LatLon
-     * @deprecated Use {@link #getRoundedToOsmPrecision()} instead
-     */
-    @Deprecated
-    public LatLon getRoundedToOsmPrecisionStrict() {
-        return getRoundedToOsmPrecision();
     }
 
     @Override
