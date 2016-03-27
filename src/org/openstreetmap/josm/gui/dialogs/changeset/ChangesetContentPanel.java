@@ -50,9 +50,9 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
-import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
  * The panel which displays the content of a changeset in a scrollable table.

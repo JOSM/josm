@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.tools.bugreport;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -15,23 +15,26 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPOutputStream;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ReportBugAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreference;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
-import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.tools.Base64;
+import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.WikiReader;
 
 /**
  * An exception handler that asks the user to send a bug report.
@@ -193,21 +196,11 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 
     private static void askForBugReport(final Throwable e) {
         try {
-            final int maxlen = 6000;
             StringWriter stack = new StringWriter();
             e.printStackTrace(new PrintWriter(stack));
 
             String text = ShowStatusReportAction.getReportHeader() + stack.getBuffer().toString();
-            String urltext = text.replaceAll("\r", "");
-            if (urltext.length() > maxlen) {
-                urltext = urltext.substring(0, maxlen);
-                int idx = urltext.lastIndexOf('\n');
-                // cut whole line when not loosing too much
-                if (maxlen-idx < 200) {
-                    urltext = urltext.substring(0, idx+1);
-                }
-                urltext += "...<snip>...\n";
-            }
+            text = text.replaceAll("\r", "");
 
             JPanel p = new JPanel(new GridBagLayout());
             p.add(new JMultilineLabel(
@@ -219,7 +212,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     tr("You should also update your plugins. If neither of those help please " +
                             "file a bug report in our bugtracker using this link:")),
                             GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-            p.add(getBugReportUrlLabel(urltext), GBC.eop().insets(8, 0, 0, 0));
+            p.add(new JButton(new ReportBugAction(text)), GBC.eop().insets(8, 0, 0, 0));
             p.add(new JMultilineLabel(
                     tr("There the error information provided below should already be " +
                             "filled in for you. Please include information on how to reproduce " +
@@ -231,17 +224,14 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             p.add(new UrlLabel(Main.getJOSMWebsite()+"/newticket", 2), GBC.eop().insets(8, 0, 0, 0));
 
             // Wiki formatting for manual copy-paste
-            text = "{{{\n"+text+"}}}";
+            DebugTextDisplay textarea = new DebugTextDisplay(text);
 
-            if (Utils.copyToClipboard(text)) {
+            if (textarea.copyToClippboard()) {
                 p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")),
                         GBC.eop().fill(GridBagConstraints.HORIZONTAL));
             }
 
-            JosmTextArea info = new JosmTextArea(text, 18, 60);
-            info.setCaretPosition(0);
-            info.setEditable(false);
-            p.add(new JScrollPane(info), GBC.eop().fill());
+            p.add(textarea, GBC.eop().fill());
 
             for (Component c: p.getComponents()) {
                 if (c instanceof JMultilineLabel) {
@@ -264,9 +254,10 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
     }
 
     /**
-     * Replies the URL to create a JOSM bug report with the given debug text
+     * Replies the URL to create a JOSM bug report with the given debug text. GZip is used to reduce the length of the parameter.
      * @param debugText The debug text to provide us
      * @return The URL to create a JOSM bug report with the given debug text
+     * @see BugReportSender#reportBug(String) if you want to send long debug texts along.
      * @since 5849
      */
     public static URL getBugReportUrl(String debugText) {

@@ -281,7 +281,7 @@ public class CoordinateInfoViewer extends JPanel {
         }
 
         /**
-         * Constrcuts a new {@code LatLonViewer}.
+         * Constructs a new {@code LatLonViewer}.
          * @param model a model
          * @param role the role for this viewer.
          */

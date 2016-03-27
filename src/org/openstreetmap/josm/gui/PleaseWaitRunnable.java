@@ -12,8 +12,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 import org.xml.sax.SAXException;
 
 /**
