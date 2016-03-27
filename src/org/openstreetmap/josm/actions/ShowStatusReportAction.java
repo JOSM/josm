@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
@@ -25,6 +26,12 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.preferences.SourceEditor;
+import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
+import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
+import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
+import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -157,16 +164,33 @@ public final class ShowStatusReportAction extends JosmAction {
         }
         text.append('\n').append(PluginHandler.getBugReportText()).append('\n');
 
-        Collection<String> errorsWarnings = Main.getLastErrorAndWarnings();
-        if (!errorsWarnings.isEmpty()) {
-            text.append("Last errors/warnings:\n");
-            for (String s : errorsWarnings) {
-                text.append("- ").append(s).append('\n');
+        appendCollection(text, "Tagging presets", getCustomUrls(TaggingPresetPreference.PresetPrefHelper.INSTANCE));
+        appendCollection(text, "Map paint styles", getCustomUrls(MapPaintPreference.MapPaintPrefHelper.INSTANCE));
+        appendCollection(text, "Validator rules", getCustomUrls(ValidatorTagCheckerRulesPreference.RulePrefHelper.INSTANCE));
+        appendCollection(text, "Last errors/warnings", Main.getLastErrorAndWarnings());
+
+        return text.toString();
+    }
+
+    protected static Collection<String> getCustomUrls(SourceEditor.SourcePrefHelper helper) {
+        Set<String> set = new TreeSet<>();
+        for (SourceEntry entry : helper.get()) {
+            set.add(entry.url);
+        }
+        for (ExtendedSourceEntry def : helper.getDefault()) {
+            set.remove(def.url);
+        }
+        return set;
+    }
+
+    protected static <T> void appendCollection(StringBuilder text, String label, Collection<T> col) {
+        if (!col.isEmpty()) {
+            text.append(label+":\n");
+            for (T o : col) {
+                text.append("- ").append(o.toString()).append('\n');
             }
             text.append('\n');
         }
-
-        return text.toString();
     }
 
     @Override

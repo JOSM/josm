@@ -1459,29 +1459,39 @@ public class Preferences {
             }
         }
         // drop in November 2016
-        if (loadedVersion < 9965) {
-            Setting<?> setting = settingsMap.get("mappaint.style.entries");
+        removeUrlFromEntries(loadedVersion, 9965,
+                "mappaint.style.entries",
+                "josm.openstreetmap.de/josmfile?page=Styles/LegacyStandard");
+        // drop in December 2016
+        removeUrlFromEntries(loadedVersion, 10063,
+                "validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.entries",
+                "resource://data/validator/power.mapcss");
+
+        for (String key : OBSOLETE_PREF_KEYS) {
+            if (settingsMap.containsKey(key)) {
+                settingsMap.remove(key);
+                Main.info(tr("Preference setting {0} has been removed since it is no longer used.", key));
+            }
+        }
+    }
+
+    private void removeUrlFromEntries(int loadedVersion, int versionMax, String key, String urlPart) {
+        if (loadedVersion < versionMax) {
+            Setting<?> setting = settingsMap.get(key);
             if (setting instanceof MapListSetting) {
                 List<Map<String, String>> l = new LinkedList<>();
                 boolean modified = false;
                 for (Map<String, String> map: ((MapListSetting) setting).getValue()) {
                     String url = map.get("url");
-                    if (url != null && url.contains("josm.openstreetmap.de/josmfile?page=Styles/LegacyStandard")) {
+                    if (url != null && url.contains(urlPart)) {
                         modified = true;
                     } else {
                         l.add(map);
                     }
                 }
                 if (modified) {
-                    putListOfStructs("mappaint.style.entries", l);
+                    putListOfStructs(key, l);
                 }
-            }
-        }
-
-        for (String key : OBSOLETE_PREF_KEYS) {
-            if (settingsMap.containsKey(key)) {
-                settingsMap.remove(key);
-                Main.info(tr("Preference setting {0} has been removed since it is no longer used.", key));
             }
         }
     }
