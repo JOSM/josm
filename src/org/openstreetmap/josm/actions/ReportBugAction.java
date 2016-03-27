@@ -21,7 +21,7 @@ public class ReportBugAction extends JosmAction {
      * Constructs a new {@code ReportBugAction} that reports the normal status report.
      */
     public ReportBugAction() {
-        this(ShowStatusReportAction.getReportHeader());
+        this(null);
     }
 
     /**
@@ -37,6 +37,6 @@ public class ReportBugAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        BugReportSender.reportBug(text);
+        BugReportSender.reportBug(text == null ? ShowStatusReportAction.getReportHeader() : text);
     }
 }

@@ -6,14 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.zip.GZIPOutputStream;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -32,7 +27,6 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
-import org.openstreetmap.josm.tools.Base64;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.WikiReader;
 
@@ -153,14 +147,6 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
     }
 
     /**
-     * Handles the given throwable object
-     * @param t The throwable object
-     */
-    public void handle(Throwable t) {
-        handleException(t);
-    }
-
-    /**
      * Handles the given exception
      * @param e the exception
      */
@@ -251,42 +237,5 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
      */
     public static boolean exceptionHandlingInProgress() {
         return handlingInProgress;
-    }
-
-    /**
-     * Replies the URL to create a JOSM bug report with the given debug text. GZip is used to reduce the length of the parameter.
-     * @param debugText The debug text to provide us
-     * @return The URL to create a JOSM bug report with the given debug text
-     * @see BugReportSender#reportBug(String) if you want to send long debug texts along.
-     * @since 5849
-     */
-    public static URL getBugReportUrl(String debugText) {
-        try (
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            GZIPOutputStream gzip = new GZIPOutputStream(out)
-        ) {
-            gzip.write(debugText.getBytes(StandardCharsets.UTF_8));
-            gzip.finish();
-
-            return new URL(Main.getJOSMWebsite()+"/josmticket?" +
-                    "gdata="+Base64.encode(ByteBuffer.wrap(out.toByteArray()), true));
-        } catch (IOException e) {
-            Main.error(e);
-            return null;
-        }
-    }
-
-    /**
-     * Replies the URL label to create a JOSM bug report with the given debug text
-     * @param debugText The debug text to provide us
-     * @return The URL label to create a JOSM bug report with the given debug text
-     * @since 5849
-     */
-    public static UrlLabel getBugReportUrlLabel(String debugText) {
-        URL url = getBugReportUrl(debugText);
-        if (url != null) {
-            return new UrlLabel(url.toString(), Main.getJOSMWebsite()+"/josmticket?...", 2);
-        }
-        return null;
     }
 }
