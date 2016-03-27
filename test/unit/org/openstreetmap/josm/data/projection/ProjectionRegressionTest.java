@@ -111,6 +111,10 @@ public class ProjectionRegressionTest {
         System.out.println("Update successful.");
     }
 
+    private static EastNorth getRoundedToOsmPrecision(double east, double north) {
+        return new EastNorth(LatLon.roundToOsmPrecision(east), LatLon.roundToOsmPrecision(north));
+    }
+
     private static List<TestData> readData() throws IOException, FileNotFoundException {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(PROJECTION_DATA_FILE),
                 StandardCharsets.UTF_8))) {
@@ -132,7 +136,7 @@ public class ProjectionRegressionTest {
                 next.ll2 = new LatLon(ll2.a, ll2.b);
                 if (TestUtils.getJavaVersion() >= 9) {
                     next.ll = next.ll.getRoundedToOsmPrecision();
-                    next.en = new EastNorth(LatLon.roundToOsmPrecision(en.a), LatLon.roundToOsmPrecision(en.b));
+                    next.en = getRoundedToOsmPrecision(en.a, en.b);
                     next.ll2 = next.ll2.getRoundedToOsmPrecision();
                 }
 
@@ -186,6 +190,9 @@ public class ProjectionRegressionTest {
                 continue;
             }
             EastNorth en = proj.latlon2eastNorth(data.ll);
+            if (TestUtils.getJavaVersion() >= 9) {
+                en = getRoundedToOsmPrecision(en.east(), en.north());
+            }
             if (!en.equals(data.en)) {
                 String error = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
                         "        expected: eastnorth(%s,%s),%n" +
@@ -194,6 +201,9 @@ public class ProjectionRegressionTest {
                 fail.append(error);
             }
             LatLon ll2 = proj.eastNorth2latlon(data.en);
+            if (TestUtils.getJavaVersion() >= 9) {
+                ll2 = ll2.getRoundedToOsmPrecision();
+            }
             if (!ll2.equals(data.ll2)) {
                 String error = String.format("%s (%s): Inverse projecting eastnorth(%s,%s):%n" +
                         "        expected: latlon(%s,%s),%n" +
