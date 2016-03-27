@@ -172,7 +172,7 @@ public class RemoteControlHttpsServer extends Thread {
         ext.set(BasicConstraintsExtension.NAME, new BasicConstraintsExtension(Boolean.TRUE, false, 0));
         // Critical: only allow TLS ("serverAuth" = 1.3.6.1.5.5.7.3.1)
         ext.set(ExtendedKeyUsageExtension.NAME, new ExtendedKeyUsageExtension(Boolean.TRUE,
-                new Vector<ObjectIdentifier>(Arrays.asList(new ObjectIdentifier("1.3.6.1.5.5.7.3.1")))));
+                new Vector<>(Arrays.asList(new ObjectIdentifier("1.3.6.1.5.5.7.3.1")))));
 
         if (san != null) {
             int colonpos;
