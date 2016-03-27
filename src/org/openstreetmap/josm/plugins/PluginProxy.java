@@ -7,7 +7,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
-import org.openstreetmap.josm.tools.BugReportExceptionHandler;
+import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
  * Helper class for the JOSM system to communicate with the plugin.

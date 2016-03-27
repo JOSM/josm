@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.tools.bugreport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -31,7 +31,7 @@ public class BugReportExceptionHandlerTest {
     }
 
     /**
-     * Test method for {@link org.openstreetmap.josm.tools.BugReportExceptionHandler#getBugReportUrl(java.lang.String)}.
+     * Test method for {@link org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler#getBugReportUrl(java.lang.String)}.
      * @throws IOException if any I/O error occurs
      */
     @Test

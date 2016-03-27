@@ -19,19 +19,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.swing.JScrollPane;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReportSender;
+import org.openstreetmap.josm.tools.bugreport.DebugTextDisplay;
 
 /**
  * @author xeen
@@ -183,23 +181,19 @@ public final class ShowStatusReportAction extends JosmAction {
             Main.error(x);
         }
 
-        JosmTextArea ta = new JosmTextArea(text.toString());
-        ta.setWrapStyleWord(true);
-        ta.setLineWrap(true);
-        ta.setEditable(false);
-        JScrollPane sp = new JScrollPane(ta);
+        DebugTextDisplay ta = new DebugTextDisplay(text.toString());
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Status Report"),
                 new String[] {tr("Copy to clipboard and close"), tr("Report bug"), tr("Close") });
         ed.setButtonIcons(new String[] {"copy", "bug", "cancel" });
-        ed.setContent(sp, false);
+        ed.setContent(ta, false);
         ed.setMinimumSize(new Dimension(380, 200));
         ed.setPreferredSize(new Dimension(700, Main.parent.getHeight()-50));
 
         switch (ed.showDialog().getValue()) {
-            case 1: Utils.copyToClipboard(text.toString()); break;
-            case 2: ReportBugAction.reportBug(reportHeader); break;
+            case 1: ta.copyToClippboard(); break;
+            case 2: BugReportSender.reportBug(reportHeader); break;
         }
     }
 }
