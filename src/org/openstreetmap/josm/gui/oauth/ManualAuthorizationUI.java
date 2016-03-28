@@ -26,7 +26,7 @@ import javax.swing.text.JTextComponent;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
-import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
+import org.openstreetmap.josm.gui.widgets.DefaultTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
@@ -177,44 +177,17 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
         return cbSaveToPreferences.isSelected();
     }
 
-    private static class AccessTokenKeyValidator extends AbstractTextComponentValidator {
-
+    private static class AccessTokenKeyValidator extends DefaultTextComponentValidator {
         AccessTokenKeyValidator(JTextComponent tc) {
-            super(tc);
-        }
-
-        @Override
-        public boolean isValid() {
-            return !getComponent().getText().trim().isEmpty();
-        }
-
-        @Override
-        public void validate() {
-            if (isValid()) {
-                feedbackValid(tr("Please enter an Access Token Key"));
-            } else {
-                feedbackInvalid(tr("The Access Token Key must not be empty. Please enter an Access Token Key"));
-            }
+            super(tc, tr("Please enter an Access Token Key"),
+                      tr("The Access Token Key must not be empty. Please enter an Access Token Key"));
         }
     }
 
-    private static class AccessTokenSecretValidator extends AbstractTextComponentValidator {
+    private static class AccessTokenSecretValidator extends DefaultTextComponentValidator {
         AccessTokenSecretValidator(JTextComponent tc) {
-            super(tc);
-        }
-
-        @Override
-        public boolean isValid() {
-            return !getComponent().getText().trim().isEmpty();
-        }
-
-        @Override
-        public void validate() {
-            if (isValid()) {
-                feedbackValid(tr("Please enter an Access Token Secret"));
-            } else {
-                feedbackInvalid(tr("The Access Token Secret must not be empty. Please enter an Access Token Secret"));
-            }
+            super(tc, tr("Please enter an Access Token Secret"),
+                      tr("The Access Token Secret must not be empty. Please enter an Access Token Secret"));
         }
     }
 

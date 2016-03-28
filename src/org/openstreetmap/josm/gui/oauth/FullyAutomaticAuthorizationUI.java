@@ -34,8 +34,9 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.preferences.server.UserNameValidator;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
+import org.openstreetmap.josm.gui.widgets.DefaultTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
@@ -389,44 +390,9 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         }
     }
 
-    private static class UserNameValidator extends AbstractTextComponentValidator {
-        UserNameValidator(JTextComponent tc) {
-            super(tc);
-        }
-
-        @Override
-        public boolean isValid() {
-            return !getComponent().getText().trim().isEmpty();
-        }
-
-        @Override
-        public void validate() {
-            if (isValid()) {
-                feedbackValid(tr("Please enter your OSM user name"));
-            } else {
-                feedbackInvalid(tr("The user name cannot be empty. Please enter your OSM user name"));
-            }
-        }
-    }
-
-    private static class PasswordValidator extends AbstractTextComponentValidator {
-
+    static class PasswordValidator extends DefaultTextComponentValidator {
         PasswordValidator(JTextComponent tc) {
-            super(tc);
-        }
-
-        @Override
-        public boolean isValid() {
-            return !getComponent().getText().trim().isEmpty();
-        }
-
-        @Override
-        public void validate() {
-            if (isValid()) {
-                feedbackValid(tr("Please enter your OSM password"));
-            } else {
-                feedbackInvalid(tr("The password cannot be empty. Please enter your OSM password"));
-            }
+            super(tc, tr("Please enter your OSM password"), tr("The password cannot be empty. Please enter your OSM password"));
         }
     }
 
