@@ -111,6 +111,13 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         pnlShowAccessToken.setAccessToken(getAccessToken());
     }
 
+    static class StepLabel extends JLabel {
+        StepLabel(String text) {
+            super(text);
+            setFont(getFont().deriveFont(16f));
+        }
+    }
+
     /**
      * This is the panel displayed in the first step of the semi-automatic authorisation process.
      */
@@ -198,9 +205,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         protected final void build() {
             setLayout(new BorderLayout(0, 5));
-            JLabel lbl = new JLabel(tr("<html>Step 1/3: Retrieve an OAuth Request Token</html>"));
-            lbl.setFont(lbl.getFont().deriveFont(16f));
-            add(lbl, BorderLayout.NORTH);
+            add(new StepLabel(tr("<html>Step 1/3: Retrieve an OAuth Request Token</html>")), BorderLayout.NORTH);
             add(buildAdvancedParametersPanel(), BorderLayout.CENTER);
             add(buildCommandPanel(), BorderLayout.SOUTH);
         }
@@ -222,9 +227,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         protected JPanel buildTitlePanel() {
             JPanel pnl = new JPanel(new BorderLayout());
-            JLabel lbl = new JLabel(tr("<html>Step 2/3: Authorize and retrieve an Access Token</html>"));
-            lbl.setFont(lbl.getFont().deriveFont(16f));
-            pnl.add(lbl, BorderLayout.CENTER);
+            pnl.add(new StepLabel(tr("<html>Step 2/3: Authorize and retrieve an Access Token</html>")), BorderLayout.CENTER);
             return pnl;
         }
 
@@ -265,7 +268,6 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         protected JPanel buildActionPanel() {
             JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
             pnl.add(new SideButton(new BackAction()));
             pnl.add(new SideButton(new RetrieveAccessTokenAction()));
             return pnl;
@@ -313,9 +315,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         protected JPanel buildTitlePanel() {
             JPanel pnl = new JPanel(new BorderLayout());
-            JLabel lbl = new JLabel(tr("<html>Step 3/3: Successfully retrieved an Access Token</html>"));
-            lbl.setFont(lbl.getFont().deriveFont(16f));
-            pnl.add(lbl, BorderLayout.CENTER);
+            pnl.add(new StepLabel(tr("<html>Step 3/3: Successfully retrieved an Access Token</html>")), BorderLayout.CENTER);
             return pnl;
         }
 

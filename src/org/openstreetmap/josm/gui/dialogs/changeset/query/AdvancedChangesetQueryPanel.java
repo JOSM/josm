@@ -30,6 +30,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.preferences.server.UserNameValidator;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.BoundingBoxSelectionPanel;
@@ -379,7 +380,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         private JosmTextField tfUid;
         private transient UidInputFieldValidator valUid;
         private JosmTextField tfUserName;
-        private transient UserNameInputValidator valUserName;
+        private transient UserNameValidator valUserName;
         private JMultilineLabel lblRestrictedToMyself;
 
         protected JPanel buildUidInputPanel() {
@@ -413,7 +414,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             gc.gridx = 1;
             pnl.add(tfUserName = new JosmTextField(10), gc);
             SelectAllOnFocusGainedDecorator.decorate(tfUserName);
-            valUserName = UserNameInputValidator.decorate(tfUserName);
+            valUserName = new UserNameValidator(tfUserName);
 
             // grab remaining space
             gc.gridx = 2;
@@ -1012,31 +1013,6 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
     }
 
-    private static class UserNameInputValidator extends AbstractTextComponentValidator {
-        public static UserNameInputValidator decorate(JTextComponent tc) {
-            return new UserNameInputValidator(tc);
-        }
-
-        UserNameInputValidator(JTextComponent tc) {
-            super(tc);
-        }
-
-        @Override
-        public boolean isValid() {
-            return !getComponent().getText().trim().isEmpty();
-        }
-
-        @Override
-        public void validate() {
-            String value  = getComponent().getText();
-            if (value.trim().isEmpty()) {
-                feedbackInvalid(tr("<html>The  current value is not a valid user name.<br>Please enter an non-empty user name.</html>"));
-                return;
-            }
-            feedbackValid(tr("Please enter an non-empty user name"));
-        }
-    }
-
     /**
      * Validates dates entered as text in a {@link JTextComponent}. Validates the input
      * on the fly and gives feedback about whether the date is valid or not.
@@ -1146,7 +1122,6 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
         @Override
         public void validate() {
-
             if (!isValid()) {
                 String msg = "<html>The current value isn't a valid time.<br>" + getStandardTooltipText() + "</html>";
                 feedbackInvalid(msg);

@@ -10,9 +10,8 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
+import org.openstreetmap.josm.gui.preferences.server.UserNameValidator;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
@@ -71,26 +70,5 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         add(new JPanel(), gc);
-    }
-
-    private static class UserNameValidator extends AbstractTextComponentValidator {
-
-        UserNameValidator(JTextComponent tc) {
-            super(tc);
-        }
-
-        @Override
-        public boolean isValid() {
-            return !getComponent().getText().trim().isEmpty();
-        }
-
-        @Override
-        public void validate() {
-            if (isValid()) {
-                feedbackValid(tr("Please enter your OSM user name"));
-            } else {
-                feedbackInvalid(tr("The user name cannot be empty. Please enter your OSM user name"));
-            }
-        }
     }
 }
