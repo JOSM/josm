@@ -600,7 +600,7 @@ public final class Utils {
                 }
             });
             return true;
-        } catch (IllegalStateException ex) {
+        } catch (IllegalStateException | HeadlessException ex) {
             Main.error(ex);
             return false;
         }
