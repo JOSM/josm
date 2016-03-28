@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.awt.Window;
@@ -24,7 +23,6 @@ import javax.swing.AbstractAction;
 import javax.swing.CellEditor;
 import javax.swing.JComponent;
 import javax.swing.JTable;
-import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -42,6 +40,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.gui.widgets.JosmTable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.TextTagParser;
 import org.openstreetmap.josm.tools.Utils;
@@ -50,7 +49,7 @@ import org.openstreetmap.josm.tools.Utils;
  * This is the tabular editor component for OSM tags.
  * @since 1762
  */
-public class TagTable extends JTable  {
+public class TagTable extends JosmTable  {
     /** the table cell editor used by this table */
     private TagCellEditor editor;
     private final TagEditorModel model;
@@ -414,20 +413,11 @@ public class TagTable extends JTable  {
 
     @Override
     public Dimension getPreferredSize() {
-        Container c = getParent();
-        while (c != null && !(c instanceof JViewport)) {
-            c = c.getParent();
-        }
-        if (c != null) {
-            Dimension d = super.getPreferredSize();
-            d.width = c.getSize().width;
-            return d;
-        }
-        return super.getPreferredSize();
+        return getPreferredFullWidthSize();
     }
 
-    @Override protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
-            int condition, boolean pressed) {
+    @Override
+    protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
 
         // handle delete key
         //

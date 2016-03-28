@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
@@ -16,7 +15,6 @@ import javax.swing.AbstractAction;
 import javax.swing.DropMode;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -94,16 +92,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
 
     @Override
     public Dimension getPreferredSize() {
-        Container c = getParent();
-        while (c != null && !(c instanceof JViewport)) {
-            c = c.getParent();
-        }
-        if (c != null) {
-            Dimension d = super.getPreferredSize();
-            d.width = c.getSize().width;
-            return d;
-        }
-        return super.getPreferredSize();
+        return getPreferredFullWidthSize();
     }
 
     @Override
