@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.bugreport;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
@@ -17,7 +18,7 @@ public class BugReportExceptionHandlerTest {
      */
     @Before
     public void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
+        JOSMFixture.createUnitTestFixture().init(true);
     }
 
     /**
@@ -25,6 +26,23 @@ public class BugReportExceptionHandlerTest {
      */
     @Test
     public void testBuildPanel() {
-        assertNotNull(BugReportExceptionHandler.buildPanel(new Exception()));
+        assertNotNull(BugReportExceptionHandler.buildPanel(new Exception("testBuildPanel")));
+    }
+
+    /**
+     * Unit test for {@link BugReportExceptionHandler.BugReporterThread#askForBugReport} method.
+     */
+    @Test
+    public void testAskForBugReport() {
+        BugReportExceptionHandler.BugReporterThread.askForBugReport(new Exception("testAskForBugReport"));
+    }
+
+    /**
+     * Unit test for {@link BugReportExceptionHandler#handleException} method.
+     */
+    @Test
+    public void testHandleException() {
+        BugReportExceptionHandler.handleException(new Exception("testHandleException"));
+        assertFalse(BugReportExceptionHandler.exceptionHandlingInProgress());
     }
 }

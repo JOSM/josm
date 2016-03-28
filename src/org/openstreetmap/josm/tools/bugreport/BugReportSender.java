@@ -48,12 +48,13 @@ import org.xml.sax.SAXException;
 public class BugReportSender extends Thread {
 
     private final String statusText;
+    private String errorMessage;
 
     /**
      * Creates a new sender.
      * @param statusText The status text to send.
      */
-    public BugReportSender(String statusText) {
+    protected BugReportSender(String statusText) {
         super("Bug report sender");
         this.statusText = statusText;
     }
@@ -100,18 +101,18 @@ public class BugReportSender extends Thread {
             try (InputStream in = connection.getContent()) {
                 DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
                 Document document = builder.parse(in);
-                return retriveDebugToken(document);
+                return retrieveDebugToken(document);
             }
         } catch (IOException | SAXException | ParserConfigurationException | XPathExpressionException t) {
             throw new BugReportSenderException(t);
         }
     }
 
-    private String getJOSMTicketURL() {
+    private static String getJOSMTicketURL() {
         return Main.getJOSMWebsite() + "/josmticket";
     }
 
-    private String retriveDebugToken(Document document) throws XPathExpressionException, BugReportSenderException {
+    private static String retrieveDebugToken(Document document) throws XPathExpressionException, BugReportSenderException {
         XPathFactory factory = XPathFactory.newInstance();
         XPath xpath = factory.newXPath();
         String status = (String) xpath.compile("/josmticket/@status").evaluate(document, XPathConstants.STRING);
@@ -133,11 +134,11 @@ public class BugReportSender extends Thread {
     }
 
     private void failed(String string) {
+        errorMessage = string;
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JPanel errorPanel = new JPanel();
-                errorPanel.setLayout(new GridBagLayout());
+                JPanel errorPanel = new JPanel(new GridBagLayout());
                 errorPanel.add(new JMultilineLabel(
                         tr("Opening the bug report failed. Please report manually using this website:")),
                         GBC.eol().fill(GridBagConstraints.HORIZONTAL));
@@ -148,6 +149,14 @@ public class BugReportSender extends Thread {
                         JOptionPane.ERROR_MESSAGE);
             }
         });
+    }
+
+    /**
+     * Returns the error message that could have occured during bug sending.
+     * @return the error message, or {@code null} if successful
+     */
+    public final String getErrorMessage() {
+        return errorMessage;
     }
 
     private static class BugReportSenderException extends Exception {
@@ -163,8 +172,11 @@ public class BugReportSender extends Thread {
     /**
      * Opens the bug report window on the JOSM server.
      * @param statusText The status text to send along to the server.
+     * @return bug report sender started thread
      */
-    public static void reportBug(String statusText) {
-        new BugReportSender(statusText).start();
+    public static BugReportSender reportBug(String statusText) {
+        BugReportSender sender = new BugReportSender(statusText);
+        sender.start();
+        return sender;
     }
 }
