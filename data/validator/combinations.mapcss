@@ -154,7 +154,7 @@ way[power=cable                ][!voltage],
 }
 
 /* {0.key} without {1.key} or {2.tag} */
-*[smoothness                   ][!highway][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking)$/],
+*[smoothness                   ][!highway][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking)$/],
 *[segregated                   ][!highway][railway!=crossing] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
 }

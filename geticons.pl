@@ -29,7 +29,7 @@ for my $arg (@ARGV ? @ARGV : @default)
     while(my $l = <FILE>)
     {
       next if $l =~ /NO-ICON/;
-      if($l =~ /icon\s*[:=]\s*["']([^+]+?)["']/)
+      if($l =~ /icon\s*[:=]\s*["']([^"'+]+?)["']/)
       {
         ++$icons{$1};
       }
@@ -45,7 +45,7 @@ for my $arg (@ARGV ? @ARGV : @default)
       if($l =~ /ImageProvider(?:\.get)?\(\"([^\"]*?)\"\)/)
       {
         my $i = $1;
-        $i = "styles/standard/$i" if $i eq "misc/no_icon.png";
+        $i = "styles/standard/$i" if $i eq "misc/no_icon";
         ++$icons{$i};
       }
       while($l =~ /\/\*\s*ICON\s*\*\/\s*\"(.*?)\"/g)
@@ -68,7 +68,17 @@ for my $arg (@ARGV ? @ARGV : @default)
         my $i = "preferences/$1";
         ++$icons{$i};
       }
-      if($l =~ /ImageProvider\.get\(\"(.*?)\",\s*\"(.*?)\"\s*\)/)
+      if($l =~ /setIcon\(\"(.*?)\"/)
+      {
+        my $i = "statusline/$1";
+        ++$icons{$i};
+      }
+      if($l =~ /ImageProvider\.get(?:IfAvailable)?\(\"(.*?)\",\s*\"(.*?)\"\s*\)/)
+      {
+        my $i = "$1/$2";
+        ++$icons{$i};
+      }
+      if($l =~ /new ImageProvider\(\"(.*?)\",\s*\"(.*?)\"\s*\)/)
       {
         my $i = "$1/$2";
         ++$icons{$i};
@@ -115,7 +125,7 @@ for my $arg (@ARGV ? @ARGV : @default)
         my $i = "markers/$1";
         ++$icons{$i};
       }
-      if($l =~ /\.setButtonIcons.*\{(.*)\}/)
+      if($l =~ /setButtonIcons.*\{(.*)\}/)
       {
         my $t = $1;
         while($t =~ /\"(.*?)\"/g)
@@ -131,6 +141,10 @@ for my $arg (@ARGV ? @ARGV : @default)
       elsif($l =~ /extends ToggleDialog/)
       {
         $extends = "dialogs/";
+      }
+      elsif($l =~ /extends JosmAction/)
+      {
+        $extends = "";
       }
     }
     close FILE;

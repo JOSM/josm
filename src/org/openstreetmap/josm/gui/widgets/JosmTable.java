@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -8,6 +10,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
@@ -103,5 +106,18 @@ public abstract class JosmTable extends JTable {
                 getEditorComponent().requestFocusInWindow();
             }
         }
+    }
+
+    protected Dimension getPreferredFullWidthSize() {
+        Container c = getParent();
+        while (c != null && !(c instanceof JViewport)) {
+            c = c.getParent();
+        }
+        if (c != null) {
+            Dimension d = super.getPreferredSize();
+            d.width = c.getSize().width;
+            return d;
+        }
+        return super.getPreferredSize();
     }
 }
