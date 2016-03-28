@@ -231,7 +231,7 @@ way[highway] > node[building][!entrance],
 way[highway] > node[leisure][!entrance],
 way[highway] > node[office][!entrance],
 way[highway] > node[shop][!entrance],
-way[highway] > node!.guidepost[tourism][!entrance][tourism!=viewpoint] {
+way[highway] > node[tourism][!entrance][tourism!=viewpoint]!.guidepost {
   throwWarning: tr("{0} node connected to a highway", "{0.key}");
 }
 
