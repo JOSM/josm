@@ -29,8 +29,7 @@ public class SelectionTableCellRendererTest {
     @Test
     public void testSelectionTableCellRenderer() {
         MemberTableModel model = new MemberTableModel(null, null, null);
-        SelectionTableCellRenderer r = new SelectionTableCellRenderer();
-        r.setMemberTableModel(model);
+        SelectionTableCellRenderer r = new SelectionTableCellRenderer(model);
         assertEquals(r, r.getTableCellRendererComponent(null, null, false, false, 0, 0));
         assertEquals(r, r.getTableCellRendererComponent(new JTable(model), new Node(), false, false, 0, 0));
     }

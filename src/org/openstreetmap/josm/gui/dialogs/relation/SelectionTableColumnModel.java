@@ -9,8 +9,7 @@ import javax.swing.table.TableColumn;
 public class SelectionTableColumnModel  extends DefaultTableColumnModel {
     public SelectionTableColumnModel(MemberTableModel model) {
         TableColumn col = null;
-        SelectionTableCellRenderer renderer = new SelectionTableCellRenderer();
-        renderer.setMemberTableModel(model);
+        SelectionTableCellRenderer renderer = new SelectionTableCellRenderer(model);
 
         // column 0 - the member role
         col = new TableColumn(0);
