@@ -34,6 +34,7 @@ import org.openstreetmap.josm.tools.WikiReader;
  * An exception handler that asks the user to send a bug report.
  *
  * @author imi
+ * @since 40
  */
 public final class BugReportExceptionHandler implements Thread.UncaughtExceptionHandler {
 
@@ -182,53 +183,57 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
 
     private static void askForBugReport(final Throwable e) {
         try {
-            StringWriter stack = new StringWriter();
-            e.printStackTrace(new PrintWriter(stack));
-
-            String text = ShowStatusReportAction.getReportHeader() + stack.getBuffer().toString();
-            text = text.replaceAll("\r", "");
-
-            JPanel p = new JPanel(new GridBagLayout());
-            p.add(new JMultilineLabel(
-                    tr("You have encountered an error in JOSM. Before you file a bug report " +
-                            "make sure you have updated to the latest version of JOSM here:")),
-                            GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-            p.add(new UrlLabel(Main.getJOSMWebsite(), 2), GBC.eop().insets(8, 0, 0, 0));
-            p.add(new JMultilineLabel(
-                    tr("You should also update your plugins. If neither of those help please " +
-                            "file a bug report in our bugtracker using this link:")),
-                            GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-            p.add(new JButton(new ReportBugAction(text)), GBC.eop().insets(8, 0, 0, 0));
-            p.add(new JMultilineLabel(
-                    tr("There the error information provided below should already be " +
-                            "filled in for you. Please include information on how to reproduce " +
-                            "the error and try to supply as much detail as possible.")),
-                            GBC.eop().fill(GridBagConstraints.HORIZONTAL));
-            p.add(new JMultilineLabel(
-                    tr("Alternatively, if that does not work you can manually fill in the information " +
-                            "below at this URL:")), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-            p.add(new UrlLabel(Main.getJOSMWebsite()+"/newticket", 2), GBC.eop().insets(8, 0, 0, 0));
-
-            // Wiki formatting for manual copy-paste
-            DebugTextDisplay textarea = new DebugTextDisplay(text);
-
-            if (textarea.copyToClippboard()) {
-                p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")),
-                        GBC.eop().fill(GridBagConstraints.HORIZONTAL));
-            }
-
-            p.add(textarea, GBC.eop().fill());
-
-            for (Component c: p.getComponents()) {
-                if (c instanceof JMultilineLabel) {
-                    ((JMultilineLabel) c).setMaxWidth(400);
-                }
-            }
-
+            JPanel p = buildPanel(e);
             JOptionPane.showMessageDialog(Main.parent, p, tr("You have encountered a bug in JOSM"), JOptionPane.ERROR_MESSAGE);
         } catch (Exception e1) {
             Main.error(e1);
         }
+    }
+
+    static JPanel buildPanel(final Throwable e) {
+        StringWriter stack = new StringWriter();
+        e.printStackTrace(new PrintWriter(stack));
+
+        String text = ShowStatusReportAction.getReportHeader() + stack.getBuffer().toString();
+        text = text.replaceAll("\r", "");
+
+        JPanel p = new JPanel(new GridBagLayout());
+        p.add(new JMultilineLabel(
+                tr("You have encountered an error in JOSM. Before you file a bug report " +
+                        "make sure you have updated to the latest version of JOSM here:")),
+                        GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        p.add(new UrlLabel(Main.getJOSMWebsite(), 2), GBC.eop().insets(8, 0, 0, 0));
+        p.add(new JMultilineLabel(
+                tr("You should also update your plugins. If neither of those help please " +
+                        "file a bug report in our bugtracker using this link:")),
+                        GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        p.add(new JButton(new ReportBugAction(text)), GBC.eop().insets(8, 0, 0, 0));
+        p.add(new JMultilineLabel(
+                tr("There the error information provided below should already be " +
+                        "filled in for you. Please include information on how to reproduce " +
+                        "the error and try to supply as much detail as possible.")),
+                        GBC.eop().fill(GridBagConstraints.HORIZONTAL));
+        p.add(new JMultilineLabel(
+                tr("Alternatively, if that does not work you can manually fill in the information " +
+                        "below at this URL:")), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        p.add(new UrlLabel(Main.getJOSMWebsite()+"/newticket", 2), GBC.eop().insets(8, 0, 0, 0));
+
+        // Wiki formatting for manual copy-paste
+        DebugTextDisplay textarea = new DebugTextDisplay(text);
+
+        if (textarea.copyToClippboard()) {
+            p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")),
+                    GBC.eop().fill(GridBagConstraints.HORIZONTAL));
+        }
+
+        p.add(textarea, GBC.eop().fill());
+
+        for (Component c: p.getComponents()) {
+            if (c instanceof JMultilineLabel) {
+                ((JMultilineLabel) c).setMaxWidth(400);
+            }
+        }
+        return p;
     }
 
     /**
