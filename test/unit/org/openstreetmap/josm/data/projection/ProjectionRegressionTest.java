@@ -134,11 +134,6 @@ public class ProjectionRegressionTest {
                 next.ll = new LatLon(ll.a, ll.b);
                 next.en = new EastNorth(en.a, en.b);
                 next.ll2 = new LatLon(ll2.a, ll2.b);
-                if (TestUtils.getJavaVersion() >= 9) {
-                    next.ll = next.ll.getRoundedToOsmPrecision();
-                    next.en = getRoundedToOsmPrecision(en.a, en.b);
-                    next.ll2 = next.ll2.getRoundedToOsmPrecision();
-                }
 
                 result.add(next);
             }
@@ -190,8 +185,12 @@ public class ProjectionRegressionTest {
                 continue;
             }
             EastNorth en = proj.latlon2eastNorth(data.ll);
+            LatLon ll2 = proj.eastNorth2latlon(data.en);
             if (TestUtils.getJavaVersion() >= 9) {
                 en = getRoundedToOsmPrecision(en.east(), en.north());
+                ll2 = ll2.getRoundedToOsmPrecision();
+                data.en = getRoundedToOsmPrecision(data.en.east(), data.en.north());
+                data.ll2 = data.ll2.getRoundedToOsmPrecision();
             }
             if (!en.equals(data.en)) {
                 String error = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
@@ -199,10 +198,6 @@ public class ProjectionRegressionTest {
                         "        but got:  eastnorth(%s,%s)!%n",
                         proj.toString(), data.code, data.ll.lat(), data.ll.lon(), data.en.east(), data.en.north(), en.east(), en.north());
                 fail.append(error);
-            }
-            LatLon ll2 = proj.eastNorth2latlon(data.en);
-            if (TestUtils.getJavaVersion() >= 9) {
-                ll2 = ll2.getRoundedToOsmPrecision();
             }
             if (!ll2.equals(data.ll2)) {
                 String error = String.format("%s (%s): Inverse projecting eastnorth(%s,%s):%n" +
