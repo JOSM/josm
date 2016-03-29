@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,13 +23,13 @@ public class LongSegmentTest {
         JOSMFixture.createUnitTestFixture().init();
     }
 
-    private static boolean test(int expected, Way w) throws Exception {
+    private static int test(Way w) throws Exception {
         LongSegment test = new LongSegment();
         test.initialize();
         test.startTest(null);
         test.visit(w);
         test.endTest();
-        return test.getErrors().size() == expected;
+        return test.getErrors().size();
     }
 
     /**
@@ -44,16 +44,16 @@ public class LongSegmentTest {
         w.addNode(new Node(new LatLon(54.1523672, 12.0979025)));
         // https://www.openstreetmap.org/node/468120683
         w.addNode(new Node(new LatLon(54.5737391, 11.9246324)));
-        assertTrue(test(1, w));
+        assertEquals(1, test(w));
 
         // Ferry route
         w.put("route", "ferry");
-        assertTrue(test(0, w));
+        assertEquals(0, test(w));
 
         // Short way
         w = new Way();
         w.addNode(new Node(new LatLon(54.152, 12.097)));
         w.addNode(new Node(new LatLon(54.153, 12.098)));
-        assertTrue(test(0, w));
+        assertEquals(0, test(w));
     }
 }
