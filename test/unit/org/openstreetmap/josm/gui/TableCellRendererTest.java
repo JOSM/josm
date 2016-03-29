@@ -31,13 +31,14 @@ import org.reflections.Reflections;
  * creates an instance and calls {@code getTableCellRendererComponent} with null
  * value to check if a NPE is thrown.
  *
- * @see #6301
+ * @see <a href="https://josm.openstreetmap.de/ticket/6301">#6301</a>
  */
 public class TableCellRendererTest {
 
-    // list of classes that cannot be easily tested and are verified manually
+    // list of classes that cannot be easily tested and are verified either manually or another unit tests
     private static final Collection<String> SKIP_TEST = Arrays.asList(
-        "org.openstreetmap.josm.gui.dialogs.FilterDialog$BooleanRenderer"
+        "org.openstreetmap.josm.gui.dialogs.FilterDialog$BooleanRenderer",
+        "org.openstreetmap.josm.gui.dialogs.relation.SelectionTableCellRenderer"
     );
 
     /**
@@ -48,6 +49,9 @@ public class TableCellRendererTest {
         JOSMFixture.createFunctionalTestFixture().init(true);
     }
 
+    /**
+     * Unit test of all table cell renderers against null values.
+     */
     @Test
     public void tableCellRendererTest() {
         Reflections reflections = new Reflections("org.openstreetmap.josm");
