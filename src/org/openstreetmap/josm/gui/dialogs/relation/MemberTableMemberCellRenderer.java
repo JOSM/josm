@@ -15,6 +15,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
 
+    /**
+     * Constructs a new {@code MemberTableMemberCellRenderer}.
+     */
+    public MemberTableMemberCellRenderer() {
+        super();
+        // Explicit default constructor is needed for intantiation via reflection
+    }
+
     protected void renderPrimitive(OsmPrimitive primitive, Dimension cellSize) {
         // Make icon the full height of the table cell. Icon background is square.
         int size = Math.min(cellSize.width, cellSize.height);

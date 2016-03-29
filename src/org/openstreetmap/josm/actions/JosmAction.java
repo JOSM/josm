@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
 
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -227,6 +229,23 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         MapView.addLayerChangeListener(layerChangeAdapter);
         DataSet.addSelectionListener(selectionChangeAdapter);
         initEnabledState();
+    }
+
+    protected static void waitFuture(final Future<?> future, final PleaseWaitProgressMonitor monitor) {
+        Main.worker.submit(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            future.get();
+                        } catch (Exception e) {
+                            Main.error(e);
+                            return;
+                        }
+                        monitor.close();
+                    }
+                }
+        );
     }
 
     /**

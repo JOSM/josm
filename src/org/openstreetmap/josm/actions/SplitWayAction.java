@@ -366,12 +366,11 @@ public class SplitWayAction extends JosmAction {
      * @param selectedNodes List of user selected nodes.
      * @return List of ways to split
      */
-    private static List<Way> getApplicableWays(List<Way> selectedWays, List<Node> selectedNodes) {
+    static List<Way> getApplicableWays(List<Way> selectedWays, List<Node> selectedNodes) {
         if (selectedNodes.isEmpty())
             return null;
 
-        // Special case - one of the selected ways touches (not cross) way that we
-        // want to split
+        // Special case - one of the selected ways touches (not cross) way that we want to split
         if (selectedNodes.size() == 1) {
             Node n = selectedNodes.get(0);
             List<Way> referedWays =
@@ -394,36 +393,7 @@ public class SplitWayAction extends JosmAction {
         }
 
         // List of ways shared by all nodes
-        List<Way> result =
-            new ArrayList<>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(),
-                                                         Way.class));
-        for (int i = 1; i < selectedNodes.size(); i++) {
-            List<OsmPrimitive> ref = selectedNodes.get(i).getReferrers();
-            for (Iterator<Way> it = result.iterator(); it.hasNext();) {
-                if (!ref.contains(it.next())) {
-                    it.remove();
-                }
-            }
-        }
-
-        // Remove broken ways
-        for (Iterator<Way> it = result.iterator(); it.hasNext();) {
-            if (it.next().getNodesCount() <= 2) {
-                it.remove();
-            }
-        }
-
-        if (selectedWays.isEmpty())
-            return result;
-        else {
-            // Return only selected ways
-            for (Iterator<Way> it = result.iterator(); it.hasNext();) {
-                if (!selectedWays.contains(it.next())) {
-                    it.remove();
-                }
-            }
-            return result;
-        }
+        return UnJoinNodeWayAction.getApplicableWays(selectedWays, selectedNodes);
     }
 
     /**

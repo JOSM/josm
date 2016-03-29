@@ -148,7 +148,7 @@ public class UnJoinNodeWayAction extends JosmAction {
      * @param selectedNodes List of user selected nodes.
      * @return List of relevant ways
      */
-    private static List<Way> getApplicableWays(List<Way> selectedWays, List<Node> selectedNodes) {
+    static List<Way> getApplicableWays(List<Way> selectedWays, List<Node> selectedNodes) {
         if (selectedNodes.isEmpty())
             return null;
 
