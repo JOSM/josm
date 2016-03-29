@@ -25,8 +25,8 @@ public class MapScaler extends JComponent implements Helpful, Accessible {
 
     private final NavigatableComponent mv;
 
-    private final static int PADDING_LEFT = 5;
-    private final static int PADDING_RIGHT = 50;
+    private static final int PADDING_LEFT = 5;
+    private static final int PADDING_RIGHT = 50;
 
     /**
      * Constructs a new {@code MapScaler}.
@@ -120,7 +120,7 @@ public class MapScaler extends JComponent implements Helpful, Accessible {
          * @param dist100Pixel The distance of 100 pixel on the map.
          * @param width The width of the mark.
          */
-        public TickMarks(double dist100Pixel, int width) {
+        TickMarks(double dist100Pixel, int width) {
             this.dist100Pixel = dist100Pixel;
             lineDistance = dist100Pixel * width / 100;
 

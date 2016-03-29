@@ -95,7 +95,8 @@ public final class CertificateAmendment {
             byte[] certBytes = certCF.getByteContent();
             byte[] sha = md.digest(certBytes);
             if (!SHA_HASHES[i].equals(Utils.toHexString(sha)))
-                throw new RuntimeException(tr("Error adding certificate {0} - hash mismatch. Expected {1}, was {2}", CERT_AMEND[i], SHA_HASHES[i], Utils.toHexString(sha)));
+                throw new RuntimeException(tr("Error adding certificate {0} - hash mismatch. Expected {1}, was {2}",
+                        CERT_AMEND[i], SHA_HASHES[i], Utils.toHexString(sha)));
 
             ByteArrayInputStream certIS = new ByteArrayInputStream(certBytes);
             X509Certificate cert;
