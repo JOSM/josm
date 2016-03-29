@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.util.List;
 
@@ -56,25 +57,44 @@ public abstract class AbstractMergeAction extends JosmAction {
         super(name, iconName, tooltip, shortcut, register, toolbar, installAdapters);
     }
 
-    protected Layer askTargetLayer(List<Layer> targetLayers) {
-        JosmComboBox<Layer> layerList = new JosmComboBox<>(targetLayers.toArray(new Layer[0]));
+    protected static Layer askTargetLayer(List<Layer> targetLayers) {
+        return askTargetLayer(targetLayers.toArray(new Layer[0]),
+                tr("Please select the target layer."),
+                tr("Select target layer"),
+                tr("Merge"), "dialogs/mergedown");
+    }
+
+    /**
+     * Asks a target layer.
+     * @param <T> type of layer
+     * @param targetLayers array of proposed target layers
+     * @param label label displayed in dialog
+     * @param title title of dialog
+     * @param buttonText text of button used to select target layer
+     * @param buttonIcon icon name of button used to select target layer
+     * @return choosen target layer
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Layer> T askTargetLayer(T[] targetLayers, String label, String title, String buttonText, String buttonIcon) {
+        JosmComboBox<T> layerList = new JosmComboBox<>(targetLayers);
         layerList.setRenderer(new LayerListCellRenderer());
         layerList.setSelectedIndex(0);
 
         JPanel pnl = new JPanel(new GridBagLayout());
-        pnl.add(new JLabel(tr("Please select the target layer.")), GBC.eol());
+        pnl.add(new JLabel(label), GBC.eol());
         pnl.add(layerList, GBC.eol());
-
-        ExtendedDialog ed = new ExtendedDialog(Main.parent,
-                tr("Select target layer"),
-                new String[] {tr("Merge"), tr("Cancel")});
-        ed.setButtonIcons(new String[] {"dialogs/mergedown", "cancel"});
+        if (GraphicsEnvironment.isHeadless()) {
+            // return first layer in headless mode, for unit tests
+            return targetLayers[0];
+        }
+        ExtendedDialog ed = new ExtendedDialog(Main.parent, title, new String[] {buttonText, tr("Cancel")});
+        ed.setButtonIcons(new String[] {buttonIcon, "cancel"});
         ed.setContent(pnl);
         ed.showDialog();
-        if (ed.getValue() != 1)
+        if (ed.getValue() != 1) {
             return null;
-
-        return (Layer) layerList.getSelectedItem();
+        }
+        return (T) layerList.getSelectedItem();
     }
 
     protected void warnNoTargetLayersForSourceLayer(Layer sourceLayer) {

@@ -88,20 +88,7 @@ public class UpdateDataAction extends JosmAction {
             //
             final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
             final Future<?> future = new DownloadTaskList().download(false /* no new layer */, areasToDownload, true, false, monitor);
-            Main.worker.submit(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                future.get();
-                            } catch (Exception e) {
-                                Main.error(e);
-                                return;
-                            }
-                            monitor.close();
-                        }
-                    }
-            );
+            waitFuture(future, monitor);
         }
     }
 }

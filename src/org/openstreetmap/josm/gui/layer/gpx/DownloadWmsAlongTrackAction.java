@@ -4,33 +4,27 @@ package org.openstreetmap.josm.gui.layer.gpx;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GraphicsEnvironment;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.AbstractMergeAction.LayerListCellRenderer;
+import org.openstreetmap.josm.actions.AbstractMergeAction;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.progress.ProgressTaskIds;
-import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
 
@@ -128,24 +122,10 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
             }
             return null;
         }
-        JosmComboBox<AbstractTileSourceLayer> layerList = new JosmComboBox<>(targetLayers.toArray(new AbstractTileSourceLayer[0]));
-        layerList.setRenderer(new LayerListCellRenderer());
-        layerList.setSelectedIndex(0);
-        JPanel pnl = new JPanel(new GridBagLayout());
-        pnl.add(new JLabel(tr("Please select the imagery layer.")), GBC.eol());
-        pnl.add(layerList, GBC.eol());
-        if (GraphicsEnvironment.isHeadless()) {
-            // return first layer in headless mode, for unit tests
-            return targetLayers.get(0);
-        }
-        ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Select imagery layer"), new String[]{tr("Download"), tr("Cancel")});
-        ed.setButtonIcons(new String[]{"dialogs/down", "cancel"});
-        ed.setContent(pnl);
-        ed.showDialog();
-        if (ed.getValue() != 1) {
-            return null;
-        }
-        return (AbstractTileSourceLayer) layerList.getSelectedItem();
+        return AbstractMergeAction.askTargetLayer(targetLayers.toArray(new AbstractTileSourceLayer[0]),
+                tr("Please select the imagery layer."),
+                tr("Select imagery layer"),
+                tr("Download"), "dialogs/down");
     }
 
     protected void warnNoImageryLayers() {
