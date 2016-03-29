@@ -103,7 +103,6 @@ class SyncEditorImageryIndex {
         /* URL style mismatch */
         skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://cyberjapandata.gsi.go.jp/xyz/ort/{z}/{x}/{y}.jpg"] = 1
         skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://tms.cadastre.openstreetmap.fr/*/tout/{z}/{x}/{y}.png"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://sdi.provincia.bz.it/geoserver/gwc/service/tms/1.0.0/WMTS_TOPOMAP_APB-PAB@GoogleMapsCompatible@png8/{z}/{x}/{-y}.png"] = 1
         skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.osm.ch:8080/tiles/AGIS2014/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
         skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.osm.ch:8080/tiles/sogis2014/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
         skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.openmap.lt/ort10lt/g/{z}/{x}/{y}.jpeg"] = 1
@@ -111,6 +110,8 @@ class SyncEditorImageryIndex {
         skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.openstreetmap.lu/tiles/ortho2013/EPSG900913/{z}/{x}/{y}.jpeg"] = 1
         skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.sosm.ch:8080/tiles/zh_luftbild2011/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
         skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.openmap.lt/ort10lt/g/{z}/{x}/{y}.jpeg"] = 1
+        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.osm.ch:8080/tiles/KTZUERICH2015/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
+        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://geoservices.buergernetz.bz.it/geoserver/gwc/service/wmts/?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=P_BZ_BASEMAP_TOPO&STYLE=default&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX=GoogleMapsCompatible%3A{z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg"] = 1
 
         skipEntries["+++ EII-URL is not unique: http://geolittoral.application.equipement.gouv.fr/wms/metropole?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=ortholittorale&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
         skipEntries["-  Streets NRW Geofabrik.de - http://tools.geofabrik.de/osmi/view/strassennrw/wxs?REQUEST=GetMap&SERVICE=wms&VERSION=1.1.1&FORMAT=image/png&SRS={proj}&STYLES=&LAYERS=unzugeordnete_strassen,kreisstrassen_ast,kreisstrassen,landesstrassen_ast,landesstrassen,bundesstrassen_ast,bundesstrassen,autobahnen_ast,autobahnen,endpunkte&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
@@ -139,6 +140,12 @@ class SyncEditorImageryIndex {
         skipEntries["  name differs: http://geoserver.infobex.hu/Budapest2014/IST/{zoom}/{x}/{y}.jpg"] = 3
         skipEntries["  name differs: http://mapproxy.openmap.lt/ort10lt/g/{zoom}/{x}/{y}.jpeg"] = 3
         skipEntries["  name differs: http://e.tile.openstreetmap.hu/ortofoto2000/{zoom}/{x}/{y}.jpg"] = 3
+        skipEntries["  name differs: http://gis3.stuttgart.de/wss/service/wms_Luftbilder2011_jpg_internet/guest?FORMAT=image/jpeg&VERSION=1.3.0&SERVICE=WMS&REQUEST=GetMap&Layers=0,1,2,3,4,5,6,7,8&STYLES=default,default,default,default,default,default,default,default,default&CRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
+        skipEntries["  name differs: http://tools.geofabrik.de/osmi/tiles/routing/{zoom}/{x}/{y}.png"] = 3
+        skipEntries["  name differs: http://e.tile.openstreetmap.hu/ortofoto2005/{zoom}/{x}/{y}.jpg"] = 3
+        skipEntries["  name differs: https://secure.erlangen.de/arcgiser/services/Luftbilder2013/MapServer/WmsServer?FORMAT=image/bmp&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Erlangen_ratio5_6.25cm.jp2&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
+        skipEntries["  name differs: http://tools.geofabrik.de/osmi/tiles/addresses/{zoom}/{x}/{y}.png"] = 3
+        skipEntries["  name differs: http://{switch:a,b,c}.www.toolserver.org/tiles/bw-mapnik/{zoom}/{x}/{y}.png"] = 3
         skipEntries["  maxzoom differs: [DE] Bavaria (2 m) - http://geodaten.bayern.de/ogc/ogc_dop200_oa.cgi?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=adv_dop200c&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
         skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries County - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=County&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
         skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries NPWS Reserve - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=NPWSReserve&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
@@ -149,7 +156,15 @@ class SyncEditorImageryIndex {
         skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries State Forest - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=StateForest&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
         skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries LGA - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=LocalGovernmentArea&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
         skipEntries["  minzoom differs: [AU] LPI NSW Base Map - http://maps.six.nsw.gov.au/arcgis/rest/services/public/NSW_Base_Map/MapServer/tile/{zoom}/{y}/{x}"] = 3
+        skipEntries["  country code differs: [EU] OSM Inspector: Boundaries (EU) - http://tools.geofabrik.de/osmi/tiles/boundaries/{zoom}/{x}/{y}.png"] = 3
         skipEntries["  country code differs: [LT] ORT10LT (Lithuania) - http://mapproxy.openmap.lt/ort10lt/g/{zoom}/{x}/{y}.jpeg"] = 3
+        skipEntries["  country code differs: [TH] Cambodia, Laos, Thailand, Vietnam bilingual - http://{switch:a,b,c,d}.tile.osm-tools.org/osm_then/{zoom}/{x}/{y}.png"] = 3
+        skipEntries["  country code differs: [HU] Szeged ortophoto 2011 - http://e.tile.openstreetmap.hu/szeged-2011-10cm/{zoom}/{x}/{y}.png"] = 3
+        skipEntries["  country code differs: [HU] Danube flood ortophoto 2013 - http://e.tile.openstreetmap.hu/dunai-arviz-2013/{zoom}/{x}/{y}.jpg"] = 3
+        skipEntries["  country code differs: [HU] Budapest district XII ortophoto 2013 - http://turistautak.openstreetmap.hu/kolesar/wms/Budapest-XII/?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Ortofot%C3%B3%202013&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
+        skipEntries["  country code differs: [HU] Törökbálint ortophoto 2013 - http://terkep.torokbalint.hu/mapproxy/service?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=ORTO_2013_5CM_2013SZEPT_TAKARASSAL_512_512&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
+
+
     }
 
     void myprintlnfinal(String s) {
@@ -332,7 +347,7 @@ class SyncEditorImageryIndex {
                 myprintln "     (JOSM):    ${getCountryCode(j)}"
             }
         }
-        myprintln "*** Same URL, but different quality: ***"
+        /*myprintln "*** Same URL, but different quality: ***"
         for (def url : eiiUrls.keySet()) {
             def e = eiiUrls.get(url)
             if (!josmUrls.containsKey(url)) {
@@ -348,7 +363,7 @@ class SyncEditorImageryIndex {
                 myprintln "     (IEE):     ${getQuality(e)}"
                 myprintln "     (JOSM):    ${getQuality(j)}"
             }
-        }
+        }*/
     }
 
     /**
