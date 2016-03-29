@@ -33,6 +33,9 @@ public class LongSegment extends Test {
 
     @Override
     public void visit(Way w) {
+        if ("ferry".equals(w.get("route"))) {
+            return;
+        }
         Double length = w.getLongestSegmentLength();
         if (length > maxlength) {
             length /= 1000.0;
