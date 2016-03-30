@@ -37,7 +37,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.JosmTable;
@@ -161,7 +160,7 @@ public class TagTable extends JosmTable  {
      *
      *
      */
-    class DeleteAction extends RunnableAction implements ListSelectionListener {
+    class DeleteAction extends AbstractAction implements ListSelectionListener {
 
         DeleteAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
@@ -196,7 +195,7 @@ public class TagTable extends JosmTable  {
         }
 
         @Override
-        public void run() {
+        public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
             switch(getSelectedColumnCount()) {
@@ -250,7 +249,7 @@ public class TagTable extends JosmTable  {
      * Action to be run when the user adds a new tag.
      *
      */
-    class AddAction extends RunnableAction implements PropertyChangeListener {
+    class AddAction extends AbstractAction implements PropertyChangeListener {
         AddAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
             putValue(SHORT_DESCRIPTION, tr("Add a new tag"));
@@ -259,7 +258,7 @@ public class TagTable extends JosmTable  {
         }
 
         @Override
-        public void run() {
+        public void actionPerformed(ActionEvent e) {
             CellEditor editor = getCellEditor();
             if (editor != null) {
                 getCellEditor().stopCellEditing();
@@ -284,7 +283,7 @@ public class TagTable extends JosmTable  {
     /**
      * Action to be run when the user wants to paste tags from buffer
      */
-    class PasteAction extends RunnableAction implements PropertyChangeListener {
+    class PasteAction extends AbstractAction implements PropertyChangeListener {
         PasteAction() {
             putValue(SMALL_ICON, ImageProvider.get("", "pastetags"));
             putValue(SHORT_DESCRIPTION, tr("Paste tags from buffer"));
@@ -293,7 +292,7 @@ public class TagTable extends JosmTable  {
         }
 
         @Override
-        public void run() {
+        public void actionPerformed(ActionEvent e) {
             Relation relation = new Relation();
             model.applyToPrimitive(relation);
 
@@ -332,27 +331,35 @@ public class TagTable extends JosmTable  {
     }
 
     /** the delete action */
-    private RunnableAction deleteAction;
+    private DeleteAction deleteAction;
 
     /** the add action */
-    private RunnableAction addAction;
+    private AddAction addAction;
 
     /** the tag paste action */
-    private RunnableAction pasteAction;
+    private PasteAction pasteAction;
 
     /**
-     *
+     * Returns the delete action.
      * @return the delete action used by this table
      */
-    public RunnableAction getDeleteAction() {
+    public DeleteAction getDeleteAction() {
         return deleteAction;
     }
 
-    public RunnableAction getAddAction() {
+    /**
+     * Returns the add action.
+     * @return the add action used by this table
+     */
+    public AddAction getAddAction() {
         return addAction;
     }
 
-    public RunnableAction getPasteAction() {
+    /**
+     * Returns the paste action.
+     * @return the paste action used by this table
+     */
+    public PasteAction getPasteAction() {
         return pasteAction;
     }
 
@@ -428,7 +435,7 @@ public class TagTable extends JosmTable  {
                 // DEL in the text input.
                 //
                 return super.processKeyBinding(ks, e, condition, pressed);
-            getDeleteAction().run();
+            getDeleteAction().actionPerformed(null);
         }
         return super.processKeyBinding(ks, e, condition, pressed);
     }
