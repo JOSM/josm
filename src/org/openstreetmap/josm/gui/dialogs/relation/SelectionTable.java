@@ -9,26 +9,30 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-
+/**
+ * Selection table of relation editor.
+ * @since 2563
+ */
 public class SelectionTable extends JTable {
 
     private final SelectionTableModel model;
-    private MemberTableModel memberTableModel;
+    private final MemberTableModel memberTableModel;
+
+    /**
+     * Constructs a new {@code SelectionTable}.
+     * @param model table model
+     * @param memberTableModel member table model
+     */
+    public SelectionTable(SelectionTableModel model, MemberTableModel memberTableModel) {
+        super(model, new SelectionTableColumnModel(memberTableModel));
+        this.model = model;
+        this.memberTableModel = memberTableModel;
+        build();
+    }
 
     protected void build() {
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         addMouseListener(new DoubleClickAdapter());
-    }
-
-    public SelectionTable(SelectionTableModel model, SelectionTableColumnModel columnModel) {
-        super(model, columnModel);
-        this.model = model;
-        build();
-    }
-
-    public void setMemberTableModel(MemberTableModel memberTableModel) {
-        this.memberTableModel = memberTableModel;
     }
 
     class DoubleClickAdapter extends MouseAdapter {
@@ -37,8 +41,7 @@ public class SelectionTable extends JTable {
             if (!(SwingUtilities.isLeftMouseButton(evt) && evt.getClickCount() > 1))
                 return;
             int row = rowAtPoint(evt.getPoint());
-            OsmPrimitive primitive = model.getPrimitive(row);
-            memberTableModel.selectMembersReferringTo(Collections.singleton(primitive));
+            memberTableModel.selectMembersReferringTo(Collections.singleton(model.getPrimitive(row)));
         }
     }
 }

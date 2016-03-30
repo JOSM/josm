@@ -109,18 +109,18 @@ public class GenericRelationEditor extends RelationEditor  {
     private final ReferringRelationsBrowser referrerBrowser;
     private final ReferringRelationsBrowserModel referrerModel;
 
-    /** the member table */
+    /** the member table and its model */
     private MemberTable memberTable;
     private final MemberTableModel memberTableModel;
 
-    /** the model for the selection table */
+    /** the selection table and its model */
     private SelectionTable selectionTable;
     private final SelectionTableModel selectionTableModel;
 
     private AutoCompletingTextField tfRole;
 
-    /** the menu item in the windows menu. Required to properly
-     * hide on dialog close.
+    /**
+     * the menu item in the windows menu. Required to properly hide on dialog close.
      */
     private JMenuItem windowMenuItem;
     /**
@@ -502,8 +502,7 @@ public class GenericRelationEditor extends RelationEditor  {
     protected JPanel buildSelectionTablePanel() {
         JPanel pnl = new JPanel(new BorderLayout());
         MemberRoleCellEditor ce = (MemberRoleCellEditor) memberTable.getColumnModel().getColumn(0).getCellEditor();
-        selectionTable = new SelectionTable(selectionTableModel, new SelectionTableColumnModel(memberTableModel));
-        selectionTable.setMemberTableModel(memberTableModel);
+        selectionTable = new SelectionTable(selectionTableModel, memberTableModel);
         selectionTable.setRowHeight(ce.getEditor().getPreferredSize().height);
         pnl.add(new JScrollPane(selectionTable), BorderLayout.CENTER);
         return pnl;

@@ -86,11 +86,17 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         return layer;
     }
 
+    /**
+     * Registers listeners (selection change and dataset change).
+     */
     public void register() {
         DataSet.addSelectionListener(this);
         getLayer().data.addDataSetListener(this);
     }
 
+    /**
+     * Unregisters listeners (selection change and dataset change).
+     */
     public void unregister() {
         DataSet.removeSelectionListener(this);
         getLayer().data.removeDataSetListener(this);
@@ -189,6 +195,10 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         }
     }
 
+    /**
+     * Populates this model from the given relation.
+     * @param relation relation
+     */
     public void populate(Relation relation) {
         members.clear();
         if (relation != null) {
@@ -347,6 +357,10 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         fireTableDataChanged();
     }
 
+    /**
+     * Applies this member model to the given relation.
+     * @param relation relation
+     */
     public void applyToRelation(Relation relation) {
         relation.setMembers(members);
     }
@@ -677,7 +691,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     }
 
     /**
-     * Selects all mebers which refer to {@link OsmPrimitive}s in the collections
+     * Selects all members which refer to {@link OsmPrimitive}s in the collections
      * <code>primitmives</code>. Does nothing is primitives is null.
      *
      * @param primitives the collection of primitives
