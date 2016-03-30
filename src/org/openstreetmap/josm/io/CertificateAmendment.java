@@ -47,8 +47,8 @@ public final class CertificateAmendment {
     };
 
     private static final String[] SHA_HASHES = {
-        "139a5e4a4e0fa505378c72c5f700934ce8333f4e6b1b508886c4b0eb14f4be99",
-        "916a8f9232328192968c81c8edb672fa539f726861dfe379ca722050e19962cd"
+        "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739",
+        "c766a9bef2d4071c863a31aa4920e813b2d198608cb7b7cfe21143b836df09ea"
     };
 
     private CertificateAmendment() {
@@ -86,24 +86,25 @@ public final class CertificateAmendment {
         boolean certificateAdded = false;
         for (int i = 0; i < CERT_AMEND.length; i++) {
             CachedFile certCF = new CachedFile(CERT_AMEND[i]);
-            MessageDigest md;
-            try {
-                md = MessageDigest.getInstance("SHA-256");
-            } catch (NoSuchAlgorithmException ex) {
-                throw new RuntimeException(ex);
-            }
             byte[] certBytes = certCF.getByteContent();
-            byte[] sha = md.digest(certBytes);
-            if (!SHA_HASHES[i].equals(Utils.toHexString(sha)))
-                throw new RuntimeException(tr("Error adding certificate {0} - hash mismatch. Expected {1}, was {2}",
-                        CERT_AMEND[i], SHA_HASHES[i], Utils.toHexString(sha)));
-
             ByteArrayInputStream certIS = new ByteArrayInputStream(certBytes);
             X509Certificate cert;
+
             try {
                 cert = (X509Certificate) cf.generateCertificate(certIS);
+                MessageDigest md = MessageDigest.getInstance("SHA-256");
+                String sha1 = Utils.toHexString(md.digest(cert.getEncoded()));
+                if (!SHA_HASHES[i].equals(sha1)) {
+                    throw new RuntimeException(tr("Error adding certificate {0} - certificate fingerprint mismatch. Expected {1}, was {2}",
+                            CERT_AMEND[i],
+                            SHA_HASHES[i],
+                            sha1
+                            ));
+                }
             } catch (CertificateException ex) {
                 throw new IOException(ex);
+            } catch (NoSuchAlgorithmException ex) {
+                throw new RuntimeException(ex);
             }
             if (certificateIsMissing(keyStore, cert)) {
                 if (Main.isDebugEnabled()) {
