@@ -9898,6 +9898,22 @@
                     <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
                 </roles>
             </item> <!-- Walking Route -->
+            <item name="Riding Route" icon="presets/path.png" type="relation" preset_name_label="true">
+                <link href="http://wiki.openstreetmap.org/wiki/Tag:route=horse" />
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="horse"/>
+                <combo key="network" text="Network" values="rwn,lwn" match="keyvalue!" />
+                <reference ref="name_ref_operator"/>
+                <optional>
+                    <reference ref="route_hikebike_optionals" />
+                </optional>
+                <roles>
+                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
+                    <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
+                    <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
+                </roles>
+            </item> <!-- Riding Route -->
             <item name="Piste Route" icon="presets/path.png" type="relation" preset_name_label="true">
                 <link href="http://wiki.openstreetmap.org/wiki/Tag:route=piste"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:route=piste"
