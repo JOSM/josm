@@ -43,12 +43,14 @@ public final class CertificateAmendment {
 
     private static final String[] CERT_AMEND = {
         "resource://data/security/DST_Root_CA_X3.pem",
-        "resource://data/security/StartCom_Certification_Authority.pem"
+        "resource://data/security/StartCom_Certification_Authority.pem",
+        "resource://data/security/Certrum_CA.pem"
     };
 
     private static final String[] SHA_HASHES = {
         "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739",
-        "c766a9bef2d4071c863a31aa4920e813b2d198608cb7b7cfe21143b836df09ea"
+        "c766a9bef2d4071c863a31aa4920e813b2d198608cb7b7cfe21143b836df09ea",
+        "fd02362244f31266caff005818d1004ec4eb08fb239aafaaafff47497d6005d6"
     };
 
     private CertificateAmendment() {
