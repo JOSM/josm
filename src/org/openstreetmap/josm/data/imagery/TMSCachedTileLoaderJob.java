@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.cache.CacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntryAttributes;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener;
 import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob;
+import org.openstreetmap.josm.data.preferences.LongProperty;
 import org.openstreetmap.josm.tools.HttpClient;
 
 /**
@@ -39,8 +40,10 @@ import org.openstreetmap.josm.tools.HttpClient;
  */
 public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener  {
     private static final Logger LOG = FeatureAdapter.getLogger(TMSCachedTileLoaderJob.class.getCanonicalName());
-    private static final long MAXIMUM_EXPIRES = 30 /*days*/ * 24 /*hours*/ * 60 /*minutes*/ * 60 /*seconds*/ *1000L /*milliseconds*/;
-    private static final long MINIMUM_EXPIRES = 1 /*hour*/ * 60 /*minutes*/ * 60 /*seconds*/ *1000L /*milliseconds*/;
+    private static final LongProperty MAXIMUM_EXPIRES = new LongProperty("imagery.generic.maximum_expires",
+            30 /*days*/ * 24 /*hours*/ * 60 /*minutes*/ * 60 /*seconds*/ *1000L /*milliseconds*/);
+    private static final LongProperty MINIMUM_EXPIRES = new LongProperty("imagery.generic.minimum_expires",
+            1 /*hour*/ * 60 /*minutes*/ * 60 /*seconds*/ *1000L /*milliseconds*/);
     private final Tile tile;
     private volatile URL url;
 
@@ -243,11 +246,11 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         CacheEntryAttributes ret = super.parseHeaders(urlConn);
         // keep the expiration time between MINIMUM_EXPIRES and MAXIMUM_EXPIRES, so we will cache the tiles
         // at least for some short period of time, but not too long
-        if (ret.getExpirationTime() < now + MINIMUM_EXPIRES) {
-            ret.setExpirationTime(now + MINIMUM_EXPIRES);
+        if (ret.getExpirationTime() < now + MINIMUM_EXPIRES.get()) {
+            ret.setExpirationTime(now + MINIMUM_EXPIRES.get());
         }
-        if (ret.getExpirationTime() > now + MAXIMUM_EXPIRES) {
-            ret.setExpirationTime(now + MAXIMUM_EXPIRES);
+        if (ret.getExpirationTime() > now + MAXIMUM_EXPIRES.get()) {
+            ret.setExpirationTime(now + MAXIMUM_EXPIRES.get());
         }
         return ret;
     }
