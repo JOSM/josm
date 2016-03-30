@@ -1,6 +1,10 @@
-/* see #9667 - Verify interpolation range/values
-   Matches nodes with a decrease of addr:housenumber within addr:interpolation=even/odd.
-*/
-*[tag("addr:housenumber") > child_tag("addr:housenumber")][regexp_test("even|odd", parent_tag("addr:interpolation"))] + *[addr:housenumber] {
-  throwWarning: tr("Decreasing house numbers in addresses interpolation");
+/* see #10232 */
+way[addr:interpolation=odd] > node[addr:housenumber][get(split(".", tag("addr:housenumber")/2), 1)=0] {
+    throwWarning: tr("Even housenumber in odd address interpolation.");
+}
+way[addr:interpolation=even] > node[addr:housenumber][get(split(".", tag("addr:housenumber")/2), 1)=5] {
+    throwWarning: tr("Odd housenumber in even address interpolation.");
+}
+way[addr:interpolation] {
+    throwOther: tr("Way with {0}. Tag each housenumber separately if possible.", "{0.key}");
 }
