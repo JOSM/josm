@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * This is the {@link TableCellRenderer} used in {@link SelectionTable}.
- *
+ * @since 1806
  */
 public class SelectionTableCellRenderer extends MemberTableMemberCellRenderer {
     public static final Color BGCOLOR_SINGLE_ENTRY = BGCOLOR_IN_JOSM_SELECTION;

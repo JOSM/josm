@@ -34,11 +34,17 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
         populateSelectedPrimitives(layer);
     }
 
+    /**
+     * Registers listeners (selection change and layer change).
+     */
     public void register() {
         DataSet.addSelectionListener(this);
         MapView.addLayerChangeListener(this);
     }
 
+    /**
+     * Unregisters listeners (selection change and layer change).
+     */
     public void unregister() {
         DataSet.removeSelectionListener(this);
         MapView.removeLayerChangeListener(this);
@@ -115,7 +121,8 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
      * Replies the primitive at row <code>row</code> in this model
      *
      * @param row the row
-     * @return  the primitive at row <code>row</code> in this model
+     * @return the primitive at row <code>row</code> in this model
+     * @throws ArrayIndexOutOfBoundsException if index is invalid
      */
     public OsmPrimitive getPrimitive(int row) {
         return cache.get(row);
