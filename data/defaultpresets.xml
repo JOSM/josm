@@ -9903,7 +9903,7 @@
                 <space/>
                 <key key="type" value="route"/>
                 <key key="route" value="horse"/>
-                <combo key="network" text="Network" values="rwn,lwn" match="keyvalue!" />
+                <combo key="network" text="Network" values="ihn,nhn,rhn,lhn" match="keyvalue!" />
                 <reference ref="name_ref_operator"/>
                 <optional>
                     <reference ref="route_hikebike_optionals" />
