@@ -5064,7 +5064,7 @@
                   zh_TW.href="http://wiki.openstreetmap.org/wiki/Zh-hant:Tag:amenity=toilets" />
             <space />
             <key key="amenity" value="toilets" />
-            <combo key="access" text="Access rights" values="public,permissive,customers" />
+            <combo key="access" text="Access rights" values="yes,permissive,customers" />
             <optional>
                 <checkgroup columns="3">
                     <check key="female" text="Female" text_context="restroom" />
@@ -5087,7 +5087,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=shower" />
             <space />
             <key key="amenity" value="shower" />
-            <combo key="access" text="Access rights" values="public,permissive,customers" />
+            <combo key="access" text="Access rights" values="yes,permissive,customers" />
             <optional>
                 <text key="description" text="Description" />
                 <combo key="fee" text="Fee" values="yes,no" />
@@ -5260,7 +5260,7 @@
             <check key="sanitary_dump_station:pump-out" text="Suction pumpout" />
             <check key="sanitary_dump_station:round_drain" text="Gravity drain for hose" />
             <check key="sanitary_dump_station:basin" text="Casette or Elsan Disposal" />
-            <combo key="access" text="Access" values="yes,public,customers,no" />
+            <combo key="access" text="Access" values="yes,customers,no" />
             <reference ref="fee" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Operation times" values="24/7" values_no_i18n="true" />
