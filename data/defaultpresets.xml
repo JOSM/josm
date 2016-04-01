@@ -4527,17 +4527,6 @@
         </item> <!-- Other Place of Worship -->
     </group> <!-- Place of Worship -->
     <group name="Public Building" icon="presets/townhall.png">
-        <item name="Public Building" icon="styles/standard/service.png" type="node,closedway,multipolygon" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=public_building"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=public_building"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=public_building"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:amenity=public_building"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=public_building" />
-            <space />
-            <key key="amenity" value="public_building" />
-            <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
-        </item> <!-- Public Building -->
         <item name="Town Hall" icon="presets/townhall.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=townhall"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=townhall"
@@ -5984,7 +5973,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,silo,cowshed,construction,basilica,cathedral,chapel,church,temple,mosque,synagogue,transformer_tower" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,silo,cowshed,construction,basilica,cathedral,chapel,church,temple,mosque,synagogue,transformer_tower,public" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <text key="height" text="Height (meters)" />
