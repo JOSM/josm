@@ -2502,15 +2502,10 @@ node[amenity=sanitary_dump_station] {
     icon-image: "service/recycling/sanitary_dump_station.svg";
     set icon_z17;
 }
-area[amenity=public_building],
 area[amenity=townhall],
 area[amenity=embassy],
 area[amenity=community_centre] {
     fill-color: amenity_light#f7efb7;
-}
-node[amenity=public_building] {
-    icon-image: "service.png";
-    set icon_z17;
 }
 node[amenity=townhall] {
     icon-image: "presets/townhall.png";
