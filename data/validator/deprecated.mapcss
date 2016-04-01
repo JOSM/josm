@@ -813,3 +813,16 @@ way[barrier=wall][type=noise_barrier][wall][wall!=noise_barrier] {
   throwWarning: tr("{0} is deprecated", "{1.tag}");
   suggestAlternative: "wall=noise_barrier";
 }
+
+/* #8978, 12588 */
+*[amenity=public_building] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=townhall";
+  suggestAlternative: "amenity=community_centre";
+  suggestAlternative: "amenity=hospital";
+  suggestAlternative: "leisure=sports_centre";
+  suggestAlternative: "office=government";
+  suggestAlternative: "building=hospital";
+  suggestAlternative: "building=public";
+  suggestAlternative: "...";
+}
