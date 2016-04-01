@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -275,7 +276,7 @@ public final class PluginHandler {
      * @param parent The parent Component used to display warning popup
      * @param plugins the collection of plugins
      */
-    private static void filterDeprecatedPlugins(Component parent, Collection<String> plugins) {
+    static void filterDeprecatedPlugins(Component parent, Collection<String> plugins) {
         Set<DeprecatedPlugin> removedPlugins = new TreeSet<>();
         for (DeprecatedPlugin depr : DEPRECATED_PLUGINS) {
             if (plugins.contains(depr.name)) {
@@ -304,12 +305,14 @@ public final class PluginHandler {
             sb.append("</li>");
         }
         sb.append("</ul></html>");
-        JOptionPane.showMessageDialog(
-                parent,
-                sb.toString(),
-                tr("Warning"),
-                JOptionPane.WARNING_MESSAGE
-        );
+        if (!GraphicsEnvironment.isHeadless()) {
+            JOptionPane.showMessageDialog(
+                    parent,
+                    sb.toString(),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
     }
 
     /**
@@ -322,7 +325,7 @@ public final class PluginHandler {
      *
      * @param plugins the collection of plugins
      */
-    private static void filterUnmaintainedPlugins(Component parent, Collection<String> plugins) {
+    static void filterUnmaintainedPlugins(Component parent, Collection<String> plugins) {
         for (String unmaintained : UNMAINTAINED_PLUGINS) {
             if (!plugins.contains(unmaintained)) {
                 continue;

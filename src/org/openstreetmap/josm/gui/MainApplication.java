@@ -51,6 +51,7 @@ import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
@@ -445,19 +446,8 @@ public class MainApplication extends Main {
 
         Collection<PluginInformation> pluginsToLoad = null;
 
-
         if (!skipLoadingPlugins) {
-            pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(splash, monitor.createSubTaskMonitor(1, false));
-            if (!pluginsToLoad.isEmpty() && PluginHandler.checkAndConfirmPluginUpdate(splash)) {
-                monitor.subTask(tr("Updating plugins"));
-                pluginsToLoad = PluginHandler.updatePlugins(splash, null, monitor.createSubTaskMonitor(1, false), false);
-            }
-
-            monitor.indeterminateSubTask(tr("Installing updated plugins"));
-            PluginHandler.installDownloadedPlugins(true);
-
-            monitor.indeterminateSubTask(tr("Loading early plugins"));
-            PluginHandler.loadEarlyPlugins(splash, pluginsToLoad, monitor.createSubTaskMonitor(1, false));
+            pluginsToLoad = updateAndLoadEarlyPlugins(splash, monitor);
         }
 
         monitor.indeterminateSubTask(tr("Setting defaults"));
@@ -467,9 +457,7 @@ public class MainApplication extends Main {
         final Main main = new MainApplication(mainFrame);
 
         if (!skipLoadingPlugins) {
-            monitor.indeterminateSubTask(tr("Loading plugins"));
-            PluginHandler.loadLatePlugins(splash, pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
-            toolbar.refreshToolbarControl();
+            loadLatePlugins(splash, monitor, pluginsToLoad);
         }
 
         // Wait for splash disappearance (fix #9714)
@@ -524,6 +512,28 @@ public class MainApplication extends Main {
             info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
         }
+    }
+
+    static Collection<PluginInformation> updateAndLoadEarlyPlugins(SplashScreen splash, SplashProgressMonitor monitor) {
+        Collection<PluginInformation> pluginsToLoad;
+        pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(splash, monitor.createSubTaskMonitor(1, false));
+        if (!pluginsToLoad.isEmpty() && PluginHandler.checkAndConfirmPluginUpdate(splash)) {
+            monitor.subTask(tr("Updating plugins"));
+            pluginsToLoad = PluginHandler.updatePlugins(splash, null, monitor.createSubTaskMonitor(1, false), false);
+        }
+
+        monitor.indeterminateSubTask(tr("Installing updated plugins"));
+        PluginHandler.installDownloadedPlugins(true);
+
+        monitor.indeterminateSubTask(tr("Loading early plugins"));
+        PluginHandler.loadEarlyPlugins(splash, pluginsToLoad, monitor.createSubTaskMonitor(1, false));
+        return pluginsToLoad;
+    }
+
+    static void loadLatePlugins(SplashScreen splash, SplashProgressMonitor monitor, Collection<PluginInformation> pluginsToLoad) {
+        monitor.indeterminateSubTask(tr("Loading plugins"));
+        PluginHandler.loadLatePlugins(splash, pluginsToLoad, monitor.createSubTaskMonitor(1, false));
+        toolbar.refreshToolbarControl();
     }
 
     private static void processOffline(Map<Option, Collection<String>> args) {
