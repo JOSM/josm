@@ -1,15 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginHandler.DeprecatedPlugin;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -56,5 +60,27 @@ public class PluginHandlerTest {
                 System.clearProperty("josm.plugins");
             }
         }
+    }
+
+    /**
+     * Unit test of {@link PluginHandler#filterDeprecatedPlugins}.
+     */
+    @Test
+    public void testFilterDeprecatedPlugins() {
+        List<String> plugins = new ArrayList<>(Arrays.asList("foo", "bar", "imagery"));
+        PluginHandler.filterDeprecatedPlugins(Main.parent, plugins);
+        assertEquals(2, plugins.size());
+        assertFalse(plugins.contains("imagery"));
+    }
+
+    /**
+     * Unit test of {@link PluginHandler#filterUnmaintainedPlugins}.
+     */
+    @Test
+    public void testFilterUnmaintainedPlugins() {
+        List<String> plugins = new ArrayList<>(Arrays.asList("foo", "bar", "gpsbabelgui"));
+        PluginHandler.filterUnmaintainedPlugins(Main.parent, plugins);
+        assertEquals(2, plugins.size());
+        assertFalse(plugins.contains("gpsbabelgui"));
     }
 }
