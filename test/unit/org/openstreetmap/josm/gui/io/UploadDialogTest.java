@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -88,5 +91,17 @@ public class UploadDialogTest {
         new UploadDialog.UploadAction(newUploadDialog("", "source")).actionPerformed(null);
         new UploadDialog.UploadAction(newUploadDialog("comment", "")).actionPerformed(null);
         new UploadDialog.UploadAction(newUploadDialog("a comment long enough", "a source long enough")).actionPerformed(null);
+    }
+
+    /**
+     * Test of {@link UploadDialog.UploadAction#isUploadCommentTooShort} method.
+     */
+    @Test
+    public void testIsUploadCommentTooShort() {
+        assertTrue(UploadDialog.UploadAction.isUploadCommentTooShort(""));
+        assertTrue(UploadDialog.UploadAction.isUploadCommentTooShort("test"));
+        assertTrue(UploadDialog.UploadAction.isUploadCommentTooShort("测试"));
+        assertFalse(UploadDialog.UploadAction.isUploadCommentTooShort("geometric corrections"));
+        assertFalse(UploadDialog.UploadAction.isUploadCommentTooShort("几何校正"));
     }
 }
