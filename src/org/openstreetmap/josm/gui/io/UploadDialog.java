@@ -17,6 +17,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -502,9 +503,23 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             );
         }
 
+        static boolean isUploadCommentTooShort(String comment) {
+            String s = comment.trim();
+            boolean result = true;
+            if (!s.isEmpty()) {
+                UnicodeBlock block = Character.UnicodeBlock.of(s.charAt(0));
+                if (block.toString().contains("CJK")) {
+                    result = s.length() < 4;
+                } else {
+                    result = s.length() < 10;
+                }
+            }
+            return result;
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (dialog.getUploadComment().trim().length() < 10 && warnUploadComment()) {
+            if (isUploadCommentTooShort(dialog.getUploadComment()) && warnUploadComment()) {
                 // abort for missing comment
                 dialog.handleMissingComment();
                 return;
