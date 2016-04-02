@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -159,7 +160,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         Main.main.menu.imageryMenu.refreshOffsetMenu();
         OffsetBookmark.saveBookmarks();
 
-        DownloadDialog.getInstance().refreshTileSources();
+        if (!GraphicsEnvironment.isHeadless()) {
+            DownloadDialog.getInstance().refreshTileSources();
+        }
 
         boolean commonRestartRequired = commonSettings.saveSettings();
         boolean wmsRestartRequired = wmsSettings.saveSettings();
