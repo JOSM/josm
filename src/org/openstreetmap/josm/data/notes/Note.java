@@ -80,7 +80,7 @@ public class Note {
     }
 
     public void addComment(NoteComment comment) {
-        this.comments.add(comment);
+        comments.add(comment);
     }
 
     /**
@@ -88,7 +88,7 @@ public class Note {
      * @return First comment object
      */
     public NoteComment getFirstComment() {
-        return this.comments.get(0);
+        return comments.isEmpty() ? null : comments.get(0);
     }
 
     /**

@@ -39,5 +39,6 @@ public final class PreferencesTestUtils {
             assertEquals(tabs + increment, tabPane.getSetting(parentClass).getTabPane().getTabCount());
             assertEquals(tabPane.getSetting(parentClass), ((SubPreferenceSetting) setting).getTabPreferenceSetting(tabPane));
         }
+        setting.ok();
     }
 }
