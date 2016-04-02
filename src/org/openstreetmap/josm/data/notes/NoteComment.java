@@ -66,6 +66,10 @@ public class NoteComment {
         return action;
     }
 
+    /**
+     * Sets whether this is a new comment/action and needs to be uploaded to the API
+     * @param isNew {@code true} if this is a new comment/action and needs to be uploaded to the API
+     */
     public void setNew(boolean isNew) {
         this.isNew = isNew;
     }
