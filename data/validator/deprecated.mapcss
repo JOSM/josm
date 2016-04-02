@@ -826,3 +826,10 @@ way[barrier=wall][type=noise_barrier][wall][wall!=noise_barrier] {
   suggestAlternative: "building=public";
   suggestAlternative: "...";
 }
+
+/* #12708 */
+*[vending=news_papers] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "vending=newspapers";
+  fixAdd: "vending=newspapers";
+}

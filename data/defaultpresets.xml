@@ -8070,7 +8070,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=vending_machine" />
         <space />
         <key key="amenity" value="vending_machine" />
-        <multiselect key="vending" text="Vending products" values="animal_food;bicycle_tube;cigarettes;condoms;drinks;excrement_bags;food;news_papers;parking_tickets;photos;public_transport_plans;public_transport_tickets;SIM-cards;stamps;sweets;tampons;telephone_vouchers;toys;vouchers" values_searchable="true" />
+        <multiselect key="vending" text="Vending products" values="animal_food;bicycle_tube;cigarettes;condoms;drinks;excrement_bags;food;newspapers;parking_tickets;photos;public_transport_plans;public_transport_tickets;SIM_cards;stamps;sweets;tampons;telephone_vouchers;toys;vouchers" values_searchable="true" />
         <text key="operator" text="Operator" />
         <text key="ref" text="Reference number" />
         <preset_link preset_name="Payment Methods" />
