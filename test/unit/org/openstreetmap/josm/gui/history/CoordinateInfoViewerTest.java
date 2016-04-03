@@ -3,12 +3,22 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 
 /**
  * Unit tests of {@link CoordinateInfoViewer} class.
  */
 public class CoordinateInfoViewerTest {
+
+    /**
+     * Setup test.
+     */
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        JOSMFixture.createUnitTestFixture().init();
+    }
 
     /**
      * Test for {@link CoordinateInfoViewer#CoordinateInfoViewer} - {@code null} handling.
