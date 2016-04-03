@@ -5,7 +5,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
@@ -18,6 +20,14 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * Unit tests of {@link HistoryBrowserDialog} class.
  */
 public class HistoryBrowserDialogTest {
+
+    /**
+     * Setup test.
+     */
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        JOSMFixture.createUnitTestFixture().init();
+    }
 
     /**
      * Test for {@link HistoryBrowserDialog#buildTitle}.
