@@ -158,6 +158,7 @@ public class OverpassDownloadAction extends JosmAction {
                     try {
                         overpassQuery.setText(OverpassTurboQueryWizard.getInstance().constructQuery(overpassWizardText));
                     } catch (UncheckedParseException ex) {
+                        Main.error(ex);
                         HelpAwareOptionPane.showOptionDialog(
                                 Main.parent,
                                 tr("<html>The Overpass wizard could not parse the following query:"

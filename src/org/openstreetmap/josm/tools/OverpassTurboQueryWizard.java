@@ -61,7 +61,7 @@ public final class OverpassTurboQueryWizard {
      * @return an Overpass QL query
      * @throws UncheckedParseException when the parsing fails
      */
-    public String constructQuery(String search) throws UncheckedParseException {
+    public String constructQuery(String search) {
         try {
             final Object result = ((Invocable) engine).invokeFunction("overpassWizard", search);
             if (Boolean.FALSE.equals(result)) {
@@ -73,7 +73,7 @@ public final class OverpassTurboQueryWizard {
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException(e);
         } catch (ScriptException e) {
-            throw new RuntimeException("Failed to execute OverpassTurboQueryWizard", e);
+            throw new UncheckedParseException("Failed to execute OverpassTurboQueryWizard", e);
         }
     }
 }
