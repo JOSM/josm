@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 
 /**
@@ -34,6 +35,9 @@ public class AudioPreferenceTest {
      */
     @Test
     public void testAddGui() {
+        Main.pref.put("audio.menuinvisible", true);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new AudioPreference.Factory(), null);
+        Main.pref.put("audio.menuinvisible", false);
         PreferencesTestUtils.doTestPreferenceSettingAddGui(new AudioPreference.Factory(), null);
     }
 }
