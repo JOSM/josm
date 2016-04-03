@@ -4,14 +4,19 @@ package org.openstreetmap.josm.gui.help;
 public class HelpContentReaderException extends Exception {
     private int responseCode;
 
-    public HelpContentReaderException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
+    /**
+     * Constructs a new {@code HelpContentReaderException}.
+     * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+     */
     public HelpContentReaderException(String message) {
         super(message);
     }
 
+    /**
+     * Constructs a new {@code HelpContentReaderException}.
+     * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+     *        (A <tt>null</tt> value is permitted, and indicates that the cause is nonexistent or unknown.)
+     */
     public HelpContentReaderException(Throwable cause) {
         super(cause);
     }

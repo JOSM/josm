@@ -3,16 +3,27 @@ package org.openstreetmap.josm.tools.date;
 
 import static org.junit.Assert.assertEquals;
 
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 
 /**
  * Unit tests of {@link DateUtils} class.
  */
 public class DateUtilsTest {
+
+    /**
+     * Setup test.
+     */
+    @BeforeClass
+    public static void setUp() {
+        JOSMFixture.createUnitTestFixture().init();
+    }
 
     /**
      * Allows to override the timezone used in {@link DateUtils} for unit tests.
@@ -84,5 +95,24 @@ public class DateUtilsTest {
         assertEquals(1453694709000L, DateUtils.fromString("2016-01-25T04:05:09.000Z").getTime());
         assertEquals(1453694709200L, DateUtils.fromString("2016-01-25T04:05:09.200Z").getTime());
         assertEquals(1453694709400L, DateUtils.fromString("2016-01-25T04:05:09.400Z").getTime());
+    }
+
+    /**
+     * Unit test of {@link DateUtils#fromTimestamp} method.
+     */
+    @Test
+    public void testFromTimestamp() {
+        assertEquals("1970-01-01T00:00:00Z", DateUtils.fromTimestamp(0));
+        assertEquals("2001-09-09T01:46:40Z", DateUtils.fromTimestamp(1000000000));
+        assertEquals("2038-01-19T03:14:07Z", DateUtils.fromTimestamp(Integer.MAX_VALUE));
+    }
+
+    /**
+     * Unit test of {@link DateUtils#formatTime} method.
+     */
+    @Test
+    public void testFormatTime() {
+        assertEquals("1:00 AM", DateUtils.formatTime(new Date(123), DateFormat.SHORT));
+        assertEquals("1:00:00 AM CET", DateUtils.formatTime(new Date(123), DateFormat.LONG));
     }
 }

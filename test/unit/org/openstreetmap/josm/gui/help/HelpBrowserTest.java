@@ -14,9 +14,9 @@ import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
  */
 public class HelpBrowserTest {
 
-    private static final String URL_1 = "https://josm.openstreetmap.de/wiki/Help";
-    private static final String URL_2 = "https://josm.openstreetmap.de/wiki/Introduction";
-    private static final String URL_3 = "https://josm.openstreetmap.de/javadoc";
+    static final String URL_1 = "https://josm.openstreetmap.de/wiki/Help";
+    static final String URL_2 = "https://josm.openstreetmap.de/wiki/Introduction";
+    static final String URL_3 = "https://josm.openstreetmap.de/javadoc";
 
     /**
      * Setup tests
