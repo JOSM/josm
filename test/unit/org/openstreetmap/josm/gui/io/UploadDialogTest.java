@@ -103,5 +103,7 @@ public class UploadDialogTest {
         assertTrue(UploadDialog.UploadAction.isUploadCommentTooShort("测试"));
         assertFalse(UploadDialog.UploadAction.isUploadCommentTooShort("geometric corrections"));
         assertFalse(UploadDialog.UploadAction.isUploadCommentTooShort("几何校正"));
+        // test with unassigned unicode characters ==> no unicode block
+        assertTrue(UploadDialog.UploadAction.isUploadCommentTooShort("\u0860"));
     }
 }
