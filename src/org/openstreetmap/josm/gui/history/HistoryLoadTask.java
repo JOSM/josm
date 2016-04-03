@@ -192,20 +192,21 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     protected static HistoryDataSet loadHistory(OsmServerHistoryReader reader, ProgressMonitor progressMonitor) throws OsmTransferException {
         HistoryDataSet ds = reader.parseHistory(progressMonitor.createSubTaskMonitor(1, false));
-        // load corresponding changesets (mostly for changeset comment)
-        OsmServerChangesetReader changesetReader = new OsmServerChangesetReader();
-        List<Long> changesetIds = new ArrayList<>(ds.getChangesetIds());
+        if (ds != null) {
+            // load corresponding changesets (mostly for changeset comment)
+            OsmServerChangesetReader changesetReader = new OsmServerChangesetReader();
+            List<Long> changesetIds = new ArrayList<>(ds.getChangesetIds());
 
-        // query changesets 100 by 100 (OSM API limit)
-        int n = ChangesetQuery.MAX_CHANGESETS_NUMBER;
-        for (int i = 0; i < changesetIds.size(); i += n) {
-            for (Changeset c : changesetReader.queryChangesets(
-                    new ChangesetQuery().forChangesetIds(changesetIds.subList(i, Math.min(i + n, changesetIds.size()))),
-                    progressMonitor.createSubTaskMonitor(1, false))) {
-                ds.putChangeset(c);
+            // query changesets 100 by 100 (OSM API limit)
+            int n = ChangesetQuery.MAX_CHANGESETS_NUMBER;
+            for (int i = 0; i < changesetIds.size(); i += n) {
+                for (Changeset c : changesetReader.queryChangesets(
+                        new ChangesetQuery().forChangesetIds(changesetIds.subList(i, Math.min(i + n, changesetIds.size()))),
+                        progressMonitor.createSubTaskMonitor(1, false))) {
+                    ds.putChangeset(c);
+                }
             }
         }
-
         return ds;
     }
 
