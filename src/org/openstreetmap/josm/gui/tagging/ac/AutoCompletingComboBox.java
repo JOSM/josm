@@ -135,7 +135,9 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
             if (sysSel != null) {
                 Transferable old = Utils.getTransferableContent(sysSel);
                 editorComponent.select(start, end);
-                sysSel.setContents(old, null);
+                if (old != null) {
+                    sysSel.setContents(old, null);
+                }
             } else {
                 editorComponent.select(start, end);
             }
