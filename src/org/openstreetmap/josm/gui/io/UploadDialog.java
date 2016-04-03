@@ -508,7 +508,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             boolean result = true;
             if (!s.isEmpty()) {
                 UnicodeBlock block = Character.UnicodeBlock.of(s.charAt(0));
-                if (block.toString().contains("CJK")) {
+                if (block != null && block.toString().contains("CJK")) {
                     result = s.length() < 4;
                 } else {
                     result = s.length() < 10;
