@@ -241,7 +241,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     /**
-     * replies the tag table model for the respective point in time
+     * Replies the tag table model for the respective point in time.
      *
      * @param pointInTimeType the type of the point in time (must not be null)
      * @return the tag table model
@@ -251,33 +251,38 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
         if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return currentTagTableModel;
-        else if (pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME))
+        else // REFERENCE_POINT_IN_TIME
             return referenceTagTableModel;
-
-        // should not happen
-        return null;
     }
 
+    /**
+     * Replies the node list table model for the respective point in time.
+     *
+     * @param pointInTimeType the type of the point in time (must not be null)
+     * @return the node list table model
+     * @throws IllegalArgumentException if pointInTimeType is null
+     */
     public DiffTableModel getNodeListTableModel(PointInTimeType pointInTimeType) {
         CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
         if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return currentNodeListTableModel;
-        else if (pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME))
+        else // REFERENCE_POINT_IN_TIME
             return referenceNodeListTableModel;
-
-        // should not happen
-        return null;
     }
 
+    /**
+     * Replies the relation member table model for the respective point in time.
+     *
+     * @param pointInTimeType the type of the point in time (must not be null)
+     * @return the relation member table model
+     * @throws IllegalArgumentException if pointInTimeType is null
+     */
     public DiffTableModel getRelationMemberTableModel(PointInTimeType pointInTimeType) {
         CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
         if (pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return currentRelationMemberTableModel;
-        else if (pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME))
+        else // REFERENCE_POINT_IN_TIME
             return referenceRelationMemberTableModel;
-
-        // should not happen
-        return null;
     }
 
     /**

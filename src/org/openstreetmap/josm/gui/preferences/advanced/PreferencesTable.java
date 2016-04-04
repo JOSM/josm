@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -94,12 +95,14 @@ public class PreferencesTable extends JTable {
      */
     public boolean editPreference(final JComponent gui) {
         if (getSelectedRowCount() != 1) {
-            JOptionPane.showMessageDialog(
-                    gui,
-                    tr("Please select the row to edit."),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-                    );
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(
+                        gui,
+                        tr("Please select the row to edit."),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                        );
+            }
             return false;
         }
         final PrefEntry e = (PrefEntry) model.getValueAt(getSelectedRow(), 1);
@@ -121,7 +124,7 @@ public class PreferencesTable extends JTable {
         return ok;
     }
 
-    static boolean doEditList(final JComponent gui, final PrefEntry e, ListSetting lSetting) {
+    private static boolean doEditList(final JComponent gui, final PrefEntry e, ListSetting lSetting) {
         ListEditor lEditor = new ListEditor(gui, e, lSetting);
         lEditor.showDialog();
         if (lEditor.getValue() == 1) {
@@ -134,7 +137,7 @@ public class PreferencesTable extends JTable {
         return false;
     }
 
-    static boolean doEditListList(final JComponent gui, final PrefEntry e, ListListSetting llSetting) {
+    private static boolean doEditListList(final JComponent gui, final PrefEntry e, ListListSetting llSetting) {
         ListListEditor llEditor = new ListListEditor(gui, e, llSetting);
         llEditor.showDialog();
         if (llEditor.getValue() == 1) {
@@ -147,7 +150,7 @@ public class PreferencesTable extends JTable {
         return false;
     }
 
-    static boolean doEditMapList(final JComponent gui, final PrefEntry e, MapListSetting mlSetting) {
+    private static boolean doEditMapList(final JComponent gui, final PrefEntry e, MapListSetting mlSetting) {
         MapListEditor mlEditor = new MapListEditor(gui, e, mlSetting);
         mlEditor.showDialog();
         if (mlEditor.getValue() == 1) {
@@ -191,14 +194,9 @@ public class PreferencesTable extends JTable {
 
         rbString.setSelected(true);
 
-        ExtendedDialog dlg = new ExtendedDialog(gui, tr("Add setting"), new String[] {tr("OK"), tr("Cancel")});
-        dlg.setButtonIcons(new String[] {"ok.png", "cancel.png"});
-        dlg.setContent(p);
-        dlg.showDialog();
-
         PrefEntry pe = null;
         boolean ok = false;
-        if (dlg.getValue() == 1) {
+        if (!GraphicsEnvironment.isHeadless() && askAddSetting(gui, p)) {
             if (rbString.isSelected()) {
                 StringSetting sSetting = new StringSetting(null);
                 pe = new PrefEntry(tkey.getText(), sSetting, sSetting, false);
@@ -220,7 +218,12 @@ public class PreferencesTable extends JTable {
         return ok ? pe : null;
     }
 
-    static boolean doAddSimple(final JComponent gui, PrefEntry pe, StringSetting sSetting) {
+    private static boolean askAddSetting(JComponent gui, JPanel p) {
+        return new ExtendedDialog(gui, tr("Add setting"), new String[] {tr("OK"), tr("Cancel")})
+                .setContent(p).setButtonIcons(new String[] {"ok.png", "cancel.png"}).showDialog().getValue() == 1;
+    }
+
+    private static boolean doAddSimple(final JComponent gui, PrefEntry pe, StringSetting sSetting) {
         StringEditor sEditor = new StringEditor(gui, pe, sSetting);
         sEditor.showDialog();
         if (sEditor.getValue() == 1) {
@@ -233,7 +236,7 @@ public class PreferencesTable extends JTable {
         return false;
     }
 
-    static boolean doAddList(final JComponent gui, PrefEntry pe, ListSetting lSetting) {
+    private static boolean doAddList(final JComponent gui, PrefEntry pe, ListSetting lSetting) {
         ListEditor lEditor = new ListEditor(gui, pe, lSetting);
         lEditor.showDialog();
         if (lEditor.getValue() == 1) {
@@ -246,7 +249,7 @@ public class PreferencesTable extends JTable {
         return false;
     }
 
-    static boolean doAddListList(final JComponent gui, PrefEntry pe, ListListSetting llSetting) {
+    private static boolean doAddListList(final JComponent gui, PrefEntry pe, ListListSetting llSetting) {
         ListListEditor llEditor = new ListListEditor(gui, pe, llSetting);
         llEditor.showDialog();
         if (llEditor.getValue() == 1) {
@@ -259,7 +262,7 @@ public class PreferencesTable extends JTable {
         return false;
     }
 
-    static boolean doAddMapList(final JComponent gui, PrefEntry pe, MapListSetting mlSetting) {
+    private static boolean doAddMapList(final JComponent gui, PrefEntry pe, MapListSetting mlSetting) {
         MapListEditor mlEditor = new MapListEditor(gui, pe, mlSetting);
         mlEditor.showDialog();
         if (mlEditor.getValue() == 1) {
@@ -278,12 +281,14 @@ public class PreferencesTable extends JTable {
      */
     public void resetPreferences(final JComponent gui) {
         if (getSelectedRowCount() == 0) {
-            JOptionPane.showMessageDialog(
-                    gui,
-                    tr("Please select the row to delete."),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-                    );
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(
+                        gui,
+                        tr("Please select the row to delete."),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                        );
+            }
             return;
         }
         for (int row : getSelectedRows()) {
@@ -293,7 +298,7 @@ public class PreferencesTable extends JTable {
         fireDataChanged();
     }
 
-    private class AllSettingsTableModel extends DefaultTableModel {
+    final class AllSettingsTableModel extends DefaultTableModel {
 
         AllSettingsTableModel() {
             setColumnIdentifiers(new String[]{tr("Key"), tr("Value")});
@@ -328,7 +333,7 @@ public class PreferencesTable extends JTable {
         }
     }
 
-    private static class SettingCellRenderer extends DefaultTableCellRenderer {
+    static final class SettingCellRenderer extends DefaultTableCellRenderer {
         private final Color backgroundColor = UIManager.getColor("Table.background");
         private final Color changedColor = Main.pref.getColor(
                          marktr("Advanced Background: Changed"),
@@ -373,7 +378,7 @@ public class PreferencesTable extends JTable {
         }
     }
 
-    private static class SettingCellEditor extends DefaultCellEditor {
+    static final class SettingCellEditor extends DefaultCellEditor {
         SettingCellEditor() {
             super(new JosmTextField());
         }
