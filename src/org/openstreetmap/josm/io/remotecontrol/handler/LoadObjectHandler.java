@@ -104,7 +104,7 @@ public class LoadObjectHandler extends RequestHandler {
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
         ps.clear();
-        for (String i : args.get("objects").split(",\\s*")) {
+        for (String i : (args != null ? args.get("objects") : "").split(",\\s*")) {
             try {
                 ps.add(SimplePrimitiveId.fromString(i));
             } catch (IllegalArgumentException e) {

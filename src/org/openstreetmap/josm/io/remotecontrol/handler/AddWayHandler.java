@@ -94,7 +94,7 @@ public class AddWayHandler extends RequestHandler {
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
         allCoordinates.clear();
-        for (String coordinatesString : args.get("way").split(";\\s*")) {
+        for (String coordinatesString : (args != null ? args.get("way") : "").split(";\\s*")) {
             String[] coordinates = coordinatesString.split(",\\s*", 2);
             if (coordinates.length < 2) {
                 throw new RequestHandlerBadRequestException(
