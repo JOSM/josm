@@ -4064,6 +4064,10 @@ area[natural=wetland] {
 area[natural=water] {
     fill-color: water#0000ff;
 }
+way[natural=water][intermittent=yes] {
+    width: 2;
+    dashes: 15, 5;
+}
 way[natural=coastline] {
     width: 2;
     color: water#0000ff;
@@ -4169,9 +4173,18 @@ way[waterway=stream] {
     width: 1;
     color: stream#6600cc;
 }
-way[waterway=ditch], way[waterway=drain] {
+way[waterway=ditch],
+way[waterway=drain] {
     width: 1;
     color: water#0000ff;
+}
+way[waterway=river][intermittent=yes],
+way[waterway=riverbank][intermittent=yes],
+way[waterway=canal][intermittent=yes],
+way[waterway=stream][intermittent=yes],
+way[waterway=ditch][intermittent=yes],
+way[waterway=drain][intermittent=yes] {
+    dashes: 15, 5;
 }
 area[waterway=dock] {
     fill-color: dock#0000cf;
