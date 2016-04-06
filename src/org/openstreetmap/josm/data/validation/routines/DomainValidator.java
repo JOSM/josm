@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016040300, Last Updated Sun Apr  3 07:07:01 2016 UTC
+        // Taken from Version 2016040501, Last Updated Wed Apr  6 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -730,6 +730,7 @@ public final class DomainValidator extends AbstractValidator {
         "kiwi", // kiwi DOT KIWI LIMITED
         "koeln", // koeln NetCologne Gesellschaft für Telekommunikation mbH
         "komatsu", // komatsu Komatsu Ltd.
+        "kpmg", // kpmg KPMG International Cooperative (KPMG International Genossenschaft)
         "kpn", // kpn Koninklijke KPN N.V.
         "krd", // krd KRG Department of Information Technology
         "kred", // kred KredTLD Pty Ltd
@@ -827,6 +828,7 @@ public final class DomainValidator extends AbstractValidator {
         "mtpc", // mtpc Mitsubishi Tanabe Pharma Corporation
         "mtr", // mtr MTR Corporation Limited
         "museum", // museum Museum Domain Management Association
+        "mutual", // mutual Northwestern Mutual MU TLD Registry, LLC
         "mutuelle", // mutuelle Fédération Nationale de la Mutualité Française
         "nadex", // nadex Nadex Domains, Inc
         "nagoya", // nagoya GMO Registry, Inc.
