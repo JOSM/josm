@@ -2854,6 +2854,7 @@
                 </checkgroup>
             </optional>
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Fuel -->
         <item name="Charging Station" icon="styles/standard/vehicle/fuel/charging_station.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=charging_station"
@@ -3527,6 +3528,7 @@
             <reference ref="internet_smoking" />
             <space />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Residential Building" />
         </item> <!-- Hotel -->
         <item name="Motel" icon="styles/standard/accommodation/motel.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=motel"
@@ -3548,6 +3550,7 @@
             <reference ref="internet_smoking" />
             <space />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Motel -->
         <item name="Guest House/Bed &amp; Breakfast" icon="styles/standard/accommodation/guest_house.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=guest_house"
@@ -3568,6 +3571,7 @@
             <reference ref="internet_smoking" />
             <space />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Guest House/Bed & Breakfast -->
         <item name="Chalet" icon="styles/standard/accommodation/chalet.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=chalet"
@@ -3589,6 +3593,7 @@
             <reference ref="internet_smoking" />
             <space />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Chalet -->
         <item name="Hostel" icon="styles/standard/accommodation/hostel.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=hostel"
@@ -3610,6 +3615,7 @@
             <reference ref="internet_smoking" />
             <space />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Hostel -->
         <item name="Alpine Hut" icon="styles/standard/accommodation/alpine_hut_blue.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=alpine_hut"
@@ -3629,6 +3635,7 @@
             <reference ref="internet_smoking" />
             <space />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Alpine Hut -->
         <item name="Wilderness Hut" icon="styles/standard/accommodation/wilderness_hut_blue.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=wilderness_hut"
@@ -3649,6 +3656,7 @@
             <text key="description" text="Closer Description" />
             <space />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Wilderness Hut -->
         <separator/>
         <item name="Caravan Site/RV Park" icon="styles/standard/accommodation/camping/caravan.png" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3740,6 +3748,7 @@
             <reference ref="internet_smoking" />
             <space />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Fast Food -->
         <item name="Food Court" icon="presets/restaurant.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=food_court"
@@ -4030,6 +4039,7 @@
             <text key="screen" text="Number of screens" />
             <text key="min_age" text="Minimum age" />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Movie Theater/Cinema -->
         <item name="Zoo" icon="presets/zoo.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=zoo"
@@ -4290,6 +4300,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <text key="wikipedia" text="Wikipedia" />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Museum -->
         <item name="Theatre" icon="presets/theater.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=theatre"
@@ -4303,6 +4314,7 @@
             <reference ref="name_operator" />
             <reference ref="wheelchair" />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Theatre -->
         <item name="Library" icon="styles/standard/shop/library.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=library"
@@ -4318,6 +4330,7 @@
             <key key="amenity" value="library" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Library -->
         <item name="Arts Centre" icon="presets/arts_centre.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=arts_centre"
@@ -4329,6 +4342,7 @@
             <key key="amenity" value="arts_centre" />
             <text key="name" text="Name" />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Arts Centre -->
         <item name="Artwork" icon="presets/arts_centre.png" type="node,way,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=artwork"
@@ -4386,6 +4400,7 @@
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Church -->
         <item name="Mosque" icon="styles/standard/religion/muslim.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
@@ -4410,6 +4425,7 @@
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Mosque -->
         <item name="Synagogue" icon="styles/standard/religion/jewish.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
@@ -4434,6 +4450,7 @@
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Synagogue -->
         <item name="Buddhist Temple" icon="styles/standard/religion/buddhism.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
@@ -4457,6 +4474,7 @@
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Buddhist Temple -->
         <item name="Hindu Temple" icon="styles/standard/religion/hinduism.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
@@ -4480,6 +4498,7 @@
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Hindu Temple -->
         <item name="Shinto Shrine" icon="styles/standard/religion/shinto.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
@@ -4502,6 +4521,7 @@
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Shinto Shrine -->
         <item name="Other Place of Worship" icon="styles/standard/religion.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=place_of_worship"
@@ -4524,6 +4544,7 @@
             <reference ref="service_times" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Other Place of Worship -->
     </group> <!-- Place of Worship -->
     <group name="Public Building" icon="presets/townhall.png">
@@ -4539,6 +4560,7 @@
             <key key="amenity" value="townhall" />
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Town Hall -->
         <item name="Community Centre" icon="presets/community_centre.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=community_centre"
@@ -4553,6 +4575,7 @@
             <key key="amenity" value="community_centre" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Community Centre -->
         <item name="Embassy" icon="presets/embassy.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=embassy"
@@ -4578,6 +4601,7 @@
             <key key="amenity" value="courthouse" />
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Courthouse -->
         <item name="Prison" icon="styles/standard/service/administration/prison.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=prison"
@@ -4604,6 +4628,7 @@
             <key key="amenity" value="police" />
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Police -->
         <item name="Ranger Station" icon="styles/standard/service/ranger_station.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=ranger_station" />
@@ -4625,6 +4650,7 @@
             <key key="amenity" value="fire_station" />
             <text key="name" text="Name" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Fire Station -->
         <item name="Post Office" icon="styles/standard/service/post_office.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=post_office"
@@ -4658,6 +4684,7 @@
             <key key="amenity" value="kindergarten" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Kindergarten -->
         <item name="School" icon="presets/school.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=school"
@@ -4676,6 +4703,7 @@
             <key key="amenity" value="school" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- School -->
         <item name="University" icon="styles/standard/education/university.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=university"
@@ -5396,6 +5424,7 @@
             <text key="name" text="Name" />
             <reference ref="sport" />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
         </item> <!-- Sports Centre -->
         <item name="Pitch" icon="styles/standard/sport/pitch.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=pitch"
@@ -5974,9 +6003,11 @@
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
             <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,silo,cowshed,construction,basilica,cathedral,chapel,church,temple,mosque,synagogue,transformer_tower,public" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
-            <text key="name" text="Name" />
-            <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
-            <text key="height" text="Height (meters)" />
+            <optional>
+                <text key="name" text="Name" />
+                <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <text key="height" text="Height (meters)" />
+            </optional>
             <preset_link preset_name="Addresses" />
         </item> <!-- Building -->
         <item name="Residential Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,multipolygon" preset_name_label="true">
@@ -5995,9 +6026,11 @@
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
             <combo key="building" text="Building" values="yes,residential,apartments,house,hotel,hut,dormitory,terrace,detached,farm,roof" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
-            <text key="name" text="Name" />
-            <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
-            <text key="height" text="Height (meters)" />
+            <optional>
+                <text key="name" text="Name" />
+                <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
+                <text key="height" text="Height (meters)" />
+            </optional>
             <preset_link preset_name="Addresses" />
         </item> <!-- Residential Building -->
         <item name="Building part" icon="styles/standard/misc/landmark/building.png" type="closedway,multipolygon" preset_name_label="true">
@@ -7522,6 +7555,7 @@
             <check key="atm" text="Automated Teller Machine" default="on" />
             <text key="ref" text="Reference" />
             <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
         </item> <!-- Bank -->
         <item name="Money Exchange" icon="styles/standard/money/exchange.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bureau_de_change"
