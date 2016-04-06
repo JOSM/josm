@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditorTest;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
@@ -35,38 +36,11 @@ public class RelationEditorActionsTest {
         final DataSet ds = new DataSet();
         final Relation orig = new Relation(1);
         ds.addPrimitive(orig);
-        OsmDataLayer layer = new OsmDataLayer(new DataSet(), "test", null);
+        final OsmDataLayer layer = new OsmDataLayer(ds, "test", null);
         MemberTableModel memberTableModel = new MemberTableModel(orig, layer, null);
         SelectionTableModel selectionTableModel = new SelectionTableModel(layer);
 
-        IRelationEditor editor = new IRelationEditor() {
-            private Relation r = orig;
-
-            @Override
-            public void setRelation(Relation relation) {
-                r = relation;
-            }
-
-            @Override
-            public boolean isDirtyRelation() {
-                return false;
-            }
-
-            @Override
-            public Relation getRelationSnapshot() {
-                return r;
-            }
-
-            @Override
-            public Relation getRelation() {
-                return r;
-            }
-
-            @Override
-            public void reloadDataFromRelation() {
-                // Do nothing
-            }
-        };
+        IRelationEditor editor = GenericRelationEditorTest.newRelationEditor(orig, layer);
 
         MemberTable memberTable = new MemberTable(layer, editor.getRelation(), memberTableModel);
         TagEditorModel tagModel = new TagEditorModel();
