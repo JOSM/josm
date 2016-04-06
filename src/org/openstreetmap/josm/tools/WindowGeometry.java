@@ -48,8 +48,7 @@ public class WindowGeometry {
      * @return the geometry object
      */
     public static WindowGeometry centerOnScreen(Dimension extent, String preferenceKey) {
-        Rectangle size = preferenceKey != null ? getScreenInfo(preferenceKey)
-            : getFullScreenInfo();
+        Rectangle size = preferenceKey != null ? getScreenInfo(preferenceKey) : getFullScreenInfo();
         Point topLeft = new Point(
                 size.x + Math.max(0, (size.width - extent.width) /2),
                 size.y + Math.max(0, (size.height - extent.height) /2)
@@ -116,8 +115,7 @@ public class WindowGeometry {
      * @param rect the position
      */
     public WindowGeometry(Rectangle rect) {
-        this.topLeft = rect.getLocation();
-        this.extent = rect.getSize();
+        this(rect.getLocation(), rect.getSize());
     }
 
     /**
@@ -425,9 +423,7 @@ public class WindowGeometry {
      * @return bounds of the screen
      */
     private static Rectangle getScreenInfo(Rectangle g) {
-        GraphicsEnvironment ge = GraphicsEnvironment
-                .getLocalGraphicsEnvironment();
-        GraphicsDevice[] gs = ge.getScreenDevices();
+        GraphicsDevice[] gs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
         int intersect = 0;
         Rectangle bounds = null;
         for (GraphicsDevice gd : gs) {
@@ -445,7 +441,7 @@ public class WindowGeometry {
                     b.x += b.width;
                     is = b.intersection(g);
                     s = is.width * is.height;
-                    if (bounds == null || intersect < s) {
+                    if (intersect < s) {
                         intersect = s;
                         bounds = b;
                     }
@@ -459,7 +455,7 @@ public class WindowGeometry {
                 }
             }
         }
-        return bounds;
+        return bounds != null ? bounds : g;
     }
 
     /**
