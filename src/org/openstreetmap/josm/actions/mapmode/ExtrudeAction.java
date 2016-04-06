@@ -762,8 +762,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             }
         }
         return bestMovement;
-
-
     }
 
     /***
@@ -1025,15 +1023,17 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 Point p3 = mv.getPoint(newN1en);
                 Point p4 = mv.getPoint(newN2en);
 
-                Point2D normalUnitVector = getNormalUniVector();
+                Point2D normalUnitVector = activeMoveDirection != null ? getNormalUniVector() : null;
 
                 if (mode == Mode.extrude || mode == Mode.create_new) {
                     g2.setColor(mainColor);
                     g2.setStroke(mainStroke);
                     // Draw rectangle around new area.
                     GeneralPath b = new GeneralPath();
-                    b.moveTo(p1.x, p1.y); b.lineTo(p3.x, p3.y);
-                    b.lineTo(p4.x, p4.y); b.lineTo(p2.x, p2.y);
+                    b.moveTo(p1.x, p1.y);
+                    b.lineTo(p3.x, p3.y);
+                    b.lineTo(p4.x, p4.y);
+                    b.lineTo(p2.x, p2.y);
                     b.lineTo(p1.x, p1.y);
                     g2.draw(b);
 
@@ -1041,7 +1041,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                         // Draw reference ways
                         drawReferenceSegment(g2, mv, dualAlignSegment1);
                         drawReferenceSegment(g2, mv, dualAlignSegment2);
-                    } else if (activeMoveDirection != null) {
+                    } else if (activeMoveDirection != null && normalUnitVector != null) {
                         // Draw reference way
                         drawReferenceSegment(g2, mv, activeMoveDirection);
 
@@ -1051,7 +1051,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                             double headingRefWS = activeMoveDirection.p1.heading(activeMoveDirection.p2);
                             double headingMoveDir = Math.atan2(normalUnitVector.getY(), normalUnitVector.getX());
                             double headingDiff = headingRefWS - headingMoveDir;
-                            if (headingDiff < 0) headingDiff += 2 * Math.PI;
+                            if (headingDiff < 0)
+                                headingDiff += 2 * Math.PI;
                             boolean mirrorRA = Math.abs(headingDiff - Math.PI) > 1e-5;
                             Point pr1 = mv.getPoint(activeMoveDirection.p1);
                             drawAngleSymbol(g2, pr1, normalUnitVector, mirrorRA);
