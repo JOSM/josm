@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * Super interface of relation editors.
@@ -44,4 +45,11 @@ public interface IRelationEditor {
      * Reloads data from relation.
      */
     void reloadDataFromRelation();
+
+    /**
+     * Replies the {@link OsmDataLayer} in whose context this relation editor is open
+     *
+     * @return the {@link OsmDataLayer} in whose context this relation editor is open
+     */
+    OsmDataLayer getLayer();
 }

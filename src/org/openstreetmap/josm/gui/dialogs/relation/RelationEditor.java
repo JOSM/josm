@@ -148,12 +148,8 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
         updateTitle();
     }
 
-    /**
-     * Replies the {@link OsmDataLayer} in whose context this relation editor is open
-     *
-     * @return the {@link OsmDataLayer} in whose context this relation editor is open
-     */
-    protected final OsmDataLayer getLayer() {
+    @Override
+    public final OsmDataLayer getLayer() {
         return layer;
     }
 
