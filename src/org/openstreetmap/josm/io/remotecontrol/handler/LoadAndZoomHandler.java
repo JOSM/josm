@@ -268,10 +268,10 @@ public class LoadAndZoomHandler extends RequestHandler {
         minlon = 0;
         maxlon = 0;
         try {
-            minlat = LatLon.roundToOsmPrecision(Double.parseDouble(args.get("bottom")));
-            maxlat = LatLon.roundToOsmPrecision(Double.parseDouble(args.get("top")));
-            minlon = LatLon.roundToOsmPrecision(Double.parseDouble(args.get("left")));
-            maxlon = LatLon.roundToOsmPrecision(Double.parseDouble(args.get("right")));
+            minlat = LatLon.roundToOsmPrecision(Double.parseDouble(args != null ? args.get("bottom") : ""));
+            maxlat = LatLon.roundToOsmPrecision(Double.parseDouble(args != null ? args.get("top") : ""));
+            minlon = LatLon.roundToOsmPrecision(Double.parseDouble(args != null ? args.get("left") : ""));
+            maxlon = LatLon.roundToOsmPrecision(Double.parseDouble(args != null ? args.get("right") : ""));
         } catch (NumberFormatException e) {
             throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+')', e);
         }

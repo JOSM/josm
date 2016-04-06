@@ -115,9 +115,9 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
 
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
-        String url = args.get("url");
-        String type = args.get("type");
-        String cookies = args.get("cookies");
+        String url = args != null ? args.get("url") : null;
+        String type = args != null ? args.get("type") : null;
+        String cookies = args != null ? args.get("cookies") : null;
         try {
             ImageryLayer.create(new ImageryInfo(null, url, type, null, cookies));
         } catch (IllegalArgumentException e) {
