@@ -85,7 +85,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
     static class MapPaintSourceEditor extends SourceEditor {
 
-        private static final String iconpref = "mappaint.icon.sources";
+        private static final String ICONPREF = "mappaint.icon.sources";
 
         MapPaintSourceEditor() {
             super(SourceType.MAP_PAINT_STYLE, Main.getJOSMWebsite()+"/styles", styleSourceProviders, true);
@@ -98,22 +98,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
         @Override
         public boolean finish() {
-            List<SourceEntry> activeStyles = activeSourcesModel.getSources();
-
-            boolean changed = MapPaintPrefHelper.INSTANCE.put(activeStyles);
-
-            if (tblIconPaths != null) {
-                List<String> iconPaths = iconPathsModel.getIconPaths();
-
-                if (!iconPaths.isEmpty()) {
-                    if (Main.pref.putCollection(iconpref, iconPaths)) {
-                        changed = true;
-                    }
-                } else if (Main.pref.putCollection(iconpref, null)) {
-                    changed = true;
-                }
-            }
-            return changed;
+            return doFinish(MapPaintPrefHelper.INSTANCE, ICONPREF);
         }
 
         @Override
@@ -123,7 +108,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
         @Override
         public Collection<String> getInitialIconPathsList() {
-            return Main.pref.getCollection(iconpref, null);
+            return Main.pref.getCollection(ICONPREF, null);
         }
 
         @Override

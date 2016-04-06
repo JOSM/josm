@@ -27,12 +27,12 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
 import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.SourceProvider;
 import org.openstreetmap.josm.gui.preferences.SourceType;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -182,7 +182,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
     static class TaggingPresetSourceEditor extends SourceEditor {
 
-        private static final String iconpref = "taggingpreset.icon.sources";
+        private static final String ICONPREF = "taggingpreset.icon.sources";
 
         TaggingPresetSourceEditor() {
             super(SourceType.TAGGING_PRESET, Main.getJOSMWebsite()+"/presets", presetSourceProviders, true);
@@ -195,22 +195,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
         @Override
         public boolean finish() {
-            List<SourceEntry> activeStyles = activeSourcesModel.getSources();
-
-            boolean changed = PresetPrefHelper.INSTANCE.put(activeStyles);
-
-            if (tblIconPaths != null) {
-                List<String> iconPaths = iconPathsModel.getIconPaths();
-
-                if (!iconPaths.isEmpty()) {
-                    if (Main.pref.putCollection(iconpref, iconPaths)) {
-                        changed = true;
-                    }
-                } else if (Main.pref.putCollection(iconpref, null)) {
-                    changed = true;
-                }
-            }
-            return changed;
+            return doFinish(PresetPrefHelper.INSTANCE, ICONPREF);
         }
 
         @Override
@@ -220,7 +205,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
         @Override
         public Collection<String> getInitialIconPathsList() {
-            return Main.pref.getCollection(iconpref, null);
+            return Main.pref.getCollection(ICONPREF, null);
         }
 
         @Override
