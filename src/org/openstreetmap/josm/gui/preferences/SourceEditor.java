@@ -112,8 +112,8 @@ public abstract class SourceEditor extends JPanel {
     protected final String availableSourcesUrl;
     protected final transient List<SourceProvider> sourceProviders;
 
-    protected JTable tblIconPaths;
-    protected IconPathTableModel iconPathsModel;
+    private JTable tblIconPaths;
+    private IconPathTableModel iconPathsModel;
 
     protected boolean sourcesInitiallyLoaded;
 
@@ -411,6 +411,23 @@ public abstract class SourceEditor extends JPanel {
      * @return true if restart is required
      */
     public abstract boolean finish();
+
+    protected boolean doFinish(SourcePrefHelper prefHelper, String iconPref) {
+        boolean changed = prefHelper.put(activeSourcesModel.getSources());
+
+        if (tblIconPaths != null) {
+            List<String> iconPaths = iconPathsModel.getIconPaths();
+
+            if (!iconPaths.isEmpty()) {
+                if (Main.pref.putCollection(iconPref, iconPaths)) {
+                    changed = true;
+                }
+            } else if (Main.pref.putCollection(iconPref, null)) {
+                changed = true;
+            }
+        }
+        return changed;
+    }
 
     /**
      * Provide the GUI strings. (There are differences for MapPaint, Preset and TagChecker Rule)
