@@ -289,12 +289,14 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016040501, Last Updated Wed Apr  6 07:07:01 2016 UTC
+        // Taken from Version 2016040601, Last Updated Thu Apr  7 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
         "abbott", // abbott Abbott Laboratories, Inc.
+        "abbvie", // abbvie AbbVie Inc.
         "abogado", // abogado Top Level Domain Holdings Limited
+        "abudhabi", // abudhabi Abu Dhabi Systems and Information Centre
         "academy", // academy Half Oaks, LLC
         "accenture", // accenture Accenture plc
         "accountant", // accountant dot Accountant Limited
@@ -851,6 +853,7 @@ public final class DomainValidator extends AbstractValidator {
         "nissan", // nissan NISSAN MOTOR CO., LTD.
         "nissay", // nissay Nippon Life Insurance Company
         "nokia", // nokia Nokia Corporation
+        "northwesternmutual", // northwesternmutual Northwestern Mutual Registry, LLC
         "norton", // norton Symantec Corporation
         "nowruz", // nowruz Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
         "nra", // nra NRA Holdings Company, INC.
@@ -1122,6 +1125,7 @@ public final class DomainValidator extends AbstractValidator {
         "vet", // vet United TLD Holdco, Ltd
         "viajes", // viajes Black Madison, LLC
         "video", // video United TLD Holdco, Ltd
+        "vig", // vig VIENNA INSURANCE GROUP AG Wiener Versicherung Gruppe
         "viking", // viking Viking River Cruises (Bermuda) Ltd.
         "villas", // villas New Sky, LLC
         "vin", // vin Holly Shadow, LLC
@@ -1152,6 +1156,7 @@ public final class DomainValidator extends AbstractValidator {
         "website", // website DotWebsite Inc.
         "wed", // wed Atgron, Inc.
         "wedding", // wedding Top Level Domain Holdings Limited
+        "weibo", // weibo Sina Corporation
         "weir", // weir Weir Group IP Limited
         "whoswho", // whoswho Who&#39;s Who Registry
         "wien", // wien punkt.wien GmbH
@@ -1191,6 +1196,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--8y0a063a", // 联通 China United Network Communications Corporation Limited
         "xn--9dbq2a", // קום VeriSign Sarl
         "xn--9et52u", // 时尚 RISE VICTORY LIMITED
+        "xn--9krt00a", // 微博 Sina Corporation
         "xn--b4w605ferd", // 淡马锡 Temasek Holdings (Private) Limited
         "xn--bck1b9a5dre4c", // ファッション Amazon Registry Services, Inc.
         "xn--c1avg", // орг Public Interest Registry
@@ -1225,6 +1231,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--mgba3a3ejt", // ارامكو Aramco Services Company
         "xn--mgbab2bd", // بازار CORE Association
         "xn--mgbb9fbpob", // موبايلي GreenTech Consultancy Company W.L.L.
+        "xn--mgbca7dzdo", // ابوظبي Abu Dhabi Systems and Information Centre
         "xn--mgbt3dhd", // همراه Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
         "xn--mk1bu44c", // 닷컴 VeriSign Sarl
         "xn--mxtq1m", // 政府 Net-Chinese Co., Ltd.
