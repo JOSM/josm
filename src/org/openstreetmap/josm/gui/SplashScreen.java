@@ -252,6 +252,9 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         @Override
         public void subTask(String title) {
+            if (Main.isDebugEnabled()) {
+                Main.debug(title);
+            }
             latestSubtask = new SplashProgressMonitor(title, listener);
             tasks.add(latestSubtask);
             listener.stateChanged(null);
