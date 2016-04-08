@@ -26,6 +26,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -228,18 +229,26 @@ public final class HelpAwareOptionPane {
             }
         }
 
-        if (msg instanceof String) {
-            msg = new JMultilineLabel((String) msg, true);
-        }
-
         final JOptionPane pane = new JOptionPane(
-                msg,
+                msg instanceof String ? new JMultilineLabel((String) msg, true) : msg,
                 messageType,
                 JOptionPane.DEFAULT_OPTION,
                 icon,
                 buttons.toArray(),
                 defaultButton
         );
+
+        // Log message. Useful for bug reports and unit tests
+        switch (messageType) {
+            case JOptionPane.ERROR_MESSAGE:
+                Main.error(title + " - " + msg);
+                break;
+            case JOptionPane.WARNING_MESSAGE:
+                Main.warn(title + " - " + msg);
+                break;
+            default:
+                Main.info(title + " - " + msg);
+        }
 
         if (!GraphicsEnvironment.isHeadless()) {
             doShowOptionDialog(parentComponent, title, options, defaultOption, helpTopic, buttons, pane);
