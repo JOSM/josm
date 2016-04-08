@@ -726,10 +726,6 @@ node[highway=crossing][crossing=traffic_signals] {
     icon-image: "vehicle/crossing_traffic_signals.svg";
     set icon_z17;
 }
-node[highway=incline], node[highway=incline_steep] {
-    icon-image: "vehicle/restriction/incline.png";
-    set icon_z17;
-}
 node[highway=motorway_junction] {
     icon-image: "vehicle/motorway_junction.svg";
     set icon_z17;
