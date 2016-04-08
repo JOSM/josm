@@ -880,15 +880,24 @@ public final class PluginHandler {
         }
         try {
             monitor.beginTask(tr("Determine plugins to load..."));
-            Set<String> plugins = new HashSet<>();
-            plugins.addAll(Main.pref.getCollection("plugins", new LinkedList<String>()));
-            if (System.getProperty("josm.plugins") != null) {
-                plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
+            Set<String> plugins = new HashSet<>(Main.pref.getCollection("plugins", new LinkedList<String>()));
+            if (Main.isDebugEnabled()) {
+                Main.debug("Plugins list initialized to " + plugins);
+            }
+            String systemProp = System.getProperty("josm.plugins");
+            if (systemProp != null) {
+                plugins.addAll(Arrays.asList(systemProp.split(",")));
+                if (Main.isDebugEnabled()) {
+                    Main.debug("josm.plugins system property set to '" + systemProp+"'. Plugins list is now " + plugins);
+                }
             }
             monitor.subTask(tr("Removing deprecated plugins..."));
             filterDeprecatedPlugins(parent, plugins);
             monitor.subTask(tr("Removing unmaintained plugins..."));
             filterUnmaintainedPlugins(parent, plugins);
+            if (Main.isDebugEnabled()) {
+                Main.debug("Plugins list is finally set to " + plugins);
+            }
             Map<String, PluginInformation> infos = loadLocallyAvailablePluginInformation(monitor.createSubTaskMonitor(1, false));
             List<PluginInformation> ret = new LinkedList<>();
             for (Iterator<String> it = plugins.iterator(); it.hasNext();) {
