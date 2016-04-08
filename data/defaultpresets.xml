@@ -5188,6 +5188,7 @@
             <space />
             <key key="amenity" value="recycling" />
             <key key="recycling_type" value="container" />
+            <text key="operator" text="Operator" />
             <reference ref="oh_wheelchair" />
             <space />
             <checkgroup columns="4">
