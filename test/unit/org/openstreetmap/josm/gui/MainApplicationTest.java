@@ -38,6 +38,7 @@ public class MainApplicationTest {
         final String old = System.getProperty("josm.plugins");
         try {
             System.setProperty("josm.plugins", "buildings_tools,plastic_laf");
+            assertEquals("buildings_tools,plastic_laf", System.getProperty("josm.plugins"));
             SplashProgressMonitor monitor = new SplashProgressMonitor("foo", new ChangeListener() {
                 @Override
                 public void stateChanged(ChangeEvent e) {
@@ -45,6 +46,7 @@ public class MainApplicationTest {
                 }
             });
             Collection<PluginInformation> plugins = MainApplication.updateAndLoadEarlyPlugins(null, monitor);
+            assertEquals("buildings_tools,plastic_laf", System.getProperty("josm.plugins"));
             assertEquals(2, plugins.size());
             assertNotNull(PluginHandler.getPlugin("plastic_laf"));
             assertNull(PluginHandler.getPlugin("buildings_tools"));

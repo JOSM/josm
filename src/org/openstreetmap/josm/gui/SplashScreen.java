@@ -224,6 +224,9 @@ public class SplashScreen extends JFrame implements ChangeListener {
         @Override
         public void beginTask(String title) {
             if (title != null) {
+                if (Main.isDebugEnabled()) {
+                    Main.debug(title);
+                }
                 final MeasurableTask task = new MeasurableTask(title);
                 tasks.add(task);
                 listener.stateChanged(null);
@@ -282,7 +285,9 @@ public class SplashScreen extends JFrame implements ChangeListener {
             final Task task = Utils.find(tasks, Predicates.<Task>equalTo(new MeasurableTask(title)));
             if (task instanceof MeasurableTask) {
                 ((MeasurableTask) task).finish();
-                Main.debug(tr("{0} completed in {1}", title, ((MeasurableTask) task).duration));
+                if (Main.isDebugEnabled()) {
+                    Main.debug(tr("{0} completed in {1}", title, ((MeasurableTask) task).duration));
+                }
                 listener.stateChanged(null);
             }
         }
