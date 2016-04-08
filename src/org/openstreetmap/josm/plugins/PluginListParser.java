@@ -33,7 +33,7 @@ public class PluginListParser {
      * @return a plugin information object
      * @throws PluginListParseException if plugin manifest cannot be parsed
      */
-    protected static PluginInformation createInfo(String name, String url, String manifest) throws PluginListParseException {
+    public static PluginInformation createInfo(String name, String url, String manifest) throws PluginListParseException {
         try {
             return new PluginInformation(
                     new ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8)),
