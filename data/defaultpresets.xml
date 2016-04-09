@@ -2082,6 +2082,7 @@
             <space />
             <key key="waterway" value="waterfall" />
             <reference ref="name_wikipedia" />
+            <text key="height" text="Height (meters)" />
         </item> <!-- Waterfall -->
         <item name="Weir" icon="styles/standard/nautical/weir.svg" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=weir"
@@ -9836,7 +9837,7 @@
             </roles>
         </item> <!-- Enforcement -->
         <separator/>
-        <group name="Routes">
+        <group name="Routes" icon="presets/path.png">
             <item name="Bicycle Route" icon="presets/path.png" type="relation" preset_name_label="true">
                 <link href="http://wiki.openstreetmap.org/wiki/Tag:route=bicycle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Cycle_routes"
