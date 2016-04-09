@@ -1,12 +1,22 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.corrector;
+package org.openstreetmap.josm.gui.correction;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.List;
 
+import org.openstreetmap.josm.data.correction.TagCorrection;
+
+/**
+ * Tag correction table model.
+ * @since 729
+ */
 public class TagCorrectionTableModel extends CorrectionTableModel<TagCorrection> {
 
+    /**
+     * Constructs a new {@code TagCorrectionTableModel}.
+     * @param tagCorrections list of tag corrections
+     */
     public TagCorrectionTableModel(List<TagCorrection> tagCorrections) {
         super(tagCorrections);
     }
@@ -27,8 +37,9 @@ public class TagCorrectionTableModel extends CorrectionTableModel<TagCorrection>
             return tr("New key");
         case 3:
             return tr("New value");
+        default:
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -44,15 +55,15 @@ public class TagCorrectionTableModel extends CorrectionTableModel<TagCorrection>
             return tagCorrection.newKey;
         case 3:
             return tagCorrection.newValue;
+        default:
+            return null;
         }
-        return null;
     }
 
     @Override
     protected boolean isBoldCell(int row, int column) {
         TagCorrection tagCorrection = getCorrections().get(row);
         return (column == 2 && tagCorrection.isKeyChanged())
-                || (column == 3 && tagCorrection.isValueChanged());
+            || (column == 3 && tagCorrection.isValueChanged());
     }
-
 }
