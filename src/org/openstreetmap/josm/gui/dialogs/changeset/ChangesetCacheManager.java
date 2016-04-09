@@ -39,13 +39,17 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.downloadtasks.AbstractChangesetDownloadTask;
+import org.openstreetmap.josm.actions.downloadtasks.ChangesetContentDownloadTask;
+import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
+import org.openstreetmap.josm.actions.downloadtasks.ChangesetQueryTask;
+import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryDialog;
-import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryTask;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CloseChangesetTask;
@@ -651,9 +655,15 @@ public class ChangesetCacheManager extends JFrame {
      */
     public void setSelectedChangesets(Collection<Changeset> changesets) {
         model.setSelectedChangesets(changesets);
-        int idx = model.getSelectionModel().getMinSelectionIndex();
-        if (idx < 0) return;
-        tblChangesets.scrollRectToVisible(tblChangesets.getCellRect(idx, 0, true));
+        final int idx = model.getSelectionModel().getMinSelectionIndex();
+        if (idx < 0)
+            return;
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override
+            public void run() {
+                tblChangesets.scrollRectToVisible(tblChangesets.getCellRect(idx, 0, true));
+            }
+        });
         repaint();
     }
 
@@ -695,13 +705,14 @@ public class ChangesetCacheManager extends JFrame {
      * Runs the given changeset download task.
      * @param task The changeset download task to run
      */
-    public void runDownloadTask(final ChangesetDownloadTask task) {
-        Main.worker.submit(task);
+    public void runDownloadTask(final AbstractChangesetDownloadTask task) {
+        Main.worker.submit(new PostDownloadHandler(task, task.download()));
         Main.worker.submit(new Runnable() {
             @Override
             public void run() {
-                if (task.isCanceled() || task.isFailed()) return;
-                setSelectedChangesets(task.getDownloadedChangesets());
+                if (task.isCanceled() || task.isFailed())
+                    return;
+                setSelectedChangesets(task.getDownloadedData());
             }
         });
     }

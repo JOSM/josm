@@ -7,7 +7,7 @@ import java.util.List;
 import org.openstreetmap.josm.io.XmlWriter;
 
 /**
- * Common abstract implementation of other download tasks
+ * Common abstract implementation of other download tasks.
  * @param <T> The downloaded data type
  * @since 2322
  */
@@ -17,22 +17,41 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
     private boolean failed;
     protected T downloadedData;
 
+    /**
+     * Constructs a new {@code AbstractDownloadTask}.
+     */
     public AbstractDownloadTask() {
         errorMessages = new ArrayList<>();
     }
 
+    /**
+     * Determines if the download task has been canceled.
+     * @return {@code true} if the download task has been canceled
+     */
     public boolean isCanceled() {
         return canceled;
     }
 
+    /**
+     * Marks this download task as canceled.
+     * @param canceled {@code true} to mark this download task as canceled
+     */
     public void setCanceled(boolean canceled) {
         this.canceled = canceled;
     }
 
+    /**
+     * Determines if the download task has failed.
+     * @return {@code true} if the download task has failed
+     */
     public boolean isFailed() {
         return failed;
     }
 
+    /**
+     * Marks this download task as failed.
+     * @param failed {@code true} to mark this download task as failed
+     */
     public void setFailed(boolean failed) {
         this.failed = failed;
     }
@@ -81,9 +100,15 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
         return buff.toString();
     }
 
-    // Can be overridden for more complex checking logic
+    /**
+     * Determines if the given URL is accepted by {@link #getPatterns}.
+     * Can be overridden for more complex checking logic.
+     * @param url URL to donwload
+     * @return {@code true} if this URL is accepted
+     */
     public boolean acceptsUrl(String url) {
-        if (url == null) return false;
+        if (url == null)
+            return false;
         for (String p: getPatterns()) {
             if (url.matches(p)) {
                 return true;
@@ -112,7 +137,8 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
 
     @Override
     public boolean acceptsUrl(String url, boolean isRemotecontrol) {
-        if (isRemotecontrol && !isSafeForRemotecontrolRequests()) return false;
+        if (isRemotecontrol && !isSafeForRemotecontrolRequests())
+            return false;
         return acceptsUrl(url);
     }
 
@@ -132,5 +158,4 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
     public String[] getPatterns() {
         return new String[]{};
     }
-
 }

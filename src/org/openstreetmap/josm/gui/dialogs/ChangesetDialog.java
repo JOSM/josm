@@ -34,6 +34,8 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
+import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
+import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -43,7 +45,6 @@ import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
-import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetInSelectionListModel;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetListCellRenderer;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetListModel;
@@ -329,7 +330,7 @@ public class ChangesetDialog extends ToggleDialog {
         }
 
         @Override
-        public void itemStateChanged(ItemEvent arg0) {
+        public void itemStateChanged(ItemEvent e) {
             updateEnabledState();
 
         }
@@ -353,13 +354,13 @@ public class ChangesetDialog extends ToggleDialog {
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             ChangesetListModel model = getCurrentChangesetListModel();
             Set<Integer> sel = model.getSelectedChangesetIds();
             if (sel.isEmpty())
                 return;
             ChangesetHeaderDownloadTask task = new ChangesetHeaderDownloadTask(sel);
-            Main.worker.submit(task);
+            Main.worker.submit(new PostDownloadHandler(task, task.download()));
         }
 
         protected void updateEnabledState() {
@@ -367,9 +368,8 @@ public class ChangesetDialog extends ToggleDialog {
         }
 
         @Override
-        public void itemStateChanged(ItemEvent arg0) {
+        public void itemStateChanged(ItemEvent e) {
             updateEnabledState();
-
         }
 
         @Override
@@ -391,7 +391,7 @@ public class ChangesetDialog extends ToggleDialog {
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             List<Changeset> sel = getCurrentChangesetListModel().getSelectedOpenChangesets();
             if (sel.isEmpty())
                 return;
@@ -403,7 +403,7 @@ public class ChangesetDialog extends ToggleDialog {
         }
 
         @Override
-        public void itemStateChanged(ItemEvent arg0) {
+        public void itemStateChanged(ItemEvent e) {
             updateEnabledState();
         }
 
@@ -426,7 +426,7 @@ public class ChangesetDialog extends ToggleDialog {
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             Set<Changeset> sel = getCurrentChangesetListModel().getSelectedChangesets();
             if (sel.isEmpty())
                 return;
@@ -434,10 +434,7 @@ public class ChangesetDialog extends ToggleDialog {
                 return;
             String baseUrl = Main.getBaseBrowseUrl();
             for (Changeset cs: sel) {
-                String url = baseUrl + "/changeset/" + cs.getId();
-                OpenBrowser.displayUrl(
-                        url
-                );
+                OpenBrowser.displayUrl(baseUrl + "/changeset/" + cs.getId());
             }
         }
 
@@ -446,7 +443,7 @@ public class ChangesetDialog extends ToggleDialog {
         }
 
         @Override
-        public void itemStateChanged(ItemEvent arg0) {
+        public void itemStateChanged(ItemEvent e) {
             updateEnabledState();
         }
 
@@ -468,7 +465,7 @@ public class ChangesetDialog extends ToggleDialog {
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             ChangesetListModel model = getCurrentChangesetListModel();
             Set<Integer> sel = model.getSelectedChangesetIds();
             LaunchChangesetManager.displayChangesets(sel);
@@ -520,7 +517,7 @@ public class ChangesetDialog extends ToggleDialog {
                 future = null;
             } else {
                 task = new ChangesetHeaderDownloadTask(toDownload);
-                future = Main.worker.submit(task);
+                future = Main.worker.submit(new PostDownloadHandler(task, task.download()));
             }
 
             Runnable r = new Runnable() {

@@ -20,6 +20,8 @@ import javax.swing.JTable;
 import javax.swing.JToolBar;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
+import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.io.OnlineResource;
 
@@ -67,14 +69,14 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            if (current == null) return;
-            Main.worker.submit(
-                    new ChangesetHeaderDownloadTask(
-                            ChangesetDiscussionPanel.this,
-                            Collections.singleton(current.getId()),
-                            true /* include discussion */
-                    )
+            if (current == null)
+                return;
+            ChangesetHeaderDownloadTask task = new ChangesetHeaderDownloadTask(
+                    ChangesetDiscussionPanel.this,
+                    Collections.singleton(current.getId()),
+                    true /* include discussion */
             );
+            Main.worker.submit(new PostDownloadHandler(task, task.download()));
         }
 
         public void initProperties(Changeset cs) {

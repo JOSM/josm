@@ -28,6 +28,8 @@ import javax.swing.JToolBar;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
+import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -297,13 +299,13 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            if (currentChangeset == null) return;
-            Main.worker.submit(
-                    new ChangesetHeaderDownloadTask(
-                            ChangesetDetailPanel.this,
-                            Collections.singleton(currentChangeset.getId())
-                    )
+            if (currentChangeset == null)
+                return;
+            ChangesetHeaderDownloadTask task = new ChangesetHeaderDownloadTask(
+                    ChangesetDetailPanel.this,
+                    Collections.singleton(currentChangeset.getId())
             );
+            Main.worker.submit(new PostDownloadHandler(task, task.download()));
         }
 
         public void initProperties(Changeset cs) {
@@ -312,8 +314,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     }
 
     /**
-     * Selects the primitives in the content of this changeset in the current
-     * data layer.
+     * Selects the primitives in the content of this changeset in the current data layer.
      *
      */
     class SelectInCurrentLayerAction extends AbstractAction implements EditLayerChangeListener {
