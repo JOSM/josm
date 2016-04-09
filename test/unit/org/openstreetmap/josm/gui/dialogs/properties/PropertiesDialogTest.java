@@ -3,12 +3,18 @@ package org.openstreetmap.josm.gui.dialogs.properties;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.data.osm.Way;
 
 /**
@@ -22,6 +28,12 @@ public class PropertiesDialogTest {
     @BeforeClass
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
+    }
+
+    private static String createSearchSetting(DataSet ds, boolean sameType) {
+        List<OsmPrimitive> sel = new ArrayList<>(ds.allPrimitives());
+        Collections.sort(sel, new OsmPrimitiveComparator(true, false));
+        return PropertiesDialog.createSearchSetting("foo", sel, sameType).text;
     }
 
     /**
@@ -38,15 +50,13 @@ public class PropertiesDialogTest {
             }
             ds.addPrimitive(n);
         }
-        assertEquals("(\"foo\"=\"bar\")",
-                PropertiesDialog.createSearchSetting("foo", ds.allPrimitives(), false).text);
+        assertEquals("(\"foo\"=\"bar\")", createSearchSetting(ds, false));
 
         Node n = new Node(LatLon.ZERO);
         n.put("foo", "baz");
         ds.addPrimitive(n);
 
-        assertEquals("(\"foo\"=\"bar\") OR (\"foo\"=\"baz\")",
-                PropertiesDialog.createSearchSetting("foo", ds.allPrimitives(), false).text);
+        assertEquals("(\"foo\"=\"baz\") OR (\"foo\"=\"bar\")", createSearchSetting(ds, false));
 
         ds.removePrimitive(n);
 
@@ -54,7 +64,6 @@ public class PropertiesDialogTest {
         w.put("foo", "bar");
         ds.addPrimitive(w);
 
-        assertEquals("(type:node \"foo\"=\"bar\") OR (type:way \"foo\"=\"bar\")",
-                PropertiesDialog.createSearchSetting("foo", ds.allPrimitives(), true).text);
+        assertEquals("(type:way \"foo\"=\"bar\") OR (type:node \"foo\"=\"bar\")", createSearchSetting(ds, true));
     }
 }
