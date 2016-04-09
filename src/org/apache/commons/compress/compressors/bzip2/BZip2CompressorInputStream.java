@@ -137,7 +137,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
     @Override
     public int read() throws IOException {
         if (this.in != null) {
-            int r = read0();
+            final int r = read0();
             count(r < 0 ? -1 : 1);
             return r;
         }
@@ -177,7 +177,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
             count(1);
         }
 
-        int c = (destOffs == offs) ? -1 : (destOffs - offs);
+        final int c = (destOffs == offs) ? -1 : (destOffs - offs);
         return c;
     }
 
@@ -227,17 +227,17 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
-    private boolean init(boolean isFirstStream) throws IOException {
+    private boolean init(final boolean isFirstStream) throws IOException {
         if (null == in) {
             throw new IOException("No InputStream");
         }
 
-        int magic0 = this.in.read();
+        final int magic0 = this.in.read();
         if (magic0 == -1 && !isFirstStream) {
             return false;
         }
-        int magic1 = this.in.read();
-        int magic2 = this.in.read();
+        final int magic1 = this.in.read();
+        final int magic2 = this.in.read();
 
         if (magic0 != 'B' || magic1 != 'Z' || magic2 != 'h') {
             throw new IOException(isFirstStream
@@ -245,7 +245,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
                     : "Garbage after a valid BZip2 stream");
         }
 
-        int blockSize = this.in.read();
+        final int blockSize = this.in.read();
         if ((blockSize < '1') || (blockSize > '9')) {
             throw new IOException("BZip2 block size is invalid");
         }
@@ -352,7 +352,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
     @Override
     public void close() throws IOException {
-        InputStream inShadow = this.in;
+        final InputStream inShadow = this.in;
         if (inShadow != null) {
             try {
                 if (inShadow != System.in) {
@@ -372,7 +372,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         if (bsLiveShadow < n) {
             final InputStream inShadow = this.in;
             do {
-                int thech = inShadow.read();
+                final int thech = inShadow.read();
 
                 if (thech < 0) {
                     throw new IOException("unexpected end of stream");
@@ -835,7 +835,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
     private int setupNoRandPartA() throws IOException {
         if (this.su_i2 <= this.last) {
             this.su_chPrev = this.su_ch2;
-            int su_ch2Shadow = this.data.ll8[this.su_tPos] & 0xff;
+            final int su_ch2Shadow = this.data.ll8[this.su_tPos] & 0xff;
             this.su_ch2 = su_ch2Shadow;
             this.su_tPos = this.data.tt[this.su_tPos];
             this.su_i2++;
@@ -905,7 +905,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
     private int setupNoRandPartC() throws IOException {
         if (this.su_j2 < this.su_z) {
-            int su_ch2Shadow = this.su_ch2;
+            final int su_ch2Shadow = this.su_ch2;
             this.crc.updateCRC(su_ch2Shadow);
             this.su_j2++;
             this.currentState = NO_RAND_PART_C_STATE;
@@ -951,7 +951,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         // 4560782 byte
         // ===============
 
-        Data(int blockSize100k) {
+        Data(final int blockSize100k) {
             this.ll8 = new byte[blockSize100k * BZip2Constants.BASEBLOCKSIZE];
         }
 
@@ -962,7 +962,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
          * I don't initialize it at construction time to avoid unneccessary
          * memory allocation when compressing small files.
          */
-        int[] initTT(int length) {
+        int[] initTT(final int length) {
             int[] ttShadow = this.tt;
 
             // tt.length should always be >= length, but theoretically
@@ -989,7 +989,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
      * 
      * @since 1.1
      */
-    public static boolean matches(byte[] signature, int length) {
+    public static boolean matches(final byte[] signature, final int length) {
 
         if (length < 3) {
             return false;

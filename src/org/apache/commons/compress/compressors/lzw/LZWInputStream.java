@@ -61,7 +61,7 @@ public abstract class LZWInputStream extends CompressorInputStream {
     
     @Override
     public int read() throws IOException {
-        int ret = read(oneByte);
+        final int ret = read(oneByte);
         if (ret < 0) {
             return ret;
         }
@@ -69,10 +69,10 @@ public abstract class LZWInputStream extends CompressorInputStream {
     }
     
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(final byte[] b, final int off, final int len) throws IOException {
         int bytesRead = readFromStack(b, off, len);
         while (len - bytesRead > 0) {
-            int result = decompressNextSymbol();
+            final int result = decompressNextSymbol();
             if (result < 0) {
                 if (bytesRead > 0) {
                     count(bytesRead);
@@ -107,7 +107,7 @@ public abstract class LZWInputStream extends CompressorInputStream {
      * Sets the clear code based on the code size.
      * @param codeSize code size
      */
-    protected void setClearCode(int codeSize) {
+    protected void setClearCode(final int codeSize) {
         clearCode = (1 << (codeSize - 1));
     }
 
@@ -115,7 +115,7 @@ public abstract class LZWInputStream extends CompressorInputStream {
      * Initializes the arrays based on the maximum code size.
      * @param maxCodeSize maximum code size
      */
-    protected void initializeTables(int maxCodeSize) {
+    protected void initializeTables(final int maxCodeSize) {
         final int maxTableSize = 1 << maxCodeSize;
         prefixes = new int[maxTableSize];
         characters = new byte[maxTableSize];
@@ -148,7 +148,7 @@ public abstract class LZWInputStream extends CompressorInputStream {
      * @param maxTableSize the maximum table size
      * @return the new code
      */
-    protected int addEntry(int previousCode, byte character, int maxTableSize) {
+    protected int addEntry(final int previousCode, final byte character, final int maxTableSize) {
         if (tableSize < maxTableSize) {
             prefixes[tableSize] = previousCode;
             characters[tableSize] = character;
@@ -178,7 +178,7 @@ public abstract class LZWInputStream extends CompressorInputStream {
      * @return the new location of the output stack
      * @throws IOException on error
      */
-    protected int expandCodeToOutputStack(int code, boolean addedUnfinishedEntry)
+    protected int expandCodeToOutputStack(final int code, final boolean addedUnfinishedEntry)
         throws IOException {
         for (int entry = code; entry >= 0; entry = prefixes[entry]) {
             outputStack[--outputStackLocation] = characters[entry];
@@ -191,10 +191,10 @@ public abstract class LZWInputStream extends CompressorInputStream {
         return outputStackLocation;
     }
 
-    private int readFromStack(byte[] b, int off, int len) {
-        int remainingInStack = outputStack.length - outputStackLocation;
+    private int readFromStack(final byte[] b, final int off, final int len) {
+        final int remainingInStack = outputStack.length - outputStackLocation;
         if (remainingInStack > 0) {
-            int maxLength = Math.min(remainingInStack, len);
+            final int maxLength = Math.min(remainingInStack, len);
             System.arraycopy(outputStack, outputStackLocation, b, off, maxLength);
             outputStackLocation += maxLength;
             return maxLength;
@@ -210,7 +210,7 @@ public abstract class LZWInputStream extends CompressorInputStream {
         setCodeSize(DEFAULT_CODE_SIZE);
     }
 
-    protected void setCodeSize(int cs) {
+    protected void setCodeSize(final int cs) {
         this.codeSize = cs;
     }
 
@@ -222,11 +222,11 @@ public abstract class LZWInputStream extends CompressorInputStream {
         this.previousCode = -1;
     }
 
-    protected int getPrefix(int offset) {
+    protected int getPrefix(final int offset) {
         return prefixes[offset];
     }
 
-    protected void setPrefix(int offset, int value) {
+    protected void setPrefix(final int offset, final int value) {
         prefixes[offset] = value;
     }
 
@@ -242,7 +242,7 @@ public abstract class LZWInputStream extends CompressorInputStream {
         return tableSize;
     }
 
-    protected void setTableSize(int newSize) {
+    protected void setTableSize(final int newSize) {
         tableSize = newSize;
     }
 

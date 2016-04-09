@@ -38,7 +38,7 @@ public class DeflateCompressorOutputStream extends CompressorOutputStream {
      * @param outputStream the stream to wrap
      * @throws IOException on error
      */
-    public DeflateCompressorOutputStream(OutputStream outputStream) throws IOException {
+    public DeflateCompressorOutputStream(final OutputStream outputStream) throws IOException {
         this(outputStream, new DeflateParameters());
     }
 
@@ -48,19 +48,19 @@ public class DeflateCompressorOutputStream extends CompressorOutputStream {
      * @param parameters the deflate parameters to apply
      * @throws IOException on error
      */
-    public DeflateCompressorOutputStream(OutputStream outputStream,
-                                         DeflateParameters parameters) throws IOException {
+    public DeflateCompressorOutputStream(final OutputStream outputStream,
+                                         final DeflateParameters parameters) throws IOException {
         this.deflater = new Deflater(parameters.getCompressionLevel(), !parameters.withZlibHeader());
         this.out = new DeflaterOutputStream(outputStream, deflater);
     }
 
     @Override
-    public void write(int b) throws IOException {
+    public void write(final int b) throws IOException {
         out.write(b);
     }
 
     @Override
-    public void write(byte[] buf, int off, int len) throws IOException {
+    public void write(final byte[] buf, final int off, final int len) throws IOException {
         out.write(buf, off, len);
     }
 

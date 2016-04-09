@@ -168,7 +168,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
                 heap[nHeap] = i;
 
                 int zz = nHeap;
-                int tmp = heap[zz];
+                final int tmp = heap[zz];
                 while (weight[tmp] < weight[heap[zz >> 1]]) {
                     heap[zz] = heap[zz >> 1];
                     zz >>= 1;
@@ -177,7 +177,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
             }
 
             while (nHeap > 1) {
-                int n1 = heap[1];
+                final int n1 = heap[1];
                 heap[1] = heap[nHeap];
                 nHeap--;
 
@@ -207,7 +207,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
                 heap[zz] = tmp;
 
-                int n2 = heap[1];
+                final int n2 = heap[1];
                 heap[1] = heap[nHeap];
                 nHeap--;
 
@@ -335,7 +335,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
      *            The length of the data which will be compressed by
      *            {@code BZip2CompressorOutputStream}.
      */
-    public static int chooseBlockSize(long inputLength) {
+    public static int chooseBlockSize(final long inputLength) {
         return (inputLength > 0) ? (int) Math
             .min((inputLength / 132000) + 1, 9) : MAX_BLOCKSIZE;
     }
@@ -496,7 +496,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     @Override
     public void close() throws IOException {
         if (out != null) {
-            OutputStream outShadow = this.out;
+            final OutputStream outShadow = this.out;
             finish();
             outShadow.close();
         }
@@ -504,7 +504,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
     @Override
     public void flush() throws IOException {
-        OutputStream outShadow = this.out;
+        final OutputStream outShadow = this.out;
         if (outShadow != null) {
             outShadow.flush();
         }
@@ -537,7 +537,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         this.last = -1;
         // ch = 0;
 
-        boolean[] inUse = this.data.inUse;
+        final boolean[] inUse = this.data.inUse;
         for (int i = 256; --i >= 0;) {
             inUse[i] = false;
         }
@@ -629,7 +629,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
             throw new IOException("stream closed");
         }
 
-        for (int hi = offs + len; offs < hi;) {
+        for (final int hi = offs + len; offs < hi;) {
             write0(buf[offs++]);
         }
     }
@@ -676,7 +676,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
     private void bsFinishedWithStream() throws IOException {
         while (this.bsLive > 0) {
-            int ch = this.bsBuff >> 24;
+            final int ch = this.bsBuff >> 24;
             this.out.write(ch); // write 8-bit
             this.bsBuff <<= 8;
             this.bsLive -= 8;
@@ -714,7 +714,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         final int alphaSize = this.nInUse + 2;
 
         for (int t = N_GROUPS; --t >= 0;) {
-            byte[] len_t = len[t];
+            final byte[] len_t = len[t];
             for (int v = alphaSize; --v >= 0;) {
                 len_t[v] = GREATER_ICOST;
             }
@@ -808,7 +808,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         for (int iter = 0; iter < N_ITERS; iter++) {
             for (int t = nGroups; --t >= 0;) {
                 fave[t] = 0;
-                int[] rfreqt = rfreq[t];
+                final int[] rfreqt = rfreq[t];
                 for (int i = alphaSize; --i >= 0;) {
                     rfreqt[i] = 0;
                 }
@@ -909,7 +909,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         // assert (nGroups < 8) : nGroups;
 
         final Data dataShadow = this.data;
-        byte[] pos = dataShadow.sendMTFValues2_pos;
+        final byte[] pos = dataShadow.sendMTFValues2_pos;
 
         for (int i = nGroups; --i >= 0;) {
             pos[i] = (byte) i;
@@ -922,7 +922,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
             while (ll_i != tmp) {
                 j++;
-                byte tmp2 = tmp;
+                final byte tmp2 = tmp;
                 tmp = pos[j];
                 pos[j] = tmp2;
             }
@@ -933,8 +933,8 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     }
 
     private void sendMTFValues3(final int nGroups, final int alphaSize) {
-        int[][] code = this.data.sendMTFValues_code;
-        byte[][] len = this.data.sendMTFValues_len;
+        final int[][] code = this.data.sendMTFValues_code;
+        final byte[][] len = this.data.sendMTFValues_len;
 
         for (int t = 0; t < nGroups; t++) {
             int minLen = 32;
@@ -1047,7 +1047,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
         int bsBuffShadow = this.bsBuff;
 
         for (int t = 0; t < nGroups; t++) {
-            byte[] len_t = len[t];
+            final byte[] len_t = len[t];
             int curr = len_t[0] & 0xff;
 
             // inlined: bsW(5, curr);
@@ -1060,7 +1060,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
             bsLiveShadow += 5;
 
             for (int i = 0; i < alphaSize; i++) {
-                int lti = len_t[i] & 0xff;
+                final int lti = len_t[i] & 0xff;
                 while (curr < lti) {
                     // inlined: bsW(2, 2);
                     while (bsLiveShadow >= 8) {
@@ -1207,7 +1207,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
             while (ll_i != tmp) {
                 j++;
-                byte tmp2 = tmp;
+                final byte tmp2 = tmp;
                 tmp = yy[j];
                 yy[j] = tmp2;
             }
@@ -1318,7 +1318,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
          */
         int origPtr;
 
-        Data(int blockSize100k) {
+        Data(final int blockSize100k) {
             final int n = blockSize100k * BZip2Constants.BASEBLOCKSIZE;
             this.block = new byte[(n + 1 + NUM_OVERSHOOT_BYTES)];
             this.fmap = new int[n];

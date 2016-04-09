@@ -95,7 +95,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
      *
      * @throws IOException if the stream could not be created
      */
-    public GzipCompressorInputStream(InputStream inputStream)
+    public GzipCompressorInputStream(final InputStream inputStream)
             throws IOException {
         this(inputStream, false);
     }
@@ -120,8 +120,8 @@ public class GzipCompressorInputStream extends CompressorInputStream {
      *
      * @throws IOException if the stream could not be created
      */
-    public GzipCompressorInputStream(InputStream inputStream,
-                                     boolean decompressConcatenated)
+    public GzipCompressorInputStream(final InputStream inputStream,
+                                     final boolean decompressConcatenated)
             throws IOException {
         // Mark support is strictly needed for concatenated files only,
         // but it's simpler if it is always available.
@@ -145,12 +145,12 @@ public class GzipCompressorInputStream extends CompressorInputStream {
         return parameters;
     }
 
-    private boolean init(boolean isFirstMember) throws IOException {
+    private boolean init(final boolean isFirstMember) throws IOException {
         assert isFirstMember || decompressConcatenated;
 
         // Check the magic bytes without a possibility of EOFException.
-        int magic0 = in.read();
-        int magic1 = in.read();
+        final int magic0 = in.read();
+        final int magic1 = in.read();
 
         // If end of input was reached after decompressing at least
         // one .gz member, we have reached the end of the file successfully.
@@ -165,14 +165,14 @@ public class GzipCompressorInputStream extends CompressorInputStream {
         }
 
         // Parsing the rest of the header may throw EOFException.
-        DataInputStream inData = new DataInputStream(in);
-        int method = inData.readUnsignedByte();
+        final DataInputStream inData = new DataInputStream(in);
+        final int method = inData.readUnsignedByte();
         if (method != Deflater.DEFLATED) {
             throw new IOException("Unsupported compression method "
                                   + method + " in the .gz header");
         }
 
-        int flg = inData.readUnsignedByte();
+        final int flg = inData.readUnsignedByte();
         if ((flg & FRESERVED) != 0) {
             throw new IOException(
                     "Reserved flags are set in the .gz header");
@@ -233,8 +233,8 @@ public class GzipCompressorInputStream extends CompressorInputStream {
         return true;
     }
 
-    private byte[] readToNull(DataInputStream inData) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    private byte[] readToNull(final DataInputStream inData) throws IOException {
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int b = 0;
         while ((b = inData.readUnsignedByte()) != 0x00) { // NOPMD
             bos.write(b);
@@ -242,7 +242,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
         return bos.toByteArray();
     }
 
-    private long readLittleEndianInt(DataInputStream inData) throws IOException {
+    private long readLittleEndianInt(final DataInputStream inData) throws IOException {
         return inData.readUnsignedByte()
             | (inData.readUnsignedByte() << 8)
             | (inData.readUnsignedByte() << 16)
@@ -260,7 +260,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
      * @since 1.1
      */
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(final byte[] b, int off, int len) throws IOException {
         if (endReached) {
             return -1;
         }
@@ -284,7 +284,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
             int ret;
             try {
                 ret = inf.inflate(b, off, len);
-            } catch (DataFormatException e) {
+            } catch (final DataFormatException e) {
                 throw new IOException("Gzip-compressed data is corrupt");
             }
 
@@ -302,17 +302,17 @@ public class GzipCompressorInputStream extends CompressorInputStream {
                 // in.mark earler, it should always skip enough.
                 in.reset();
 
-                int skipAmount = bufUsed - inf.getRemaining();
+                final int skipAmount = bufUsed - inf.getRemaining();
                 if (in.skip(skipAmount) != skipAmount) {
                     throw new IOException();
                 }
 
                 bufUsed = 0;
 
-                DataInputStream inData = new DataInputStream(in);
+                final DataInputStream inData = new DataInputStream(in);
 
                 // CRC32
-                long crcStored = readLittleEndianInt(inData);
+                final long crcStored = readLittleEndianInt(inData);
 
                 if (crcStored != crc.getValue()) {
                     throw new IOException("Gzip-compressed data is corrupt "
@@ -320,7 +320,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
                 }
 
                 // Uncompressed size modulo 2^32 (ISIZE in the spec)
-                long isize = readLittleEndianInt(inData);
+                final long isize = readLittleEndianInt(inData);
 
                 if (isize != (inf.getBytesWritten() & 0xffffffffl)) {
                     throw new IOException("Gzip-compressed data is corrupt"
@@ -349,7 +349,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
      *
      * @since 1.1
      */
-    public static boolean matches(byte[] signature, int length) {
+    public static boolean matches(final byte[] signature, final int length) {
 
         if (length < 2) {
             return false;

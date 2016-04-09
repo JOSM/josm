@@ -38,11 +38,11 @@ public class ZCompressorInputStream extends LZWInputStream {
     private final int maxCodeSize;
     private long totalCodesRead = 0;
     
-    public ZCompressorInputStream(InputStream inputStream) throws IOException {
+    public ZCompressorInputStream(final InputStream inputStream) throws IOException {
         super(inputStream, ByteOrder.LITTLE_ENDIAN);
-        int firstByte = (int) in.readBits(8);
-        int secondByte = (int) in.readBits(8);
-        int thirdByte = (int) in.readBits(8);
+        final int firstByte = (int) in.readBits(8);
+        final int secondByte = (int) in.readBits(8);
+        final int thirdByte = (int) in.readBits(8);
         if (firstByte != MAGIC_1 || secondByte != MAGIC_2 || thirdByte < 0) {
             throw new IOException("Input is not in .Z format");
         }
@@ -67,7 +67,7 @@ public class ZCompressorInputStream extends LZWInputStream {
      */
     @Override
     protected int readNextCode() throws IOException {
-        int code = super.readNextCode();
+        final int code = super.readNextCode();
         if (code >= 0) {
             ++totalCodesRead;
         }
@@ -96,9 +96,9 @@ public class ZCompressorInputStream extends LZWInputStream {
      * change or disappear without warning.</strong></p>
      */
     @Override
-    protected int addEntry(int previousCode, byte character) throws IOException {
+    protected int addEntry(final int previousCode, final byte character) throws IOException {
         final int maxTableSize = 1 << getCodeSize();
-        int r = addEntry(previousCode, character, maxTableSize);
+        final int r = addEntry(previousCode, character, maxTableSize);
         if (getTableSize() == maxTableSize && getCodeSize() < maxCodeSize) {
             reAlignReading();
             incrementCodeSize();
@@ -159,7 +159,7 @@ public class ZCompressorInputStream extends LZWInputStream {
      * 
      * @since 1.9
      */
-    public static boolean matches(byte[] signature, int length) {
+    public static boolean matches(final byte[] signature, final int length) {
         return length > 3 && signature[0] == MAGIC_1 && signature[1] == (byte) MAGIC_2;
     }
 

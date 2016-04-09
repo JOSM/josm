@@ -48,7 +48,7 @@ public class XZUtils {
     private static volatile CachedAvailability cachedXZAvailability;
 
     static {
-        Map<String, String> uncompressSuffix = new HashMap<String, String>();
+        final Map<String, String> uncompressSuffix = new HashMap<String, String>();
         uncompressSuffix.put(".txz", ".tar");
         uncompressSuffix.put(".xz", "");
         uncompressSuffix.put("-xz", "");
@@ -56,7 +56,7 @@ public class XZUtils {
         cachedXZAvailability = CachedAvailability.DONT_CACHE;
         try {
             Class.forName("org.osgi.framework.BundleEvent");
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             setCacheXZAvailablity(true);
         }
     }
@@ -77,7 +77,7 @@ public class XZUtils {
      * @return  true if signature matches the .xz magic bytes, false otherwise
      * @since 1.9
      */
-    public static boolean matches(byte[] signature, int length) {
+    public static boolean matches(final byte[] signature, final int length) {
         if (length < HEADER_MAGIC.length) {
             return false;
         }
@@ -108,7 +108,7 @@ public class XZUtils {
         try {
             XZCompressorInputStream.matches(null, 0);
             return true;
-        } catch (NoClassDefFoundError error) {
+        } catch (final NoClassDefFoundError error) {
             return false;
         }
     }
@@ -120,7 +120,7 @@ public class XZUtils {
      * @return {@code true} if the filename has a common xz suffix,
      *         {@code false} otherwise
      */
-    public static boolean isCompressedFilename(String filename) {
+    public static boolean isCompressedFilename(final String filename) {
         return fileNameUtil.isCompressedFilename(filename);
     }
 
@@ -137,7 +137,7 @@ public class XZUtils {
      * @param filename name of a file
      * @return name of the corresponding uncompressed file
      */
-    public static String getUncompressedFilename(String filename) {
+    public static String getUncompressedFilename(final String filename) {
         return fileNameUtil.getUncompressedFilename(filename);
     }
 
@@ -152,7 +152,7 @@ public class XZUtils {
      * @param filename name of a file
      * @return name of the corresponding compressed file
      */
-    public static String getCompressedFilename(String filename) {
+    public static String getCompressedFilename(final String filename) {
         return fileNameUtil.getCompressedFilename(filename);
     }
 
@@ -163,7 +163,7 @@ public class XZUtils {
      * @param doCache whether to cache the result
      * @since 1.9
      */
-    public static void setCacheXZAvailablity(boolean doCache) {
+    public static void setCacheXZAvailablity(final boolean doCache) {
         if (!doCache) {
             cachedXZAvailability = CachedAvailability.DONT_CACHE;
         } else if (cachedXZAvailability == CachedAvailability.DONT_CACHE) {

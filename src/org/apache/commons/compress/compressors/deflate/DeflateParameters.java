@@ -47,7 +47,7 @@ public class DeflateParameters {
      *
      * @param zlibHeader true if zlib header shall be written
      */
-    public void setWithZlibHeader(boolean zlibHeader) {
+    public void setWithZlibHeader(final boolean zlibHeader) {
         this.zlibHeader = zlibHeader;
     }
 
@@ -69,7 +69,7 @@ public class DeflateParameters {
      * @see Deflater#DEFAULT_COMPRESSION
      * @see Deflater#BEST_COMPRESSION
      */
-    public void setCompressionLevel(int compressionLevel) {
+    public void setCompressionLevel(final int compressionLevel) {
         if (compressionLevel < -1 || compressionLevel > 9) {
             throw new IllegalArgumentException("Invalid Deflate compression level: " + compressionLevel);
         }

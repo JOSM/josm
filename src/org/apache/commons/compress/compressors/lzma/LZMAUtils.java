@@ -45,14 +45,14 @@ public class LZMAUtils {
     private static volatile CachedAvailability cachedLZMAAvailability;
 
     static {
-        Map<String, String> uncompressSuffix = new HashMap<String, String>();
+        final Map<String, String> uncompressSuffix = new HashMap<String, String>();
         uncompressSuffix.put(".lzma", "");
         uncompressSuffix.put("-lzma", "");
         fileNameUtil = new FileNameUtil(uncompressSuffix, ".lzma");
         cachedLZMAAvailability = CachedAvailability.DONT_CACHE;
         try {
             Class.forName("org.osgi.framework.BundleEvent");
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             setCacheLZMAAvailablity(true);
         }
     }
@@ -68,7 +68,7 @@ public class LZMAUtils {
      * @param   length        the number of bytes to check
      * @return  true if signature matches the .lzma magic bytes, false otherwise
      */
-    public static boolean matches(byte[] signature, int length) {
+    public static boolean matches(final byte[] signature, final int length) {
         if (length < HEADER_MAGIC.length) {
             return false;
         }
@@ -99,7 +99,7 @@ public class LZMAUtils {
         try {
             LZMACompressorInputStream.matches(null, 0);
             return true;
-        } catch (NoClassDefFoundError error) {
+        } catch (final NoClassDefFoundError error) {
             return false;
         }
     }
@@ -111,7 +111,7 @@ public class LZMAUtils {
      * @return {@code true} if the filename has a common lzma suffix,
      *         {@code false} otherwise
      */
-    public static boolean isCompressedFilename(String filename) {
+    public static boolean isCompressedFilename(final String filename) {
         return fileNameUtil.isCompressedFilename(filename);
     }
 
@@ -125,7 +125,7 @@ public class LZMAUtils {
      * @param filename name of a file
      * @return name of the corresponding uncompressed file
      */
-    public static String getUncompressedFilename(String filename) {
+    public static String getUncompressedFilename(final String filename) {
         return fileNameUtil.getUncompressedFilename(filename);
     }
 
@@ -136,7 +136,7 @@ public class LZMAUtils {
      * @param filename name of a file
      * @return name of the corresponding compressed file
      */
-    public static String getCompressedFilename(String filename) {
+    public static String getCompressedFilename(final String filename) {
         return fileNameUtil.getCompressedFilename(filename);
     }
 
@@ -146,7 +146,7 @@ public class LZMAUtils {
      * <p>This defaults to {@code false} in an OSGi environment and {@code true} otherwise.</p>
      * @param doCache whether to cache the result
      */
-    public static void setCacheLZMAAvailablity(boolean doCache) {
+    public static void setCacheLZMAAvailablity(final boolean doCache) {
         if (!doCache) {
             cachedLZMAAvailability = CachedAvailability.DONT_CACHE;
         } else if (cachedLZMAAvailability == CachedAvailability.DONT_CACHE) {

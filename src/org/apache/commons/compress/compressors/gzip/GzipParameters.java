@@ -47,7 +47,7 @@ public class GzipParameters {
      * @see Deflater#DEFAULT_COMPRESSION
      * @see Deflater#BEST_COMPRESSION
      */
-    public void setCompressionLevel(int compressionLevel) {
+    public void setCompressionLevel(final int compressionLevel) {
         if (compressionLevel < -1 || compressionLevel > 9) {
             throw new IllegalArgumentException("Invalid gzip compression level: " + compressionLevel);
         }
@@ -63,7 +63,7 @@ public class GzipParameters {
      * 
      * @param modificationTime the modification time, in milliseconds
      */
-    public void setModificationTime(long modificationTime) {
+    public void setModificationTime(final long modificationTime) {
         this.modificationTime = modificationTime;
     }
 
@@ -76,7 +76,7 @@ public class GzipParameters {
      * 
      * @param filename the name of the file without the directory path
      */
-    public void setFilename(String filename) {
+    public void setFilename(final String filename) {
         this.filename = filename;
     }
 
@@ -84,7 +84,7 @@ public class GzipParameters {
         return comment;
     }
 
-    public void setComment(String comment) {
+    public void setComment(final String comment) {
         this.comment = comment;
     }
 
@@ -115,7 +115,7 @@ public class GzipParameters {
      * 
      * @param operatingSystem the code of the operating system
      */
-    public void setOperatingSystem(int operatingSystem) {
+    public void setOperatingSystem(final int operatingSystem) {
         this.operatingSystem = operatingSystem;
     }
 }

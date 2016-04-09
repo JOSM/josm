@@ -66,7 +66,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
      * @param out the stream to compress to
      * @throws IOException if writing fails
      */
-    public GzipCompressorOutputStream(OutputStream out) throws IOException {
+    public GzipCompressorOutputStream(final OutputStream out) throws IOException {
         this(out, new GzipParameters());
     }
 
@@ -78,18 +78,18 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
      * 
      * @since 1.7
      */
-    public GzipCompressorOutputStream(OutputStream out, GzipParameters parameters) throws IOException {
+    public GzipCompressorOutputStream(final OutputStream out, final GzipParameters parameters) throws IOException {
         this.out = out;
         this.deflater = new Deflater(parameters.getCompressionLevel(), true);
         
         writeHeader(parameters);
     }
 
-    private void writeHeader(GzipParameters parameters) throws IOException {
-        String filename = parameters.getFilename();
-        String comment = parameters.getComment();
+    private void writeHeader(final GzipParameters parameters) throws IOException {
+        final String filename = parameters.getFilename();
+        final String comment = parameters.getComment();
         
-        ByteBuffer buffer = ByteBuffer.allocate(10);
+        final ByteBuffer buffer = ByteBuffer.allocate(10);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         buffer.putShort((short) GZIPInputStream.GZIP_MAGIC);
         buffer.put((byte) Deflater.DEFLATED); // compression method (8: deflate)
@@ -97,7 +97,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
         buffer.putInt((int) (parameters.getModificationTime() / 1000));
         
         // extra flags
-        int compressionLevel = parameters.getCompressionLevel();
+        final int compressionLevel = parameters.getCompressionLevel();
         if (compressionLevel == Deflater.BEST_COMPRESSION) {
             buffer.put((byte) 2);
         } else if (compressionLevel == Deflater.BEST_SPEED) {
@@ -122,7 +122,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
     }
 
     private void writeTrailer() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8);
+        final ByteBuffer buffer = ByteBuffer.allocate(8);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         buffer.putInt((int) crc.getValue());
         buffer.putInt(deflater.getTotalIn());
@@ -131,7 +131,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
     }
 
     @Override
-    public void write(int b) throws IOException {
+    public void write(final int b) throws IOException {
         write(new byte[]{(byte) (b & 0xff)}, 0, 1);
     }
 
@@ -141,7 +141,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
      * @since 1.1
      */
     @Override
-    public void write(byte[] buffer) throws IOException {
+    public void write(final byte[] buffer) throws IOException {
         write(buffer, 0, buffer.length);
     }
 
@@ -151,7 +151,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
      * @since 1.1
      */
     @Override
-    public void write(byte[] buffer, int offset, int length) throws IOException {
+    public void write(final byte[] buffer, final int offset, final int length) throws IOException {
         if (deflater.finished()) {
             throw new IOException("Cannot write more data, the end of the compressed data stream has been reached");
 
@@ -167,7 +167,7 @@ public class GzipCompressorOutputStream extends CompressorOutputStream {
     }
 
     private void deflate() throws IOException {
-        int length = deflater.deflate(deflateBuffer, 0, deflateBuffer.length);
+        final int length = deflater.deflate(deflateBuffer, 0, deflateBuffer.length);
         if (length > 0) {
             out.write(deflateBuffer, 0, length);
         }

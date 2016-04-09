@@ -160,7 +160,7 @@ public class CompressorStreamFactory {
      *           This setting applies to the gzip, bzip2 and xz formats only.
      * @since 1.10
      */
-    public CompressorStreamFactory(boolean decompressUntilEOF) {
+    public CompressorStreamFactory(final boolean decompressUntilEOF) {
         this.decompressUntilEOF = Boolean.valueOf(decompressUntilEOF);
         // Also copy to existing variable so can continue to use that as the current value
         this.decompressConcatenated = decompressUntilEOF;
@@ -183,7 +183,7 @@ public class CompressorStreamFactory {
      * was used to create the factory
      */
     @Deprecated
-    public void setDecompressConcatenated(boolean decompressConcatenated) {
+    public void setDecompressConcatenated(final boolean decompressConcatenated) {
         if (this.decompressUntilEOF != null) {
             throw new IllegalStateException("Cannot override the setting defined by the constructor");
         }
@@ -214,7 +214,7 @@ public class CompressorStreamFactory {
         final byte[] signature = new byte[12];
         in.mark(signature.length);
         try {
-            int signatureLength = IOUtils.readFully(in, signature);
+            final int signatureLength = IOUtils.readFully(in, signature);
             in.reset();
 
             if (BZip2CompressorInputStream.matches(signature, signatureLength)) {
@@ -251,7 +251,7 @@ public class CompressorStreamFactory {
                 return new LZMACompressorInputStream(in);
             }
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new CompressorException("Failed to detect Compressor from InputStream.", e);
         }
 
@@ -315,7 +315,7 @@ public class CompressorStreamFactory {
                 return new DeflateCompressorInputStream(in);
             }
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new CompressorException(
                     "Could not create CompressorInputStream.", e);
         }
@@ -363,7 +363,7 @@ public class CompressorStreamFactory {
                 return new DeflateCompressorOutputStream(out);
             }
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new CompressorException(
                     "Could not create CompressorOutputStream", e);
         }
