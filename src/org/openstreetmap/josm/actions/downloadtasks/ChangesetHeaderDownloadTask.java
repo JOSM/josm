@@ -5,13 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -19,8 +16,6 @@ import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.ExceptionUtil;
-import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 import org.xml.sax.SAXException;
 
 /**
@@ -73,31 +68,7 @@ public class ChangesetHeaderDownloadTask extends AbstractChangesetDownloadTask {
             if (lastException != null) {
                 ExceptionDialogUtil.explainException(lastException);
             }
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    ChangesetCache.getInstance().update(downloadedChangesets);
-                }
-            };
-
-            if (SwingUtilities.isEventDispatchThread()) {
-                r.run();
-            } else {
-                try {
-                    SwingUtilities.invokeAndWait(r);
-                } catch (InterruptedException e) {
-                    Main.warn("InterruptedException in "+getClass().getSimpleName()+" while updating changeset cache");
-                } catch (InvocationTargetException e) {
-                    Throwable t = e.getTargetException();
-                    if (t instanceof RuntimeException) {
-                        BugReportExceptionHandler.handleException(t);
-                    } else if (t instanceof Exception) {
-                        ExceptionUtil.explainException(e);
-                    } else {
-                        BugReportExceptionHandler.handleException(t);
-                    }
-                }
-            }
+            updateChangesets();
         }
     }
 

@@ -122,37 +122,30 @@ public class TaggingPresetMenu extends TaggingPreset {
             if (item instanceof JMenuItem) {
                 sortarray.add((JMenuItem) item);
                 if (i == items.length-1) {
-                    Collections.sort(sortarray, comp);
-                    int pos = 0;
-                    for (JMenuItem menuItem : sortarray) {
-                        int oldPos;
-                        if (lastSeparator == 0) {
-                            oldPos = pos;
-                        } else {
-                            oldPos = pos+lastSeparator+1;
-                        }
-                        menu.add(menuItem, oldPos);
-                        pos++;
-                    }
+                    handleMenuItem(menu, comp, sortarray, lastSeparator);
                     sortarray = new ArrayList<>();
                     lastSeparator = 0;
                 }
             } else if (item instanceof JSeparator) {
-                Collections.sort(sortarray, comp);
-                int pos = 0;
-                for (JMenuItem menuItem : sortarray) {
-                    int oldPos;
-                    if (lastSeparator == 0) {
-                        oldPos = pos;
-                    } else {
-                        oldPos = pos+lastSeparator+1;
-                    }
-                    menu.add(menuItem, oldPos);
-                    pos++;
-                }
+                handleMenuItem(menu, comp, sortarray, lastSeparator);
                 sortarray = new ArrayList<>();
                 lastSeparator = i;
             }
+        }
+    }
+
+    private static void handleMenuItem(JMenu menu, PresetTextComparator comp, List<JMenuItem> sortarray, int lastSeparator) {
+        Collections.sort(sortarray, comp);
+        int pos = 0;
+        for (JMenuItem menuItem : sortarray) {
+            int oldPos;
+            if (lastSeparator == 0) {
+                oldPos = pos;
+            } else {
+                oldPos = pos+lastSeparator+1;
+            }
+            menu.add(menuItem, oldPos);
+            pos++;
         }
     }
 }
