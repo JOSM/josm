@@ -33,7 +33,7 @@ public class CompressorException extends Exception {
      * @param message
      *            the detail message
      */
-    public CompressorException(String message) {
+    public CompressorException(final String message) {
         super(message);
     }
 
@@ -45,7 +45,7 @@ public class CompressorException extends Exception {
      * @param cause
      *            the cause
      */
-    public CompressorException(String message, Throwable cause) {
+    public CompressorException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

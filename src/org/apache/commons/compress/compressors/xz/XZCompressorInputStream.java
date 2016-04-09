@@ -40,7 +40,7 @@ public class XZCompressorInputStream extends CompressorInputStream {
      * @param   length        the number of bytes to check
      * @return  true if signature matches the .xz magic bytes, false otherwise
      */
-    public static boolean matches(byte[] signature, int length) {
+    public static boolean matches(final byte[] signature, final int length) {
         if (length < XZ.HEADER_MAGIC.length) {
             return false;
         }
@@ -67,7 +67,7 @@ public class XZCompressorInputStream extends CompressorInputStream {
      *                          by this implementation, or the underlying
      *                          <code>inputStream</code> throws an exception
      */
-    public XZCompressorInputStream(InputStream inputStream)
+    public XZCompressorInputStream(final InputStream inputStream)
             throws IOException {
         this(inputStream, false);
     }
@@ -89,8 +89,8 @@ public class XZCompressorInputStream extends CompressorInputStream {
      *                          by this implementation, or the underlying
      *                          <code>inputStream</code> throws an exception
      */
-    public XZCompressorInputStream(InputStream inputStream,
-                                   boolean decompressConcatenated)
+    public XZCompressorInputStream(final InputStream inputStream,
+                                   final boolean decompressConcatenated)
             throws IOException {
         if (decompressConcatenated) {
             in = new XZInputStream(inputStream);
@@ -101,20 +101,20 @@ public class XZCompressorInputStream extends CompressorInputStream {
 
     @Override
     public int read() throws IOException {
-        int ret = in.read();
+        final int ret = in.read();
         count(ret == -1 ? -1 : 1);
         return ret;
     }
 
     @Override
-    public int read(byte[] buf, int off, int len) throws IOException {
-        int ret = in.read(buf, off, len);
+    public int read(final byte[] buf, final int off, final int len) throws IOException {
+        final int ret = in.read(buf, off, len);
         count(ret);
         return ret;
     }
 
     @Override
-    public long skip(long n) throws IOException {
+    public long skip(final long n) throws IOException {
         return in.skip(n);
     }
 

@@ -85,7 +85,7 @@ final class Rand {
      * @param i the index
      * @return the random number
      */
-    static int rNums(int i){
+    static int rNums(final int i){
         return RNUMS[i];
     }
 }

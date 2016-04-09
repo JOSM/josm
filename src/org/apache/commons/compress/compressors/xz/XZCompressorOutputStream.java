@@ -38,7 +38,7 @@ public class XZCompressorOutputStream extends CompressorOutputStream {
      * @param outputStream the stream to wrap
      * @throws IOException on error
      */
-    public XZCompressorOutputStream(OutputStream outputStream)
+    public XZCompressorOutputStream(final OutputStream outputStream)
             throws IOException {
         out = new XZOutputStream(outputStream, new LZMA2Options());
     }
@@ -59,18 +59,18 @@ public class XZCompressorOutputStream extends CompressorOutputStream {
      * @param preset the preset
      * @throws IOException on error
      */
-    public XZCompressorOutputStream(OutputStream outputStream, int preset)
+    public XZCompressorOutputStream(final OutputStream outputStream, final int preset)
             throws IOException {
         out = new XZOutputStream(outputStream, new LZMA2Options(preset));
     }
 
     @Override
-    public void write(int b) throws IOException {
+    public void write(final int b) throws IOException {
         out.write(b);
     }
 
     @Override
-    public void write(byte[] buf, int off, int len) throws IOException {
+    public void write(final byte[] buf, final int off, final int len) throws IOException {
         out.write(buf, off, len);
     }
 

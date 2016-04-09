@@ -43,7 +43,7 @@ public class LZMACompressorInputStream extends CompressorInputStream {
      *                          by this implementation, or the underlying
      *                          <code>inputStream</code> throws an exception
      */
-    public LZMACompressorInputStream(InputStream inputStream)
+    public LZMACompressorInputStream(final InputStream inputStream)
             throws IOException {
         in = new LZMAInputStream(inputStream);
     }
@@ -51,22 +51,22 @@ public class LZMACompressorInputStream extends CompressorInputStream {
     /** {@inheritDoc} */
     @Override
     public int read() throws IOException {
-        int ret = in.read();
+        final int ret = in.read();
         count(ret == -1 ? 0 : 1);
         return ret;
     }
 
     /** {@inheritDoc} */
     @Override
-    public int read(byte[] buf, int off, int len) throws IOException {
-        int ret = in.read(buf, off, len);
+    public int read(final byte[] buf, final int off, final int len) throws IOException {
+        final int ret = in.read(buf, off, len);
         count(ret);
         return ret;
     }
 
     /** {@inheritDoc} */
     @Override
-    public long skip(long n) throws IOException {
+    public long skip(final long n) throws IOException {
         return in.skip(n);
     }
 
@@ -93,7 +93,7 @@ public class LZMACompressorInputStream extends CompressorInputStream {
      * 
      * @since 1.10
      */
-    public static boolean matches(byte[] signature, int length) {
+    public static boolean matches(final byte[] signature, final int length) {
 
         if (signature == null || length < 3) {
             return false;

@@ -44,7 +44,7 @@ class PureJavaCrc32C implements Checksum {
 
   @Override
 public long getValue() {
-    long ret = crc;
+    final long ret = crc;
     return (~ret) & 0xffffffffL;
   }
 
@@ -54,7 +54,7 @@ public void reset() {
   }
 
   @Override
-public void update(byte[] b, int off, int len) {
+public void update(final byte[] b, int off, int len) {
     int localCrc = crc;
 
     while(len > 7) {
@@ -95,7 +95,7 @@ public void update(byte[] b, int off, int len) {
   }
 
   @Override
-final public void update(int b) {
+final public void update(final int b) {
     crc = (crc >>> 8) ^ T[T8_0_start + ((crc ^ b) & 0xff)];
   }
     

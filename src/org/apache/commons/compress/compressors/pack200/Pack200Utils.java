@@ -55,7 +55,7 @@ public class Pack200Utils {
      * @param jar the JAR archive to normalize
      * @throws IOException if reading or writing fails
      */
-    public static void normalize(File jar)
+    public static void normalize(final File jar)
         throws IOException {
         normalize(jar, jar, null);
     }
@@ -76,7 +76,7 @@ public class Pack200Utils {
      * method will implicitly set the segment limit to -1.
      * @throws IOException if reading or writing fails
      */
-    public static void normalize(File jar, Map<String, String> props)
+    public static void normalize(final File jar, final Map<String, String> props)
         throws IOException {
         normalize(jar, jar, props);
     }
@@ -101,7 +101,7 @@ public class Pack200Utils {
      * @param to the normalized archive
      * @throws IOException if reading or writing fails
      */
-    public static void normalize(File from, File to)
+    public static void normalize(final File from, final File to)
         throws IOException {
         normalize(from, to, null);
     }
@@ -125,26 +125,26 @@ public class Pack200Utils {
      * method will implicitly set the segment limit to -1.
      * @throws IOException if reading or writing fails
      */
-    public static void normalize(File from, File to, Map<String, String> props)
+    public static void normalize(final File from, final File to, Map<String, String> props)
         throws IOException {
         if (props == null) {
             props = new HashMap<String, String>();
         }
         props.put(Pack200.Packer.SEGMENT_LIMIT, "-1");
-        File f = File.createTempFile("commons-compress", "pack200normalize");
+        final File f = File.createTempFile("commons-compress", "pack200normalize");
         f.deleteOnExit();
         try {
             OutputStream os = new FileOutputStream(f);
             JarFile j = null;
             try {
-                Pack200.Packer p = Pack200.newPacker();
+                final Pack200.Packer p = Pack200.newPacker();
                 p.properties().putAll(props);
                 p.pack(j = new JarFile(from), os);
                 j = null;
                 os.close();
                 os = null;
 
-                Pack200.Unpacker u = Pack200.newUnpacker();
+                final Pack200.Unpacker u = Pack200.newUnpacker();
                 os = new JarOutputStream(new FileOutputStream(to));
                 u.unpack(f, (JarOutputStream) os);
             } finally {

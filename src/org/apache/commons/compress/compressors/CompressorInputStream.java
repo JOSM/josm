@@ -31,7 +31,7 @@ public abstract class CompressorInputStream extends InputStream {
      *
      * @since 1.1
      */
-    protected void count(int read) {
+    protected void count(final int read) {
         count((long) read);
     }
 
@@ -41,7 +41,7 @@ public abstract class CompressorInputStream extends InputStream {
      * 
      * @param read the number of bytes read
      */
-    protected void count(long read) {
+    protected void count(final long read) {
         if (read != -1) {
             bytesRead = bytesRead + read;
         }
@@ -53,7 +53,7 @@ public abstract class CompressorInputStream extends InputStream {
      * @param pushedBack the number of bytes pushed back.
      * @since 1.7
      */
-    protected void pushedBackBytes(long pushedBack) {
+    protected void pushedBackBytes(final long pushedBack) {
         bytesRead -= pushedBack;
     }
 

@@ -34,7 +34,7 @@ public class GzipUtils {
         // using LinkedHashMap so .tgz is preferred over .taz as
         // compressed extension of .tar as FileNameUtil will use the
         // first one found
-        Map<String, String> uncompressSuffix =
+        final Map<String, String> uncompressSuffix =
             new LinkedHashMap<String, String>();
         uncompressSuffix.put(".tgz", ".tar");
         uncompressSuffix.put(".taz", ".tar");
@@ -61,7 +61,7 @@ public class GzipUtils {
      * @return {@code true} if the filename has a common gzip suffix,
      *         {@code false} otherwise
      */
-    public static boolean isCompressedFilename(String filename) {
+    public static boolean isCompressedFilename(final String filename) {
         return fileNameUtil.isCompressedFilename(filename);
     }
 
@@ -78,7 +78,7 @@ public class GzipUtils {
      * @param filename name of a file
      * @return name of the corresponding uncompressed file
      */
-    public static String getUncompressedFilename(String filename) {
+    public static String getUncompressedFilename(final String filename) {
         return fileNameUtil.getUncompressedFilename(filename);
     }
 
@@ -93,7 +93,7 @@ public class GzipUtils {
      * @param filename name of a file
      * @return name of the corresponding compressed file
      */
-    public static String getCompressedFilename(String filename) {
+    public static String getCompressedFilename(final String filename) {
         return fileNameUtil.getCompressedFilename(filename);
     }
 
