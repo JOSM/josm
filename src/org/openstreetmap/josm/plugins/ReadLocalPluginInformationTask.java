@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
@@ -135,7 +136,10 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     }
 
     protected void scanLocalPluginRepository(ProgressMonitor monitor, File pluginsDirectory) {
-        if (pluginsDirectory == null) return;
+        if (pluginsDirectory == null)
+            return;
+        if (monitor == null)
+            monitor = NullProgressMonitor.INSTANCE;
         try {
             monitor.beginTask("");
             scanSiteCacheFiles(monitor, pluginsDirectory);

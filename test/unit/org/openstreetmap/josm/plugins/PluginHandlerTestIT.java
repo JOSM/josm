@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -65,14 +66,8 @@ public class PluginHandlerTestIT {
         }
         System.out.println("Filtered plugin list contains " + plugins.size() + " plugins");
 
-        // Update the locally installed plugins
-        PluginDownloadTask pluginDownloadTask = new PluginDownloadTask(NullProgressMonitor.INSTANCE, plugins, null);
-        pluginDownloadTask.run();
-        assertTrue(pluginDownloadTask.getFailedPlugins().toString(), pluginDownloadTask.getFailedPlugins().isEmpty());
-        assertEquals(plugins.size(), pluginDownloadTask.getDownloadedPlugins().size());
-
-        // Update Plugin info for downloaded plugins
-        PluginHandler.refreshLocalUpdatedPluginInfo(pluginDownloadTask.getDownloadedPlugins());
+        // Download plugins
+        downloadPlugins(plugins);
 
         // Load early plugins
         PluginHandler.loadEarlyPlugins(null, plugins, null);
@@ -81,5 +76,20 @@ public class PluginHandlerTestIT {
         PluginHandler.loadLatePlugins(null, plugins, null);
 
         assertTrue(PluginHandler.pluginLoadingExceptions.toString(), PluginHandler.pluginLoadingExceptions.isEmpty());
+    }
+
+    /**
+     * Download plugins
+     * @param plugins plugins to download
+     */
+    public static void downloadPlugins(Collection<PluginInformation> plugins) {
+        // Update the locally installed plugins
+        PluginDownloadTask pluginDownloadTask = new PluginDownloadTask(NullProgressMonitor.INSTANCE, plugins, null);
+        pluginDownloadTask.run();
+        assertTrue(pluginDownloadTask.getFailedPlugins().toString(), pluginDownloadTask.getFailedPlugins().isEmpty());
+        assertEquals(plugins.size(), pluginDownloadTask.getDownloadedPlugins().size());
+
+        // Update Plugin info for downloaded plugins
+        PluginHandler.refreshLocalUpdatedPluginInfo(pluginDownloadTask.getDownloadedPlugins());
     }
 }
