@@ -5,13 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -21,7 +18,6 @@ import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ExceptionUtil;
-import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 import org.xml.sax.SAXException;
 
 /**
@@ -102,36 +98,7 @@ public class ChangesetQueryTask extends AbstractChangesetDownloadTask {
                 });
                 return;
             }
-
-            // update the global changeset cache with the downloaded changesets.
-            // this will trigger change events which views are listening to. They
-            // will update their views accordingly.
-            //
-            // Run on the EDT because UI updates are triggered.
-            //
-            Runnable r = new Runnable() {
-                @Override public void run() {
-                    ChangesetCache.getInstance().update(downloadedChangesets);
-                }
-            };
-            if (SwingUtilities.isEventDispatchThread()) {
-                r.run();
-            } else {
-                try {
-                    SwingUtilities.invokeAndWait(r);
-                } catch (InterruptedException e) {
-                    Main.warn("InterruptedException in "+getClass().getSimpleName()+" while updating changeset cache");
-                } catch (InvocationTargetException e) {
-                    Throwable t = e.getTargetException();
-                    if (t instanceof RuntimeException) {
-                        BugReportExceptionHandler.handleException(t);
-                    } else if (t instanceof Exception) {
-                        ExceptionUtil.explainException(e);
-                    } else {
-                        BugReportExceptionHandler.handleException(t);
-                    }
-                }
-            }
+            updateChangesets();
         }
 
         @Override
