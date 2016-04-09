@@ -140,9 +140,8 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
             int r = read0();
             count(r < 0 ? -1 : 1);
             return r;
-        } else {
-            throw new IOException("stream closed");
         }
+        throw new IOException("stream closed");
     }
 
     /*
@@ -299,24 +298,23 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
             ) {
             this.currentState = EOF;
             throw new IOException("bad block header");
-        } else {
-            this.storedBlockCRC = bsGetInt();
-            this.blockRandomised = bsR(1) == 1;
-
-            /**
-             * Allocate data here instead in constructor, so we do not allocate
-             * it if the input file is empty.
-             */
-            if (this.data == null) {
-                this.data = new Data(this.blockSize100k);
-            }
-
-            // currBlockNo++;
-            getAndMoveToFrontDecode();
-
-            this.crc.initialiseCRC();
-            this.currentState = START_BLOCK_STATE;
         }
+        this.storedBlockCRC = bsGetInt();
+        this.blockRandomised = bsR(1) == 1;
+
+        /**
+         * Allocate data here instead in constructor, so we do not allocate
+         * it if the input file is empty.
+         */
+        if (this.data == null) {
+            this.data = new Data(this.blockSize100k);
+        }
+
+        // currBlockNo++;
+        getAndMoveToFrontDecode();
+
+        this.crc.initialiseCRC();
+        this.currentState = START_BLOCK_STATE;
     }
 
     private void endBlock() throws IOException {
@@ -630,9 +628,8 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
                             bsBuffShadow = (bsBuffShadow << 8) | thech;
                             bsLiveShadow += 8;
                             continue;
-                        } else {
-                            throw new IOException("unexpected end of stream");
                         }
+                        throw new IOException("unexpected end of stream");
                     }
                     int zvec = (bsBuffShadow >> (bsLiveShadow - zn))
                         & ((1 << zn) - 1);
@@ -646,10 +643,9 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
                                 bsBuffShadow = (bsBuffShadow << 8) | thech;
                                 bsLiveShadow += 8;
                                 continue;
-                            } else {
-                                throw new IOException(
-                                                      "unexpected end of stream");
                             }
+                            throw new IOException(
+                                                  "unexpected end of stream");
                         }
                         bsLiveShadow--;
                         zvec = (zvec << 1)
@@ -713,9 +709,8 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
                         bsBuffShadow = (bsBuffShadow << 8) | thech;
                         bsLiveShadow += 8;
                         continue;
-                    } else {
-                        throw new IOException("unexpected end of stream");
                     }
+                    throw new IOException("unexpected end of stream");
                 }
                 int zvec = (bsBuffShadow >> (bsLiveShadow - zn))
                     & ((1 << zn) - 1);
@@ -729,9 +724,8 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
                             bsBuffShadow = (bsBuffShadow << 8) | thech;
                             bsLiveShadow += 8;
                             continue;
-                        } else {
-                            throw new IOException("unexpected end of stream");
                         }
+                        throw new IOException("unexpected end of stream");
                     }
                     bsLiveShadow--;
                     zvec = (zvec << 1) | ((bsBuffShadow >> bsLiveShadow) & 1);
@@ -764,9 +758,8 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
                     bsBuffShadow = (bsBuffShadow << 8) | thech;
                     bsLiveShadow += 8;
                     continue;
-                } else {
-                    throw new IOException("unexpected end of stream");
                 }
+                throw new IOException("unexpected end of stream");
             }
             bsLiveShadow--;
             zvec = (zvec << 1) | ((bsBuffShadow >> bsLiveShadow) & 1);
@@ -833,11 +826,10 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
             this.currentState = RAND_PART_B_STATE;
             this.crc.updateCRC(su_ch2Shadow);
             return su_ch2Shadow;
-        } else {
-            endBlock();
-            initBlock();
-            return setupBlock();
         }
+        endBlock();
+        initBlock();
+        return setupBlock();
     }
 
     private int setupNoRandPartA() throws IOException {
@@ -850,12 +842,11 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
             this.currentState = NO_RAND_PART_B_STATE;
             this.crc.updateCRC(su_ch2Shadow);
             return su_ch2Shadow;
-        } else {
-            this.currentState = NO_RAND_PART_A_STATE;
-            endBlock();
-            initBlock();
-            return setupBlock();
         }
+        this.currentState = NO_RAND_PART_A_STATE;
+        endBlock();
+        initBlock();
+        return setupBlock();
     }
 
     private int setupRandPartB() throws IOException {
@@ -891,12 +882,11 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
             this.crc.updateCRC(this.su_ch2);
             this.su_j2++;
             return this.su_ch2;
-        } else {
-            this.currentState = RAND_PART_A_STATE;
-            this.su_i2++;
-            this.su_count = 0;
-            return setupRandPartA();
         }
+        this.currentState = RAND_PART_A_STATE;
+        this.su_i2++;
+        this.su_count = 0;
+        return setupRandPartA();
     }
 
     private int setupNoRandPartB() throws IOException {
@@ -920,11 +910,10 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
             this.su_j2++;
             this.currentState = NO_RAND_PART_C_STATE;
             return su_ch2Shadow;
-        } else {
-            this.su_i2++;
-            this.su_count = 0;
-            return setupNoRandPartA();
         }
+        this.su_i2++;
+        this.su_count = 0;
+        return setupNoRandPartA();
     }
 
     private static final class Data {

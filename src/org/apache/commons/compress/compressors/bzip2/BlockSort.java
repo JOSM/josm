@@ -725,13 +725,10 @@ class BlockSort {
                                                 }
                                                 break HAMMER;
                                             } // while x > 0
-                                            else {
-                                                if ((block[i1] & 0xff) > (block[i2] & 0xff)) {
-                                                    continue HAMMER;
-                                                } else {
-                                                    break HAMMER;
-                                                }
+                                            if ((block[i1] & 0xff) > (block[i2] & 0xff)) {
+                                                continue HAMMER;
                                             }
+                                            break HAMMER;
                                         } else if ((block[i1 + 5] & 0xff) > (block[i2 + 5] & 0xff)) {
                                             continue HAMMER;
                                         } else {
