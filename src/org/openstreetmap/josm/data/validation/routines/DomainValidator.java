@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016040601, Last Updated Thu Apr  7 07:07:01 2016 UTC
+        // Taken from Version 2016040900, Last Updated Sat Apr  9 07:07:02 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -345,6 +345,7 @@ public final class DomainValidator extends AbstractValidator {
         "aws", // aws Amazon Registry Services, Inc.
         "axa", // axa AXA SA
         "azure", // azure Microsoft Corporation
+        "baby", // baby Johnson &amp; Johnson Services, Inc.
         "baidu", // baidu Baidu, Inc.
         "band", // band United TLD Holdco, Ltd
         "bank", // bank fTLD Registry Services, LLC
@@ -712,6 +713,7 @@ public final class DomainValidator extends AbstractValidator {
         "jlc", // jlc Richemont DNS Inc.
         "jll", // jll Jones Lang LaSalle Incorporated
         "jmp", // jmp Matrix IP LLC
+        "jnj", // jnj Johnson &amp; Johnson Services, Inc.
         "jobs", // jobs Employ Media LLC
         "joburg", // joburg ZA Central Registry NPC trading as ZA Central Registry
         "jot", // jot Amazon Registry Services, Inc.
