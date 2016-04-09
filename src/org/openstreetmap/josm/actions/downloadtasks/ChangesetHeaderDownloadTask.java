@@ -1,0 +1,185 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.actions.downloadtasks;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Component;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.swing.SwingUtilities;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.ChangesetCache;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.ExceptionUtil;
+import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
+import org.xml.sax.SAXException;
+
+/**
+ * This is an asynchronous task for downloading a collection of changests from the OSM server.
+ *
+ * The  task only downloads the changeset properties without the changeset content. It
+ * updates the global {@link ChangesetCache}.
+ * @since 2613
+ */
+public class ChangesetHeaderDownloadTask extends AbstractChangesetDownloadTask {
+
+    private final DownloadTask downloadTask;
+
+    class DownloadTask extends RunnableDownloadTask {
+        /** the list of changeset ids to download */
+        private final Set<Integer> toDownload = new HashSet<>();
+        /** whether to include discussions or not */
+        private final boolean includeDiscussion;
+
+        DownloadTask(Component parent, Collection<Integer> ids, boolean includeDiscussion) {
+            super(parent, tr("Download changesets"));
+            this.includeDiscussion = includeDiscussion;
+            for (int id: ids != null ? ids : Collections.<Integer>emptyList()) {
+                if (id <= 0) {
+                    continue;
+                }
+                toDownload.add(id);
+            }
+        }
+
+        @Override
+        protected void realRun() throws SAXException, IOException, OsmTransferException {
+            try {
+                downloadedChangesets.addAll(reader.readChangesets(toDownload, includeDiscussion,
+                        getProgressMonitor().createSubTaskMonitor(0, false)));
+            } catch (OsmTransferException e) {
+                if (isCanceled())
+                    // ignore exception if canceled
+                    return;
+                // remember other exceptions
+                rememberLastException(e);
+            }
+        }
+
+        @Override
+        protected void finish() {
+            rememberDownloadedData(downloadedChangesets);
+            if (isCanceled())
+                return;
+            if (lastException != null) {
+                ExceptionDialogUtil.explainException(lastException);
+            }
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    ChangesetCache.getInstance().update(downloadedChangesets);
+                }
+            };
+
+            if (SwingUtilities.isEventDispatchThread()) {
+                r.run();
+            } else {
+                try {
+                    SwingUtilities.invokeAndWait(r);
+                } catch (InterruptedException e) {
+                    Main.warn("InterruptedException in "+getClass().getSimpleName()+" while updating changeset cache");
+                } catch (InvocationTargetException e) {
+                    Throwable t = e.getTargetException();
+                    if (t instanceof RuntimeException) {
+                        BugReportExceptionHandler.handleException(t);
+                    } else if (t instanceof Exception) {
+                        ExceptionUtil.explainException(e);
+                    } else {
+                        BugReportExceptionHandler.handleException(t);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates the download task for a collection of changeset ids. Uses a {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
+     * whose parent is {@link Main#parent}.
+     *
+     * Null ids or or ids &lt;= 0 in the id collection are ignored.
+     *
+     * @param ids the collection of ids. Empty collection assumed if null.
+     */
+    public ChangesetHeaderDownloadTask(Collection<Integer> ids) {
+        this(Main.parent, ids, false);
+    }
+
+    /**
+     * Creates the download task for a collection of changeset ids. Uses a {@link org.openstreetmap.josm.gui.PleaseWaitDialog}
+     * whose parent is the parent window of <code>dialogParent</code>.
+     *
+     * Null ids or or ids &lt;= 0 in the id collection are ignored.
+     *
+     * @param dialogParent the parent reference component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be null.
+     * @param ids the collection of ids. Empty collection assumed if null.
+     * @throws IllegalArgumentException if dialogParent is null
+     */
+    public ChangesetHeaderDownloadTask(Component dialogParent, Collection<Integer> ids) {
+        this(dialogParent, ids, false);
+    }
+
+    /**
+     * Creates the download task for a collection of changeset ids, with possibility to download changeset discussion.
+     * Uses a {@link org.openstreetmap.josm.gui.PleaseWaitDialog} whose parent is the parent window of <code>dialogParent</code>.
+     *
+     * Null ids or or ids &lt;= 0 in the id collection are ignored.
+     *
+     * @param dialogParent the parent reference component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be null.
+     * @param ids the collection of ids. Empty collection assumed if null.
+     * @param includeDiscussion determines if discussion comments must be downloaded or not
+     * @throws IllegalArgumentException if dialogParent is null
+     * @since 7704
+     */
+    public ChangesetHeaderDownloadTask(Component dialogParent, Collection<Integer> ids, boolean includeDiscussion) {
+        downloadTask = new DownloadTask(dialogParent, ids, includeDiscussion);
+        setDownloadTask(downloadTask);
+    }
+
+    /**
+     * Builds a download task from for a collection of changesets.
+     *
+     * Ignores null values and changesets with {@link Changeset#isNew()} == true.
+     *
+     * @param changesets the collection of changesets. Assumes an empty collection if null.
+     * @return the download task
+     */
+    public static ChangesetHeaderDownloadTask buildTaskForChangesets(Collection<Changeset> changesets) {
+        return buildTaskForChangesets(Main.parent, changesets);
+    }
+
+    /**
+     * Builds a download task from for a collection of changesets.
+     *
+     * Ignores null values and changesets with {@link Changeset#isNew()} == true.
+     *
+     * @param parent the parent component relative to which the {@link org.openstreetmap.josm.gui.PleaseWaitDialog} is displayed.
+     * Must not be null.
+     * @param changesets the collection of changesets. Assumes an empty collection if null.
+     * @return the download task
+     * @throws IllegalArgumentException if parent is null
+     */
+    public static ChangesetHeaderDownloadTask buildTaskForChangesets(Component parent, Collection<Changeset> changesets) {
+        CheckParameterUtil.ensureParameterNotNull(parent, "parent");
+
+        Set<Integer> ids = new HashSet<>();
+        for (Changeset cs: changesets != null ? changesets : Collections.<Changeset>emptyList()) {
+            if (cs == null || cs.isNew()) {
+                continue;
+            }
+            ids.add(cs.getId());
+        }
+        if (parent == null)
+            return new ChangesetHeaderDownloadTask(ids);
+        else
+            return new ChangesetHeaderDownloadTask(parent, ids);
+    }
+}
