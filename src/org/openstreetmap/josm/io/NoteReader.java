@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -115,7 +116,7 @@ public class NoteReader {
                     commentUid = Long.parseLong(uidStr);
                 }
                 commentUsername = attrs.getValue("user");
-                noteAction = Action.valueOf(attrs.getValue("action"));
+                noteAction = Action.valueOf(attrs.getValue("action").toUpperCase(Locale.ENGLISH));
                 commentCreateDate = DateUtils.fromString(attrs.getValue("timestamp"));
                 String isNew = attrs.getValue("is_new");
                 if (isNew == null) {
@@ -160,7 +161,7 @@ public class NoteReader {
                 thisNote.setId(Long.parseLong(buffer.toString()));
                 break;
             case "status":
-                thisNote.setState(Note.State.valueOf(buffer.toString()));
+                thisNote.setState(Note.State.valueOf(buffer.toString().toUpperCase(Locale.ENGLISH)));
                 break;
             case "date_created":
                 thisNote.setCreatedAt(DateUtils.fromString(buffer.toString()));
@@ -182,7 +183,7 @@ public class NoteReader {
                 buffer.setLength(0);
                 break;
             case "action":
-                noteAction = Action.valueOf(buffer.toString());
+                noteAction = Action.valueOf(buffer.toString().toUpperCase(Locale.ENGLISH));
                 break;
             case "note": //nothing to do for comment or note, already handled above
             case "comment":
