@@ -100,9 +100,9 @@ public class NoteReader {
                 thisNote.setId(Long.parseLong(attrs.getValue("id")));
                 String closedTimeStr = attrs.getValue("closed_at");
                 if (closedTimeStr == null) { //no closed_at means the note is still open
-                    thisNote.setState(Note.State.open);
+                    thisNote.setState(Note.State.OPEN);
                 } else {
-                    thisNote.setState(Note.State.closed);
+                    thisNote.setState(Note.State.CLOSED);
                     thisNote.setClosedAt(DateUtils.fromString(closedTimeStr));
                 }
                 thisNote.setCreatedAt(DateUtils.fromString(attrs.getValue("created_at")));

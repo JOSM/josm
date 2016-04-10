@@ -8,6 +8,7 @@ import org.openstreetmap.josm.data.osm.User;
 /**
  * Represents a comment made on a note. All notes have at least on comment
  * which is the comment the note was opened with. Comments are immutable.
+ * @since 7451
  */
 public class NoteComment {
 
@@ -24,11 +25,16 @@ public class NoteComment {
      * while others indicate the note being opened, closed or reopened
      */
     public enum Action {
-        opened,
-        closed,
-        reopened,
-        commented,
-        hidden
+        /** note has been opened */
+        OPENED,
+        /** note has been closed */
+        CLOSED,
+        /** note has been reopened */
+        REOPENED,
+        /** note has been commented */
+        COMMENTED,
+        /** note has been hidden */
+        HIDDEN
     }
 
     /**

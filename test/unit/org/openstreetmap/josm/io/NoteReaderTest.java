@@ -67,19 +67,19 @@ public class NoteReaderTest {
         assertEquals(DateUtils.fromString("2013-04-24 08:07:02 UTC"), n.getCreatedAt());
         assertEquals(4, n.getId());
         assertEquals(new LatLon(36.7232991, 68.86415), n.getLatLon());
-        assertEquals(State.closed, n.getState());
+        assertEquals(State.CLOSED, n.getState());
         List<NoteComment> comments = n.getComments();
         assertEquals(2, comments.size());
 
         NoteComment c1 = comments.get(0);
         assertEquals(c1, n.getFirstComment());
         assertEquals(DateUtils.fromString("2013-04-24 08:07:02 UTC"), c1.getCommentTimestamp());
-        assertEquals(Action.opened, c1.getNoteAction());
+        assertEquals(Action.OPENED, c1.getNoteAction());
         assertEquals("test", c1.getText());
         assertEquals(User.createOsmUser(1626, "FredB"), c1.getUser());
 
         NoteComment c2 = comments.get(1);
-        assertEquals(Action.closed, c2.getNoteAction());
+        assertEquals(Action.CLOSED, c2.getNoteAction());
         assertEquals("", c2.getText());
     }
 

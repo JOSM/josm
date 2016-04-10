@@ -877,11 +877,11 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 setColumnIdentifiers(new String[] {tr("Projection"), tr("Layer"), tr("Name"), tr("Easting"), tr("Northing")});
             }
 
-            public OffsetBookmark getRow(int row) {
+            private OffsetBookmark getRow(int row) {
                 return bookmarks.get(row);
             }
 
-            public void addRow(OffsetBookmark i) {
+            private void addRow(OffsetBookmark i) {
                 bookmarks.add(i);
                 int p = getRowCount() - 1;
                 fireTableRowsInserted(p, p);

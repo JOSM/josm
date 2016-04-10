@@ -30,8 +30,11 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Language preferences.
+ * @since 1065
  */
 public class LanguagePreference implements SubPreferenceSetting {
+
+    private static final String LANGUAGE = "language";
 
     /**
      * Factory used to create a new {@code LanguagePreference}.
@@ -51,7 +54,7 @@ public class LanguagePreference implements SubPreferenceSetting {
         LanguageComboBoxModel model = new LanguageComboBoxModel();
         // Selecting the language BEFORE the JComboBox listens to model changes speed up initialization by ~35ms (see #7386)
         // See https://stackoverflow.com/questions/3194958/fast-replacement-for-jcombobox-basiccomboboxui
-        model.selectLanguage(Main.pref.get("language"));
+        model.selectLanguage(Main.pref.get(LANGUAGE));
         langCombo = new JosmComboBox<>(model);
         langCombo.setRenderer(new LanguageCellRenderer());
 
@@ -69,9 +72,9 @@ public class LanguagePreference implements SubPreferenceSetting {
     @Override
     public boolean ok() {
         if (langCombo.getSelectedItem() == null)
-            return Main.pref.put("language", null);
+            return Main.pref.put(LANGUAGE, null);
         else
-            return Main.pref.put("language",
+            return Main.pref.put(LANGUAGE,
                     LanguageInfo.getJOSMLocaleCode((Locale) langCombo.getSelectedItem()));
     }
 
@@ -83,15 +86,15 @@ public class LanguagePreference implements SubPreferenceSetting {
             data.addAll(Arrays.asList(I18n.getAvailableTranslations()));
         }
 
-        public void selectLanguage(String language) {
+        private void selectLanguage(String language) {
             setSelectedItem(null);
             if (language != null) {
-                language = LanguageInfo.getJavaLocaleCode(language);
+                String lang = LanguageInfo.getJavaLocaleCode(language);
                 for (Locale locale: data) {
                     if (locale == null) {
                         continue;
                     }
-                    if (locale.toString().equals(language)) {
+                    if (locale.toString().equals(lang)) {
                         setSelectedItem(locale);
                         return;
                     }

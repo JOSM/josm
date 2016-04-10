@@ -88,25 +88,25 @@ public class UploadNotesTask {
                 }
                 Note newNote;
                 switch (comment.getNoteAction()) {
-                case opened:
+                case OPENED:
                     if (Main.isDebugEnabled()) {
                         Main.debug("opening new note");
                     }
                     newNote = api.createNote(note.getLatLon(), comment.getText(), monitor);
                     break;
-                case closed:
+                case CLOSED:
                     if (Main.isDebugEnabled()) {
                         Main.debug("closing note " + note.getId());
                     }
                     newNote = api.closeNote(note, comment.getText(), monitor);
                     break;
-                case commented:
+                case COMMENTED:
                     if (Main.isDebugEnabled()) {
                         Main.debug("adding comment to note " + note.getId());
                     }
                     newNote = api.addCommentToNote(note, comment.getText(), monitor);
                     break;
-                case reopened:
+                case REOPENED:
                     if (Main.isDebugEnabled()) {
                         Main.debug("reopening note " + note.getId());
                     }

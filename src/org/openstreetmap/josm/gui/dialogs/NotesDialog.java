@@ -145,7 +145,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             closeAction.setEnabled(false);
             addCommentAction.setEnabled(false);
             reopenAction.setEnabled(false);
-        } else if (noteData.getSelectedNote().getState() == State.open) {
+        } else if (noteData.getSelectedNote().getState() == State.OPEN) {
             closeAction.setEnabled(true);
             addCommentAction.setEnabled(true);
             reopenAction.setEnabled(false);
@@ -248,7 +248,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                 ImageIcon icon;
                 if (note.getId() < 0) {
                     icon = ICON_NEW_SMALL;
-                } else if (note.getState() == State.closed) {
+                } else if (note.getState() == State.CLOSED) {
                     icon = ICON_CLOSED_SMALL;
                 } else {
                     icon = ICON_OPEN_SMALL;
