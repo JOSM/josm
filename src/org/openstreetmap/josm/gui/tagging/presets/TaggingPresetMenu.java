@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.event.ActionEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -93,8 +94,11 @@ public class TaggingPresetMenu extends TaggingPreset {
             for (Component c : menu.getMenuComponents()) {
                 pm.add(copyMenuComponent(c));
             }
-            Point p = MouseInfo.getPointerInfo().getLocation();
-            pm.show(Main.parent, p.x-Main.parent.getX(), p.y-Main.parent.getY());
+            PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+            if (pointerInfo != null) {
+                Point p = pointerInfo.getLocation();
+                pm.show(Main.parent, p.x-Main.parent.getX(), p.y-Main.parent.getY());
+            }
         }
     }
 
