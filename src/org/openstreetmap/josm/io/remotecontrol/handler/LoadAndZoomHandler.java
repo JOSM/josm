@@ -290,7 +290,7 @@ public class LoadAndZoomHandler extends RequestHandler {
         }
 
         // Process optional argument 'select'
-        if (args.containsKey("select")) {
+        if (args != null && args.containsKey("select")) {
             toSelect.clear();
             for (String item : args.get("select").split(",")) {
                 try {

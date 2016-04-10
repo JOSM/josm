@@ -212,9 +212,11 @@ public class SplitWayAction extends JosmAction {
                     return; // splitting is performed in SegmentToKeepSelectionDialog.buttonAction()
                 }
             }
-            final SplitWayResult result = doSplitWay(getEditLayer(), selectedWay, wayToKeep, newWays, sel);
-            Main.main.undoRedo.add(result.getCommand());
-            getCurrentDataSet().setSelected(result.getNewSelection());
+            if (wayToKeep != null) {
+                final SplitWayResult result = doSplitWay(getEditLayer(), selectedWay, wayToKeep, newWays, sel);
+                Main.main.undoRedo.add(result.getCommand());
+                getCurrentDataSet().setSelected(result.getNewSelection());
+            }
         }
     }
 
@@ -535,7 +537,7 @@ public class SplitWayAction extends JosmAction {
         // Determine which part reuses the existing way
         final Way wayToKeep = splitStrategy.determineWayToKeep(newWays);
 
-        return doSplitWay(layer, way, wayToKeep, newWays, newSelection);
+        return wayToKeep != null ? doSplitWay(layer, way, wayToKeep, newWays, newSelection) : null;
     }
 
     static SplitWayResult doSplitWay(OsmDataLayer layer, Way way, Way wayToKeep, List<Way> newWays,

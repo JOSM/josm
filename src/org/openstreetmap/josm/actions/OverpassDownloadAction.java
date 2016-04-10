@@ -105,10 +105,13 @@ public class OverpassDownloadAction extends JosmAction {
         }
 
         private void enableActions(boolean enabled) {
-            for (Object key : actionMap.allKeys()) {
-                Action action = actionMap.get(key);
-                if (action != null) {
-                    action.setEnabled(enabled);
+            Object[] allKeys = actionMap.allKeys();
+            if (allKeys != null) {
+                for (Object key : allKeys) {
+                    Action action = actionMap.get(key);
+                    if (action != null) {
+                        action.setEnabled(enabled);
+                    }
                 }
             }
         }

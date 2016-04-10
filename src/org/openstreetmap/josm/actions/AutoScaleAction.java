@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -301,7 +302,10 @@ public class AutoScaleAction extends JosmAction {
                         v.visit(dataSources.get(lastZoomArea).bounds);
                     } else {
                         lastZoomArea = -1;
-                        v.visit(new Bounds(Main.main.getCurrentDataSet().getDataSourceArea().getBounds2D()));
+                        Area sourceArea = Main.main.getCurrentDataSet().getDataSourceArea();
+                        if (sourceArea != null) {
+                            v.visit(new Bounds(sourceArea.getBounds2D()));
+                        }
                     }
                     lastZoomTime = System.currentTimeMillis();
                 } else {
