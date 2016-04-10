@@ -256,6 +256,14 @@ public class RegexValidatorTest {
     }
 
     /**
+     * Unit test of {@link RegexValidator#getValidatorName}.
+     */
+    @Test
+    public void testValidatorName() {
+        assertNull(new RegexValidator(".*").getValidatorName());
+    }
+
+    /**
      * Compare two arrays
      * @param label Label for the test
      * @param expect Expected array

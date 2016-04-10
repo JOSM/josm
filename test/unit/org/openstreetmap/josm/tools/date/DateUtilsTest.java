@@ -186,4 +186,12 @@ public class DateUtilsTest {
             DateUtils.PROP_ISO_DATES.put(iso);
         }
     }
+
+    /**
+     * Unit test to reach 100% code coverage.
+     */
+    @Test
+    public void testCoverage() {
+        assertNotNull(new DateUtils());
+    }
 }

@@ -38,7 +38,8 @@ public class RoleCorrectionTableTest {
         Relation r = new Relation();
         RelationMember member = new RelationMember("foo", new Node());
         r.addMember(member);
-        RoleCorrectionTable t = new RoleCorrectionTable(Arrays.asList(new RoleCorrection(r, 0, member, "bar")));
+        RoleCorrection rc = new RoleCorrection(r, 0, member, "bar");
+        RoleCorrectionTable t = new RoleCorrectionTable(Arrays.asList(rc));
         assertNotNull(t.getCellRenderer(0, 0));
         assertNotNull(t.getCellRenderer(0, 1));
         assertNotNull(t.getCellRenderer(0, 2));
@@ -62,5 +63,15 @@ public class RoleCorrectionTableTest {
         assertEquals("bar", model.getValueAt(0, 2));
         assertEquals(Boolean.TRUE, model.getValueAt(0, 3));
         assertNull(model.getValueAt(0, 4));
+        model.setValueAt("", 0, 0);
+        assertEquals("relation (0, 1 member)", model.getValueAt(0, 0));
+        model.setValueAt("", 0, 3);
+        assertEquals(Boolean.TRUE, model.getValueAt(0, 3));
+        model.setValueAt(Boolean.FALSE, 0, 3);
+        assertEquals(Boolean.FALSE, model.getValueAt(0, 3));
+        RoleCorrection[] array = new RoleCorrection[15];
+        Arrays.fill(array, rc);
+        t = new RoleCorrectionTable(Arrays.asList(array));
+        assertEquals(array.length, t.getCorrectionTableModel().getCorrections().size());
     }
 }

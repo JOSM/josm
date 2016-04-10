@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.UncheckedParseException;
  */
 public final class DateUtils {
 
-    private DateUtils() {
+    protected DateUtils() {
         // Hide default constructor for utils classes
     }
 
@@ -169,12 +169,15 @@ public final class DateUtils {
     }
 
     private static boolean checkLayout(String text, String pattern) {
-        if (text.length() != pattern.length()) return false;
+        if (text.length() != pattern.length())
+            return false;
         for (int i = 0; i < pattern.length(); i++) {
             char pc = pattern.charAt(i);
             char tc = text.charAt(i);
-            if (pc == 'x' && tc >= '0' && tc <= '9') continue;
-            else if (pc == 'x' || pc != tc) return false;
+            if (pc == 'x' && Character.isDigit(tc))
+                continue;
+            else if (pc == 'x' || pc != tc)
+                return false;
         }
         return true;
     }

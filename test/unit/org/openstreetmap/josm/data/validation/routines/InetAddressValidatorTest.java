@@ -18,6 +18,7 @@
 package org.openstreetmap.josm.data.validation.routines;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -614,4 +615,12 @@ public class InetAddressValidatorTest {
     // CHECKSTYLE.ON: ExecutableStatementCount
     // CHECKSTYLE.ON: MethodLengthCheck
     // CHECKSTYLE.ON: LineLength
+
+    /**
+     * Unit test of {@link InetAddressValidator#getValidatorName}.
+     */
+    @Test
+    public void testValidatorName() {
+        assertNull(new InetAddressValidator().getValidatorName());
+    }
 }

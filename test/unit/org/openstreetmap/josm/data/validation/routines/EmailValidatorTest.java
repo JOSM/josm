@@ -573,4 +573,12 @@ public class EmailValidatorTest {
     public void testValidator374() {
         assertTrue(validator.isValid("abc@school.school"));
     }
+
+    /**
+     * Unit test of {@link EmailValidator#getValidatorName}.
+     */
+    @Test
+    public void testValidatorName() {
+        assertEquals("Email validator", EmailValidator.getInstance().getValidatorName());
+    }
 }
