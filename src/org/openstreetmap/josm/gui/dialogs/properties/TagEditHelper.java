@@ -588,7 +588,9 @@ public class TagEditHelper {
                 Transferable old = Utils.getTransferableContent(sysSel);
                 cb.requestFocusInWindow();
                 cb.getEditor().selectAll();
-                sysSel.setContents(old, null);
+                if (old != null) {
+                    sysSel.setContents(old, null);
+                }
             } else {
                 cb.requestFocusInWindow();
                 cb.getEditor().selectAll();
