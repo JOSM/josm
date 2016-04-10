@@ -19,6 +19,7 @@ package org.openstreetmap.josm.data.validation.routines;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -476,5 +477,13 @@ public class DomainValidatorTest {
             }
         }
         return sorted && strictlySorted && lowerCase;
+    }
+
+    /**
+     * Unit test of {@link DomainValidator#getValidatorName}.
+     */
+    @Test
+    public void testValidatorName() {
+        assertNull(DomainValidator.getInstance().getValidatorName());
     }
 }

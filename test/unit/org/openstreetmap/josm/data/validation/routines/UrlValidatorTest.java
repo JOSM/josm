@@ -545,6 +545,14 @@ public class UrlValidatorTest {
        assertTrue(validator.isValid("http://www.apache.org:/path"));
    }
 
+   /**
+    * Unit test of {@link UrlValidator#getValidatorName}.
+    */
+   @Test
+   public void testValidatorName() {
+       assertEquals("URL validator", UrlValidator.getInstance().getValidatorName());
+   }
+
    //-------------------- Test data for creating a composite URL
    /**
     * The data given below approximates the 4 parts of a URL
