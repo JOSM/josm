@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -269,10 +270,14 @@ public class DownloadTaskList {
                 GuiHelper.runInEDT(new Runnable() {
                     @Override
                     public void run() {
-                        JOptionPane.showMessageDialog(Main.parent, "<html>"
-                                + tr("The following errors occurred during mass download: {0}",
-                                        Utils.joinAsHtmlUnorderedList(items)) + "</html>",
-                                tr("Errors during download"), JOptionPane.ERROR_MESSAGE);
+                        if (items.size() == 1 && tr("No data found in this area.").equals(items.iterator().next())) {
+                            new Notification(items.iterator().next().toString()).setIcon(JOptionPane.WARNING_MESSAGE).show();
+                        } else {
+                            JOptionPane.showMessageDialog(Main.parent, "<html>"
+                                    + tr("The following errors occurred during mass download: {0}",
+                                            Utils.joinAsHtmlUnorderedList(items)) + "</html>",
+                                    tr("Errors during download"), JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 });
 
