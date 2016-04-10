@@ -42,7 +42,7 @@ import org.openstreetmap.josm.tools.UserCancelException;
  * user already has an Access Token.
  *
  * For initial authorisation see {@link OAuthAuthorizationWizard}.
- *
+ * @since 2745
  */
 public class OAuthAuthenticationPreferencesPanel extends JPanel implements PropertyChangeListener {
     private JPanel pnlAuthorisationMessage;
@@ -52,6 +52,14 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     private String apiUrl;
     private JCheckBox cbShowAdvancedParameters;
     private JCheckBox cbSaveToPreferences;
+
+    /**
+     * Create the panel
+     */
+    public OAuthAuthenticationPreferencesPanel() {
+        build();
+        refreshView();
+    }
 
     /**
      * Builds the panel for entering the advanced OAuth parameters
@@ -139,14 +147,6 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     }
 
     /**
-     * Create the panel
-     */
-    public OAuthAuthenticationPreferencesPanel() {
-        build();
-        refreshView();
-    }
-
-    /**
      * Sets the URL of the OSM API for which this panel is currently displaying OAuth properties.
      *
      * @param apiUrl the api URL
@@ -223,6 +223,14 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         private JosmTextField tfAccessTokenKey;
         private JosmTextField tfAccessTokenSecret;
 
+        /**
+         * Constructs a new {@code AlreadyAuthorisedPanel}.
+         */
+        AlreadyAuthorisedPanel() {
+            build();
+            refreshView();
+        }
+
         protected void build() {
             setLayout(new GridBagLayout());
             GridBagConstraints gc = new GridBagConstraints();
@@ -290,23 +298,14 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             gc.weightx = 1.0;
             gc.weighty = 1.0;
             add(new JPanel(), gc);
-
         }
 
-        public final void refreshView() {
+        protected final void refreshView() {
             String v = OAuthAccessTokenHolder.getInstance().getAccessTokenKey();
             tfAccessTokenKey.setText(v == null ? "" : v);
             v = OAuthAccessTokenHolder.getInstance().getAccessTokenSecret();
             tfAccessTokenSecret.setText(v == null ? "" : v);
             cbSaveToPreferences.setSelected(OAuthAccessTokenHolder.getInstance().isSaveToPreferences());
-        }
-
-        /**
-         * Constructs a new {@code AlreadyAuthorisedPanel}.
-         */
-        AlreadyAuthorisedPanel() {
-            build();
-            refreshView();
         }
     }
 

@@ -29,6 +29,7 @@ import java.util.Map;
  * @see <a href="http://www.w3.org/TR/REC-html40/sgml/entities.html">HTML 4.0 Character entity references</a>
  * @see <a href="http://www.w3.org/TR/html401/charset.html#h-5.3">HTML 4.01 Character References</a>
  * @see <a href="http://www.w3.org/TR/html401/charset.html#code-position">HTML 4.01 Code positions</a>
+ * @since 3669
  */
 public final class Entities {
     private static final String[][] ARRAY = {
@@ -339,6 +340,11 @@ public final class Entities {
         // Private constructor for utilities classes
     }
 
+    /**
+     * Returns unescaped entity representation.
+     * @param str entity
+     * @return unescaped entity representation
+     */
     public static String unescape(String str) {
         int firstAmp = str.indexOf('&');
         if (firstAmp < 0)
@@ -356,7 +362,7 @@ public final class Entities {
                 }
                 int amphersandIdx = str.indexOf('&', i + 1);
                 if (amphersandIdx != -1 && amphersandIdx < semiColonIdx) {
-                    // Then the text looks like &...&...;
+                    // Then the text looks like "&...&...;"
                     res.append(c);
                     continue;
                 }
@@ -364,8 +370,7 @@ public final class Entities {
                 int entityValue = -1;
                 int entityContentLen = entityContent.length();
                 if (entityContentLen > 0) {
-                    if (entityContent.charAt(0) == '#') { // escaped value content is an integer (decimal or
-                        // hexidecimal)
+                    if (entityContent.charAt(0) == '#') { // escaped value content is an integer (decimal or hexidecimal)
                         if (entityContentLen > 1) {
                             char isHexChar = entityContent.charAt(1);
                             try {

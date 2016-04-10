@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  * AutoCompletionList is an {@link AbstractTableModel} which serves the list of filtered
  * items to a {@link JTable}.
- *
+ * @since 1762
  */
 public class AutoCompletionList extends AbstractTableModel {
 
@@ -66,7 +66,6 @@ public class AutoCompletionList extends AbstractTableModel {
 
     /**
      * clears the current filter
-     *
      */
     public void clearFilter() {
         filter = null;
@@ -134,8 +133,9 @@ public class AutoCompletionList extends AbstractTableModel {
      * @param priority the priority to use
      */
     public void add(Collection<String> values, AutoCompletionItemPriority priority) {
-        if (values == null) return;
-        for (String value: values) {
+        if (values == null)
+            return;
+        for (String value : values) {
             if (value == null) {
                 continue;
             }
@@ -147,16 +147,19 @@ public class AutoCompletionList extends AbstractTableModel {
         filter();
     }
 
+    /**
+     * Adds values that have been entered by the user.
+     * @param values values that have been entered by the user
+     */
     public void addUserInput(Collection<String> values) {
-        if (values == null) return;
+        if (values == null)
+            return;
         int i = 0;
-        for (String value: values) {
-            if (value == null) {
-                continue;
+        for (String value : values) {
+            if (value != null) {
+                appendOrUpdatePriority(
+                        new AutoCompletionListItem(value, new AutoCompletionItemPriority(false, false, false, i++)));
             }
-            AutoCompletionListItem item = new AutoCompletionListItem(value, new AutoCompletionItemPriority(false, false, false, i));
-            appendOrUpdatePriority(item);
-            i++;
         }
         sort();
         filter();

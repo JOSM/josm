@@ -69,14 +69,16 @@ public class PluginListPanel extends VerticallyScrollablePanel {
     }
 
     protected String formatPluginLocalVersion(PluginInformation pi) {
-        if (pi == null) return tr("unknown");
+        if (pi == null)
+            return tr("unknown");
         if (pi.localversion == null || pi.localversion.trim().isEmpty())
             return tr("unknown");
         return pi.localversion;
     }
 
     protected String formatCheckboxTooltipText(PluginInformation pi) {
-        if (pi == null) return "";
+        if (pi == null)
+            return "";
         if (pi.downloadlink == null)
             return tr("Plugin bundled with JOSM");
         else
@@ -106,10 +108,9 @@ public class PluginListPanel extends VerticallyScrollablePanel {
 
     /**
      * A plugin checkbox.
-     *
      */
     private class JPluginCheckBox extends JCheckBox {
-        public final transient PluginInformation pi;
+        protected final transient PluginInformation pi;
 
         JPluginCheckBox(final PluginInformation pi, boolean selected) {
             this.pi = pi;
@@ -121,7 +122,6 @@ public class PluginListPanel extends VerticallyScrollablePanel {
 
     /**
      * Listener called when the user selects/unselects a plugin checkbox.
-     *
      */
     private class PluginCbActionListener implements ActionListener {
         private final JPluginCheckBox cb;
@@ -171,7 +171,6 @@ public class PluginListPanel extends VerticallyScrollablePanel {
         }
     }
 
-
     /**
      * Alerts the user if an unselected plugin is still required by another plugins
      *
@@ -180,8 +179,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
      * @param otherPlugins the other plugins
      */
     private static void alertPluginStillRequired(Component parent, String plugin, Set<String> otherPlugins) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html>")
+        StringBuilder sb = new StringBuilder("<html>")
           .append(trn("Plugin {0} is still required by this plugin:",
                 "Plugin {0} is still required by these {1} plugins:",
                 otherPlugins.size(),

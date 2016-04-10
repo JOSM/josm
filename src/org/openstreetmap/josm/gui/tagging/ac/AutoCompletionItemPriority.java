@@ -6,6 +6,7 @@ package org.openstreetmap.josm.gui.tagging.ac;
  * The selected flag is currently only used in plugins.
  *
  * Instances of this class are not modifiable.
+ * @since 1762
  */
 public class AutoCompletionItemPriority implements Comparable<AutoCompletionItemPriority> {
 
@@ -43,12 +44,11 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
     private final boolean inStandard;
     private final boolean selected;
 
-
     /**
-     * Create new AutoCompletionItemPriority object.
+     * Constructs a new {@code AutoCompletionItemPriority}.
      *
      * @param inDataSet true, if the item is found in the currently active data layer
-     * @param inStandard true, if the item is a standard tag, e.g. from the presets.
+     * @param inStandard true, if the item is a standard tag, e.g. from the presets
      * @param selected true, if it is found on an object that is currently selected
      * @param userInput null, if the user hasn't entered this tag so far. A number when
      * the tag key / value has been entered by the user before. A lower number means
@@ -61,22 +61,47 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
         this.userInput = userInput == null ? NO_USER_INPUT : userInput;
     }
 
+    /**
+     * Constructs a new {@code AutoCompletionItemPriority}.
+     *
+     * @param inDataSet true, if the item is found in the currently active data layer
+     * @param inStandard true, if the item is a standard tag, e.g. from the presets
+     * @param selected true, if it is found on an object that is currently selected
+     */
     public AutoCompletionItemPriority(boolean inDataSet, boolean inStandard, boolean selected) {
         this(inDataSet, inStandard, selected, NO_USER_INPUT);
     }
 
+    /**
+     * Determines if the item is found in the currently active data layer.
+     * @return {@code true} if the item is found in the currently active data layer
+     */
     public boolean isInDataSet() {
         return inDataSet;
     }
 
+    /**
+     * Determines if the item is a standard tag, e.g. from the presets.
+     * @return {@code true} if the item is a standard tag, e.g. from the presets
+     */
     public boolean isInStandard() {
         return inStandard;
     }
 
+    /**
+     * Determines if it is found on an object that is currently selected.
+     * @return {@code true} if it is found on an object that is currently selected
+     */
     public boolean isSelected() {
         return selected;
     }
 
+    /**
+     * Returns a number when the tag key / value has been entered by the user before.
+     * A lower number means this happened more recently and beats a higher number in priority.
+     * @return a number when the tag key / value has been entered by the user before.
+     *         {@code null}, if the user hasn't entered this tag so far.
+     */
     public Integer getUserInput() {
         return userInput == NO_USER_INPUT ? null : userInput;
     }
@@ -88,16 +113,20 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
     @Override
     public int compareTo(AutoCompletionItemPriority other) {
         int ui = Integer.compare(other.userInput, userInput);
-        if (ui != 0) return ui;
+        if (ui != 0)
+            return ui;
 
         int sel = Boolean.valueOf(selected).compareTo(other.selected);
-        if (sel != 0) return sel;
+        if (sel != 0)
+            return sel;
 
         int ds = Boolean.valueOf(inDataSet).compareTo(other.inDataSet);
-        if (ds != 0) return ds;
+        if (ds != 0)
+            return ds;
 
         int std = Boolean.valueOf(inStandard).compareTo(other.inStandard);
-        if (std != 0) return std;
+        if (std != 0)
+            return std;
 
         return 0;
     }

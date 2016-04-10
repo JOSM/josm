@@ -60,6 +60,14 @@ public class OsmApiUrlInputPanel extends JPanel {
 
     private transient ApiUrlPropagator propagator;
 
+    /**
+     * Constructs a new {@code OsmApiUrlInputPanel}.
+     */
+    public OsmApiUrlInputPanel() {
+        build();
+        HelpUtil.setHelpContext(this, HelpUtil.ht("/Preferences/Connection#ApiUrl"));
+    }
+
     protected JComponent buildDefaultServerUrlPanel() {
         cbUseDefaultServerUrl = new JCheckBox(tr("<html>Use the default OSM server URL (<strong>{0}</strong>)</html>", OsmApi.DEFAULT_API_URL));
         cbUseDefaultServerUrl.addItemListener(new UseDefaultServerUrlChangeHandler());
@@ -111,14 +119,6 @@ public class OsmApiUrlInputPanel extends JPanel {
     }
 
     /**
-     * Constructs a new {@code OsmApiUrlInputPanel}.
-     */
-    public OsmApiUrlInputPanel() {
-        build();
-        HelpUtil.setHelpContext(this, HelpUtil.ht("/Preferences/Connection#ApiUrl"));
-    }
-
-    /**
      * Initializes the configuration panel with values from the preferences
      */
     public void initFromPreferences() {
@@ -151,8 +151,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         }
         String newUrl = OsmApi.getOsmApi().getServerUrl();
 
-        // When API URL changes, re-initialize API connection so we may adjust
-        // server-dependent settings.
+        // When API URL changes, re-initialize API connection so we may adjust server-dependent settings.
         if (!oldUrl.equals(newUrl)) {
             try {
                 OsmApi.getOsmApi().initialize(null);
@@ -302,11 +301,11 @@ public class OsmApiUrlInputPanel extends JPanel {
     }
 
     class ApiUrlPropagator extends FocusAdapter implements ActionListener {
-        public void propagate() {
+        protected void propagate() {
             propagate(getStrippedApiUrl());
         }
 
-        public void propagate(String url) {
+        protected void propagate(String url) {
             firePropertyChange(API_URL_PROP, null, url);
         }
 
