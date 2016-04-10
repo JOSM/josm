@@ -26,9 +26,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * these nodes might not be present explicitly in the original collection. The "hull" also includes
  * incomplete {@link OsmPrimitive}s which are referred to by relations in the original collection. And
  * it turns {@link OsmPrimitive} referred to by {@link Relation}s in the original collection into
- * incomplete {@link OsmPrimitive}s in the "hull", if they are not themselves present in the
- * original collection.
- *
+ * incomplete {@link OsmPrimitive}s in the "hull", if they are not themselves present in the original collection.
+ * @since 1891
  */
 public class MergeSourceBuildingVisitor extends AbstractVisitor {
     private final DataSet selectionBase;
@@ -102,8 +101,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
 
         List<RelationMemberData> newMembers = new ArrayList<>();
         for (RelationMember member: r.getMembers()) {
-            newMembers.add(
-                    new RelationMemberData(member.getRole(), mappedPrimitives.get(member.getMember())));
+            newMembers.add(new RelationMemberData(member.getRole(), mappedPrimitives.get(member.getMember())));
 
         }
         clone.setMembers(newMembers);
@@ -133,7 +131,6 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     @Override
     public void visit(Way w) {
         // remember all nodes this way refers to ...
-        //
         for (Node n: w.getNodes()) {
             n.accept(this);
         }
@@ -143,14 +140,11 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
 
     @Override
     public void visit(Relation r) {
-        // first, remember all primitives members refer to (only if necessary, see
-        // below)
-        //
+        // first, remember all primitives members refer to (only if necessary, see below)
         rememberRelationPartial(r);
         for (RelationMember member: r.getMembers()) {
             if (isAlreadyRemembered(member.getMember())) {
                 // referred primitive already remembered
-                //
                 continue;
             }
             if (isInSelectionBase(member.getMember()) || member.getMember().isNew()) {
@@ -185,6 +179,10 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         }
     }
 
+    /**
+     * Builds and returns the "hull".
+     * @return the "hull" data set
+     */
     public DataSet build() {
         for (OsmPrimitive primitive: selectionBase.getAllSelected()) {
             primitive.accept(this);

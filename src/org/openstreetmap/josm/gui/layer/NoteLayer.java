@@ -112,7 +112,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             ImageIcon icon = null;
             if (note.getId() < 0) {
                 icon = NotesDialog.ICON_NEW_SMALL;
-            } else if (note.getState() == State.closed) {
+            } else if (note.getState() == State.CLOSED) {
                 icon = NotesDialog.ICON_CLOSED_SMALL;
             } else {
                 icon = NotesDialog.ICON_OPEN_SMALL;

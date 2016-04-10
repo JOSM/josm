@@ -158,7 +158,7 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
             }
         }
 
-        public static void launch(Component parent, KeyStroke keystroke) {
+        protected static void launch(Component parent, KeyStroke keystroke) {
             Rectangle r = parent.getBounds();
             new RecentRelationsPopupMenu(getRecentRelationsOnActiveLayer(), keystroke).show(parent, r.x, r.y + r.height);
         }

@@ -11,12 +11,18 @@ import java.util.Objects;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
- * A map note. It always has at least one comment since a comment is required
- * to create a note on osm.org
+ * A map note. It always has at least one comment since a comment is required to create a note on osm.org.
+ * @since 7451
  */
 public class Note {
 
-    public enum State { open, closed }
+    /** Note state */
+    public enum State {
+        /** Note is open */
+        OPEN,
+        /** Note is closed */
+        CLOSED
+    }
 
     private long id;
     private LatLon latLon;
@@ -38,6 +44,10 @@ public class Note {
         return id;
     }
 
+    /**
+     * Sets note id.
+     * @param id OSM ID of this note
+     */
     public void setId(long id) {
         this.id = id;
     }
@@ -52,6 +62,10 @@ public class Note {
         return createdAt;
     }
 
+    /**
+     * Sets date at which this note has been created.
+     * @param createdAt date at which this note has been created
+     */
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
@@ -61,6 +75,10 @@ public class Note {
         return closedAt;
     }
 
+    /**
+     * Sets date at which this note has been closed.
+     * @param closedAt date at which this note has been closed
+     */
     public void setClosedAt(Date closedAt) {
         this.closedAt = closedAt;
     }
@@ -70,6 +88,10 @@ public class Note {
         return state;
     }
 
+    /**
+     * Sets the note state.
+     * @param state note state (open or closed)
+     */
     public void setState(State state) {
         this.state = state;
     }
@@ -79,6 +101,10 @@ public class Note {
         return comments;
     }
 
+    /**
+     * Adds a comment.
+     * @param comment note comment
+     */
     public void addComment(NoteComment comment) {
         comments.add(comment);
     }
@@ -111,8 +137,10 @@ public class Note {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
         Note note = (Note) obj;
         return id == note.id;
     }

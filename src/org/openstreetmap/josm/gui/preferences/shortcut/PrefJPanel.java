@@ -76,27 +76,6 @@ public class PrefJPanel extends JPanel {
     // not a list of real physical keys. If someone knows how to get that list?
     private static Map<Integer, String> keyList = setKeyList();
 
-    private static Map<Integer, String> setKeyList() {
-        Map<Integer, String> list = new LinkedHashMap<>();
-        String unknown = Toolkit.getProperty("AWT.unknown", "Unknown");
-        // Assume all known keys are declared in KeyEvent as "public static int VK_*"
-        for (Field field : KeyEvent.class.getFields()) {
-            if (field.getName().startsWith("VK_")) {
-                try {
-                    int i = field.getInt(null);
-                    String s = KeyEvent.getKeyText(i);
-                    if (s != null && s.length() > 0 && !s.contains(unknown)) {
-                        list.put(Integer.valueOf(i), s);
-                    }
-                } catch (Exception e) {
-                    Main.error(e);
-                }
-            }
-        }
-        list.put(Integer.valueOf(-1), "");
-        return list;
-    }
-
     private final JCheckBox cbAlt = new JCheckBox();
     private final JCheckBox cbCtrl = new JCheckBox();
     private final JCheckBox cbMeta = new JCheckBox();
@@ -113,6 +92,27 @@ public class PrefJPanel extends JPanel {
     public PrefJPanel() {
         this.model = new ScListModel();
         initComponents();
+    }
+
+    private static Map<Integer, String> setKeyList() {
+        Map<Integer, String> list = new LinkedHashMap<>();
+        String unknown = Toolkit.getProperty("AWT.unknown", "Unknown");
+        // Assume all known keys are declared in KeyEvent as "public static int VK_*"
+        for (Field field : KeyEvent.class.getFields()) {
+            if (field.getName().startsWith("VK_")) {
+                try {
+                    int i = field.getInt(null);
+                    String s = KeyEvent.getKeyText(i);
+                    if (s != null && s.length() > 0 && !s.contains(unknown)) {
+                        list.put(Integer.valueOf(i), s);
+                    }
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    Main.error(e);
+                }
+            }
+        }
+        list.put(Integer.valueOf(-1), "");
+        return list;
     }
 
     /**
@@ -168,7 +168,8 @@ public class PrefJPanel extends JPanel {
                 isSelected, boolean hasFocus, int row, int column) {
             int row1 = shortcutTable.convertRowIndexToModel(row);
             Shortcut sc = (Shortcut) model.getValueAt(row1, -1);
-            if (sc == null) return null;
+            if (sc == null)
+                return null;
             JLabel label = (JLabel) super.getTableCellRendererComponent(
                 table, name ? sc.getLongText() : sc.getKeyText(), isSelected, hasFocus, row, column);
             GuiHelper.setBackgroundReadable(label, UIManager.getColor("Table.background"));
@@ -186,27 +187,24 @@ public class PrefJPanel extends JPanel {
     }
 
     private void initComponents() {
-        JPanel listPane = new JPanel(new GridLayout());
-        JScrollPane listScrollPane = new JScrollPane();
-        JPanel shortcutEditPane = new JPanel(new GridLayout(5, 2));
-
         CbAction action = new CbAction(this);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(buildFilterPanel());
 
         // This is the list of shortcuts:
         shortcutTable.setModel(model);
-        shortcutTable.getSelectionModel().addListSelectionListener(new CbAction(this));
+        shortcutTable.getSelectionModel().addListSelectionListener(action);
         shortcutTable.setFillsViewportHeight(true);
         shortcutTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         shortcutTable.setAutoCreateRowSorter(true);
         TableColumnModel mod = shortcutTable.getColumnModel();
         mod.getColumn(0).setCellRenderer(new ShortcutTableCellRenderer(true));
         mod.getColumn(1).setCellRenderer(new ShortcutTableCellRenderer(false));
+        JScrollPane listScrollPane = new JScrollPane();
         listScrollPane.setViewportView(shortcutTable);
 
+        JPanel listPane = new JPanel(new GridLayout());
         listPane.add(listScrollPane);
-
         add(listPane);
 
         // and here follows the edit area. I won't object to someone re-designing it, it looks, um, "minimalistic" ;)
@@ -225,6 +223,8 @@ public class PrefJPanel extends JPanel {
         tfKey.setModel(new DefaultComboBoxModel<>(keyList.values().toArray(new String[0])));
         cbMeta.setAction(action);
         cbMeta.setText(META); // see above for why no tr()
+
+        JPanel shortcutEditPane = new JPanel(new GridLayout(5, 2));
 
         shortcutEditPane.add(cbDefault);
         shortcutEditPane.add(new JLabel());
@@ -265,15 +265,6 @@ public class PrefJPanel extends JPanel {
         return pnl;
     }
 
-    private void disableAllModifierCheckboxes() {
-        cbDefault.setEnabled(false);
-        cbDisable.setEnabled(false);
-        cbShift.setEnabled(false);
-        cbCtrl.setEnabled(false);
-        cbAlt.setEnabled(false);
-        cbMeta.setEnabled(false);
-    }
-
     // this allows to edit shortcuts. it:
     //  * sets the edit controls to the selected shortcut
     //  * enabled/disables the controls as needed
@@ -281,12 +272,21 @@ public class PrefJPanel extends JPanel {
     // And after I finally had it working, I realized that those two methods
     // are playing ping-pong (politically correct: table tennis, I know) and
     // even have some duplicated code. Feel free to refactor, If you have
-    // more expirience with GUI coding than I have.
-    private class CbAction extends AbstractAction implements ListSelectionListener {
+    // more experience with GUI coding than I have.
+    private static class CbAction extends AbstractAction implements ListSelectionListener {
         private final PrefJPanel panel;
 
         CbAction(PrefJPanel panel) {
             this.panel = panel;
+        }
+
+        private void disableAllModifierCheckboxes() {
+            panel.cbDefault.setEnabled(false);
+            panel.cbDisable.setEnabled(false);
+            panel.cbShift.setEnabled(false);
+            panel.cbCtrl.setEnabled(false);
+            panel.cbAlt.setEnabled(false);
+            panel.cbMeta.setEnabled(false);
         }
 
         @Override
@@ -302,9 +302,9 @@ public class PrefJPanel extends JPanel {
                 panel.cbAlt.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & KeyEvent.ALT_DOWN_MASK) != 0);
                 panel.cbMeta.setSelected(sc.getAssignedModifier() != -1 && (sc.getAssignedModifier() & KeyEvent.META_DOWN_MASK) != 0);
                 if (sc.getKeyStroke() != null) {
-                    tfKey.setSelectedItem(keyList.get(sc.getKeyStroke().getKeyCode()));
+                    panel.tfKey.setSelectedItem(keyList.get(sc.getKeyStroke().getKeyCode()));
                 } else {
-                    tfKey.setSelectedItem(keyList.get(-1));
+                    panel.tfKey.setSelectedItem(keyList.get(-1));
                 }
                 if (!sc.isChangeable()) {
                     disableAllModifierCheckboxes();
@@ -313,9 +313,9 @@ public class PrefJPanel extends JPanel {
                     panel.cbDefault.setEnabled(true);
                     actionPerformed(null);
                 }
-                model.fireTableRowsUpdated(row, row);
+                panel.model.fireTableRowsUpdated(row, row);
             } else {
-                panel.disableAllModifierCheckboxes();
+                disableAllModifierCheckboxes();
                 panel.tfKey.setEnabled(false);
             }
         }
@@ -356,14 +356,14 @@ public class PrefJPanel extends JPanel {
                 panel.cbMeta.setEnabled(state);
                 panel.tfKey.setEnabled(state);
             } else {
-                panel.disableAllModifierCheckboxes();
+                disableAllModifierCheckboxes();
                 panel.tfKey.setEnabled(false);
             }
         }
     }
 
     class FilterFieldAdapter implements DocumentListener {
-        public void filter() {
+        private void filter() {
             String expr = filterField.getText().trim();
             if (expr.isEmpty()) {
                 expr = null;

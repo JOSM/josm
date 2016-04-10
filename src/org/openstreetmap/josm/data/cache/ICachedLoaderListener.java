@@ -1,6 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.cache;
 
+/**
+ * Cache loader listener.
+ * @since 8168
+ */
 public interface ICachedLoaderListener {
 
     /**

@@ -45,10 +45,10 @@ public class NoteData {
             if (n1.getId() > 0 && n2.getId() < 0) {
                 return -1;
             }
-            if (n1.getState() == State.closed && n2.getState() == State.open) {
+            if (n1.getState() == State.CLOSED && n2.getState() == State.OPEN) {
                 return 1;
             }
-            if (n1.getState() == State.open && n2.getState() == State.closed) {
+            if (n1.getState() == State.OPEN && n2.getState() == State.CLOSED) {
                 return -1;
             }
             return Long.compare(Math.abs(n1.getId()), Math.abs(n2.getId()));
@@ -199,9 +199,9 @@ public class NoteData {
         }
         Note note = new Note(location);
         note.setCreatedAt(new Date());
-        note.setState(State.open);
+        note.setState(State.OPEN);
         note.setId(newNoteId--);
-        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.opened, true);
+        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.OPENED, true);
         note.addComment(comment);
         if (Main.isDebugEnabled()) {
             Main.debug("Created note {0} with comment: {1}", note.getId(), text);
@@ -219,13 +219,13 @@ public class NoteData {
         if (!noteList.contains(note)) {
             throw new IllegalArgumentException("Note to modify must be in layer");
         }
-        if (note.getState() == State.closed) {
+        if (note.getState() == State.CLOSED) {
             throw new IllegalStateException("Cannot add a comment to a closed note");
         }
         if (Main.isDebugEnabled()) {
             Main.debug("Adding comment to note {0}: {1}", note.getId(), text);
         }
-        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.commented, true);
+        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.COMMENTED, true);
         note.addComment(comment);
         dataUpdated();
     }
@@ -239,15 +239,15 @@ public class NoteData {
         if (!noteList.contains(note)) {
             throw new IllegalArgumentException("Note to close must be in layer");
         }
-        if (note.getState() != State.open) {
+        if (note.getState() != State.OPEN) {
             throw new IllegalStateException("Cannot close a note that isn't open");
         }
         if (Main.isDebugEnabled()) {
             Main.debug("closing note {0} with comment: {1}", note.getId(), text);
         }
-        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.closed, true);
+        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.CLOSED, true);
         note.addComment(comment);
-        note.setState(State.closed);
+        note.setState(State.CLOSED);
         note.setClosedAt(new Date());
         dataUpdated();
     }
@@ -261,15 +261,15 @@ public class NoteData {
         if (!noteList.contains(note)) {
             throw new IllegalArgumentException("Note to reopen must be in layer");
         }
-        if (note.getState() != State.closed) {
+        if (note.getState() != State.CLOSED) {
             throw new IllegalStateException("Cannot reopen a note that isn't closed");
         }
         if (Main.isDebugEnabled()) {
             Main.debug("reopening note {0} with comment: {1}", note.getId(), text);
         }
-        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.reopened, true);
+        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.REOPENED, true);
         note.addComment(comment);
-        note.setState(State.open);
+        note.setState(State.OPEN);
         dataUpdated();
     }
 
