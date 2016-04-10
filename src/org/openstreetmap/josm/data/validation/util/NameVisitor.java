@@ -18,27 +18,30 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-//TODO This class used to be in JOSM but it was removed. MultipleNameVisitor depends on it so I copied it here,
-// but MultipleNameVisitor should be refactored instead of using this class
 public class NameVisitor extends AbstractVisitor {
 
     /**
      * The name of the item class
      */
     public String className;
+
+    /**
+     * The plural name of the item class
+     */
     public String classNamePlural;
+
     /**
      * The name of this item.
      */
     public String name = "";
+
     /**
      * The icon of this item.
      */
     public Icon icon;
 
     /**
-     * If the node has a name-key or id-key, this is displayed. If not, (lat,lon)
-     * is displayed.
+     * If the node has a name-key or id-key, this is displayed. If not, (lat,lon) is displayed.
      */
     @Override
     public void visit(Node n) {
@@ -68,6 +71,10 @@ public class NameVisitor extends AbstractVisitor {
         classNamePlural = trn("relation", "relations", 2);
     }
 
+    /**
+     * Returns an horizontal {@code JLabel} with icon and name.
+     * @return horizontal {@code JLabel} with icon and name
+     */
     public JLabel toLabel() {
         return new JLabel(name, icon, JLabel.HORIZONTAL);
     }

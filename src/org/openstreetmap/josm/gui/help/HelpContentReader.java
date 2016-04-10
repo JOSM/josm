@@ -50,13 +50,9 @@ public class HelpContentReader extends WikiReader {
                 return prepareHelpContent(in, dotest, u);
             }
         } catch (MalformedURLException e) {
-            throw new HelpContentReaderException(e);
+            throw new HelpContentReaderException(e, 0);
         } catch (IOException e) {
-            HelpContentReaderException ex = new HelpContentReaderException(e);
-            if (con != null) {
-                ex.setResponseCode(con.getResponseCode());
-            }
-            throw ex;
+            throw new HelpContentReaderException(e, con != null ? con.getResponseCode() : 0);
         }
     }
 
@@ -80,7 +76,7 @@ public class HelpContentReader extends WikiReader {
         try {
             s = readFromTrac(in, url);
         } catch (IOException e) {
-            throw new HelpContentReaderException(e);
+            throw new HelpContentReaderException(e, 0);
         }
         if (dotest && s.isEmpty())
             throw new MissingHelpContentException(s);

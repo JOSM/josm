@@ -18,6 +18,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class MultipleNameVisitor extends NameVisitor {
 
+    /**
+     * Maximum displayed length, in characters.
+     */
     public static final int MULTIPLE_NAME_MAX_LENGTH = 80;
 
     /** The class name of the combined primitives */

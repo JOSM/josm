@@ -269,8 +269,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 );
         if (answer != 0 /* OK */)
             return;
-        List<String> sites = pnl.getUpdateSites();
-        Main.pref.setPluginSites(sites);
+        Main.pref.setPluginSites(pnl.getUpdateSites());
     }
 
     /**
@@ -496,11 +495,10 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
     }
 
     /**
-     * Applies the current filter condition in the filter text field to the
-     * model
+     * Applies the current filter condition in the filter text field to the model.
      */
     class SearchFieldAdapter implements DocumentListener {
-        public void filter() {
+        private void filter() {
             String expr = tfFilter.getText().trim();
             if (expr.isEmpty()) {
                 expr = null;
@@ -596,7 +594,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             add(buttons, GBC.eol());
         }
 
-        public List<String> getUpdateSites() {
+        protected List<String> getUpdateSites() {
             if (model.getSize() == 0)
                 return Collections.emptyList();
             List<String> ret = new ArrayList<>(model.getSize());

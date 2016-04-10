@@ -12,6 +12,6 @@ public class MissingHelpContentException extends HelpContentReaderException {
      * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
      */
     public MissingHelpContentException(String message) {
-        super(message);
+        super(message, 0);
     }
 }
