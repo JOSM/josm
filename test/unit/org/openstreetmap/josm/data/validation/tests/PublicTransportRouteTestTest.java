@@ -66,5 +66,14 @@ public class PublicTransportRouteTestTest {
         assertEquals(1, test.getErrors().size());
         assertEquals("Route relation contains a gap", test.getErrors().get(0).getMessage());
 
+        final Relation r5 = TestUtils.newRelation("type=route route=tram public_transport:version=2",
+                new RelationMember("", w1), new RelationMember("", w2), new RelationMember("", w3),
+                new RelationMember("stop", w1.firstNode()), new RelationMember("stop", w4.lastNode()));
+        test.startTest(null);
+        test.visit(r5);
+        assertEquals(1, test.getErrors().size());
+        assertEquals("Stop position not part of route", test.getErrors().get(0).getMessage());
+        assertEquals(w4.lastNode(), test.getErrors().get(0).getPrimitives().iterator().next());
+
     }
 }

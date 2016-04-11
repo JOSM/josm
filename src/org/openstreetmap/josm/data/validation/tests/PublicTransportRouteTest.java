@@ -4,8 +4,13 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -39,12 +44,14 @@ public class PublicTransportRouteTest extends Test {
         }
 
         final List<RelationMember> membersToCheck = new ArrayList<>();
+        final Set<Node> routeNodes = new HashSet<>();
         for (RelationMember member : r.getMembers()) {
             if (member.hasRole("forward", "backward")) {
                 errors.add(new TestError(this, Severity.WARNING, tr("Route relation contains a ''{0}'' role", "forward/backward"), 3601, r));
                 return;
-            } else if (member.hasRole("")) {
+            } else if (member.hasRole("") && OsmPrimitiveType.WAY.equals(member.getType())) {
                 membersToCheck.add(member);
+                routeNodes.addAll(member.getWay().getNodes());
             }
         }
         if (membersToCheck.isEmpty()) {
@@ -61,6 +68,14 @@ public class PublicTransportRouteTest extends Test {
             if (hasError) {
                 errors.add(new TestError(this, Severity.WARNING, tr("Route relation contains a gap"), 3602, r));
                 return;
+            }
+        }
+
+        for (RelationMember member : r.getMembers()) {
+            if (member.hasRole("stop", "stop_exit_only", "stop_entry_only")
+                    && OsmPrimitiveType.NODE.equals(member.getType())
+                    && !routeNodes.contains(member.getNode())) {
+                errors.add(new TestError(this, Severity.WARNING, tr("Stop position not part of route"), 3603, Arrays.asList(member.getMember(), r)));
             }
         }
 
