@@ -82,6 +82,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGUniverse;
+import org.openstreetmap.josm.data.osm.DataSet;
 
 /**
  * Helper class to support the application with images.
@@ -1311,7 +1312,18 @@ public class ImageProvider {
     public static ImageIcon getPadded(OsmPrimitive primitive, Dimension iconSize) {
         // Check if the current styles have special icon for tagged nodes.
         if (primitive instanceof org.openstreetmap.josm.data.osm.Node) {
-            Pair<StyleElementList, Range> nodeStyles = MapPaintStyles.getStyles().generateStyles(primitive, 100, false);
+            Pair<StyleElementList, Range> nodeStyles;
+            DataSet ds = primitive.getDataSet();
+            if (ds != null) {
+                ds.getReadLock().lock();
+            }
+            try {
+                nodeStyles = MapPaintStyles.getStyles().generateStyles(primitive, 100, false);
+            } finally {
+                if (ds != null) {
+                    ds.getReadLock().unlock();
+                }
+            }
             for (StyleElement style : nodeStyles.a) {
                 if (style instanceof NodeElement) {
                     NodeElement nodeStyle = (NodeElement) style;
