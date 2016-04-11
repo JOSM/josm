@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
