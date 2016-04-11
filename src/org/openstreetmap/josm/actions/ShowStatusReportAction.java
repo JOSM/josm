@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
@@ -60,12 +61,6 @@ public final class ShowStatusReportAction extends JosmAction {
         putValue("help", ht("/Action/ShowStatusReport"));
         putValue("toolbar", "help/showstatusreport");
         Main.toolbar.register(this);
-    }
-
-    private static void shortenParam(ListIterator<String> it, String[] param, String source, String target) {
-        if (source != null && target.length() < source.length() && param[1].startsWith(source)) {
-            it.set(param[0] + '=' + param[1].replace(source, target));
-        }
     }
 
     private static boolean isRunningJavaWebStart() {
@@ -119,6 +114,15 @@ public final class ShowStatusReportAction extends JosmAction {
             final String envJavaHomeAlt = Main.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}";
             final String propJavaHome = System.getProperty("java.home");
             final String propJavaHomeAlt = "<java.home>";
+            final String prefDir = Main.pref.getPreferencesDirectory().toString();
+            final String prefDirAlt = "<josm.pref>";
+            final String userDataDir = Main.pref.getUserDataDirectory().toString();
+            final String userDataDirAlt = "<josm.userdata>";
+            final String userCacheDir = Main.pref.getCacheDirectory().toString();
+            final String userCacheDirAlt = "<josm.cache>";
+            final String userHomeDir = System.getProperty("user.home");
+            final String userHomeDirAlt = Main.isPlatformWindows() ? "%UserProfile%" : "${HOME}";
+
             // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
             List<String> vmArguments = new ArrayList<>(ManagementFactory.getRuntimeMXBean().getInputArguments());
             for (ListIterator<String> it = vmArguments.listIterator(); it.hasNext();) {
@@ -129,9 +133,18 @@ public final class ShowStatusReportAction extends JosmAction {
                     if (param[0].toLowerCase(Locale.ENGLISH).startsWith("-dproxy")) {
                         it.set(param[0]+"=xxx");
                     } else {
-                        // Shorten some parameters for readability concerns
-                        shortenParam(it, param, envJavaHome, envJavaHomeAlt);
-                        shortenParam(it, param, propJavaHome, propJavaHomeAlt);
+                        // Replace some paths for readability and privacy concerns
+                        String val = param[1];
+                        val = paramReplace(val, envJavaHome, envJavaHomeAlt);
+                        val = paramReplace(val, envJavaHome, envJavaHomeAlt);
+                        val = paramReplace(val, propJavaHome, propJavaHomeAlt);
+                        val = paramReplace(val, prefDir, prefDirAlt);
+                        val = paramReplace(val, userDataDir, userDataDirAlt);
+                        val = paramReplace(val, userCacheDir, userCacheDirAlt);
+                        val = paramReplace(val, userHomeDir, userHomeDirAlt);
+                        if (!val.equals(param[1])) {
+                            it.set(param[0] + '=' + val);
+                        }
                     }
                 } else if (value.startsWith("-X")) {
                     // Remove arguments like -Xbootclasspath/a, -Xverify:remote, that can be very long and unhelpful
@@ -181,6 +194,11 @@ public final class ShowStatusReportAction extends JosmAction {
             set.remove(def.url);
         }
         return set;
+    }
+
+    private static String paramReplace(String str, String target, String replacement) {
+        if (target == null) return str;
+        return str.replace(target, replacement);
     }
 
     protected static <T> void appendCollection(StringBuilder text, String label, Collection<T> col) {
