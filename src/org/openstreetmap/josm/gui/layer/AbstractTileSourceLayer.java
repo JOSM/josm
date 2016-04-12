@@ -258,6 +258,18 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         redraw();
     }
 
+    @Override
+    public void setSharpenLevel(double sharpenLevel) {
+        super.setSharpenLevel(sharpenLevel);
+        redraw();
+    }
+
+    @Override
+    public void setColorfulness(double colorfulness) {
+        super.setColorfulness(colorfulness);
+        redraw();
+    }
+
     /**
      * Marks layer as needing redraw on offset change
      */
