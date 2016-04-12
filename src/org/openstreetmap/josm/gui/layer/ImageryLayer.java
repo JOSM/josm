@@ -8,11 +8,18 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.event.ActionEvent;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
+import java.awt.image.ColorModel;
 import java.awt.image.ConvolveOp;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.awt.image.Kernel;
 import java.awt.image.LookupOp;
 import java.awt.image.ShortLookupTable;
@@ -69,6 +76,8 @@ public abstract class ImageryLayer extends Layer {
     protected double dy;
 
     protected GammaImageProcessor gammaImageProcessor = new GammaImageProcessor();
+    protected SharpenImageProcessor sharpenImageProcessor = new SharpenImageProcessor();
+    protected ColorfulImageProcessor collorfulnessImageProcessor = new ColorfulImageProcessor();
 
     private final ImageryAdjustAction adjustAction = new ImageryAdjustAction(this);
 
@@ -86,8 +95,10 @@ public abstract class ImageryLayer extends Layer {
         if (icon == null) {
             icon = ImageProvider.get("imagery_small");
         }
-        addImageProcessor(createSharpener(PROP_SHARPEN_LEVEL.get()));
+        addImageProcessor(collorfulnessImageProcessor);
         addImageProcessor(gammaImageProcessor);
+        addImageProcessor(sharpenImageProcessor);
+        sharpenImageProcessor.setSharpenLevel(1 + PROP_SHARPEN_LEVEL.get() / 2f);
     }
 
     public double getPPD() {
@@ -232,19 +243,6 @@ public abstract class ImageryLayer extends Layer {
         return hasBookmarks ? subMenu : adjustMenuItem;
     }
 
-    public ImageProcessor createSharpener(int sharpenLevel) {
-        final Kernel kernel;
-        if (sharpenLevel == 1) {
-            kernel = new Kernel(3, 3, new float[]{-0.25f, -0.5f, -0.25f, -0.5f, 4, -0.5f, -0.25f, -0.5f, -0.25f});
-        } else if (sharpenLevel == 2) {
-            kernel = new Kernel(3, 3, new float[]{-0.5f, -1, -0.5f, -1, 7, -1, -0.5f, -1, -0.5f});
-        } else {
-            return null;
-        }
-        BufferedImageOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
-        return createImageProcessor(op, false);
-    }
-
     /**
      * An image processor which adjusts the gamma value of an image.
      */
@@ -300,6 +298,258 @@ public abstract class ImageryLayer extends Layer {
     }
 
     /**
+     * Sharpens or blurs the image, depending on the sharpen value.
+     * <p>
+     * A positive sharpen level means that we sharpen the image.
+     * <p>
+     * A negative sharpen level let's us blur the image. -1 is the most useful value there.
+     *
+     * @author Michael Zangl
+     */
+    public static class SharpenImageProcessor implements ImageProcessor {
+        private float sharpenLevel = 0;
+        private ConvolveOp op;
+
+        private static float[] KERNEL_IDENTITY = new float[] {
+            0, 0, 0,
+            0, 1, 0,
+            0, 0, 0
+        };
+
+        private static float[] KERNEL_BLUR = new float[] {
+            1f / 16, 2f / 16, 1f / 16,
+            2f / 16, 4f / 16, 2f / 16,
+            1f / 16, 2f / 16, 1f / 16
+        };
+
+        private static float[] KERNEL_SHARPEN = new float[] {
+            -.5f, -1f, -.5f,
+             -1f,  7,  -1f,
+            -.5f, -1f, -.5f
+        };
+
+        /**
+         * Gets the current sharpen level.
+         * @return The level.
+         */
+        public float getSharpenLevel() {
+            return sharpenLevel;
+        }
+
+        /**
+         * Sets the sharpening level.
+         * @param sharpenLevel The level. Clamped to be positive or 0.
+         */
+        public void setSharpenLevel(float sharpenLevel) {
+            if (sharpenLevel < 0) {
+                this.sharpenLevel = 0;
+            } else {
+                this.sharpenLevel = sharpenLevel;
+            }
+
+            if (this.sharpenLevel < 0.95) {
+                op = generateMixed(this.sharpenLevel, KERNEL_IDENTITY, KERNEL_BLUR);
+            } else if (this.sharpenLevel > 1.05) {
+                op = generateMixed(this.sharpenLevel - 1, KERNEL_SHARPEN, KERNEL_IDENTITY);
+            } else {
+                op = null;
+            }
+        }
+
+        private ConvolveOp generateMixed(float aFactor, float[] a, float[] b) {
+            if (a.length != 9 || b.length != 9) {
+                throw new IllegalArgumentException("Illegal kernel array length.");
+            }
+            float[] values = new float[9];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = aFactor * a[i] + (1 - aFactor) * b[i];
+            }
+            return new ConvolveOp(new Kernel(3, 3, values), ConvolveOp.EDGE_NO_OP, null);
+        }
+
+        @Override
+        public BufferedImage process(BufferedImage image) {
+            if (op != null) {
+                return op.filter(image, null);
+            } else {
+                return image;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "SharpenImageProcessor [sharpenLevel=" + sharpenLevel + "]";
+        }
+    }
+
+    /**
+     * Adds or removes the colorfulness of the image.
+     *
+     * @author Michael Zangl
+     */
+    public static class ColorfulImageProcessor implements ImageProcessor {
+        private ColorfulFilter op = null;
+        private double colorfulness = 1;
+
+        /**
+         * Gets the colorfulness value.
+         * @return The value
+         */
+        public double getColorfulness() {
+            return colorfulness;
+        }
+
+        /**
+         * Sets the colorfulness value. Clamps it to 0+
+         * @param colorfulness The value
+         */
+        public void setColorfulness(double colorfulness) {
+            if (colorfulness < 0) {
+                this.colorfulness = 0;
+            } else {
+                this.colorfulness = colorfulness;
+            }
+
+            if (this.colorfulness < .95 || this.colorfulness > 1.05) {
+                op = new ColorfulFilter(this.colorfulness);
+            } else {
+                op = null;
+            }
+        }
+
+        @Override
+        public BufferedImage process(BufferedImage image) {
+            if (op != null) {
+                return op.filter(image, null);
+            } else {
+                return image;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "ColorfulImageProcessor [colorfulness=" + colorfulness + "]";
+        }
+    }
+
+    private static class ColorfulFilter implements BufferedImageOp {
+        private final double colorfulness;
+
+        /**
+         * Create a new colorful filter.
+         * @param colorfulness The colorfulness as defined in the {@link ColorfulImageProcessor} class.
+         */
+        ColorfulFilter(double colorfulness) {
+            this.colorfulness = colorfulness;
+        }
+
+        @Override
+        public BufferedImage filter(BufferedImage src, BufferedImage dest) {
+            if (src.getWidth() == 0 || src.getHeight() == 0) {
+                return src;
+            }
+
+            if (dest == null) {
+                dest = createCompatibleDestImage(src, null);
+            }
+            DataBuffer srcBuffer = src.getRaster().getDataBuffer();
+            DataBuffer destBuffer = dest.getRaster().getDataBuffer();
+            if (!(srcBuffer instanceof DataBufferByte) || !(destBuffer instanceof DataBufferByte)) {
+                Main.trace("Cannot apply color filter: Images do not use DataBufferByte.");
+                return src;
+            }
+
+            int type = src.getType();
+            if (type != dest.getType()) {
+                Main.trace("Cannot apply color filter: Src / Dest differ in type (" + type + "/" + dest.getType() + ")");
+                return src;
+            }
+            int redOffset, greenOffset, blueOffset, alphaOffset = 0;
+            switch (type) {
+            case BufferedImage.TYPE_3BYTE_BGR:
+                blueOffset = 0;
+                greenOffset = 1;
+                redOffset = 2;
+                break;
+            case BufferedImage.TYPE_4BYTE_ABGR:
+            case BufferedImage.TYPE_4BYTE_ABGR_PRE:
+                blueOffset = 1;
+                greenOffset = 2;
+                redOffset = 3;
+                break;
+            case BufferedImage.TYPE_INT_ARGB:
+            case BufferedImage.TYPE_INT_ARGB_PRE:
+                redOffset = 0;
+                greenOffset = 1;
+                blueOffset = 2;
+                alphaOffset = 3;
+                break;
+            default:
+                Main.trace("Cannot apply color filter: Source image is of wrong type (" + type + ").");
+                return src;
+            }
+            doFilter((DataBufferByte) srcBuffer, (DataBufferByte) destBuffer, redOffset, greenOffset, blueOffset,
+                    alphaOffset, src.getAlphaRaster() != null);
+            return dest;
+        }
+
+        private void doFilter(DataBufferByte src, DataBufferByte dest, int redOffset, int greenOffset, int blueOffset,
+                int alphaOffset, boolean hasAlpha) {
+            byte[] srcPixels = src.getData();
+            byte[] destPixels = dest.getData();
+            if (srcPixels.length != destPixels.length) {
+                Main.trace("Cannot apply color filter: Source/Dest lengths differ.");
+                return;
+            }
+            int entries = hasAlpha ? 4 : 3;
+            for (int i = 0; i < srcPixels.length; i += entries) {
+                int r = srcPixels[i + redOffset] & 0xff;
+                int g = srcPixels[i + greenOffset] & 0xff;
+                int b = srcPixels[i + blueOffset] & 0xff;
+                float luminosity = r * .21f + g * .72f + b * .07f;
+                destPixels[i + redOffset] = mix(r, luminosity);
+                destPixels[i + greenOffset] = mix(g, luminosity);
+                destPixels[i + blueOffset] = mix(b, luminosity);
+                if (hasAlpha) {
+                    destPixels[i + alphaOffset] = srcPixels[i + alphaOffset];
+                }
+            }
+        }
+
+        private byte mix(int color, float luminosity) {
+            int val = (int) (colorfulness * color +  (1 - colorfulness) * luminosity);
+            if (val < 0) {
+                return 0;
+            } else if (val > 0xff) {
+                return (byte) 0xff;
+            } else {
+                return (byte) val;
+            }
+        }
+
+        @Override
+        public Rectangle2D getBounds2D(BufferedImage src) {
+            return new Rectangle(src.getWidth(), src.getHeight());
+        }
+
+        @Override
+        public BufferedImage createCompatibleDestImage(BufferedImage src, ColorModel destCM) {
+            return new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
+        }
+
+        @Override
+        public Point2D getPoint2D(Point2D srcPt, Point2D dstPt) {
+            return (Point2D) srcPt.clone();
+        }
+
+        @Override
+        public RenderingHints getRenderingHints() {
+            return null;
+        }
+
+    }
+
+    /**
      * Returns the currently set gamma value.
      * @return the currently set gamma value
      */
@@ -313,6 +563,44 @@ public abstract class ImageryLayer extends Layer {
      */
     public void setGamma(double gamma) {
         gammaImageProcessor.setGamma(gamma);
+    }
+
+    /**
+     * Gets the current sharpen level.
+     * @return The sharpen level.
+     */
+    public double getSharpenLevel() {
+        return sharpenImageProcessor.getSharpenLevel();
+    }
+
+    /**
+     * Sets the sharpen level for the layer.
+     * <code>1</code> means no change in sharpness.
+     * Values in range 0..1 blur the image.
+     * Values above 1 are used to sharpen the image.
+     * @param sharpenLevel The sharpen level.
+     */
+    public void setSharpenLevel(double sharpenLevel) {
+        sharpenImageProcessor.setSharpenLevel((float) sharpenLevel);
+    }
+
+    /**
+     * Gets the colorfulness of this image.
+     * @return The colorfulness
+     */
+    public double getColorfulness() {
+        return collorfulnessImageProcessor.getColorfulness();
+    }
+
+    /**
+     * Sets the colorfulness of this image.
+     * 0 means grayscale.
+     * 1 means normal colorfulness.
+     * Values greater than 1 are allowed.
+     * @param colorfulness The colorfulness.
+     */
+    public void setColorfulness(double colorfulness) {
+        collorfulnessImageProcessor.setColorfulness(colorfulness);
     }
 
     /**
