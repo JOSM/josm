@@ -221,7 +221,6 @@ public final class PluginHandler {
     static final String[] UNMAINTAINED_PLUGINS = new String[] {
         "gpsbabelgui",
         "Intersect_way",
-        "CADTools",                // See #11438, #11518, https://github.com/ROTARIUANAMARIA/CADTools/issues/1
         "ContourOverlappingMerge", // See #11202, #11518, https://github.com/bularcasergiu/ContourOverlappingMerge/issues/1
         "LaneConnector",           // See #11468, #11518, https://github.com/TrifanAdrian/LanecConnectorPlugin/issues/1
         "Remove.redundant.points"  // See #11468, #11518, https://github.com/bularcasergiu/RemoveRedundantPoints (not even created an issue...)
