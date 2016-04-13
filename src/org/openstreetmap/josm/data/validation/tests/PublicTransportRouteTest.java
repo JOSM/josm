@@ -75,9 +75,9 @@ public class PublicTransportRouteTest extends Test {
             if (member.hasRole("stop", "stop_exit_only", "stop_entry_only")
                     && OsmPrimitiveType.NODE.equals(member.getType())
                     && !routeNodes.contains(member.getNode())) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Stop position not part of route"), 3603, Arrays.asList(member.getMember(), r)));
+                errors.add(new TestError(this, Severity.WARNING,
+                        tr("Stop position not part of route"), 3603, Arrays.asList(member.getMember(), r)));
             }
         }
-
     }
 }

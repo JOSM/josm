@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -16,33 +15,24 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -58,26 +48,27 @@ import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.gui.dialogs.layer.ActivateLayerAction;
+import org.openstreetmap.josm.gui.dialogs.layer.DeleteLayerAction;
+import org.openstreetmap.josm.gui.dialogs.layer.DuplicateAction;
+import org.openstreetmap.josm.gui.dialogs.layer.IEnabledStateUpdating;
+import org.openstreetmap.josm.gui.dialogs.layer.LayerVisibilityAction;
+import org.openstreetmap.josm.gui.dialogs.layer.MergeAction;
+import org.openstreetmap.josm.gui.dialogs.layer.MoveDownAction;
+import org.openstreetmap.josm.gui.dialogs.layer.MoveUpAction;
+import org.openstreetmap.josm.gui.dialogs.layer.ShowHideLayerAction;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.MultikeyActionsHandler;
-import org.openstreetmap.josm.tools.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a toggle dialog which displays the list of layers. Actions allow to
@@ -246,17 +237,17 @@ public class LayerListDialog extends ToggleDialog {
                 );
 
         // -- move up action
-        MoveUpAction moveUpAction = new MoveUpAction();
+        MoveUpAction moveUpAction = new MoveUpAction(model);
         adaptTo(moveUpAction, model);
         adaptTo(moveUpAction, selectionModel);
 
         // -- move down action
-        MoveDownAction moveDownAction = new MoveDownAction();
+        MoveDownAction moveDownAction = new MoveDownAction(model);
         adaptTo(moveDownAction, model);
         adaptTo(moveDownAction, selectionModel);
 
         // -- activate action
-        activateLayerAction = new ActivateLayerAction();
+        activateLayerAction = new ActivateLayerAction(model);
         activateLayerAction.updateEnabledState();
         MultikeyActionsHandler.getInstance().addAction(activateLayerAction);
         adaptTo(activateLayerAction, selectionModel);
@@ -264,7 +255,7 @@ public class LayerListDialog extends ToggleDialog {
         JumpToMarkerActions.initialize();
 
         // -- show hide action
-        showHideLayerAction = new ShowHideLayerAction();
+        showHideLayerAction = new ShowHideLayerAction(model);
         MultikeyActionsHandler.getInstance().addAction(showHideLayerAction);
         adaptTo(showHideLayerAction, selectionModel);
 
@@ -274,7 +265,7 @@ public class LayerListDialog extends ToggleDialog {
         visibilityAction.setCorrespondingSideButton(visibilityButton);
 
         // -- delete layer action
-        DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
+        DeleteLayerAction deleteLayerAction = new DeleteLayerAction(model);
         layerList.getActionMap().put("deleteLayer", deleteLayerAction);
         adaptTo(deleteLayerAction, selectionModel);
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
@@ -326,10 +317,6 @@ public class LayerListDialog extends ToggleDialog {
         return model;
     }
 
-    protected interface IEnabledStateUpdating {
-        void updateEnabledState();
-    }
-
     /**
      * Wires <code>listener</code> to <code>listSelectionModel</code> in such a way, that
      * <code>listener</code> receives a {@link IEnabledStateUpdating#updateEnabledState()}
@@ -360,7 +347,6 @@ public class LayerListDialog extends ToggleDialog {
     protected void adaptTo(final IEnabledStateUpdating listener, LayerListModel listModel) {
         listModel.addTableModelListener(
                 new TableModelListener() {
-
                     @Override
                     public void tableChanged(TableModelEvent e) {
                         listener.updateEnabledState();
@@ -379,821 +365,6 @@ public class LayerListDialog extends ToggleDialog {
         JumpToMarkerActions.unregisterActions();
         super.destroy();
         instance = null;
-    }
-
-    /**
-     * The action to delete the currently selected layer
-     */
-    public final class DeleteLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
-
-        /**
-         * Creates a {@link DeleteLayerAction} which will delete the currently
-         * selected layers in the layer dialog.
-         */
-        public DeleteLayerAction() {
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
-            putValue(SHORT_DESCRIPTION, tr("Delete the selected layers."));
-            putValue(NAME, tr("Delete"));
-            putValue("help", HelpUtil.ht("/Dialog/LayerList#DeleteLayer"));
-            updateEnabledState();
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            List<Layer> selectedLayers = getModel().getSelectedLayers();
-            if (selectedLayers.isEmpty())
-                return;
-            if (!Main.saveUnsavedModifications(selectedLayers, false))
-                return;
-            for (Layer l: selectedLayers) {
-                Main.main.removeLayer(l);
-            }
-        }
-
-        @Override
-        public void updateEnabledState() {
-            setEnabled(!getModel().getSelectedLayers().isEmpty());
-        }
-
-        @Override
-        public Component createMenuComponent() {
-            return new JMenuItem(this);
-        }
-
-        @Override
-        public boolean supportLayers(List<Layer> layers) {
-            return true;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof DeleteLayerAction;
-        }
-
-        @Override
-        public int hashCode() {
-            return getClass().hashCode();
-        }
-    }
-
-    /**
-     * Action which will toggle the visibility of the currently selected layers.
-     */
-    public final class ShowHideLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction, MultikeyShortcutAction {
-
-        private transient WeakReference<Layer> lastLayer;
-        private final transient Shortcut multikeyShortcut;
-
-        /**
-         * Creates a {@link ShowHideLayerAction} which will toggle the visibility of
-         * the currently selected layers
-         */
-        public ShowHideLayerAction() {
-            putValue(NAME, tr("Show/hide"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "showhide"));
-            putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
-            putValue("help", HelpUtil.ht("/Dialog/LayerList#ShowHideLayer"));
-            multikeyShortcut = Shortcut.registerShortcut("core_multikey:showHideLayer", tr("Multikey: {0}",
-                    tr("Show/hide layer")), KeyEvent.VK_S, Shortcut.SHIFT);
-            multikeyShortcut.setAccelerator(this);
-            updateEnabledState();
-        }
-
-        @Override
-        public Shortcut getMultikeyShortcut() {
-            return multikeyShortcut;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            for (Layer l : model.getSelectedLayers()) {
-                l.toggleVisible();
-            }
-        }
-
-        @Override
-        public void executeMultikeyAction(int index, boolean repeat) {
-            Layer l = LayerListDialog.getLayerForIndex(index);
-            if (l != null) {
-                l.toggleVisible();
-                lastLayer = new WeakReference<>(l);
-            } else if (repeat && lastLayer != null) {
-                l = lastLayer.get();
-                if (LayerListDialog.isLayerValid(l)) {
-                    l.toggleVisible();
-                }
-            }
-        }
-
-        @Override
-        public void updateEnabledState() {
-            setEnabled(!model.getSelectedLayers().isEmpty());
-        }
-
-        @Override
-        public Component createMenuComponent() {
-            return new JMenuItem(this);
-        }
-
-        @Override
-        public boolean supportLayers(List<Layer> layers) {
-            return true;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof ShowHideLayerAction;
-        }
-
-        @Override
-        public int hashCode() {
-            return getClass().hashCode();
-        }
-
-        @Override
-        public List<MultikeyInfo> getMultikeyCombinations() {
-            return LayerListDialog.getLayerInfoByClass(Layer.class);
-        }
-
-        @Override
-        public MultikeyInfo getLastMultikeyAction() {
-            if (lastLayer != null)
-                return LayerListDialog.getLayerInfo(lastLayer.get());
-            return null;
-        }
-    }
-
-    /**
-     * This is a menu that includes all settings for the layer visibility. It combines gamma/opacity sliders and the visible-checkbox.
-     *
-     * @author Michael Zangl
-     */
-    public static final class LayerVisibilityAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
-        protected static final int SLIDER_STEPS = 100;
-        private static final double MAX_GAMMA_FACTOR = 2;
-        private static final double MAX_SHARPNESS_FACTOR = 2;
-        private static final double MAX_COLORFUL_FACTOR = 2;
-        private final LayerListModel model;
-        private final JPopupMenu popup;
-        private SideButton sideButton;
-        private JCheckBox visibilityCheckbox;
-        final OpacitySlider opacitySlider = new OpacitySlider();
-        private final ArrayList<FilterSlider<?>> sliders = new ArrayList<>();
-
-        /**
-         * Creates a new {@link LayerVisibilityAction}
-         * @param model The list to get the selection from.
-         */
-        public LayerVisibilityAction(LayerListModel model) {
-            this.model = model;
-            popup = new JPopupMenu();
-
-            // just to add a border
-            JPanel content = new JPanel();
-            popup.add(content);
-            content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            content.setLayout(new GridBagLayout());
-
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/layerlist", "visibility"));
-            putValue(SHORT_DESCRIPTION, tr("Change visibility of the selected layer."));
-
-            visibilityCheckbox = new JCheckBox(tr("Show layer"));
-            visibilityCheckbox.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    setVisibleFlag(visibilityCheckbox.isSelected());
-                }
-            });
-            content.add(visibilityCheckbox, GBC.eop());
-
-            addSlider(content, opacitySlider);
-            addSlider(content, new ColorfulnessSlider());
-            addSlider(content, new GammaFilterSlider());
-            addSlider(content, new SharpnessSlider());
-        }
-
-        private void addSlider(JPanel content, FilterSlider<?> slider) {
-            content.add(new JLabel(slider.getIcon()), GBC.std().span(1, 2).insets(0, 0, 5, 0));
-            content.add(new JLabel(slider.getLabel()), GBC.eol());
-            content.add(slider, GBC.eop());
-            sliders.add(slider);
-        }
-
-        protected void setVisibleFlag(boolean visible) {
-            for (Layer l : model.getSelectedLayers()) {
-                l.setVisible(visible);
-            }
-            updateValues();
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            updateValues();
-            if (e.getSource() == sideButton) {
-                popup.show(sideButton, 0, sideButton.getHeight());
-            } else {
-                // Action can be trigger either by opacity button or by popup menu (in case toggle buttons are hidden).
-                // In that case, show it in the middle of screen (because opacityButton is not visible)
-                popup.show(Main.parent, Main.parent.getWidth() / 2, (Main.parent.getHeight() - popup.getHeight()) / 2);
-            }
-        }
-
-        protected void updateValues() {
-            List<Layer> layers = model.getSelectedLayers();
-
-            visibilityCheckbox.setEnabled(!layers.isEmpty());
-            boolean allVisible = true;
-            boolean allHidden = true;
-            for (Layer l : layers) {
-                allVisible &= l.isVisible();
-                allHidden &= !l.isVisible();
-            }
-            // TODO: Indicate tristate.
-            visibilityCheckbox.setSelected(allVisible && !allHidden);
-
-            for (FilterSlider<?> slider : sliders) {
-                slider.updateSlider(layers, allHidden);
-            }
-        }
-
-        @Override
-        public boolean supportLayers(List<Layer> layers) {
-            return !layers.isEmpty();
-        }
-
-        @Override
-        public Component createMenuComponent() {
-            return new JMenuItem(this);
-        }
-
-        @Override
-        public void updateEnabledState() {
-            setEnabled(!model.getSelectedLayers().isEmpty());
-        }
-
-        /**
-         * Sets the corresponding side button.
-         * @param sideButton the corresponding side button
-         */
-        void setCorrespondingSideButton(SideButton sideButton) {
-            this.sideButton = sideButton;
-        }
-
-        /**
-         * This is a slider for a filter value.
-         * @author Michael Zangl
-         *
-         * @param <T> The layer type.
-         */
-        private abstract class FilterSlider<T extends Layer> extends JSlider {
-            private final double minValue;
-            private final double maxValue;
-            private final Class<T> layerClassFilter;
-
-            /**
-             * Create a new filter slider.
-             * @param minValue The minimum value to map to the left side.
-             * @param maxValue The maximum value to map to the right side.
-             * @param layerClassFilter The type of layer influenced by this filter.
-             */
-            FilterSlider(double minValue, double maxValue, Class<T> layerClassFilter) {
-                super(JSlider.HORIZONTAL);
-                this.minValue = minValue;
-                this.maxValue = maxValue;
-                this.layerClassFilter = layerClassFilter;
-                setMaximum(SLIDER_STEPS);
-                int tick = convertFromRealValue(1);
-                setMinorTickSpacing(tick);
-                setMajorTickSpacing(tick);
-                setPaintTicks(true);
-
-                addChangeListener(new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        onStateChanged();
-                    }
-                });
-            }
-
-            /**
-             * Called whenever the state of the slider was changed.
-             * @see #getValueIsAdjusting()
-             * @see #getRealValue()
-             */
-            protected void onStateChanged() {
-                Collection<T> layers = filterLayers(model.getSelectedLayers());
-                for (T layer : layers) {
-                    applyValueToLayer(layer);
-                }
-            }
-
-            protected void applyValueToLayer(T layer) {
-            }
-
-            protected double getRealValue() {
-                return convertToRealValue(getValue());
-            }
-
-            protected double convertToRealValue(int value) {
-                double s = (double) value / SLIDER_STEPS;
-                return s * maxValue + (1-s) * minValue;
-            }
-
-            protected void setRealValue(double value) {
-                setValue(convertFromRealValue(value));
-            }
-
-            protected int convertFromRealValue(double value) {
-                int i = (int) ((value - minValue) / (maxValue - minValue) * SLIDER_STEPS + .5);
-                if (i < getMinimum()) {
-                    return getMinimum();
-                } else if (i > getMaximum()) {
-                    return getMaximum();
-                } else {
-                    return i;
-                }
-            }
-
-            public abstract ImageIcon getIcon();
-
-            public abstract String getLabel();
-
-            public void updateSlider(List<Layer> layers, boolean allHidden) {
-                Collection<? extends Layer> usedLayers = filterLayers(layers);
-                if (usedLayers.isEmpty() || allHidden) {
-                    setEnabled(false);
-                } else {
-                    setEnabled(true);
-                    updateSliderWhileEnabled(usedLayers, allHidden);
-                }
-            }
-
-            protected Collection<T> filterLayers(List<Layer> layers) {
-                return Utils.filteredCollection(layers, layerClassFilter);
-            }
-
-            protected abstract void updateSliderWhileEnabled(Collection<? extends Layer> usedLayers, boolean allHidden);
-        }
-
-        /**
-         * This slider allows you to change the opacity of a layer.
-         *
-         * @author Michael Zangl
-         * @see Layer#setOpacity(double)
-         */
-        class OpacitySlider extends FilterSlider<Layer> {
-            /**
-             * Creaate a new {@link OpacitySlider}.
-             */
-            OpacitySlider() {
-                super(0, 1, Layer.class);
-                setToolTipText(tr("Adjust opacity of the layer."));
-
-            }
-
-            @Override
-            protected void onStateChanged() {
-                if (getRealValue() <= 0.001 && !getValueIsAdjusting()) {
-                    setVisibleFlag(false);
-                } else {
-                    super.onStateChanged();
-                }
-            }
-
-            @Override
-            protected void applyValueToLayer(Layer layer) {
-                layer.setOpacity(getRealValue());
-            }
-
-            @Override
-            protected void updateSliderWhileEnabled(Collection<? extends Layer> usedLayers, boolean allHidden) {
-                double opacity = 0;
-                for (Layer l : usedLayers) {
-                    opacity += l.getOpacity();
-                }
-                opacity /= usedLayers.size();
-                if (opacity == 0) {
-                    opacity = 1;
-                    setVisibleFlag(true);
-                }
-                setRealValue(opacity);
-            }
-
-            @Override
-            public String getLabel() {
-                return tr("Opacity");
-            }
-
-            @Override
-            public ImageIcon getIcon() {
-                return ImageProvider.get("dialogs/layerlist", "transparency");
-            }
-
-            @Override
-            public String toString() {
-                return "OpacitySlider [getRealValue()=" + getRealValue() + "]";
-            }
-        }
-
-        /**
-         * This slider allows you to change the gamma value of a layer.
-         *
-         * @author Michael Zangl
-         * @see ImageryLayer#setGamma(double)
-         */
-        private class GammaFilterSlider extends FilterSlider<ImageryLayer> {
-
-            /**
-             * Create a new {@link GammaFilterSlider}
-             */
-            GammaFilterSlider() {
-                super(0, MAX_GAMMA_FACTOR, ImageryLayer.class);
-                setToolTipText(tr("Adjust gamma value of the layer."));
-            }
-
-            @Override
-            protected void updateSliderWhileEnabled(Collection<? extends Layer> usedLayers, boolean allHidden) {
-                double gamma = ((ImageryLayer) usedLayers.iterator().next()).getGamma();
-                setRealValue(gamma);
-            }
-
-            @Override
-            protected void applyValueToLayer(ImageryLayer layer) {
-                layer.setGamma(getRealValue());
-            }
-
-            @Override
-            public ImageIcon getIcon() {
-               return ImageProvider.get("dialogs/layerlist", "gamma");
-            }
-
-            @Override
-            public String getLabel() {
-                return tr("Gamma");
-            }
-        }
-
-        /**
-         * This slider allows you to change the sharpness of a layer.
-         *
-         * @author Michael Zangl
-         * @see ImageryLayer#setSharpenLevel(double)
-         */
-        private class SharpnessSlider extends FilterSlider<ImageryLayer> {
-
-            /**
-             * Creates a new {@link SharpnessSlider}
-             */
-            SharpnessSlider() {
-                super(0, MAX_SHARPNESS_FACTOR, ImageryLayer.class);
-                setToolTipText(tr("Adjust sharpness/blur value of the layer."));
-            }
-
-            @Override
-            protected void updateSliderWhileEnabled(Collection<? extends Layer> usedLayers, boolean allHidden) {
-                setRealValue(((ImageryLayer) usedLayers.iterator().next()).getSharpenLevel());
-            }
-
-            @Override
-            protected void applyValueToLayer(ImageryLayer layer) {
-                layer.setSharpenLevel(getRealValue());
-            }
-
-            @Override
-            public ImageIcon getIcon() {
-               return ImageProvider.get("dialogs/layerlist", "sharpness");
-            }
-
-            @Override
-            public String getLabel() {
-                return tr("Sharpness");
-            }
-        }
-
-        /**
-         * This slider allows you to change the colorfulness of a layer.
-         *
-         * @author Michael Zangl
-         * @see ImageryLayer#setColorfulness(double)
-         */
-        private class ColorfulnessSlider extends FilterSlider<ImageryLayer> {
-
-            /**
-             * Create a new {@link ColorfulnessSlider}
-             */
-            ColorfulnessSlider() {
-                super(0, MAX_COLORFUL_FACTOR, ImageryLayer.class);
-                setToolTipText(tr("Adjust colorfulness of the layer."));
-            }
-
-            @Override
-            protected void updateSliderWhileEnabled(Collection<? extends Layer> usedLayers, boolean allHidden) {
-                setRealValue(((ImageryLayer) usedLayers.iterator().next()).getColorfulness());
-            }
-
-            @Override
-            protected void applyValueToLayer(ImageryLayer layer) {
-                layer.setColorfulness(getRealValue());
-            }
-
-            @Override
-            public ImageIcon getIcon() {
-               return ImageProvider.get("dialogs/layerlist", "colorfulness");
-            }
-
-            @Override
-            public String getLabel() {
-                return tr("Colorfulness");
-            }
-        }
-    }
-
-    /**
-     * The action to activate the currently selected layer
-     */
-
-    public final class ActivateLayerAction extends AbstractAction
-    implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutAction {
-        private transient Layer layer;
-        private transient Shortcut multikeyShortcut;
-
-        /**
-         * Constructs a new {@code ActivateLayerAction}.
-         * @param layer the layer
-         */
-        public ActivateLayerAction(Layer layer) {
-            this();
-            CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-            this.layer = layer;
-            putValue(NAME, tr("Activate"));
-            updateEnabledState();
-        }
-
-        /**
-         * Constructs a new {@code ActivateLayerAction}.
-         */
-        public ActivateLayerAction() {
-            putValue(NAME, tr("Activate"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
-            putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
-            multikeyShortcut = Shortcut.registerShortcut("core_multikey:activateLayer", tr("Multikey: {0}",
-                    tr("Activate layer")), KeyEvent.VK_A, Shortcut.SHIFT);
-            multikeyShortcut.setAccelerator(this);
-            putValue("help", HelpUtil.ht("/Dialog/LayerList#ActivateLayer"));
-        }
-
-        @Override
-        public Shortcut getMultikeyShortcut() {
-            return multikeyShortcut;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Layer toActivate;
-            if (layer != null) {
-                toActivate = layer;
-            } else {
-                toActivate = model.getSelectedLayers().get(0);
-            }
-            execute(toActivate);
-        }
-
-        private void execute(Layer layer) {
-            // model is  going to be updated via LayerChangeListener and PropertyChangeEvents
-            Main.map.mapView.setActiveLayer(layer);
-            layer.setVisible(true);
-        }
-
-        protected boolean isActiveLayer(Layer layer) {
-            if (!Main.isDisplayingMapView()) return false;
-            return Main.map.mapView.getActiveLayer() == layer;
-        }
-
-        @Override
-        public void updateEnabledState() {
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    if (layer == null) {
-                        if (getModel().getSelectedLayers().size() != 1) {
-                            setEnabled(false);
-                            return;
-                        }
-                        Layer selectedLayer = getModel().getSelectedLayers().get(0);
-                        setEnabled(!isActiveLayer(selectedLayer));
-                    } else {
-                        setEnabled(!isActiveLayer(layer));
-                    }
-                }
-            });
-        }
-
-        @Override
-        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-            updateEnabledState();
-        }
-
-        @Override
-        public void layerAdded(Layer newLayer) {
-            updateEnabledState();
-        }
-
-        @Override
-        public void layerRemoved(Layer oldLayer) {
-            updateEnabledState();
-        }
-
-        @Override
-        public void executeMultikeyAction(int index, boolean repeat) {
-            Layer l = LayerListDialog.getLayerForIndex(index);
-            if (l != null) {
-                execute(l);
-            }
-        }
-
-        @Override
-        public List<MultikeyInfo> getMultikeyCombinations() {
-            return LayerListDialog.getLayerInfoByClass(Layer.class);
-        }
-
-        @Override
-        public MultikeyInfo getLastMultikeyAction() {
-            return null; // Repeating action doesn't make much sense for activating
-        }
-    }
-
-    /**
-     * The action to merge the currently selected layer into another layer.
-     */
-    public final class MergeAction extends AbstractAction implements IEnabledStateUpdating, LayerAction, Layer.MultiLayerAction {
-        private transient Layer layer;
-        private transient List<Layer> layers;
-
-        /**
-         * Constructs a new {@code MergeAction}.
-         * @param layer the layer
-         * @throws IllegalArgumentException if {@code layer} is null
-         */
-        public MergeAction(Layer layer) {
-            this(layer, null);
-            CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-        }
-
-        /**
-         * Constructs a new {@code MergeAction}.
-         * @param layers the layer list
-         * @throws IllegalArgumentException if {@code layers} is null
-         */
-        public MergeAction(List<Layer> layers) {
-            this(null, layers);
-            CheckParameterUtil.ensureParameterNotNull(layers, "layers");
-        }
-
-        /**
-         * Constructs a new {@code MergeAction}.
-         * @param layer the layer (null if layer list if specified)
-         * @param layers the layer list (null if a single layer is specified)
-         */
-        private MergeAction(Layer layer, List<Layer> layers) {
-            this.layer = layer;
-            this.layers = layers;
-            putValue(NAME, tr("Merge"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "mergedown"));
-            putValue(SHORT_DESCRIPTION, tr("Merge this layer into another layer"));
-            putValue("help", HelpUtil.ht("/Dialog/LayerList#MergeLayer"));
-            updateEnabledState();
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (layer != null) {
-                Main.main.menu.merge.merge(layer);
-            } else if (layers != null) {
-                Main.main.menu.merge.merge(layers);
-            } else {
-                if (getModel().getSelectedLayers().size() == 1) {
-                    Layer selectedLayer = getModel().getSelectedLayers().get(0);
-                    Main.main.menu.merge.merge(selectedLayer);
-                } else {
-                    Main.main.menu.merge.merge(getModel().getSelectedLayers());
-                }
-            }
-        }
-
-        @Override
-        public void updateEnabledState() {
-            if (layer == null && layers == null) {
-                if (getModel().getSelectedLayers().isEmpty()) {
-                    setEnabled(false);
-                } else  if (getModel().getSelectedLayers().size() > 1) {
-                    setEnabled(supportLayers(getModel().getSelectedLayers()));
-                } else {
-                    Layer selectedLayer = getModel().getSelectedLayers().get(0);
-                    List<Layer> targets = getModel().getPossibleMergeTargets(selectedLayer);
-                    setEnabled(!targets.isEmpty());
-                }
-            } else if (layer != null) {
-                List<Layer> targets = getModel().getPossibleMergeTargets(layer);
-                setEnabled(!targets.isEmpty());
-            } else {
-                setEnabled(supportLayers(layers));
-            }
-        }
-
-        @Override
-        public boolean supportLayers(List<Layer> layers) {
-            if (layers.isEmpty()) {
-                return false;
-            } else {
-                final Layer firstLayer = layers.get(0);
-                final List<Layer> remainingLayers = layers.subList(1, layers.size());
-                return getModel().getPossibleMergeTargets(firstLayer).containsAll(remainingLayers);
-            }
-        }
-
-        @Override
-        public Component createMenuComponent() {
-            return new JMenuItem(this);
-        }
-
-        @Override
-        public MergeAction getMultiLayerAction(List<Layer> layers) {
-            return new MergeAction(layers);
-        }
-    }
-
-    /**
-     * The action to merge the currently selected layer into another layer.
-     */
-    public final class DuplicateAction extends AbstractAction implements IEnabledStateUpdating {
-        private transient Layer layer;
-
-        /**
-         * Constructs a new {@code DuplicateAction}.
-         * @param layer the layer
-         * @throws IllegalArgumentException if {@code layer} is null
-         */
-        public DuplicateAction(Layer layer) {
-            this();
-            CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-            this.layer = layer;
-            updateEnabledState();
-        }
-
-        /**
-         * Constructs a new {@code DuplicateAction}.
-         */
-        public DuplicateAction() {
-            putValue(NAME, tr("Duplicate"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "duplicatelayer"));
-            putValue(SHORT_DESCRIPTION, tr("Duplicate this layer"));
-            putValue("help", HelpUtil.ht("/Dialog/LayerList#DuplicateLayer"));
-            updateEnabledState();
-        }
-
-        private void duplicate(Layer layer) {
-            if (!Main.isDisplayingMapView())
-                return;
-
-            List<String> layerNames = new ArrayList<>();
-            for (Layer l: Main.map.mapView.getAllLayers()) {
-                layerNames.add(l.getName());
-            }
-            if (layer instanceof OsmDataLayer) {
-                OsmDataLayer oldLayer = (OsmDataLayer) layer;
-                // Translators: "Copy of {layer name}"
-                String newName = tr("Copy of {0}", oldLayer.getName());
-                int i = 2;
-                while (layerNames.contains(newName)) {
-                    // Translators: "Copy {number} of {layer name}"
-                    newName = tr("Copy {1} of {0}", oldLayer.getName(), i);
-                    i++;
-                }
-                Main.main.addLayer(new OsmDataLayer(oldLayer.data.clone(), newName, null));
-            }
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (layer != null) {
-                duplicate(layer);
-            } else {
-                duplicate(getModel().getSelectedLayers().get(0));
-            }
-        }
-
-        @Override
-        public void updateEnabledState() {
-            if (layer == null) {
-                if (getModel().getSelectedLayers().size() == 1) {
-                    setEnabled(getModel().getSelectedLayers().get(0) instanceof OsmDataLayer);
-                } else {
-                    setEnabled(false);
-                }
-            } else {
-                setEnabled(layer instanceof OsmDataLayer);
-            }
-        }
     }
 
     private static class ActiveLayerCheckBox extends JCheckBox {
@@ -1341,7 +512,8 @@ public class LayerListDialog extends ToggleDialog {
     private class LayerNameCellRenderer extends DefaultTableCellRenderer {
 
         protected boolean isActiveLayer(Layer layer) {
-            if (!Main.isDisplayingMapView()) return false;
+            if (!Main.isDisplayingMapView())
+                return false;
             return Main.map.mapView.getActiveLayer() == layer;
         }
 
@@ -1403,50 +575,6 @@ public class LayerListDialog extends ToggleDialog {
         public void showMenu(MouseEvent evt) {
             menu = new LayerListPopup(getModel().getSelectedLayers());
             super.showMenu(evt);
-        }
-    }
-
-    /**
-     * The action to move up the currently selected entries in the list.
-     */
-    class MoveUpAction extends AbstractAction implements  IEnabledStateUpdating {
-        MoveUpAction() {
-            putValue(NAME, tr("Move up"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "up"));
-            putValue(SHORT_DESCRIPTION, tr("Move the selected layer one row up."));
-            updateEnabledState();
-        }
-
-        @Override
-        public void updateEnabledState() {
-            setEnabled(model.canMoveUp());
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            model.moveUp();
-        }
-    }
-
-    /**
-     * The action to move down the currently selected entries in the list.
-     */
-    class MoveDownAction extends AbstractAction implements IEnabledStateUpdating {
-        MoveDownAction() {
-            putValue(NAME, tr("Move down"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "down"));
-            putValue(SHORT_DESCRIPTION, tr("Move the selected layer one row down."));
-            updateEnabledState();
-        }
-
-        @Override
-        public void updateEnabledState() {
-            setEnabled(model.canMoveDown());
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            model.moveDown();
         }
     }
 
@@ -1517,7 +645,6 @@ public class LayerListDialog extends ToggleDialog {
         /**
          * removes a listener from  this model
          * @param listener the listener
-         *
          */
         public void removeLayerListModelListener(LayerListModelListener listener) {
             listeners.remove(listener);
@@ -1635,7 +762,8 @@ public class LayerListDialog extends ToggleDialog {
          * @param layer the layer
          */
         protected void onAddLayer(Layer layer) {
-            if (layer == null) return;
+            if (layer == null)
+                return;
             layer.addPropertyChangeListener(this);
             fireTableDataChanged();
             int idx = getLayers().indexOf(layer);
@@ -1650,7 +778,8 @@ public class LayerListDialog extends ToggleDialog {
          * @return the first layer. Null if no layers are present
          */
         public Layer getFirstLayer() {
-            if (getRowCount() == 0) return null;
+            if (getRowCount() == 0)
+                return null;
             return getLayers().get(0);
         }
 
@@ -1682,7 +811,8 @@ public class LayerListDialog extends ToggleDialog {
          *
          */
         public void moveUp() {
-            if (!canMoveUp()) return;
+            if (!canMoveUp())
+                return;
             List<Integer> sel = getSelectedRows();
             List<Layer> layers = getLayers();
             for (int row : sel) {
@@ -1711,10 +841,10 @@ public class LayerListDialog extends ToggleDialog {
 
         /**
          * Move down the currently selected layers by one position
-         *
          */
         public void moveDown() {
-            if (!canMoveDown()) return;
+            if (!canMoveDown())
+                return;
             List<Integer> sel = getSelectedRows();
             Collections.reverse(sel);
             List<Layer> layers = getLayers();
@@ -1733,22 +863,21 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         /**
-         * Make sure the first of the selected layers is visible in the
-         * views of this model.
-         *
+         * Make sure the first of the selected layers is visible in the views of this model.
          */
         protected void ensureSelectedIsVisible() {
             int index = selectionModel.getMinSelectionIndex();
-            if (index < 0) return;
+            if (index < 0)
+                return;
             List<Layer> layers = getLayers();
-            if (index >= layers.size()) return;
+            if (index >= layers.size())
+                return;
             Layer layer = layers.get(index);
             fireMakeVisible(index, layer);
         }
 
         /**
-         * Replies a list of layers which are possible merge targets
-         * for <code>source</code>
+         * Replies a list of layers which are possible merge targets for <code>source</code>
          *
          * @param source the source layer
          * @return a list of layers which are possible merge targets
@@ -1810,8 +939,7 @@ public class LayerListDialog extends ToggleDialog {
          * @return the active layer. null, if no active layer is available
          */
         protected Layer getActiveLayer() {
-            if (!Main.isDisplayingMapView()) return null;
-            return Main.map.mapView.getActiveLayer();
+            return Main.isDisplayingMapView() ? Main.map.mapView.getActiveLayer() : null;
         }
 
         /**
@@ -1820,8 +948,7 @@ public class LayerListDialog extends ToggleDialog {
          * @return the scale layer. null, if no active layer is available
          */
         protected NativeScaleLayer getNativeScaleLayer() {
-            if (!Main.isDisplayingMapView()) return null;
-            return Main.map.mapView.getNativeScaleLayer();
+            return Main.isDisplayingMapView() ? Main.map.mapView.getNativeScaleLayer() : null;
         }
 
         /* ------------------------------------------------------------------------------ */
@@ -1831,8 +958,7 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public int getRowCount() {
             List<Layer> layers = getLayers();
-            if (layers == null) return 0;
-            return layers.size();
+            return layers == null ? 0 : layers.size();
         }
 
         @Override
@@ -1942,7 +1068,8 @@ public class LayerListDialog extends ToggleDialog {
             if (evt.getSource() instanceof Layer) {
                 Layer layer = (Layer) evt.getSource();
                 final int idx = getLayers().indexOf(layer);
-                if (idx < 0) return;
+                if (idx < 0)
+                    return;
                 fireRefresh();
             }
         }
@@ -1966,56 +1093,51 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /**
-     * Creates a {@link ShowHideLayerAction} in the
-     * context of this {@link LayerListDialog}.
+     * Creates a {@link ShowHideLayerAction} in the context of this {@link LayerListDialog}.
      *
      * @return the action
      */
     public ShowHideLayerAction createShowHideLayerAction() {
-        return new ShowHideLayerAction();
+        return new ShowHideLayerAction(model);
     }
 
     /**
-     * Creates a {@link DeleteLayerAction} in the
-     * context of this {@link LayerListDialog}.
+     * Creates a {@link DeleteLayerAction} in the context of this {@link LayerListDialog}.
      *
      * @return the action
      */
     public DeleteLayerAction createDeleteLayerAction() {
-        return new DeleteLayerAction();
+        return new DeleteLayerAction(model);
     }
 
     /**
-     * Creates a {@link ActivateLayerAction} for <code>layer</code> in the
-     * context of this {@link LayerListDialog}.
+     * Creates a {@link ActivateLayerAction} for <code>layer</code> in the context of this {@link LayerListDialog}.
      *
      * @param layer the layer
      * @return the action
      */
     public ActivateLayerAction createActivateLayerAction(Layer layer) {
-        return new ActivateLayerAction(layer);
+        return new ActivateLayerAction(layer, model);
     }
 
     /**
-     * Creates a {@link MergeLayerAction} for <code>layer</code> in the
-     * context of this {@link LayerListDialog}.
+     * Creates a {@link MergeLayerAction} for <code>layer</code> in the context of this {@link LayerListDialog}.
      *
      * @param layer the layer
      * @return the action
      */
     public MergeAction createMergeLayerAction(Layer layer) {
-        return new MergeAction(layer);
+        return new MergeAction(layer, model);
     }
 
     /**
-     * Creates a {@link DuplicateAction} for <code>layer</code> in the
-     * context of this {@link LayerListDialog}.
+     * Creates a {@link DuplicateAction} for <code>layer</code> in the context of this {@link LayerListDialog}.
      *
      * @param layer the layer
      * @return the action
      */
     public DuplicateAction createDuplicateLayerAction(Layer layer) {
-        return new DuplicateAction(layer);
+        return new DuplicateAction(layer, model);
     }
 
     /**
@@ -2024,7 +1146,6 @@ public class LayerListDialog extends ToggleDialog {
      * @return the layer at given index, or {@code null} if index out of range
      */
     public static Layer getLayerForIndex(int index) {
-
         if (!Main.isDisplayingMapView())
             return null;
 
@@ -2043,7 +1164,6 @@ public class LayerListDialog extends ToggleDialog {
      * @return list of info on all layers assignable from {@code layerClass}
      */
     public static List<MultikeyInfo> getLayerInfoByClass(Class<?> layerClass) {
-
         List<MultikeyInfo> result = new ArrayList<>();
 
         if (!Main.isDisplayingMapView())
@@ -2068,7 +1188,6 @@ public class LayerListDialog extends ToggleDialog {
      * @return {@code true} if layer {@code l} is contained in current layer list
      */
     public static boolean isLayerValid(Layer l) {
-
         if (l == null || !Main.isDisplayingMapView())
             return false;
 
@@ -2081,7 +1200,6 @@ public class LayerListDialog extends ToggleDialog {
      * @return info about layer {@code l}
      */
     public static MultikeyInfo getLayerInfo(Layer l) {
-
         if (l == null || !Main.isDisplayingMapView())
             return null;
 

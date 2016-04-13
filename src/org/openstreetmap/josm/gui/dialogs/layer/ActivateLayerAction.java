@@ -1,0 +1,139 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.gui.dialogs.layer;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.util.List;
+
+import javax.swing.AbstractAction;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
+import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
+import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.MultikeyShortcutAction;
+import org.openstreetmap.josm.tools.Shortcut;
+
+/**
+ * The action to activate the currently selected layer
+ */
+public final class ActivateLayerAction extends AbstractAction
+implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutAction {
+    private transient Layer layer;
+    private transient Shortcut multikeyShortcut;
+    private final LayerListModel model;
+
+    /**
+     * Constructs a new {@code ActivateLayerAction}.
+     * @param layer the layer
+     * @param model layer list model
+     */
+    public ActivateLayerAction(Layer layer, LayerListModel model) {
+        this(model);
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
+        this.layer = layer;
+        putValue(NAME, tr("Activate"));
+        updateEnabledState();
+    }
+
+    /**
+     * Constructs a new {@code ActivateLayerAction}.
+     * @param model layer list model
+     */
+    public ActivateLayerAction(LayerListModel model) {
+        this.model = model;
+        putValue(NAME, tr("Activate"));
+        putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
+        putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
+        multikeyShortcut = Shortcut.registerShortcut("core_multikey:activateLayer", tr("Multikey: {0}",
+                tr("Activate layer")), KeyEvent.VK_A, Shortcut.SHIFT);
+        multikeyShortcut.setAccelerator(this);
+        putValue("help", HelpUtil.ht("/Dialog/LayerList#ActivateLayer"));
+    }
+
+    @Override
+    public Shortcut getMultikeyShortcut() {
+        return multikeyShortcut;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Layer toActivate;
+        if (layer != null) {
+            toActivate = layer;
+        } else {
+            toActivate = model.getSelectedLayers().get(0);
+        }
+        execute(toActivate);
+    }
+
+    private void execute(Layer layer) {
+        // model is going to be updated via LayerChangeListener and PropertyChangeEvents
+        Main.map.mapView.setActiveLayer(layer);
+        layer.setVisible(true);
+    }
+
+    protected boolean isActiveLayer(Layer layer) {
+        if (!Main.isDisplayingMapView())
+            return false;
+        return Main.map.mapView.getActiveLayer() == layer;
+    }
+
+    @Override
+    public void updateEnabledState() {
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override
+            public void run() {
+                if (layer == null) {
+                    if (model.getSelectedLayers().size() != 1) {
+                        setEnabled(false);
+                        return;
+                    }
+                    setEnabled(!isActiveLayer(model.getSelectedLayers().get(0)));
+                } else {
+                    setEnabled(!isActiveLayer(layer));
+                }
+            }
+        });
+    }
+
+    @Override
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        updateEnabledState();
+    }
+
+    @Override
+    public void layerAdded(Layer newLayer) {
+        updateEnabledState();
+    }
+
+    @Override
+    public void layerRemoved(Layer oldLayer) {
+        updateEnabledState();
+    }
+
+    @Override
+    public void executeMultikeyAction(int index, boolean repeat) {
+        Layer l = LayerListDialog.getLayerForIndex(index);
+        if (l != null) {
+            execute(l);
+        }
+    }
+
+    @Override
+    public List<MultikeyInfo> getMultikeyCombinations() {
+        return LayerListDialog.getLayerInfoByClass(Layer.class);
+    }
+
+    @Override
+    public MultikeyInfo getLastMultikeyAction() {
+        return null; // Repeating action doesn't make much sense for activating
+    }
+}
