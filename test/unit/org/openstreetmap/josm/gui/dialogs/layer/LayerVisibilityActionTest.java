@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.dialogs;
+package org.openstreetmap.josm.gui.dialogs.layer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,15 +9,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
-import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerVisibilityAction;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayerTest;
 
 /**
- * Unit tests of {@link LayerListDialog} class.
+ * Unit tests of {@link LayerVisibilityAction} class.
  */
-public class LayerListDialogTest {
+public class LayerVisibilityActionTest {
 
     /**
      * Setup tests
