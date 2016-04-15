@@ -117,7 +117,7 @@ public class DividedScale<T> {
      * @param lower lower bound
      * @param upper upper bound
      */
-    protected void putImpl(T o, double lower, double upper) {
+    private void putImpl(T o, double lower, double upper) {
         int i = 0;
         while (bd.get(i) < lower) {
             ++i;
@@ -163,6 +163,10 @@ public class DividedScale<T> {
         }
     }
 
+    /**
+     * Runs a consistency test.
+     * @throws AssertionError When an invariant is broken.
+     */
     public void consistencyTest() {
         if (bd.size() < 2) throw new AssertionError(bd);
         if (data.isEmpty()) throw new AssertionError(data);
