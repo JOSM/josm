@@ -8,6 +8,8 @@ import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Caches styles for a single primitive.
+ * <p>
+ * This object is immutable.
  */
 public final class StyleCache {
 
@@ -30,16 +32,22 @@ public final class StyleCache {
     private StyleCache() {
     }
 
+    /**
+     * Creates a new copy of this style cache with a new entry added.
+     * @param o The style to cache.
+     * @param r The range the style is for.
+     * @param selected The style list we should use (selected/unselected)
+     * @return The new object.
+     */
     public StyleCache put(StyleElementList o, Range r, boolean selected) {
         StyleCache s = new StyleCache(this);
 
         int idx = getIndex(selected);
         DividedScale<StyleElementList> ds = s.states[idx];
         if (ds == null) {
-            ds = s.states[idx] = new DividedScale<>();
+            ds = new DividedScale<>();
         }
-        ds.putImpl(o, r.getLower(), r.getUpper());
-        ds.consistencyTest();
+        s.states[idx] = ds.put(o, r);
         s.intern();
         return s;
     }
