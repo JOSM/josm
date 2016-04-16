@@ -39,7 +39,6 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class LayerVisibilityAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
     protected static final int SLIDER_STEPS = 100;
-    private static final double MAX_GAMMA_FACTOR = 2;
     private static final double MAX_SHARPNESS_FACTOR = 2;
     private static final double MAX_COLORFUL_FACTOR = 2;
     private final LayerListModel model;
@@ -315,19 +314,19 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
          * Create a new {@link GammaFilterSlider}
          */
         GammaFilterSlider() {
-            super(0, MAX_GAMMA_FACTOR, ImageryLayer.class);
+            super(-1, 1, ImageryLayer.class);
             setToolTipText(tr("Adjust gamma value of the layer."));
         }
 
         @Override
         protected void updateSliderWhileEnabled(Collection<? extends Layer> usedLayers, boolean allHidden) {
             double gamma = ((ImageryLayer) usedLayers.iterator().next()).getGamma();
-            setRealValue(gamma);
+            setRealValue(mapGammaToInterval(gamma));
         }
 
         @Override
         protected void applyValueToLayer(ImageryLayer layer) {
-            layer.setGamma(getRealValue());
+            layer.setGamma(mapIntervalToGamma(getRealValue()));
         }
 
         @Override
@@ -338,6 +337,27 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         @Override
         public String getLabel() {
             return tr("Gamma");
+        }
+
+        /**
+         * Maps a number x from the range (-1,1) to a gamma value.
+         * Gamma value is in the range (0, infinity).
+         * Gamma values of 3 and 1/3 have opposite effects, so the mapping
+         * should be symmetric in that sense.
+         * @param x the slider value in the range (-1,1)
+         * @return the gamma value
+         */
+        private double mapIntervalToGamma(double x) {
+            // properties of the mapping:
+            // g(-1) = 0
+            // g(0) = 1
+            // g(1) = infinity
+            // g(-x) = 1 / g(x)
+            return (1 + x) / (1 - x);
+        }
+
+        private double mapGammaToInterval(double gamma) {
+            return (gamma - 1) / (gamma + 1);
         }
     }
 
