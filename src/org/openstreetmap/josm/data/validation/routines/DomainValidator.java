@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016041501, Last Updated Sat Apr 16 07:07:01 2016 UTC
+        // Taken from Version 2016042000, Last Updated Wed Apr 20 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -310,10 +310,12 @@ public final class DomainValidator extends AbstractValidator {
         "aeg", // aeg Aktiebolaget Electrolux
         "aero", // aero Societe Internationale de Telecommunications Aeronautique (SITA INC USA)
         "afl", // afl Australian Football League
+        "agakhan", // agakhan Fondation Aga Khan (Aga Khan Foundation)
         "agency", // agency Steel Falls, LLC
         "aig", // aig American International Group, Inc.
         "airforce", // airforce United TLD Holdco Ltd.
         "airtel", // airtel Bharti Airtel Limited
+        "akdn", // akdn Fondation Aga Khan (Aga Khan Foundation)
         "alibaba", // alibaba Alibaba Group Holding Limited
         "alipay", // alipay Alibaba Group Holding Limited
         "allfinanz", // allfinanz Allfinanz Deutsche Vermögensberatung Aktiengesellschaft
@@ -601,6 +603,7 @@ public final class DomainValidator extends AbstractValidator {
         "frl", // frl FRLregistry B.V.
         "frogans", // frogans OP3FT
         "frontier", // frontier Frontier Communications Corporation
+        "ftr", // ftr Frontier Communications Corporation
         "fund", // fund John Castle, LLC
         "furniture", // furniture Lone Fields, LLC
         "futbol", // futbol United TLD Holdco, Ltd.
@@ -684,6 +687,7 @@ public final class DomainValidator extends AbstractValidator {
         "icu", // icu One.com A/S
         "ifm", // ifm ifm electronic gmbh
         "iinet", // iinet Connect West Pty. Ltd.
+        "imamat", // imamat Fondation Aga Khan (Aga Khan Foundation)
         "immo", // immo Auburn Bloom, LLC
         "immobilien", // immobilien United TLD Holdco Ltd.
         "industries", // industries Outer House, LLC
@@ -700,6 +704,7 @@ public final class DomainValidator extends AbstractValidator {
         "ipiranga", // ipiranga Ipiranga Produtos de Petroleo S.A.
         "irish", // irish Dot-Irish LLC
         "iselect", // iselect iSelect Ltd
+        "ismaili", // ismaili Fondation Aga Khan (Aga Khan Foundation)
         "ist", // ist Istanbul Metropolitan Municipality
         "istanbul", // istanbul Istanbul Metropolitan Municipality / Medya A.S.
         "itau", // itau Itau Unibanco Holding S.A.
@@ -979,6 +984,7 @@ public final class DomainValidator extends AbstractValidator {
         "sarl", // sarl Delta Orchard, LLC
         "sas", // sas Research IP LLC
         "saxo", // saxo Saxo Bank A/S
+        "sbi", // sbi STATE BANK OF INDIA
         "sbs", // sbs SPECIAL BROADCASTING SERVICE CORPORATION
         "sca", // sca SVENSKA CELLULOSA AKTIEBOLAGET SCA (publ)
         "scb", // scb The Siam Commercial Bank Public Company Limited (&quot;SCB&quot;)
@@ -1038,6 +1044,7 @@ public final class DomainValidator extends AbstractValidator {
         "stada", // stada STADA Arzneimittel AG
         "star", // star Star India Private Limited
         "starhub", // starhub StarHub Limited
+        "statebank", // statebank STATE BANK OF INDIA
         "statefarm", // statefarm State Farm Mutual Automobile Insurance Company
         "statoil", // statoil Statoil ASA
         "stc", // stc Saudi Telecom Company
@@ -1191,6 +1198,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--4gbrim", // موقع Suhub Electronic Establishment
         "xn--55qw42g", // 公益 China Organizational Name Administration Center
         "xn--55qx5d", // 公司 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
+        "xn--5tzm5g", // 网站 Global Website TLD Asia Limited
         "xn--6frz82g", // 移动 Afilias Limited
         "xn--6qq986b3xl", // 我爱你 Tycoon Treasure Limited
         "xn--80adxhks", // москва Foundation for Assistance for Internet Technologies and Infrastructure Development (FAITID)
