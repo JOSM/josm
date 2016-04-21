@@ -7,8 +7,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,7 +27,7 @@ import org.openstreetmap.josm.Main;
  *
  * @author Tim Haussmann
  */
-public class SlippyMapControler extends MouseAdapter implements MouseMotionListener, MouseListener {
+public class SlippyMapControler extends MouseAdapter {
 
     /** A Timer for smoothly moving the map area */
     private static final Timer timer = new Timer(true);

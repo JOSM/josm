@@ -8,7 +8,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
@@ -21,7 +20,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Apply the current updates.
  * @since 9496
  */
-public class ApplyAction extends SavingAction implements PropertyChangeListener, TableModelListener {
+public class ApplyAction extends SavingAction implements PropertyChangeListener {
 
     /**
      * Constructs a new {@code ApplyAction}.

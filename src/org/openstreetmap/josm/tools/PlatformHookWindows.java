@@ -59,7 +59,7 @@ import org.openstreetmap.josm.Main;
   * {@code PlatformHook} implementation for Microsoft Windows systems.
   * @since 1023
   */
-public class PlatformHookWindows extends PlatformHookUnixoid implements PlatformHook {
+public class PlatformHookWindows extends PlatformHookUnixoid {
 
     @Override
     public void startupHook() {
