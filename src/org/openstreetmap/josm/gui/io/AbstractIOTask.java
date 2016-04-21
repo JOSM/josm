@@ -88,12 +88,6 @@ public abstract class AbstractIOTask implements Runnable {
     }
 
     /**
-     * Runs the task
-     */
-    @Override
-    public abstract void run();
-
-    /**
      * Cancel the task
      */
     public abstract void cancel();

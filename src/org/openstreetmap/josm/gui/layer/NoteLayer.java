@@ -47,7 +47,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * A layer to hold Note objects.
  * @since 7522
  */
-public class NoteLayer extends AbstractModifiableLayer implements MouseListener, UploadToServer, SaveToFile {
+public class NoteLayer extends AbstractModifiableLayer implements MouseListener {
 
     private final NoteData noteData;
 

@@ -25,7 +25,7 @@ import org.xml.sax.SAXException;
  * {@code PlatformHook} implementation for Apple Mac OS X systems.
  * @since 1023
  */
-public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook, InvocationHandler {
+public class PlatformHookOsx extends PlatformHookUnixoid implements InvocationHandler {
 
     private static PlatformHookOsx ivhandler = new PlatformHookOsx();
 

@@ -9,9 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -36,7 +34,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class MapMover extends MouseAdapter implements MouseMotionListener, MouseWheelListener, Destroyable {
+public class MapMover extends MouseAdapter implements Destroyable {
 
     public static final BooleanProperty PROP_ZOOM_REVERSE_WHEEL = new BooleanProperty("zoom.reverse-wheel", false);
 
