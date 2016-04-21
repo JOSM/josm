@@ -73,9 +73,6 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
     protected final void keysChangedImpl(Map<String, String> originalKeys) {
     }
 
-    @Override
-    public abstract OsmPrimitiveType getType();
-
     private void writeObject(ObjectOutputStream oos) throws IOException {
         // since super class is not Serializable
         oos.writeLong(id);

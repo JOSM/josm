@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.awt.Color;
-import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -52,10 +51,6 @@ public abstract class MemberTableCellRenderer extends JLabel implements TableCel
         }
         GuiHelper.setBackgroundReadable(this, bgc);
     }
-
-    @Override
-    public abstract Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-            boolean hasFocus, int row, int column);
 
     /**
      * replies the model

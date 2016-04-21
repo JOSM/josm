@@ -31,9 +31,6 @@ public abstract class CorrectionTableModel<C extends Correction> extends Abstrac
         applyColumn = getColumnCount() - 1;
     }
 
-    @Override
-    public abstract int getColumnCount();
-
     protected abstract boolean isBoldCell(int row, int column);
 
     /**

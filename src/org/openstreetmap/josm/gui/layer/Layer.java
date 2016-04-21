@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -23,11 +22,9 @@ import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.actions.SaveAsAction;
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -185,13 +182,6 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
             }
         }
     }
-
-    /**
-     * Paint the dataset using the engine set.
-     * @param mv The object that can translate GeoPoints to screen coordinates.
-     */
-    @Override
-    public abstract void paint(Graphics2D g, MapView mv, Bounds box);
 
     /**
      * Return a representative small image for this layer. The image must not
