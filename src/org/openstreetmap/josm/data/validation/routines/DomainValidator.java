@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016042000, Last Updated Wed Apr 20 07:07:01 2016 UTC
+        // Taken from Version 2016042300, Last Updated Sat Apr 23 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -816,6 +816,7 @@ public final class DomainValidator extends AbstractValidator {
         "microsoft", // microsoft Microsoft Corporation
         "mil", // mil DoD Network Information Center
         "mini", // mini Bayerische Motoren Werke Aktiengesellschaft
+        "mls", // mls The Canadian Real Estate Association
         "mma", // mma MMA IARD
         "mobi", // mobi Afilias Technologies Limited dba dotMobi
         "mobily", // mobily GreenTech Consultancy Company W.L.L.
@@ -924,6 +925,7 @@ public final class DomainValidator extends AbstractValidator {
         "prod", // prod Charleston Road Registry Inc.
         "productions", // productions Magic Birch, LLC
         "prof", // prof Charleston Road Registry Inc.
+        "progressive", // progressive Progressive Casualty Insurance Company
         "promo", // promo Afilias plc
         "properties", // properties Big Pass, LLC
         "property", // property Uniregistry, Corp.
