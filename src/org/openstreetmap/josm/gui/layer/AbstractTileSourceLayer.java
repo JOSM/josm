@@ -1222,6 +1222,14 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
             y0 = t1.getYIndex();
             x1 = t2.getXIndex();
             y1 = t2.getYIndex();
+            double centerLon = Main.getProjection().eastNorth2latlon(Main.map.mapView.getCenter()).lon();
+
+            if (topLeft.lon() > centerLon) {
+                x0 = tileSource.getTileXMin(zoom);
+            }
+            if (botRight.lon() < centerLon) {
+                x1 = tileSource.getTileXMax(zoom);
+            }
 
             if (x0 > x1) {
                 int tmp = x0;
