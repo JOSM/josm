@@ -109,19 +109,6 @@ public final class ShowStatusReportAction extends JosmAction {
             }
         }
         try {
-            final String envJavaHome = System.getenv("JAVA_HOME");
-            final String envJavaHomeAlt = Main.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}";
-            final String propJavaHome = System.getProperty("java.home");
-            final String propJavaHomeAlt = "<java.home>";
-            final String prefDir = Main.pref.getPreferencesDirectory().toString();
-            final String prefDirAlt = "<josm.pref>";
-            final String userDataDir = Main.pref.getUserDataDirectory().toString();
-            final String userDataDirAlt = "<josm.userdata>";
-            final String userCacheDir = Main.pref.getCacheDirectory().toString();
-            final String userCacheDirAlt = "<josm.cache>";
-            final String userHomeDir = System.getProperty("user.home");
-            final String userHomeDirAlt = Main.isPlatformWindows() ? "%UserProfile%" : "${HOME}";
-
             // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
             List<String> vmArguments = new ArrayList<>(ManagementFactory.getRuntimeMXBean().getInputArguments());
             for (ListIterator<String> it = vmArguments.listIterator(); it.hasNext();) {
@@ -133,14 +120,7 @@ public final class ShowStatusReportAction extends JosmAction {
                         it.set(param[0]+"=xxx");
                     } else {
                         // Replace some paths for readability and privacy concerns
-                        String val = param[1];
-                        val = paramReplace(val, envJavaHome, envJavaHomeAlt);
-                        val = paramReplace(val, envJavaHome, envJavaHomeAlt);
-                        val = paramReplace(val, propJavaHome, propJavaHomeAlt);
-                        val = paramReplace(val, prefDir, prefDirAlt);
-                        val = paramReplace(val, userDataDir, userDataDirAlt);
-                        val = paramReplace(val, userCacheDir, userCacheDirAlt);
-                        val = paramReplace(val, userHomeDir, userHomeDirAlt);
+                        String val = paramCleanup(param[1]);
                         if (!val.equals(param[1])) {
                             it.set(param[0] + '=' + val);
                         }
@@ -161,7 +141,7 @@ public final class ShowStatusReportAction extends JosmAction {
         }
         List<String> commandLineArgs = Main.getCommandLineArgs();
         if (!commandLineArgs.isEmpty()) {
-            text.append("Program arguments: ").append(Arrays.toString(commandLineArgs.toArray())).append('\n');
+            text.append("Program arguments: ").append(Arrays.toString(paramCleanup(commandLineArgs).toArray())).append('\n');
         }
         if (Main.main != null) {
             DataSet dataset = Main.main.getCurrentDataSet();
@@ -195,16 +175,53 @@ public final class ShowStatusReportAction extends JosmAction {
         return set;
     }
 
+    private static List<String> paramCleanup(Collection<String> params) {
+        List<String> result = new ArrayList<>(params.size());
+        for (String param : params) {
+            result.add(paramCleanup(param));
+        }
+        return result;
+    }
+
+    /**
+     * Shortens and removes private informations from a parameter used for status report.
+     * @param param parameter to cleanup
+     * @return shortened/anonymized parameter
+     */
+    private static String paramCleanup(String param) {
+        final String envJavaHome = System.getenv("JAVA_HOME");
+        final String envJavaHomeAlt = Main.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}";
+        final String propJavaHome = System.getProperty("java.home");
+        final String propJavaHomeAlt = "<java.home>";
+        final String prefDir = Main.pref.getPreferencesDirectory().toString();
+        final String prefDirAlt = "<josm.pref>";
+        final String userDataDir = Main.pref.getUserDataDirectory().toString();
+        final String userDataDirAlt = "<josm.userdata>";
+        final String userCacheDir = Main.pref.getCacheDirectory().toString();
+        final String userCacheDirAlt = "<josm.cache>";
+        final String userHomeDir = System.getProperty("user.home");
+        final String userHomeDirAlt = Main.isPlatformWindows() ? "%UserProfile%" : "${HOME}";
+
+        String val = param;
+        val = paramReplace(val, envJavaHome, envJavaHomeAlt);
+        val = paramReplace(val, envJavaHome, envJavaHomeAlt);
+        val = paramReplace(val, propJavaHome, propJavaHomeAlt);
+        val = paramReplace(val, prefDir, prefDirAlt);
+        val = paramReplace(val, userDataDir, userDataDirAlt);
+        val = paramReplace(val, userCacheDir, userCacheDirAlt);
+        val = paramReplace(val, userHomeDir, userHomeDirAlt);
+        return val;
+    }
+
     private static String paramReplace(String str, String target, String replacement) {
-        if (target == null) return str;
-        return str.replace(target, replacement);
+        return target == null ? str : str.replace(target, replacement);
     }
 
     protected static <T> void appendCollection(StringBuilder text, String label, Collection<T> col) {
         if (!col.isEmpty()) {
             text.append(label+":\n");
             for (T o : col) {
-                text.append("- ").append(o.toString()).append('\n');
+                text.append("- ").append(paramCleanup(o.toString())).append('\n');
             }
             text.append('\n');
         }
@@ -225,7 +242,9 @@ public final class ShowStatusReportAction extends JosmAction {
                 }
             }
             for (Entry<String, Setting<?>> entry : settings.entrySet()) {
-                text.append(entry.getKey()).append('=').append(entry.getValue().getValue()).append('\n');
+                text.append(paramCleanup(entry.getKey()))
+                    .append('=')
+                    .append(paramCleanup(entry.getValue().getValue().toString())).append('\n');
             }
         } catch (Exception x) {
             Main.error(x);
