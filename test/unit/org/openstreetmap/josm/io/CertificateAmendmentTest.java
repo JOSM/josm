@@ -46,6 +46,8 @@ public class CertificateAmendmentTest {
         connect("https://helloworld.letsencrypt.org", false);
         // signed by letsencrypt's cross-sign CA
         connect("https://letsencrypt.org", true);
+        // signed by letsencrypt's cross-sign CA, requires SNI
+        connect("https://acme-v01.api.letsencrypt.org", true);
     }
 
     /**
