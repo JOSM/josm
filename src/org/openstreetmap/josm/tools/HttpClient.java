@@ -109,9 +109,8 @@ public final class HttpClient {
             Main.info("{0} {1} ({2}) ...", requestMethod, url, Utils.getSizeString(requestBody.length, Locale.getDefault()));
             connection.setFixedLengthStreamingMode(requestBody.length);
             connection.setDoOutput(true);
-            final ProgressMonitor subTaskMonitor = progressMonitor.createSubTaskMonitor(1, false);
             try (OutputStream out = new BufferedOutputStream(
-                    new ProgressOutputStream(connection.getOutputStream(), requestBody.length, subTaskMonitor))) {
+                    new ProgressOutputStream(connection.getOutputStream(), requestBody.length, progressMonitor))) {
                 out.write(requestBody);
             }
         }
@@ -263,9 +262,8 @@ public final class HttpClient {
             } catch (IOException ioe) {
                 in = connection.getErrorStream();
             }
-            monitor.subTask(tr("Fetching content..."));
             if (in != null) {
-                in = new ProgressInputStream(in, getContentLength(), monitor.createSubTaskMonitor(1, false));
+                in = new ProgressInputStream(in, getContentLength(), monitor);
                 in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
                 Compression compression = Compression.NONE;
                 if (uncompress) {
