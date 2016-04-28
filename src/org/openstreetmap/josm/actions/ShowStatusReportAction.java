@@ -201,6 +201,8 @@ public final class ShowStatusReportAction extends JosmAction {
         final String userCacheDirAlt = "<josm.cache>";
         final String userHomeDir = System.getProperty("user.home");
         final String userHomeDirAlt = Main.isPlatformWindows() ? "%UserProfile%" : "${HOME}";
+        final String userName = System.getProperty("user.name");
+        final String userNameAlt = "<user.name>";
 
         String val = param;
         val = paramReplace(val, envJavaHome, envJavaHomeAlt);
@@ -210,6 +212,7 @@ public final class ShowStatusReportAction extends JosmAction {
         val = paramReplace(val, userDataDir, userDataDirAlt);
         val = paramReplace(val, userCacheDir, userCacheDirAlt);
         val = paramReplace(val, userHomeDir, userHomeDirAlt);
+        val = paramReplace(val, userName, userNameAlt);
         return val;
     }
 
