@@ -36,6 +36,7 @@ import org.openstreetmap.josm.actions.UploadNotesAction;
 import org.openstreetmap.josm.actions.mapmode.AddNoteAction;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
+import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
@@ -237,14 +238,21 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                 boolean isSelected, boolean cellHasFocus) {
             Component comp = defaultListCellRenderer.getListCellRendererComponent(list, note, index, isSelected, cellHasFocus);
             if (note != null && comp instanceof JLabel) {
-                String text = note.getFirstComment().getText();
-                String userName = note.getFirstComment().getUser().getName();
-                if (userName == null || userName.isEmpty()) {
-                    userName = "<Anonymous>";
-                }
-                String toolTipText = userName + " @ " + dateFormat.format(note.getCreatedAt());
+                NoteComment fstComment = note.getFirstComment();
                 JLabel jlabel = (JLabel) comp;
-                jlabel.setText(note.getId() + ": " +text);
+                if (fstComment != null) {
+                    String text = note.getFirstComment().getText();
+                    String userName = note.getFirstComment().getUser().getName();
+                    if (userName == null || userName.isEmpty()) {
+                        userName = "<Anonymous>";
+                    }
+                    String toolTipText = userName + " @ " + dateFormat.format(note.getCreatedAt());
+                    jlabel.setToolTipText(toolTipText);
+                    jlabel.setText(note.getId() + ": " +text);
+                } else {
+                    jlabel.setToolTipText(null);
+                    jlabel.setText(Long.toString(note.getId()));
+                }
                 ImageIcon icon;
                 if (note.getId() < 0) {
                     icon = ICON_NEW_SMALL;
@@ -254,7 +262,6 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                     icon = ICON_OPEN_SMALL;
                 }
                 jlabel.setIcon(icon);
-                jlabel.setToolTipText(toolTipText);
             }
             return comp;
         }
