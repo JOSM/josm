@@ -148,9 +148,6 @@ public class ChangesetHeaderDownloadTask extends AbstractChangesetDownloadTask {
             }
             ids.add(cs.getId());
         }
-        if (parent == null)
-            return new ChangesetHeaderDownloadTask(ids);
-        else
-            return new ChangesetHeaderDownloadTask(parent, ids);
+        return new ChangesetHeaderDownloadTask(parent, ids);
     }
 }
