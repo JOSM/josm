@@ -111,6 +111,24 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void startupHook() {
+        if (isDebianOrUbuntu()) {
+            // Invite users to install Java 8 if they are still with Java 7 and using a compatible distrib (Debian >= 8 or Ubuntu >= 15.10)
+            String java = System.getProperty("java.version");
+            String os = getOSDescription();
+            if (java != null && java.startsWith("1.7") && os != null && (
+                    os.startsWith("Linux Debian GNU/Linux 8") || os.matches("^Linux Ubuntu 1[567].*"))) {
+                String url;
+                // apturl does not exist on Debian (see #8465)
+                if (os.startsWith("Linux Debian")) {
+                    url = "https://packages.debian.org/jessie-backports/openjdk-8-jre";
+                } else if (getPackageDetails("apturl") != null) {
+                    url = "apt://openjdk-8-jre";
+                } else {
+                    url = "http://packages.ubuntu.com/xenial/openjdk-8-jre";
+                }
+                askUpdateJava(java, url);
+            }
+        }
     }
 
     @Override
@@ -178,6 +196,20 @@ public class PlatformHookUnixoid implements PlatformHook {
     @Override
     public boolean rename(File from, File to) {
         return from.renameTo(to);
+    }
+
+    /**
+     * Determines if the distribution is Debian or Ubuntu, or a derivative.
+     * @return {@code true} if the distribution is Debian, Ubuntu or Mint, {@code false} otherwise
+     */
+    public static boolean isDebianOrUbuntu() {
+        try {
+            String dist = Utils.execOutput(Arrays.asList("lsb_release", "-i", "-s"));
+            return "Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist) || "Mint".equalsIgnoreCase(dist);
+        } catch (IOException e) {
+            Main.warn(e);
+            return false;
+        }
     }
 
     /**
