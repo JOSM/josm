@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.io;
 
 import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -67,7 +69,8 @@ public class GeoJSONWriter {
         try (JsonWriter writer = Json.createWriterFactory(config).createWriter(stringWriter)) {
             JsonObjectBuilder object = Json.createObjectBuilder()
                     .add("type", "FeatureCollection")
-                    .add("crs", Json.createObjectBuilder().add("type", "name").add("name", projection.toCode()))
+                    .add("crs", Json.createObjectBuilder().add("type", "name").add(
+                            "properties", Json.createObjectBuilder().add("name", projection.toCode())))
                     .add("generator", "JOSM");
             appendLayerBounds(layer.data, object);
             appendLayerFeatures(layer.data, object);
@@ -118,7 +121,10 @@ public class GeoJSONWriter {
     }
 
     private static JsonArrayBuilder getCoorArray(JsonArrayBuilder builder, EastNorth c) {
-        return builder.add(c.getX()).add(c.getY());
+        return builder
+                .add(BigDecimal.valueOf(c.getX()).setScale(11, RoundingMode.HALF_UP))
+                .add(BigDecimal.valueOf(c.getY()).setScale(11, RoundingMode.HALF_UP))
+                ;
     }
 
     protected void appendPrimitive(OsmPrimitive p, JsonArrayBuilder array) {
