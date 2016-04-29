@@ -15,6 +15,7 @@ import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Stroke;
 import java.awt.Toolkit;
@@ -521,9 +522,13 @@ public final class GuiHelper {
      * @since 10035
      */
     public static Frame getFrameForComponent(Component parentComponent) {
-        if (parentComponent == null && GraphicsEnvironment.isHeadless()) {
+        try {
+            return JOptionPane.getFrameForComponent(parentComponent);
+        } catch (HeadlessException e) {
+            if (Main.isDebugEnabled()) {
+                Main.debug(e.getMessage());
+            }
             return null;
         }
-        return JOptionPane.getFrameForComponent(parentComponent);
     }
 }
