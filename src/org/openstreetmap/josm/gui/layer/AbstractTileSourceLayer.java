@@ -968,15 +968,13 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
     }
 
     /**
-     * Returns the image for the given tile if both tile and image are loaded.
+     * Returns the image for the given tile image is loaded.
      * Otherwise returns  null.
      *
      * @param tile the Tile for which the image should be returned
      * @return  the image of the tile or null.
      */
     private Image getLoadedTileImage(Tile tile) {
-        if (!tile.isLoaded())
-            return null;
         Image img = tile.getImage();
         if (!imageLoaded(img))
             return null;
