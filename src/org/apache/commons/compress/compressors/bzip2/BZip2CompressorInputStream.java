@@ -122,9 +122,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
      *                     byte after the .bz2 stream
      *
      * @throws IOException
-     *             if the stream content is malformed or an I/O error occurs.
-     * @throws NullPointerException
-     *             if {@code in == null}
+     *             if {@code in == null}, the stream content is malformed, or an I/O error occurs.
      */
     public BZip2CompressorInputStream(final InputStream in, final boolean decompressConcatenated) throws IOException {
         this.in = in;
