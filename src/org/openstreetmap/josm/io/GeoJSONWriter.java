@@ -123,8 +123,7 @@ public class GeoJSONWriter {
     private static JsonArrayBuilder getCoorArray(JsonArrayBuilder builder, EastNorth c) {
         return builder
                 .add(BigDecimal.valueOf(c.getX()).setScale(11, RoundingMode.HALF_UP))
-                .add(BigDecimal.valueOf(c.getY()).setScale(11, RoundingMode.HALF_UP))
-                ;
+                .add(BigDecimal.valueOf(c.getY()).setScale(11, RoundingMode.HALF_UP));
     }
 
     protected void appendPrimitive(OsmPrimitive p, JsonArrayBuilder array) {

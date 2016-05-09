@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
@@ -10,9 +12,9 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-
+/**
+ * Unit tests of {@link GeoJSONWriter} class.
+ */
 public class GeoJSONWriterTest {
 
     /**
@@ -23,8 +25,11 @@ public class GeoJSONWriterTest {
         JOSMFixture.createUnitTestFixture().init();
     }
 
+    /**
+     * Unit test
+     */
     @Test
-    public void testPoint() throws Exception {
+    public void testPoint() {
         final Node node = new Node(new LatLon(12.3, 4.56));
         node.put("name", "foo");
         node.put("source", "code");
@@ -32,7 +37,7 @@ public class GeoJSONWriterTest {
         ds.addPrimitive(node);
         final OsmDataLayer layer = new OsmDataLayer(ds, "foo", null);
         final GeoJSONWriter writer = new GeoJSONWriter(layer, ProjectionPreference.wgs84.getProjection());
-        assertThat(writer.write().trim(), is(("" +
+        assertEquals(("" +
                 "{\n" +
                 "    'type':'FeatureCollection',\n" +
                 "    'crs':{\n" +
@@ -58,6 +63,6 @@ public class GeoJSONWriterTest {
                 "            }\n" +
                 "        }\n" +
                 "    ]\n" +
-                "}").replace("'", "\"")));
+                "}").replace("'", "\""), writer.write().trim());
     }
 }
