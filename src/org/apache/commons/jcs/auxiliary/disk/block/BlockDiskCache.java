@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -81,6 +82,8 @@ public class BlockDiskCache<K, V>
      * need a reentrant lock, since we only lock one level.
      */
     private final ReentrantReadWriteLock storageLock = new ReentrantReadWriteLock();
+
+    private ScheduledFuture<?> future;
 
     /**
      * Constructs the BlockDisk after setting up the root directory.
@@ -167,7 +170,7 @@ public class BlockDiskCache<K, V>
         // TODO we might need to stagger this a bit.
         if ( this.blockDiskCacheAttributes.getKeyPersistenceIntervalSeconds() > 0 )
         {
-            scheduledExecutor.scheduleAtFixedRate(
+            future = scheduledExecutor.scheduleAtFixedRate(
                     new Runnable()
                     {
                         @Override
@@ -584,6 +587,11 @@ public class BlockDiskCache<K, V>
             // Prevents any interaction with the cache while we're shutting down.
             setAlive(false);
             this.keyStore.saveKeys();
+
+            if (future != null)
+            {
+                future.cancel(true);
+            }
 
             try
             {
