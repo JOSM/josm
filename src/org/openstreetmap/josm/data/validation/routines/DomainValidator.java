@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016042300, Last Updated Sat Apr 23 07:07:01 2016 UTC
+        // Taken from Version 2016050900, Last Updated Mon May  9 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -775,6 +775,7 @@ public final class DomainValidator extends AbstractValidator {
         "lincoln", // lincoln Ford Motor Company
         "linde", // linde Linde Aktiengesellschaft
         "link", // link Uniregistry, Corp.
+        "lipsy", // lipsy Lipsy Ltd
         "live", // live United TLD Holdco Ltd.
         "living", // living Lifestyle Domain Holdings, Inc.
         "lixil", // lixil LIXIL Group Corporation
@@ -852,6 +853,8 @@ public final class DomainValidator extends AbstractValidator {
         "neustar", // neustar NeuStar, Inc.
         "new", // new Charleston Road Registry Inc.
         "news", // news United TLD Holdco Ltd.
+        "next", // next Next plc
+        "nextdirect", // nextdirect Next plc
         "nexus", // nexus Charleston Road Registry Inc.
         "ngo", // ngo Public Interest Registry
         "nhk", // nhk Japan Broadcasting Corporation (NHK)
@@ -871,6 +874,8 @@ public final class DomainValidator extends AbstractValidator {
         "obi", // obi OBI Group Holding SE &amp; Co. KGaA
         "office", // office Microsoft Corporation
         "okinawa", // okinawa BusinessRalliart inc.
+        "olayan", // olayan Crescent Holding GmbH
+        "olayangroup", // olayangroup Crescent Holding GmbH
         "omega", // omega The Swatch Group Ltd
         "one", // one One.com A/S
         "ong", // ong Public Interest Registry
@@ -1159,6 +1164,7 @@ public final class DomainValidator extends AbstractValidator {
         "walter", // walter Sandvik AB
         "wang", // wang Zodiac Registry Limited
         "wanggou", // wanggou Amazon Registry Services, Inc.
+        "warman", // warman Weir Group IP Limited
         "watch", // watch Sand Shadow, LLC
         "watches", // watches Richemont DNS Inc.
         "weather", // weather The Weather Channel, LLC
@@ -1242,6 +1248,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--kpu716f", // 手表 Richemont DNS Inc.
         "xn--kput3i", // 手机 Beijing RITT-Net Technology Development Co., Ltd
         "xn--mgba3a3ejt", // ارامكو Aramco Services Company
+        "xn--mgba7c0bbn0a", // العليان Crescent Holding GmbH
         "xn--mgbab2bd", // بازار CORE Association
         "xn--mgbb9fbpob", // موبايلي GreenTech Consultancy Company W.L.L.
         "xn--mgbca7dzdo", // ابوظبي Abu Dhabi Systems and Information Centre
