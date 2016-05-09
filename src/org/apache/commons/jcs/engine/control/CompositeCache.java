@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -119,6 +120,8 @@ public class CompositeCache<K, V>
     /** Key matcher used by the getMatching API */
     private IKeyMatcher<K> keyMatcher = new KeyMatcherPatternImpl<K>();
 
+    private ScheduledFuture<?> future;
+
     /**
      * Constructor for the Cache object
      * <p>
@@ -163,7 +166,7 @@ public class CompositeCache<K, V>
     {
         if ( cacheAttr.isUseMemoryShrinker() )
         {
-            scheduledExecutor.scheduleAtFixedRate(
+            future = scheduledExecutor.scheduleAtFixedRate(
                     new ShrinkerThread<K, V>(this), 0, cacheAttr.getShrinkerIntervalSeconds(),
                     TimeUnit.SECONDS);
         }
@@ -1296,6 +1299,12 @@ public class CompositeCache<K, V>
 
         synchronized (this)
         {
+            // Try to stop shrinker thread
+            if (future != null)
+            {
+                future.cancel(true);
+            }
+
             // Now, shut down the event queue
             if (elementEventQ != null)
             {
