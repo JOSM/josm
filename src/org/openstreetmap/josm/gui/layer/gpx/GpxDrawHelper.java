@@ -18,6 +18,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
+import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -29,7 +31,7 @@ import org.openstreetmap.josm.tools.ColorScale;
  * Class that helps to draw large set of GPS tracks with different colors and options
  * @since 7319
  */
-public class GpxDrawHelper {
+public class GpxDrawHelper implements SoMChangeListener {
     private final GpxData data;
 
     // draw lines between points belonging to different segments
@@ -96,11 +98,22 @@ public class GpxDrawHelper {
 
     private void setupColors() {
         hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);
-        velocityScale = ColorScale.createHSBScale(256).addTitle(tr("Velocity, km/h"));
+        velocityScale = ColorScale.createHSBScale(256);
         /** Colors (without custom alpha channel, if given) for HDOP painting. **/
-        hdopScale = ColorScale.createHSBScale(256).makeReversed().addTitle(tr("HDOP, m"));
+        hdopScale = ColorScale.createHSBScale(256).makeReversed();
         dateScale = ColorScale.createHSBScale(256).addTitle(tr("Time"));
         directionScale = ColorScale.createCyclicScale(256).setIntervalCount(4).addTitle(tr("Direction"));
+        systemOfMeasurementChanged(null, null);
+    }
+
+    @Override
+    public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
+        SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
+        velocityScale.addTitle(tr("Velocity, {0}", som.speedName));
+        hdopScale.addTitle(tr("HDOP, {0}", som.aName));
+        if (Main.isDisplayingMapView() && oldSoM != null && newSoM != null) {
+            Main.map.mapView.repaint();
+        }
     }
 
     /**
@@ -553,10 +566,11 @@ public class GpxDrawHelper {
 
     public void drawColorBar(Graphics2D g, MapView mv) {
         int w = mv.getWidth();
+        SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
         if (colored == ColorMode.HDOP) {
-            hdopScale.drawColorBar(g, w-30, 50, 20, 100, 1.0);
+            hdopScale.drawColorBar(g, w-30, 50, 20, 100, som.aValue);
         } else if (colored == ColorMode.VELOCITY) {
-            velocityScale.drawColorBar(g, w-30, 50, 20, 100, 3.6);
+            velocityScale.drawColorBar(g, w-30, 50, 20, 100, som.speedValue);
         } else if (colored == ColorMode.DIRECTION) {
             directionScale.drawColorBar(g, w-30, 50, 20, 100, 180.0/Math.PI);
         }

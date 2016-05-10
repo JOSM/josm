@@ -38,25 +38,28 @@ public class SystemOfMeasurement {
      * Metric system (international standard).
      * @since 3406
      */
-    public static final SystemOfMeasurement METRIC = new SystemOfMeasurement(1, "m", 1000, "km", 10000, "ha");
+    public static final SystemOfMeasurement METRIC = new SystemOfMeasurement(1, "m", 1000, "km", "km/h", 3.6, 10000, "ha");
 
     /**
      * Chinese system.
+     * See <a href="https://en.wikipedia.org/wiki/Chinese_units_of_measurement#Chinese_length_units_effective_in_1930">length units</a>,
+     * <a href="https://en.wikipedia.org/wiki/Chinese_units_of_measurement#Chinese_area_units_effective_in_1930">area units</a>
      * @since 3406
      */
-    public static final SystemOfMeasurement CHINESE = new SystemOfMeasurement(1.0/3.0, "\u5e02\u5c3a" /* chi */, 500, "\u5e02\u91cc" /* li */);
+    public static final SystemOfMeasurement CHINESE = new SystemOfMeasurement(1.0/3.0, "\u5e02\u5c3a" /* chi */, 500, "\u5e02\u91cc" /* li */,
+            "km/h", 3.6, 666.0 + 2.0/3.0, "\u4ea9" /* mu */);
 
     /**
      * Imperial system (British Commonwealth and former British Empire).
      * @since 3406
      */
-    public static final SystemOfMeasurement IMPERIAL = new SystemOfMeasurement(0.3048, "ft", 1609.344, "mi", 4046.86, "ac");
+    public static final SystemOfMeasurement IMPERIAL = new SystemOfMeasurement(0.3048, "ft", 1609.344, "mi", "mph", 2.23694, 4046.86, "ac");
 
     /**
      * Nautical mile system (navigation, polar exploration).
      * @since 5549
      */
-    public static final SystemOfMeasurement NAUTICAL_MILE = new SystemOfMeasurement(185.2, "kbl", 1852, "NM");
+    public static final SystemOfMeasurement NAUTICAL_MILE = new SystemOfMeasurement(185.2, "kbl", 1852, "NM", "kn", 1.94384);
 
     /**
      * Known systems of measurement.
@@ -137,6 +140,12 @@ public class SystemOfMeasurement {
     public final String aName;
     /** Second unit used to format text. */
     public final String bName;
+    /** Speed value for the most common speed symbol, in meters per second
+     *  @since 10175 */
+    public final double speedValue;
+    /** Most common speed symbol (kmh/h, mph, kn, etc.)
+     *  @since 10175 */
+    public final String speedName;
     /** Specific optional area value, in squared meters, between {@code aValue*aValue} and {@code bValue*bValue}. Set to {@code -1} if not used.
      *  @since 5870 */
     public final double areaCustomValue;
@@ -154,9 +163,12 @@ public class SystemOfMeasurement {
      * @param aName First unit used to format text.
      * @param bValue Second value, in meters, used to translate unit according to above formula.
      * @param bName Second unit used to format text.
+     * @param speedName the most common speed symbol (kmh/h, mph, kn, etc.)
+     * @param speedValue the speed value for the most common speed symbol, for 1 meter per second
+     * @since 10175
      */
-    public SystemOfMeasurement(double aValue, String aName, double bValue, String bName) {
-        this(aValue, aName, bValue, bName, -1, null);
+    public SystemOfMeasurement(double aValue, String aName, double bValue, String bName, String speedName, double speedValue) {
+        this(aValue, aName, bValue, bName, speedName, speedValue, -1, null);
     }
 
     /**
@@ -169,17 +181,22 @@ public class SystemOfMeasurement {
      * @param aName First unit used to format text.
      * @param bValue Second value, in meters, used to translate unit according to above formula.
      * @param bName Second unit used to format text.
+     * @param speedName the most common speed symbol (kmh/h, mph, kn, etc.)
+     * @param speedValue the speed value for the most common speed symbol, for 1 meter per second
      * @param areaCustomValue Specific optional area value, in squared meters, between {@code aValue*aValue} and {@code bValue*bValue}.
      *                        Set to {@code -1} if not used.
      * @param areaCustomName Specific optional area unit. Set to {@code null} if not used.
      *
-     * @since 5870
+     * @since 10175
      */
-    public SystemOfMeasurement(double aValue, String aName, double bValue, String bName, double areaCustomValue, String areaCustomName) {
+    public SystemOfMeasurement(double aValue, String aName, double bValue, String bName, String speedName, double speedValue,
+            double areaCustomValue, String areaCustomName) {
         this.aValue = aValue;
         this.aName = aName;
         this.bValue = bValue;
         this.bName = bName;
+        this.speedValue = speedValue;
+        this.speedName = speedName;
         this.areaCustomValue = areaCustomValue;
         this.areaCustomName = areaCustomName;
     }

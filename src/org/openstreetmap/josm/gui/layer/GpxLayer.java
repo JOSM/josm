@@ -89,6 +89,7 @@ public class GpxLayer extends Layer {
         super(d.getString(GpxConstants.META_NAME));
         data = d;
         drawHelper = new GpxDrawHelper(data);
+        SystemOfMeasurement.addSoMChangeListener(drawHelper);
         ensureTrackVisibilityLength();
         setName(name);
         isLocalFile = isLocal;
@@ -388,5 +389,10 @@ public class GpxLayer extends Layer {
     @Override
     public LayerPositionStrategy getDefaultLayerPosition() {
         return LayerPositionStrategy.AFTER_LAST_DATA_LAYER;
+    }
+
+    @Override
+    public void destroy() {
+        SystemOfMeasurement.removeSoMChangeListener(drawHelper);
     }
 }
