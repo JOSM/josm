@@ -93,6 +93,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
 
     @Override
     public void setProgressTaskId(ProgressTaskId taskId) {
+        // Do nothing
     }
 
     @Override

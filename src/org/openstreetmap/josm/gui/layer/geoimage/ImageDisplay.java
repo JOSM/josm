@@ -401,14 +401,17 @@ public class ImageDisplay extends JComponent {
 
         @Override
         public void mouseEntered(MouseEvent e) {
+            // Do nothing
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
+            // Do nothing
         }
 
         @Override
         public void mouseMoved(MouseEvent e) {
+            // Do nothing
         }
 
         private void checkPointInVisibleRect(Point p, Rectangle visibleRect) {

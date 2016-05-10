@@ -118,6 +118,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
 
             @Override
             protected void finish() {
+                // Do nothing
             }
 
             @Override

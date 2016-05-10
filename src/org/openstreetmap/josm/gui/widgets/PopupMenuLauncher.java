@@ -3,8 +3,8 @@ package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -94,10 +94,7 @@ public class PopupMenuLauncher extends MouseAdapter {
 
     protected void checkFocusAndShowMenu(final Component component, final MouseEvent evt) {
         if (component != null && component.isFocusable() && !component.hasFocus() && component.requestFocusInWindow()) {
-            component.addFocusListener(new FocusListener() {
-                @Override
-                public void focusLost(FocusEvent e) {}
-
+            component.addFocusListener(new FocusAdapter() {
                 @Override
                 public void focusGained(FocusEvent e) {
                     showMenu(evt);

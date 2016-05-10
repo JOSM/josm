@@ -11,8 +11,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
@@ -388,7 +388,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         }
     }
 
-    static class TextFieldFocusHandler implements FocusListener {
+    static class TextFieldFocusHandler extends FocusAdapter {
         @Override
         public void focusGained(FocusEvent e) {
             Component c = e.getComponent();
@@ -397,9 +397,6 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
                 tf.selectAll();
             }
         }
-
-        @Override
-        public void focusLost(FocusEvent e) {}
     }
 
     class ChunkSizeInputVerifier implements DocumentListener, PropertyChangeListener {
@@ -466,7 +463,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         }
     }
 
-    class StrategyChangeListener implements ItemListener, FocusListener, ActionListener {
+    class StrategyChangeListener extends FocusAdapter implements ItemListener, ActionListener {
 
         protected void notifyStrategy() {
             firePropertyChange(UPLOAD_STRATEGY_SPECIFICATION_PROP, null, getUploadStrategySpecification());
@@ -486,9 +483,6 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
             }
             notifyStrategy();
         }
-
-        @Override
-        public void focusGained(FocusEvent arg0) {}
 
         @Override
         public void focusLost(FocusEvent arg0) {

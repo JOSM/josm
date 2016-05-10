@@ -77,7 +77,9 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     }
 
     @Override
-    protected void finish() {}
+    protected void finish() {
+        // Do nothing
+    }
 
     protected void sign(HttpClient con) throws OAuthException {
         OAuthConsumer consumer = oauthParameters.buildConsumer();

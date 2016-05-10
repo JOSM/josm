@@ -91,7 +91,9 @@ public class QuadStateCheckBox extends JCheckBox {
 
     /** Do not let anyone add mouse listeners */
     @Override
-    public void addMouseListener(MouseListener l) { }
+    public void addMouseListener(MouseListener l) {
+        // Do nothing
+    }
 
     /**
      * Sets a text describing this property in the tooltip text
@@ -210,13 +212,19 @@ public class QuadStateCheckBox extends JCheckBox {
         // ----------------------------------------------------------------------
 
         @Override
-        public void setArmed(boolean b) { }
+        public void setArmed(boolean b) {
+            // Do nothing
+        }
 
         @Override
-        public void setSelected(boolean b) { }
+        public void setSelected(boolean b) {
+            // Do nothing
+        }
 
         @Override
-        public void setPressed(boolean b) { }
+        public void setPressed(boolean b) {
+            // Do nothing
+        }
 
         /** We disable focusing on the component when it is not enabled. */
         @Override

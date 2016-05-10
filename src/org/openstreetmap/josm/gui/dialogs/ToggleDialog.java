@@ -458,7 +458,6 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     /**
      * Closes the detached dialog if this toggle dialog is currently displayed in a detached dialog.
-     *
      */
     public void closeDetachedDialog() {
         if (detachedDialog != null) {
@@ -473,20 +472,18 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * method, it's a good place to register listeners needed to keep dialog updated
      */
     public void showNotify() {
-
+        // Do nothing
     }
 
     /**
-     * Called when toggle dialog is hidden (collapsed, removed, MapFrame is removed, ...). Good place to unregister
-     * listeners
+     * Called when toggle dialog is hidden (collapsed, removed, MapFrame is removed, ...). Good place to unregister listeners
      */
     public void hideNotify() {
-
+        // Do nothing
     }
 
     /**
      * The title bar displayed in docked mode
-     *
      */
     protected class TitleBar extends JPanel {
         /** the label which shows whether the toggle dialog is expanded or collapsed */
@@ -854,6 +851,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * Do something when the toggleButton is pressed.
      */
     protected void toggleButtonHook() {
+        // Do nothing
     }
 
     protected boolean dockWhenClosingDetachedDlg() {
@@ -864,6 +862,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * primitive stateChangedListener for subclasses
      */
     protected void stateChanged() {
+        // Do nothing
     }
 
     protected Component createLayout(Component data, boolean scroll, Collection<SideButton> buttons) {

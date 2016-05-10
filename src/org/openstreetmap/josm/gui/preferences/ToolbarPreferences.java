@@ -461,10 +461,14 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 }
 
                 @Override
-                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                    // Do nothing
+                }
 
                 @Override
-                public void popupMenuCanceled(PopupMenuEvent e) {}
+                public void popupMenuCanceled(PopupMenuEvent e) {
+                    // Do nothing
+                }
             });
             add(remove);
             add(configure);
@@ -819,10 +823,14 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             final JPanel p = new JPanel();
             p.setLayout(new LayoutManager() {
                 @Override
-                public void addLayoutComponent(String name, Component comp) {}
+                public void addLayoutComponent(String name, Component comp) {
+                    // Do nothing
+                }
 
                 @Override
-                public void removeLayoutComponent(Component comp) {}
+                public void removeLayoutComponent(Component comp) {
+                    // Do nothing
+                }
 
                 @Override
                 public Dimension minimumLayoutSize(Container parent) {

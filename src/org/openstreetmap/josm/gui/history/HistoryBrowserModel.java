@@ -760,10 +760,14 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {}
+    public void layerAdded(Layer newLayer) {
+        // Do nothing
+    }
 
     @Override
-    public void layerRemoved(Layer oldLayer) {}
+    public void layerRemoved(Layer oldLayer) {
+        // Do nothing
+    }
 
     /**
      * Creates a {@link HistoryOsmPrimitive} from a {@link OsmPrimitive}

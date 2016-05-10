@@ -26,6 +26,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class RecentlyOpenedFilesMenu extends JMenu {
     private ClearAction clearAction;
 
+    /**
+     * Constructs a new {@code RecentlyOpenedFilesMenu}.
+     */
     public RecentlyOpenedFilesMenu() {
         super(tr("Open Recent"));
         setToolTipText(tr("List of recently opened files"));
@@ -41,10 +44,12 @@ public class RecentlyOpenedFilesMenu extends JMenu {
 
             @Override
             public void menuDeselected(MenuEvent e) {
+                // Do nothing
             }
 
             @Override
             public void menuCanceled(MenuEvent e) {
+                // Do nothing
             }
         });
     }

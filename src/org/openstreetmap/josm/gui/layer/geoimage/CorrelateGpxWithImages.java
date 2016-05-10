@@ -792,6 +792,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         @Override
         public void changedUpdate(DocumentEvent ev) {
+            // Do nothing
         }
 
         @Override

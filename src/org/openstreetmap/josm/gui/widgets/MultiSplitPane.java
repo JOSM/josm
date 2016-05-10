@@ -383,10 +383,14 @@ public class MultiSplitPane extends JPanel {
         }
 
         @Override
-        public void keyReleased(KeyEvent e) { }
+        public void keyReleased(KeyEvent e) {
+            // Do nothing
+        }
 
         @Override
-        public void keyTyped(KeyEvent e) { }
+        public void keyTyped(KeyEvent e) {
+            // Do nothing
+        }
     }
 
     @Override

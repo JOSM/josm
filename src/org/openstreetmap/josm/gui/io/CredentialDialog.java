@@ -13,8 +13,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Objects;
@@ -343,7 +343,7 @@ public class CredentialDialog extends JDialog {
      *   If current text field is not empty, but the next one is (or just contains a sequence of spaces), focuses the next text field.
      *   If both text fields contain characters, submits the form by calling owner's {@link OKAction}.
      */
-    private static class TFKeyListener implements KeyListener {
+    private static class TFKeyListener extends KeyAdapter {
         protected CredentialDialog owner; // owner Dependency Injection to call OKAction
         protected JTextField currentTF;
         protected JTextField nextTF;
@@ -369,14 +369,6 @@ public class CredentialDialog extends JDialog {
                     okAction.actionPerformed(null);
                 }
             }
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-        }
-
-        @Override
-        public void keyTyped(KeyEvent e) {
         }
     }
 

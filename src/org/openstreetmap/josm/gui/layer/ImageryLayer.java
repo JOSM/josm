@@ -194,6 +194,7 @@ public abstract class ImageryLayer extends Layer {
     public class OffsetAction extends AbstractAction implements LayerAction {
         @Override
         public void actionPerformed(ActionEvent e) {
+            // Do nothing
         }
 
         @Override

@@ -29,6 +29,7 @@ public class ChildProgress extends AbstractProgressMonitor {
 
     @Override
     protected void doBeginTask() {
+        // Do nothing
     }
 
     @Override
