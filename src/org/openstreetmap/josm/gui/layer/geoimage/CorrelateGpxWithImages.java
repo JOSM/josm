@@ -53,6 +53,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.ListSelectionModel;
+import javax.swing.MutableComboBoxModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -309,11 +310,15 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     return;
                 }
 
+                MutableComboBoxModel<GpxDataWrapper> model = (MutableComboBoxModel<GpxDataWrapper>) cbGpx.getModel();
                 loadedGpxData.add(data);
                 if (gpxLst.get(0).file == null) {
                     gpxLst.remove(0);
+                    model.removeElementAt(0);
                 }
-                gpxLst.add(new GpxDataWrapper(sel.getName(), data, sel));
+                GpxDataWrapper elem = new GpxDataWrapper(sel.getName(), data, sel);
+                gpxLst.add(elem);
+                model.addElement(elem);
                 cbGpx.setSelectedIndex(cbGpx.getItemCount() - 1);
             } finally {
                 outerPanel.setCursor(Cursor.getDefaultCursor());
