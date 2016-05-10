@@ -958,13 +958,16 @@ public class JoinAreasAction extends JosmAction {
             SplitWayResult split = SplitWayAction.splitWay(getEditLayer(), way, chunks,
                     Collections.<OsmPrimitive>emptyList(), SplitWayAction.Strategy.keepFirstChunk());
 
-            //execute the command, we need the results
-            cmds.add(split.getCommand());
-            commitCommands(marktr("Split ways into fragments"));
+            if (split != null) {
+                //execute the command, we need the results
+                cmds.add(split.getCommand());
+                commitCommands(marktr("Split ways into fragments"));
 
-            result.add(split.getOriginalWay());
-            result.addAll(split.getNewWays());
-        } else {
+                result.add(split.getOriginalWay());
+                result.addAll(split.getNewWays());
+            }
+        }
+        if (result.isEmpty()) {
             //nothing to split
             result.add(way);
         }

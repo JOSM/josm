@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -26,6 +27,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SplitWayAction;
+import org.openstreetmap.josm.actions.SplitWayAction.SplitWayResult;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -469,10 +471,8 @@ public class DeleteCommand extends Command {
             wnew.setNodes(n1);
             return new ChangeCommand(ws.way, wnew);
         } else {
-            List<List<Node>> chunks = new ArrayList<>(2);
-            chunks.add(n1);
-            chunks.add(n2);
-            return SplitWayAction.splitWay(layer, ws.way, chunks, Collections.<OsmPrimitive>emptyList()).getCommand();
+            SplitWayResult split = SplitWayAction.splitWay(layer, ws.way, Arrays.asList(n1, n2), Collections.<OsmPrimitive>emptyList());
+            return split != null ? split.getCommand() : null;
         }
     }
 
