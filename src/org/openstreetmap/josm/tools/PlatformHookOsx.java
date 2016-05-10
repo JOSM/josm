@@ -3,12 +3,14 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
@@ -41,26 +43,32 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements InvocationHa
     @Override
     public void startupHook() {
         // Here we register callbacks for the menu entries in the system menu and file opening through double-click
+        // http://openjdk.java.net/jeps/272
+        // https://bugs.openjdk.java.net/browse/JDK-8048731
+        // http://cr.openjdk.java.net/~azvegint/jdk/9/8143227/10/jdk/
+        // This method must be cleaned up after we switch to Java 9
         try {
             Class<?> eawtApplication = Class.forName("com.apple.eawt.Application");
-            Class<?> eawtQuitHandler = Class.forName("com.apple.eawt.QuitHandler");
-            Class<?> eawtAboutHandler = Class.forName("com.apple.eawt.AboutHandler");
-            Class<?> eawtOpenFilesHandler = Class.forName("com.apple.eawt.OpenFilesHandler");
-            Class<?> eawtPreferencesHandler = Class.forName("com.apple.eawt.PreferencesHandler");
-            Object appli = eawtApplication.getConstructor((Class[]) null).newInstance((Object[]) null);
+            Class<?> quitHandler = findHandlerClass("QuitHandler");
+            Class<?> aboutHandler = findHandlerClass("AboutHandler");
+            Class<?> openFilesHandler = findHandlerClass("OpenFilesHandler");
+            Class<?> preferencesHandler = findHandlerClass("PreferencesHandler");
             Object proxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] {
-                eawtQuitHandler, eawtAboutHandler, eawtOpenFilesHandler, eawtPreferencesHandler}, ivhandler);
-            eawtApplication.getDeclaredMethod("setQuitHandler", eawtQuitHandler).invoke(appli, proxy);
-            eawtApplication.getDeclaredMethod("setAboutHandler", eawtAboutHandler).invoke(appli, proxy);
-            eawtApplication.getDeclaredMethod("setOpenFileHandler", eawtOpenFilesHandler).invoke(appli, proxy);
-            eawtApplication.getDeclaredMethod("setPreferencesHandler", eawtPreferencesHandler).invoke(appli, proxy);
-            // this method has been deprecated, but without replacement ATM
-            eawtApplication.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class).invoke(appli, Boolean.TRUE);
-            // setup the dock icon. It is automatically set with application bundle and Web start but we need
-            // to do it manually if run with `java -jar``
-            eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(appli, ImageProvider.get("logo").getImage());
-            // enable full screen
-            enableOSXFullscreen((Window) Main.parent);
+                quitHandler, aboutHandler, openFilesHandler, preferencesHandler}, ivhandler);
+            try {
+                Object appli = eawtApplication.getConstructor((Class[]) null).newInstance((Object[]) null);
+                setHandlers(eawtApplication, quitHandler, aboutHandler, openFilesHandler, preferencesHandler, proxy, appli);
+                // this method has been deprecated, but without replacement ATM
+                eawtApplication.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class).invoke(appli, Boolean.TRUE);
+                // setup the dock icon. It is automatically set with application bundle and Web start but we need
+                // to do it manually if run with `java -jar``
+                eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(appli, ImageProvider.get("logo").getImage());
+                // enable full screen
+                enableOSXFullscreen((Window) Main.parent);
+            } catch (IllegalAccessException e) {
+                // with Java 9, module java.desktop does not export com.apple.eawt, use new Desktop API instead
+                setHandlers(Desktop.class, quitHandler, aboutHandler, openFilesHandler, preferencesHandler, proxy, Desktop.getDesktop());
+            }
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
             Main.warn("Failed to register with OSX: " + ex);
@@ -69,6 +77,23 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements InvocationHa
         String java = System.getProperty("java.version");
         if (java != null && java.startsWith("1.7")) {
             askUpdateJava(java);
+        }
+    }
+
+    protected void setHandlers(Class<?> appClass, Class<?> quitHandler, Class<?> aboutHandler,
+            Class<?> openFilesHandler, Class<?> preferencesHandler, Object proxy, Object appInstance)
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        appClass.getDeclaredMethod("setQuitHandler", quitHandler).invoke(appInstance, proxy);
+        appClass.getDeclaredMethod("setAboutHandler", aboutHandler).invoke(appInstance, proxy);
+        appClass.getDeclaredMethod("setOpenFileHandler", openFilesHandler).invoke(appInstance, proxy);
+        appClass.getDeclaredMethod("setPreferencesHandler", preferencesHandler).invoke(appInstance, proxy);
+    }
+
+    protected Class<?> findHandlerClass(String className) throws ClassNotFoundException {
+        try {
+            return Class.forName("com.apple.eawt."+className);
+        } catch (ClassNotFoundException e) {
+            return Class.forName("java.awt.desktop."+className);
         }
     }
 
@@ -124,7 +149,12 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements InvocationHa
         case "handleQuitRequestWith":
             boolean closed = Main.exitJosm(false, 0);
             if (args[1] != null) {
-                args[1].getClass().getDeclaredMethod(closed ? "performQuit" : "cancelQuit").invoke(args[1]);
+                try {
+                    args[1].getClass().getDeclaredMethod(closed ? "performQuit" : "cancelQuit").invoke(args[1]);
+                } catch (IllegalAccessException e) {
+                    // with Java 9, module java.desktop does not export com.apple.eawt, use new Desktop API instead
+                    Class.forName("java.awt.desktop.QuitResponse").getMethod(closed ? "performQuit" : "cancelQuit").invoke(args[1]);
+                }
             }
             break;
         case "handleAbout":
