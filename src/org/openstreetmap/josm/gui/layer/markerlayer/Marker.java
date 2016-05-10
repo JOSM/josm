@@ -387,6 +387,7 @@ public class Marker implements TemplateEngineDataProvider {
      * @param ev A dummy ActionEvent
      */
     public void actionPerformed(ActionEvent ev) {
+        // Do nothing
     }
 
     /**

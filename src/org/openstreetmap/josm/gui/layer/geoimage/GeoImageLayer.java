@@ -899,6 +899,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
 
             @Override
             public void layerAdded(Layer newLayer) {
+                // Do nothing
             }
 
             @Override

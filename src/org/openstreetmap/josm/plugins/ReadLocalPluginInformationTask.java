@@ -57,7 +57,9 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     }
 
     @Override
-    protected void finish() {}
+    protected void finish() {
+        // Do nothing
+    }
 
     protected void processJarFile(File f, String pluginName) throws PluginException {
         PluginInformation info = new PluginInformation(

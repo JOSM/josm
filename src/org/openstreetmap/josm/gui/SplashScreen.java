@@ -309,6 +309,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         @Override
         public void setTicks(int ticks) {
+            // Not used
         }
 
         @Override

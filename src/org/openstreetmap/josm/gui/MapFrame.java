@@ -219,6 +219,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
                 return new BasicSplitPaneDivider(this) {
                     @Override
                     public void setBorder(Border b) {
+                        // Do nothing
                     }
                 };
             }
@@ -545,7 +546,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
                 }
 
                 @Override
-                public void popupMenuCanceled(PopupMenuEvent e) {}
+                public void popupMenuCanceled(PopupMenuEvent e) {
+                    // Do nothing
+                }
             });
 
             add(new AbstractAction(tr("Hide edit toolbar")) {
@@ -776,7 +779,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     }
 
     @Override
-    public void layerAdded(Layer newLayer) { }
+    public void layerAdded(Layer newLayer) {
+        // Do nothing
+    }
 
     @Override
     public void layerRemoved(Layer oldLayer) {

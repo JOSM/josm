@@ -410,7 +410,9 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         }
 
         @Override
-        protected void finish() {}
+        protected void finish() {
+            // Do nothing
+        }
 
         protected void alertAuthorisationFailed(OsmOAuthAuthorizationException e) {
             HelpAwareOptionPane.showOptionDialog(

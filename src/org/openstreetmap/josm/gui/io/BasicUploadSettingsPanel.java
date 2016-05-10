@@ -9,8 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -134,22 +134,12 @@ public class BasicUploadSettingsPanel extends JPanel {
     public void setHistoryComboBoxDownFocusTraversalHandler(final Action handler, final HistoryComboBox hcb) {
         hcb.getEditor().addActionListener(handler);
         hcb.getEditorComponent().addKeyListener(
-                new KeyListener() {
+                new KeyAdapter() {
                     @Override
                     public void keyTyped(KeyEvent e) {
                         if (e.getKeyCode() == KeyEvent.VK_TAB) {
                             handler.actionPerformed(new ActionEvent(hcb, 0, "focusDown"));
                         }
-                    }
-
-                    @Override
-                    public void keyReleased(KeyEvent e) {
-                        // Do nothing
-                    }
-
-                    @Override
-                    public void keyPressed(KeyEvent e) {
-                        // Do nothing
                     }
                 }
         );

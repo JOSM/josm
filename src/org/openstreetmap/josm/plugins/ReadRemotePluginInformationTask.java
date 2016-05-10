@@ -96,7 +96,9 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     }
 
     @Override
-    protected void finish() {}
+    protected void finish() {
+        // Do nothing
+    }
 
     /**
      * Creates the file name for the cached plugin list and the icon cache file.

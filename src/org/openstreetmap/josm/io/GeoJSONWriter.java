@@ -113,6 +113,7 @@ public class GeoJSONWriter {
 
         @Override
         public void visit(IRelation r) {
+            // Do nothing
         }
     }
 

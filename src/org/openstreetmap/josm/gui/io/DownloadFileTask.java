@@ -84,7 +84,9 @@ public class DownloadFileTask extends PleaseWaitRunnable {
     }
 
     @Override
-    protected void finish() {}
+    protected void finish() {
+        // Do nothing
+    }
 
     /**
      * Performs download.

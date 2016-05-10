@@ -107,6 +107,7 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void afterPrefStartupHook() {
+        // Do nothing
     }
 
     @Override

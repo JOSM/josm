@@ -120,10 +120,12 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
 
             @Override
             public void menuDeselected(MenuEvent e) {
+                // Do nothing
             }
 
             @Override
             public void menuCanceled(MenuEvent e) {
+                // Do nothing
             }
         });
         MainMenu.add(subMenu, rectaction);
@@ -237,6 +239,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
 
     @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        // Do nothing
     }
 
     @Override

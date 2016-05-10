@@ -32,13 +32,13 @@ import org.openstreetmap.josm.actions.AlignInLineAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ChangesetManagerToggleAction;
 import org.openstreetmap.josm.actions.CloseChangesetAction;
-import org.openstreetmap.josm.actions.DeleteLayerAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.actions.CopyCoordinatesAction;
 import org.openstreetmap.josm.actions.CreateCircleAction;
 import org.openstreetmap.josm.actions.CreateMultipolygonAction;
 import org.openstreetmap.josm.actions.DeleteAction;
+import org.openstreetmap.josm.actions.DeleteLayerAction;
 import org.openstreetmap.josm.actions.DialogsToggleAction;
 import org.openstreetmap.josm.actions.DistributeAction;
 import org.openstreetmap.josm.actions.DownloadAction;
@@ -402,10 +402,14 @@ public class MainMenu extends JMenuBar {
      */
     public static final MenuListener menuSeparatorHandler = new MenuListener() {
         @Override
-        public void menuCanceled(MenuEvent e) {}
+        public void menuCanceled(MenuEvent e) {
+            // Do nothing
+        }
 
         @Override
-        public void menuDeselected(MenuEvent e) {}
+        public void menuDeselected(MenuEvent e) {
+            // Do nothing
+        }
 
         @Override
         public void menuSelected(MenuEvent a) {

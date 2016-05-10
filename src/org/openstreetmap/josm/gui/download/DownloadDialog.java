@@ -476,6 +476,7 @@ public class DownloadDialog extends JDialog  {
     }
 
     protected void buildMainPanelAboveDownloadSelections(JPanel pnl) {
+        // Do nothing
     }
 
     class CancelAction extends AbstractAction {

@@ -15,11 +15,12 @@ public final class NullProgressMonitor implements ProgressMonitor {
     public static final ProgressMonitor INSTANCE = new NullProgressMonitor();
 
     private NullProgressMonitor() {
-
+        // Do nothing
     }
 
     @Override
     public void addCancelListener(CancelListener listener) {
+        // Do nothing
     }
 
     @Override
@@ -38,6 +39,7 @@ public final class NullProgressMonitor implements ProgressMonitor {
 
     @Override
     public void cancel() {
+        // Do nothing
     }
 
     @Override
@@ -47,10 +49,7 @@ public final class NullProgressMonitor implements ProgressMonitor {
 
     @Override
     public void finishTask() {
-    }
-
-    public String getErrorMessage() {
-        return null;
+        // Do nothing
     }
 
     @Override
@@ -67,6 +66,7 @@ public final class NullProgressMonitor implements ProgressMonitor {
 
     @Override
     public void invalidate() {
+        // Do nothing
     }
 
     @Override
@@ -76,32 +76,32 @@ public final class NullProgressMonitor implements ProgressMonitor {
 
     @Override
     public void removeCancelListener(CancelListener listener) {
+        // Do nothing
     }
 
     @Override
     public void setCustomText(String text) {
-    }
-
-    public void setErrorMessage(String message) {
+        // Do nothing
     }
 
     @Override
     public void setExtraText(String text) {
+        // Do nothing
     }
 
     @Override
     public void appendLogMessage(String message) {
-    }
-
-    public void setSilent(boolean value) {
+        // Do nothing
     }
 
     @Override
     public void setTicks(int ticks) {
+        // Do nothing
     }
 
     @Override
     public void setTicksCount(int ticks) {
+        // Do nothing
     }
 
     @Override
@@ -113,6 +113,7 @@ public final class NullProgressMonitor implements ProgressMonitor {
 
     @Override
     public void worked(int ticks) {
+        // Do nothing
     }
 
     @Override
@@ -122,6 +123,7 @@ public final class NullProgressMonitor implements ProgressMonitor {
 
     @Override
     public void setProgressTaskId(ProgressTaskId taskId) {
+        // Do nothing
     }
 
     @Override

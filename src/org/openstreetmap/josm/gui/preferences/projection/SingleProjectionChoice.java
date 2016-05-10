@@ -53,6 +53,7 @@ public class SingleProjectionChoice extends AbstractProjectionChoice {
 
     @Override
     public void setPreferences(Collection<String> args) {
+        // Do nothing
     }
 
     @Override

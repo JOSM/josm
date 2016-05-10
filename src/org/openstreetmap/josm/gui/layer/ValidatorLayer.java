@@ -107,6 +107,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
     @Override
     public void mergeFrom(Layer from) {
+        // Do nothing
     }
 
     @Override
@@ -121,6 +122,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
     @Override
     public void visitBoundingBox(BoundingXYVisitor v) {
+        // Do nothing
     }
 
     @Override
@@ -141,10 +143,12 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
     @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        // Do nothing
     }
 
     @Override
     public void layerAdded(Layer newLayer) {
+        // Do nothing
     }
 
     /**

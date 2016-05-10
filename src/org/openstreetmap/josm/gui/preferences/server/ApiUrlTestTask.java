@@ -142,7 +142,9 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
     }
 
     @Override
-    protected void finish() {}
+    protected void finish() {
+        // Do nothing
+    }
 
     /**
      * Removes leading and trailing whitespace from the API URL and removes trailing '/'.
