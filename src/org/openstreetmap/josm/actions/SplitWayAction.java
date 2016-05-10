@@ -745,8 +745,7 @@ public class SplitWayAction extends JosmAction {
      */
     public static SplitWayResult split(OsmDataLayer layer, Way way, List<Node> atNodes, Collection<? extends OsmPrimitive> selection) {
         List<List<Node>> chunks = buildSplitChunks(way, atNodes);
-        if (chunks == null) return null;
-        return splitWay(layer, way, chunks, selection);
+        return chunks != null ? splitWay(layer, way, chunks, selection) : null;
     }
 
     @Override
