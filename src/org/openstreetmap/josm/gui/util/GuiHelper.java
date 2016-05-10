@@ -42,6 +42,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
@@ -477,7 +478,22 @@ public final class GuiHelper {
      * @since 9916
      */
     public static Window getWindowAncestorFor(EventObject e) {
-        return e != null && e.getSource() instanceof Component ? SwingUtilities.getWindowAncestor((Component) e.getSource()) : null;
+        if (e != null) {
+            Object source = e.getSource();
+            if (source instanceof Component) {
+                Window ancestor = SwingUtilities.getWindowAncestor((Component) source);
+                if (ancestor != null) {
+                    return ancestor;
+                } else {
+                    Container parent = ((Component) source).getParent();
+                    if (parent instanceof JPopupMenu) {
+                        Component invoker = ((JPopupMenu) parent).getInvoker();
+                        return SwingUtilities.getWindowAncestor(invoker);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
