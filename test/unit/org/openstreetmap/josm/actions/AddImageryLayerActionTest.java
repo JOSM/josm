@@ -52,7 +52,7 @@ public final class AddImageryLayerActionTest {
         assertEquals(1, tmsLayers.size());
 
         try {
-            new AddImageryLayerAction(new ImageryInfo("osm-wms.de", "http://129.206.228.72/cached/osm?",
+            new AddImageryLayerAction(new ImageryInfo("wms.openstreetmap.fr", "http://wms.openstreetmap.fr/wms?",
                     "wms_endpoint", null, null)).actionPerformed(null);
             List<WMSLayer> wmsLayers = Main.map.mapView.getLayersOfType(WMSLayer.class);
             assertEquals(1, wmsLayers.size());
