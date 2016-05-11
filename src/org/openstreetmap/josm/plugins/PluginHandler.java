@@ -1492,8 +1492,13 @@ public final class PluginHandler {
     }
 
     private static class UpdatePluginsMessagePanel extends JPanel {
-        private JMultilineLabel lblMessage;
-        private JCheckBox cbDontShowAgain;
+        private final JMultilineLabel lblMessage = new JMultilineLabel("");
+        private final JCheckBox cbDontShowAgain = new JCheckBox(
+                tr("Do not ask again and remember my decision (go to Preferences->Plugins to change it later)"));
+
+        UpdatePluginsMessagePanel() {
+            build();
+        }
 
         protected final void build() {
             setLayout(new GridBagLayout());
@@ -1503,19 +1508,14 @@ public final class PluginHandler {
             gc.weightx = 1.0;
             gc.weighty = 1.0;
             gc.insets = new Insets(5, 5, 5, 5);
-            add(lblMessage = new JMultilineLabel(""), gc);
+            add(lblMessage, gc);
             lblMessage.setFont(lblMessage.getFont().deriveFont(Font.PLAIN));
 
             gc.gridy = 1;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weighty = 0.0;
-            add(cbDontShowAgain = new JCheckBox(
-                    tr("Do not ask again and remember my decision (go to Preferences->Plugins to change it later)")), gc);
+            add(cbDontShowAgain, gc);
             cbDontShowAgain.setFont(cbDontShowAgain.getFont().deriveFont(Font.PLAIN));
-        }
-
-        UpdatePluginsMessagePanel() {
-            build();
         }
 
         public void setMessage(String message) {

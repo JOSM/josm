@@ -25,11 +25,18 @@ import org.openstreetmap.josm.io.OnlineResource;
 /**
  * This panel allows to enter the ID of single changeset and to download
  * the respective changeset.
- *
+ * @since 2689
  */
 public class SingleChangesetDownloadPanel extends JPanel {
 
-    private ChangesetIdTextField tfChangesetId;
+    private final ChangesetIdTextField tfChangesetId = new ChangesetIdTextField();
+
+    /**
+     * Constructs a new {@link SingleChangesetDownloadPanel}
+     */
+    public SingleChangesetDownloadPanel() {
+        build();
+    }
 
     protected void build() {
         setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -41,7 +48,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
         );
 
         add(new JLabel(tr("Changeset ID: ")));
-        add(tfChangesetId = new ChangesetIdTextField());
+        add(tfChangesetId);
         tfChangesetId.setToolTipText(tr("Enter a changeset id"));
         SelectAllOnFocusGainedDecorator.decorate(tfChangesetId);
 
@@ -54,13 +61,6 @@ public class SingleChangesetDownloadPanel extends JPanel {
         if (Main.pref.getBoolean("downloadchangeset.autopaste", true)) {
             tfChangesetId.tryToPasteFromClipboard();
         }
-    }
-
-    /**
-     * Constructs a new {@link SingleChangesetDownloadPanel}
-     */
-    public SingleChangesetDownloadPanel() {
-        build();
     }
 
     /**
@@ -89,7 +89,8 @@ public class SingleChangesetDownloadPanel extends JPanel {
             if (!isEnabled())
                 return;
             int id = getChangesetId();
-            if (id == 0) return;
+            if (id == 0)
+                return;
             ChangesetContentDownloadTask task =  new ChangesetContentDownloadTask(
                     SingleChangesetDownloadPanel.this,
                     Collections.singleton(id)

@@ -83,15 +83,18 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         if (nc != null && r != null) {
             Map<DataSet, Map<Relation, Multipolygon>> map1 = cache.get(nc);
             if (map1 == null) {
-                cache.put(nc, map1 = new ConcurrentHashMap<>());
+                map1 = new ConcurrentHashMap<>();
+                cache.put(nc, map1);
             }
             Map<Relation, Multipolygon> map2 = map1.get(r.getDataSet());
             if (map2 == null) {
-                map1.put(r.getDataSet(), map2 = new ConcurrentHashMap<>());
+                map2 = new ConcurrentHashMap<>();
+                map1.put(r.getDataSet(), map2);
             }
             multipolygon = map2.get(r);
             if (multipolygon == null || forceRefresh) {
-                map2.put(r, multipolygon = new Multipolygon(r));
+                multipolygon = new Multipolygon(r);
+                map2.put(r, multipolygon);
                 for (PolyData pd : multipolygon.getCombinedPolygons()) {
                     if (pd.selected) {
                         selectedPolyData.add(pd);

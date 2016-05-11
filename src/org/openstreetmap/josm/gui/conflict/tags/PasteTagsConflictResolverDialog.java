@@ -56,16 +56,16 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         RESOLVING_TYPED_TAGCOLLECTIONS
     }
 
-    private TagConflictResolver allPrimitivesResolver;
-    private transient Map<OsmPrimitiveType, TagConflictResolver> resolvers;
-    private JTabbedPane tpResolvers;
+    private final TagConflictResolver allPrimitivesResolver = new TagConflictResolver();
+    private final transient Map<OsmPrimitiveType, TagConflictResolver> resolvers = new EnumMap<>(OsmPrimitiveType.class);
+    private final JTabbedPane tpResolvers = new JTabbedPane();
     private Mode mode;
     private boolean canceled;
 
-    private final ImageIcon iconResolved;
-    private final ImageIcon iconUnresolved;
-    private StatisticsTableModel statisticsModel;
-    private JPanel pnlTagResolver;
+    private final ImageIcon iconResolved = ImageProvider.get("dialogs/conflict", "tagconflictresolved");
+    private final ImageIcon iconUnresolved = ImageProvider.get("dialogs/conflict", "tagconflictunresolved");
+    private final StatisticsTableModel statisticsModel = new StatisticsTableModel();
+    private final JPanel pnlTagResolver = new JPanel(new BorderLayout());
 
     /**
      * Constructs a new {@code PasteTagsConflictResolverDialog}.
@@ -74,19 +74,14 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     public PasteTagsConflictResolverDialog(Component owner) {
         super(GuiHelper.getFrameForComponent(owner), ModalityType.DOCUMENT_MODAL);
         build();
-        iconResolved = ImageProvider.get("dialogs/conflict", "tagconflictresolved");
-        iconUnresolved = ImageProvider.get("dialogs/conflict", "tagconflictunresolved");
     }
 
     protected final void build() {
         setTitle(tr("Conflicts in pasted tags"));
-        allPrimitivesResolver = new TagConflictResolver();
-        resolvers = new EnumMap<>(OsmPrimitiveType.class);
         for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
             resolvers.put(type, new TagConflictResolver());
             resolvers.get(type).getModel().addPropertyChangeListener(this);
         }
-        tpResolvers = new JTabbedPane();
         getContentPane().setLayout(new GridBagLayout());
         mode = null;
         GridBagConstraints gc = new GridBagConstraints();
@@ -101,7 +96,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        getContentPane().add(pnlTagResolver = new JPanel(new BorderLayout()), gc);
+        getContentPane().add(pnlTagResolver, gc);
         gc.gridx = 0;
         gc.gridy = 2;
         gc.fill = GridBagConstraints.HORIZONTAL;
@@ -130,7 +125,6 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
 
     protected JPanel buildSourceAndTargetInfoPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
-        statisticsModel = new StatisticsTableModel();
         pnl.add(new StatisticsInfoTable(statisticsModel), BorderLayout.CENTER);
         return pnl;
     }

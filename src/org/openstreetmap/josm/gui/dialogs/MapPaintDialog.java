@@ -88,11 +88,15 @@ import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Dialog to configure the map painting style.
+ * @since 3843
+ */
 public class MapPaintDialog extends ToggleDialog {
 
     protected StylesTable tblStyles;
     protected StylesModel model;
-    protected DefaultListSelectionModel selectionModel;
+    protected final DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
 
     protected OnOffAction onoffAction;
     protected ReloadAction reloadAction;
@@ -143,7 +147,7 @@ public class MapPaintDialog extends ToggleDialog {
         cbWireframe.setBorder(new EmptyBorder(new Insets(1, 1, 1, 1)));
 
         tblStyles = new StylesTable(model);
-        tblStyles.setSelectionModel(selectionModel = new DefaultListSelectionModel());
+        tblStyles.setSelectionModel(selectionModel);
         tblStyles.addMouseListener(new PopupMenuHandler());
         tblStyles.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         tblStyles.setBackground(UIManager.getColor("Panel.background"));
@@ -271,8 +275,10 @@ public class MapPaintDialog extends ToggleDialog {
          */
         public void ensureSelectedIsVisible() {
             int index = selectionModel.getMinSelectionIndex();
-            if (index < 0) return;
-            if (index >= getRowCount()) return;
+            if (index < 0)
+                return;
+            if (index >= getRowCount())
+                return;
             tblStyles.scrollToVisible(index, 0);
             tblStyles.repaint();
         }

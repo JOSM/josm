@@ -55,10 +55,12 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     private transient Map<UploadStrategy, JRadioButton> rbStrategy;
     private transient Map<UploadStrategy, JLabel> lblNumRequests;
     private transient Map<UploadStrategy, JMultilineLabel> lblStrategies;
-    private JosmTextField tfChunkSize;
-    private JPanel pnlMultiChangesetPolicyPanel;
-    private JRadioButton rbFillOneChangeset;
-    private JRadioButton rbUseMultipleChangesets;
+    private final JosmTextField tfChunkSize = new JosmTextField(4);
+    private final JPanel pnlMultiChangesetPolicyPanel = new JPanel(new GridBagLayout());
+    private final JRadioButton rbFillOneChangeset = new JRadioButton(
+            tr("Fill up one changeset and return to the Upload Dialog"));
+    private final JRadioButton rbUseMultipleChangesets = new JRadioButton(
+            tr("Open and use as many new changesets as necessary"));
     private JMultilineLabel lblMultiChangesetPoliciesHeader;
 
     private long numUploadedObjects;
@@ -137,7 +139,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         gc.gridwidth = 1;
-        pnl.add(tfChunkSize = new JosmTextField(4), gc);
+        pnl.add(tfChunkSize, gc);
         gc.gridx = 3;
         gc.gridy = 2;
         gc.weightx = 0.0;
@@ -180,23 +182,21 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     }
 
     protected JPanel buildMultiChangesetPolicyPanel() {
-        pnlMultiChangesetPolicyPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
         gc.gridy = 0;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.weightx = 1.0;
-        pnlMultiChangesetPolicyPanel.add(lblMultiChangesetPoliciesHeader = new JMultilineLabel(
+        lblMultiChangesetPoliciesHeader = new JMultilineLabel(
                 tr("<html>There are <strong>multiple changesets</strong> necessary in order to upload {0} objects. " +
                    "Which strategy do you want to use?</html>",
-                        numUploadedObjects)), gc);
+                        numUploadedObjects));
+        pnlMultiChangesetPolicyPanel.add(lblMultiChangesetPoliciesHeader, gc);
         gc.gridy = 1;
-        pnlMultiChangesetPolicyPanel.add(rbFillOneChangeset = new JRadioButton(
-                tr("Fill up one changeset and return to the Upload Dialog")), gc);
+        pnlMultiChangesetPolicyPanel.add(rbFillOneChangeset, gc);
         gc.gridy = 2;
-        pnlMultiChangesetPolicyPanel.add(rbUseMultipleChangesets = new JRadioButton(
-                tr("Open and use as many new changesets as necessary")), gc);
+        pnlMultiChangesetPolicyPanel.add(rbUseMultipleChangesets, gc);
 
         ButtonGroup bgMultiChangesetPolicies = new ButtonGroup();
         bgMultiChangesetPolicies.add(rbFillOneChangeset);
@@ -472,7 +472,8 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         @Override
         public void itemStateChanged(ItemEvent e) {
             UploadStrategy strategy = getUploadStrategy();
-            if (strategy == null) return;
+            if (strategy == null)
+                return;
             switch(strategy) {
             case CHUNKED_DATASET_STRATEGY:
                 tfChunkSize.setEnabled(true);

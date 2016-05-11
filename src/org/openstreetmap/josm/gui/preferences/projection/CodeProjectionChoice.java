@@ -46,8 +46,8 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
 
     private static class CodeSelectionPanel extends JPanel implements ListSelectionListener, DocumentListener {
 
-        public JosmTextField filter;
-        private ProjectionCodeListModel model;
+        public final JosmTextField filter = new JosmTextField(30);
+        private final ProjectionCodeListModel model = new ProjectionCodeListModel();
         public JList<String> selectionList;
         private final List<String> data;
         private final List<String> filteredData;
@@ -88,12 +88,11 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         }
 
         private void build() {
-            filter = new JosmTextField(30);
             filter.setColumns(10);
             filter.getDocument().addDocumentListener(this);
 
             selectionList = new JList<>(data.toArray(new String[0]));
-            selectionList.setModel(model = new ProjectionCodeListModel());
+            selectionList.setModel(model);
             JScrollPane scroll = new JScrollPane(selectionList);
             scroll.setPreferredSize(new Dimension(200, 214));
 
@@ -104,7 +103,8 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
 
         public String getCode() {
             int idx = selectionList.getSelectedIndex();
-            if (idx == -1) return lastCode;
+            if (idx == -1)
+                return lastCode;
             return filteredData.get(selectionList.getSelectedIndex());
         }
 
@@ -173,7 +173,8 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
             if (matcher1.matches()) {
                 if (matcher2.matches()) {
                     int cmp1 = matcher1.group(1).compareTo(matcher2.group(1));
-                    if (cmp1 != 0) return cmp1;
+                    if (cmp1 != 0)
+                        return cmp1;
                     int num1 = Integer.parseInt(matcher1.group(2));
                     int num2 = Integer.parseInt(matcher2.group(2));
                     return Integer.compare(num1, num2);

@@ -30,8 +30,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class UrlBasedQueryPanel extends JPanel {
 
-    private JosmTextField tfUrl;
-    private JLabel lblValid;
+    private final JosmTextField tfUrl = new JosmTextField();
+    private final JLabel lblValid = new JLabel();
+
+    /**
+     * Constructs a new {@code UrlBasedQueryPanel}.
+     */
+    public UrlBasedQueryPanel() {
+        build();
+    }
 
     protected JPanel buildURLPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -44,7 +51,7 @@ public class UrlBasedQueryPanel extends JPanel {
         gc.gridx = 1;
         gc.weightx = 1.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        pnl.add(tfUrl = new JosmTextField(), gc);
+        pnl.add(tfUrl, gc);
         tfUrl.getDocument().addDocumentListener(new ChangetQueryUrlValidator());
         tfUrl.addFocusListener(
                 new FocusAdapter() {
@@ -58,7 +65,7 @@ public class UrlBasedQueryPanel extends JPanel {
         gc.gridx = 2;
         gc.weightx = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        pnl.add(lblValid = new JLabel(), gc);
+        pnl.add(lblValid, gc);
         lblValid.setPreferredSize(new Dimension(20, 20));
         return pnl;
     }
@@ -114,13 +121,6 @@ public class UrlBasedQueryPanel extends JPanel {
         add(new JPanel(), gc);
     }
 
-    /**
-     * Constructs a new {@code UrlBasedQueryPanel}.
-     */
-    public UrlBasedQueryPanel() {
-        build();
-    }
-
     protected boolean isValidChangesetQueryUrl(String text) {
         return buildChangesetQuery(text) != null;
     }
@@ -134,7 +134,8 @@ public class UrlBasedQueryPanel extends JPanel {
         }
         String path = url.getPath();
         String query = url.getQuery();
-        if (path == null || !path.endsWith("/changesets")) return null;
+        if (path == null || !path.endsWith("/changesets"))
+            return null;
 
         try {
             return ChangesetQuery.buildFromUrlQuery(query);
@@ -169,14 +170,16 @@ public class UrlBasedQueryPanel extends JPanel {
         }
 
         protected void feedbackValid() {
-            if ("valid".equals(getCurrentFeedback())) return;
+            if ("valid".equals(getCurrentFeedback()))
+                return;
             lblValid.setIcon(ImageProvider.get("dialogs", "valid"));
             lblValid.setToolTipText(null);
             lblValid.putClientProperty("valid", "valid");
         }
 
         protected void feedbackInvalid() {
-            if ("invalid".equals(getCurrentFeedback())) return;
+            if ("invalid".equals(getCurrentFeedback()))
+                return;
             lblValid.setIcon(ImageProvider.get("warning-small"));
             lblValid.setToolTipText(tr("This changeset query URL is invalid"));
             lblValid.putClientProperty("valid", "invalid");

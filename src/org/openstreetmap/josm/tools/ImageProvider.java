@@ -57,6 +57,7 @@ import javax.swing.ImageIcon;
 import javax.xml.bind.DatatypeConverter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -82,7 +83,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGUniverse;
-import org.openstreetmap.josm.data.osm.DataSet;
 
 /**
  * Helper class to support the application with images.
@@ -1228,7 +1228,8 @@ public class ImageProvider {
         synchronized (ROTATE_CACHE) {
             Map<Long, ImageResource> cacheByAngle = ROTATE_CACHE.get(img);
             if (cacheByAngle == null) {
-                ROTATE_CACHE.put(img, cacheByAngle = new HashMap<>());
+                cacheByAngle = new HashMap<>();
+                ROTATE_CACHE.put(img, cacheByAngle);
             }
 
             imageResource = cacheByAngle.get(originalAngle);
@@ -1256,7 +1257,8 @@ public class ImageProvider {
                     h = (int) (ih * Math.sin(radian) + iw * Math.sin(DEGREE_90 - radian));
                 }
                 Image image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-                cacheByAngle.put(originalAngle, imageResource = new ImageResource(image));
+                imageResource = new ImageResource(image);
+                cacheByAngle.put(originalAngle, imageResource);
                 Graphics g = image.getGraphics();
                 Graphics2D g2d = (Graphics2D) g.create();
 

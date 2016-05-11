@@ -116,37 +116,43 @@ public class CredentialDialog extends JDialog {
 
     public void prepareForOsmApiCredentials(String username, String password) {
         setTitle(tr("Enter credentials for OSM API"));
-        getContentPane().add(pnlCredentials = new OsmApiCredentialsPanel(this), BorderLayout.CENTER);
+        pnlCredentials = new OsmApiCredentialsPanel(this);
+        getContentPane().add(pnlCredentials, BorderLayout.CENTER);
         pnlCredentials.init(username, password);
         validate();
     }
 
     public void prepareForOtherHostCredentials(String username, String password, String host) {
         setTitle(tr("Enter credentials for host"));
-        getContentPane().add(pnlCredentials = new OtherHostCredentialsPanel(this, host), BorderLayout.CENTER);
+        pnlCredentials = new OtherHostCredentialsPanel(this, host);
+        getContentPane().add(pnlCredentials, BorderLayout.CENTER);
         pnlCredentials.init(username, password);
         validate();
     }
 
     public void prepareForProxyCredentials(String username, String password) {
         setTitle(tr("Enter credentials for HTTP proxy"));
-        getContentPane().add(pnlCredentials = new HttpProxyCredentialsPanel(this), BorderLayout.CENTER);
+        pnlCredentials = new HttpProxyCredentialsPanel(this);
+        getContentPane().add(pnlCredentials, BorderLayout.CENTER);
         pnlCredentials.init(username, password);
         validate();
     }
 
     public String getUsername() {
-        if (pnlCredentials == null) return null;
+        if (pnlCredentials == null)
+            return null;
         return pnlCredentials.getUserName();
     }
 
     public char[] getPassword() {
-        if (pnlCredentials == null) return null;
+        if (pnlCredentials == null)
+            return null;
         return pnlCredentials.getPassword();
     }
 
     public boolean isSaveCredentials() {
-        if (pnlCredentials == null) return false;
+        if (pnlCredentials == null)
+            return false;
         return pnlCredentials.isSaveCredentials();
     }
 
@@ -154,8 +160,8 @@ public class CredentialDialog extends JDialog {
         protected JosmTextField tfUserName;
         protected JosmPasswordField tfPassword;
         protected JCheckBox cbSaveCredentials;
-        protected JMultilineLabel lblHeading;
-        protected JMultilineLabel lblWarning;
+        protected final JMultilineLabel lblHeading = new JMultilineLabel("");
+        protected final JMultilineLabel lblWarning = new JMultilineLabel("");
         protected CredentialDialog owner; // owner Dependency Injection to use Key listeners for username and password text fields
 
         protected void build() {
@@ -175,7 +181,7 @@ public class CredentialDialog extends JDialog {
             gc.weightx = 1.0;
             gc.weighty = 0.0;
             gc.insets = new Insets(0, 0, 10, 0);
-            add(lblHeading = new JMultilineLabel(""), gc);
+            add(lblHeading, gc);
 
             gc.gridx = 0;
             gc.gridy = 1;
@@ -207,7 +213,6 @@ public class CredentialDialog extends JDialog {
             gc.fill = GridBagConstraints.BOTH;
             gc.weightx = 1.0;
             gc.weighty = 0.0;
-            lblWarning = new JMultilineLabel("");
             lblWarning.setFont(lblWarning.getFont().deriveFont(Font.ITALIC));
             add(lblWarning, gc);
 

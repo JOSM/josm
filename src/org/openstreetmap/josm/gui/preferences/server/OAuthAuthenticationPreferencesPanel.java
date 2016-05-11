@@ -45,13 +45,13 @@ import org.openstreetmap.josm.tools.UserCancelException;
  * @since 2745
  */
 public class OAuthAuthenticationPreferencesPanel extends JPanel implements PropertyChangeListener {
-    private JPanel pnlAuthorisationMessage;
-    private NotYetAuthorisedPanel pnlNotYetAuthorised;
-    private AlreadyAuthorisedPanel pnlAlreadyAuthorised;
-    private AdvancedOAuthPropertiesPanel pnlAdvancedProperties;
+    private final JPanel pnlAuthorisationMessage = new JPanel(new BorderLayout());
+    private final NotYetAuthorisedPanel pnlNotYetAuthorised = new NotYetAuthorisedPanel();
+    private final AlreadyAuthorisedPanel pnlAlreadyAuthorised = new AlreadyAuthorisedPanel();
+    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel();
     private String apiUrl;
-    private JCheckBox cbShowAdvancedParameters;
-    private JCheckBox cbSaveToPreferences;
+    private final JCheckBox cbShowAdvancedParameters = new JCheckBox();
+    private final JCheckBox cbSaveToPreferences = new JCheckBox(tr("Save to preferences"));
 
     /**
      * Create the panel
@@ -74,7 +74,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
         gc.insets = new Insets(0, 0, 0, 3);
-        pnl.add(cbShowAdvancedParameters = new JCheckBox(), gc);
+        pnl.add(cbShowAdvancedParameters, gc);
         cbShowAdvancedParameters.setSelected(false);
         cbShowAdvancedParameters.addItemListener(
                 new ItemListener() {
@@ -97,7 +97,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        pnl.add(pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel(), gc);
+        pnl.add(pnlAdvancedProperties, gc);
         pnlAdvancedProperties.initFromPreferences(Main.pref);
         pnlAdvancedProperties.setBorder(
                 BorderFactory.createCompoundBorder(
@@ -125,12 +125,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         gc.weighty = 1.0;
         gc.weightx = 1.0;
         gc.insets = new Insets(10, 0, 0, 0);
-        add(pnlAuthorisationMessage = new JPanel(new BorderLayout()), gc);
-
-        // create these two panels, they are going to be used later in refreshView
-        //
-        pnlAlreadyAuthorised = new AlreadyAuthorisedPanel();
-        pnlNotYetAuthorised = new NotYetAuthorisedPanel();
+        add(pnlAuthorisationMessage, gc);
     }
 
     protected void refreshView() {
@@ -195,9 +190,9 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             gc.insets = new Insets(0, 0, 3, 0);
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
-            JMultilineLabel lbl;
-            add(lbl = new JMultilineLabel(
-                    tr("You do not have an Access Token yet to access the OSM server using OAuth. Please authorize first.")), gc);
+            JMultilineLabel lbl = new JMultilineLabel(
+                    tr("You do not have an Access Token yet to access the OSM server using OAuth. Please authorize first."));
+            add(lbl, gc);
             lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
 
             // Action for authorising now
@@ -220,8 +215,8 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      *
      */
     private class AlreadyAuthorisedPanel extends JPanel {
-        private JosmTextField tfAccessTokenKey;
-        private JosmTextField tfAccessTokenSecret;
+        private final JosmTextField tfAccessTokenKey = new JosmTextField();
+        private final JosmTextField tfAccessTokenSecret = new JosmTextField();
 
         /**
          * Constructs a new {@code AlreadyAuthorisedPanel}.
@@ -239,8 +234,8 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             gc.gridwidth = 2;
-            JMultilineLabel lbl;
-            add(lbl = new JMultilineLabel(tr("You already have an Access Token to access the OSM server using OAuth.")), gc);
+            JMultilineLabel lbl = new JMultilineLabel(tr("You already have an Access Token to access the OSM server using OAuth."));
+            add(lbl, gc);
             lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
 
             // -- access token key
@@ -252,7 +247,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
             gc.gridx = 1;
             gc.weightx = 1.0;
-            add(tfAccessTokenKey = new JosmTextField(), gc);
+            add(tfAccessTokenKey, gc);
             tfAccessTokenKey.setEditable(false);
 
             // -- access token secret
@@ -264,7 +259,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
             gc.gridx = 1;
             gc.weightx = 1.0;
-            add(tfAccessTokenSecret = new JosmTextField(), gc);
+            add(tfAccessTokenSecret, gc);
             tfAccessTokenSecret.setEditable(false);
 
             // -- access token secret
@@ -272,7 +267,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             gc.gridx = 0;
             gc.gridwidth = 2;
             gc.weightx = 1.0;
-            add(cbSaveToPreferences = new JCheckBox(tr("Save to preferences")), gc);
+            add(cbSaveToPreferences, gc);
             cbSaveToPreferences.setSelected(OAuthAccessTokenHolder.getInstance().isSaveToPreferences());
 
             // -- action buttons

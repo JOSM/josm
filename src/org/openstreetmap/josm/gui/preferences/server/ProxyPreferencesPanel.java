@@ -101,12 +101,12 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     public static final String PROXY_EXCEPTIONS = "proxy.exceptions";
 
     private transient Map<ProxyPolicy, JRadioButton> rbProxyPolicy;
-    private JosmTextField tfProxyHttpHost;
-    private JosmTextField tfProxyHttpPort;
-    private JosmTextField tfProxySocksHost;
-    private JosmTextField tfProxySocksPort;
-    private JosmTextField tfProxyHttpUser;
-    private JosmPasswordField tfProxyHttpPassword;
+    private final JosmTextField tfProxyHttpHost = new JosmTextField();
+    private final JosmTextField tfProxyHttpPort = new JosmTextField(5);
+    private final JosmTextField tfProxySocksHost = new JosmTextField(20);
+    private final JosmTextField tfProxySocksPort = new JosmTextField(5);
+    private final JosmTextField tfProxyHttpUser = new JosmTextField(20);
+    private final JosmPasswordField tfProxyHttpPassword = new JosmPasswordField(20);
 
     private JPanel pnlHttpProxyConfigurationPanel;
     private JPanel pnlSocksProxyConfigurationPanel;
@@ -133,7 +133,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpHost = new JosmTextField(), gc);
+        pnl.add(tfProxyHttpHost, gc);
 
         gc.gridy = 1;
         gc.gridx = 0;
@@ -143,7 +143,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpPort = new JosmTextField(5), gc);
+        pnl.add(tfProxyHttpPort, gc);
         tfProxyHttpPort.setMinimumSize(tfProxyHttpPort.getPreferredSize());
 
         gc.gridy = 2;
@@ -163,7 +163,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         gc.gridy = 3;
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpUser = new JosmTextField(20), gc);
+        pnl.add(tfProxyHttpUser, gc);
         tfProxyHttpUser.setMinimumSize(tfProxyHttpUser.getPreferredSize());
 
         gc.gridy = 4;
@@ -173,7 +173,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxyHttpPassword = new JosmPasswordField(20), gc);
+        pnl.add(tfProxyHttpPassword, gc);
         tfProxyHttpPassword.setMinimumSize(tfProxyHttpPassword.getPreferredSize());
 
         // add an extra spacer, otherwise the layout is broken
@@ -208,7 +208,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxySocksHost = new JosmTextField(20), gc);
+        pnl.add(tfProxySocksHost, gc);
 
         gc.gridy = 1;
         gc.gridx = 0;
@@ -218,7 +218,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfProxySocksPort = new JosmTextField(5), gc);
+        pnl.add(tfProxySocksPort, gc);
         tfProxySocksPort.setMinimumSize(tfProxySocksPort.getPreferredSize());
 
         // add an extra spacer, otherwise the layout is broken
@@ -289,7 +289,8 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
-        pnl.add(pnlHttpProxyConfigurationPanel = buildHttpProxyConfigurationPanel(), gc);
+        pnlHttpProxyConfigurationPanel = buildHttpProxyConfigurationPanel();
+        pnl.add(pnlHttpProxyConfigurationPanel, gc);
 
         // radio button SOCKS proxy
         gc.gridx = 0;
@@ -308,7 +309,8 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         gc.anchor = GridBagConstraints.WEST;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
-        pnl.add(pnlSocksProxyConfigurationPanel = buildSocksProxyConfigurationPanel(), gc);
+        pnlSocksProxyConfigurationPanel = buildSocksProxyConfigurationPanel();
+        pnl.add(pnlSocksProxyConfigurationPanel, gc);
 
         return pnl;
     }

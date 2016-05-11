@@ -45,10 +45,11 @@ public class PluginUpdatePolicyPanel extends JPanel {
         }
 
         static Policy fromPreferenceValue(String preferenceValue) {
-            if (preferenceValue == null) return null;
-            preferenceValue = preferenceValue.trim().toLowerCase(Locale.ENGLISH);
+            if (preferenceValue == null)
+                return null;
+            String prefValue = preferenceValue.trim().toLowerCase(Locale.ENGLISH);
             for (Policy p: Policy.values()) {
-                if (p.getPreferencesValue().equals(preferenceValue))
+                if (p.getPreferencesValue().equals(prefValue))
                     return p;
             }
             return null;
@@ -57,8 +58,16 @@ public class PluginUpdatePolicyPanel extends JPanel {
 
     private transient Map<Policy, JRadioButton> rbVersionBasedUpatePolicy;
     private transient Map<Policy, JRadioButton> rbTimeBasedUpatePolicy;
-    private JosmTextField tfUpdateInterval;
-    private JLabel lblUpdateInterval;
+    private final JosmTextField tfUpdateInterval = new JosmTextField(5);
+    private final JLabel lblUpdateInterval = new JLabel(tr("Update interval (in days):"));
+
+    /**
+     * Constructs a new {@code PluginUpdatePolicyPanel}.
+     */
+    public PluginUpdatePolicyPanel() {
+        build();
+        initFromPreferences();
+    }
 
     protected JPanel buildVersionBasedUpdatePolicyPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -94,8 +103,8 @@ public class PluginUpdatePolicyPanel extends JPanel {
 
     protected JPanel buildUpdateIntervalPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        pnl.add(lblUpdateInterval = new JLabel(tr("Update interval (in days):")));
-        pnl.add(tfUpdateInterval = new JosmTextField(5));
+        pnl.add(lblUpdateInterval);
+        pnl.add(tfUpdateInterval);
         lblUpdateInterval.setLabelFor(tfUpdateInterval);
         SelectAllOnFocusGainedDecorator.decorate(tfUpdateInterval);
         return pnl;
@@ -159,16 +168,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
     }
 
     /**
-     * Constructs a new {@code PluginUpdatePolicyPanel}.
-     */
-    public PluginUpdatePolicyPanel() {
-        build();
-        initFromPreferences();
-    }
-
-    /**
      * Loads the relevant preference values from the JOSM preferences
-     *
      */
     public final void initFromPreferences() {
         String pref = Main.pref.get("pluginmanager.version-based-update.policy", "ask");

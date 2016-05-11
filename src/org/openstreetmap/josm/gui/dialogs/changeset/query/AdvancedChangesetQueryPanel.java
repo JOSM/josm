@@ -41,21 +41,27 @@ import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-
 /**
  * This panel allows to specify a changeset query
- *
+ * @since 2689
  */
 public class AdvancedChangesetQueryPanel extends JPanel {
 
-    private JCheckBox cbUserRestriction;
-    private JCheckBox cbOpenAndCloseRestrictions;
-    private JCheckBox cbTimeRestrictions;
-    private JCheckBox cbBoundingBoxRestriction;
-    private UserRestrictionPanel pnlUserRestriction;
-    private OpenAndCloseStateRestrictionPanel pnlOpenAndCloseRestriction;
-    private TimeRestrictionPanel pnlTimeRestriction;
-    private BBoxRestrictionPanel pnlBoundingBoxRestriction;
+    private final JCheckBox cbUserRestriction = new JCheckBox();
+    private final JCheckBox cbOpenAndCloseRestrictions = new JCheckBox();
+    private final JCheckBox cbTimeRestrictions = new JCheckBox();
+    private final JCheckBox cbBoundingBoxRestriction = new JCheckBox();
+    private final UserRestrictionPanel pnlUserRestriction = new UserRestrictionPanel();
+    private final OpenAndCloseStateRestrictionPanel pnlOpenAndCloseRestriction = new OpenAndCloseStateRestrictionPanel();
+    private final TimeRestrictionPanel pnlTimeRestriction = new TimeRestrictionPanel();
+    private final BBoxRestrictionPanel pnlBoundingBoxRestriction = new BBoxRestrictionPanel();
+
+    /**
+     * Constructs a new {@code AdvancedChangesetQueryPanel}.
+     */
+    public AdvancedChangesetQueryPanel() {
+        build();
+    }
 
     protected JPanel buildQueryPanel() {
         ItemListener stateChangeHandler = new RestrictionGroupStateChangeHandler();
@@ -68,7 +74,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        pnl.add(cbUserRestriction = new JCheckBox(), gc);
+        pnl.add(cbUserRestriction, gc);
         cbUserRestriction.addItemListener(stateChangeHandler);
 
         gc.gridx = 1;
@@ -78,7 +84,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         gc.gridy = 1;
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(pnlUserRestriction = new UserRestrictionPanel(), gc);
+        pnl.add(pnlUserRestriction, gc);
 
         // -- restricting the query to open and closed changesets
         //
@@ -87,7 +93,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        pnl.add(cbOpenAndCloseRestrictions = new JCheckBox(), gc);
+        pnl.add(cbOpenAndCloseRestrictions, gc);
         cbOpenAndCloseRestrictions.addItemListener(stateChangeHandler);
 
         gc.gridx = 1;
@@ -97,7 +103,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         gc.gridy = 3;
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(pnlOpenAndCloseRestriction = new OpenAndCloseStateRestrictionPanel(), gc);
+        pnl.add(pnlOpenAndCloseRestriction, gc);
 
         // -- restricting the query to a specific time
         //
@@ -106,7 +112,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        pnl.add(cbTimeRestrictions = new JCheckBox(), gc);
+        pnl.add(cbTimeRestrictions, gc);
         cbTimeRestrictions.addItemListener(stateChangeHandler);
 
         gc.gridx = 1;
@@ -116,7 +122,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         gc.gridy = 5;
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(pnlTimeRestriction = new TimeRestrictionPanel(), gc);
+        pnl.add(pnlTimeRestriction, gc);
 
 
         // -- restricting the query to a specific bounding box
@@ -126,7 +132,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        pnl.add(cbBoundingBoxRestriction = new JCheckBox(), gc);
+        pnl.add(cbBoundingBoxRestriction, gc);
         cbBoundingBoxRestriction.addItemListener(stateChangeHandler);
 
         gc.gridx = 1;
@@ -136,7 +142,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         gc.gridy = 7;
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(pnlBoundingBoxRestriction = new BBoxRestrictionPanel(), gc);
+        pnl.add(pnlBoundingBoxRestriction, gc);
 
 
         gc.gridy = 8;
@@ -154,13 +160,6 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         setLayout(new BorderLayout());
         JScrollPane spQueryPanel = GuiHelper.embedInVerticalScrollPane(buildQueryPanel());
         add(spQueryPanel, BorderLayout.CENTER);
-    }
-
-    /**
-     * Constructs a new {@code AdvancedChangesetQueryPanel}.
-     */
-    public AdvancedChangesetQueryPanel() {
-        build();
     }
 
     public void startUserInput() {
@@ -240,22 +239,26 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
     class RestrictionGroupStateChangeHandler implements ItemListener {
         protected void userRestrictionStateChanged() {
-            if (pnlUserRestriction == null) return;
+            if (pnlUserRestriction == null)
+                return;
             pnlUserRestriction.setVisible(cbUserRestriction.isSelected());
         }
 
         protected void openCloseRestrictionStateChanged() {
-            if (pnlOpenAndCloseRestriction == null) return;
+            if (pnlOpenAndCloseRestriction == null)
+                return;
             pnlOpenAndCloseRestriction.setVisible(cbOpenAndCloseRestrictions.isSelected());
         }
 
         protected void timeRestrictionsStateChanged() {
-            if (pnlTimeRestriction == null) return;
+            if (pnlTimeRestriction == null)
+                return;
             pnlTimeRestriction.setVisible(cbTimeRestrictions.isSelected());
         }
 
         protected void boundingBoxRestrictionChanged() {
-            if (pnlBoundingBoxRestriction == null) return;
+            if (pnlBoundingBoxRestriction == null)
+                return;
             pnlBoundingBoxRestriction.setVisible(cbBoundingBoxRestriction.isSelected());
         }
 
@@ -281,9 +284,13 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      */
     private static class OpenAndCloseStateRestrictionPanel extends JPanel {
 
-        private JRadioButton rbOpenOnly;
-        private JRadioButton rbClosedOnly;
-        private JRadioButton rbBoth;
+        private final JRadioButton rbOpenOnly = new JRadioButton();
+        private final JRadioButton rbClosedOnly = new JRadioButton();
+        private final JRadioButton rbBoth = new JRadioButton();
+
+        OpenAndCloseStateRestrictionPanel() {
+            build();
+        }
 
         protected void build() {
             setLayout(new GridBagLayout());
@@ -298,7 +305,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             gc.anchor = GridBagConstraints.NORTHWEST;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 0.0;
-            add(rbOpenOnly = new JRadioButton(), gc);
+            add(rbOpenOnly, gc);
 
             gc.gridx = 1;
             gc.weightx = 1.0;
@@ -307,7 +314,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             gc.gridy = 1;
             gc.gridx = 0;
             gc.weightx = 0.0;
-            add(rbClosedOnly = new JRadioButton(), gc);
+            add(rbClosedOnly, gc);
 
             gc.gridx = 1;
             gc.weightx = 1.0;
@@ -316,7 +323,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             gc.gridy = 2;
             gc.gridx = 0;
             gc.weightx = 0.0;
-            add(rbBoth = new JRadioButton(), gc);
+            add(rbBoth, gc);
 
             gc.gridx = 1;
             gc.weightx = 1.0;
@@ -326,10 +333,6 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             bgRestrictions.add(rbBoth);
             bgRestrictions.add(rbClosedOnly);
             bgRestrictions.add(rbOpenOnly);
-        }
-
-        OpenAndCloseStateRestrictionPanel() {
-            build();
         }
 
         public void startUserInput() {
@@ -368,20 +371,22 @@ public class AdvancedChangesetQueryPanel extends JPanel {
     }
 
     /**
-     * This is the panel for selecting whether the query should be restricted to a specific
-     * user
-     *
+     * This is the panel for selecting whether the query should be restricted to a specific user
      */
     private static class UserRestrictionPanel extends JPanel {
-        private ButtonGroup bgUserRestrictions;
-        private JRadioButton rbRestrictToMyself;
-        private JRadioButton rbRestrictToUid;
-        private JRadioButton rbRestrictToUserName;
-        private JosmTextField tfUid;
+        private final ButtonGroup bgUserRestrictions = new ButtonGroup();
+        private final JRadioButton rbRestrictToMyself = new JRadioButton();
+        private final JRadioButton rbRestrictToUid = new JRadioButton();
+        private final JRadioButton rbRestrictToUserName = new JRadioButton();
+        private final JosmTextField tfUid = new JosmTextField(10);
         private transient UidInputFieldValidator valUid;
-        private JosmTextField tfUserName;
+        private final JosmTextField tfUserName = new JosmTextField(10);
         private transient UserNameValidator valUserName;
-        private JMultilineLabel lblRestrictedToMyself;
+        private final JMultilineLabel lblRestrictedToMyself = new JMultilineLabel(tr("Only changesets owned by myself"));
+
+        UserRestrictionPanel() {
+            build();
+        }
 
         protected JPanel buildUidInputPanel() {
             JPanel pnl = new JPanel(new GridBagLayout());
@@ -392,7 +397,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             pnl.add(new JLabel(tr("User ID:")), gc);
 
             gc.gridx = 1;
-            pnl.add(tfUid = new JosmTextField(10), gc);
+            pnl.add(tfUid, gc);
             SelectAllOnFocusGainedDecorator.decorate(tfUid);
             valUid = UidInputFieldValidator.decorate(tfUid);
 
@@ -412,7 +417,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             pnl.add(new JLabel(tr("User name:")), gc);
 
             gc.gridx = 1;
-            pnl.add(tfUserName = new JosmTextField(10), gc);
+            pnl.add(tfUserName, gc);
             SelectAllOnFocusGainedDecorator.decorate(tfUserName);
             valUserName = new UserNameValidator(tfUserName);
 
@@ -439,19 +444,19 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             gc.gridx = 0;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 0.0;
-            add(rbRestrictToMyself = new JRadioButton(), gc);
+            add(rbRestrictToMyself, gc);
             rbRestrictToMyself.addItemListener(userRestrictionChangeHandler);
 
             gc.gridx = 1;
             gc.fill =  GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
-            add(lblRestrictedToMyself = new JMultilineLabel(tr("Only changesets owned by myself")), gc);
+            add(lblRestrictedToMyself, gc);
 
             gc.gridx = 0;
             gc.gridy = 1;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 0.0;
-            add(rbRestrictToUid = new JRadioButton(), gc);
+            add(rbRestrictToUid, gc);
             rbRestrictToUid.addItemListener(userRestrictionChangeHandler);
 
             gc.gridx = 1;
@@ -469,7 +474,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             gc.gridy = 3;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 0.0;
-            add(rbRestrictToUserName = new JRadioButton(), gc);
+            add(rbRestrictToUserName, gc);
             rbRestrictToUserName.addItemListener(userRestrictionChangeHandler);
 
             gc.gridx = 1;
@@ -483,14 +488,9 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             gc.weightx = 1.0;
             add(buildUserNameInputPanel(), gc);
 
-            bgUserRestrictions = new ButtonGroup();
             bgUserRestrictions.add(rbRestrictToMyself);
             bgUserRestrictions.add(rbRestrictToUid);
             bgUserRestrictions.add(rbRestrictToUserName);
-        }
-
-        UserRestrictionPanel() {
-            build();
         }
 
         public void startUserInput() {
@@ -636,20 +636,24 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      */
     private static class TimeRestrictionPanel extends JPanel {
 
-        private JRadioButton rbClosedAfter;
-        private JRadioButton rbClosedAfterAndCreatedBefore;
-        private JosmTextField tfClosedAfterDate1;
+        private final JRadioButton rbClosedAfter = new JRadioButton();
+        private final JRadioButton rbClosedAfterAndCreatedBefore = new JRadioButton();
+        private final JosmTextField tfClosedAfterDate1 = new JosmTextField();
         private transient DateValidator valClosedAfterDate1;
-        private JosmTextField tfClosedAfterTime1;
+        private final JosmTextField tfClosedAfterTime1 = new JosmTextField();
         private transient TimeValidator valClosedAfterTime1;
-        private JosmTextField tfClosedAfterDate2;
+        private final JosmTextField tfClosedAfterDate2 = new JosmTextField();
         private transient DateValidator valClosedAfterDate2;
-        private JosmTextField tfClosedAfterTime2;
+        private final JosmTextField tfClosedAfterTime2 = new JosmTextField();
         private transient TimeValidator valClosedAfterTime2;
-        private JosmTextField tfCreatedBeforeDate;
+        private final JosmTextField tfCreatedBeforeDate = new JosmTextField();
         private transient DateValidator valCreatedBeforeDate;
-        private JosmTextField tfCreatedBeforeTime;
+        private final JosmTextField tfCreatedBeforeTime = new JosmTextField();
         private transient TimeValidator valCreatedBeforeTime;
+
+        TimeRestrictionPanel() {
+            build();
+        }
 
         protected JPanel buildClosedAfterInputPanel() {
             JPanel pnl = new JPanel(new GridBagLayout());
@@ -661,7 +665,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 1;
             gc.weightx = 0.7;
-            pnl.add(tfClosedAfterDate1 = new JosmTextField(), gc);
+            pnl.add(tfClosedAfterDate1, gc);
             SelectAllOnFocusGainedDecorator.decorate(tfClosedAfterDate1);
             valClosedAfterDate1 = DateValidator.decorate(tfClosedAfterDate1);
             tfClosedAfterDate1.setToolTipText(valClosedAfterDate1.getStandardTooltipTextAsHtml());
@@ -672,7 +676,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 3;
             gc.weightx = 0.3;
-            pnl.add(tfClosedAfterTime1 = new JosmTextField(), gc);
+            pnl.add(tfClosedAfterTime1, gc);
             SelectAllOnFocusGainedDecorator.decorate(tfClosedAfterTime1);
             valClosedAfterTime1 = TimeValidator.decorate(tfClosedAfterTime1);
             tfClosedAfterTime1.setToolTipText(valClosedAfterTime1.getStandardTooltipTextAsHtml());
@@ -695,7 +699,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 2;
             gc.weightx = 0.7;
-            pnl.add(tfClosedAfterDate2 = new JosmTextField(), gc);
+            pnl.add(tfClosedAfterDate2, gc);
             SelectAllOnFocusGainedDecorator.decorate(tfClosedAfterDate2);
             valClosedAfterDate2 = DateValidator.decorate(tfClosedAfterDate2);
             tfClosedAfterDate2.setToolTipText(valClosedAfterDate2.getStandardTooltipTextAsHtml());
@@ -705,7 +709,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 4;
             gc.weightx = 0.3;
-            pnl.add(tfClosedAfterTime2 = new JosmTextField(), gc);
+            pnl.add(tfClosedAfterTime2, gc);
             SelectAllOnFocusGainedDecorator.decorate(tfClosedAfterTime2);
             valClosedAfterTime2 = TimeValidator.decorate(tfClosedAfterTime2);
             tfClosedAfterTime2.setToolTipText(valClosedAfterTime2.getStandardTooltipTextAsHtml());
@@ -725,7 +729,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 2;
             gc.weightx = 0.7;
-            pnl.add(tfCreatedBeforeDate = new JosmTextField(), gc);
+            pnl.add(tfCreatedBeforeDate, gc);
             SelectAllOnFocusGainedDecorator.decorate(tfCreatedBeforeDate);
             valCreatedBeforeDate = DateValidator.decorate(tfCreatedBeforeDate);
             tfCreatedBeforeDate.setToolTipText(valCreatedBeforeDate.getStandardTooltipTextAsHtml());
@@ -736,7 +740,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 4;
             gc.weightx = 0.3;
-            pnl.add(tfCreatedBeforeTime = new JosmTextField(), gc);
+            pnl.add(tfCreatedBeforeTime, gc);
             SelectAllOnFocusGainedDecorator.decorate(tfCreatedBeforeTime);
             valCreatedBeforeTime = TimeValidator.decorate(tfCreatedBeforeTime);
             tfCreatedBeforeTime.setToolTipText(valCreatedBeforeDate.getStandardTooltipTextAsHtml());
@@ -761,7 +765,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             gc.gridx = 0;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 0.0;
-            add(rbClosedAfter = new JRadioButton(), gc);
+            add(rbClosedAfter, gc);
 
             gc.gridx = 1;
             gc.fill = GridBagConstraints.HORIZONTAL;
@@ -782,7 +786,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             gc.gridx = 0;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 0.0;
-            add(rbClosedAfterAndCreatedBefore = new JRadioButton(), gc);
+            add(rbClosedAfterAndCreatedBefore, gc);
 
             gc.gridx = 1;
             gc.fill = GridBagConstraints.HORIZONTAL;
@@ -804,10 +808,6 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             rbClosedAfterAndCreatedBefore.addItemListener(restrictionChangeHandler);
 
             rbClosedAfter.setSelected(true);
-        }
-
-        TimeRestrictionPanel() {
-            build();
         }
 
         public boolean isValidChangesetQuery() {
@@ -863,7 +863,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
 
         public void displayMessageIfInvalid() {
-            if (isValidChangesetQuery()) return;
+            if (isValidChangesetQuery())
+                return;
             HelpAwareOptionPane.showOptionDialog(
                     this,
                     tr(
@@ -948,7 +949,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
 
         public void displayMessageIfInvalid() {
-            if (isValidChangesetQuery()) return;
+            if (isValidChangesetQuery())
+                return;
             HelpAwareOptionPane.showOptionDialog(
                     this,
                     tr(
@@ -967,12 +969,12 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      *
      */
     private static class UidInputFieldValidator extends AbstractTextComponentValidator {
-        public static UidInputFieldValidator decorate(JTextComponent tc) {
-            return new UidInputFieldValidator(tc);
-        }
-
         UidInputFieldValidator(JTextComponent tc) {
             super(tc);
+        }
+
+        public static UidInputFieldValidator decorate(JTextComponent tc) {
+            return new UidInputFieldValidator(tc);
         }
 
         @Override
@@ -1005,7 +1007,8 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             if (value == null || value.trim().isEmpty()) return 0;
             try {
                 int uid = Integer.parseInt(value.trim());
-                if (uid > 0) return uid;
+                if (uid > 0)
+                    return uid;
                 return 0;
             } catch (NumberFormatException e) {
                 return 0;
@@ -1020,12 +1023,12 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      * Dates can be entered in one of four standard formats defined for the current locale.
      */
     private static class DateValidator extends AbstractTextComponentValidator {
-        public static DateValidator decorate(JTextComponent tc) {
-            return new DateValidator(tc);
-        }
-
         DateValidator(JTextComponent tc) {
             super(tc);
+        }
+
+        public static DateValidator decorate(JTextComponent tc) {
+            return new DateValidator(tc);
         }
 
         @Override
@@ -1087,17 +1090,18 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      * Time values can be entered in one of four standard formats defined for the current locale.
      */
     private static class TimeValidator extends AbstractTextComponentValidator {
-        public static TimeValidator decorate(JTextComponent tc) {
-            return new TimeValidator(tc);
-        }
-
         TimeValidator(JTextComponent tc) {
             super(tc);
         }
 
+        public static TimeValidator decorate(JTextComponent tc) {
+            return new TimeValidator(tc);
+        }
+
         @Override
         public boolean isValid() {
-            if (getComponent().getText().trim().isEmpty()) return true;
+            if (getComponent().getText().trim().isEmpty())
+                return true;
             return getDate() != null;
         }
 

@@ -68,9 +68,9 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     /** the data model */
     private RelationMemberTableModel model;
-    private HtmlPanel htmlPanel;
+    private final HtmlPanel htmlPanel = new HtmlPanel();
     private boolean canceled;
-    private SideButton btnOK;
+    private final SideButton btnOK = new SideButton(new OKAction());
 
     protected JPanel buildRelationMemberTablePanel() {
         JTable table = new JTable(model, new RelationMemberTableColumnModel());
@@ -81,7 +81,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout());
-        pnl.add(btnOK = new SideButton(new OKAction()));
+        pnl.add(btnOK);
         btnOK.setFocusable(true);
         pnl.add(new SideButton(new CancelAction()));
         pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Action/Delete#DeleteFromRelations"))));
@@ -92,7 +92,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         model = new RelationMemberTableModel();
         model.addTableModelListener(this);
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(htmlPanel = new HtmlPanel(), BorderLayout.NORTH);
+        getContentPane().add(htmlPanel, BorderLayout.NORTH);
         getContentPane().add(buildRelationMemberTablePanel(), BorderLayout.CENTER);
         getContentPane().add(buildButtonPanel(), BorderLayout.SOUTH);
 

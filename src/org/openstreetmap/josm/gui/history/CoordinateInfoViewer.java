@@ -82,7 +82,8 @@ public class CoordinateInfoViewer extends JPanel {
         gc.weighty = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        add(referenceLatLonViewer = new LatLonViewer(model, PointInTimeType.REFERENCE_POINT_IN_TIME), gc);
+        referenceLatLonViewer = new LatLonViewer(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
+        add(referenceLatLonViewer, gc);
 
         gc.gridx = 1;
         gc.gridy = 1;
@@ -90,7 +91,8 @@ public class CoordinateInfoViewer extends JPanel {
         gc.weighty = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        add(currentLatLonViewer = new LatLonViewer(model, PointInTimeType.CURRENT_POINT_IN_TIME), gc);
+        currentLatLonViewer = new LatLonViewer(model, PointInTimeType.CURRENT_POINT_IN_TIME);
+        add(currentLatLonViewer, gc);
 
         // --------------------
         // the distance panel
@@ -100,7 +102,8 @@ public class CoordinateInfoViewer extends JPanel {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
-        add(distanceViewer = new DistanceViewer(model), gc);
+        distanceViewer = new DistanceViewer(model);
+        add(distanceViewer, gc);
 
         // the map panel
         gc.gridx = 0;
@@ -109,7 +112,8 @@ public class CoordinateInfoViewer extends JPanel {
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        add(mapViewer = new MapViewer(model), gc);
+        mapViewer = new MapViewer(model);
+        add(mapViewer, gc);
         mapViewer.setZoomContolsVisible(false);
     }
 

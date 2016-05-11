@@ -38,7 +38,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
     private JButton btnInBackground;
     /** the text area and the scroll pane for the log */
     private final JosmTextArea taLog = new JosmTextArea(5, 50);
-    private  JScrollPane spLog;
+    private final JScrollPane spLog = new JScrollPane(taLog);
 
     private void initDialog() {
         setLayout(new GridBagLayout());
@@ -59,7 +59,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
         GridBagConstraints gc = GBC.eol().fill(GBC.BOTH);
         gc.weighty = 1.0;
         gc.weightx = 1.0;
-        pane.add(spLog = new JScrollPane(taLog), gc);
+        pane.add(spLog, gc);
         spLog.setVisible(false);
         setContentPane(pane);
         setCustomText("");

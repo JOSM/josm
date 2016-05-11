@@ -90,7 +90,7 @@ import org.openstreetmap.josm.tools.Predicate;
  *
  * @author imi
  */
-public class MapStatus extends JPanel implements Helpful, Destroyable, PreferenceChangedListener {
+public class MapStatus extends JPanel implements Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener {
 
     private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(Main.pref.get("statusbar.decimal-format", "0.0"));
     private final double DISTANCE_THRESHOLD = Main.pref.getDouble("statusbar.distance-threshold", 0.01);
@@ -200,8 +200,6 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     private final JosmTextField helpText = new JosmTextField();
     private final JProgressBar progressBar = new JProgressBar();
     public final transient BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
-
-    private final transient SoMChangeListener somListener;
 
     // Distance value displayed in distText, stored if refresh needed after a change of system of measurement
     private double distValue;
@@ -923,12 +921,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
             });
         }
 
-        SystemOfMeasurement.addSoMChangeListener(somListener = new SoMChangeListener() {
-            @Override
-            public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
-                setDist(distValue);
-            }
-        });
+        SystemOfMeasurement.addSoMChangeListener(this);
 
         latText.addMouseListener(jumpToOnLeftClick);
         lonText.addMouseListener(jumpToOnLeftClick);
@@ -958,6 +951,11 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         thread = new Thread(collector, "Map Status Collector");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    @Override
+    public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
+        setDist(distValue);
     }
 
     /**
@@ -1077,7 +1075,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
     @Override
     public void destroy() {
-        SystemOfMeasurement.removeSoMChangeListener(somListener);
+        SystemOfMeasurement.removeSoMChangeListener(this);
         Main.pref.removePreferenceChangeListener(this);
 
         // MapFrame gets destroyed when the last layer is removed, but the status line background

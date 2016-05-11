@@ -202,25 +202,18 @@ public final class CustomConfigurator {
      * @return number of pressed button, -1 if cancelled
      */
     public static int askForOption(String text, String opts) {
-        Integer answer;
         if (!opts.isEmpty()) {
-            String[] options = opts.split(";");
-            answer = JOptionPane.showOptionDialog(Main.parent, text, "Question",
-                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 0);
+            return JOptionPane.showOptionDialog(Main.parent, text, "Question",
+                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opts.split(";"), 0);
         } else {
-            answer = JOptionPane.showOptionDialog(Main.parent, text, "Question",
+            return JOptionPane.showOptionDialog(Main.parent, text, "Question",
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 2);
         }
-        if (answer == null) return -1; else return answer;
     }
 
     public static String askForText(String text) {
         String s = JOptionPane.showInputDialog(Main.parent, text, tr("Enter text"), JOptionPane.QUESTION_MESSAGE);
-        if (s != null && !(s = s.trim()).isEmpty()) {
-            return s;
-        } else {
-            return "";
-        }
+        return s != null ? s.trim() : null;
     }
 
     /**

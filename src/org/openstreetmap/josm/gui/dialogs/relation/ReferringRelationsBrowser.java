@@ -38,8 +38,19 @@ public class ReferringRelationsBrowser extends JPanel {
     private JList<Relation> referrers;
     private final ReferringRelationsBrowserModel model;
     private final transient OsmDataLayer layer;
-    private JCheckBox cbReadFull;
+    private final JCheckBox cbReadFull = new JCheckBox(tr("including immediate children of parent relations"));
     private EditAction editAction;
+
+    /**
+     * Constructs a new {@code ReferringRelationsBrowser}.
+     * @param layer OSM data layer
+     * @param model referrinf relations browser model
+     */
+    public ReferringRelationsBrowser(OsmDataLayer layer, ReferringRelationsBrowserModel model) {
+        this.model = model;
+        this.layer = layer;
+        build();
+    }
 
     /**
      * build the GUI
@@ -57,18 +68,12 @@ public class ReferringRelationsBrowser extends JPanel {
         ReloadAction reloadAction = new ReloadAction();
         referrers.getModel().addListDataListener(reloadAction);
         pnl.add(new SideButton(reloadAction));
-        pnl.add(cbReadFull = new JCheckBox(tr("including immediate children of parent relations")));
+        pnl.add(cbReadFull);
 
         editAction = new EditAction();
         referrers.getSelectionModel().addListSelectionListener(editAction);
         pnl.add(new SideButton(editAction));
         add(pnl, BorderLayout.SOUTH);
-    }
-
-    public ReferringRelationsBrowser(OsmDataLayer layer, ReferringRelationsBrowserModel model) {
-        this.model = model;
-        this.layer = layer;
-        build();
     }
 
     public void init() {
@@ -156,9 +161,11 @@ public class ReferringRelationsBrowser extends JPanel {
 
         public void run() {
             int idx = referrers.getSelectedIndex();
-            if (idx < 0) return;
+            if (idx < 0)
+                return;
             Relation r = model.getElementAt(idx);
-            if (r == null) return;
+            if (r == null)
+                return;
             RelationEditor editor = RelationEditor.getEditor(getLayer(), r, null);
             editor.setVisible(true);
         }

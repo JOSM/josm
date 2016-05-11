@@ -12,27 +12,37 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 
 /**
  * Creates an OsmChange document from JOSM edits.
- * See http://wiki.openstreetmap.org/index.php/OsmChange for a documentation of the
- * OsmChange format.
- *
+ * See http://wiki.openstreetmap.org/index.php/OsmChange for a documentation of the OsmChange format.
+ * @since 1071
  */
 public class OsmChangeBuilder {
+    /** Default OSM API version */
     public static final String DEFAULT_API_VERSION = "0.6";
 
     private String currentMode;
-    private PrintWriter writer;
-    private StringWriter swriter;
-    private OsmWriter osmwriter;
+    private final PrintWriter writer;
+    private final StringWriter swriter;
+    private final OsmWriter osmwriter;
     private String apiVersion = DEFAULT_API_VERSION;
     private boolean prologWritten;
 
+    /**
+     * Constructs a new {@code OsmChangeBuilder}.
+     * @param changeset changeset
+     */
     public OsmChangeBuilder(Changeset changeset) {
         this(changeset, null /* default api version */);
     }
 
+    /**
+     * Constructs a new {@code OsmChangeBuilder}.
+     * @param changeset changeset
+     * @param apiVersion OSM API version
+     */
     public OsmChangeBuilder(Changeset changeset, String apiVersion) {
         this.apiVersion = apiVersion == null ? DEFAULT_API_VERSION : apiVersion;
-        writer = new PrintWriter(swriter = new StringWriter());
+        swriter = new StringWriter();
+        writer = new PrintWriter(swriter);
         osmwriter = OsmWriterFactory.createOsmWriter(writer, false, apiVersion);
         osmwriter.setChangeset(changeset);
         osmwriter.setIsOsmChange(true);
@@ -89,12 +99,17 @@ public class OsmChangeBuilder {
      * @see #append(IPrimitive)
      */
     public void append(Collection<? extends IPrimitive> primitives) {
-        if (primitives == null) return;
-        if (!prologWritten)
-            throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write first."));
+        if (primitives == null)
+            return;
+        checkProlog();
         for (IPrimitive p : primitives) {
             write(p);
         }
+    }
+
+    private void checkProlog() {
+        if (!prologWritten)
+            throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write first."));
     }
 
     /**
@@ -106,9 +121,9 @@ public class OsmChangeBuilder {
      * @see #append(Collection)
      */
     public void append(IPrimitive p) {
-        if (p == null) return;
-        if (!prologWritten)
-            throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write first."));
+        if (p == null)
+            return;
+        checkProlog();
         write(p);
     }
 
@@ -118,8 +133,7 @@ public class OsmChangeBuilder {
      * @throws IllegalStateException if the prologs has not been written yet
      */
     public void finish() {
-        if (!prologWritten)
-            throw new IllegalStateException(tr("Prolog of OsmChange document not written yet. Please write first."));
+        checkProlog();
         if (currentMode != null) {
             writer.print("</");
             writer.print(currentMode);
@@ -128,6 +142,10 @@ public class OsmChangeBuilder {
         writer.println("</osmChange>");
     }
 
+    /**
+     * Returns XML document.
+     * @return XML document
+     */
     public String getDocument() {
         return swriter.toString();
     }

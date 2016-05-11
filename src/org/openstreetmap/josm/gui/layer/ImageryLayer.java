@@ -102,7 +102,8 @@ public abstract class ImageryLayer extends Layer {
     }
 
     public double getPPD() {
-        if (!Main.isDisplayingMapView()) return Main.getProjection().getDefaultZoomInPPD();
+        if (!Main.isDisplayingMapView())
+            return Main.getProjection().getDefaultZoomInPPD();
         ProjectionBounds bounds = Main.map.mapView.getProjectionBounds();
         return Main.map.mapView.getWidth() / (bounds.maxEast - bounds.minEast);
     }
@@ -121,9 +122,15 @@ public abstract class ImageryLayer extends Layer {
     }
 
     public void displace(double dx, double dy) {
-        setOffset(this.dx += dx, this.dy += dy);
+        this.dx += dx;
+        this.dy += dy;
+        setOffset(this.dx, this.dy);
     }
 
+    /**
+     * Returns imagery info.
+     * @return imagery info
+     */
     public ImageryInfo getInfo() {
         return info;
     }

@@ -48,9 +48,9 @@ public class OsmApiUrlInputPanel extends JPanel {
      */
     public static final String API_URL_PROP = OsmApiUrlInputPanel.class.getName() + ".apiUrl";
 
-    private JLabel lblValid;
-    private JLabel lblApiUrl;
-    private HistoryComboBox tfOsmServerUrl;
+    private final JLabel lblValid = new JLabel();
+    private final JLabel lblApiUrl = new JLabel(tr("OSM Server URL:"));
+    private final HistoryComboBox tfOsmServerUrl = new HistoryComboBox();
     private transient ApiUrlValidator valOsmServerUrl;
     private SideButton btnTest;
     /** indicates whether to use the default OSM URL or not */
@@ -94,11 +94,11 @@ public class OsmApiUrlInputPanel extends JPanel {
         gc.gridwidth = 1;
         gc.weightx = 0.0;
         gc.insets = new Insets(0, 0, 0, 3);
-        add(lblApiUrl = new JLabel(tr("OSM Server URL:")), gc);
+        add(lblApiUrl, gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfOsmServerUrl = new HistoryComboBox(), gc);
+        add(tfOsmServerUrl, gc);
         lblApiUrl.setLabelFor(tfOsmServerUrl);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmServerUrl.getEditorComponent());
         valOsmServerUrl = new ApiUrlValidator(tfOsmServerUrl.getEditorComponent());
@@ -109,13 +109,14 @@ public class OsmApiUrlInputPanel extends JPanel {
 
         gc.gridx = 2;
         gc.weightx = 0.0;
-        add(lblValid = new JLabel(), gc);
+        add(lblValid, gc);
 
         gc.gridx = 3;
         gc.weightx = 0.0;
         ValidateApiUrlAction actTest = new ValidateApiUrlAction();
         tfOsmServerUrl.getEditorComponent().getDocument().addDocumentListener(actTest);
-        add(btnTest = new SideButton(actTest), gc);
+        btnTest = new SideButton(actTest);
+        add(btnTest, gc);
     }
 
     /**

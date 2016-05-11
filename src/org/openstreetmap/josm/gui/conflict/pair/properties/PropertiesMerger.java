@@ -36,16 +36,16 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class PropertiesMerger extends JPanel implements Observer, IConflictResolver {
     private static final DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000000");
 
-    private JLabel lblMyCoordinates;
-    private JLabel lblMergedCoordinates;
-    private JLabel lblTheirCoordinates;
+    private final JLabel lblMyCoordinates = buildValueLabel("label.mycoordinates");
+    private final JLabel lblMergedCoordinates = buildValueLabel("label.mergedcoordinates");
+    private final JLabel lblTheirCoordinates = buildValueLabel("label.theircoordinates");
 
-    private JLabel lblMyDeletedState;
-    private JLabel lblMergedDeletedState;
-    private JLabel lblTheirDeletedState;
+    private final JLabel lblMyDeletedState = buildValueLabel("label.mydeletedstate");
+    private final JLabel lblMergedDeletedState = buildValueLabel("label.mergeddeletedstate");
+    private final JLabel lblTheirDeletedState = buildValueLabel("label.theirdeletedstate");
 
-    private JLabel lblMyReferrers;
-    private JLabel lblTheirReferrers;
+    private final JLabel lblMyReferrers = buildValueLabel("label.myreferrers");
+    private final JLabel lblTheirReferrers = buildValueLabel("label.theirreferrers");
 
     private final transient PropertiesMergeModel model;
     private final VersionInfoPanel mineVersionInfo = new VersionInfoPanel();
@@ -60,7 +60,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         build();
     }
 
-    protected JLabel buildValueLabel(String name) {
+    protected static JLabel buildValueLabel(String name) {
         JLabel lbl = new JLabel();
         lbl.setName(name);
         lbl.setHorizontalAlignment(JLabel.CENTER);
@@ -128,7 +128,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
         gc.weighty = 0.0;
-        add(lblMyCoordinates = buildValueLabel("label.mycoordinates"), gc);
+        add(lblMyCoordinates, gc);
 
         gc.gridx = 2;
         gc.fill = GridBagConstraints.NONE;
@@ -146,7 +146,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
         gc.weighty = 0.0;
-        add(lblMergedCoordinates = buildValueLabel("label.mergedcoordinates"), gc);
+        add(lblMergedCoordinates, gc);
 
         gc.gridx = 4;
         gc.fill = GridBagConstraints.NONE;
@@ -163,7 +163,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
         gc.weighty = 0.0;
-        add(lblTheirCoordinates = buildValueLabel("label.theircoordinates"), gc);
+        add(lblTheirCoordinates, gc);
 
         // ---------------------------------------------------
         gc.gridx = 3;
@@ -197,7 +197,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
         gc.weighty = 0.0;
-        add(lblMyDeletedState = buildValueLabel("label.mydeletedstate"), gc);
+        add(lblMyDeletedState, gc);
 
         gc.gridx = 2;
         gc.fill = GridBagConstraints.NONE;
@@ -215,7 +215,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
         gc.weighty = 0.0;
-        add(lblMergedDeletedState = buildValueLabel("label.mergeddeletedstate"), gc);
+        add(lblMergedDeletedState, gc);
 
         gc.gridx = 4;
         gc.fill = GridBagConstraints.NONE;
@@ -233,7 +233,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
         gc.weighty = 0.0;
-        add(lblTheirDeletedState = buildValueLabel("label.theirdeletedstate"), gc);
+        add(lblTheirDeletedState, gc);
 
         // ---------------------------------------------------
         gc.gridx = 3;
@@ -269,7 +269,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
         gc.weighty = 0.0;
-        add(lblMyReferrers = buildValueLabel("label.myreferrers"), gc);
+        add(lblMyReferrers, gc);
 
         gc.gridx = 5;
         gc.gridy = 7;
@@ -277,7 +277,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.33;
         gc.weighty = 0.0;
-        add(lblTheirReferrers = buildValueLabel("label.theirreferrers"), gc);
+        add(lblTheirReferrers, gc);
     }
 
     protected final void build() {
@@ -288,7 +288,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         buildReferrersRow();
     }
 
-    public String coordToString(LatLon coord) {
+    protected static String coordToString(LatLon coord) {
         if (coord == null)
             return tr("(none)");
         StringBuilder sb = new StringBuilder();
@@ -300,7 +300,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         return sb.toString();
     }
 
-    public String deletedStateToString(Boolean deleted) {
+    protected static String deletedStateToString(Boolean deleted) {
         if (deleted == null)
             return tr("(none)");
         if (deleted)
@@ -309,7 +309,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
             return tr("not deleted");
     }
 
-    public String referrersToString(List<OsmPrimitive> referrers) {
+    protected static String referrersToString(List<OsmPrimitive> referrers) {
         if (referrers.isEmpty())
             return tr("(none)");
         StringBuilder str = new StringBuilder("<html>");
@@ -389,6 +389,10 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         updateReferrers();
     }
 
+    /**
+     * Returns properties merge model.
+     * @return properties merge model
+     */
     public PropertiesMergeModel getModel() {
         return model;
     }

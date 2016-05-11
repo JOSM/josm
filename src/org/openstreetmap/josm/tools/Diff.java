@@ -596,7 +596,7 @@ public class Diff {
         @Override
         public String toString() {
             String s = String.format("%d -%d +%d %d", line0, deleted, inserted, line1);
-            return (link != null) ? s = s + '\n' + link : s;
+            return (link != null) ? s + '\n' + link : s;
         }
     }
 
@@ -831,7 +831,8 @@ public class Diff {
             for (int i = 0; i < data.length; ++i) {
                 Integer ir = h.get(data[i]);
                 if (ir == null) {
-                    h.put(data[i], equivs[i] = equivMax++);
+                    equivs[i] = equivMax++;
+                    h.put(data[i], equivs[i]);
                 } else {
                     equivs[i] = ir.intValue();
                 }

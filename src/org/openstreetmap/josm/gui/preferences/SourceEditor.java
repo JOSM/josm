@@ -1485,7 +1485,8 @@ public abstract class SourceEditor extends JPanel {
                         last = null;
                         Matcher m = Pattern.compile("^(.+);(.+)$").matcher(line);
                         if (m.matches()) {
-                            sources.add(last = new ExtendedSourceEntry(m.group(1), m.group(2)));
+                            last = new ExtendedSourceEntry(m.group(1), m.group(2));
+                            sources.add(last);
                         } else {
                             Main.error(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
                         }
@@ -1527,7 +1528,7 @@ public abstract class SourceEditor extends JPanel {
     }
 
     class FileOrUrlCellEditor extends JPanel implements TableCellEditor {
-        private JosmTextField tfFileName;
+        private final JosmTextField tfFileName = new JosmTextField();
         private final CopyOnWriteArrayList<CellEditorListener> listeners;
         private String value;
         private final boolean isFile;
@@ -1543,7 +1544,7 @@ public abstract class SourceEditor extends JPanel {
             gc.fill = GridBagConstraints.BOTH;
             gc.weightx = 1.0;
             gc.weighty = 1.0;
-            add(tfFileName = new JosmTextField(), gc);
+            add(tfFileName, gc);
 
             gc.gridx = 1;
             gc.gridy = 0;
