@@ -64,7 +64,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         CANCEL
     }
 
-    private SaveLayersModel model;
+    private final SaveLayersModel model = new SaveLayersModel();
     private UserAction action = UserAction.CANCEL;
     private final UploadAndSaveProgressRenderer pnlUploadLayers = new UploadAndSaveProgressRenderer();
 
@@ -93,7 +93,6 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         geometry.applySafe(this);
         getContentPane().setLayout(new BorderLayout());
 
-        model = new SaveLayersModel();
         SaveLayersTable table = new SaveLayersTable(model);
         JScrollPane pane = new JScrollPane(table);
         model.addPropertyChangeListener(table);
@@ -410,18 +409,13 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         }
 
         public void redrawIcon() {
-            try { // Can fail if model is not yet setup properly
-                Image base = ((ImageIcon) getValue(BASE_ICON)).getImage();
-                BufferedImage newIco = new BufferedImage(ICON_SIZE*3, ICON_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-                Graphics2D g = newIco.createGraphics();
-                g.drawImage(model.getLayersToUpload().isEmpty() ? upldDis : upld, ICON_SIZE*0, 0, ICON_SIZE, ICON_SIZE, null);
-                g.drawImage(model.getLayersToSave().isEmpty()   ? saveDis : save, ICON_SIZE*1, 0, ICON_SIZE, ICON_SIZE, null);
-                g.drawImage(base,                                                 ICON_SIZE*2, 0, ICON_SIZE, ICON_SIZE, null);
-                putValue(SMALL_ICON, new ImageIcon(newIco));
-            } catch (Exception e) {
-                Main.warn(e);
-                putValue(SMALL_ICON, getValue(BASE_ICON));
-            }
+            Image base = ((ImageIcon) getValue(BASE_ICON)).getImage();
+            BufferedImage newIco = new BufferedImage(ICON_SIZE*3, ICON_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
+            Graphics2D g = newIco.createGraphics();
+            g.drawImage(model.getLayersToUpload().isEmpty() ? upldDis : upld, ICON_SIZE*0, 0, ICON_SIZE, ICON_SIZE, null);
+            g.drawImage(model.getLayersToSave().isEmpty()   ? saveDis : save, ICON_SIZE*1, 0, ICON_SIZE, ICON_SIZE, null);
+            g.drawImage(base,                                                 ICON_SIZE*2, 0, ICON_SIZE, ICON_SIZE, null);
+            putValue(SMALL_ICON, new ImageIcon(newIco));
         }
 
         @Override
