@@ -63,7 +63,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     private boolean canceled;
     private final String apiUrl;
 
-    private AuthorizationProcedureComboBox cbAuthorisationProcedure;
+    private final AuthorizationProcedureComboBox cbAuthorisationProcedure = new AuthorizationProcedureComboBox();
     private FullyAutomaticAuthorizationUI pnlFullyAutomaticAuthorisationUI;
     private SemiAutomaticAuthorizationUI pnlSemiAutomaticAuthorisationUI;
     private ManualAuthorizationUI pnlManualAuthorisationUI;
@@ -149,7 +149,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         gc.gridx = 1;
         gc.gridwidth = 1;
         gc.weightx = 1.0;
-        pnl.add(cbAuthorisationProcedure = new AuthorizationProcedureComboBox(), gc);
+        pnl.add(cbAuthorisationProcedure, gc);
         cbAuthorisationProcedure.addItemListener(new AuthorisationProcedureChangeListener());
         lbl.setLabelFor(cbAuthorisationProcedure);
 

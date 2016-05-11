@@ -16,12 +16,19 @@ import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 
 public class OsmPrivilegesPanel extends VerticallyScrollablePanel {
 
-    private JCheckBox cbWriteApi;
-    private JCheckBox cbWriteGpx;
-    private JCheckBox cbReadGpx;
-    private JCheckBox cbWritePrefs;
-    private JCheckBox cbReadPrefs;
-    private JCheckBox cbModifyNotes;
+    private final JCheckBox cbWriteApi = new JCheckBox();
+    private final JCheckBox cbWriteGpx = new JCheckBox();
+    private final JCheckBox cbReadGpx = new JCheckBox();
+    private final JCheckBox cbWritePrefs = new JCheckBox();
+    private final JCheckBox cbReadPrefs = new JCheckBox();
+    private final JCheckBox cbModifyNotes = new JCheckBox();
+
+    /**
+     * Constructs a new {@code OsmPrivilegesPanel}.
+     */
+    public OsmPrivilegesPanel() {
+        build();
+    }
 
     protected final void build() {
         setLayout(new GridBagLayout());
@@ -34,7 +41,7 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
         gc.insets = new Insets(0, 0, 3, 3);
-        add(cbWriteApi = new JCheckBox(), gc);
+        add(cbWriteApi, gc);
         cbWriteApi.setText(tr("Allow to upload map data"));
         cbWriteApi.setToolTipText(tr("Select to grant JOSM the right to upload map data on your behalf"));
         cbWriteApi.setSelected(true);
@@ -42,7 +49,7 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel {
         // checkbox for "allow to upload gps traces"
         //
         gc.gridy = 1;
-        add(cbWriteGpx = new JCheckBox(), gc);
+        add(cbWriteGpx, gc);
         cbWriteGpx.setText(tr("Allow to upload GPS traces"));
         cbWriteGpx.setToolTipText(tr("Select to grant JOSM the right to upload GPS traces on your behalf"));
         cbWriteGpx.setSelected(true);
@@ -50,7 +57,7 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel {
         // checkbox for "allow to download private gps traces"
         //
         gc.gridy = 2;
-        add(cbReadGpx = new JCheckBox(), gc);
+        add(cbReadGpx, gc);
         cbReadGpx.setText(tr("Allow to download your private GPS traces"));
         cbReadGpx.setToolTipText(tr("Select to grant JOSM the right to download your private GPS traces into JOSM layers"));
         cbReadGpx.setSelected(true);
@@ -58,7 +65,7 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel {
         // checkbox for "allow to download private gps traces"
         //
         gc.gridy = 3;
-        add(cbReadPrefs = new JCheckBox(), gc);
+        add(cbReadPrefs, gc);
         cbReadPrefs.setText(tr("Allow to read your preferences"));
         cbReadPrefs.setToolTipText(tr("Select to grant JOSM the right to read your server preferences"));
         cbReadPrefs.setSelected(true);
@@ -66,13 +73,13 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel {
         // checkbox for "allow to download private gps traces"
         //
         gc.gridy = 4;
-        add(cbWritePrefs = new JCheckBox(), gc);
+        add(cbWritePrefs, gc);
         cbWritePrefs.setText(tr("Allow to write your preferences"));
         cbWritePrefs.setToolTipText(tr("Select to grant JOSM the right to write your server preferences"));
         cbWritePrefs.setSelected(true);
 
         gc.gridy = 5;
-        add(cbModifyNotes = new JCheckBox(), gc);
+        add(cbModifyNotes, gc);
         cbModifyNotes.setText(tr("Allow modifications of notes"));
         cbModifyNotes.setToolTipText(tr("Select to grant JOSM the right to modify notes on your behalf"));
         cbModifyNotes.setSelected(true);
@@ -83,13 +90,6 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel {
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         add(new JPanel(), gc);
-    }
-
-    /**
-     * Constructs a new {@code OsmPrivilegesPanel}.
-     */
-    public OsmPrivilegesPanel() {
-        build();
     }
 
     /**

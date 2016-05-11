@@ -17,13 +17,20 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 
 /**
  * Displays the key and the secret of an OAuth Access Token.
- *
+ * @since 2746
  */
 public class AccessTokenInfoPanel extends JPanel {
 
-    private JosmTextField tfAccessTokenKey;
-    private JosmTextField tfAccessTokenSecret;
-    private JCheckBox cbSaveAccessTokenInPreferences;
+    private final JosmTextField tfAccessTokenKey = new JosmTextField();
+    private final JosmTextField tfAccessTokenSecret = new JosmTextField();
+    private final JCheckBox cbSaveAccessTokenInPreferences = new JCheckBox(tr("Save Access Token in preferences"));
+
+    /**
+     * Constructs a new {@code AccessTokenInfoPanel}.
+     */
+    public AccessTokenInfoPanel() {
+        build();
+    }
 
     protected final void build() {
         setLayout(new GridBagLayout());
@@ -38,7 +45,7 @@ public class AccessTokenInfoPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfAccessTokenKey = new JosmTextField(), gc);
+        add(tfAccessTokenKey, gc);
         tfAccessTokenKey.setEditable(false);
 
         // the access token secret
@@ -50,14 +57,14 @@ public class AccessTokenInfoPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfAccessTokenSecret = new JosmTextField(), gc);
+        add(tfAccessTokenSecret, gc);
         tfAccessTokenSecret.setEditable(false);
 
         // the checkbox
         gc.gridx = 0;
         gc.gridy = 2;
         gc.gridwidth = 2;
-        add(cbSaveAccessTokenInPreferences = new JCheckBox(tr("Save Access Token in preferences")), gc);
+        add(cbSaveAccessTokenInPreferences, gc);
         cbSaveAccessTokenInPreferences.setToolTipText(tr(
                 "<html>Select to save the Access Token in the JOSM preferences.<br>"
                 + "Unselect to use the Access Token in this JOSM session only.</html>"
@@ -72,10 +79,6 @@ public class AccessTokenInfoPanel extends JPanel {
         gc.fill = GridBagConstraints.BOTH;
         gc.gridwidth = 2;
         add(new JPanel(), gc);
-    }
-
-    public AccessTokenInfoPanel() {
-        build();
     }
 
     /**

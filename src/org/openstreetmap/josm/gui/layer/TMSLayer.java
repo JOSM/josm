@@ -30,7 +30,7 @@ import org.openstreetmap.josm.data.projection.Projection;
  * @author LuVar &lt;lubomir.varga@freemap.sk&gt;
  * @author Dave Hansen &lt;dave@sr71.net&gt;
  * @author Upliner &lt;upliner@gmail.com&gt;
- *
+ * @since 3715
  */
 public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> implements NativeScaleLayer {
     private static final String CACHE_REGION_NAME = "TMS";
@@ -71,7 +71,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
      * @throws IllegalArgumentException if url from imagery info is null or invalid
      */
     @Override
-    protected TMSTileSource getTileSource(ImageryInfo info) throws IllegalArgumentException {
+    protected TMSTileSource getTileSource(ImageryInfo info) {
         return getTileSourceStatic(info, new Runnable() {
             @Override
             public void run() {
@@ -103,7 +103,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
      * @return a new TileSource instance or null if no TileSource for the ImageryInfo/ImageryType could be found.
      * @throws IllegalArgumentException if url from imagery info is null or invalid
      */
-    public static AbstractTMSTileSource getTileSourceStatic(ImageryInfo info) throws IllegalArgumentException {
+    public static AbstractTMSTileSource getTileSourceStatic(ImageryInfo info) {
         return getTileSourceStatic(info, null);
     }
 
@@ -120,7 +120,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
      * @return a new TileSource instance or null if no TileSource for the ImageryInfo/ImageryType could be found.
      * @throws IllegalArgumentException if url from imagery info is null or invalid
      */
-    public static TMSTileSource getTileSourceStatic(ImageryInfo info, Runnable attributionLoadedTask) throws IllegalArgumentException {
+    public static TMSTileSource getTileSourceStatic(ImageryInfo info, Runnable attributionLoadedTask) {
         if (info.getImageryType() == ImageryType.TMS) {
             TemplatedTMSTileSource.checkUrl(info.getUrl());
             TMSTileSource t = new TemplatedTMSTileSource(info);

@@ -59,11 +59,11 @@ import org.xml.sax.SAXException;
  */
 public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
-    private JosmTextField tfUserName;
-    private JosmPasswordField tfPassword;
+    private final JosmTextField tfUserName = new JosmTextField();
+    private final JosmPasswordField tfPassword = new JosmPasswordField();
     private transient UserNameValidator valUserName;
     private transient PasswordValidator valPassword;
-    private AccessTokenInfoPanel pnlAccessTokenInfo;
+    private final AccessTokenInfoPanel pnlAccessTokenInfo = new AccessTokenInfoPanel();
     private OsmPrivilegesPanel pnlOsmPrivileges;
     private JPanel pnlPropertiesPanel;
     private JPanel pnlActionButtonsPanel;
@@ -119,7 +119,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfUserName = new JosmTextField(), gc);
+        pnl.add(tfUserName, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfUserName);
         valUserName = new UserNameValidator(tfUserName);
         valUserName.validate();
@@ -134,7 +134,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfPassword = new JosmPasswordField(), gc);
+        pnl.add(tfPassword, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfPassword);
         valPassword = new PasswordValidator(tfPassword);
         valPassword.validate();
@@ -231,7 +231,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         // infos about the access token
         gc.gridy = 1;
         gc.insets = new Insets(5, 0, 0, 0);
-        pnl.add(pnlAccessTokenInfo = new AccessTokenInfoPanel(), gc);
+        pnl.add(pnlAccessTokenInfo, gc);
 
         // the actions
         JPanel pnl1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
