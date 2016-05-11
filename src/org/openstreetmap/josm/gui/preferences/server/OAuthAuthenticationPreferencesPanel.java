@@ -45,13 +45,13 @@ import org.openstreetmap.josm.tools.UserCancelException;
  * @since 2745
  */
 public class OAuthAuthenticationPreferencesPanel extends JPanel implements PropertyChangeListener {
-    private final JPanel pnlAuthorisationMessage = new JPanel(new BorderLayout());
-    private final NotYetAuthorisedPanel pnlNotYetAuthorised = new NotYetAuthorisedPanel();
-    private final AlreadyAuthorisedPanel pnlAlreadyAuthorised = new AlreadyAuthorisedPanel();
-    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel();
-    private String apiUrl;
     private final JCheckBox cbShowAdvancedParameters = new JCheckBox();
     private final JCheckBox cbSaveToPreferences = new JCheckBox(tr("Save to preferences"));
+    private final JPanel pnlAuthorisationMessage = new JPanel(new BorderLayout());
+    private final NotYetAuthorisedPanel pnlNotYetAuthorised = new NotYetAuthorisedPanel();
+    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel();
+    private final AlreadyAuthorisedPanel pnlAlreadyAuthorised = new AlreadyAuthorisedPanel();
+    private String apiUrl;
 
     /**
      * Create the panel
