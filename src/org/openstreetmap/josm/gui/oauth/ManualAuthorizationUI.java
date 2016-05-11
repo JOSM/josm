@@ -54,7 +54,8 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
      * @since 5422
      */
     public ManualAuthorizationUI(String apiUrl, Executor executor) {
-        super(apiUrl);
+        super(/* dont pass apiURL because setApiUrl is overriden and references a local field */);
+        setApiUrl(apiUrl);
         this.executor = executor;
         build();
     }
