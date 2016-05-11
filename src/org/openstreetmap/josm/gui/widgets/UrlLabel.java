@@ -67,7 +67,7 @@ public class UrlLabel extends JLabel implements MouseListener {
         setUrl(url);
         setDescription(description);
         if (fontPlus != 0) {
-            setFont(getFont().deriveFont(0, getFont().getSize()+fontPlus));
+            setFont(getFont().deriveFont(0, (float) getFont().getSize()+fontPlus));
         }
         refresh();
     }

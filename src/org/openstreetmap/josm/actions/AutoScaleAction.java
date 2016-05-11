@@ -286,7 +286,7 @@ public class AutoScaleAction extends JosmAction {
             break;
         case "download":
 
-            if (lastZoomTime > 0 && System.currentTimeMillis() - lastZoomTime > Main.pref.getLong("zoom.bounds.reset.time", 10*1000)) {
+            if (lastZoomTime > 0 && System.currentTimeMillis() - lastZoomTime > Main.pref.getLong("zoom.bounds.reset.time", 10L*1000L)) {
                 lastZoomTime = -1;
             }
             final DataSet dataset = getCurrentDataSet();

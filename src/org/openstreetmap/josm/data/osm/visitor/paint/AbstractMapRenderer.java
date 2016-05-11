@@ -220,10 +220,10 @@ public abstract class AbstractMapRenderer implements Rendering {
                 if (isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace)) {
                     int x = (p.x+lastP.x)/2;
                     int y = (p.y+lastP.y)/2;
-                    path.moveTo(x-virtualNodeSize, y);
-                    path.lineTo(x+virtualNodeSize, y);
-                    path.moveTo(x, y-virtualNodeSize);
-                    path.lineTo(x, y+virtualNodeSize);
+                    path.moveTo((float) x-virtualNodeSize, y);
+                    path.lineTo((float) x+virtualNodeSize, y);
+                    path.moveTo(x, (float) y-virtualNodeSize);
+                    path.lineTo(x, (float) y+virtualNodeSize);
                 }
                 lastP = p;
             }

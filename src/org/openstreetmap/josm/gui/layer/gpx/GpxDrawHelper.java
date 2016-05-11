@@ -418,7 +418,7 @@ public class GpxDrawHelper implements SoMChangeListener {
                             && (oldA == null || screen.x < oldA.x - delta || screen.x > oldA.x + delta
                             || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
                         g.setColor(trkPnt.customColoring);
-                        double t = Math.atan2(screen.y - old.y, screen.x - old.x) + Math.PI;
+                        double t = Math.atan2((double) screen.y - old.y, (double) screen.x - old.x) + Math.PI;
                         g.drawLine(screen.x, screen.y, (int) (screen.x + 10 * Math.cos(t - PHI)),
                                 (int) (screen.y + 10 * Math.sin(t - PHI)));
                         g.drawLine(screen.x, screen.y, (int) (screen.x + 10 * Math.cos(t + PHI)),
