@@ -98,7 +98,7 @@ public class Preferences {
     private static final String[] OBSOLETE_PREF_KEYS = {
     };
 
-    private static final long MAX_AGE_DEFAULT_PREFERENCES = 60 * 60 * 24 * 50; // 50 days (in seconds)
+    private static final long MAX_AGE_DEFAULT_PREFERENCES = 60L * 60L * 24L * 50L; // 50 days (in seconds)
 
     /**
      * Internal storage for the preference directory.

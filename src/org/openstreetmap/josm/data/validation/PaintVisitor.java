@@ -140,7 +140,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
      */
     protected void drawSegment(Point p1, Point p2, Color color) {
 
-        double t = Math.atan2(p2.x - p1.x, p2.y - p1.y);
+        double t = Math.atan2((double) p2.x - p1.x, (double) p2.y - p1.y);
         double cosT = 5 * Math.cos(t);
         double sinT = 5 * Math.sin(t);
         int deg = (int) Math.toDegrees(t);

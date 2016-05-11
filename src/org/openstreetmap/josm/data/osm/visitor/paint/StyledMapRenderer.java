@@ -143,7 +143,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
             int dxNext = next.x - current.x;
             int dyNext = next.y - current.y;
-            double lenNext = Math.sqrt(dxNext*dxNext + dyNext*dyNext);
+            double lenNext = Math.sqrt((double) dxNext*dxNext + (double) dyNext*dyNext);
 
             if (lenNext == 0) {
                 lenNext = 1; // value does not matter, because dy_next and dx_next is 0
@@ -813,8 +813,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             if (lastP != null) {
                 final double segmentLength = thisP.distance(lastP);
 
-                final double dx = thisP.x - lastP.x;
-                final double dy = thisP.y - lastP.y;
+                final double dx = (double) thisP.x - lastP.x;
+                final double dy = (double) thisP.y - lastP.y;
 
                 // pos is the position from the beginning of the current segment
                 // where an image should be painted
@@ -1262,8 +1262,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             poly.addPoint(p.x, p.y);
 
             if (lastPoint != null) {
-                dx = p.x - lastPoint.x;
-                dy = p.y - lastPoint.y;
+                dx = (long) p.x - lastPoint.x;
+                dy = (long) p.y - lastPoint.y;
                 double segmentLength = Math.sqrt(dx*dx + dy*dy);
                 if (segmentLength > 2*(rec.getWidth()+4)) {
                     Point center = new Point((lastPoint.x + p.x)/2, (lastPoint.y + p.y)/2);
@@ -1755,8 +1755,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         // Yes, it is inefficient to iterate from the beginning for each glyph.
         // Can be optimized if it turns out to be slow.
         for (int i = 1; i < poly.npoints; ++i) {
-            dx = poly.xpoints[i] - poly.xpoints[i-1];
-            dy = poly.ypoints[i] - poly.ypoints[i-1];
+            dx = (long) poly.xpoints[i] - poly.xpoints[i-1];
+            dy = (long) poly.ypoints[i] - poly.ypoints[i-1];
             segLen = Math.sqrt(dx*dx + dy*dy);
             if (totalLen > curLen + segLen) {
                 curLen += segLen;

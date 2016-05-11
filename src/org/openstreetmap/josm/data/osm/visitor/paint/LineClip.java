@@ -38,7 +38,8 @@ public class LineClip {
             return false;
         }
         return cohenSutherland(p1.x, p1.y, p2.x, p2.y, clipBounds.x, clipBounds.y,
-                clipBounds.x + clipBounds.width, clipBounds.y + clipBounds.height);
+                (long) clipBounds.x + clipBounds.width,
+                (long) clipBounds.y + clipBounds.height);
     }
 
     /**

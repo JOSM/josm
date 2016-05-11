@@ -67,7 +67,7 @@ public class OsmServerWriter {
             elapsed = 1;
         }
         double uploadsPerMs = (double) progress / elapsed;
-        double uploadsLeft = listSize - progress;
+        double uploadsLeft = (double) listSize - progress;
         long msLeft = (long) (uploadsLeft / uploadsPerMs);
         long minutesLeft = msLeft / MSECS_PER_MINUTE;
         long secondsLeft = (msLeft / MSECS_PER_SECOND) % SECONDS_PER_MINUTE;

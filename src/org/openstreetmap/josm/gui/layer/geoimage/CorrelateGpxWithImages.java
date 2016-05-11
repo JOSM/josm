@@ -924,7 +924,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                     lblTimezone.setText(tr("Timezone: {0}", timezone.formatTimezone()));
                     lblMinutes.setText(tr("Minutes: {0}", sldMinutes.getValue()));
-                    lblSeconds.setText(tr("Seconds: {0}", Offset.milliseconds(100 * sldSeconds.getValue()).formatOffset()));
+                    lblSeconds.setText(tr("Seconds: {0}", Offset.milliseconds(100L * sldSeconds.getValue()).formatOffset()));
 
                     delta = Offset.milliseconds(100 * sldSeconds.getValue()
                             + 1000L * 60 * sldMinutes.getValue()

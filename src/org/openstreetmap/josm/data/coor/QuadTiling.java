@@ -24,9 +24,9 @@ public final class QuadTiling {
         // The world is divided up into X_PARTS,Y_PARTS.
         // The question is how far we move for each bit being set.
         // In the case of the top level, we move half of the world.
-        double xUnit = X_PARTS/2;
-        double yUnit = Y_PARTS/2;
-        long shift = (NR_LEVELS*2)-2;
+        double xUnit = X_PARTS/2d;
+        double yUnit = Y_PARTS/2d;
+        long shift = (NR_LEVELS*2L)-2L;
 
         double x = 0;
         double y = 0;

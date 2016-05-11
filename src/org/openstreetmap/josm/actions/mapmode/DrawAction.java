@@ -1141,7 +1141,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Point p1 = mv.getPoint(getCurrentBaseNode());
         Point p2 = mv.getPoint(currentMouseEastNorth);
 
-        double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
+        double t = Math.atan2((double) p2.y - p1.y, (double) p2.x - p1.x) + Math.PI;
 
         b.moveTo(p1.x, p1.y);
         b.lineTo(p2.x, p2.y);
@@ -1482,7 +1482,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 b = new GeneralPath();
                 if (absoluteFix) {
                     b.moveTo(p2.x, p2.y);
-                    b.lineTo(2*p1.x-p2.x, 2*p1.y-p2.y); // bi-directional line
+                    b.lineTo(2f*p1.x-p2.x, 2f*p1.y-p2.y); // bi-directional line
                 } else {
                     b.moveTo(p2.x, p2.y);
                     b.lineTo(p3.x, p3.y);

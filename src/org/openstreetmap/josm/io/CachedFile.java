@@ -75,7 +75,7 @@ public class CachedFile implements Closeable {
     protected boolean initialized;
 
     public static final long DEFAULT_MAXTIME = -1L;
-    public static final long DAYS = 24*60*60; // factor to get caching time in days
+    public static final long DAYS = 24L*60L*60L; // factor to get caching time in days
 
     private final Map<String, String> httpHeaders = new ConcurrentHashMap<>();
 

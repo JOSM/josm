@@ -186,7 +186,7 @@ public class JumpToAction extends JosmAction {
             }
 
             // 10 000 000 = 10 000 * 1000 = World * (km -> m)
-            zm.setText(Double.toString(Math.round(10000000 * Math.pow(2, (-1) * zoomLvl))));
+            zm.setText(Double.toString(Math.round(10000000d * Math.pow(2d, (-1d) * zoomLvl))));
         }
     }
 

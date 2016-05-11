@@ -168,7 +168,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      */
     public void hookUpMapView() {
         // calculate total memory needed for all layers
-        long memoryBytesRequired = 50 * 1024 * 1024; // assumed minimum JOSM memory footprint
+        long memoryBytesRequired = 50L * 1024L * 1024L; // assumed minimum JOSM memory footprint
         if (Main.map != null && Main.map.mapView != null) {
             for (Layer layer: Main.map.mapView.getAllLayers()) {
                 memoryBytesRequired += layer.estimateMemoryUsage();

@@ -634,7 +634,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                         // FIXME - not use zoom history here
                         zoomTo(oldCenter.interpolate(finalNewCenter, (i+1) / frames));
                         try {
-                            Thread.sleep(1000 / fps);
+                            Thread.sleep(1000L / fps);
                         } catch (InterruptedException ex) {
                             Main.warn("InterruptedException in "+NavigatableComponent.class.getSimpleName()+" during smooth scrolling");
                         }

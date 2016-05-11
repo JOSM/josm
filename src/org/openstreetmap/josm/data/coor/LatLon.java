@@ -173,7 +173,7 @@ public class LatLon extends Coordinate {
 
         if (cDms60.equals(sSeconds)) {
             sSeconds = cDms00;
-            sMinutes = cDmsMinuteFormatter.format(tMinutes+1);
+            sMinutes = cDmsMinuteFormatter.format(tMinutes+1L);
         }
         if ("60".equals(sMinutes)) {
             sMinutes = "00";

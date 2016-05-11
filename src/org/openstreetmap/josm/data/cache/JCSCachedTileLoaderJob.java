@@ -26,6 +26,8 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Utils;
 
+import sun.net.www.protocol.http.HttpURLConnection;
+
 /**
  * @author Wiktor Niesiobędzki
  *
@@ -339,18 +341,17 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 useHead.put(serverKey, Boolean.TRUE);
             }
 
-
             attributes = parseHeaders(urlConn);
 
             for (int i = 0; i < 5; ++i) {
-                if (urlConn.getResponseCode() == 503) {
-                    Thread.sleep(5000+(new Random()).nextInt(5000));
+                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_UNAVAILABLE) {
+                    Thread.sleep(5000L+(new Random()).nextInt(5000));
                     continue;
                 }
 
                 attributes.setResponseCode(urlConn.getResponseCode());
                 byte[] raw;
-                if (urlConn.getResponseCode() == 200) {
+                if (urlConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     raw = Utils.readBytesFromStream(urlConn.getContent());
                 } else {
                     raw = new byte[]{};

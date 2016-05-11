@@ -8,9 +8,14 @@ import java.io.PushbackInputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
- * Detects the different UTF encodings from byte order mark
+ * Detects the different UTF encodings from byte order mark.
+ * @since 3372
  */
 public final class UTFInputStreamReader extends InputStreamReader {
+
+    private UTFInputStreamReader(InputStream in, String cs) throws UnsupportedEncodingException {
+        super(in, cs);
+    }
 
     /**
      * Creates a new {@link InputStreamReader} from the {@link InputStream} with UTF-8 as default encoding.
@@ -63,17 +68,8 @@ public final class UTFInputStreamReader extends InputStreamReader {
         }
 
         if (encoding == null) {
-            return new UTFInputStreamReader(pushbackStream);
-        } else {
-            return new UTFInputStreamReader(pushbackStream, encoding);
+            encoding = "UTF-8";
         }
-    }
-
-    private UTFInputStreamReader(InputStream in) {
-        super(in);
-    }
-
-    private UTFInputStreamReader(InputStream in, String cs) throws UnsupportedEncodingException {
-        super(in, cs);
+        return new UTFInputStreamReader(pushbackStream, encoding);
     }
 }
