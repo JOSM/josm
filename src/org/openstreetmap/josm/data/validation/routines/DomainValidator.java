@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016050900, Last Updated Mon May  9 07:07:01 2016 UTC
+        // Taken from Version 2016051100, Last Updated Wed May 11 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -587,6 +587,7 @@ public final class DomainValidator extends AbstractValidator {
         "fitness", // fitness Brice Orchard, LLC
         "flickr", // flickr Yahoo! Domain Services Inc.
         "flights", // flights Fox Station, LLC
+        "flir", // flir FLIR Systems, Inc.
         "florist", // florist Half Cypress, LLC
         "flowers", // flowers Uniregistry, Corp.
         "flsmidth", // flsmidth FLSmidth A/S
