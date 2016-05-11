@@ -175,6 +175,12 @@ public class CachedFile implements Closeable {
         return name;
     }
 
+    /**
+     * Returns maximum age of cache file. Only applies to URLs.
+     * When this time has passed after the last download of the file, the
+     * cache is considered stale and a new download will be attempted.
+     * @return the maximum cache age in seconds
+     */
     public long getMaxAge() {
         return maxAge;
     }
