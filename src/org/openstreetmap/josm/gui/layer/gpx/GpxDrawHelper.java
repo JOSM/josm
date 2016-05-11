@@ -100,7 +100,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);
         velocityScale = ColorScale.createHSBScale(256);
         /** Colors (without custom alpha channel, if given) for HDOP painting. **/
-        hdopScale = ColorScale.createHSBScale(256).makeReversed();
+        hdopScale = ColorScale.createHSBScale(256).makeReversed().addTitle(tr("HDOP"));
         dateScale = ColorScale.createHSBScale(256).addTitle(tr("Time"));
         directionScale = ColorScale.createCyclicScale(256).setIntervalCount(4).addTitle(tr("Direction"));
         systemOfMeasurementChanged(null, null);
@@ -110,7 +110,6 @@ public class GpxDrawHelper implements SoMChangeListener {
     public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
         SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
         velocityScale.addTitle(tr("Velocity, {0}", som.speedName));
-        hdopScale.addTitle(tr("HDOP, {0}", som.aName));
         if (Main.isDisplayingMapView() && oldSoM != null && newSoM != null) {
             Main.map.mapView.repaint();
         }
@@ -566,10 +565,10 @@ public class GpxDrawHelper implements SoMChangeListener {
 
     public void drawColorBar(Graphics2D g, MapView mv) {
         int w = mv.getWidth();
-        SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
         if (colored == ColorMode.HDOP) {
-            hdopScale.drawColorBar(g, w-30, 50, 20, 100, som.aValue);
+            hdopScale.drawColorBar(g, w-30, 50, 20, 100, 1.0);
         } else if (colored == ColorMode.VELOCITY) {
+            SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
             velocityScale.drawColorBar(g, w-30, 50, 20, 100, som.speedValue);
         } else if (colored == ColorMode.DIRECTION) {
             directionScale.drawColorBar(g, w-30, 50, 20, 100, 180.0/Math.PI);
