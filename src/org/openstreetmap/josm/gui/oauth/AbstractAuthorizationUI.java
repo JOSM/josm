@@ -21,11 +21,14 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
     public static final String ACCESS_TOKEN_PROP = AbstractAuthorizationUI.class.getName() + ".accessToken";
 
     private String apiUrl;
-    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties;
+    private final AdvancedOAuthPropertiesPanel pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel();
     private transient OAuthToken accessToken;
 
-    protected void fireAccessTokenChanged(OAuthToken oldValue, OAuthToken newValue) {
-        firePropertyChange(ACCESS_TOKEN_PROP, oldValue, newValue);
+    /**
+     * Constructs a new {@code AbstractAuthorizationUI} without API URL.
+     * @since 10189
+     */
+    public AbstractAuthorizationUI() {
     }
 
     /**
@@ -34,8 +37,11 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
      * @since 5422
      */
     public AbstractAuthorizationUI(String apiUrl) {
-        pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel();
         setApiUrl(apiUrl);
+    }
+
+    protected void fireAccessTokenChanged(OAuthToken oldValue, OAuthToken newValue) {
+        firePropertyChange(ACCESS_TOKEN_PROP, oldValue, newValue);
     }
 
     /**
