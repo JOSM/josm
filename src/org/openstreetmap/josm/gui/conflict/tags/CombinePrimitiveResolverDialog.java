@@ -171,7 +171,8 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         spTagConflictTypes = new AutoAdjustingSplitPane(JSplitPane.VERTICAL_SPLIT);
         spTagConflictTypes.setTopComponent(buildTagConflictResolverPanel());
         spTagConflictTypes.setBottomComponent(buildRelationMemberConflictResolverPanel());
-        getContentPane().add(pnlButtons = buildButtonPanel(), BorderLayout.SOUTH);
+        pnlButtons = buildButtonPanel();
+        getContentPane().add(pnlButtons, BorderLayout.SOUTH);
         addWindowListener(new AdjustDividerLocationAction());
         HelpUtil.setHelpContext(getRootPane(), ht("/"));
     }

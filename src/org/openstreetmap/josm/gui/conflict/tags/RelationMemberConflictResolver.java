@@ -39,18 +39,18 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class RelationMemberConflictResolver extends JPanel {
 
-    private AutoCompletingTextField tfRole;
-    private AutoCompletingTextField tfKey;
-    private AutoCompletingTextField tfValue;
+    private final AutoCompletingTextField tfRole = new AutoCompletingTextField(10);
+    private final AutoCompletingTextField tfKey = new AutoCompletingTextField(10);
+    private final AutoCompletingTextField tfValue = new AutoCompletingTextField(10);
     private JCheckBox cbTagRelations;
     private final RelationMemberConflictResolverModel model;
-    private RelationMemberConflictResolverTable tblResolver;
-    private JMultilineLabel lblHeader;
+    private final RelationMemberConflictResolverTable tblResolver;
+    private final JMultilineLabel lblHeader = new JMultilineLabel("");
 
     protected final void build() {
         setLayout(new GridBagLayout());
         final JPanel pnl = new JPanel(new BorderLayout());
-        pnl.add(lblHeader = new JMultilineLabel(""));
+        pnl.add(lblHeader);
         GridBagConstraints gc = new GridBagConstraints();
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weighty = 0.0;
@@ -62,7 +62,7 @@ public class RelationMemberConflictResolver extends JPanel {
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         gc.insets = new Insets(0, 0, 0, 0);
-        add(new JScrollPane(tblResolver = new RelationMemberConflictResolverTable(model)), gc);
+        add(new JScrollPane(tblResolver), gc);
 
         final JPanel pnl2 = new JPanel();
         pnl2.setLayout(new BoxLayout(pnl2, BoxLayout.Y_AXIS));
@@ -77,7 +77,7 @@ public class RelationMemberConflictResolver extends JPanel {
     protected JPanel buildRoleEditingPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pnl.add(new JLabel(tr("Role:")));
-        pnl.add(tfRole = new AutoCompletingTextField(10));
+        pnl.add(tfRole);
         tfRole.setToolTipText(tr("Enter a role for all relation memberships"));
         pnl.add(new JButton(new ApplyRoleAction()));
         tfRole.addActionListener(new ApplyRoleAction());
@@ -101,10 +101,10 @@ public class RelationMemberConflictResolver extends JPanel {
                         + "to all modified relations.</html>"));
         pnl.add(cbTagRelations);
         pnl.add(new JLabel(trc("tag", "Key:")));
-        pnl.add(tfKey = new AutoCompletingTextField(10));
+        pnl.add(tfKey);
         tfKey.setToolTipText(tr("<html>Enter a tag key, e.g. <strong><tt>fixme</tt></strong></html>"));
         pnl.add(new JLabel(tr("Value:")));
-        pnl.add(tfValue = new AutoCompletingTextField(10));
+        pnl.add(tfValue);
         tfValue.setToolTipText(tr("<html>Enter a tag value, e.g. <strong><tt>check members</tt></strong></html>"));
         cbTagRelations.setSelected(false);
         tfKey.setEnabled(false);
@@ -119,6 +119,7 @@ public class RelationMemberConflictResolver extends JPanel {
      */
     public RelationMemberConflictResolver(RelationMemberConflictResolverModel model) {
         this.model = model;
+        this.tblResolver = new RelationMemberConflictResolverTable(model);
         build();
     }
 

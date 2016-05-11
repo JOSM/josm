@@ -46,10 +46,10 @@ public class BookmarkSelection implements DownloadSelection {
     private DownloadDialog parent;
 
     /** displays information about the current download area */
-    private JMultilineLabel lblCurrentDownloadArea;
+    private final JMultilineLabel lblCurrentDownloadArea = new JMultilineLabel("");
     private final JosmTextArea bboxDisplay = new JosmTextArea();
     /** the add action */
-    private AddAction actAdd;
+    private final AddAction actAdd = new AddAction();
 
     /**
      * Creates the panel with the action buttons on the left
@@ -83,7 +83,7 @@ public class BookmarkSelection implements DownloadSelection {
         GridBagConstraints  gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.insets = new Insets(5, 5, 5, 5);
-        pnl.add(lblCurrentDownloadArea = new JMultilineLabel(""), gc);
+        pnl.add(lblCurrentDownloadArea, gc);
 
         gc.weightx = 1.0;
         gc.weighty = 1.0;
@@ -97,7 +97,7 @@ public class BookmarkSelection implements DownloadSelection {
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         gc.insets = new Insets(5, 5, 5, 5);
-        pnl.add(new JButton(actAdd = new AddAction()), gc);
+        pnl.add(new JButton(actAdd), gc);
         return pnl;
     }
 
@@ -162,7 +162,8 @@ public class BookmarkSelection implements DownloadSelection {
      */
     @Override
     public void setDownloadArea(Bounds area) {
-        if (area == null) return;
+        if (area == null)
+            return;
         this.currentArea = area;
         bookmarks.clearSelection();
         updateDownloadAreaLabel();

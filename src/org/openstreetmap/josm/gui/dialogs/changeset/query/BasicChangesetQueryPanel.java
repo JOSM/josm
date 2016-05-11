@@ -102,7 +102,8 @@ public class BasicChangesetQueryPanel extends JPanel {
         gc.insets = new Insets(5, 0, 3, 3);
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
-        pnl.add(cbMyChangesetsOnly = new JCheckBox(tr("Download my changesets only")), gc);
+        cbMyChangesetsOnly = new JCheckBox(tr("Download my changesets only"));
+        pnl.add(cbMyChangesetsOnly, gc);
         cbMyChangesetsOnly.setToolTipText(
                 tr("<html>Select to restrict the query to your changesets only.<br>Unselect to include all changesets in the query.</html>"));
 

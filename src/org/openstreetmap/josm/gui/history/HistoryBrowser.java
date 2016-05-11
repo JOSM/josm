@@ -33,15 +33,30 @@ public class HistoryBrowser extends JPanel {
     private JTabbedPane tpViewers;
 
     /**
+     * Constructs a new {@code HistoryBrowser}.
+     */
+    public HistoryBrowser() {
+        model = new HistoryBrowserModel();
+        build();
+    }
+
+    /**
+     * Constructs a new {@code HistoryBrowser}.
+     * @param history the history of an {@link OsmPrimitive}
+     */
+    public HistoryBrowser(History history) {
+        this();
+        populate(history);
+    }
+
+    /**
      * creates the table which shows the list of versions
      *
      * @return  the panel with the version table
      */
     protected JPanel createVersionTablePanel() {
         JPanel pnl = new JPanel(new BorderLayout());
-
-        VersionTable versionTable = new VersionTable(model);
-        pnl.add(new JScrollPane(versionTable), BorderLayout.CENTER);
+        pnl.add(new JScrollPane(new VersionTable(model)), BorderLayout.CENTER);
         return pnl;
     }
 
@@ -81,14 +96,10 @@ public class HistoryBrowser extends JPanel {
      * builds the GUI
      */
     protected void build() {
-        JPanel left;
-        JPanel right;
+        JPanel left = createVersionTablePanel();
+        JPanel right = createVersionComparePanel();
         setLayout(new BorderLayout());
-        JSplitPane pane = new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT,
-                left = createVersionTablePanel(),
-                right = createVersionComparePanel()
-        );
+        JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, right);
         add(pane, BorderLayout.CENTER);
 
         pane.setOneTouchExpandable(true);
@@ -99,22 +110,6 @@ public class HistoryBrowser extends JPanel {
         right.setMinimumSize(minimumSize);
     }
 
-    /**
-     * constructor
-     */
-    public HistoryBrowser() {
-        model = new HistoryBrowserModel();
-        build();
-    }
-
-    /**
-     * constructor
-     * @param history  the history of an {@link OsmPrimitive}
-     */
-    public HistoryBrowser(History history) {
-        this();
-        populate(history);
-    }
 
     /**
      * populates the browser with the history of a specific {@link OsmPrimitive}

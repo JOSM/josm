@@ -132,21 +132,21 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     // Toggle dialogs
 
     /** Conflict dialog */
-    public ConflictDialog conflictDialog;
+    public final ConflictDialog conflictDialog;
     /** Filter dialog */
-    public FilterDialog filterDialog;
+    public final FilterDialog filterDialog;
     /** Relation list dialog */
-    public RelationListDialog relationListDialog;
+    public final RelationListDialog relationListDialog;
     /** Validator dialog */
-    public ValidatorDialog validatorDialog;
+    public final ValidatorDialog validatorDialog;
     /** Selection list dialog */
-    public SelectionListDialog selectionListDialog;
+    public final SelectionListDialog selectionListDialog;
     /** Properties dialog */
-    public PropertiesDialog propertiesDialog;
+    public final PropertiesDialog propertiesDialog;
     /** Map paint dialog */
-    public MapPaintDialog mapPaintDialog;
+    public final MapPaintDialog mapPaintDialog;
     /** Notes dialog */
-    public NotesDialog noteDialog;
+    public final NotesDialog noteDialog;
 
     // Map modes
 
@@ -237,10 +237,15 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         mapView.setMinimumSize(new Dimension(10, 0));
 
         // toolBarActions, map mode buttons
-        addMapMode(new IconToggleButton(mapModeSelect = new SelectAction(this)));
-        addMapMode(new IconToggleButton(mapModeSelectLasso = new LassoModeAction(), true));
-        addMapMode(new IconToggleButton(mapModeDraw = new DrawAction(this)));
-        addMapMode(new IconToggleButton(mapModeZoom = new ZoomAction(this)));
+        mapModeSelect = new SelectAction(this);
+        mapModeSelectLasso = new LassoModeAction();
+        mapModeDraw = new DrawAction(this);
+        mapModeZoom = new ZoomAction(this);
+
+        addMapMode(new IconToggleButton(mapModeSelect));
+        addMapMode(new IconToggleButton(mapModeSelectLasso, true));
+        addMapMode(new IconToggleButton(mapModeDraw));
+        addMapMode(new IconToggleButton(mapModeZoom));
         addMapMode(new IconToggleButton(new DeleteAction(this), true));
         addMapMode(new IconToggleButton(new ParallelWayAction(this), true));
         addMapMode(new IconToggleButton(new ExtrudeAction(this), true));
@@ -250,19 +255,28 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         // toolBarToggles, toggle dialog buttons
         LayerListDialog.createInstance(this);
+        propertiesDialog = new PropertiesDialog();
+        selectionListDialog = new SelectionListDialog();
+        relationListDialog = new RelationListDialog();
+        conflictDialog = new ConflictDialog();
+        validatorDialog = new ValidatorDialog();
+        filterDialog = new FilterDialog();
+        mapPaintDialog = new MapPaintDialog();
+        noteDialog = new NotesDialog();
+
         addToggleDialog(LayerListDialog.getInstance());
-        addToggleDialog(propertiesDialog = new PropertiesDialog());
-        addToggleDialog(selectionListDialog = new SelectionListDialog());
-        addToggleDialog(relationListDialog = new RelationListDialog());
+        addToggleDialog(propertiesDialog);
+        addToggleDialog(selectionListDialog);
+        addToggleDialog(relationListDialog);
         addToggleDialog(new MinimapDialog());
         addToggleDialog(new CommandStackDialog());
         addToggleDialog(new UserListDialog());
-        addToggleDialog(conflictDialog = new ConflictDialog());
-        addToggleDialog(validatorDialog = new ValidatorDialog());
-        addToggleDialog(filterDialog = new FilterDialog());
+        addToggleDialog(conflictDialog);
+        addToggleDialog(validatorDialog);
+        addToggleDialog(filterDialog);
         addToggleDialog(new ChangesetDialog(), true);
-        addToggleDialog(mapPaintDialog = new MapPaintDialog());
-        addToggleDialog(noteDialog = new NotesDialog());
+        addToggleDialog(mapPaintDialog);
+        addToggleDialog(noteDialog);
         toolBarToggle.setFloatable(false);
 
         // status line below the map
@@ -271,8 +285,12 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0) != null;
         if (unregisterTab) {
-            for (JComponent c: allDialogButtons) c.setFocusTraversalKeysEnabled(false);
-            for (JComponent c: allMapModeButtons) c.setFocusTraversalKeysEnabled(false);
+            for (JComponent c: allDialogButtons) {
+                c.setFocusTraversalKeysEnabled(false);
+            }
+            for (JComponent c: allMapModeButtons) {
+                c.setFocusTraversalKeysEnabled(false);
+            }
         }
 
         if (Main.pref.getBoolean("debug.advanced-keypress-detector.enable", true)) {

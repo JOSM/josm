@@ -20,16 +20,23 @@ import org.openstreetmap.josm.Main;
 /**
  * This is a UI widget for resolving tag conflicts, i.e. differences of the tag values
  * of multiple {@link org.openstreetmap.josm.data.osm.OsmPrimitive}s.
- *
- *
+ * @since 2008
  */
 public class TagConflictResolver extends JPanel {
 
     /** the model for the tag conflict resolver */
     private final TagConflictResolverModel model;
     /** selects whether only tags with conflicts are displayed */
-    private JCheckBox cbShowTagsWithConflictsOnly;
-    private JCheckBox cbShowTagsWithMultiValuesOnly;
+    private final JCheckBox cbShowTagsWithConflictsOnly = new JCheckBox(tr("Show tags with conflicts only"));
+    private final JCheckBox cbShowTagsWithMultiValuesOnly = new JCheckBox(tr("Show tags with multiple values only"));
+
+    /**
+     * Constructs a new {@code TagConflictResolver}.
+     */
+    public TagConflictResolver() {
+        this.model = new TagConflictResolverModel();
+        build();
+    }
 
     protected JPanel buildInfoPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -46,8 +53,8 @@ public class TagConflictResolver extends JPanel {
         gc.gridy = 1;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weighty = 0.0;
-        pnl.add(cbShowTagsWithConflictsOnly = new JCheckBox(tr("Show tags with conflicts only")), gc);
-        pnl.add(cbShowTagsWithMultiValuesOnly = new JCheckBox(tr("Show tags with multiple values only")), gc);
+        pnl.add(cbShowTagsWithConflictsOnly, gc);
+        pnl.add(cbShowTagsWithMultiValuesOnly, gc);
         cbShowTagsWithConflictsOnly.addChangeListener(
                 new ChangeListener() {
                     @Override
@@ -88,14 +95,6 @@ public class TagConflictResolver extends JPanel {
         setLayout(new BorderLayout());
         add(buildInfoPanel(), BorderLayout.NORTH);
         add(new JScrollPane(new TagConflictResolverTable(model)), BorderLayout.CENTER);
-    }
-
-    /**
-     * Constructs a new {@code TagConflictResolver}.
-     */
-    public TagConflictResolver() {
-        this.model = new TagConflictResolverModel();
-        build();
     }
 
     /**

@@ -24,18 +24,24 @@ import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 
 /**
- * The preferences panel for parameters necessary for the Basic Authentication
- * Scheme.
- *
+ * The preferences panel for parameters necessary for the Basic Authentication Scheme.
+ * @since 2745
  */
 public class BasicAuthenticationPreferencesPanel extends JPanel {
 
     /** the OSM user name */
-    private JosmTextField tfOsmUserName;
+    private final JosmTextField tfOsmUserName = new JosmTextField();
     /** the OSM password */
-    private JosmPasswordField tfOsmPassword;
+    private final JosmPasswordField tfOsmPassword = new JosmPasswordField();
     /** a panel with further information, e.g. some warnings */
     private JPanel decorationPanel;
+
+    /**
+     * Constructs a new {@code BasicAuthenticationPreferencesPanel}.
+     */
+    public BasicAuthenticationPreferencesPanel() {
+        build();
+    }
 
     /**
      * builds the UI
@@ -54,7 +60,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfOsmUserName = new JosmTextField(), gc);
+        add(tfOsmUserName, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmUserName);
         UserNameValidator valUserName = new UserNameValidator(tfOsmUserName);
         valUserName.validate();
@@ -67,7 +73,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfOsmPassword = new JosmPasswordField(), gc);
+        add(tfOsmPassword, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmPassword);
         tfOsmPassword.setToolTipText(tr("Please enter your OSM password"));
 
@@ -81,13 +87,6 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
         gc.fill = GridBagConstraints.BOTH;
         decorationPanel = new JPanel(new BorderLayout());
         add(decorationPanel, gc);
-    }
-
-    /**
-     * Constructs a new {@code BasicAuthenticationPreferencesPanel}.
-     */
-    public BasicAuthenticationPreferencesPanel() {
-        build();
     }
 
     /**

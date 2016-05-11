@@ -65,7 +65,8 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         add(new JLabel(tr("3. Select image format")), GBC.eol());
         add(formats, GBC.eol().fill());
 
-        add(wmsInstruction = new JLabel(tr("4. Verify generated WMS URL")), GBC.eol());
+        wmsInstruction = new JLabel(tr("4. Verify generated WMS URL"));
+        add(wmsInstruction, GBC.eol());
         wmsInstruction.setLabelFor(wmsUrl);
         add(wmsUrl, GBC.eop().fill());
         wmsUrl.setLineWrap(true);

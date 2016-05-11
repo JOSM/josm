@@ -153,7 +153,8 @@ public class RelationSorter {
                     List<RelationMember> list;
                     list = customMap.get(sorter);
                     if (list == null) {
-                        customMap.put(sorter, list = new LinkedList<>());
+                        list = new LinkedList<>();
+                        customMap.put(sorter, list);
                     }
                     list.add(m);
                     wasAdded = true;

@@ -24,26 +24,32 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 
 /**
- * This is the preference panel for the authentication method and the authentication
- * parameters.
- *
+ * This is the preference panel for the authentication method and the authentication parameters.
+ * @since 2745
  */
 public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel implements PropertyChangeListener {
 
     /** indicates whether we use basic authentication */
-    private JRadioButton rbBasicAuthentication;
+    private final JRadioButton rbBasicAuthentication = new JRadioButton();
     /** indicates whether we use OAuth as authentication scheme */
-    private JRadioButton rbOAuth;
-    /** the panel which contains the authentication parameters for the respective
-     * authentication scheme
-     */
-    private JPanel pnlAuthenticationParameteters;
+    private final JRadioButton rbOAuth = new JRadioButton();
+    /** the panel which contains the authentication parameters for the respective authentication scheme */
+    private final JPanel pnlAuthenticationParameteters = new JPanel(new BorderLayout());
     /** the panel for the basic authentication parameters */
     private BasicAuthenticationPreferencesPanel pnlBasicAuthPreferences;
     /** the panel for the OAuth authentication parameters */
     private OAuthAuthenticationPreferencesPanel pnlOAuthPreferences;
     /** the panel for messages notifier preferences */
     private FeaturesPanel pnlFeaturesPreferences;
+
+    /**
+     * Constructs a new {@code AuthenticationPreferencesPanel}.
+     */
+    public AuthenticationPreferencesPanel() {
+        build();
+        initFromPreferences();
+        HelpUtil.setHelpContext(this, HelpUtil.ht("/Preferences/Connection#AuthenticationSettings"));
+    }
 
     /**
      * builds the UI
@@ -60,7 +66,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         gc.gridx = 1;
         gc.weightx = 1.0;
         gc.insets = new Insets(0, 0, 0, 3);
-        add(rbBasicAuthentication = new JRadioButton(), gc);
+        add(rbBasicAuthentication, gc);
         rbBasicAuthentication.setText(tr("Use Basic Authentication"));
         rbBasicAuthentication.setToolTipText(tr("Select to use HTTP basic authentication with your OSM username and password"));
         rbBasicAuthentication.addItemListener(authChangeListener);
@@ -68,7 +74,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         //-- radio button for OAuth
         gc.gridx = 0;
         gc.weightx = 0.0;
-        add(rbOAuth = new JRadioButton(), gc);
+        add(rbOAuth, gc);
         rbOAuth.setText(tr("Use OAuth"));
         rbOAuth.setToolTipText(tr("Select to use OAuth as authentication mechanism"));
         rbOAuth.addItemListener(authChangeListener);
@@ -85,7 +91,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        pnlAuthenticationParameteters = new JPanel(new BorderLayout());
         add(pnlAuthenticationParameteters, gc);
 
         //-- the two panels for authentication parameters
@@ -103,15 +108,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         gc.fill = GridBagConstraints.NONE;
         pnlFeaturesPreferences = new FeaturesPanel();
         add(pnlFeaturesPreferences, gc);
-    }
-
-    /**
-     * Constructs a new {@code AuthenticationPreferencesPanel}.
-     */
-    public AuthenticationPreferencesPanel() {
-        build();
-        initFromPreferences();
-        HelpUtil.setHelpContext(this, HelpUtil.ht("/Preferences/Connection#AuthenticationSettings"));
     }
 
     /**

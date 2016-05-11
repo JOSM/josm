@@ -74,23 +74,18 @@ public class TagEditorPanel extends JPanel {
         JPanel pnl = new JPanel();
         pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
 
-        // add action
-        //
-        JButton btn;
-        pnl.add(btn = new JButton(tagTable.getAddAction()));
-        btn.setMargin(new Insets(0, 0, 0, 0));
-        tagTable.addComponentNotStoppingCellEditing(btn);
+        buildButton(pnl, tagTable.getAddAction());
+        buildButton(pnl, tagTable.getDeleteAction());
+        buildButton(pnl, tagTable.getPasteAction());
 
-        // delete action
-        pnl.add(btn = new JButton(tagTable.getDeleteAction()));
-        btn.setMargin(new Insets(0, 0, 0, 0));
-        tagTable.addComponentNotStoppingCellEditing(btn);
-
-        // paste action
-        pnl.add(btn = new JButton(tagTable.getPasteAction()));
-        btn.setMargin(new Insets(0, 0, 0, 0));
-        tagTable.addComponentNotStoppingCellEditing(btn);
         return pnl;
+    }
+
+    private void buildButton(JPanel pnl, AbstractAction action) {
+        JButton btn = new JButton(action);
+        pnl.add(btn);
+        btn.setMargin(new Insets(0, 0, 0, 0));
+        tagTable.addComponentNotStoppingCellEditing(btn);
     }
 
     /**

@@ -97,7 +97,8 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
             final String k = style.getDisplayString();
             MapPaintAction a = actions.get(k);
             if (a == null) {
-                actions.put(k, a = new MapPaintAction(style));
+                a = new MapPaintAction(style);
+                actions.put(k, a);
                 add(a.getButton());
             } else {
                 a.setStyle(style);

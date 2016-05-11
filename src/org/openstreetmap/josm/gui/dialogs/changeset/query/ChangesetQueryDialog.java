@@ -31,21 +31,30 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * This is a modal dialog for entering query criteria to search for changesets.
- *
+ * @since 2689
  */
 public class ChangesetQueryDialog extends JDialog {
 
     private JTabbedPane tpQueryPanels;
-    private BasicChangesetQueryPanel pnlBasicChangesetQueries;
-    private UrlBasedQueryPanel pnlUrlBasedQueries;
-    private AdvancedChangesetQueryPanel pnlAdvancedQueries;
+    private final BasicChangesetQueryPanel pnlBasicChangesetQueries = new BasicChangesetQueryPanel();
+    private final UrlBasedQueryPanel pnlUrlBasedQueries = new UrlBasedQueryPanel();
+    private final AdvancedChangesetQueryPanel pnlAdvancedQueries = new AdvancedChangesetQueryPanel();
     private boolean canceled;
+
+    /**
+     * Constructs a new {@code ChangesetQueryDialog}.
+     * @param parent parent window
+     */
+    public ChangesetQueryDialog(Window parent) {
+        super(parent, ModalityType.DOCUMENT_MODAL);
+        build();
+    }
 
     protected JPanel buildContentPanel() {
         tpQueryPanels = new JTabbedPane();
-        tpQueryPanels.add(pnlBasicChangesetQueries = new BasicChangesetQueryPanel());
-        tpQueryPanels.add(pnlUrlBasedQueries = new UrlBasedQueryPanel());
-        tpQueryPanels.add(pnlAdvancedQueries = new AdvancedChangesetQueryPanel());
+        tpQueryPanels.add(pnlBasicChangesetQueries);
+        tpQueryPanels.add(pnlUrlBasedQueries);
+        tpQueryPanels.add(pnlAdvancedQueries);
 
         tpQueryPanels.setTitleAt(0, tr("Basic"));
         tpQueryPanels.setToolTipTextAt(0, tr("Download changesets using predefined queries"));
@@ -91,11 +100,6 @@ public class ChangesetQueryDialog extends JDialog {
         HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetQueryDialog"));
 
         addWindowListener(new WindowEventHandler());
-    }
-
-    public ChangesetQueryDialog(Window parent) {
-        super(parent, ModalityType.DOCUMENT_MODAL);
-        build();
     }
 
     public boolean isCanceled() {
@@ -183,7 +187,6 @@ public class ChangesetQueryDialog extends JDialog {
                         return;
                     }
                     break;
-
                 case 2:
                     if (getChangesetQuery() == null) {
                         pnlAdvancedQueries.displayMessageIfInvalid();

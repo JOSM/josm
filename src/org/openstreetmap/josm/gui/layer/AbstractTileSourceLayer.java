@@ -1579,9 +1579,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
                 TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
                 int offset = 200;
                 for (String part: cachedTileLoader.getStats().split("\n")) {
-                    myDrawString(g, tr("Cache stats: {0}", part), 50, offset += 15);
+                    offset += 15;
+                    myDrawString(g, tr("Cache stats: {0}", part), 50, offset);
                 }
-
             }
         }
     }

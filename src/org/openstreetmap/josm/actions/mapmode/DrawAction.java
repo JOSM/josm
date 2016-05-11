@@ -1664,7 +1664,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     }
                 }
             }
-            return projected = new EastNorth(e0+l*pe, n0+l*pn);
+            projected = new EastNorth(e0+l*pe, n0+l*pn);
+            return projected;
         }
 
         public void noSnapNow() {

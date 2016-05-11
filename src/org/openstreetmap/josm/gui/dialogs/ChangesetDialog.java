@@ -71,7 +71,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  * The dialog offers actions to download and to close changesets. It can also launch an external
  * browser with information about a changeset. Furthermore, it can select all objects in
  * the current data layer being assigned to a specific changeset.
- *
+ * @since 2613
  */
 public class ChangesetDialog extends ToggleDialog {
     private ChangesetInSelectionListModel inSelectionModel;
@@ -161,7 +161,8 @@ public class ChangesetDialog extends ToggleDialog {
     protected JPanel buildFilterPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pnl.setBorder(null);
-        pnl.add(cbInSelectionOnly = new JCheckBox(tr("For selected objects only")));
+        cbInSelectionOnly = new JCheckBox(tr("For selected objects only"));
+        pnl.add(cbInSelectionOnly);
         cbInSelectionOnly.setToolTipText(tr("<html>Select to show changesets for the currently selected objects only.<br>"
                 + "Unselect to show all changesets for objects in the current data layer.</html>"));
         cbInSelectionOnly.setSelected(Main.pref.getBoolean("changeset-dialog.for-selected-objects-only", false));
@@ -182,7 +183,8 @@ public class ChangesetDialog extends ToggleDialog {
     protected void build() {
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(buildFilterPanel(), BorderLayout.NORTH);
-        pnl.add(pnlList = buildListPanel(), BorderLayout.CENTER);
+        pnlList = buildListPanel();
+        pnl.add(pnlList, BorderLayout.CENTER);
 
         cbInSelectionOnly.addItemListener(new FilterChangeHandler());
 

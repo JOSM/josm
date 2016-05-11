@@ -68,32 +68,51 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private static List<ProjectionChoice> projectionChoices = new ArrayList<>();
     private static Map<String, ProjectionChoice> projectionChoicesById = new HashMap<>();
 
-    // some ProjectionChoices that are referenced from other parts of the code
-    public static final ProjectionChoice wgs84, mercator, lambert, utm_france_dom, lambert_cc9;
+    /**
+     * WGS84: Directly use latitude / longitude values as x/y.
+     */
+    public static final ProjectionChoice wgs84 = registerProjectionChoice(tr("WGS84 Geographic"), "core:wgs84", 4326, "epsg4326");
+
+    /**
+     * Mercator Projection.
+     *
+     * The center of the mercator projection is always the 0 grad coordinate.
+     *
+     * See also USGS Bulletin 1532 (http://pubs.usgs.gov/bul/1532/report.pdf)
+     * initially EPSG used 3785 but that has been superseded by 3857, see https://www.epsg-registry.org/
+     */
+    public static final ProjectionChoice mercator = registerProjectionChoice(tr("Mercator"), "core:mercator", 3857);
+
+    /**
+     * Lambert conic conform 4 zones using the French geodetic system NTF.
+     *
+     * This newer version uses the grid translation NTF<->RGF93 provided by IGN for a submillimetric accuracy.
+     * (RGF93 is the French geodetic system similar to WGS84 but not mathematically equal)
+     *
+     * Source: http://geodesie.ign.fr/contenu/fichiers/Changement_systeme_geodesique.pdf
+     */
+    public static final ProjectionChoice lambert = new LambertProjectionChoice();
+
+    /**
+     * French departements in the Caribbean Sea and Indian Ocean.
+     *
+     * Using the UTM transvers Mercator projection and specific geodesic settings.
+     */
+    public static final ProjectionChoice utm_france_dom = new UTMFranceDOMProjectionChoice();
+
+    /**
+     * Lambert Conic Conform 9 Zones projection.
+     *
+     * As specified by the IGN in this document
+     * http://geodesie.ign.fr/contenu/fichiers/documentation/rgf93/cc9zones.pdf
+     */
+    public static final ProjectionChoice lambert_cc9 = new LambertCC9ZonesProjectionChoice();
 
     static {
 
         /************************
          * Global projections.
          */
-
-        /**
-         * WGS84: Directly use latitude / longitude values as x/y.
-         */
-        wgs84 = registerProjectionChoice(tr("WGS84 Geographic"), "core:wgs84", 4326, "epsg4326");
-
-        /**
-         * Mercator Projection.
-         *
-         * The center of the mercator projection is always the 0 grad
-         * coordinate.
-         *
-         * See also USGS Bulletin 1532
-         * (http://pubs.usgs.gov/bul/1532/report.pdf)
-         * initially EPSG used 3785 but that has been superseded by 3857,
-         * see https://www.epsg-registry.org/
-         */
-        mercator = registerProjectionChoice(tr("Mercator"), "core:mercator", 3857);
 
         /**
          * UTM.
@@ -155,7 +174,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * Source: http://geodesie.ign.fr/contenu/fichiers/Changement_systeme_geodesique.pdf
          * @author Pieren
          */
-        registerProjectionChoice(lambert = new LambertProjectionChoice());                          // FR
+        registerProjectionChoice(lambert);                                                          // FR
 
         /**
          * Lambert 93 projection.
@@ -173,14 +192,14 @@ public class ProjectionPreference implements SubPreferenceSetting {
          * http://geodesie.ign.fr/contenu/fichiers/documentation/rgf93/cc9zones.pdf
          * @author Pieren
          */
-        registerProjectionChoice(lambert_cc9 = new LambertCC9ZonesProjectionChoice());              // FR
+        registerProjectionChoice(lambert_cc9);                                                      // FR
 
         /**
          * French departements in the Caribbean Sea and Indian Ocean.
          *
          * Using the UTM transvers Mercator projection and specific geodesic settings.
          */
-        registerProjectionChoice(utm_france_dom = new UTMFranceDOMProjectionChoice());              // FR
+        registerProjectionChoice(utm_france_dom);                                                   // FR
 
         /**
          * LKS-92/ Latvia TM projection.
@@ -280,11 +299,11 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private JPanel projSubPrefPanel;
     private final JPanel projSubPrefPanelWrapper = new JPanel(new GridBagLayout());
 
-    private JLabel projectionCodeLabel;
-    private Component projectionCodeGlue;
+    private JLabel projectionCodeLabel = new JLabel(tr("Projection code"));
+    private Component projectionCodeGlue = GBC.glue(5, 0);
     private final JLabel projectionCode = new JLabel();
-    private JLabel projectionNameLabel;
-    private Component projectionNameGlue;
+    private final JLabel projectionNameLabel = new JLabel(tr("Projection name"));
+    private final Component projectionNameGlue = GBC.glue(5, 0);
     private final JLabel projectionName = new JLabel();
     private final JLabel bounds = new JLabel();
 
@@ -322,11 +341,11 @@ public class ProjectionPreference implements SubPreferenceSetting {
         projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5, 5, 0, 5));
         projPanel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
-        projPanel.add(projectionCodeLabel = new JLabel(tr("Projection code")), GBC.std().insets(25, 5, 0, 5));
-        projPanel.add(projectionCodeGlue = GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(projectionCodeLabel, GBC.std().insets(25, 5, 0, 5));
+        projPanel.add(projectionCodeGlue, GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionCode, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
-        projPanel.add(projectionNameLabel = new JLabel(tr("Projection name")), GBC.std().insets(25, 5, 0, 5));
-        projPanel.add(projectionNameGlue = GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(projectionNameLabel, GBC.std().insets(25, 5, 0, 5));
+        projPanel.add(projectionNameGlue, GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionName, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
         projPanel.add(new JLabel(tr("Bounds")), GBC.std().insets(25, 5, 0, 5));
         projPanel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));

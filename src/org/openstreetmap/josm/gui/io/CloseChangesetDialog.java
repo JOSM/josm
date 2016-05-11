@@ -60,7 +60,8 @@ public class CloseChangesetDialog extends JDialog {
     protected JPanel buildCenterPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
         model = new DefaultListModel<>();
-        pnl.add(new JScrollPane(lstOpenChangesets = new JList<>(model)), BorderLayout.CENTER);
+        lstOpenChangesets = new JList<>(model);
+        pnl.add(new JScrollPane(lstOpenChangesets), BorderLayout.CENTER);
         lstOpenChangesets.setCellRenderer(new ChangesetCellRenderer());
         return pnl;
     }
@@ -71,12 +72,13 @@ public class CloseChangesetDialog extends JDialog {
         // -- close action
         CloseAction closeAction = new CloseAction();
         lstOpenChangesets.addListSelectionListener(closeAction);
-        pnl.add(btnCloseChangesets = new SideButton(closeAction));
+        btnCloseChangesets = new SideButton(closeAction);
+        pnl.add(btnCloseChangesets);
         InputMapUtils.enableEnter(btnCloseChangesets);
 
         // -- cancel action
-        SideButton btn;
-        pnl.add(btn = new SideButton(new CancelAction()));
+        SideButton btn = new SideButton(new CancelAction());
+        pnl.add(btn);
         btn.setFocusable(true);
         return pnl;
     }

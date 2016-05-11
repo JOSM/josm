@@ -127,7 +127,8 @@ public class Highways extends Test {
                 if (h != w && value != null && !value.endsWith("_link")) {
                     List<Way> list = map.get(value);
                     if (list == null) {
-                        map.put(value, list = new ArrayList<>());
+                        list = new ArrayList<>();
+                        map.put(value, list);
                     }
                     list.add(h);
                 }

@@ -78,9 +78,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     private ImageryProvidersPanel imageryProviders;
     private ImageryLayerInfo layerInfo;
 
-    private CommonSettingsPanel commonSettings;
-    private WMSSettingsPanel wmsSettings;
-    private TMSSettingsPanel tmsSettings;
+    private final CommonSettingsPanel commonSettings = new CommonSettingsPanel();
+    private final WMSSettingsPanel wmsSettings = new WMSSettingsPanel();
+    private final TMSSettingsPanel tmsSettings = new TMSSettingsPanel();
 
     /**
      * Factory used to create a new {@code ImageryPreference}.
@@ -114,10 +114,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         final JPanel p = new JPanel(new GridBagLayout());
         p.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        addSettingsSection(p, tr("Common Settings"), commonSettings = new CommonSettingsPanel());
-        addSettingsSection(p, tr("WMS Settings"), wmsSettings = new WMSSettingsPanel(),
+        addSettingsSection(p, tr("Common Settings"), commonSettings);
+        addSettingsSection(p, tr("WMS Settings"), wmsSettings,
                 GBC.eol().fill(GBC.HORIZONTAL));
-        addSettingsSection(p, tr("TMS Settings"), tmsSettings = new TMSSettingsPanel(),
+        addSettingsSection(p, tr("TMS Settings"), tmsSettings,
                 GBC.eol().fill(GBC.HORIZONTAL));
 
         p.add(new JPanel(), GBC.eol().fill(GBC.BOTH));

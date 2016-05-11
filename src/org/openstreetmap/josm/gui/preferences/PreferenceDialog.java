@@ -36,8 +36,21 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class PreferenceDialog extends JDialog {
 
-    private PreferenceTabbedPane tpPreferences;
+    private final PreferenceTabbedPane tpPreferences = new PreferenceTabbedPane();
     private boolean canceled;
+
+    /**
+     * Constructs a new {@code PreferenceDialog}.
+     * @param parent parent component
+     */
+    public PreferenceDialog(Component parent) {
+        super(GuiHelper.getFrameForComponent(parent), tr("Preferences"), ModalityType.DOCUMENT_MODAL);
+        build();
+        this.setMinimumSize(new Dimension(600, 350));
+        // set the maximum width to the current screen. If the dialog is opened on a
+        // smaller screen than before, this will reset the stored preference.
+        this.setMaximumSize(GuiHelper.getScreenSize());
+    }
 
     protected JPanel buildActionPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -64,7 +77,7 @@ public class PreferenceDialog extends JDialog {
     protected final void build() {
         Container c = getContentPane();
         c.setLayout(new BorderLayout());
-        c.add(tpPreferences = new PreferenceTabbedPane(), BorderLayout.CENTER);
+        c.add(tpPreferences, BorderLayout.CENTER);
         tpPreferences.buildGui();
         tpPreferences.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         c.add(buildActionPanel(), BorderLayout.SOUTH);
@@ -74,15 +87,6 @@ public class PreferenceDialog extends JDialog {
         getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancel");
         getRootPane().getActionMap().put("cancel", new CancelAction());
         HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Action/Preferences"));
-    }
-
-    public PreferenceDialog(Component parent) {
-        super(GuiHelper.getFrameForComponent(parent), tr("Preferences"), ModalityType.DOCUMENT_MODAL);
-        build();
-        this.setMinimumSize(new Dimension(600, 350));
-        // set the maximum width to the current screen. If the dialog is opened on a
-        // smaller screen than before, this will reset the stored preference.
-        this.setMaximumSize(GuiHelper.getScreenSize());
     }
 
     /**
@@ -125,14 +129,26 @@ public class PreferenceDialog extends JDialog {
         super.setVisible(visible);
     }
 
+    /**
+     * Select preferences tab by name.
+     * @param name preferences tab name (icon)
+     */
     public void selectPreferencesTabByName(String name) {
         tpPreferences.selectTabByName(name);
     }
 
+    /**
+     * Select preferences tab by class.
+     * @param clazz preferences tab class
+     */
     public void selectPreferencesTabByClass(Class<? extends TabPreferenceSetting> clazz) {
         tpPreferences.selectTabByPref(clazz);
     }
 
+    /**
+     * Select preferences sub-tab by class.
+     * @param clazz preferences sub-tab class
+     */
     public void selectSubPreferencesTabByClass(Class<? extends SubPreferenceSetting> clazz) {
         tpPreferences.selectSubTabByPref(clazz);
     }

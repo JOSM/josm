@@ -82,8 +82,8 @@ public class DownloadDialog extends JDialog  {
     protected JCheckBox cbDownloadGpxData;
     protected JCheckBox cbDownloadNotes;
     /** the download action and button */
-    private DownloadAction actDownload;
-    protected SideButton btnDownload;
+    private final DownloadAction actDownload = new DownloadAction();
+    protected final SideButton btnDownload = new SideButton(actDownload);
 
     private void makeCheckBoxRespondToEnter(JCheckBox cb) {
         cb.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "doDownload");
@@ -189,7 +189,7 @@ public class DownloadDialog extends JDialog  {
         JPanel pnl = new JPanel(new FlowLayout());
 
         // -- download button
-        pnl.add(btnDownload = new SideButton(actDownload = new DownloadAction()));
+        pnl.add(btnDownload);
         InputMapUtils.enableEnter(btnDownload);
 
         makeCheckBoxRespondToEnter(cbDownloadGpxData);
@@ -200,7 +200,8 @@ public class DownloadDialog extends JDialog  {
         // -- cancel button
         SideButton btnCancel;
         CancelAction actCancel = new CancelAction();
-        pnl.add(btnCancel = new SideButton(actCancel));
+        btnCancel = new SideButton(actCancel);
+        pnl.add(btnCancel);
         InputMapUtils.enableEnter(btnCancel);
 
         // -- cancel on ESC
@@ -208,8 +209,8 @@ public class DownloadDialog extends JDialog  {
         getRootPane().getActionMap().put("cancel", actCancel);
 
         // -- help button
-        SideButton btnHelp;
-        pnl.add(btnHelp = new SideButton(new ContextSensitiveHelpAction(getRootPane().getClientProperty("help").toString())));
+        SideButton btnHelp = new SideButton(new ContextSensitiveHelpAction(getRootPane().getClientProperty("help").toString()));
+        pnl.add(btnHelp);
         InputMapUtils.enableEnter(btnHelp);
 
         return pnl;

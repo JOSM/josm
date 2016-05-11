@@ -21,19 +21,29 @@ import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Button that is usually used in toggle dialogs
+ * Button that is usually used in toggle dialogs.
+ * @since 744
  */
 public class SideButton extends JButton implements Destroyable {
     private static final int iconHeight = ImageProvider.ImageSizes.SIDEBUTTON.getImageSize();
 
     private transient PropertyChangeListener propertyChangeListener;
 
+    /**
+     * Constructs a new {@code SideButton}.
+     * @param action action used to specify the new button
+     */
     public SideButton(Action action) {
         super(action);
         fixIcon(action);
         doStyle();
     }
 
+    /**
+     * Constructs a new {@code SideButton}.
+     * @param action action used to specify the new button
+     * @param usename use action name
+     */
     public SideButton(Action action, boolean usename) {
         super(action);
         if (!usename) {
@@ -43,9 +53,14 @@ public class SideButton extends JButton implements Destroyable {
         }
     }
 
+    /**
+     * Constructs a new {@code SideButton}.
+     * @param action action used to specify the new button
+     * @param imagename image name in "dialogs" directory
+     */
     public SideButton(Action action, String imagename) {
         super(action);
-        setIcon(makeIcon(imagename));
+        setIcon(getScaledImage(ImageProvider.get("dialogs", imagename).getImage()));
         doStyle();
     }
 
@@ -53,14 +68,15 @@ public class SideButton extends JButton implements Destroyable {
         // need to listen for changes, so that putValue() that are called after the
         // SideButton is constructed get the proper icon size
         if (action != null) {
-            action.addPropertyChangeListener(propertyChangeListener = new PropertyChangeListener() {
+            propertyChangeListener = new PropertyChangeListener() {
                 @Override
                 public void propertyChange(PropertyChangeEvent evt) {
                     if (javax.swing.Action.SMALL_ICON.equals(evt.getPropertyName())) {
                         fixIcon(null);
                     }
                 }
-            });
+            };
+            action.addPropertyChangeListener(propertyChangeListener);
         }
         Icon i = getIcon();
         if (i instanceof ImageIcon && i.getIconHeight() != iconHeight) {
@@ -76,11 +92,6 @@ public class SideButton extends JButton implements Destroyable {
     private static ImageIcon getScaledImage(Image im) {
         int newWidth = im.getWidth(null) *  iconHeight / im.getHeight(null);
         return new ImageIcon(im.getScaledInstance(newWidth, iconHeight, Image.SCALE_SMOOTH));
-    }
-
-    public static ImageIcon makeIcon(String imagename) {
-        Image im = ImageProvider.get("dialogs", imagename).getImage();
-        return getScaledImage(im);
     }
 
     private void doStyle() {

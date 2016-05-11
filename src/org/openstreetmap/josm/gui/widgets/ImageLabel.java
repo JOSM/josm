@@ -17,8 +17,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 5965
  */
 public class ImageLabel extends JPanel {
-    private final JLabel imgLabel;
-    private final JLabel tf;
+    private final JLabel imgLabel = new JLabel();
+    private final JLabel tf = new JLabel();
     private final int charCount;
 
     /**
@@ -31,9 +31,9 @@ public class ImageLabel extends JPanel {
     public ImageLabel(String img, String tooltip, int charCount, Color background) {
         setLayout(new GridBagLayout());
         setBackground(background);
-        add(imgLabel = new JLabel(), GBC.std().anchor(GBC.WEST).insets(0, 1, 1, 0));
+        add(imgLabel, GBC.std().anchor(GBC.WEST).insets(0, 1, 1, 0));
         setIcon(img);
-        add(tf = new JLabel(), GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2, 1, 1, 0));
+        add(tf, GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2, 1, 1, 0));
         setToolTipText(tooltip);
         this.charCount = charCount;
     }

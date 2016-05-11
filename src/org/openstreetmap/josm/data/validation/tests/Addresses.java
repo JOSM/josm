@@ -157,7 +157,8 @@ public class Addresses extends Test {
                         number = number.trim().toUpperCase(Locale.ENGLISH);
                         List<OsmPrimitive> list = map.get(number);
                         if (list == null) {
-                            map.put(number, list = new ArrayList<>());
+                            list = new ArrayList<>();
+                            map.put(number, list);
                         }
                         list.add(p);
                     }

@@ -724,8 +724,8 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 ((MoveCommand) c).saveCheckpoint();
                 ((MoveCommand) c).applyVectorTo(currentEN);
             } else {
-                Main.main.undoRedo.add(
-                        c = new MoveCommand(selection, startEN, currentEN));
+                c = new MoveCommand(selection, startEN, currentEN);
+                Main.main.undoRedo.add(c);
             }
             for (Node n : affectedNodes) {
                 LatLon ll = n.getCoor();
@@ -833,7 +833,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             if (osm instanceof Way) {
                 limit -= ((Way) osm).getNodes().size();
             }
-            if ((limit -= 1) < 0) {
+            if (--limit < 0) {
                 break;
             }
         }
@@ -1199,8 +1199,10 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 for (WaySegment ws : mv.getNearestWaySegments(p, mv.isSelectablePredicate)) {
                     w = ws.way;
 
-                    Point2D p1 = mv.getPoint2D(wnp.a = w.getNode(ws.lowerIndex));
-                    Point2D p2 = mv.getPoint2D(wnp.b = w.getNode(ws.lowerIndex + 1));
+                    wnp.a = w.getNode(ws.lowerIndex);
+                    wnp.b = w.getNode(ws.lowerIndex + 1);
+                    Point2D p1 = mv.getPoint2D(wnp.a);
+                    Point2D p2 = mv.getPoint2D(wnp.b);
                     if (WireframeMapRenderer.isLargeSegment(p1, p2, virtualSpace)) {
                         Point2D pc = new Point2D.Double((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
                         if (p.distanceSq(pc) < virtualSnapDistSq2) {

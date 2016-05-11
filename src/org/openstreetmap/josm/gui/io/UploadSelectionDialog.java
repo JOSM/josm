@@ -50,8 +50,8 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class UploadSelectionDialog extends JDialog {
 
-    private OsmPrimitiveList lstSelectedPrimitives;
-    private OsmPrimitiveList lstDeletedPrimitives;
+    private final OsmPrimitiveList lstSelectedPrimitives = new OsmPrimitiveList();
+    private final OsmPrimitiveList lstDeletedPrimitives = new OsmPrimitiveList();
     private JSplitPane spLists;
     private boolean canceled;
     private SideButton btnContinue;
@@ -70,7 +70,7 @@ public class UploadSelectionDialog extends JDialog {
                 tr("<html>Mark modified objects <strong>from the current selection</strong> to be uploaded to the server.</html>"));
         lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pnl.add(lbl, BorderLayout.NORTH);
-        pnl.add(new JScrollPane(lstSelectedPrimitives = new OsmPrimitiveList()), BorderLayout.CENTER);
+        pnl.add(new JScrollPane(lstSelectedPrimitives), BorderLayout.CENTER);
         lbl.setLabelFor(lstSelectedPrimitives);
         return pnl;
     }
@@ -80,7 +80,7 @@ public class UploadSelectionDialog extends JDialog {
         JLabel lbl = new JLabel(tr("<html>Mark <strong>locally deleted objects</strong> to be deleted on the server.</html>"));
         lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pnl.add(lbl, BorderLayout.NORTH);
-        pnl.add(new JScrollPane(lstDeletedPrimitives = new OsmPrimitiveList()), BorderLayout.CENTER);
+        pnl.add(new JScrollPane(lstDeletedPrimitives), BorderLayout.CENTER);
         lbl.setLabelFor(lstDeletedPrimitives);
         return pnl;
     }
@@ -88,7 +88,8 @@ public class UploadSelectionDialog extends JDialog {
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout());
         ContinueAction continueAction = new ContinueAction();
-        pnl.add(btnContinue = new SideButton(continueAction));
+        btnContinue = new SideButton(continueAction);
+        pnl.add(btnContinue);
         btnContinue.setFocusable(true);
         lstDeletedPrimitives.getSelectionModel().addListSelectionListener(continueAction);
         lstSelectedPrimitives.getSelectionModel().addListSelectionListener(continueAction);
@@ -175,11 +176,6 @@ public class UploadSelectionDialog extends JDialog {
     }
 
     static class OsmPrimitiveList extends JList<OsmPrimitive> {
-        protected void init() {
-            setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            setCellRenderer(new OsmPrimitivRenderer());
-        }
-
         OsmPrimitiveList() {
             this(new OsmPrimitiveListModel());
         }
@@ -187,6 +183,11 @@ public class UploadSelectionDialog extends JDialog {
         OsmPrimitiveList(OsmPrimitiveListModel model) {
             super(model);
             init();
+        }
+
+        protected void init() {
+            setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+            setCellRenderer(new OsmPrimitivRenderer());
         }
 
         public OsmPrimitiveListModel getOsmPrimitiveListModel() {
@@ -207,7 +208,8 @@ public class UploadSelectionDialog extends JDialog {
                         @Override
                         public int compare(OsmPrimitive o1, OsmPrimitive o2) {
                             int ret = OsmPrimitiveType.from(o1).compareTo(OsmPrimitiveType.from(o2));
-                            if (ret != 0) return ret;
+                            if (ret != 0)
+                                return ret;
                             return o1.getDisplayName(formatter).compareTo(o1.getDisplayName(formatter));
                         }
                     }
