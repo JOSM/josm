@@ -40,7 +40,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  * @since 2746
  */
 public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
-    private AccessTokenInfoPanel pnlAccessTokenInfo;
+    private final AccessTokenInfoPanel pnlAccessTokenInfo = new AccessTokenInfoPanel();
     private transient OAuthToken requestToken;
 
     private RetrieveRequestTokenPanel pnlRetrieveRequestToken;
@@ -216,7 +216,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      */
     private class RetrieveAccessTokenPanel extends JPanel {
 
-        private JosmTextField tfAuthoriseUrl;
+        private final JosmTextField tfAuthoriseUrl = new JosmTextField();
 
         /**
          * Constructs a new {@code RetrieveAccessTokenPanel}.
@@ -260,7 +260,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
             gc.gridx = 1;
             gc.weightx = 1.0;
-            pnl.add(tfAuthoriseUrl = new JosmTextField(), gc);
+            pnl.add(tfAuthoriseUrl, gc);
             tfAuthoriseUrl.setEditable(false);
 
             return pnl;
@@ -339,7 +339,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             gc.gridy = 1;
             gc.weightx = 1.0;
             gc.gridwidth = 1;
-            pnl.add(pnlAccessTokenInfo = new AccessTokenInfoPanel(), gc);
+            pnl.add(pnlAccessTokenInfo, gc);
             pnlAccessTokenInfo.setSaveToPreferences(
                     OAuthAccessTokenHolder.getInstance().isSaveToPreferences()
             );

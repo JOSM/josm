@@ -18,40 +18,8 @@ import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 
 public class FullyAutomaticPropertiesPanel extends JPanel {
 
-    private JosmTextField tfUserName;
-    private JosmPasswordField tfPassword;
-
-    protected final JPanel buildUserNamePasswordPanel() {
-        JPanel pnl = new JPanel(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
-
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
-        gc.insets = new Insets(0, 0, 3, 3);
-        pnl.add(new JLabel(tr("Username: ")), gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(tfUserName = new JosmTextField(), gc);
-        SelectAllOnFocusGainedDecorator.decorate(tfUserName);
-        UserNameValidator valUserName = new UserNameValidator(tfUserName);
-        valUserName.validate();
-
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.gridy = 1;
-        gc.gridx = 0;
-        gc.weightx = 0.0;
-        pnl.add(new JLabel(tr("Password: ")), gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(tfPassword = new JosmPasswordField(), gc);
-        SelectAllOnFocusGainedDecorator.decorate(tfPassword);
-
-        return pnl;
-    }
+    private final JosmTextField tfUserName = new JosmTextField();
+    private final JosmPasswordField tfPassword = new JosmPasswordField();
 
     /**
      * Constructs a new {@code FullyAutomaticPropertiesPanel}.
@@ -70,5 +38,37 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         add(new JPanel(), gc);
+    }
+
+    protected final JPanel buildUserNamePasswordPanel() {
+        JPanel pnl = new JPanel(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx = 0.0;
+        gc.insets = new Insets(0, 0, 3, 3);
+        pnl.add(new JLabel(tr("Username: ")), gc);
+
+        gc.gridx = 1;
+        gc.weightx = 1.0;
+        pnl.add(tfUserName, gc);
+        SelectAllOnFocusGainedDecorator.decorate(tfUserName);
+        UserNameValidator valUserName = new UserNameValidator(tfUserName);
+        valUserName.validate();
+
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.gridy = 1;
+        gc.gridx = 0;
+        gc.weightx = 0.0;
+        pnl.add(new JLabel(tr("Password: ")), gc);
+
+        gc.gridx = 1;
+        gc.weightx = 1.0;
+        pnl.add(tfPassword, gc);
+        SelectAllOnFocusGainedDecorator.decorate(tfPassword);
+
+        return pnl;
     }
 }

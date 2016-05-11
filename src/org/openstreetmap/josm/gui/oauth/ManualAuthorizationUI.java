@@ -33,20 +33,31 @@ import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * This is an UI which supports a JOSM user to get an OAuth Access Token in a fully
- * manual process.
+ * This is an UI which supports a JOSM user to get an OAuth Access Token in a fully manual process.
  *
  * @since 2746
  */
 public class ManualAuthorizationUI extends AbstractAuthorizationUI {
 
-    private JosmTextField tfAccessTokenKey;
+    private final JosmTextField tfAccessTokenKey = new JosmTextField();
     private transient AccessTokenKeyValidator valAccessTokenKey;
-    private JosmTextField tfAccessTokenSecret;
+    private final JosmTextField tfAccessTokenSecret = new JosmTextField();
     private transient AccessTokenSecretValidator valAccessTokenSecret;
-    private JCheckBox cbSaveToPreferences;
-    private HtmlPanel pnlMessage;
+    private final JCheckBox cbSaveToPreferences = new JCheckBox(tr("Save Access Token in preferences"));
+    private final HtmlPanel pnlMessage = new HtmlPanel();
     private final transient Executor executor;
+
+    /**
+     * Constructs a new {@code ManualAuthorizationUI} for the given API URL.
+     * @param apiUrl The OSM API URL
+     * @param executor the executor used for running the HTTP requests for the authorization
+     * @since 5422
+     */
+    public ManualAuthorizationUI(String apiUrl, Executor executor) {
+        super(apiUrl);
+        this.executor = executor;
+        build();
+    }
 
     protected JPanel buildAccessTokenPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -60,7 +71,6 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
         gc.weightx = 0.0;
         gc.gridwidth = 2;
         gc.insets = new Insets(0, 0, 5, 0);
-        pnlMessage = new HtmlPanel();
         pnlMessage.setText("<html><body>"
                 + tr("Please enter an OAuth Access Token which is authorized to access the OSM server "
                         + "''{0}''.",
@@ -76,7 +86,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfAccessTokenKey = new JosmTextField(), gc);
+        pnl.add(tfAccessTokenKey, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfAccessTokenKey);
         valAccessTokenKey = new AccessTokenKeyValidator(tfAccessTokenKey);
         valAccessTokenKey.validate();
@@ -90,7 +100,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfAccessTokenSecret = new JosmTextField(), gc);
+        pnl.add(tfAccessTokenSecret, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfAccessTokenSecret);
         valAccessTokenSecret = new AccessTokenSecretValidator(tfAccessTokenSecret);
         valAccessTokenSecret.validate();
@@ -101,7 +111,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
         gc.gridx = 0;
         gc.gridwidth = 2;
         gc.weightx = 1.0;
-        pnl.add(cbSaveToPreferences = new JCheckBox(tr("Save Access Token in preferences")), gc);
+        pnl.add(cbSaveToPreferences, gc);
         cbSaveToPreferences.setSelected(OAuthAccessTokenHolder.getInstance().isSaveToPreferences());
 
         // filler - grab remaining space
@@ -158,18 +168,6 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         add(buildTabbedPreferencesPanel(), BorderLayout.CENTER);
         add(buildActionsPanel(), BorderLayout.SOUTH);
-    }
-
-    /**
-     * Constructs a new {@code ManualAuthorizationUI} for the given API URL.
-     * @param apiUrl The OSM API URL
-     * @param executor the executor used for running the HTTP requests for the authorization
-     * @since 5422
-     */
-    public ManualAuthorizationUI(String apiUrl, Executor executor) {
-        super(apiUrl);
-        this.executor = executor;
-        build();
     }
 
     @Override

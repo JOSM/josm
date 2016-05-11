@@ -43,14 +43,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
-    private JCheckBox cbUseDefaults;
-    private JosmTextField tfConsumerKey;
-    private JosmTextField tfConsumerSecret;
-    private JosmTextField tfRequestTokenURL;
-    private JosmTextField tfAccessTokenURL;
-    private JosmTextField tfAuthoriseURL;
-    private JosmTextField tfOsmLoginURL;
-    private JosmTextField tfOsmLogoutURL;
+    private final JCheckBox cbUseDefaults = new JCheckBox(tr("Use default settings"));
+    private final JosmTextField tfConsumerKey = new JosmTextField();
+    private final JosmTextField tfConsumerSecret = new JosmTextField();
+    private final JosmTextField tfRequestTokenURL = new JosmTextField();
+    private final JosmTextField tfAccessTokenURL = new JosmTextField();
+    private final JosmTextField tfAuthoriseURL = new JosmTextField();
+    private final JosmTextField tfOsmLoginURL = new JosmTextField();
+    private final JosmTextField tfOsmLogoutURL = new JosmTextField();
     private transient UseDefaultItemListener ilUseDefault;
     private String apiUrl;
 
@@ -64,7 +64,6 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         gc.weightx = 1.0;
         gc.insets = new Insets(0, 0, 3, 3);
         gc.gridwidth = 2;
-        cbUseDefaults = new JCheckBox(tr("Use default settings"));
         add(cbUseDefaults, gc);
 
         // -- consumer key
@@ -75,7 +74,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfConsumerKey = new JosmTextField(), gc);
+        add(tfConsumerKey, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfConsumerKey);
 
         // -- consumer secret
@@ -86,7 +85,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfConsumerSecret = new JosmTextField(), gc);
+        add(tfConsumerSecret, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfConsumerSecret);
 
         // -- request token URL
@@ -97,7 +96,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfRequestTokenURL = new JosmTextField(), gc);
+        add(tfRequestTokenURL, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfRequestTokenURL);
 
         // -- access token URL
@@ -108,7 +107,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfAccessTokenURL = new JosmTextField(), gc);
+        add(tfAccessTokenURL, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfAccessTokenURL);
 
 
@@ -120,7 +119,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfAuthoriseURL = new JosmTextField(), gc);
+        add(tfAuthoriseURL, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfAuthoriseURL);
 
 
@@ -132,7 +131,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfOsmLoginURL = new JosmTextField(), gc);
+        add(tfOsmLoginURL, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmLoginURL);
 
 
@@ -144,7 +143,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfOsmLogoutURL = new JosmTextField(), gc);
+        add(tfOsmLogoutURL, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmLogoutURL);
 
         cbUseDefaults.addItemListener(ilUseDefault = new UseDefaultItemListener());
