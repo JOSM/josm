@@ -4,10 +4,10 @@ package org.openstreetmap.josm.data.cache;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -345,7 +345,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
             for (int i = 0; i < 5; ++i) {
                 if (urlConn.getResponseCode() == HttpURLConnection.HTTP_UNAVAILABLE) {
-                    Thread.sleep(5000L+(new Random()).nextInt(5000));
+                    Thread.sleep(5000L+new SecureRandom().nextInt(5000));
                     continue;
                 }
 
