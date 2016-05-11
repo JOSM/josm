@@ -51,7 +51,8 @@ public class SessionLoadAction extends DiskAccessAction {
         AbstractFileChooser fc = createAndOpenFileChooser(true, false, tr("Open session"),
                 Arrays.asList(SessionImporter.FILE_FILTER, FileFilterAllFiles.getInstance()),
                 SessionImporter.FILE_FILTER, JFileChooser.FILES_ONLY, "lastDirectory");
-        if (fc == null) return;
+        if (fc == null)
+            return;
         File file = fc.getSelectedFile();
         boolean zip = Utils.hasExtension(file, "joz");
         Main.worker.submit(new Loader(file, zip));
@@ -113,33 +114,44 @@ public class SessionLoadAction extends DiskAccessAction {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    if (canceled) return;
-                    if (!layers.isEmpty()) {
-                        Layer firstLayer = layers.get(0);
-                        boolean noMap = Main.map == null;
-                        if (noMap) {
-                            Main.main.createMapFrame(firstLayer, viewport);
-                        }
-                        for (Layer l : layers) {
-                            if (canceled) return;
-                            Main.main.addLayer(l, (ViewportData) null);
-                        }
-                        if (active != null) {
-                            Main.map.mapView.setActiveLayer(active);
-                        }
-                        if (noMap) {
-                            Main.map.setVisible(true);
-                        }
-                    }
-                    for (Runnable task : postLoadTasks) {
-                        if (canceled) return;
-                        if (task == null) {
-                            continue;
-                        }
-                        task.run();
-                    }
+                    if (canceled)
+                        return;
+                    addLayers();
+                    runPostLoadTasks();
                 }
             });
+        }
+
+        private void addLayers() {
+            if (layers != null && !layers.isEmpty()) {
+                Layer firstLayer = layers.get(0);
+                boolean noMap = Main.map == null;
+                if (noMap) {
+                    Main.main.createMapFrame(firstLayer, viewport);
+                }
+                for (Layer l : layers) {
+                    if (canceled)
+                        return;
+                    Main.main.addLayer(l, (ViewportData) null);
+                }
+                if (active != null) {
+                    Main.map.mapView.setActiveLayer(active);
+                }
+                if (noMap) {
+                    Main.map.setVisible(true);
+                }
+            }
+        }
+
+        private void runPostLoadTasks() {
+            for (Runnable task : postLoadTasks) {
+                if (canceled)
+                    return;
+                if (task == null) {
+                    continue;
+                }
+                task.run();
+            }
         }
 
         @Override
