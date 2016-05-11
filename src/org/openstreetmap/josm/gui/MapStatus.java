@@ -20,6 +20,8 @@ import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -196,9 +198,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     private final ImageLabel distText = new ImageLabel("dist",
             tr("The length of the new way segment being drawn."), 10, PROP_BACKGROUND_COLOR.get());
     private final ImageLabel nameText = new ImageLabel("name",
-            tr("The name of the object at the mouse pointer."), 20, PROP_BACKGROUND_COLOR.get());
+            tr("The name of the object at the mouse pointer."), getNameLabelCharacterCount(Main.parent), PROP_BACKGROUND_COLOR.get());
     private final JosmTextField helpText = new JosmTextField();
     private final JProgressBar progressBar = new JProgressBar();
+    private final transient ComponentAdapter mvComponentAdapter;
     public final transient BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
 
     // Distance value displayed in distText, stored if refresh needed after a change of system of measurement
@@ -947,6 +950,15 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
 
         Main.pref.addPreferenceChangeListener(this);
 
+        mvComponentAdapter = new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                nameText.setCharCount(getNameLabelCharacterCount(Main.parent));
+                revalidate();
+            }
+        };
+        mv.addComponentListener(mvComponentAdapter);
+
         // The background thread
         thread = new Thread(collector, "Map Status Collector");
         thread.setDaemon(true);
@@ -1077,6 +1089,7 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
     public void destroy() {
         SystemOfMeasurement.removeSoMChangeListener(this);
         Main.pref.removePreferenceChangeListener(this);
+        mv.removeComponentListener(mvComponentAdapter);
 
         // MapFrame gets destroyed when the last layer is removed, but the status line background
         // thread that collects the information doesn't get destroyed automatically.
@@ -1115,5 +1128,10 @@ public class MapStatus extends JPanel implements Helpful, Destroyable, Preferenc
         PROP_FOREGROUND_COLOR.get();
         PROP_ACTIVE_BACKGROUND_COLOR.get();
         PROP_ACTIVE_FOREGROUND_COLOR.get();
+    }
+
+    private static int getNameLabelCharacterCount(Component parent) {
+        int w = parent != null ? parent.getWidth() : 800;
+        return Math.min(80, 20 + Math.max(0, w-1280) * 60 / (1920-1280));
     }
 }

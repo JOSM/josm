@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class ImageLabel extends JPanel {
     private final JLabel imgLabel = new JLabel();
     private final JLabel tf = new JLabel();
-    private final int charCount;
+    private int charCount;
 
     /**
      * Constructs a new {@code ImageLabel}.
@@ -35,7 +35,7 @@ public class ImageLabel extends JPanel {
         setIcon(img);
         add(tf, GBC.std().fill(GBC.BOTH).anchor(GBC.WEST).insets(2, 1, 1, 0));
         setToolTipText(tooltip);
-        this.charCount = charCount;
+        setCharCount(charCount);
     }
 
     /**
@@ -62,5 +62,23 @@ public class ImageLabel extends JPanel {
     @Override
     public Dimension getMinimumSize() {
         return new Dimension(25 + charCount*tf.getFontMetrics(tf.getFont()).charWidth('0'), super.getMinimumSize().height);
+    }
+
+    /**
+     * Returns the preferred char count.
+     * @return the preferred char count
+     * @since 10191
+     */
+    public final int getCharCount() {
+        return charCount;
+    }
+
+    /**
+     * Sets the preferred char count.
+     * @param charCount the preferred char count
+     * @since 10191
+     */
+    public final void setCharCount(int charCount) {
+        this.charCount = charCount;
     }
 }
