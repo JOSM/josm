@@ -8,8 +8,8 @@ import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.DataSet
-import org.openstreetmap.josm.data.osm.OsmUtils
 import org.openstreetmap.josm.data.osm.Node
+import org.openstreetmap.josm.data.osm.OsmUtils
 import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
@@ -33,8 +33,8 @@ class MapCSSParserTest {
 
     @Test
     public void testKothicStylesheets() throws Exception {
-        new MapCSSParser(new URL("http://kothic.googlecode.com/hg/src/styles/default.mapcss").openStream(), "UTF-8")
-        new MapCSSParser(new URL("http://kothic.googlecode.com/hg/src/styles/mapink.mapcss").openStream(), "UTF-8")
+        new MapCSSParser(new URL("https://raw.githubusercontent.com/kothic/kothic/master/src/styles/default.mapcss").openStream(), "UTF-8")
+        new MapCSSParser(new URL("https://raw.githubusercontent.com/kothic/kothic/master/src/styles/mapink.mapcss").openStream(), "UTF-8")
     }
 
     @Test

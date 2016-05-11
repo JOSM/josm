@@ -134,8 +134,10 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     protected boolean canShowAsLatest(OsmPrimitive primitive) {
-        if (primitive == null) return false;
-        if (primitive.isNew() || !primitive.isUsable()) return false;
+        if (primitive == null)
+            return false;
+        if (primitive.isNew() || !primitive.isUsable())
+            return false;
 
         //try creating a history primitive. if that fails, the primitive cannot be used.
         try {
@@ -144,7 +146,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             return false;
         }
 
-        if (history == null) return false;
+        if (history == null)
+            return false;
         // only show latest of the same version if it is modified
         if (history.getByVersion(primitive.getVersion()) != null)
             return primitive.isModified();
@@ -393,7 +396,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * @return true if <code>primitive</code> is the latest primitive
      */
     public boolean isLatest(HistoryOsmPrimitive primitive) {
-        if (primitive == null) return false;
+        if (primitive == null)
+            return false;
         return primitive == latest;
     }
 
@@ -445,7 +449,8 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
         @Override
         public void setValueAt(Object aValue, int row, int column) {
-            if (!((Boolean) aValue)) return;
+            if (!((Boolean) aValue))
+                return;
             switch (column) {
             case 1:
                 setReferencePointInTime(row);
@@ -465,45 +470,53 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
 
         public void setReferencePointInTime(int row) {
-            if (history == null) return;
+            if (history == null)
+                return;
             if (row == history.getNumVersions()) {
                 if (latest != null) {
                     HistoryBrowserModel.this.setReferencePointInTime(latest);
                 }
                 return;
             }
-            if (row < 0 || row > history.getNumVersions()) return;
+            if (row < 0 || row > history.getNumVersions())
+                return;
             HistoryOsmPrimitive reference = history.get(row);
             HistoryBrowserModel.this.setReferencePointInTime(reference);
         }
 
         public void setCurrentPointInTime(int row) {
-            if (history == null) return;
+            if (history == null)
+                return;
             if (row == history.getNumVersions()) {
                 if (latest != null) {
                     HistoryBrowserModel.this.setCurrentPointInTime(latest);
                 }
                 return;
             }
-            if (row < 0 || row > history.getNumVersions()) return;
+            if (row < 0 || row > history.getNumVersions())
+                return;
             HistoryOsmPrimitive current = history.get(row);
             HistoryBrowserModel.this.setCurrentPointInTime(current);
         }
 
         public boolean isReferencePointInTime(int row) {
-            if (history == null) return false;
+            if (history == null)
+                return false;
             if (row == history.getNumVersions())
                 return latest == reference;
-            if (row < 0 || row > history.getNumVersions()) return false;
+            if (row < 0 || row > history.getNumVersions())
+                return false;
             HistoryOsmPrimitive p = history.get(row);
             return p == reference;
         }
 
         public boolean isCurrentPointInTime(int row) {
-            if (history == null) return false;
+            if (history == null)
+                return false;
             if (row == history.getNumVersions())
                 return latest == current;
-            if (row < 0 || row > history.getNumVersions()) return false;
+            if (row < 0 || row > history.getNumVersions())
+                return false;
             HistoryOsmPrimitive p = history.get(row);
             return p == current;
         }
@@ -519,9 +532,11 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
 
         public OsmPrimitive getLatest() {
-            if (latest == null) return null;
+            if (latest == null)
+                return null;
             OsmDataLayer editLayer = Main.main.getEditLayer();
-            if (editLayer == null) return null;
+            if (editLayer == null)
+                return null;
             return editLayer.data.getPrimitiveById(latest.getId(), latest.getType());
         }
 
@@ -541,6 +556,11 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         private List<String> keys;
         private final PointInTimeType pointInTimeType;
 
+        protected TagTableModel(PointInTimeType type) {
+            pointInTimeType = type;
+            initKeyList();
+        }
+
         protected void initKeyList() {
             Set<String> keySet = new HashSet<>();
             if (current != null) {
@@ -554,14 +574,10 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             fireTableDataChanged();
         }
 
-        protected TagTableModel(PointInTimeType type) {
-            pointInTimeType = type;
-            initKeyList();
-        }
-
         @Override
         public int getRowCount() {
-            if (keys == null) return 0;
+            if (keys == null)
+                return 0;
             return keys.size();
         }
 

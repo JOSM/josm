@@ -27,18 +27,7 @@ public class ChangesetQuery {
     /**
      * Maximum number of changesets returned by the OSM API call "/changesets?"
      */
-    public static int MAX_CHANGESETS_NUMBER = 100;
-
-    /**
-     * Replies a changeset query object from the query part of a OSM API URL for querying changesets.
-     *
-     * @param query the query part
-     * @return the query object
-     * @throws ChangesetQueryUrlException if query doesn't consist of valid query parameters
-     */
-    public static ChangesetQuery buildFromUrlQuery(String query) throws ChangesetQueryUrlException {
-        return new ChangesetQueryUrlParser().parse(query);
-    }
+    public static final int MAX_CHANGESETS_NUMBER = 100;
 
     /** the user id this query is restricted to. null, if no restriction to a user id applies */
     private Integer uid;
@@ -55,6 +44,17 @@ public class ChangesetQuery {
     private Boolean closed;
     /** a collection of changeset ids to query for */
     private Collection<Long> changesetIds;
+
+    /**
+     * Replies a changeset query object from the query part of a OSM API URL for querying changesets.
+     *
+     * @param query the query part
+     * @return the query object
+     * @throws ChangesetQueryUrlException if query doesn't consist of valid query parameters
+     */
+    public static ChangesetQuery buildFromUrlQuery(String query) throws ChangesetQueryUrlException {
+        return new ChangesetQueryUrlParser().parse(query);
+    }
 
     /**
      * Restricts the query to changesets owned by the user with id <code>uid</code>.
@@ -304,6 +304,9 @@ public class ChangesetQuery {
         return getQueryString();
     }
 
+    /**
+     * Exception thrown for invalid changeset queries.
+     */
     public static class ChangesetQueryUrlException extends Exception {
 
         /**
@@ -338,6 +341,9 @@ public class ChangesetQuery {
         }
     }
 
+    /**
+     * Changeset query URL parser.
+     */
     public static class ChangesetQueryUrlParser {
         protected int parseUid(String value) throws ChangesetQueryUrlException {
             if (value == null || value.trim().isEmpty())
@@ -485,19 +491,17 @@ public class ChangesetQuery {
          *    uid=1234&amp;open=true
          * </pre>
          *
-         * @param query the query string. If null, an empty query (identical to a query for all changesets) is
-         * assumed
+         * @param query the query string. If null, an empty query (identical to a query for all changesets) is assumed
          * @return the changeset query
          * @throws ChangesetQueryUrlException if the query string doesn't represent a legal query for changesets
          */
         public ChangesetQuery parse(String query) throws ChangesetQueryUrlException {
             if (query == null)
                 return new ChangesetQuery();
-            query = query.trim();
-            if (query.isEmpty())
+            String apiQuery = query.trim();
+            if (apiQuery.isEmpty())
                 return new ChangesetQuery();
-            Map<String, String> queryParams = createMapFromQueryString(query);
-            return createFromMap(queryParams);
+            return createFromMap(createMapFromQueryString(apiQuery));
         }
     }
 }
