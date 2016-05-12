@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016051100, Last Updated Wed May 11 07:07:01 2016 UTC
+        // Taken from Version 2016051101, Last Updated Thu May 12 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -509,6 +509,7 @@ public final class DomainValidator extends AbstractValidator {
         "datsun", // datsun NISSAN MOTOR CO., LTD.
         "day", // day Charleston Road Registry Inc.
         "dclk", // dclk Charleston Road Registry Inc.
+        "dds", // dds Minds + Machines Group Limited
         "dealer", // dealer Dealer Dot Com, Inc.
         "deals", // deals Sand Sunset, LLC
         "degree", // degree United TLD Holdco, Ltd
@@ -814,6 +815,7 @@ public final class DomainValidator extends AbstractValidator {
         "men", // men Exclusive Registry Limited
         "menu", // menu Wedding TLD2, LLC
         "meo", // meo PT Comunicacoes S.A.
+        "metlife", // metlife MetLife Services and Solutions, LLC
         "miami", // miami Top Level Domain Holdings Limited
         "microsoft", // microsoft Microsoft Corporation
         "mil", // mil DoD Network Information Center
@@ -868,6 +870,7 @@ public final class DomainValidator extends AbstractValidator {
         "northwesternmutual", // northwesternmutual Northwestern Mutual Registry, LLC
         "norton", // norton Symantec Corporation
         "nowruz", // nowruz Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
+        "nowtv", // nowtv Starbucks (HK) Limited
         "nra", // nra NRA Holdings Company, INC.
         "nrw", // nrw Minds + Machines GmbH
         "ntt", // ntt NIPPON TELEGRAPH AND TELEPHONE CORPORATION
@@ -900,6 +903,7 @@ public final class DomainValidator extends AbstractValidator {
         "parts", // parts Sea Goodbye, LLC
         "party", // party Blue Sky Registry Limited
         "passagens", // passagens Travel Reservations SRL
+        "pccw", // pccw PCCW Enterprises Limited
         "pet", // pet Afilias plc
         "pharmacy", // pharmacy National Association of Boards of Pharmacy
         "philips", // philips Koninklijke Philips N.V.
@@ -965,6 +969,7 @@ public final class DomainValidator extends AbstractValidator {
         "reviews", // reviews United TLD Holdco, Ltd.
         "rexroth", // rexroth Robert Bosch GMBH
         "rich", // rich I-REGISTRY Ltd., Niederlassung Deutschland
+        "richardli", // richardli Pacific Century Asset Management (HK) Limited
         "ricoh", // ricoh Ricoh Company, Ltd.
         "rio", // rio Empresa Municipal de Informática SA - IPLANRIO
         "rip", // rip United TLD Holdco Ltd.
@@ -1236,6 +1241,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--fiq64b", // 中信 CITIC Group Corporation
         "xn--fjq720a", // 娱乐 Will Bloom, LLC
         "xn--flw351e", // 谷歌 Charleston Road Registry Inc.
+        "xn--fzys8d69uvgm", // 電訊盈科 PCCW Enterprises Limited
         "xn--g2xx48c", // 购物 Minds + Machines Group Limited
         "xn--gckr3f0f", // クラウド Amazon Registry Services, Inc.
         "xn--hxt814e", // 网店 Zodiac Libra Limited
