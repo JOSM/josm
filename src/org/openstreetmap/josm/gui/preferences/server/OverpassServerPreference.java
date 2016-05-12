@@ -31,9 +31,9 @@ import org.openstreetmap.josm.tools.GBC;
 public class OverpassServerPreference implements SubPreferenceSetting {
 
     private static final StringProperty OVERPASS_SERVER = new StringProperty("download.overpass.server",
-            "http://overpass-api.de/api/");
+            "https://overpass-api.de/api/");
     private static final CollectionProperty OVERPASS_SERVER_HISTORY = new CollectionProperty("download.overpass.servers",
-            Arrays.asList("http://overpass-api.de/api/", "http://overpass.osm.rambler.ru/cgi/"));
+            Arrays.asList("https://overpass-api.de/api/", "http://overpass.osm.rambler.ru/cgi/"));
     private static final BooleanProperty FOR_MULTI_FETCH = new BooleanProperty("download.overpass.for-multi-fetch", false);
 
     private HistoryComboBox overpassServer = new HistoryComboBox();
