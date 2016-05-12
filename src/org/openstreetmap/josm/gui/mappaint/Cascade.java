@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
@@ -205,17 +206,24 @@ public final class Cascade implements Cloneable {
     @Override
     public String toString() {
         StringBuilder res = new StringBuilder("Cascade{ ");
+        // List properties in alphabetical order to be deterministic, without changing "prop" to a TreeMap
+        // (no reason too, not sure about the potential memory/performance impact of such a change)
+        TreeSet<String> props = new TreeSet<>();
         for (Entry<String, Object> entry : prop.entrySet()) {
-            res.append(entry.getKey()+':');
+            StringBuilder sb = new StringBuilder(entry.getKey()+':');
             Object val = entry.getValue();
             if (val instanceof float[]) {
-                res.append(Arrays.toString((float[]) val));
+                sb.append(Arrays.toString((float[]) val));
             } else if (val instanceof Color) {
-                res.append(Utils.toString((Color) val));
+                sb.append(Utils.toString((Color) val));
             } else if (val != null) {
-                res.append(val);
+                sb.append(val);
             }
-            res.append("; ");
+            sb.append("; ");
+            props.add(sb.toString());
+        }
+        for (String s : props) {
+            res.append(s);
         }
         return res.append('}').toString();
     }
