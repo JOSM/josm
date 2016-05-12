@@ -5,17 +5,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.gui.history.HistoryBrowserModel.TagTableModel;
+import org.openstreetmap.josm.gui.history.HistoryBrowserModel.VersionTableModel;
 
 /**
  * Unit tests of {@link HistoryBrowserModel} class.
@@ -87,5 +90,87 @@ public class HistoryBrowserModelTest {
         assertNotNull(t1);
         assertNotNull(t2);
         assertNotEquals(t1, t2);
+    }
+
+    /**
+     * Unit test of {@link HistoryBrowserModel#setCurrentPointInTime} and {@link HistoryBrowserModel#setReferencePointInTime} - null history.
+     */
+    @Test
+    public void testSetPointsInTimeNullHistory() {
+        HistoryBrowserModel model = new HistoryBrowserModel();
+        VersionTableModel tableModel = model.getVersionTableModel();
+        tableModel.setValueAt(false, 0, 0); // code coverage
+        tableModel.setValueAt(true, 0, 1);  // reference point
+        tableModel.setValueAt(true, 1, 2);  // current point
+        tableModel.setValueAt(true, 3, 3);  // code coverage
+    }
+
+    /**
+     * Unit test of {@link HistoryBrowserModel#setCurrentPointInTime} and {@link HistoryBrowserModel#setReferencePointInTime} - node history.
+     */
+    @Test
+    public void testSetPointsInTimeNodeHistory() {
+        SimplePrimitiveId id = new SimplePrimitiveId(2, OsmPrimitiveType.NODE);
+        new HistoryLoadTask().add(id).run();
+        History history = HistoryDataSet.getInstance().getHistory(id);
+        assertTrue(history.getNumVersions() >= 4);
+        HistoryBrowserModel model = new HistoryBrowserModel(history);
+        VersionTableModel tableModel = model.getVersionTableModel();
+        tableModel.setValueAt(false, 0, 0); // code coverage
+        tableModel.setValueAt(true, 0, 1);  // reference point
+        tableModel.setValueAt(true, 3, 2);  // current point
+        tableModel.setValueAt(true, 3, 3);  // code coverage
+        // nodes only for ways
+        assertEquals(0, model.getNodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME).getRowCount());
+        assertEquals(0, model.getNodeListTableModel(PointInTimeType.CURRENT_POINT_IN_TIME).getRowCount());
+        // members only for relations
+        assertEquals(0, model.getRelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME).getRowCount());
+        assertEquals(0, model.getRelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME).getRowCount());
+    }
+
+    /**
+     * Unit test of {@link HistoryBrowserModel#setCurrentPointInTime} and {@link HistoryBrowserModel#setReferencePointInTime} - way history.
+     */
+    @Test
+    public void testSetPointsInTimeWayHistory() {
+        SimplePrimitiveId id = new SimplePrimitiveId(2, OsmPrimitiveType.WAY);
+        new HistoryLoadTask().add(id).run();
+        History history = HistoryDataSet.getInstance().getHistory(id);
+        assertTrue(history.getNumVersions() >= 2);
+        HistoryBrowserModel model = new HistoryBrowserModel(history);
+        VersionTableModel tableModel = model.getVersionTableModel();
+        tableModel.setValueAt(false, 0, 0); // code coverage
+        tableModel.setValueAt(true, 0, 1);  // reference point
+        tableModel.setValueAt(true, 3, 2);  // current point
+        tableModel.setValueAt(true, 3, 3);  // code coverage
+        // nodes only for ways
+        assertEquals(2, model.getNodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME).getRowCount());
+        assertEquals(2, model.getNodeListTableModel(PointInTimeType.CURRENT_POINT_IN_TIME).getRowCount());
+        // members only for relations
+        assertEquals(0, model.getRelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME).getRowCount());
+        assertEquals(0, model.getRelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME).getRowCount());
+    }
+
+    /**
+     * Unit test of {@link HistoryBrowserModel#setCurrentPointInTime} and {@link HistoryBrowserModel#setReferencePointInTime} - relation history.
+     */
+    @Test
+    public void testSetPointsInTimeRelationHistory() {
+        SimplePrimitiveId id = new SimplePrimitiveId(2, OsmPrimitiveType.RELATION);
+        new HistoryLoadTask().add(id).run();
+        History history = HistoryDataSet.getInstance().getHistory(id);
+        assertTrue(history.getNumVersions() >= 2);
+        HistoryBrowserModel model = new HistoryBrowserModel(history);
+        VersionTableModel tableModel = model.getVersionTableModel();
+        tableModel.setValueAt(false, 0, 0); // code coverage
+        tableModel.setValueAt(true, 0, 1);  // reference point
+        tableModel.setValueAt(true, 3, 2);  // current point
+        tableModel.setValueAt(true, 3, 3);  // code coverage
+        // nodes only for ways
+        assertEquals(0, model.getNodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME).getRowCount());
+        assertEquals(0, model.getNodeListTableModel(PointInTimeType.CURRENT_POINT_IN_TIME).getRowCount());
+        // members only for relations
+        assertEquals(1, model.getRelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME).getRowCount());
+        assertEquals(1, model.getRelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME).getRowCount());
     }
 }
