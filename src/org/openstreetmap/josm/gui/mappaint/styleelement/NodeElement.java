@@ -240,7 +240,7 @@ public class NodeElement extends StyleElement {
         }
 
         Stroke stroke = null;
-        if (strokeColor != null) {
+        if (strokeColor != null && strokeWidth != null) {
             Integer strokeAlpha = Utils.color_float2int(c.get("symbol-stroke-opacity", null, Float.class));
             if (strokeAlpha != null) {
                 strokeColor = new Color(strokeColor.getRed(), strokeColor.getGreen(),
