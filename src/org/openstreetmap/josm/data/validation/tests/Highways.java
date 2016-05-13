@@ -105,8 +105,9 @@ public class Highways extends Test {
     @Override
     public void visit(Way w) {
         if (w.isUsable()) {
-            if (w.hasKey("highway") && CLASSIFIED_HIGHWAYS.contains(w.get("highway"))
+            if (w.isClosed() && w.hasKey("highway") && CLASSIFIED_HIGHWAYS.contains(w.get("highway"))
                     && w.hasKey("junction") && "roundabout".equals(w.get("junction"))) {
+                // TODO: find out how to handle splitted roundabouts (see #12841)
                 testWrongRoundabout(w);
             }
             if (w.hasKey(SOURCE_MAXSPEED)) {
