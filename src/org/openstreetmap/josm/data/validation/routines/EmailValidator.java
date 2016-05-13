@@ -72,13 +72,6 @@ public class EmailValidator extends AbstractValidator {
      */
     private static final EmailValidator EMAIL_VALIDATOR_WITH_LOCAL = new EmailValidator(true, false);
 
-
-    /**
-     * Singleton instance of this class, which does
-     *  consider local addresses valid.
-     */
-    private static final EmailValidator EMAIL_VALIDATOR_WITH_LOCAL_WITH_TLD = new EmailValidator(true, true);
-
     /**
      * Returns the Singleton instance of this validator.
      *
@@ -98,11 +91,7 @@ public class EmailValidator extends AbstractValidator {
      */
     public static EmailValidator getInstance(boolean allowLocal, boolean allowTld) {
         if (allowLocal) {
-            if (allowTld) {
-                return EMAIL_VALIDATOR_WITH_LOCAL_WITH_TLD;
-            } else {
-                return EMAIL_VALIDATOR_WITH_LOCAL;
-            }
+            return EMAIL_VALIDATOR_WITH_LOCAL;
         } else {
             if (allowTld) {
                 return EMAIL_VALIDATOR_WITH_TLD;

@@ -59,6 +59,7 @@ public class EmailValidatorTest {
     @Test
     public void testEmail()  {
         assertTrue(validator.isValid("jsmith@apache.org"));
+        assertFalse(validator.isValid(null));
     }
 
     /**

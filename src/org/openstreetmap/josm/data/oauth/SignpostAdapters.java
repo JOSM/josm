@@ -19,8 +19,17 @@ public final class SignpostAdapters {
     private SignpostAdapters() {
     }
 
+    /**
+     * OAuth provider.
+     */
     public static class OAuthProvider extends AbstractOAuthProvider {
 
+        /**
+         * Constructs a new {@code OAuthProvider}.
+         * @param requestTokenEndpointUrl request token endpoint URL
+         * @param accessTokenEndpointUrl access token endpoint URL
+         * @param authorizationWebsiteUrl authorization website URL
+         */
         public OAuthProvider(String requestTokenEndpointUrl, String accessTokenEndpointUrl, String authorizationWebsiteUrl) {
             super(requestTokenEndpointUrl, accessTokenEndpointUrl, authorizationWebsiteUrl);
         }
@@ -45,8 +54,16 @@ public final class SignpostAdapters {
         }
     }
 
+    /**
+     * OAuth consumer.
+     */
     public static class OAuthConsumer extends AbstractOAuthConsumer {
 
+        /**
+         * Constructs a new {@code OAuthConsumer}.
+         * @param consumerKey consumer key
+         * @param consumerSecret consumer secret
+         */
         public OAuthConsumer(String consumerKey, String consumerSecret) {
             super(consumerKey, consumerSecret);
         }
@@ -57,8 +74,8 @@ public final class SignpostAdapters {
         }
     }
 
-    private static class HttpRequest implements oauth.signpost.http.HttpRequest {
-        private final HttpClient request;
+    static final class HttpRequest implements oauth.signpost.http.HttpRequest {
+        final HttpClient request;
 
         HttpRequest(HttpClient request) {
             this.request = request;
@@ -110,8 +127,8 @@ public final class SignpostAdapters {
         }
     }
 
-    private static class HttpResponse implements oauth.signpost.http.HttpResponse {
-        private final HttpClient.Response response;
+    static final class HttpResponse implements oauth.signpost.http.HttpResponse {
+        final HttpClient.Response response;
 
         HttpResponse(HttpClient.Response response) {
             this.response = response;
@@ -137,5 +154,4 @@ public final class SignpostAdapters {
             throw new IllegalStateException();
         }
     }
-
 }

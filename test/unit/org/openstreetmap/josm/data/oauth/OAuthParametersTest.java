@@ -4,16 +4,27 @@ package org.openstreetmap.josm.data.oauth;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import nl.jqno.equalsverifier.EqualsVerifier;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmApi;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 /**
  * Unit tests for class {@link OAuthParameters}.
  */
 public class OAuthParametersTest {
+
+    /**
+     * Setup test.
+     */
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        JOSMFixture.createUnitTestFixture().init();
+    }
 
     /**
      * Unit test of method {@link OAuthParameters#createDefault}.
@@ -30,6 +41,14 @@ public class OAuthParametersTest {
         assertEquals(def, OAuthParameters.createDefault("wrong_url"));
         OAuthParameters dev2 = new OAuthParameters(dev);
         assertEquals(dev, dev2);
+    }
+
+    /**
+     * Unit test of method {@link OAuthParameters#createFromPreferences}.
+     */
+    @Test
+    public void testCreateFromPreferences() {
+        assertNotNull(OAuthParameters.createFromPreferences(Main.pref));
     }
 
     /**
