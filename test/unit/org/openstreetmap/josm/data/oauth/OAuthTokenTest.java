@@ -3,10 +3,11 @@ package org.openstreetmap.josm.data.oauth;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import oauth.signpost.OAuthConsumer;
 
 import org.junit.Test;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
+import oauth.signpost.OAuthConsumer;
 
 /**
  * Unit tests for class {@link OAuthToken}.
@@ -24,6 +25,7 @@ public class OAuthTokenTest {
         assertNotNull(defTok);
         assertEquals(defCon.getToken(), defTok.getKey());
         assertEquals(defCon.getTokenSecret(), defTok.getSecret());
+        assertEquals(defTok, new OAuthToken(defTok));
     }
 
     /**
