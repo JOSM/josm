@@ -210,7 +210,7 @@ public final class Cascade implements Cloneable {
         // (no reason too, not sure about the potential memory/performance impact of such a change)
         TreeSet<String> props = new TreeSet<>();
         for (Entry<String, Object> entry : prop.entrySet()) {
-            StringBuilder sb = new StringBuilder(entry.getKey()+':');
+            StringBuilder sb = new StringBuilder(entry.getKey()).append(':');
             Object val = entry.getValue();
             if (val instanceof float[]) {
                 sb.append(Arrays.toString((float[]) val));

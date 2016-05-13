@@ -23,9 +23,75 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 /**
  * This is a helper class for persisting the geometry of a JOSM window to the preference store
  * and for restoring it from the preference store.
- *
+ * @since 2008
  */
 public class WindowGeometry {
+
+    /** the top left point */
+    private Point topLeft;
+    /** the size */
+    private Dimension extent;
+
+    /**
+     * Creates a window geometry from a position and dimension
+     *
+     * @param topLeft the top left point
+     * @param extent the extent
+     */
+    public WindowGeometry(Point topLeft, Dimension extent) {
+        this.topLeft = topLeft;
+        this.extent = extent;
+    }
+
+    /**
+     * Creates a window geometry from a rectangle
+     *
+     * @param rect the position
+     */
+    public WindowGeometry(Rectangle rect) {
+        this(rect.getLocation(), rect.getSize());
+    }
+
+    /**
+     * Creates a window geometry from the position and the size of a window.
+     *
+     * @param window the window
+     */
+    public WindowGeometry(Window window)  {
+        this(window.getLocationOnScreen(), window.getSize());
+    }
+
+    /**
+     * Creates a window geometry from the values kept in the preference store under the
+     * key <code>preferenceKey</code>
+     *
+     * @param preferenceKey the preference key
+     * @throws WindowGeometryException if no such key exist or if the preference value has
+     * an illegal format
+     */
+    public WindowGeometry(String preferenceKey) throws WindowGeometryException {
+        initFromPreferences(preferenceKey);
+    }
+
+    /**
+     * Creates a window geometry from the values kept in the preference store under the
+     * key <code>preferenceKey</code>. Falls back to the <code>defaultGeometry</code> if
+     * something goes wrong.
+     *
+     * @param preferenceKey the preference key
+     * @param defaultGeometry the default geometry
+     *
+     */
+    public WindowGeometry(String preferenceKey, WindowGeometry defaultGeometry) {
+        try {
+            initFromPreferences(preferenceKey);
+        } catch (WindowGeometryException e) {
+            if (Main.isDebugEnabled()) {
+                Main.debug(e.getMessage());
+            }
+            initFromWindowGeometry(defaultGeometry);
+        }
+    }
 
     /**
      * Replies a window geometry object for a window with a specific size which is
@@ -84,47 +150,13 @@ public class WindowGeometry {
      * Exception thrown by the WindowGeometry class if something goes wrong
      */
     public static class WindowGeometryException extends Exception {
-        public WindowGeometryException(String message, Throwable cause) {
+        WindowGeometryException(String message, Throwable cause) {
             super(message, cause);
         }
 
-        public WindowGeometryException(String message) {
+        WindowGeometryException(String message) {
             super(message);
         }
-    }
-
-    /** the top left point */
-    private Point topLeft;
-    /** the size */
-    private Dimension extent;
-
-    /**
-     * Creates a window geometry from a position and dimension
-     *
-     * @param topLeft the top left point
-     * @param extent the extent
-     */
-    public WindowGeometry(Point topLeft, Dimension extent) {
-        this.topLeft = topLeft;
-        this.extent = extent;
-    }
-
-    /**
-     * Creates a window geometry from a rectangle
-     *
-     * @param rect the position
-     */
-    public WindowGeometry(Rectangle rect) {
-        this(rect.getLocation(), rect.getSize());
-    }
-
-    /**
-     * Creates a window geometry from the position and the size of a window.
-     *
-     * @param window the window
-     */
-    public WindowGeometry(Window window)  {
-        this(window.getLocationOnScreen(), window.getSize());
     }
 
     /**
@@ -161,7 +193,7 @@ public class WindowGeometry {
                     tr("Preference with key ''{0}'' does not provide an int value for ''{1}''. Got {2}. " +
                        "Cannot restore window geometry from preferences.",
                             preferenceKey, field, v), e);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             throw new WindowGeometryException(
                     tr("Failed to parse field ''{1}'' in preference with key ''{0}''. Exception was: {2}. " +
                        "Cannot restore window geometry from preferences.",
@@ -194,7 +226,8 @@ public class WindowGeometry {
             if (m.matches()) {
                 int w = Integer.parseInt(m.group(1));
                 int h = Integer.parseInt(m.group(2));
-                int x = screenDimension.x, y = screenDimension.y;
+                int x = screenDimension.x;
+                int y = screenDimension.y;
                 if (m.group(3) != null) {
                     x = Integer.parseInt(m.group(5));
                     y = Integer.parseInt(m.group(7));
@@ -220,35 +253,6 @@ public class WindowGeometry {
             def = new WindowGeometry(p, new Dimension(1000, 740));
         }
         return new WindowGeometry(preferenceKey, def);
-    }
-
-    /**
-     * Creates a window geometry from the values kept in the preference store under the
-     * key <code>preferenceKey</code>
-     *
-     * @param preferenceKey the preference key
-     * @throws WindowGeometryException if no such key exist or if the preference value has
-     * an illegal format
-     */
-    public WindowGeometry(String preferenceKey) throws WindowGeometryException {
-        initFromPreferences(preferenceKey);
-    }
-
-    /**
-     * Creates a window geometry from the values kept in the preference store under the
-     * key <code>preferenceKey</code>. Falls back to the <code>defaultGeometry</code> if
-     * something goes wrong.
-     *
-     * @param preferenceKey the preference key
-     * @param defaultGeometry the default geometry
-     *
-     */
-    public WindowGeometry(String preferenceKey, WindowGeometry defaultGeometry) {
-        try {
-            initFromPreferences(preferenceKey);
-        } catch (WindowGeometryException e) {
-            initFromWindowGeometry(defaultGeometry);
-        }
     }
 
     /**
@@ -368,9 +372,11 @@ public class WindowGeometry {
     public static Rectangle getVirtualScreenBounds() {
         Rectangle virtualBounds = new Rectangle();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        for (GraphicsDevice gd : ge.getScreenDevices()) {
-            if (gd.getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
-                virtualBounds = virtualBounds.union(gd.getDefaultConfiguration().getBounds());
+        if (!GraphicsEnvironment.isHeadless()) {
+            for (GraphicsDevice gd : ge.getScreenDevices()) {
+                if (gd.getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
+                    virtualBounds = virtualBounds.union(gd.getDefaultConfiguration().getBounds());
+                }
             }
         }
         return virtualBounds;
@@ -423,34 +429,35 @@ public class WindowGeometry {
      * @return bounds of the screen
      */
     private static Rectangle getScreenInfo(Rectangle g) {
-        GraphicsDevice[] gs = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-        int intersect = 0;
         Rectangle bounds = null;
-        for (GraphicsDevice gd : gs) {
-            if (gd.getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
-                Rectangle b = gd.getDefaultConfiguration().getBounds();
-                if (b.height > 0 && b.width / b.height >= 3) /* multiscreen with wrong definition */ {
-                    b.width /= 2;
-                    Rectangle is = b.intersection(g);
-                    int s = is.width * is.height;
-                    if (bounds == null || intersect < s) {
-                        intersect = s;
-                        bounds = b;
-                    }
-                    b = new Rectangle(b);
-                    b.x += b.width;
-                    is = b.intersection(g);
-                    s = is.width * is.height;
-                    if (intersect < s) {
-                        intersect = s;
-                        bounds = b;
-                    }
-                } else {
-                    Rectangle is = b.intersection(g);
-                    int s = is.width * is.height;
-                    if (bounds == null || intersect < s) {
-                        intersect = s;
-                        bounds = b;
+        if (!GraphicsEnvironment.isHeadless()) {
+            int intersect = 0;
+            for (GraphicsDevice gd : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+                if (gd.getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
+                    Rectangle b = gd.getDefaultConfiguration().getBounds();
+                    if (b.height > 0 && b.width / b.height >= 3) /* multiscreen with wrong definition */ {
+                        b.width /= 2;
+                        Rectangle is = b.intersection(g);
+                        int s = is.width * is.height;
+                        if (bounds == null || intersect < s) {
+                            intersect = s;
+                            bounds = b;
+                        }
+                        b = new Rectangle(b);
+                        b.x += b.width;
+                        is = b.intersection(g);
+                        s = is.width * is.height;
+                        if (intersect < s) {
+                            intersect = s;
+                            bounds = b;
+                        }
+                    } else {
+                        Rectangle is = b.intersection(g);
+                        int s = is.width * is.height;
+                        if (bounds == null || intersect < s) {
+                            intersect = s;
+                            bounds = b;
+                        }
                     }
                 }
             }
@@ -464,6 +471,35 @@ public class WindowGeometry {
      */
     public static Rectangle getFullScreenInfo() {
         return new Rectangle(new Point(0, 0), GuiHelper.getScreenSize());
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((extent == null) ? 0 : extent.hashCode());
+        result = prime * result + ((topLeft == null) ? 0 : topLeft.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        WindowGeometry other = (WindowGeometry) obj;
+        if (extent == null) {
+            if (other.extent != null)
+                return false;
+        } else if (!extent.equals(other.extent))
+            return false;
+        if (topLeft == null) {
+            if (other.topLeft != null)
+                return false;
+        } else if (!topLeft.equals(other.topLeft))
+            return false;
+        return true;
     }
 
     @Override
