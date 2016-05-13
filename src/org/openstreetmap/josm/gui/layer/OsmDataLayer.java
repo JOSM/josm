@@ -10,6 +10,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -514,7 +515,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * @param processed A list of all objects that were actually uploaded.
      *         May be <code>null</code>, which means nothing has been uploaded
      */
-    public void cleanupAfterUpload(final Collection<IPrimitive> processed) {
+    public void cleanupAfterUpload(final Collection<? extends IPrimitive> processed) {
         // return immediately if an upload attempt failed
         if (processed == null || processed.isEmpty())
             return;
@@ -972,6 +973,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         if (isDataSetEmpty() && 1 != GuiHelper.runInEDTAndWaitAndReturn(new Callable<Integer>() {
             @Override
             public Integer call() {
+                if (GraphicsEnvironment.isHeadless()) {
+                    return 2;
+                }
                 ExtendedDialog dialog = new ExtendedDialog(
                         Main.parent,
                         tr("Empty document"),
