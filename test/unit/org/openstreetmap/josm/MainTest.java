@@ -6,15 +6,28 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.util.Collection;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main.DownloadParamType;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Unit tests of {@link Main} class.
  */
 public class MainTest {
+
+    /**
+     * Setup test.
+     */
+    @BeforeClass
+    public static void setUp() {
+        JOSMFixture.createUnitTestFixture().init();
+    }
 
     /**
      * Unit test of {@link DownloadParamType#paramType} method.
@@ -27,6 +40,16 @@ public class MainTest {
         assertEquals(DownloadParamType.fileUrl, DownloadParamType.paramType("file://C:\\Users\\foo\\data.osm"));
         assertEquals(DownloadParamType.httpUrl, DownloadParamType.paramType("http://somewhere.com/data.osm"));
         assertEquals(DownloadParamType.httpUrl, DownloadParamType.paramType("https://somewhere.com/data.osm"));
+    }
+
+    /**
+     * Unit test of {@code Main#preConstructorInit}.
+     */
+    @Test
+    public void testPreConstructorInit() {
+        Main.preConstructorInit(MainApplication.buildCommandLineArgumentMap(new String[0]));
+        Main.preConstructorInit(MainApplication.buildCommandLineArgumentMap(new String[]{"--geometry=400x300+10+5", "--no-maximize"}));
+        assertEquals(new WindowGeometry(new Point(10, 5), new Dimension(400, 300)), Main.geometry);
     }
 
     /**
