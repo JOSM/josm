@@ -28,23 +28,17 @@ import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.UIManager;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The MultiSplitLayout layout manager recursively arranges its
@@ -103,18 +97,30 @@ public class MultiSplitLayout implements LayoutManager {
         }
     }
 
+    /**
+     * Add property change listener.
+     * @param listener listener to add
+     */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         if (listener != null) {
             pcs.addPropertyChangeListener(listener);
         }
     }
 
+    /**
+     * Remove property change listener.
+     * @param listener listener to remove
+     */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         if (listener != null) {
             pcs.removePropertyChangeListener(listener);
         }
     }
 
+    /**
+     * Replies list of property change listeners.
+     * @return list of property change listeners
+     */
     public PropertyChangeListener[] getPropertyChangeListeners() {
         return pcs.getPropertyChangeListeners();
     }
@@ -651,7 +657,7 @@ public class MultiSplitLayout implements LayoutManager {
                     Divider dividerChild =
                         splitChildren.hasNext() ? (Divider) splitChildren.next() : null;
 
-                        double childHeight = 0.0;
+                        double childHeight;
                         if (getFloatingDividers()) {
                             childHeight = preferredNodeSize(splitChild).getHeight();
                         } else {
@@ -713,7 +719,7 @@ public class MultiSplitLayout implements LayoutManager {
         throw new InvalidLayoutException(msg, node);
     }
 
-    private void checkLayout(Node root) {
+    private static void checkLayout(Node root) {
         if (root instanceof Split) {
             Split split = (Split) root;
             if (split.getChildren().size() <= 2) {
@@ -791,7 +797,7 @@ public class MultiSplitLayout implements LayoutManager {
         (r1.y <= (r2.y + r2.height)) && ((r1.y + r1.height) >= r2.y);
     }
 
-    private List<Divider> dividersThatOverlap(Node root, Rectangle r) {
+    private static List<Divider> dividersThatOverlap(Node root, Rectangle r) {
         if (nodeOverlapsRectangle(root, r) && (root instanceof Split)) {
             List<Divider> dividers = new ArrayList<>();
             for (Node child : ((Split) root).getChildren()) {
@@ -1136,144 +1142,5 @@ public class MultiSplitLayout implements LayoutManager {
         public String toString() {
             return "MultiSplitLayout.Divider " + getBounds();
         }
-    }
-
-    private static void throwParseException(StreamTokenizer st, String msg) throws Exception {
-        throw new Exception("MultiSplitLayout.parseModel Error: " + msg);
-    }
-
-    private static void parseAttribute(String name, StreamTokenizer st, Node node) throws Exception {
-        if (st.nextToken() != '=') {
-            throwParseException(st, "expected '=' after " + name);
-        }
-        if ("WEIGHT".equalsIgnoreCase(name)) {
-            if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
-                node.setWeight(st.nval);
-            } else {
-                throwParseException(st, "invalid weight");
-            }
-        } else if ("NAME".equalsIgnoreCase(name)) {
-            if (st.nextToken() == StreamTokenizer.TT_WORD) {
-                if (node instanceof Leaf) {
-                    ((Leaf) node).setName(st.sval);
-                } else {
-                    throwParseException(st, "can't specify name for " + node);
-                }
-            } else {
-                throwParseException(st, "invalid name");
-            }
-        } else {
-            throwParseException(st, "unrecognized attribute \"" + name + '\"');
-        }
-    }
-
-    private static void addSplitChild(Split parent, Node child) {
-        List<Node> children = new ArrayList<>(parent.getChildren());
-        if (children.isEmpty()) {
-            children.add(child);
-        } else {
-            children.add(new Divider());
-            children.add(child);
-        }
-        parent.setChildren(children);
-    }
-
-    private static void parseLeaf(StreamTokenizer st, Split parent) throws Exception {
-        Leaf leaf = new Leaf();
-        int token;
-        while ((token = st.nextToken()) != StreamTokenizer.TT_EOF) {
-            if (token == ')') {
-                break;
-            }
-            if (token == StreamTokenizer.TT_WORD) {
-                parseAttribute(st.sval, st, leaf);
-            } else {
-                throwParseException(st, "Bad Leaf: " + leaf);
-            }
-        }
-        addSplitChild(parent, leaf);
-    }
-
-    private static void parseSplit(StreamTokenizer st, Split parent) throws Exception {
-        int token;
-        while ((token = st.nextToken()) != StreamTokenizer.TT_EOF) {
-            if (token == ')') {
-                break;
-            } else if (token == StreamTokenizer.TT_WORD) {
-                if ("WEIGHT".equalsIgnoreCase(st.sval)) {
-                    parseAttribute(st.sval, st, parent);
-                } else {
-                    addSplitChild(parent, new Leaf(st.sval));
-                }
-            } else if (token == '(') {
-                if ((token = st.nextToken()) != StreamTokenizer.TT_WORD) {
-                    throwParseException(st, "invalid node type");
-                }
-                String nodeType = st.sval.toUpperCase(Locale.ENGLISH);
-                if ("LEAF".equals(nodeType)) {
-                    parseLeaf(st, parent);
-                } else if ("ROW".equals(nodeType) || "COLUMN".equals(nodeType)) {
-                    Split split = new Split();
-                    split.setRowLayout("ROW".equals(nodeType));
-                    addSplitChild(parent, split);
-                    parseSplit(st, split);
-                } else {
-                    throwParseException(st, "unrecognized node type '" + nodeType + '\'');
-                }
-            }
-        }
-    }
-
-    private static Node parseModel(Reader r) {
-        StreamTokenizer st = new StreamTokenizer(r);
-        try {
-            Split root = new Split();
-            parseSplit(st, root);
-            return root.getChildren().get(0);
-        } catch (Exception e) {
-            Main.error(e);
-        } finally {
-            Utils.close(r);
-        }
-        return null;
-    }
-
-    /**
-     * A convenience method that converts a string to a MultiSplitLayout model (a tree of Nodes) using a
-     * a simple syntax.  Nodes are represented by parenthetical expressions whose first token
-     * is one of ROW/COLUMN/LEAF.  ROW and COLUMN specify horizontal and vertical Split nodes respectively,
-     * LEAF specifies a Leaf node.  A Leaf's name and weight can be specified with attributes,
-     * name=<i>myLeafName</i> weight=<i>myLeafWeight</i>.
-     * Similarly, a Split's weight can be specified with weight=<i>mySplitWeight</i>.
-     *
-     * <p> For example, the following expression generates a horizontal Split node with three children:
-     * the Leafs named left and right, and a Divider in between:
-     * <pre>
-     * (ROW (LEAF name=left) (LEAF name=right weight=1.0))
-     * </pre>
-     *
-     * <p> Dividers should not be included in the string, they're added automatcially as needed.  Because
-     * Leaf nodes often only need to specify a name, one can specify a Leaf by just providing the name.
-     * The previous example can be written like this:
-     * <pre>
-     * (ROW left (LEAF name=right weight=1.0))
-     * </pre>
-     *
-     * <p>Here's a more complex example.  One row with three elements, the first and last of which are columns
-     * with two leaves each:
-     * <pre>
-     * (ROW (COLUMN weight=0.5 left.top left.bottom)
-     *      (LEAF name=middle)
-     *      (COLUMN weight=0.5 right.top right.bottom))
-     * </pre>
-     *
-     * <p> This syntax is not intended for archiving or configuration files .  It's just a convenience for
-     * examples and tests.
-     * @param s model as string
-     *
-     * @return the Node root of a tree based on s.
-     */
-    public static Node parseModel(String s) {
-        return parseModel(new StringReader(s));
     }
 }
