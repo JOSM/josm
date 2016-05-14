@@ -98,8 +98,8 @@ public class SessionReader {
             return null;
         SessionLayerImporter importer = null;
         try {
-            importer = importerClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            importer = importerClass.getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
         return importer;

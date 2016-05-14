@@ -135,8 +135,8 @@ public class OsmValidator implements LayerChangeListener {
         allTestsMap = new HashMap<>();
         for (Class<Test> testClass : allAvailableTests) {
             try {
-                allTestsMap.put(testClass.getName(), testClass.newInstance());
-            } catch (Exception e) {
+                allTestsMap.put(testClass.getName(), testClass.getConstructor().newInstance());
+            } catch (ReflectiveOperationException e) {
                 Main.error(e);
             }
         }
