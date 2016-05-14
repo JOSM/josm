@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Observable;
 import java.util.Set;
 
 import javax.swing.JTable;
@@ -45,6 +44,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -73,7 +73,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  *
  * @see HistoryBrowser
  */
-public class HistoryBrowserModel extends Observable implements LayerChangeListener, DataSetListener {
+public class HistoryBrowserModel extends ChangeNotifier implements LayerChangeListener, DataSetListener {
     /** the history of an OsmPrimitive */
     private History history;
     private HistoryOsmPrimitive reference;
@@ -197,8 +197,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     protected void fireModelChange() {
         initNodeListTableModels();
         initMemberListTableModels();
-        setChanged();
-        notifyObservers();
+        fireStateChanged();
         versionTableModel.fireTableDataChanged();
     }
 
@@ -316,8 +315,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         initTagTableModels();
         initNodeListTableModels();
         initMemberListTableModels();
-        setChanged();
-        notifyObservers();
+        fireStateChanged();
     }
 
     /**
@@ -347,8 +345,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         initTagTableModels();
         initNodeListTableModels();
         initMemberListTableModels();
-        setChanged();
-        notifyObservers();
+        fireStateChanged();
     }
 
     /**

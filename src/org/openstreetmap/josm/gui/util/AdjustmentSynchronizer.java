@@ -11,11 +11,11 @@ import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 
 import javax.swing.JCheckBox;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -30,7 +30,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
     private final Set<Adjustable> synchronizedAdjustables;
     private final Map<Adjustable, Boolean> enabledMap;
 
-    private final Observable observable;
+    private final ChangeNotifier observable;
 
     /**
      * Constructs a new {@code AdjustmentSynchronizer}
@@ -38,7 +38,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
     public AdjustmentSynchronizer() {
         synchronizedAdjustables = new HashSet<>();
         enabledMap = new HashMap<>();
-        observable = new Observable();
+        observable = new ChangeNotifier();
     }
 
     /**
@@ -83,7 +83,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
                     tr("Adjustable {0} not registered yet. Cannot set participation in synchronized adjustment.", adjustable));
 
         enabledMap.put(adjustable, isParticipating);
-        observable.notifyObservers();
+        observable.fireStateChanged();
     }
 
     /**
@@ -142,10 +142,10 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
             }
         });
 
-        observable.addObserver(
-                new Observer() {
+        observable.addChangeListener(
+                new ChangeListener() {
                     @Override
-                    public void update(Observable o, Object arg) {
+                    public void stateChanged(ChangeEvent e) {
                         boolean sync = isParticipatingInSynchronizedScrolling(adjustable);
                         if (view.isSelected() != sync) {
                             view.setSelected(sync);

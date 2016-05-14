@@ -2,14 +2,15 @@
 package org.openstreetmap.josm.gui.io;
 
 import java.util.Objects;
-import java.util.Observable;
+
+import org.openstreetmap.josm.gui.util.ChangeNotifier;
 
 /**
  * ChangesetCommentModel is an observable model for the changeset comment edited
  * in the {@link UploadDialog}.
  * @since 3133
  */
-public class ChangesetCommentModel extends Observable {
+public class ChangesetCommentModel extends ChangeNotifier {
     private String comment = "";
 
     /**
@@ -21,8 +22,7 @@ public class ChangesetCommentModel extends Observable {
         String oldValue = this.comment;
         this.comment = comment == null ? "" : comment;
         if (!Objects.equals(oldValue, this.comment)) {
-            setChanged();
-            notifyObservers(this.comment);
+            fireStateChanged();
         }
     }
 

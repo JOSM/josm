@@ -8,7 +8,6 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Observable;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.conflict.CoordinateConflictResolveCommand;
@@ -18,6 +17,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
+import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * {@link OsmPrimitive}s. In particular, it represents conflicts in the coordinates of {@link Node}s and
  * the deleted or visible state of {@link OsmPrimitive}s.
  *
- * This model is an {@link Observable}. It notifies registered {@link java.util.Observer}s whenever the
+ * This model is a {@link ChangeNotifier}. It notifies registered {@link javax.swing.event.ChangeListener}s whenever the
  * internal state changes.
  *
  * This model also emits property changes for {@link #RESOLVED_COMPLETELY_PROP}. Property change
@@ -36,7 +36,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * @see OsmPrimitive#isVisible
  *
  */
-public class PropertiesMergeModel extends Observable {
+public class PropertiesMergeModel extends ChangeNotifier {
 
     public static final String RESOLVED_COMPLETELY_PROP = PropertiesMergeModel.class.getName() + ".resolvedCompletely";
     public static final String DELETE_PRIMITIVE_PROP = PropertiesMergeModel.class.getName() + ".deletePrimitive";
@@ -144,8 +144,7 @@ public class PropertiesMergeModel extends Observable {
 
         coordMergeDecision = UNDECIDED;
         deletedMergeDecision = UNDECIDED;
-        setChanged();
-        notifyObservers();
+        fireStateChanged();
         fireCompletelyResolved();
     }
 
@@ -195,8 +194,7 @@ public class PropertiesMergeModel extends Observable {
      */
     public void decideCoordsConflict(MergeDecisionType decision) {
         coordMergeDecision = decision;
-        setChanged();
-        notifyObservers();
+        fireStateChanged();
         fireCompletelyResolved();
     }
 
@@ -270,8 +268,7 @@ public class PropertiesMergeModel extends Observable {
         boolean newMergedDeletedState = getMergedDeletedState(decision);
 
         this.deletedMergeDecision = decision;
-        setChanged();
-        notifyObservers();
+        fireStateChanged();
         fireCompletelyResolved();
 
         if (oldMergedDeletedState != newMergedDeletedState) {

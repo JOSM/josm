@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016051300, Last Updated Fri May 13 07:07:02 2016 UTC
+        // Taken from Version 2016051400, Last Updated Sat May 14 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -649,6 +649,7 @@ public final class DomainValidator extends AbstractValidator {
         "green", // green Afilias Limited
         "gripe", // gripe Corn Sunset, LLC
         "group", // group Romeo Town, LLC
+        "guardian", // guardian The Guardian Life Insurance Company of America
         "gucci", // gucci Guccio Gucci S.p.a.
         "guge", // guge Charleston Road Registry Inc.
         "guide", // guide Snow Moon, LLC

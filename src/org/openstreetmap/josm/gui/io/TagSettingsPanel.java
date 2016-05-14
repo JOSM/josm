@@ -3,10 +3,10 @@ package org.openstreetmap.josm.gui.io;
 
 import java.awt.BorderLayout;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -40,8 +40,8 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
         CheckParameterUtil.ensureParameterNotNull(changesetSourceModel, "changesetSourceModel");
         this.changesetCommentModel = changesetCommentModel;
         this.changesetSourceModel = changesetSourceModel;
-        this.changesetCommentModel.addObserver(new ChangesetCommentObserver("comment"));
-        this.changesetSourceModel.addObserver(new ChangesetCommentObserver("source"));
+        this.changesetCommentModel.addChangeListener(new ChangesetCommentChangeListener("comment"));
+        this.changesetSourceModel.addChangeListener(new ChangesetCommentChangeListener("source"));
         build();
         pnlTagEditor.getModel().addTableModelListener(this);
     }
@@ -112,24 +112,24 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      * Observes the changeset comment model and keeps the tag editor in sync
      * with the current changeset comment
      */
-    class ChangesetCommentObserver implements Observer {
+    class ChangesetCommentChangeListener implements ChangeListener {
 
         private final String key;
 
-        ChangesetCommentObserver(String key) {
+        ChangesetCommentChangeListener(String key) {
             this.key = key;
         }
 
         @Override
-        public void update(Observable o, Object arg) {
-            if (o instanceof ChangesetCommentModel) {
-                String newValue = (String) arg;
+        public void stateChanged(ChangeEvent e) {
+            if (e.getSource() instanceof ChangesetCommentModel) {
+                String newValue = ((ChangesetCommentModel) e.getSource()).getComment();
                 String oldValue = getTagEditorValue(key);
                 if (oldValue == null) {
                     oldValue = "";
                 }
                 if (!oldValue.equals(newValue)) {
-                    setProperty(key, (String) arg);
+                    setProperty(key, newValue);
                 }
             }
         }

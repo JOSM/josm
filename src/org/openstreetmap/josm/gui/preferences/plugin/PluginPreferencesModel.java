@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Observable;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -24,7 +24,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 /**
  * The plugin model behind a {@code PluginListPanel}.
  */
-public class PluginPreferencesModel extends Observable {
+public class PluginPreferencesModel extends ChangeNotifier {
     // remember the initial list of active plugins
     private final Set<String> currentActivePlugins;
     private final List<PluginInformation> availablePlugins = new ArrayList<>();
@@ -60,8 +60,7 @@ public class PluginPreferencesModel extends Observable {
             }
         }
         filterExpression = filter;
-        clearChanged();
-        notifyObservers();
+        fireStateChanged();
     }
 
     /**
@@ -86,8 +85,7 @@ public class PluginPreferencesModel extends Observable {
                 selectedPluginsMap.put(pi, Boolean.TRUE);
             }
         }
-        clearChanged();
-        notifyObservers();
+        fireStateChanged();
     }
 
     protected void updateAvailablePlugin(PluginInformation other) {

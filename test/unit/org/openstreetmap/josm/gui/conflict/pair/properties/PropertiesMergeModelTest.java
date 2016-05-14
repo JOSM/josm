@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Observable;
-import java.util.Observer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,11 +23,11 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
 public class PropertiesMergeModelTest {
 
-    private abstract static class TestObserver implements Observer {
+    private abstract static class TestChangeListener implements ChangeListener {
         public int numInvocations;
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             numInvocations++;
             doTest();
         }
@@ -112,9 +112,9 @@ public class PropertiesMergeModelTest {
 
         // decide KEEP_MINE  and ensure notification via Observable
         //
-        TestObserver observerTest;
-        model.addObserver(
-                observerTest = new TestObserver() {
+        TestChangeListener observerTest;
+        model.addChangeListener(
+                observerTest = new TestChangeListener() {
                     @Override
                     public void doTest() {
                         assertTrue(model.isCoordMergeDecision(MergeDecisionType.KEEP_MINE));
@@ -127,9 +127,9 @@ public class PropertiesMergeModelTest {
 
         // decide KEEP_THEIR and  ensure notification via Observable
         //
-        model.deleteObserver(observerTest);
-        model.addObserver(
-                observerTest = new TestObserver() {
+        model.removeChangeListener(observerTest);
+        model.addChangeListener(
+                observerTest = new TestChangeListener() {
                     @Override
                     public void doTest() {
                         assertTrue(model.isCoordMergeDecision(MergeDecisionType.KEEP_THEIR));
@@ -139,6 +139,6 @@ public class PropertiesMergeModelTest {
         model.decideCoordsConflict(MergeDecisionType.KEEP_THEIR);
         assertTrue(model.isCoordMergeDecision(MergeDecisionType.KEEP_THEIR));
         observerTest.assertNumInvocations(1);
-        model.deleteObserver(observerTest);
+        model.removeChangeListener(observerTest);
     }
 }

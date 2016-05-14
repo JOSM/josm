@@ -19,8 +19,6 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -34,6 +32,8 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AttributeSet;
@@ -494,7 +494,7 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
         }
     }
 
-    static class BackAction extends AbstractBrowserAction implements Observer {
+    static class BackAction extends AbstractBrowserAction implements ChangeListener {
 
         /**
          * Constructs a new {@code BackAction}.
@@ -502,7 +502,7 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
          */
         BackAction(IHelpBrowser browser) {
             super(browser);
-            browser.getHistory().addObserver(this);
+            browser.getHistory().addChangeListener(this);
             putValue(SHORT_DESCRIPTION, tr("Go to the previous page"));
             putValue(SMALL_ICON, ImageProvider.get("help", "previous"));
             setEnabled(browser.getHistory().canGoBack());
@@ -514,12 +514,12 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             setEnabled(browser.getHistory().canGoBack());
         }
     }
 
-    static class ForwardAction extends AbstractBrowserAction implements Observer {
+    static class ForwardAction extends AbstractBrowserAction implements ChangeListener {
 
         /**
          * Constructs a new {@code ForwardAction}.
@@ -527,7 +527,7 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
          */
         ForwardAction(IHelpBrowser browser) {
             super(browser);
-            browser.getHistory().addObserver(this);
+            browser.getHistory().addChangeListener(this);
             putValue(SHORT_DESCRIPTION, tr("Go to the next page"));
             putValue(SMALL_ICON, ImageProvider.get("help", "next"));
             setEnabled(browser.getHistory().canGoForward());
@@ -539,7 +539,7 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             setEnabled(browser.getHistory().canGoForward());
         }
     }

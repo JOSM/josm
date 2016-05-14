@@ -13,8 +13,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
@@ -24,6 +22,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
@@ -44,7 +44,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  * of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive}.
  * @since 1709
  */
-public class VersionTable extends JTable implements Observer {
+public class VersionTable extends JTable implements ChangeListener {
     private VersionTablePopupMenu popupMenu;
     private final transient HistoryBrowserModel model;
 
@@ -54,7 +54,7 @@ public class VersionTable extends JTable implements Observer {
      */
     public VersionTable(HistoryBrowserModel model) {
         super(model.getVersionTableModel(), new VersionTableColumnModel());
-        model.addObserver(this);
+        model.addChangeListener(this);
         build();
         this.model = model;
     }
@@ -116,7 +116,7 @@ public class VersionTable extends JTable implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void stateChanged(ChangeEvent e) {
         repaint();
     }
 

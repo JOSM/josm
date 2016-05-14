@@ -4,13 +4,14 @@ package org.openstreetmap.josm.gui.help;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Observable;
+
+import org.openstreetmap.josm.gui.util.ChangeNotifier;
 
 /**
  * Help browser history.
  * @since 2274
  */
-public class HelpBrowserHistory extends Observable {
+public class HelpBrowserHistory extends ChangeNotifier {
     private final IHelpBrowser browser;
     private List<String> history;
     private int historyPos;
@@ -30,8 +31,7 @@ public class HelpBrowserHistory extends Observable {
     public void clear() {
         history.clear();
         historyPos = 0;
-        setChanged();
-        notifyObservers();
+        fireStateChanged();
     }
 
     /**
@@ -59,8 +59,7 @@ public class HelpBrowserHistory extends Observable {
             return;
         String url = history.get(historyPos);
         browser.openUrl(url);
-        setChanged();
-        notifyObservers();
+        fireStateChanged();
     }
 
     /**
@@ -72,8 +71,7 @@ public class HelpBrowserHistory extends Observable {
             return;
         String url = history.get(historyPos);
         browser.openUrl(url);
-        setChanged();
-        notifyObservers();
+        fireStateChanged();
     }
 
     /**
@@ -98,7 +96,6 @@ public class HelpBrowserHistory extends Observable {
             history.add(url);
             historyPos = history.size()-1;
         }
-        setChanged();
-        notifyObservers();
+        fireStateChanged();
     }
 }
