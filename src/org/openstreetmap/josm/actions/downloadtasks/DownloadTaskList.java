@@ -15,6 +15,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
@@ -248,7 +250,7 @@ public class DownloadTaskList {
             for (Future<?> future : taskFutures) {
                 try {
                     future.get();
-                } catch (Exception e) {
+                } catch (InterruptedException | ExecutionException | CancellationException e) {
                     Main.error(e);
                     return;
                 }

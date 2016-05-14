@@ -574,7 +574,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     selectedList.setSelectedIndices(indices);
                     movingComponent = "";
                     return true;
-                } catch (Exception e) {
+                } catch (IOException | UnsupportedFlavorException e) {
                     Main.error(e);
                 }
                 return false;
@@ -593,7 +593,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                                 selected.remove(indices[i]);
                             }
                         }
-                    } catch (Exception e) {
+                    } catch (IOException | UnsupportedFlavorException e) {
                         Main.error(e);
                     }
                     movingComponent = "";

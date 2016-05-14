@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
@@ -238,7 +240,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
                     public void run() {
                         try {
                             future.get();
-                        } catch (Exception e) {
+                        } catch (InterruptedException | ExecutionException | CancellationException e) {
                             Main.error(e);
                             return;
                         }

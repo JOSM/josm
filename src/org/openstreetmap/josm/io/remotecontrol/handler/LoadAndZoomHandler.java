@@ -144,7 +144,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                     }
                 }
             }
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             Main.warn("RemoteControl: Error parsing load_and_zoom remote control request:");
             Main.error(ex);
             throw new RequestHandlerErrorException(ex);

@@ -408,7 +408,7 @@ public class GpxReader implements GpxConstants {
                 case "pdop":
                     try {
                         currentWayPoint.put(localName, Float.valueOf(accumulator.toString()));
-                    } catch (Exception e) {
+                    } catch (NumberFormatException e) {
                         currentWayPoint.put(localName, 0f);
                     }
                     break;

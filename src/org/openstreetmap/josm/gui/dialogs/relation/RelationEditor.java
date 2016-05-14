@@ -105,7 +105,7 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
                 if (canEdit) {
                     return e.getConstructor(Relation.class, Collection.class).newInstance(layer, r, selectedMembers);
                 }
-            } catch (Exception ex) {
+            } catch (ReflectiveOperationException ex) {
                 Main.warn(ex);
             }
         }

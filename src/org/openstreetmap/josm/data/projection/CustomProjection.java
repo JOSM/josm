@@ -813,7 +813,7 @@ public class CustomProjection extends AbstractProjection {
                             polesEN.put(p, enPole);
                         }
                     }
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     Main.error(e);
                 }
             }

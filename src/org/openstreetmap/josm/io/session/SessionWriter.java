@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Constructor;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,9 +95,8 @@ public class SessionWriter {
         if (exporterClass == null)
             return null;
         try {
-            Constructor<? extends SessionLayerExporter> constructor = exporterClass.getConstructor(layerClass);
-            return constructor.newInstance(layer);
-        } catch (Exception e) {
+            return exporterClass.getConstructor(layerClass).newInstance(layer);
+        } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
     }

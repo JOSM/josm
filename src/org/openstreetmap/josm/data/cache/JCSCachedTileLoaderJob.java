@@ -296,7 +296,6 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     /**
      * @return true if object was successfully downloaded, false, if there was a loading failure
      */
-
     private boolean loadObject() {
         if (attributes == null) {
             attributes = new CacheEntryAttributes();
@@ -395,14 +394,13 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 cache.put(getCacheKey(), createCacheEntry(new byte[]{}), attributes);
             }
             return doCache;
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
             attributes.setErrorMessage(e.toString());
             log.log(Level.WARNING, "JCS - Exception during download {0}",  getUrlNoException());
             Main.warn(e);
         }
         log.log(Level.WARNING, "JCS - Silent failure during download: {0}", getUrlNoException());
         return false;
-
     }
 
     /**

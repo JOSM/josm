@@ -44,7 +44,6 @@ import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -693,26 +692,22 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser {
          */
         @Override
         public void paint(Graphics g) {
-            try {
-                super.paint(g);
-                if (min == null || max == null) return;
-                int zoomDiff = MAX_ZOOM - zoom;
-                Point tlc = getTopLeftCoordinates();
-                int xMin = (min.x >> zoomDiff) - tlc.x;
-                int yMin = (min.y >> zoomDiff) - tlc.y;
-                int xMax = (max.x >> zoomDiff) - tlc.x;
-                int yMax = (max.y >> zoomDiff) - tlc.y;
+            super.paint(g);
+            if (min == null || max == null) return;
+            int zoomDiff = MAX_ZOOM - zoom;
+            Point tlc = getTopLeftCoordinates();
+            int xMin = (min.x >> zoomDiff) - tlc.x;
+            int yMin = (min.y >> zoomDiff) - tlc.y;
+            int xMax = (max.x >> zoomDiff) - tlc.x;
+            int yMax = (max.y >> zoomDiff) - tlc.y;
 
-                int w = xMax - xMin;
-                int h = yMax - yMin;
-                g.setColor(new Color(0.9f, 0.7f, 0.7f, 0.6f));
-                g.fillRect(xMin, yMin, w, h);
+            int w = xMax - xMin;
+            int h = yMax - yMin;
+            g.setColor(new Color(0.9f, 0.7f, 0.7f, 0.6f));
+            g.fillRect(xMin, yMin, w, h);
 
-                g.setColor(Color.BLACK);
-                g.drawRect(xMin, yMin, w, h);
-            } catch (Exception e) {
-                Main.error(e);
-            }
+            g.setColor(Color.BLACK);
+            g.drawRect(xMin, yMin, w, h);
         }
     }
 }

@@ -112,7 +112,7 @@ public abstract class AbstractPrimitiveTask extends PleaseWaitRunnable {
             }
 
             loadIncompleteNodes();
-        } catch (Exception e) {
+        } catch (OsmTransferException e) {
             if (canceled)
                 return;
             lastException = e;

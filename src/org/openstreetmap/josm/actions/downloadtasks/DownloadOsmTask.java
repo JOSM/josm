@@ -331,7 +331,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 if (isCanceled())
                     return;
                 dataSet = parseDataSet();
-            } catch (Exception e) {
+            } catch (OsmTransferException e) {
                 if (isCanceled()) {
                     Main.info(tr("Ignoring exception because download has been canceled. Exception was: {0}", e.toString()));
                     return;
@@ -339,10 +339,8 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 if (e instanceof OsmTransferCanceledException) {
                     setCanceled(true);
                     return;
-                } else if (e instanceof OsmTransferException) {
-                    rememberException(e);
                 } else {
-                    rememberException(new OsmTransferException(e));
+                    rememberException(e);
                 }
                 DownloadOsmTask.this.setFailed(true);
             }

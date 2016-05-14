@@ -151,7 +151,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         tile.initLoading();
         try {
             super.submit(this, force);
-        } catch (Exception e) {
+        } catch (IOException e) {
             // if we fail to submit the job, mark tile as loaded and set error message
             tile.finishLoading();
             tile.setError(e.getMessage());

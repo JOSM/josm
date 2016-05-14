@@ -9,6 +9,7 @@ import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,9 +35,13 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -52,10 +57,12 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Class to process configuration changes stored in XML
@@ -269,10 +276,10 @@ public final class CustomConfigurator {
             document = builder.parse(is);
             exportDocument = builder.newDocument();
             root = document.getDocumentElement();
-        } catch (Exception ex) {
+        } catch (SAXException | IOException | ParserConfigurationException ex) {
             Main.warn("Error getting preferences to save:" +ex.getMessage());
         }
-        if (root == null)
+        if (root == null || exportDocument == null)
             return;
         try {
             Element newRoot = exportDocument.createElement("config");
@@ -298,7 +305,7 @@ public final class CustomConfigurator {
             Transformer ts = TransformerFactory.newInstance().newTransformer();
             ts.setOutputProperty(OutputKeys.INDENT, "yes");
             ts.transform(new DOMSource(exportDocument), new StreamResult(f.toURI().getPath()));
-        } catch (Exception ex) {
+        } catch (DOMException | TransformerFactoryConfigurationError | TransformerException ex) {
             Main.warn("Error saving preferences part:");
             Main.error(ex);
         }
@@ -450,7 +457,7 @@ public final class CustomConfigurator {
                 try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
                     openAndReadXML(is);
                 }
-            } catch (Exception ex) {
+            } catch (ScriptException | IOException | SecurityException ex) {
                 log("Error reading custom preferences: " + ex.getMessage());
             }
         }
@@ -465,7 +472,7 @@ public final class CustomConfigurator {
                 synchronized (CustomConfigurator.class) {
                     processXML(document);
                 }
-            } catch (Exception ex) {
+            } catch (SAXException | IOException | ParserConfigurationException ex) {
                 log("Error reading custom preferences: "+ex.getMessage());
             }
             log("-- Reading complete --");
@@ -491,7 +498,7 @@ public final class CustomConfigurator {
                 engine.eval("API.pluginInstall = function(names) { "+className+".pluginOperation(names,'','');}");
                 engine.eval("API.pluginUninstall = function(names) { "+className+".pluginOperation('',names,'');}");
                 engine.eval("API.pluginDelete = function(names) { "+className+".pluginOperation('','',names);}");
-            } catch (Exception ex) {
+            } catch (ScriptException ex) {
                 log("Error: initializing script engine: "+ex.getMessage());
                 Main.error(ex);
             }
@@ -746,7 +753,7 @@ public final class CustomConfigurator {
 
                 CharArrayReader reader = new CharArrayReader(fragmentWithReplacedVars.toCharArray());
                 tmpPref.fromXML(reader);
-            } catch (Exception ex) {
+            } catch (TransformerException | XMLStreamException | IOException ex) {
                 log("Error: can not read XML fragment :" + ex.getMessage());
             }
 

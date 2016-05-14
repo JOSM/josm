@@ -425,7 +425,7 @@ public class ChildRelationBrowser extends JPanel {
                         Main.map.repaint();
                     }
                 });
-            } catch (Exception e) {
+            } catch (OsmTransferException e) {
                 if (canceled) {
                     Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                     return;
@@ -474,7 +474,7 @@ public class ChildRelationBrowser extends JPanel {
                     mergeDataSet(dataSet);
                     refreshView(r);
                 }
-            } catch (Exception e) {
+            } catch (OsmTransferException e) {
                 if (canceled) {
                     Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                     return;

@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.io.UpdatePrimitivesTask;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -43,7 +44,7 @@ public class UpdateSelectionAction extends JosmAction {
         try {
             DataSet ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
             Main.main.getEditLayer().mergeFrom(ds);
-        } catch (Exception e) {
+        } catch (OsmTransferException e) {
             ExceptionDialogUtil.explainException(e);
         }
     }

@@ -143,7 +143,7 @@ public class DownloadDialog extends JDialog  {
 
         try {
             tpDownloadAreaSelectors.setSelectedIndex(Main.pref.getInteger("download.tab", 0));
-        } catch (Exception ex) {
+        } catch (IndexOutOfBoundsException ex) {
             Main.pref.putInteger("download.tab", 0);
         }
 

@@ -114,14 +114,10 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
                     return;
                 ProgressMonitor subMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
                 rawData = reader.parseRawGps(subMonitor);
-            } catch (Exception e) {
+            } catch (OsmTransferException e) {
                 if (isCanceled())
                     return;
-                if (e instanceof OsmTransferException) {
-                    rememberException(e);
-                } else {
-                    rememberException(new OsmTransferException(e));
-                }
+                rememberException(e);
             }
         }
 

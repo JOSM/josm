@@ -14,6 +14,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -722,7 +723,7 @@ public final class PluginHandler {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?</html>", plugin.name, plugin.className);
             }
-        }  catch (Exception e) {
+        }  catch (RuntimeException e) {
             pluginLoadingExceptions.put(plugin.name, e);
             Main.error(e);
         }
@@ -1192,7 +1193,7 @@ public final class PluginHandler {
             try {
                 // Check the plugin is a valid and accessible JAR file before installing it (fix #7754)
                 new JarFile(updatedPlugin).close();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 if (dowarn) {
                     Main.warn(tr("Failed to install plugin ''{0}'' from temporary download file ''{1}''. {2}",
                             plugin.toString(), updatedPlugin.toString(), e.getLocalizedMessage()));
@@ -1220,7 +1221,7 @@ public final class PluginHandler {
         if (jar != null && jar.exists() && jar.canRead()) {
             try {
                 new JarFile(jar).close();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 Main.warn(e);
                 return false;
             }

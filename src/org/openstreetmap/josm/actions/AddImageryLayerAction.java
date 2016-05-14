@@ -53,25 +53,21 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         installAdapters();
 
         // change toolbar icon from if specified
-        try {
-            String icon = info.getIcon();
-            if (icon != null) {
-                new ImageProvider(icon).setOptional(true).getInBackground(new ImageResourceCallback() {
-                            @Override
-                            public void finished(final ImageResource result) {
-                                if (result != null) {
-                                    GuiHelper.runInEDT(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            result.getImageIcon(AddImageryLayerAction.this);
-                                        }
-                                    });
-                                }
+        String icon = info.getIcon();
+        if (icon != null) {
+            new ImageProvider(icon).setOptional(true).getInBackground(new ImageResourceCallback() {
+                        @Override
+                        public void finished(final ImageResource result) {
+                            if (result != null) {
+                                GuiHelper.runInEDT(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        result.getImageIcon(AddImageryLayerAction.this);
+                                    }
+                                });
                             }
-                        });
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
+                        }
+                    });
         }
     }
 

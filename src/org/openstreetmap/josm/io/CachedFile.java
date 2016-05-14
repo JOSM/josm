@@ -351,7 +351,7 @@ public class CachedFile implements Closeable {
             } else {
                 Utils.close(zipFile);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             if (file.getName().endsWith(".zip")) {
                 Main.warn(tr("Failed to open file with extension ''{2}'' and namepart ''{3}'' in zip file ''{0}''. Exception was: {1}",
                         file.getName(), e.toString(), extension, namepart));

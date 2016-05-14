@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -327,7 +328,7 @@ public class OpenFileAction extends DiskAccessAction {
                                 Main.main.menu.openLocation.openUrl(false, url);
                             }
                         }
-                    } catch (Exception e) {
+                    } catch (IOException | PatternSyntaxException | IllegalStateException | IndexOutOfBoundsException e) {
                         Main.error(e);
                     }
                 }

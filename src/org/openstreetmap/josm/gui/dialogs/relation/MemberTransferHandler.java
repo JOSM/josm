@@ -53,7 +53,7 @@ class MemberTransferHandler extends TransferHandler {
             } else if (support.isDataFlavorSupported(PrimitiveTransferable.PRIMITIVE_DATA)) {
                 importPrimitiveData(support, destination, insertRow);
             }
-        } catch (Exception e) {
+        } catch (IOException | UnsupportedFlavorException e) {
             Main.warn(e);
             return false;
         }

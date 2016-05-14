@@ -143,7 +143,7 @@ public class OsmApiException extends OsmTransferException {
                 .append(eh)
                 .append('>');
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             // Ignored
             if (Main.isTraceEnabled()) {
                 Main.trace(e.getMessage());
@@ -156,7 +156,7 @@ public class OsmApiException extends OsmTransferException {
                 .append(eb)
                 .append('>');
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             // Ignored
             if (Main.isTraceEnabled()) {
                 Main.trace(e.getMessage());

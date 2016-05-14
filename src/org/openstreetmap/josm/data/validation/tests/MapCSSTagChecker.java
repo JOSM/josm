@@ -749,7 +749,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             } catch (IOException ex) {
                 Main.warn(tr("Failed to add {0} to tag checker", i));
                 Main.warn(ex, false);
-            } catch (Exception ex) {
+            } catch (ParseException ex) {
                 Main.warn(tr("Failed to add {0} to tag checker", i));
                 Main.warn(ex);
             }

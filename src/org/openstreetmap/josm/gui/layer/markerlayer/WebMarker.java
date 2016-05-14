@@ -65,7 +65,7 @@ public class WebMarker extends ButtonMarker {
             String path = webUrl.getPath();
             try {
                 setErroneous(path.isEmpty() || !new File(path).exists());
-            } catch (Exception e) {
+            } catch (SecurityException e) {
                 Main.warn(e);
                 setErroneous(true);
             }

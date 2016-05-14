@@ -262,7 +262,7 @@ public class OsmApi extends OsmConnection {
             initialized = false;
             Main.addNetworkError(url, Utils.getRootCause(e));
             throw new OsmApiInitializationException(e);
-        } catch (Exception e) {
+        } catch (SAXException | IOException | ParserConfigurationException e) {
             initialized = false;
             throw new OsmApiInitializationException(e);
         }

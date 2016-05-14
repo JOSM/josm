@@ -116,7 +116,7 @@ public class UploadNotesTask {
                     newNote = null;
                 }
                 updatedNotes.put(note, newNote);
-            } catch (Exception e) {
+            } catch (OsmTransferException e) {
                 Main.error("Failed to upload note to server: " + note.getId());
                 Main.error(e);
                 failedNotes.put(note, e);

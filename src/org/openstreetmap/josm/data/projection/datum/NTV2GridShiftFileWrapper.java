@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection.datum;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.openstreetmap.josm.io.CachedFile;
@@ -54,7 +55,7 @@ public class NTV2GridShiftFileWrapper {
             try (CachedFile cf = new CachedFile(gridFileName); InputStream is = cf.getInputStream()) {
                 instance = new NTV2GridShiftFile();
                 instance.loadGridShiftFile(is, false);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }

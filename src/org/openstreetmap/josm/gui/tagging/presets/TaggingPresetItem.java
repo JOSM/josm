@@ -117,7 +117,7 @@ public abstract class TaggingPresetItem {
             return null;
         try {
             return Integer.valueOf(str);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             if (Main.isTraceEnabled()) {
                 Main.trace(e.getMessage());
             }

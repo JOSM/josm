@@ -597,14 +597,14 @@ public class SearchCompiler {
                     this.keyPattern = Pattern.compile(key, searchFlags);
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()), e);
                 }
                 try {
                     this.valuePattern = Pattern.compile(value, searchFlags);
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
                 }
                 this.key = key;
@@ -794,7 +794,7 @@ public class SearchCompiler {
                     keyPattern = Pattern.compile(key, regexFlags(false));
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()), e);
                 }
             } else {
@@ -805,7 +805,7 @@ public class SearchCompiler {
                     valuePattern = Pattern.compile(this.value, regexFlags(false));
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
                 }
             } else {
@@ -884,7 +884,7 @@ public class SearchCompiler {
                     this.searchRegex = Pattern.compile(s, regexFlags(caseSensitive));
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     throw new ParseError(tr(rxErrorMsgNoPos, s, e.getMessage()), e);
                 }
                 this.search = s;

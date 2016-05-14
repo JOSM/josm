@@ -143,7 +143,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                 try {
                     JPanel p = buildPanel(e);
                     JOptionPane.showMessageDialog(Main.parent, p, tr("You have encountered a bug in JOSM"), JOptionPane.ERROR_MESSAGE);
-                } catch (Exception ex) {
+                } catch (RuntimeException ex) {
                     Main.error(ex);
                 }
             }

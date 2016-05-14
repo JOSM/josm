@@ -159,14 +159,10 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
                                 + tr("Request a smaller area to make sure that all notes are being downloaded.")
                                 + "</html>",
                         tr("More notes to download"), JOptionPane.INFORMATION_MESSAGE);
-            } catch (Exception e) {
+            } catch (OsmTransferException e) {
                 if (isCanceled())
                     return;
-                if (e instanceof OsmTransferException) {
-                    rememberException(e);
-                } else {
-                    rememberException(new OsmTransferException(e));
-                }
+                rememberException(e);
             }
         }
     }
@@ -185,14 +181,10 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             ProgressMonitor subMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
             try {
                 notesData = reader.parseRawNotes(subMonitor);
-            } catch (Exception e) {
+            } catch (OsmTransferException e) {
                 if (isCanceled())
                     return;
-                if (e instanceof OsmTransferException) {
-                    rememberException(e);
-                } else {
-                    rememberException(new OsmTransferException(e));
-                }
+                rememberException(e);
             }
         }
     }
@@ -211,14 +203,10 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             ProgressMonitor subMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
             try {
                 notesData = reader.parseRawNotesBzip2(subMonitor);
-            } catch (Exception e) {
+            } catch (OsmTransferException e) {
                 if (isCanceled())
                     return;
-                if (e instanceof OsmTransferException) {
-                    rememberException(e);
-                } else {
-                    rememberException(new OsmTransferException(e));
-                }
+                rememberException(e);
             }
         }
     }

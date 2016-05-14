@@ -136,7 +136,7 @@ public class CloseChangesetAction extends JosmAction {
                         query,
                         getProgressMonitor().createSubTaskMonitor(1, false /* not internal */)
                 );
-            } catch (Exception e) {
+            } catch (OsmTransferException | IllegalArgumentException e) {
                 if (canceled)
                     return;
                 lastException = e;

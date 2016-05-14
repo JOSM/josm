@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 
@@ -133,7 +134,7 @@ public class OsmServerObjectReader extends OsmServerReader {
         } catch (OsmTransferException e) {
             if (cancel) return null;
             throw e;
-        } catch (Exception e) {
+        } catch (IOException | IllegalDataException e) {
             if (cancel) return null;
             throw new OsmTransferException(e);
         } finally {

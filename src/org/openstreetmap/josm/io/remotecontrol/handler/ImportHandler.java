@@ -46,7 +46,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
                     task.loadUrl(isLoadInNewLayer(), url.toExternalForm(), null);
                 }
             }
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             Main.warn("RemoteControl: Error parsing import remote control request:");
             Main.error(ex);
             throw new RequestHandlerErrorException(ex);

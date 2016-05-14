@@ -20,6 +20,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -495,7 +496,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     currentFuture.get();
                 } catch (CancellationException e) {
                     model.setUploadState(layer, UploadOrSaveState.CANCELED);
-                } catch (Exception e) {
+                } catch (InterruptedException | ExecutionException e) {
                     Main.error(e);
                     model.setUploadState(layer, UploadOrSaveState.FAILED);
                     ExceptionDialogUtil.explainException(e);
@@ -536,7 +537,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     currentFuture.get();
                 } catch (CancellationException e) {
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
-                } catch (Exception e) {
+                } catch (InterruptedException | ExecutionException e) {
                     Main.error(e);
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
                     ExceptionDialogUtil.explainException(e);

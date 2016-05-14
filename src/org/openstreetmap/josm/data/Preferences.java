@@ -730,21 +730,13 @@ public class Preferences {
 
     /* only for preferences */
     public synchronized String getColorName(String o) {
-        try {
-            Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
-            if (m.matches()) {
-                return tr("Paint style {0}: {1}", tr(I18n.escape(m.group(1))), tr(I18n.escape(m.group(2))));
-            }
-        } catch (Exception e) {
-            Main.warn(e);
+        Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
+        if (m.matches()) {
+            return tr("Paint style {0}: {1}", tr(I18n.escape(m.group(1))), tr(I18n.escape(m.group(2))));
         }
-        try {
-            Matcher m = Pattern.compile("layer (.+)").matcher(o);
-            if (m.matches()) {
-                return tr("Layer: {0}", tr(I18n.escape(m.group(1))));
-            }
-        } catch (Exception e) {
-            Main.warn(e);
+        m = Pattern.compile("layer (.+)").matcher(o);
+        if (m.matches()) {
+            return tr("Layer: {0}", tr(I18n.escape(m.group(1))));
         }
         return tr(I18n.escape(colornames.containsKey(o) ? colornames.get(o) : o));
     }
@@ -1335,10 +1327,7 @@ public class Preferences {
                 Field field = Toolkit.class.getDeclaredField("resources");
                 field.setAccessible(true);
                 field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
-            } catch (Exception | InternalError e) {
-                // Ignore all exceptions, including internal error raised by Java 9 Jigsaw EA:
-                // java.lang.InternalError: legacy getBundle can't be used to find sun.awt.resources.awt in module java.desktop
-                // InternalError catch to remove when https://bugs.openjdk.java.net/browse/JDK-8136804 is resolved
+            } catch (ReflectiveOperationException e) {
                 if (Main.isTraceEnabled()) {
                     Main.trace(e.getMessage());
                 }
