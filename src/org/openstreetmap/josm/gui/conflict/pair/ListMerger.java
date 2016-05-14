@@ -14,8 +14,6 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -27,6 +25,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -48,7 +48,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @see ListMergeModel
  * @since 1631
  */
-public abstract class ListMerger<T extends PrimitiveId> extends JPanel implements PropertyChangeListener, Observer, IConflictResolver {
+public abstract class ListMerger<T extends PrimitiveId> extends JPanel implements PropertyChangeListener, ChangeListener, IConflictResolver {
     protected OsmPrimitivesTable myEntriesTable;
     protected OsmPrimitivesTable mergedEntriesTable;
     protected OsmPrimitivesTable theirEntriesTable;
@@ -119,8 +119,8 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         mergedEntriesTable.getSelectionModel().addListSelectionListener(moveDownMergedAction);
         mergedEntriesTable.getSelectionModel().addListSelectionListener(removeMergedAction);
 
-        model.addObserver(copyAllLeft);
-        model.addObserver(copyAllRight);
+        model.addChangeListener(copyAllLeft);
+        model.addChangeListener(copyAllRight);
         model.addPropertyChangeListener(copyAllLeft);
         model.addPropertyChangeListener(copyAllRight);
     }
@@ -407,7 +407,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
      */
     public ListMerger(ListMergeModel<T> model) {
         this.model = model;
-        model.addObserver(this);
+        model.addChangeListener(this);
         build();
         model.addPropertyChangeListener(this);
     }
@@ -620,7 +620,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         }
     }
 
-    class CopyAllLeft extends AbstractAction implements Observer, PropertyChangeListener {
+    class CopyAllLeft extends AbstractAction implements ChangeListener, PropertyChangeListener {
 
         CopyAllLeft() {
             ImageIcon icon = ImageProvider.get("dialogs/conflict", "useallleft");
@@ -639,7 +639,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             updateEnabledState();
         }
 
@@ -649,7 +649,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         }
     }
 
-    class CopyAllRight extends AbstractAction implements Observer, PropertyChangeListener {
+    class CopyAllRight extends AbstractAction implements ChangeListener, PropertyChangeListener {
 
         CopyAllRight() {
             ImageIcon icon = ImageProvider.get("dialogs/conflict", "useallright");
@@ -668,7 +668,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             updateEnabledState();
         }
 
@@ -870,7 +870,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void stateChanged(ChangeEvent e) {
         lblMyVersion.setText(
                 trn("My version ({0} entry)", "My version ({0} entries)", model.getMyEntriesSize(), model.getMyEntriesSize())
         );

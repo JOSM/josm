@@ -9,8 +9,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -18,6 +16,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * This class represents a UI component for resolving conflicts in some properties of {@link OsmPrimitive}.
  * @since 1654
  */
-public class PropertiesMerger extends JPanel implements Observer, IConflictResolver {
+public class PropertiesMerger extends JPanel implements ChangeListener, IConflictResolver {
     private static final DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000000");
 
     private final JLabel lblMyCoordinates = buildValueLabel("label.mycoordinates");
@@ -56,7 +56,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
      */
     public PropertiesMerger() {
         model = new PropertiesMergeModel();
-        model.addObserver(this);
+        model.addChangeListener(this);
         build();
     }
 
@@ -136,7 +136,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         KeepMyCoordinatesAction actKeepMyCoordinates = new KeepMyCoordinatesAction();
-        model.addObserver(actKeepMyCoordinates);
+        model.addChangeListener(actKeepMyCoordinates);
         JButton btnKeepMyCoordinates = new JButton(actKeepMyCoordinates);
         btnKeepMyCoordinates.setName("button.keepmycoordinates");
         add(btnKeepMyCoordinates, gc);
@@ -154,7 +154,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         KeepTheirCoordinatesAction actKeepTheirCoordinates = new KeepTheirCoordinatesAction();
-        model.addObserver(actKeepTheirCoordinates);
+        model.addChangeListener(actKeepTheirCoordinates);
         JButton btnKeepTheirCoordinates = new JButton(actKeepTheirCoordinates);
         add(btnKeepTheirCoordinates, gc);
 
@@ -173,7 +173,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         UndecideCoordinateConflictAction actUndecideCoordinates = new UndecideCoordinateConflictAction();
-        model.addObserver(actUndecideCoordinates);
+        model.addChangeListener(actUndecideCoordinates);
         JButton btnUndecideCoordinates = new JButton(actUndecideCoordinates);
         add(btnUndecideCoordinates, gc);
     }
@@ -205,7 +205,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         KeepMyDeletedStateAction actKeepMyDeletedState = new KeepMyDeletedStateAction();
-        model.addObserver(actKeepMyDeletedState);
+        model.addChangeListener(actKeepMyDeletedState);
         JButton btnKeepMyDeletedState = new JButton(actKeepMyDeletedState);
         btnKeepMyDeletedState.setName("button.keepmydeletedstate");
         add(btnKeepMyDeletedState, gc);
@@ -223,7 +223,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         KeepTheirDeletedStateAction actKeepTheirDeletedState = new KeepTheirDeletedStateAction();
-        model.addObserver(actKeepTheirDeletedState);
+        model.addChangeListener(actKeepTheirDeletedState);
         JButton btnKeepTheirDeletedState = new JButton(actKeepTheirDeletedState);
         btnKeepTheirDeletedState.setName("button.keeptheirdeletedstate");
         add(btnKeepTheirDeletedState, gc);
@@ -243,7 +243,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         UndecideDeletedStateConflictAction actUndecideDeletedState = new UndecideDeletedStateConflictAction();
-        model.addObserver(actUndecideDeletedState);
+        model.addChangeListener(actUndecideDeletedState);
         JButton btnUndecideDeletedState = new JButton(actUndecideDeletedState);
         btnUndecideDeletedState.setName("button.undecidedeletedstate");
         add(btnUndecideDeletedState, gc);
@@ -383,7 +383,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void stateChanged(ChangeEvent e) {
         updateCoordinates();
         updateDeletedState();
         updateReferrers();
@@ -397,7 +397,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         return model;
     }
 
-    class KeepMyCoordinatesAction extends AbstractAction implements Observer {
+    class KeepMyCoordinatesAction extends AbstractAction implements ChangeListener {
         KeepMyCoordinatesAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeepmine"));
             putValue(Action.SHORT_DESCRIPTION, tr("Keep my coordinates"));
@@ -409,12 +409,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             setEnabled(model.hasCoordConflict() && !model.isDecidedCoord() && model.getMyCoords() != null);
         }
     }
 
-    class KeepTheirCoordinatesAction extends AbstractAction implements Observer {
+    class KeepTheirCoordinatesAction extends AbstractAction implements ChangeListener {
         KeepTheirCoordinatesAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeeptheir"));
             putValue(Action.SHORT_DESCRIPTION, tr("Keep their coordinates"));
@@ -426,12 +426,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             setEnabled(model.hasCoordConflict() && !model.isDecidedCoord() && model.getTheirCoords() != null);
         }
     }
 
-    class UndecideCoordinateConflictAction extends AbstractAction implements Observer {
+    class UndecideCoordinateConflictAction extends AbstractAction implements ChangeListener {
         UndecideCoordinateConflictAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagundecide"));
             putValue(Action.SHORT_DESCRIPTION, tr("Undecide conflict between different coordinates"));
@@ -443,12 +443,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             setEnabled(model.hasCoordConflict() && model.isDecidedCoord());
         }
     }
 
-    class KeepMyDeletedStateAction extends AbstractAction implements Observer {
+    class KeepMyDeletedStateAction extends AbstractAction implements ChangeListener {
         KeepMyDeletedStateAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeepmine"));
             putValue(Action.SHORT_DESCRIPTION, tr("Keep my deleted state"));
@@ -460,12 +460,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             setEnabled(model.hasDeletedStateConflict() && !model.isDecidedDeletedState());
         }
     }
 
-    class KeepTheirDeletedStateAction extends AbstractAction implements Observer {
+    class KeepTheirDeletedStateAction extends AbstractAction implements ChangeListener {
         KeepTheirDeletedStateAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagkeeptheir"));
             putValue(Action.SHORT_DESCRIPTION, tr("Keep their deleted state"));
@@ -477,12 +477,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             setEnabled(model.hasDeletedStateConflict() && !model.isDecidedDeletedState());
         }
     }
 
-    class UndecideDeletedStateConflictAction extends AbstractAction implements Observer {
+    class UndecideDeletedStateConflictAction extends AbstractAction implements ChangeListener {
         UndecideDeletedStateConflictAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs/conflict", "tagundecide"));
             putValue(Action.SHORT_DESCRIPTION, tr("Undecide conflict between deleted state"));
@@ -494,7 +494,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             setEnabled(model.hasDeletedStateConflict() && model.isDecidedDeletedState());
         }
     }

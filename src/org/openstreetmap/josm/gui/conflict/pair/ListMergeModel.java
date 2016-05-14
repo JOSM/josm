@@ -16,7 +16,6 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.Set;
 
 import javax.swing.AbstractListModel;
@@ -35,6 +34,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
@@ -71,7 +71,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @param <T>  the type of the list entries
  * @see ListMerger
  */
-public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
+public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifier {
     public static final String FROZEN_PROP = ListMergeModel.class.getName() + ".frozen";
 
     private static final int MAX_DELETED_PRIMITIVE_IN_DIALOG = 5;
@@ -269,8 +269,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
         myEntriesTableModel.fireTableDataChanged();
         theirEntriesTableModel.fireTableDataChanged();
         mergedEntriesTableModel.fireTableDataChanged();
-        setChanged();
-        notifyObservers();
+        fireStateChanged();
     }
 
     protected void copyToTop(ListRole role, int[] rows) {
@@ -457,7 +456,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
     protected void copyAfterCurrent(ListRole source, int[] rows, int current) {
         copy(source, rows, current + 1);
         mergedEntriesSelectionModel.setSelectionInterval(current+1, current + rows.length-1);
-        notifyObservers();
+        fireStateChanged();
     }
 
     /**
@@ -504,7 +503,6 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
             mergedEntries.add(row -1, n);
         }
         fireModelDataChanged();
-        notifyObservers();
         mergedEntriesSelectionModel.clearSelection();
         for (int row: rows) {
             mergedEntriesSelectionModel.addSelectionInterval(row-1, row-1);
@@ -531,7 +529,6 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
             mergedEntries.add(row +1, n);
         }
         fireModelDataChanged();
-        notifyObservers();
         mergedEntriesSelectionModel.clearSelection();
         for (int row: rows) {
             mergedEntriesSelectionModel.addSelectionInterval(row+1, row+1);
@@ -554,7 +551,6 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends Observable {
             mergedEntries.remove(rows[i]);
         }
         fireModelDataChanged();
-        notifyObservers();
         mergedEntriesSelectionModel.clearSelection();
     }
 

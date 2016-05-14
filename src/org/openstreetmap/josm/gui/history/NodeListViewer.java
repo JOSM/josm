@@ -172,21 +172,21 @@ public class NodeListViewer extends JPanel {
         add(embeddInScrollPane(buildCurrentNodeListTable()), gc);
     }
 
-    protected void unregisterAsObserver(HistoryBrowserModel model) {
+    protected void unregisterAsChangeListener(HistoryBrowserModel model) {
         if (currentInfoPanel != null) {
-            model.deleteObserver(currentInfoPanel);
+            model.removeChangeListener(currentInfoPanel);
         }
         if (referenceInfoPanel != null) {
-            model.deleteObserver(referenceInfoPanel);
+            model.removeChangeListener(referenceInfoPanel);
         }
     }
 
-    protected void registerAsObserver(HistoryBrowserModel model) {
+    protected void registerAsChangeListener(HistoryBrowserModel model) {
         if (currentInfoPanel != null) {
-            model.addObserver(currentInfoPanel);
+            model.addChangeListener(currentInfoPanel);
         }
         if (referenceInfoPanel != null) {
-            model.addObserver(referenceInfoPanel);
+            model.addChangeListener(referenceInfoPanel);
         }
     }
 
@@ -196,11 +196,11 @@ public class NodeListViewer extends JPanel {
      */
     public void setModel(HistoryBrowserModel model) {
         if (this.model != null) {
-            unregisterAsObserver(model);
+            unregisterAsChangeListener(model);
         }
         this.model = model;
         if (this.model != null) {
-            registerAsObserver(model);
+            registerAsChangeListener(model);
         }
     }
 

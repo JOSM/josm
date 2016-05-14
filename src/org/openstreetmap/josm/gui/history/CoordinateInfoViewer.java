@@ -6,13 +6,13 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
@@ -126,48 +126,48 @@ public class CoordinateInfoViewer extends JPanel {
         CheckParameterUtil.ensureParameterNotNull(model, "model");
         setModel(model);
         build();
-        registerAsObserver(model);
+        registerAsChangeListener(model);
     }
 
-    protected void unregisterAsObserver(HistoryBrowserModel model) {
+    protected void unregisterAsChangeListener(HistoryBrowserModel model) {
         if (currentInfoPanel != null) {
-            model.deleteObserver(currentInfoPanel);
+            model.removeChangeListener(currentInfoPanel);
         }
         if (referenceInfoPanel != null) {
-            model.deleteObserver(referenceInfoPanel);
+            model.removeChangeListener(referenceInfoPanel);
         }
         if (currentLatLonViewer != null) {
-            model.deleteObserver(currentLatLonViewer);
+            model.removeChangeListener(currentLatLonViewer);
         }
         if (referenceLatLonViewer != null) {
-            model.deleteObserver(referenceLatLonViewer);
+            model.removeChangeListener(referenceLatLonViewer);
         }
         if (distanceViewer != null) {
-            model.deleteObserver(distanceViewer);
+            model.removeChangeListener(distanceViewer);
         }
         if (mapViewer != null) {
-            model.deleteObserver(mapViewer);
+            model.removeChangeListener(mapViewer);
         }
     }
 
-    protected void registerAsObserver(HistoryBrowserModel model) {
+    protected void registerAsChangeListener(HistoryBrowserModel model) {
         if (currentInfoPanel != null) {
-            model.addObserver(currentInfoPanel);
+            model.addChangeListener(currentInfoPanel);
         }
         if (referenceInfoPanel != null) {
-            model.addObserver(referenceInfoPanel);
+            model.addChangeListener(referenceInfoPanel);
         }
         if (currentLatLonViewer != null) {
-            model.addObserver(currentLatLonViewer);
+            model.addChangeListener(currentLatLonViewer);
         }
         if (referenceLatLonViewer != null) {
-            model.addObserver(referenceLatLonViewer);
+            model.addChangeListener(referenceLatLonViewer);
         }
         if (distanceViewer != null) {
-            model.addObserver(distanceViewer);
+            model.addChangeListener(distanceViewer);
         }
         if (mapViewer != null) {
-            model.addObserver(mapViewer);
+            model.addChangeListener(mapViewer);
         }
     }
 
@@ -178,11 +178,11 @@ public class CoordinateInfoViewer extends JPanel {
      */
     public void setModel(HistoryBrowserModel model) {
         if (this.model != null) {
-            unregisterAsObserver(model);
+            unregisterAsChangeListener(model);
         }
         this.model = model;
         if (this.model != null) {
-            registerAsObserver(model);
+            registerAsChangeListener(model);
         }
     }
 
@@ -240,7 +240,7 @@ public class CoordinateInfoViewer extends JPanel {
     /**
      * A UI widgets which displays the Lan/Lon-coordinates of a {@link HistoryNode}.
      */
-    private static class LatLonViewer extends JPanel implements Observer {
+    private static class LatLonViewer extends JPanel implements ChangeListener {
 
         private final JosmTextArea lblLat = newTextArea();
         private final JosmTextArea lblLon = newTextArea();
@@ -323,12 +323,12 @@ public class CoordinateInfoViewer extends JPanel {
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             refresh();
         }
     }
 
-    private static class MapViewer extends JMapViewer implements Observer {
+    private static class MapViewer extends JMapViewer implements ChangeListener {
 
         private final Updater updater;
 
@@ -338,7 +338,7 @@ public class CoordinateInfoViewer extends JPanel {
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             final Pair<LatLon, LatLon> coordinates = updater.getCoordinates();
             if (coordinates == null) {
                 return;
@@ -361,7 +361,7 @@ public class CoordinateInfoViewer extends JPanel {
         }
     }
 
-    private static class DistanceViewer extends JPanel implements Observer {
+    private static class DistanceViewer extends JPanel implements ChangeListener {
 
         private final JosmTextArea lblDistance = newTextArea();
         private final Updater updater;
@@ -416,7 +416,7 @@ public class CoordinateInfoViewer extends JPanel {
         }
 
         @Override
-        public void update(Observable o, Object arg) {
+        public void stateChanged(ChangeEvent e) {
             refresh();
         }
     }

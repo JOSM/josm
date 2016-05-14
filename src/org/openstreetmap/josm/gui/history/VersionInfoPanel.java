@@ -14,8 +14,6 @@ import java.awt.event.ActionEvent;
 import java.text.DateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -23,6 +21,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -47,7 +47,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * of a {@link OsmPrimitive}.
  * @since 1709
  */
-public class VersionInfoPanel extends JPanel implements Observer {
+public class VersionInfoPanel extends JPanel implements ChangeListener {
     private final PointInTimeType pointInTimeType;
     private final transient HistoryBrowserModel model;
     private JMultilineLabel lblInfo;
@@ -188,7 +188,7 @@ public class VersionInfoPanel extends JPanel implements Observer {
 
         this.model = model;
         this.pointInTimeType = pointInTimeType;
-        model.addObserver(this);
+        model.addChangeListener(this);
         build();
     }
 
@@ -197,7 +197,7 @@ public class VersionInfoPanel extends JPanel implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void stateChanged(ChangeEvent e) {
         HistoryOsmPrimitive primitive = getPrimitive();
         if (primitive != null) {
             Changeset cs = primitive.getChangeset();
