@@ -205,7 +205,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         for (Map.Entry<String, Integer> entry : editCountByUser.entrySet()) {
             final String username = entry.getKey();
             final Integer editCount = entry.getValue();
-            s.append(String.format("%6d  %s\n", editCount, username));
+            s.append(String.format("%6d  %s", editCount, username)).append('\n');
         }
         return s.toString();
     }
