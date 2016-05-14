@@ -1174,7 +1174,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         String value = wp.getString(GpxConstants.PT_ELE);
         if (value != null && !value.isEmpty()) {
             try {
-                return new Double(value);
+                return Double.valueOf(value);
             } catch (NumberFormatException e) {
                 Main.warn(e);
             }
