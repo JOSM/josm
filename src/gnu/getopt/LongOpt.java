@@ -4,7 +4,7 @@
 /* Copyright (c) 1998 by Aaron M. Renn (arenn@urbanophile.com)
 /*
 /* This program is free software; you can redistribute it and/or modify
-/* it under the terms of the GNU Library General Public License as published 
+/* it under the terms of the GNU Library General Public License as published
 /* by  the Free Software Foundation; either version 2 of the License or
 /* (at your option) any later version.
 /*
@@ -14,15 +14,13 @@
 /* GNU Library General Public License for more details.
 /*
 /* You should have received a copy of the GNU Library General Public License
-/* along with this program; see the file COPYING.LIB.  If not, write to 
-/* the Free Software Foundation Inc., 59 Temple Place - Suite 330, 
+/* along with this program; see the file COPYING.LIB.  If not, write to
+/* the Free Software Foundation Inc., 59 Temple Place - Suite 330,
 /* Boston, MA  02111-1307 USA
 /**************************************************************************/
 
 package gnu.getopt;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.text.MessageFormat;
 
 /**************************************************************************/
@@ -33,7 +31,7 @@ import java.text.MessageFormat;
   * object to define the list of valid long options for a given parsing
   * session.  Refer to the getopt documentation for details on the
   * format of long options.
-  * 
+  *
   * @version 1.0.5
   * @author Aaron M. Renn (arenn@urbanophile.com)
   *
@@ -54,7 +52,7 @@ public class LongOpt extends Object
   */
 public static final int NO_ARGUMENT = 0;
 
-/** 
+/**
   * Constant value used for the "has_arg" constructor argument.  This
   * value indicates that the option takes an argument that is required.
   */
@@ -115,18 +113,18 @@ private Getopt.OptI18n _messages = new Getopt.OptI18n(); // ResourceBundle.getBu
   * @param has_arg Indicates whether the option has no argument (NO_ARGUMENT), a required argument (REQUIRED_ARGUMENT) or an optional argument (OPTIONAL_ARGUMENT).
   * @param flag If non-null, this is a location to store the value of "val" when this option is encountered, otherwise "val" is treated as the equivalent short option character.
   * @param val The value to return for this long option, or the equivalent single letter option to emulate if flag is null.
-  * 
+  *
   * @exception IllegalArgumentException If the has_arg param is not one of NO_ARGUMENT, REQUIRED_ARGUMENT or OPTIONAL_ARGUMENT.
   */
 public
-LongOpt(String name, int has_arg, 
+LongOpt(String name, int has_arg,
         StringBuffer flag, int val) throws IllegalArgumentException
 {
   // Validate has_arg
-  if ((has_arg != NO_ARGUMENT) && (has_arg != REQUIRED_ARGUMENT) 
+  if ((has_arg != NO_ARGUMENT) && (has_arg != REQUIRED_ARGUMENT)
      && (has_arg != OPTIONAL_ARGUMENT))
     {
-      Object[] msgArgs = { new Integer(has_arg).toString() };
+      Object[] msgArgs = { Integer.toString(has_arg) };
       throw new IllegalArgumentException(MessageFormat.format(
                     _messages.getString("getopt.invalidValue"), msgArgs));
     }
