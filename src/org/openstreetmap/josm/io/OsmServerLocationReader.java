@@ -51,7 +51,7 @@ public class OsmServerLocationReader extends OsmServerReader {
             return parser.parse();
         } catch (OsmTransferException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (IOException | SAXException | IllegalDataException e) {
             if (cancel)
                 return null;
             throw new OsmTransferException(e);

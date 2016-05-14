@@ -153,7 +153,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
                     query,
                     getProgressMonitor().createSubTaskMonitor(1, false /* not internal */)
             );
-        } catch (Exception e) {
+        } catch (OsmTransferException e) {
             if (canceled)
                 return;
             lastException = e;

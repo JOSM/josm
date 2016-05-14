@@ -206,8 +206,8 @@ public class OpeningHourTest extends Test.TagTest {
             String prettifiedValue = null;
             try {
                 prettifiedValue = (String) ((Invocable) ENGINE).invokeMethod(r, "prettifyValue");
-            } catch (Exception e) {
-                Main.debug(e.getMessage());
+            } catch (ScriptException | NoSuchMethodException e) {
+                Main.warn(e);
             }
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getErrors"))) {
                 errors.add(new OpeningHoursTestError(getErrorMessage(key, i), Severity.ERROR, prettifiedValue));

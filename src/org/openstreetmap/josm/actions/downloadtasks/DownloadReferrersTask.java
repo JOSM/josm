@@ -193,7 +193,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
                 downloadParents(entry.getKey(), entry.getValue(), progressMonitor);
                 i++;
             }
-        } catch (Exception e) {
+        } catch (OsmTransferException e) {
             if (canceled)
                 return;
             lastException = e;

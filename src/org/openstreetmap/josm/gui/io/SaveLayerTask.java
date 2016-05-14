@@ -55,7 +55,7 @@ public class SaveLayerTask extends AbstractIOTask {
             if (!isCanceled()) {
                 layerInfo.getLayer().onPostSaveToFile();
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             Main.error(e);
             setLastException(e);
         }

@@ -503,7 +503,7 @@ public abstract class SourceEditor extends JPanel {
             final SourceLoader loader = new SourceLoader(availableSourcesUrl, sourceProviders);
             loader.realRun();
             return loader.sources;
-        } catch (Exception ex) {
+        } catch (IOException | SAXException | OsmTransferException ex) {
             throw new RuntimeException(ex);
         }
     }

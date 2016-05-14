@@ -40,6 +40,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -395,7 +396,7 @@ public class PlaceSelection implements DownloadSelection {
                         }
                     });
                 }
-            } catch (Exception e) {
+            } catch (IOException | ParserConfigurationException e) {
                 if (!canceled) {
                     OsmTransferException ex = new OsmTransferException(e);
                     ex.setUrl(urlString);

@@ -156,7 +156,7 @@ public class RelationTree extends JTree {
                 OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true);
                 ds = reader.parseOsm(progressMonitor
                         .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-            } catch (Exception e) {
+            } catch (OsmTransferException e) {
                 if (canceled) {
                     Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                     return;

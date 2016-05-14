@@ -163,7 +163,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         try {
             int i = Main.pref.getInteger("draw.rawgps.colors", specName(layerName), 0);
             return ColorMode.fromIndex(i);
-        } catch (Exception e) {
+        } catch (IndexOutOfBoundsException e) {
             Main.warn(e);
         }
         return ColorMode.NONE;

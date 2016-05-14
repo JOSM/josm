@@ -191,7 +191,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
             return ds;
         } catch (OsmTransferException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (IllegalDataException | IOException e) {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();

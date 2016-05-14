@@ -37,7 +37,7 @@ public abstract class AbstractIdTextField<T extends AbstractTextComponentValidat
             if (klass != null) {
                 validator = klass.getConstructor(JTextComponent.class).newInstance(this);
             }
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             Main.error(e);
         } finally {
             this.validator = validator;

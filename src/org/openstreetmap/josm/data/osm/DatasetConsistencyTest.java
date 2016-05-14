@@ -211,7 +211,7 @@ public class DatasetConsistencyTest {
                 writer.println((errorCount - MAX_ERRORS) + " more...");
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             writer.println("Exception during dataset integrity test:");
             e.printStackTrace(writer);
         }

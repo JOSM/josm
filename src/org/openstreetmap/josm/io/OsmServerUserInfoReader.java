@@ -3,11 +3,13 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathException;
@@ -22,6 +24,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class OsmServerUserInfoReader extends OsmServerReader {
 
@@ -177,7 +180,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             }
         } catch (OsmTransferException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (IOException | ParserConfigurationException | SAXException e) {
             throw new OsmTransferException(e);
         } finally {
             monitor.finishTask();

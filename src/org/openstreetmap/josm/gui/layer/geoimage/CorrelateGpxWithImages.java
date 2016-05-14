@@ -464,12 +464,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 @Override
                 public void valueChanged(ListSelectionEvent arg0) {
                     int index = imgList.getSelectedIndex();
-                    Integer orientation = null;
-                    try {
-                        orientation = ExifReader.readOrientation(yLayer.data.get(index).getFile());
-                    } catch (Exception e) {
-                        Main.warn(e);
-                    }
+                    Integer orientation = ExifReader.readOrientation(yLayer.data.get(index).getFile());
                     imgDisp.setImage(yLayer.data.get(index).getFile(), orientation);
                     Date date = yLayer.data.get(index).getExifTime();
                     if (date != null) {
@@ -499,20 +494,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         return;
                     File sel = fc.getSelectedFile();
 
-                    Integer orientation = null;
-                    try {
-                        orientation = ExifReader.readOrientation(sel);
-                    } catch (Exception e) {
-                        Main.warn(e);
-                    }
+                    Integer orientation = ExifReader.readOrientation(sel);
                     imgDisp.setImage(sel, orientation);
 
-                    Date date = null;
-                    try {
-                        date = ExifReader.readTime(sel);
-                    } catch (Exception e) {
-                        Main.warn(e);
-                    }
+                    Date date = ExifReader.readTime(sel);
                     if (date != null) {
                         lbExifTime.setText(DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM).format(date));
                         tfGpsTime.setText(DateUtils.getDateFormat(DateFormat.SHORT).format(date)+' ');
@@ -966,7 +951,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 sldMinutes.setValue((int) (timezoneOffsetPair.b.getSeconds() / 60));
                 final long deciSeconds = timezoneOffsetPair.b.getMilliseconds() / 100;
                 sldSeconds.setValue((int) (deciSeconds % 60));
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("An error occurred while trying to match the photos to the GPX track."
                                 +" You can adjust the sliders to manually match the photos."),
@@ -1014,14 +999,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
         outer: for (GpxTrack trk : gpx.tracks) {
             for (GpxTrackSegment segment : trk.getSegments()) {
                 for (WayPoint curWp : segment.getWayPoints()) {
-                    try {
-                        final Date parsedTime = curWp.setTimeFromAttribute();
-                        if (parsedTime != null) {
-                            firstGPXDate = parsedTime.getTime();
-                            break outer;
-                        }
-                    } catch (Exception e) {
-                        Main.warn(e);
+                    final Date parsedTime = curWp.setTimeFromAttribute();
+                    if (parsedTime != null) {
+                        firstGPXDate = parsedTime.getTime();
+                        break outer;
                     }
                 }
             }
@@ -1149,18 +1130,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 WayPoint prevWp = null;
 
                 for (WayPoint curWp : segment.getWayPoints()) {
-                    try {
-                        final Date parsedTime = curWp.setTimeFromAttribute();
-                        if (parsedTime != null) {
-                            final long curWpTime = parsedTime.getTime() + offset;
-                            ret += matchPoints(images, prevWp, prevWpTime, curWp, curWpTime, offset);
+                    final Date parsedTime = curWp.setTimeFromAttribute();
+                    if (parsedTime != null) {
+                        final long curWpTime = parsedTime.getTime() + offset;
+                        ret += matchPoints(images, prevWp, prevWpTime, curWp, curWpTime, offset);
 
-                            prevWp = curWp;
-                            prevWpTime = curWpTime;
-                            continue;
-                        }
-                    } catch (Exception e) {
-                        Main.warn(e);
+                        prevWp = curWp;
+                        prevWpTime = curWpTime;
+                        continue;
                     }
                     prevWp = null;
                     prevWpTime = 0;

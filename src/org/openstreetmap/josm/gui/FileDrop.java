@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +34,7 @@ import javax.swing.border.Border;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction;
+import org.openstreetmap.josm.gui.FileDrop.TransferableObject;
 
 // CHECKSTYLE.OFF: HideUtilityClassConstructor
 
@@ -137,7 +139,7 @@ public class FileDrop {
     private static File[] createFileArray(BufferedReader bReader) {
         try {
             List<File> list = new ArrayList<>();
-            String line = null;
+            String line;
             while ((line = bReader.readLine()) != null) {
                 try {
                     // kde seems to append a 0 char to the end of the reader
@@ -145,9 +147,8 @@ public class FileDrop {
                         continue;
                     }
 
-                    File file = new File(new URI(line));
-                    list.add(file);
-                } catch (Exception ex) {
+                    list.add(new File(new URI(line)));
+                } catch (URISyntaxException ex) {
                     Main.warn("Error with " + line + ": " + ex.getMessage());
                 }
             }

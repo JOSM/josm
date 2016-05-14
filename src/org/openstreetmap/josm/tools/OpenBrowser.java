@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.openstreetmap.josm.Main;
 
@@ -61,7 +62,7 @@ public final class OpenBrowser {
                         displayUrlFallback(uri);
                     }
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 Main.warn(e);
                 return e.getMessage();
             }
@@ -87,7 +88,7 @@ public final class OpenBrowser {
     public static String displayUrl(String url) {
         try {
             return displayUrl(new URI(url));
-        } catch (Exception e) {
+        } catch (URISyntaxException e) {
             return e.getMessage();
         }
     }

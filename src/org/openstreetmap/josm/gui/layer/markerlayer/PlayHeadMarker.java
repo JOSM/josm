@@ -50,12 +50,7 @@ public final class PlayHeadMarker extends Marker {
      */
     public static PlayHeadMarker create() {
         if (playHead == null) {
-            try {
-                playHead = new PlayHeadMarker();
-            } catch (Exception ex) {
-                Main.error(ex);
-                return null;
-            }
+            playHead = new PlayHeadMarker();
         }
         return playHead;
     }

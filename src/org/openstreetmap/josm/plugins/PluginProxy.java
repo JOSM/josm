@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
@@ -44,7 +45,7 @@ public class PluginProxy extends Plugin {
             plugin.getClass().getMethod("mapFrameInitialized", MapFrame.class, MapFrame.class).invoke(plugin, oldFrame, newFrame);
         } catch (NoSuchMethodException e) {
             Main.debug("Plugin "+plugin+" does not define mapFrameInitialized");
-        } catch (Exception e) {
+        } catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
             handlePluginException(e);
         }
     }
@@ -56,7 +57,7 @@ public class PluginProxy extends Plugin {
         } catch (NoSuchMethodException e) {
             Main.debug("Plugin "+plugin+" does not define getPreferenceSetting");
             return null;
-        } catch (Exception e) {
+        } catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
             handlePluginException(e);
         }
         return null;
@@ -68,7 +69,7 @@ public class PluginProxy extends Plugin {
             plugin.getClass().getMethod("addDownloadSelection", List.class).invoke(plugin, list);
         } catch (NoSuchMethodException e) {
             Main.debug("Plugin "+plugin+" does not define addDownloadSelection");
-        } catch (Exception e) {
+        } catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
             handlePluginException(e);
         }
     }

@@ -35,6 +35,8 @@ import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.OsmApiInitializationException;
+import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -156,7 +158,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         if (!oldUrl.equals(newUrl)) {
             try {
                 OsmApi.getOsmApi().initialize(null);
-            } catch (Exception x) {
+            } catch (OsmTransferCanceledException | OsmApiInitializationException x) {
                 Main.warn(x);
             }
         }

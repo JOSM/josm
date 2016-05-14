@@ -34,6 +34,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -105,6 +106,8 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.OsmApiInitializationException;
+import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
@@ -593,7 +596,7 @@ public abstract class Main {
                 // if it goes wrong that's not critical at this stage.
                 try {
                     OsmApi.getOsmApi().initialize(null, true);
-                } catch (Exception e) {
+                } catch (OsmTransferCanceledException | OsmApiInitializationException e) {
                     Main.warn(getErrorMessage(Utils.getRootCause(e)));
                 }
             }
@@ -639,7 +642,7 @@ public abstract class Main {
                 i.get();
             }
             service.shutdown();
-        } catch (Exception ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             throw new RuntimeException(ex);
         }
 
@@ -932,45 +935,46 @@ public abstract class Main {
     public static void preConstructorInit(Map<Option, Collection<String>> args) {
         ProjectionPreference.setProjection();
 
+        String defaultlaf = platform.getDefaultStyle();
+        String laf = Main.pref.get("laf", defaultlaf);
         try {
-            String defaultlaf = platform.getDefaultStyle();
-            String laf = Main.pref.get("laf", defaultlaf);
-            try {
-                UIManager.setLookAndFeel(laf);
-            } catch (final NoClassDefFoundError | ClassNotFoundException e) {
-                // Try to find look and feel in plugin classloaders
-                Class<?> klass = null;
-                for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
-                    try {
-                        klass = cl.loadClass(laf);
-                        break;
-                    } catch (ClassNotFoundException ex) {
-                        // Do nothing
-                        if (Main.isTraceEnabled()) {
-                            Main.trace(ex.getMessage());
-                        }
+            UIManager.setLookAndFeel(laf);
+        } catch (final NoClassDefFoundError | ClassNotFoundException e) {
+            // Try to find look and feel in plugin classloaders
+            Class<?> klass = null;
+            for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
+                try {
+                    klass = cl.loadClass(laf);
+                    break;
+                } catch (ClassNotFoundException ex) {
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(ex.getMessage());
                     }
                 }
-                if (klass != null && LookAndFeel.class.isAssignableFrom(klass)) {
-                    try {
-                        UIManager.setLookAndFeel((LookAndFeel) klass.getConstructor().newInstance());
-                    } catch (ReflectiveOperationException ex) {
-                        warn("Cannot set Look and Feel: " + laf + ": "+ex.getMessage());
-                    }
-                } else {
-                    info("Look and Feel not found: " + laf);
+            }
+            if (klass != null && LookAndFeel.class.isAssignableFrom(klass)) {
+                try {
+                    UIManager.setLookAndFeel((LookAndFeel) klass.getConstructor().newInstance());
+                } catch (ReflectiveOperationException ex) {
+                    warn("Cannot set Look and Feel: " + laf + ": "+ex.getMessage());
+                } catch (UnsupportedLookAndFeelException ex) {
+                    info("Look and Feel not supported: " + laf);
                     Main.pref.put("laf", defaultlaf);
                 }
-            } catch (final UnsupportedLookAndFeelException e) {
-                info("Look and Feel not supported: " + laf);
+            } else {
+                info("Look and Feel not found: " + laf);
                 Main.pref.put("laf", defaultlaf);
             }
-            toolbar = new ToolbarPreferences();
-            contentPanePrivate.updateUI();
-            panel.updateUI();
-        } catch (final Exception e) {
+        } catch (UnsupportedLookAndFeelException e) {
+            info("Look and Feel not supported: " + laf);
+            Main.pref.put("laf", defaultlaf);
+        } catch (InstantiationException | IllegalAccessException e) {
             error(e);
         }
+        toolbar = new ToolbarPreferences();
+        contentPanePrivate.updateUI();
+        panel.updateUI();
+
         UIManager.put("OptionPane.okIcon", ImageProvider.get("ok"));
         UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));
         UIManager.put("OptionPane.cancelIcon", ImageProvider.get("cancel"));

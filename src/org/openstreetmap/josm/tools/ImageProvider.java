@@ -82,6 +82,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.kitfox.svg.SVGDiagram;
+import com.kitfox.svg.SVGException;
 import com.kitfox.svg.SVGUniverse;
 
 /**
@@ -985,7 +986,7 @@ public class ImageProvider {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             Main.warn(tr("Failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
         }
         return null;
@@ -1152,7 +1153,7 @@ public class ImageProvider {
             cf.close();
         } catch (SAXReturnException r) {
             return r.getResult();
-        } catch (Exception e) {
+        } catch (IOException | SAXException e) {
             Main.warn("Parsing " + base + fn + " failed:\n" + e);
             return null;
         }
@@ -1426,7 +1427,7 @@ public class ImageProvider {
             synchronized (getSvgUniverse()) {
                 svg.render(g);
             }
-        } catch (Exception ex) {
+        } catch (SVGException ex) {
             Main.error("Unable to load svg: {0}", ex.getMessage());
             return null;
         }

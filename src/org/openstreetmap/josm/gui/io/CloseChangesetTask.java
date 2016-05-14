@@ -79,7 +79,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
                 OsmApi.getOsmApi().closeChangeset(cs, getProgressMonitor().createSubTaskMonitor(1, false));
                 closedChangesets.add(cs);
             }
-        } catch (Exception e) {
+        } catch (OsmTransferException e) {
             if (canceled)
                 return;
             lastException = e;

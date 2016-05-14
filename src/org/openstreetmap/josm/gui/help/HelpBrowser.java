@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -154,7 +155,7 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
                 css.append(line);
                 css.append('\n');
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             Main.error(tr("Failed to read CSS file ''help-browser.css''. Exception is: {0}", e.toString()));
             Main.error(e);
             return ss;
@@ -238,7 +239,7 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
         Document document = help.getEditorKit().createDefaultDocument();
         try {
             help.getEditorKit().read(new StringReader(content), document, 0);
-        } catch (Exception e) {
+        } catch (IOException | BadLocationException e) {
             Main.error(e);
         }
         help.setDocument(document);
@@ -375,7 +376,7 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
                 loadTopic(content);
                 history.setCurrentUrl(url);
                 this.url = url;
-            } catch (Exception e) {
+            } catch (HelpContentReaderException e) {
                 Main.warn(e);
                 HelpAwareOptionPane.showOptionDialog(
                         Main.parent,

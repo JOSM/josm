@@ -210,7 +210,7 @@ public final class HistoryBrowserDialogManager implements MapView.LayerChangeLis
                             }
                         });
                     }
-                } catch (final Exception e) {
+                } catch (final RuntimeException e) {
                     BugReportExceptionHandler.handleException(e);
                 }
             }

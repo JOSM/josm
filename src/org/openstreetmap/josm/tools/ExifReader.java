@@ -77,7 +77,7 @@ public final class ExifReader {
                 }
                 return date;
             }
-        } catch (Exception e) {
+        } catch (UncheckedParseException | JpegProcessingException | IOException e) {
             Main.error(e);
         }
         return null;

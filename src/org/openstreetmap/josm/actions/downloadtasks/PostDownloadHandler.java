@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
@@ -39,7 +41,7 @@ public class PostDownloadHandler implements Runnable {
         //
         try {
             future.get();
-        } catch (Exception e) {
+        } catch (InterruptedException | ExecutionException | CancellationException e) {
             Main.error(e);
             return;
         }

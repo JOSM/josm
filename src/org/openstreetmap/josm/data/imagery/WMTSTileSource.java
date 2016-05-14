@@ -251,6 +251,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * Creates a tile source based on imagery info
      * @param info imagery info
      * @throws IOException if any I/O error occurs
+     * @throws IllegalArgumentException if any other error happens for the given imagery info
      */
     public WMTSTileSource(ImageryInfo info) throws IOException {
         super(info);
@@ -289,7 +290,12 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         return output.toString();
     }
 
-    private Collection<Layer> getCapabilities() {
+    /**
+     * @return capabilities
+     * @throws IOException in case of any I/O error
+     * @throws IllegalArgumentException in case of any other error
+     */
+    private Collection<Layer> getCapabilities() throws IOException {
         XMLInputFactory factory = XMLInputFactory.newFactory();
         // do not try to load external entities, nor validate the XML
         factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
@@ -319,7 +325,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 }
             }
             return ret;
-        } catch (Exception e) {
+        } catch (XMLStreamException e) {
             throw new IllegalArgumentException(e);
         }
     }

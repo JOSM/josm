@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
@@ -121,7 +122,8 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                     });
                 }
             }
-        } catch (final Exception e) {
+        } catch (final RuntimeException |
+                OsmTransferException | IOException | SAXException | InvocationTargetException | InterruptedException e) {
             if (!ignoreException) {
                 // Exception has to thrown in EDT to be shown to user
                 SwingUtilities.invokeLater(new Runnable() {

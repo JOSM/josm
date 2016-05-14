@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
@@ -650,7 +651,7 @@ public class OsmReader extends AbstractReader {
                         e.getLocation().getLineNumber(), e.getLocation().getColumnNumber()) + msg, e);
             else
                 throw new IllegalDataException(msg, e);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new IllegalDataException(e);
         } finally {
             progressMonitor.finishTask();

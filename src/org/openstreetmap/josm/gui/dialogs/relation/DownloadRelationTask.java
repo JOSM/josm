@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import javax.swing.SwingUtilities;
@@ -106,7 +107,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
                         }
                     }
             );
-        } catch (Exception e) {
+        } catch (OsmTransferException | InvocationTargetException | InterruptedException e) {
             if (canceled) {
                 Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                 return;

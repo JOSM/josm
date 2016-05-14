@@ -142,7 +142,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements LayerChangeLi
         //try creating a history primitive. if that fails, the primitive cannot be used.
         try {
             HistoryOsmPrimitive.forOsmPrimitive(primitive);
-        } catch (Exception ign) {
+        } catch (IllegalArgumentException ign) {
             return false;
         }
 

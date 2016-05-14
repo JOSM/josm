@@ -182,7 +182,7 @@ public class SessionLoadAction extends DiskAccessAction {
                 handleException(tr("Data Error"), e);
             } catch (IOException e) {
                 handleException(tr("IO Error"), e);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 cancel();
                 throw e;
             }

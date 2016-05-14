@@ -198,22 +198,18 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
      */
     @Override
     public void paint(Graphics g) {
-        try {
-            super.paint(g);
+        super.paint(g);
 
-            // draw selection rectangle
-            if (iSelectionRectStart != null && iSelectionRectEnd != null) {
-                Rectangle box = new Rectangle(getMapPosition(iSelectionRectStart, false));
-                box.add(getMapPosition(iSelectionRectEnd, false));
+        // draw selection rectangle
+        if (iSelectionRectStart != null && iSelectionRectEnd != null) {
+            Rectangle box = new Rectangle(getMapPosition(iSelectionRectStart, false));
+            box.add(getMapPosition(iSelectionRectEnd, false));
 
-                g.setColor(new Color(0.9f, 0.7f, 0.7f, 0.6f));
-                g.fillRect(box.x, box.y, box.width, box.height);
+            g.setColor(new Color(0.9f, 0.7f, 0.7f, 0.6f));
+            g.fillRect(box.x, box.y, box.width, box.height);
 
-                g.setColor(Color.BLACK);
-                g.drawRect(box.x, box.y, box.width, box.height);
-            }
-        } catch (Exception e) {
-            Main.error(e);
+            g.setColor(Color.BLACK);
+            g.drawRect(box.x, box.y, box.width, box.height);
         }
     }
 

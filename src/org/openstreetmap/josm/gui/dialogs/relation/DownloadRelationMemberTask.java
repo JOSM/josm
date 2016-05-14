@@ -142,7 +142,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
                     }
             );
 
-        } catch (Exception e) {
+        } catch (OsmTransferException e) {
             if (canceled) {
                 Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                 return;

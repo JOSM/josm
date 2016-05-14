@@ -83,7 +83,7 @@ public class LafPreference implements SubPreferenceSetting {
                 lafCombo.addItem(
                         new UIManager.LookAndFeelInfo(((LookAndFeel) oquaqua).getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel")
                 );
-            } catch (Exception ex) {
+            } catch (ReflectiveOperationException ex) {
                 // just debug, Quaqua may not even be installed...
                 Main.debug(ex.getMessage());
             }

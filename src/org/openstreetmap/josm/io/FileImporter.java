@@ -98,7 +98,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
                 displayError(f, e);
             }
             return false;
-        } catch (Exception e) {
+        } catch (IOException e) {
             displayError(f, e);
             return false;
         }
@@ -137,7 +137,7 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
             Main.info("Open "+files.size()+" files");
             importData(files, progressMonitor);
             return true;
-        } catch (Exception e) {
+        } catch (IOException | IllegalDataException e) {
             Main.error(e);
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,

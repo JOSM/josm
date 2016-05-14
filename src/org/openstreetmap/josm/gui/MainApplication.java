@@ -402,7 +402,7 @@ public class MainApplication extends Main {
                 info("Reading preferences from " + i);
                 try (InputStream is = HttpClient.create(new URL(i)).connect().getContent()) {
                     config.openAndReadXML(is);
-                } catch (Exception ex) {
+                } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
             }

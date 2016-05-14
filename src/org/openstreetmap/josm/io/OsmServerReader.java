@@ -143,7 +143,7 @@ public abstract class OsmServerReader extends OsmConnection {
             final HttpClient.Response response;
             try {
                 response = client.connect(progressMonitor);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 Main.error(e);
                 OsmTransferException ote = new OsmTransferException(
                         tr("Could not connect to the OSM server. Please check your internet connection."), e);
@@ -162,7 +162,7 @@ public abstract class OsmServerReader extends OsmConnection {
                     String errorBody;
                     try {
                         errorBody = response.fetchContent();
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         errorBody = tr("Reading error text failed.");
                     }
                     throw new OsmApiException(response.getResponseCode(), errorHeader, errorBody, url.toString());
@@ -172,7 +172,7 @@ public abstract class OsmServerReader extends OsmConnection {
                 return response.getContent();
             } catch (OsmTransferException e) {
                 throw e;
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new OsmTransferException(e);
             }
         } finally {

@@ -491,7 +491,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             }
             // default is K (km/h)
             setSpeed(speed);
-        } catch (Exception ex) {
+        } catch (MetadataException ex) {
             if (Main.isDebugEnabled()) {
                 Main.debug(ex.getMessage());
             }
@@ -515,7 +515,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             setExifCoor(latlon);
             setPos(getExifCoor());
 
-        } catch (Exception ex) { // (other exceptions, e.g. #5271)
+        } catch (MetadataException | IndexOutOfBoundsException ex) { // (other exceptions, e.g. #5271)
             Main.error("Error reading EXIF from file: " + ex);
             setExifCoor(null);
             setPos(null);
@@ -526,7 +526,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             if (direction != null) {
                 setExifImgDir(direction);
             }
-        } catch (Exception ex) { // (CompoundException and other exceptions, e.g. #5271)
+        } catch (IndexOutOfBoundsException ex) { // (other exceptions, e.g. #5271)
             if (Main.isDebugEnabled()) {
                 Main.debug(ex.getMessage());
             }

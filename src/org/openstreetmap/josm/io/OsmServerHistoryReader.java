@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 
@@ -11,6 +12,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.xml.sax.SAXException;
 
 /**
  * Reads the history of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} from the OSM API server.
@@ -71,7 +73,7 @@ public class OsmServerHistoryReader extends OsmServerReader {
             }
         } catch (OsmTransferException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (IOException | SAXException e) {
             if (cancel)
                 return null;
             throw new OsmTransferException(e);

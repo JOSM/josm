@@ -152,7 +152,7 @@ public class OpenLocationAction extends JosmAction {
                     if (task.acceptsUrl(url, isRemotecontrol)) {
                         result.add(task);
                     }
-                } catch (Exception e) {
+                } catch (ReflectiveOperationException e) {
                     Main.error(e);
                 }
             }
@@ -172,7 +172,7 @@ public class OpenLocationAction extends JosmAction {
                 try {
                     DownloadTask task = taskClass.getConstructor().newInstance();
                     result.append(task.acceptsDocumentationSummary());
-                } catch (Exception e) {
+                } catch (ReflectiveOperationException e) {
                     Main.error(e);
                 }
             }

@@ -11,6 +11,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
@@ -123,7 +124,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
                 final Date time = DateUtils.fromString(get(PT_TIME).toString());
                 this.time = time.getTime() / 1000.;
                 return time;
-            } catch (Exception e) {
+            } catch (UncheckedParseException e) {
                 Main.warn(e);
                 time = 0;
             }

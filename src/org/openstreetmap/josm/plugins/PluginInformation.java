@@ -272,7 +272,7 @@ public class PluginInformation {
                             }
                         }
                     }
-                } catch (Exception e) {
+                } catch (NumberFormatException e) {
                     Main.error(e);
                 }
             }

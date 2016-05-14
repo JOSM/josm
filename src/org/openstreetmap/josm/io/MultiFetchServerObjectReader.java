@@ -521,7 +521,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                 progressMonitor.subTask(tr("Downloading OSM data..."));
                 try {
                     result = new FetchResult(OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(pkg.size(), false)), null);
-                } catch (Exception e) {
+                } catch (IllegalDataException e) {
                     throw new OsmTransferException(e);
                 }
             } catch (IOException ex) {
@@ -549,7 +549,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                 progressMonitor.subTask(tr("Downloading OSM data..."));
                 try {
                     result = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
-                } catch (Exception e) {
+                } catch (IllegalDataException e) {
                     throw new OsmTransferException(e);
                 }
             } catch (IOException ex) {

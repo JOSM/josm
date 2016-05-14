@@ -136,7 +136,7 @@ public class UploadLayerTask extends AbstractIOTask {
                     OsmApi.getOsmApi().closeChangeset(changeset, monitor.createSubTaskMonitor(0, false));
                 }
             }
-        } catch (Exception sxe) {
+        } catch (OsmTransferException sxe) {
             if (isCanceled()) {
                 Main.info("Ignoring exception caught because upload is canceled. Exception is: " + sxe);
                 return;

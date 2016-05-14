@@ -78,42 +78,37 @@ public class RestartAction extends JosmAction {
     }
 
     /**
-     * Restarts the current Java application
-     * @throws IOException in case of any error
+     * Restarts the current Java application.
+     * @throws IOException in case of any I/O error
      */
     public static void restartJOSM() throws IOException {
         if (isRestartSupported() && !Main.exitJosm(false, 0)) return;
         final List<String> cmd;
-        try {
-            // special handling for OSX .app package
-            if (Main.isPlatformOsx() && System.getProperty("java.library.path").contains("/JOSM.app/Contents/MacOS")) {
-                cmd = getAppleCommands();
-            } else {
-                cmd = getCommands();
-            }
-            Main.info("Restart "+cmd);
-            if (Main.isDebugEnabled() && Main.pref.getBoolean("restart.debug.simulation")) {
-                Main.debug("Restart cancelled to get debug info");
-                return;
-            }
-            // execute the command in a shutdown hook, to be sure that all the
-            // resources have been disposed before restarting the application
-            Runtime.getRuntime().addShutdownHook(new Thread("josm-restarter") {
-                @Override
-                public void run() {
-                    try {
-                        Runtime.getRuntime().exec(cmd.toArray(new String[cmd.size()]));
-                    } catch (IOException e) {
-                        Main.error(e);
-                    }
-                }
-            });
-            // exit
-            System.exit(0);
-        } catch (Exception e) {
-            // something went wrong
-            throw new IOException("Error while trying to restart the application", e);
+        // special handling for OSX .app package
+        if (Main.isPlatformOsx() && System.getProperty("java.library.path").contains("/JOSM.app/Contents/MacOS")) {
+            cmd = getAppleCommands();
+        } else {
+            cmd = getCommands();
         }
+        Main.info("Restart "+cmd);
+        if (Main.isDebugEnabled() && Main.pref.getBoolean("restart.debug.simulation")) {
+            Main.debug("Restart cancelled to get debug info");
+            return;
+        }
+        // execute the command in a shutdown hook, to be sure that all the
+        // resources have been disposed before restarting the application
+        Runtime.getRuntime().addShutdownHook(new Thread("josm-restarter") {
+            @Override
+            public void run() {
+                try {
+                    Runtime.getRuntime().exec(cmd.toArray(new String[cmd.size()]));
+                } catch (IOException e) {
+                    Main.error(e);
+                }
+            }
+        });
+        // exit
+        System.exit(0);
     }
 
     private static List<String> getAppleCommands() {

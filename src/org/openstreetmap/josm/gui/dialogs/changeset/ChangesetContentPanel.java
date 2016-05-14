@@ -234,7 +234,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                             }
                         });
                     }
-                } catch (final Exception e) {
+                } catch (final RuntimeException e) {
                     GuiHelper.runInEDT(new Runnable() {
                         @Override
                         public void run() {
