@@ -64,10 +64,10 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
 
         for (final Class<? extends FileImporter> importerClass : importerNames) {
             try {
-                FileImporter importer = importerClass.newInstance();
+                FileImporter importer = importerClass.getConstructor().newInstance();
                 importers.add(importer);
                 MapView.addLayerChangeListener(importer);
-            } catch (Exception e) {
+            } catch (ReflectiveOperationException e) {
                 if (Main.isDebugEnabled()) {
                     Main.debug(e.getMessage());
                 }
@@ -105,10 +105,10 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
 
         for (final Class<? extends FileExporter> exporterClass : exporterClasses) {
             try {
-                FileExporter exporter = exporterClass.newInstance();
+                FileExporter exporter = exporterClass.getConstructor().newInstance();
                 exporters.add(exporter);
                 MapView.addLayerChangeListener(exporter);
-            } catch (Exception e) {
+            } catch (ReflectiveOperationException e) {
                 if (Main.isDebugEnabled()) {
                     Main.debug(e.getMessage());
                 }

@@ -1208,8 +1208,8 @@ public class Preferences {
     public static <T> Map<String, String> serializeStruct(T struct, Class<T> klass) {
         T structPrototype;
         try {
-            structPrototype = klass.newInstance();
-        } catch (InstantiationException | IllegalAccessException ex) {
+            structPrototype = klass.getConstructor().newInstance();
+        } catch (ReflectiveOperationException ex) {
             throw new RuntimeException(ex);
         }
 
@@ -1257,12 +1257,12 @@ public class Preferences {
     public static <T> T deserializeStruct(Map<String, String> hash, Class<T> klass) {
         T struct = null;
         try {
-            struct = klass.newInstance();
-        } catch (InstantiationException | IllegalAccessException ex) {
+            struct = klass.getConstructor().newInstance();
+        } catch (ReflectiveOperationException ex) {
             throw new RuntimeException(ex);
         }
         for (Entry<String, String> key_value : hash.entrySet()) {
-            Object value = null;
+            Object value;
             Field f;
             try {
                 f = klass.getDeclaredField(key_value.getKey().replace('-', '_'));

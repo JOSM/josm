@@ -953,8 +953,8 @@ public abstract class Main {
                 }
                 if (klass != null && LookAndFeel.class.isAssignableFrom(klass)) {
                     try {
-                        UIManager.setLookAndFeel((LookAndFeel) klass.newInstance());
-                    } catch (Exception ex) {
+                        UIManager.setLookAndFeel((LookAndFeel) klass.getConstructor().newInstance());
+                    } catch (ReflectiveOperationException ex) {
                         warn("Cannot set Look and Feel: " + laf + ": "+ex.getMessage());
                     }
                 } else {

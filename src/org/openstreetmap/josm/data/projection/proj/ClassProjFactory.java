@@ -8,6 +8,10 @@ public class ClassProjFactory implements ProjFactory {
 
     private final Class<? extends Proj> projClass;
 
+    /**
+     * Constructs a new {@code ClassProjFactory}.
+     * @param projClass projection class
+     */
     public ClassProjFactory(Class<? extends Proj> projClass) {
         this.projClass = projClass;
     }
@@ -16,8 +20,8 @@ public class ClassProjFactory implements ProjFactory {
     public Proj createInstance() {
         Proj proj = null;
         try {
-            proj = projClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            proj = projClass.getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
         return proj;

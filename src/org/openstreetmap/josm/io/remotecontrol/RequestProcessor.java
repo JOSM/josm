@@ -219,7 +219,7 @@ public class RequestProcessor extends Thread {
                 sendBadRequest(out, help);
             } else {
                 // create handler object
-                RequestHandler handler = handlerClass.newInstance();
+                RequestHandler handler = handlerClass.getConstructor().newInstance();
                 try {
                     handler.setCommand(command);
                     handler.setUrl(url);
@@ -242,7 +242,7 @@ public class RequestProcessor extends Thread {
 
         } catch (IOException ioe) {
             Main.debug(Main.getErrorMessage(ioe));
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             Main.error(e);
             try {
                 sendError(out);
@@ -390,17 +390,17 @@ public class RequestProcessor extends Thread {
 
     public static String getHandlerInfoAsJSON(String cmd) {
         try (StringWriter w = new StringWriter()) {
-            PrintWriter r = new PrintWriter(w);
             RequestHandler handler = null;
             try {
                 Class<?> c = handlers.get(cmd);
                 if (c == null) return null;
-                handler = handlers.get(cmd).newInstance();
-            } catch (InstantiationException | IllegalAccessException ex) {
+                handler = handlers.get(cmd).getConstructor().newInstance();
+            } catch (ReflectiveOperationException ex) {
                 Main.error(ex);
                 return null;
             }
 
+            PrintWriter r = new PrintWriter(w);
             printJsonInfo(cmd, r, handler);
             return w.toString();
         } catch (IOException e) {
@@ -458,14 +458,12 @@ public class RequestProcessor extends Thread {
     /**
      * Reports HTML message with the description of all available commands
      * @return HTML message with the description of all available commands
-     * @throws IllegalAccessException if one handler class or its nullary constructor is not accessible.
-     * @throws InstantiationException if one handler class represents an abstract class, an interface, an array class,
-     * a primitive type, or void; or if the class has no nullary constructor; or if the instantiation fails for some other reason.
+     * @throws ReflectiveOperationException if a reflective operation fails for one handler class
      */
-    public static String getUsageAsHtml() throws IllegalAccessException, InstantiationException {
+    public static String getUsageAsHtml() throws ReflectiveOperationException {
         StringBuilder usage = new StringBuilder(1024);
         for (Entry<String, Class<? extends RequestHandler>> handler : handlers.entrySet()) {
-            RequestHandler sample = handler.getValue().newInstance();
+            RequestHandler sample = handler.getValue().getConstructor().newInstance();
             String[] mandatory = sample.getMandatoryParams();
             String[] optional = sample.getOptionalParams();
             String[] examples = sample.getUsageExamples(handler.getKey().substring(1));

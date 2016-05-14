@@ -82,8 +82,8 @@ public class XmlObjectParser implements Iterable<Object> {
             if (mapping.containsKey(qname)) {
                 Class<?> klass = mapping.get(qname).klass;
                 try {
-                    current.push(klass.newInstance());
-                } catch (Exception e) {
+                    current.push(klass.getConstructor().newInstance());
+                } catch (ReflectiveOperationException e) {
                     throwException(e);
                 }
                 for (int i = 0; i < a.getLength(); ++i) {
