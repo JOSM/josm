@@ -90,7 +90,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
     protected String oldModeHelpText;
 
-    private final AbstractMapViewPaintable temporaryLayer = new AbstractMapViewPaintable() {
+    private final transient AbstractMapViewPaintable temporaryLayer = new AbstractMapViewPaintable() {
         @Override
         public void paint(Graphics2D g, MapView mv, Bounds bbox) {
             ImproveWayAccuracyAction.this.paint(g, mv, bbox);

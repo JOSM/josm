@@ -205,7 +205,7 @@ public class OsmValidator implements LayerChangeListener {
         }
     }
 
-    public static void initializeErrorLayer() {
+    public static synchronized void initializeErrorLayer() {
         if (!Main.pref.getBoolean(ValidatorPreference.PREF_LAYER, true))
             return;
         if (errorLayer == null) {
