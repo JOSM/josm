@@ -16,8 +16,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Represents the resolution of a version conflict between two {@link OsmPrimitive}s.
- *
- *
+ * @since 1622
  */
 public class VersionConflictResolveCommand extends ConflictResolveCommand {
 
@@ -34,11 +33,12 @@ public class VersionConflictResolveCommand extends ConflictResolveCommand {
 
     @Override
     public String getDescriptionText() {
-        String msg = "";
+        String msg;
         switch(OsmPrimitiveType.from(conflict.getMy())) {
         case NODE: msg = marktr("Resolve version conflict for node {0}"); break;
         case WAY: msg = marktr("Resolve version conflict for way {0}"); break;
         case RELATION: msg = marktr("Resolve version conflict for relation {0}"); break;
+        default: throw new AssertionError();
         }
         return tr(msg, conflict.getMy().getId());
     }

@@ -124,6 +124,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         case NODE: nodes.add(id.getUniqueId()); break;
         case WAY: ways.add(id.getUniqueId()); break;
         case RELATION: relations.add(id.getUniqueId()); break;
+        default: throw new AssertionError();
         }
     }
 
@@ -579,11 +580,12 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
             String baseUrl = OsmApi.getOsmApi().getBaseUrl();
             for (long id : pkg) {
                 try {
-                    String msg = "";
+                    String msg;
                     switch (type) {
                         case NODE:     msg = tr("Fetching node with id {0} from ''{1}''",     id, baseUrl); break;
                         case WAY:      msg = tr("Fetching way with id {0} from ''{1}''",      id, baseUrl); break;
                         case RELATION: msg = tr("Fetching relation with id {0} from ''{1}''", id, baseUrl); break;
+                        default: throw new AssertionError();
                     }
                     progressMonitor.setCustomText(msg);
                     result.dataSet.mergeFrom(singleGetId(type, id, progressMonitor));

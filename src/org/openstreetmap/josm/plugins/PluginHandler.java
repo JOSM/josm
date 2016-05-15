@@ -450,6 +450,7 @@ public final class PluginHandler {
             case 1:
                 Main.pref.put(togglePreferenceKey, "never");
                 break;
+            default: // Do nothing
             }
         } else {
             Main.pref.put(togglePreferenceKey, "ask");

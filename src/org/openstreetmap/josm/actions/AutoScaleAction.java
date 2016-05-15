@@ -233,87 +233,107 @@ public class AutoScaleAction extends JosmAction {
 
         switch (mode) {
         case "problem":
-            TestError error = Main.map.validatorDialog.getSelectedError();
-            if (error == null)
-                return null;
-            ((ValidatorBoundingXYVisitor) v).visit(error);
-            if (v.getBounds() == null)
-                return null;
-            v.enlargeBoundingBox(Main.pref.getDouble("validator.zoom-enlarge-bbox", 0.0002));
-            break;
+            return modeProblem(v);
         case "data":
-            for (Layer l : Main.map.mapView.getAllLayers()) {
-                l.visitBoundingBox(v);
-            }
-            break;
+            return modeData(v);
         case "layer":
-            // try to zoom to the first selected layer
-            Layer l = getFirstSelectedLayer();
-            if (l == null)
-                return null;
-            l.visitBoundingBox(v);
-            break;
+            return modeLayer(v);
         case "selection":
         case "conflict":
-            Collection<OsmPrimitive> sel = new HashSet<>();
-            if ("selection".equals(mode)) {
-                sel = getCurrentDataSet().getSelected();
-            } else {
-                Conflict<? extends OsmPrimitive> c = Main.map.conflictDialog.getSelectedConflict();
-                if (c != null) {
-                    sel.add(c.getMy());
-                } else if (Main.map.conflictDialog.getConflicts() != null) {
-                    sel = Main.map.conflictDialog.getConflicts().getMyConflictParties();
-                }
-            }
-            if (sel.isEmpty()) {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        "selection".equals(mode) ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to"),
-                        tr("Information"),
-                        JOptionPane.INFORMATION_MESSAGE);
-                return null;
-            }
-            for (OsmPrimitive osm : sel) {
-                osm.accept(v);
-            }
-
-            // Increase the bounding box by up to 100% to give more context.
-            v.enlargeBoundingBoxLogarithmically(100);
-            // Make the bounding box at least 100 meter wide to
-            // ensure reasonable zoom level when zooming onto single nodes.
-            v.enlargeToMinSize(Main.pref.getDouble("zoom_to_selection_min_size_in_meter", 100));
-            break;
+            return modeSelectionOrConflict(v);
         case "download":
+            return modeDownload(v);
+        default:
+            return v;
+        }
+    }
 
-            if (lastZoomTime > 0 && System.currentTimeMillis() - lastZoomTime > Main.pref.getLong("zoom.bounds.reset.time", 10L*1000L)) {
-                lastZoomTime = -1;
+    private static BoundingXYVisitor modeProblem(BoundingXYVisitor v) {
+        TestError error = Main.map.validatorDialog.getSelectedError();
+        if (error == null)
+            return null;
+        ((ValidatorBoundingXYVisitor) v).visit(error);
+        if (v.getBounds() == null)
+            return null;
+        v.enlargeBoundingBox(Main.pref.getDouble("validator.zoom-enlarge-bbox", 0.0002));
+        return v;
+    }
+
+    private static BoundingXYVisitor modeData(BoundingXYVisitor v) {
+        for (Layer l : Main.map.mapView.getAllLayers()) {
+            l.visitBoundingBox(v);
+        }
+        return v;
+    }
+
+    private BoundingXYVisitor modeLayer(BoundingXYVisitor v) {
+        // try to zoom to the first selected layer
+        Layer l = getFirstSelectedLayer();
+        if (l == null)
+            return null;
+        l.visitBoundingBox(v);
+        return v;
+    }
+
+    private BoundingXYVisitor modeSelectionOrConflict(BoundingXYVisitor v) {
+        Collection<OsmPrimitive> sel = new HashSet<>();
+        if ("selection".equals(mode)) {
+            sel = getCurrentDataSet().getSelected();
+        } else {
+            Conflict<? extends OsmPrimitive> c = Main.map.conflictDialog.getSelectedConflict();
+            if (c != null) {
+                sel.add(c.getMy());
+            } else if (Main.map.conflictDialog.getConflicts() != null) {
+                sel = Main.map.conflictDialog.getConflicts().getMyConflictParties();
             }
-            final DataSet dataset = getCurrentDataSet();
-            if (dataset != null) {
-                List<DataSource> dataSources = new ArrayList<>(dataset.getDataSources());
-                int s = dataSources.size();
-                if (s > 0) {
-                    if (lastZoomTime == -1 || lastZoomArea == -1 || lastZoomArea > s) {
-                        lastZoomArea = s-1;
-                        v.visit(dataSources.get(lastZoomArea).bounds);
-                    } else if (lastZoomArea > 0) {
-                        lastZoomArea -= 1;
-                        v.visit(dataSources.get(lastZoomArea).bounds);
-                    } else {
-                        lastZoomArea = -1;
-                        Area sourceArea = Main.main.getCurrentDataSet().getDataSourceArea();
-                        if (sourceArea != null) {
-                            v.visit(new Bounds(sourceArea.getBounds2D()));
-                        }
-                    }
-                    lastZoomTime = System.currentTimeMillis();
+        }
+        if (sel.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    "selection".equals(mode) ? tr("Nothing selected to zoom to.") : tr("No conflicts to zoom to"),
+                    tr("Information"),
+                    JOptionPane.INFORMATION_MESSAGE);
+            return null;
+        }
+        for (OsmPrimitive osm : sel) {
+            osm.accept(v);
+        }
+
+        // Increase the bounding box by up to 100% to give more context.
+        v.enlargeBoundingBoxLogarithmically(100);
+        // Make the bounding box at least 100 meter wide to
+        // ensure reasonable zoom level when zooming onto single nodes.
+        v.enlargeToMinSize(Main.pref.getDouble("zoom_to_selection_min_size_in_meter", 100));
+        return v;
+    }
+
+    private BoundingXYVisitor modeDownload(BoundingXYVisitor v) {
+        if (lastZoomTime > 0 && System.currentTimeMillis() - lastZoomTime > Main.pref.getLong("zoom.bounds.reset.time", 10L*1000L)) {
+            lastZoomTime = -1;
+        }
+        final DataSet dataset = getCurrentDataSet();
+        if (dataset != null) {
+            List<DataSource> dataSources = new ArrayList<>(dataset.getDataSources());
+            int s = dataSources.size();
+            if (s > 0) {
+                if (lastZoomTime == -1 || lastZoomArea == -1 || lastZoomArea > s) {
+                    lastZoomArea = s-1;
+                    v.visit(dataSources.get(lastZoomArea).bounds);
+                } else if (lastZoomArea > 0) {
+                    lastZoomArea -= 1;
+                    v.visit(dataSources.get(lastZoomArea).bounds);
                 } else {
-                    lastZoomTime = -1;
                     lastZoomArea = -1;
+                    Area sourceArea = Main.main.getCurrentDataSet().getDataSourceArea();
+                    if (sourceArea != null) {
+                        v.visit(new Bounds(sourceArea.getBounds2D()));
+                    }
                 }
+                lastZoomTime = System.currentTimeMillis();
+            } else {
+                lastZoomTime = -1;
+                lastZoomArea = -1;
             }
-            break;
         }
         return v;
     }

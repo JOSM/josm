@@ -75,11 +75,12 @@ public class ChangeCommand extends Command {
 
     @Override
     public String getDescriptionText() {
-        String msg = "";
+        String msg;
         switch(OsmPrimitiveType.from(osm)) {
         case NODE: msg = marktr("Change node {0}"); break;
         case WAY: msg = marktr("Change way {0}"); break;
         case RELATION: msg = marktr("Change relation {0}"); break;
+        default: throw new AssertionError();
         }
         return tr(msg, osm.getDisplayName(DefaultNameFormatter.getInstance()));
     }

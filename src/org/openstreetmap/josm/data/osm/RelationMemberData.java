@@ -4,6 +4,8 @@ package org.openstreetmap.josm.data.osm;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+
 public class RelationMemberData implements PrimitiveId, Serializable {
 
     private static final long serialVersionUID = 381392198209333319L;
@@ -11,28 +13,58 @@ public class RelationMemberData implements PrimitiveId, Serializable {
     private final long memberId;
     private final OsmPrimitiveType memberType;
 
+    /**
+     * Constructs a new {@code RelationMemberData}.
+     * @param role member role - can be null
+     * @param type member type - cannot be null
+     * @param id member id - cannot be null
+     * @throws IllegalArgumentException is type or id is null
+     */
     public RelationMemberData(String role, OsmPrimitiveType type, long id) {
+        CheckParameterUtil.ensureParameterNotNull(type, "type");
         this.role = role == null ? "" : role;
         this.memberType = type;
         this.memberId = id;
     }
 
+    /**
+     * Constructs a new {@code RelationMemberData}.
+     * @param role member role - can be null
+     * @param primitive member type and id - cannot be null
+     * @throws NullPointerException if primitive is null
+     */
     public RelationMemberData(String role, PrimitiveId primitive) {
         this(role, primitive.getType(), primitive.getUniqueId());
     }
 
+    /**
+     * Get member id.
+     * @return member id
+     */
     public long getMemberId() {
         return memberId;
     }
 
+    /**
+     * Get member role.
+     * @return member role
+     */
     public String getRole() {
         return role;
     }
 
+    /**
+     * Get member type.
+     * @return member type
+     */
     public OsmPrimitiveType getMemberType() {
         return memberType;
     }
 
+    /**
+     * Determines if this member has a role.
+     * @return {@code true} if this member has a role
+     */
     public boolean hasRole() {
         return !"".equals(role);
     }

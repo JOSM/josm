@@ -218,6 +218,7 @@ public class OsmServerWriter {
                 uploadChangesIndividually(primitives, monitor.createSubTaskMonitor(0, false));
                 break;
             case CHUNKED_DATASET_STRATEGY:
+            default:
                 uploadChangesInChunks(primitives, monitor.createSubTaskMonitor(0, false), strategy.getChunkSize());
                 break;
             }

@@ -63,7 +63,10 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
      */
     public void pasteData(PrimitiveDeepCopy pasteBuffer, Layer source, ActionEvent e) {
         /* Find the middle of the pasteBuffer area */
-        double maxEast = -1E100, minEast = 1E100, maxNorth = -1E100, minNorth = 1E100;
+        double maxEast = -1E100;
+        double minEast = 1E100;
+        double maxNorth = -1E100;
+        double minNorth = 1E100;
         boolean incomplete = false;
         for (PrimitiveData data : pasteBuffer.getAll()) {
             if (data instanceof NodeData) {
@@ -91,8 +94,8 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         }
 
         // Allow to cancel paste if there are incomplete primitives
-        if (incomplete) {
-            if (!confirmDeleteIncomplete()) return;
+        if (incomplete && !confirmDeleteIncomplete()) {
+            return;
         }
 
         // default to paste in center of map (pasted via menu or cursor not in MapView)
@@ -157,7 +160,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
                 List<RelationMemberData> newMembers = new ArrayList<>();
                 for (RelationMemberData member: ((RelationData) data).getMembers()) {
                     OsmPrimitiveType memberType = member.getMemberType();
-                    Long newId = null;
+                    Long newId;
                     switch (memberType) {
                     case NODE:
                         newId = newNodeIds.get(member.getMemberId());
@@ -168,6 +171,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
                     case RELATION:
                         newId = newRelationIds.get(member.getMemberId());
                         break;
+                    default: throw new AssertionError();
                     }
                     if (newId != null) {
                         newMembers.add(new RelationMemberData(member.getRole(), memberType, newId));
@@ -182,7 +186,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         Main.map.mapView.repaint();
     }
 
-    protected boolean confirmDeleteIncomplete() {
+    private static boolean confirmDeleteIncomplete() {
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Delete incomplete members?"),
                 new String[] {tr("Paste without incomplete members"), tr("Cancel")});

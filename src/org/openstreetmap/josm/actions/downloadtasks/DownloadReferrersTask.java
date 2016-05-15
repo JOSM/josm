@@ -183,11 +183,12 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
             for (Entry<Long, OsmPrimitiveType> entry: children.entrySet()) {
                 if (canceled)
                     return;
-                String msg = "";
+                String msg;
                 switch(entry.getValue()) {
                 case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i+1, children.size(), entry.getKey()); break;
                 case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i+1, children.size(), entry.getKey()); break;
                 case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i+1, children.size(), entry.getKey()); break;
+                default: throw new AssertionError();
                 }
                 progressMonitor.subTask(msg);
                 downloadParents(entry.getKey(), entry.getValue(), progressMonitor);

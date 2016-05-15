@@ -285,6 +285,7 @@ public final class AudioPlayer extends Thread {
                         state = State.NOTPLAYING;
                         command.possiblyInterrupt();
                         break;
+                    default: // Do nothing
                 }
             } catch (InterruptedException e) {
                 interrupted(); // just in case we get an interrupt
@@ -354,6 +355,7 @@ public final class AudioPlayer extends Thread {
                         case PAUSE:
                             stateChange = State.PAUSED;
                             break;
+                        default: // Do nothing
                     }
                     command.ok(stateChange);
                 } catch (LineUnavailableException | IOException | UnsupportedAudioFileException |

@@ -44,17 +44,17 @@ import org.xml.sax.helpers.DefaultHandler;
 public class GpxReader implements GpxConstants {
 
     private enum State {
-        init,
-        gpx,
-        metadata,
-        wpt,
-        rte,
-        trk,
-        ext,
-        author,
-        link,
-        trkseg,
-        copyright
+        INIT,
+        GPX,
+        METADATA,
+        WPT,
+        RTE,
+        TRK,
+        EXT,
+        AUTHOR,
+        LINK,
+        TRKSEG,
+        COPYRIGHT
     }
 
     private String version;
@@ -71,7 +71,7 @@ public class GpxReader implements GpxConstants {
         private GpxRoute currentRoute;
         private WayPoint currentWayPoint;
 
-        private State currentState = State.init;
+        private State currentState = State.INIT;
 
         private GpxLink currentLink;
         private Extensions currentExtensions;
@@ -107,9 +107,9 @@ public class GpxReader implements GpxConstants {
         public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             elements.push(localName);
             switch(currentState) {
-            case init:
+            case INIT:
                 states.push(currentState);
-                currentState = State.gpx;
+                currentState = State.GPX;
                 data.creator = atts.getValue("creator");
                 version = atts.getValue("version");
                 if (version != null && version.startsWith("1.0")) {
@@ -119,58 +119,60 @@ public class GpxReader implements GpxConstants {
                     version = "1.1";
                 }
                 break;
-            case gpx:
+            case GPX:
                 switch (localName) {
                 case "metadata":
                     states.push(currentState);
-                    currentState = State.metadata;
+                    currentState = State.METADATA;
                     break;
                 case "wpt":
                     states.push(currentState);
-                    currentState = State.wpt;
+                    currentState = State.WPT;
                     currentWayPoint = new WayPoint(parseLatLon(atts));
                     break;
                 case "rte":
                     states.push(currentState);
-                    currentState = State.rte;
+                    currentState = State.RTE;
                     currentRoute = new GpxRoute();
                     break;
                 case "trk":
                     states.push(currentState);
-                    currentState = State.trk;
+                    currentState = State.TRK;
                     currentTrack = new ArrayList<>();
                     currentTrackAttr = new HashMap<>();
                     break;
                 case "extensions":
                     states.push(currentState);
-                    currentState = State.ext;
+                    currentState = State.EXT;
                     currentExtensions = new Extensions();
                     break;
                 case "gpx":
                     if (atts.getValue("creator") != null && atts.getValue("creator").startsWith("Nokia Sports Tracker")) {
                         nokiaSportsTrackerBug = true;
                     }
+                    break;
+                default: // Do nothing
                 }
                 break;
-            case metadata:
+            case METADATA:
                 switch (localName) {
                 case "author":
                     states.push(currentState);
-                    currentState = State.author;
+                    currentState = State.AUTHOR;
                     break;
                 case "extensions":
                     states.push(currentState);
-                    currentState = State.ext;
+                    currentState = State.EXT;
                     currentExtensions = new Extensions();
                     break;
                 case "copyright":
                     states.push(currentState);
-                    currentState = State.copyright;
+                    currentState = State.COPYRIGHT;
                     data.put(META_COPYRIGHT_AUTHOR, atts.getValue("author"));
                     break;
                 case "link":
                     states.push(currentState);
-                    currentState = State.link;
+                    currentState = State.LINK;
                     currentLink = new GpxLink(atts.getValue("href"));
                     break;
                 case "bounds":
@@ -179,77 +181,86 @@ public class GpxReader implements GpxConstants {
                                 parseCoord(atts.getValue("minlon")),
                                 parseCoord(atts.getValue("maxlat")),
                                 parseCoord(atts.getValue("maxlon"))));
+                    break;
+                default: // Do nothing
                 }
                 break;
-            case author:
+            case AUTHOR:
                 switch (localName) {
                 case "link":
                     states.push(currentState);
-                    currentState = State.link;
+                    currentState = State.LINK;
                     currentLink = new GpxLink(atts.getValue("href"));
                     break;
                 case "email":
                     data.put(META_AUTHOR_EMAIL, atts.getValue("id") + '@' + atts.getValue("domain"));
+                    break;
+                default: // Do nothing
                 }
                 break;
-            case trk:
+            case TRK:
                 switch (localName) {
                 case "trkseg":
                     states.push(currentState);
-                    currentState = State.trkseg;
+                    currentState = State.TRKSEG;
                     currentTrackSeg = new ArrayList<>();
                     break;
                 case "link":
                     states.push(currentState);
-                    currentState = State.link;
+                    currentState = State.LINK;
                     currentLink = new GpxLink(atts.getValue("href"));
                     break;
                 case "extensions":
                     states.push(currentState);
-                    currentState = State.ext;
+                    currentState = State.EXT;
                     currentExtensions = new Extensions();
+                    break;
+                default: // Do nothing
                 }
                 break;
-            case trkseg:
+            case TRKSEG:
                 if ("trkpt".equals(localName)) {
                     states.push(currentState);
-                    currentState = State.wpt;
+                    currentState = State.WPT;
                     currentWayPoint = new WayPoint(parseLatLon(atts));
                 }
                 break;
-            case wpt:
+            case WPT:
                 switch (localName) {
                 case "link":
                     states.push(currentState);
-                    currentState = State.link;
+                    currentState = State.LINK;
                     currentLink = new GpxLink(atts.getValue("href"));
                     break;
                 case "extensions":
                     states.push(currentState);
-                    currentState = State.ext;
+                    currentState = State.EXT;
                     currentExtensions = new Extensions();
                     break;
+                default: // Do nothing
                 }
                 break;
-            case rte:
+            case RTE:
                 switch (localName) {
                 case "link":
                     states.push(currentState);
-                    currentState = State.link;
+                    currentState = State.LINK;
                     currentLink = new GpxLink(atts.getValue("href"));
                     break;
                 case "rtept":
                     states.push(currentState);
-                    currentState = State.wpt;
+                    currentState = State.WPT;
                     currentWayPoint = new WayPoint(parseLatLon(atts));
                     break;
                 case "extensions":
                     states.push(currentState);
-                    currentState = State.ext;
+                    currentState = State.EXT;
                     currentExtensions = new Extensions();
                     break;
+                default: // Do nothing
                 }
                 break;
+            default: // Do nothing
             }
             accumulator.setLength(0);
         }
@@ -275,10 +286,10 @@ public class GpxReader implements GpxConstants {
 
         private Map<String, Object> getAttr() {
             switch (currentState) {
-            case rte: return currentRoute.attr;
-            case metadata: return data.attr;
-            case wpt: return currentWayPoint.attr;
-            case trk: return currentTrackAttr;
+            case RTE: return currentRoute.attr;
+            case METADATA: return data.attr;
+            case WPT: return currentWayPoint.attr;
+            case TRK: return currentTrackAttr;
             default: return null;
             }
         }
@@ -288,8 +299,8 @@ public class GpxReader implements GpxConstants {
         public void endElement(String namespaceURI, String localName, String qName) {
             elements.pop();
             switch (currentState) {
-            case gpx:       // GPX 1.0
-            case metadata:  // GPX 1.1
+            case GPX:       // GPX 1.0
+            case METADATA:  // GPX 1.1
                 switch (localName) {
                 case "name":
                     data.put(META_NAME, accumulator.toString());
@@ -320,8 +331,8 @@ public class GpxReader implements GpxConstants {
                     break;
                 case "metadata":
                 case "gpx":
-                    if ((currentState == State.metadata && "metadata".equals(localName)) ||
-                        (currentState == State.gpx && "gpx".equals(localName))) {
+                    if ((currentState == State.METADATA && "metadata".equals(localName)) ||
+                        (currentState == State.GPX && "gpx".equals(localName))) {
                         convertUrlToLink(data.attr);
                         if (currentExtensions != null && !currentExtensions.isEmpty()) {
                             data.put(META_EXTENSIONS, currentExtensions);
@@ -336,7 +347,7 @@ public class GpxReader implements GpxConstants {
                     //TODO: parse extensions
                 }
                 break;
-            case author:
+            case AUTHOR:
                 switch (localName) {
                 case "author":
                     currentState = states.pop();
@@ -350,9 +361,10 @@ public class GpxReader implements GpxConstants {
                 case "link":
                     data.put(META_AUTHOR_LINK, currentLink);
                     break;
+                default: // Do nothing
                 }
                 break;
-            case copyright:
+            case COPYRIGHT:
                 switch (localName) {
                 case "copyright":
                     currentState = states.pop();
@@ -363,9 +375,10 @@ public class GpxReader implements GpxConstants {
                 case "license":
                     data.put(META_COPYRIGHT_LICENSE, accumulator.toString());
                     break;
+                default: // Do nothing
                 }
                 break;
-            case link:
+            case LINK:
                 switch (localName) {
                 case "text":
                     currentLink.text = accumulator.toString();
@@ -379,10 +392,11 @@ public class GpxReader implements GpxConstants {
                     }
                     currentState = states.pop();
                     break;
+                default: // Do nothing
                 }
-                if (currentState == State.author) {
+                if (currentState == State.AUTHOR) {
                     data.put(META_AUTHOR_LINK, currentLink);
-                } else if (currentState != State.link) {
+                } else if (currentState != State.LINK) {
                     Map<String, Object> attr = getAttr();
                     if (!attr.containsKey(META_LINKS)) {
                         attr.put(META_LINKS, new LinkedList<GpxLink>());
@@ -390,7 +404,7 @@ public class GpxReader implements GpxConstants {
                     ((Collection<GpxLink>) attr.get(META_LINKS)).add(currentLink);
                 }
                 break;
-            case wpt:
+            case WPT:
                 switch (localName) {
                 case "ele":
                 case "magvar":
@@ -436,15 +450,16 @@ public class GpxReader implements GpxConstants {
                     }
                     data.waypoints.add(currentWayPoint);
                     break;
+                default: // Do nothing
                 }
                 break;
-            case trkseg:
+            case TRKSEG:
                 if ("trkseg".equals(localName)) {
                     currentState = states.pop();
                     currentTrack.add(currentTrackSeg);
                 }
                 break;
-            case trk:
+            case TRK:
                 switch (localName) {
                 case "trk":
                     currentState = states.pop();
@@ -461,9 +476,10 @@ public class GpxReader implements GpxConstants {
                 case "urlname":
                     currentTrackAttr.put(localName, accumulator.toString());
                     break;
+                default: // Do nothing
                 }
                 break;
-            case ext:
+            case EXT:
                 if ("extensions".equals(localName)) {
                     currentState = states.pop();
                 } else if (JOSM_EXTENSIONS_NAMESPACE_URI.equals(namespaceURI)) {
@@ -481,6 +497,7 @@ public class GpxReader implements GpxConstants {
                     convertUrlToLink(currentRoute.attr);
                     data.routes.add(currentRoute);
                     break;
+                default: // Do nothing
                 }
             }
         }
@@ -515,7 +532,7 @@ public class GpxReader implements GpxConstants {
             }
         }
 
-        public void tryToFinish() throws SAXException {
+        void tryToFinish() throws SAXException {
             List<String> remainingElements = new ArrayList<>(elements);
             for (int i = remainingElements.size() - 1; i >= 0; i--) {
                 endElement(null, remainingElements.get(i), remainingElements.get(i));

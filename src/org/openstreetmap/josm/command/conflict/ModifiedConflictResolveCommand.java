@@ -16,8 +16,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Represents the resolution of a conflict between the modified flag of two {@link OsmPrimitive}s.
- *
- *
+ * @since 2624
  */
 public class ModifiedConflictResolveCommand extends ConflictResolveCommand {
 
@@ -34,11 +33,12 @@ public class ModifiedConflictResolveCommand extends ConflictResolveCommand {
 
     @Override
     public String getDescriptionText() {
-        String msg = "";
+        String msg;
         switch(OsmPrimitiveType.from(conflict.getMy())) {
         case NODE: msg = marktr("Set the ''modified'' flag for node {0}"); break;
         case WAY: msg = marktr("Set the ''modified'' flag for way {0}"); break;
         case RELATION: msg = marktr("Set the ''modified'' flag for relation {0}"); break;
+        default: throw new AssertionError();
         }
         return tr(msg, conflict.getMy().getId());
     }

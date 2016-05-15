@@ -54,14 +54,26 @@ public class WMSImagery {
     private URL serviceUrl;
     private List<String> formats;
 
+    /**
+     * Returns the list of layers.
+     * @return the list of layers
+     */
     public List<LayerDetails> getLayers() {
         return layers;
     }
 
+    /**
+     * Returns the service URL.
+     * @return the service URL
+     */
     public URL getServiceUrl() {
         return serviceUrl;
     }
 
+    /**
+     * Returns the list of supported formats.
+     * @return the list of supported formats
+     */
     public List<String> getFormats() {
         return Collections.unmodifiableList(formats);
     }
@@ -310,6 +322,7 @@ public class WMSImagery {
                 case Node.TEXT_NODE:
                     content.append(node.getNodeValue());
                     break;
+                default: // Do nothing
             }
         }
         return content.toString().trim();
@@ -370,6 +383,5 @@ public class WMSImagery {
             else
                 return this.name;
         }
-
     }
 }

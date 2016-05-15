@@ -134,7 +134,6 @@ public final class ShowStatusReportAction extends JosmAction {
                 text.append("VM arguments: ").append(vmArguments.toString().replace("\\\\", "\\")).append('\n');
             }
         } catch (SecurityException e) {
-            // Ignore exception
             if (Main.isTraceEnabled()) {
                 Main.trace(e.getMessage());
             }
@@ -164,7 +163,7 @@ public final class ShowStatusReportAction extends JosmAction {
         return text.toString();
     }
 
-    protected static Collection<String> getCustomUrls(SourceEditor.SourcePrefHelper helper) {
+    private static Collection<String> getCustomUrls(SourceEditor.SourcePrefHelper helper) {
         Set<String> set = new TreeSet<>();
         for (SourceEntry entry : helper.get()) {
             set.add(entry.url);
@@ -220,7 +219,7 @@ public final class ShowStatusReportAction extends JosmAction {
         return target == null ? str : str.replace(target, replacement);
     }
 
-    protected static <T> void appendCollection(StringBuilder text, String label, Collection<T> col) {
+    private static <T> void appendCollection(StringBuilder text, String label, Collection<T> col) {
         if (!col.isEmpty()) {
             text.append(label+":\n");
             for (T o : col) {
@@ -266,6 +265,7 @@ public final class ShowStatusReportAction extends JosmAction {
         switch (ed.showDialog().getValue()) {
             case 1: ta.copyToClippboard(); break;
             case 2: BugReportSender.reportBug(reportHeader); break;
+            default: // Do nothing
         }
     }
 }
