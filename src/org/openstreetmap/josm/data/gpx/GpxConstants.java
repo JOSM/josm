@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.gpx;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
@@ -88,18 +89,18 @@ public interface GpxConstants {
     /**
      * Ordered list of all possible waypoint keys.
      */
-    List<String> WPT_KEYS = Arrays.asList(PT_ELE, PT_TIME, PT_MAGVAR, PT_GEOIDHEIGHT,
+    List<String> WPT_KEYS = Collections.unmodifiableList(Arrays.asList(PT_ELE, PT_TIME, PT_MAGVAR, PT_GEOIDHEIGHT,
             GPX_NAME, GPX_CMT, GPX_DESC, GPX_SRC, META_LINKS, PT_SYM, PT_TYPE,
-            PT_FIX, PT_SAT, PT_HDOP, PT_VDOP, PT_PDOP, PT_AGEOFDGPSDATA, PT_DGPSID, META_EXTENSIONS);
+            PT_FIX, PT_SAT, PT_HDOP, PT_VDOP, PT_PDOP, PT_AGEOFDGPSDATA, PT_DGPSID, META_EXTENSIONS));
 
     /**
      * Ordered list of all possible route and track keys.
      */
-    List<String> RTE_TRK_KEYS = Arrays.asList(
-            GPX_NAME, GPX_CMT, GPX_DESC, GPX_SRC, META_LINKS, "number", PT_TYPE, META_EXTENSIONS);
+    List<String> RTE_TRK_KEYS = Collections.unmodifiableList(Arrays.asList(
+            GPX_NAME, GPX_CMT, GPX_DESC, GPX_SRC, META_LINKS, "number", PT_TYPE, META_EXTENSIONS));
 
     /**
      * Possible fix values.
      */
-    Collection<String> FIX_VALUES = Arrays.asList("none", "2d", "3d", "dgps", "pps");
+    Collection<String> FIX_VALUES = Collections.unmodifiableList(Arrays.asList("none", "2d", "3d", "dgps", "pps"));
 }
