@@ -9,6 +9,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -169,10 +170,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         zoomSlider.setFocusable(false);
         add(zoomSlider);
         int size = 18;
-        try {
-            ImageIcon icon = new ImageIcon(JMapViewer.class.getResource("images/plus.png"));
+        URL url = JMapViewer.class.getResource("images/plus.png");
+        if (url != null) {
+            ImageIcon icon = new ImageIcon(url);
             zoomInButton = new JButton(icon);
-        } catch (Exception e) {
+        } else {
             zoomInButton = new JButton("+");
             zoomInButton.setFont(new Font("sansserif", Font.BOLD, 9));
             zoomInButton.setMargin(new Insets(0, 0, 0, 0));
@@ -187,10 +189,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         });
         zoomInButton.setFocusable(false);
         add(zoomInButton);
-        try {
-            ImageIcon icon = new ImageIcon(JMapViewer.class.getResource("images/minus.png"));
+        url = JMapViewer.class.getResource("images/minus.png");
+        if (url != null) {
+            ImageIcon icon = new ImageIcon(url);
             zoomOutButton = new JButton(icon);
-        } catch (Exception e) {
+        } else {
             zoomOutButton = new JButton("-");
             zoomOutButton.setFont(new Font("sansserif", Font.BOLD, 9));
             zoomOutButton.setMargin(new Insets(0, 0, 0, 0));

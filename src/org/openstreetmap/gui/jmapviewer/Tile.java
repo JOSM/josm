@@ -81,7 +81,7 @@ public class Tile {
     private static BufferedImage loadImage(String path) {
         try {
             return ImageIO.read(JMapViewer.class.getResourceAsStream(path));
-        } catch (Exception ex) {
+        } catch (IOException | IllegalArgumentException ex) {
             ex.printStackTrace();
             return null;
         }

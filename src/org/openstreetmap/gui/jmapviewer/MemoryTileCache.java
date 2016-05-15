@@ -77,7 +77,7 @@ public class MemoryTileCache implements TileCache {
             while (lruTiles.getElementCount() > cacheSize) {
                 removeEntry(lruTiles.getLastElement());
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             log.warning(e.getMessage());
         }
     }
