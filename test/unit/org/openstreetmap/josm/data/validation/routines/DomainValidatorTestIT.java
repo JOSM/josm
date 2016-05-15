@@ -22,15 +22,17 @@ import static org.junit.Assert.fail;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.IDN;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -79,7 +81,7 @@ public class DomainValidatorTestIT {
         // if the txt file contains entries not found in the html file, try again in a day or two
         download(htmlFile, "http://www.iana.org/domains/root/db", timestamp);
 
-        BufferedReader br = new BufferedReader(new FileReader(txtFile));
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(txtFile), StandardCharsets.UTF_8));
         String line;
         final String header;
         line = br.readLine(); // header
@@ -183,7 +185,7 @@ public class DomainValidatorTestIT {
 //        <td>Ålands landskapsregering</td>
         final Pattern comment = Pattern.compile("\\s+<td>([^<]+)</td>");
 
-        final BufferedReader br = new BufferedReader(new FileReader(f));
+        final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8));
         String line;
         while ((line = br.readLine()) != null) {
             Matcher m = domain.matcher(line);
@@ -287,7 +289,7 @@ public class DomainValidatorTestIT {
         try {
             File rootCheck = new File(System.getProperty("java.io.tmpdir"), "tld_" + domain + ".html");
             download(rootCheck, tldurl, 0L);
-            in = new BufferedReader(new FileReader(rootCheck));
+            in = new BufferedReader(new InputStreamReader(new FileInputStream(rootCheck), StandardCharsets.UTF_8));
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 if (inputLine.contains("This domain is not present in the root zone at this time.")) {

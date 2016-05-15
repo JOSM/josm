@@ -221,9 +221,9 @@ public class ProjectionRefTest {
         try {
             Process process = pb.start();
             OutputStream stdin = process.getOutputStream();
-            final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
+            final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin, StandardCharsets.UTF_8));
             InputStream stdout = process.getInputStream();
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(stdout, StandardCharsets.UTF_8));
             String input = String.format("%.9f %.9f\n", ll.lon(), ll.lat());
             writer.write(input);
             writer.close();

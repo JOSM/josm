@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.junit.BeforeClass;
@@ -45,7 +46,7 @@ public class JCSCachedTileLoaderJobTest {
 
         @Override
         protected CacheEntry createCacheEntry(byte[] content) {
-            return new CacheEntry("dummy".getBytes());
+            return new CacheEntry("dummy".getBytes(StandardCharsets.UTF_8));
         }
     }
 
