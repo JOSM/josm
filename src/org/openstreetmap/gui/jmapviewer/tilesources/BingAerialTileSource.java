@@ -36,6 +36,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/**
+ * Tile source for the Bing Maps REST Imagery API.
+ * @see <a href="https://msdn.microsoft.com/en-us/library/ff701724.aspx">MSDN</a>
+ */
 public class BingAerialTileSource extends TMSTileSource {
 
     private static final String API_KEY = "Arzdiw4nlOJzRwOz__qailc8NiR31Tt51dN2D7cm57NrnceZnCpgOkmJhNpGoppU";
@@ -65,7 +69,7 @@ public class BingAerialTileSource extends TMSTileSource {
     }
 
     protected static class Attribution {
-        private String attribution;
+        private String attributionText;
         private int minZoom;
         private int maxZoom;
         private Coordinate min;
@@ -101,8 +105,7 @@ public class BingAerialTileSource extends TMSTileSource {
 
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xpath = xPathFactory.newXPath();
-            imageUrlTemplate = xpath.compile("//ImageryMetadata/ImageUrl/text()").evaluate(document);
-            imageUrlTemplate = imageUrlTemplate.replace(
+            imageUrlTemplate = xpath.compile("//ImageryMetadata/ImageUrl/text()").evaluate(document).replace(
                     "http://ecn.{subdomain}.tiles.virtualearth.net/",
                     "https://ecn.{subdomain}.tiles.virtualearth.net/");
             imageUrlTemplate = culturePattern.matcher(imageUrlTemplate).replaceAll(Locale.getDefault().toString());
@@ -128,7 +131,7 @@ public class BingAerialTileSource extends TMSTileSource {
 
             NodeList imageryProviderNodes = (NodeList) xpath.compile("//ImageryMetadata/ImageryProvider")
                     .evaluate(document, XPathConstants.NODESET);
-            List<Attribution> attributions = new ArrayList<>(imageryProviderNodes.getLength());
+            List<Attribution> attributionsList = new ArrayList<>(imageryProviderNodes.getLength());
             for (int i = 0; i < imageryProviderNodes.getLength(); i++) {
                 Node providerNode = imageryProviderNodes.item(i);
 
@@ -138,7 +141,7 @@ public class BingAerialTileSource extends TMSTileSource {
                 for (int j = 0; j < coverageAreaNodes.getLength(); j++) {
                     Node areaNode = coverageAreaNodes.item(j);
                     Attribution attr = new Attribution();
-                    attr.attribution = attribution;
+                    attr.attributionText = attribution;
 
                     attr.maxZoom = Integer.parseInt(zoomMaxXpath.evaluate(areaNode));
                     attr.minZoom = Integer.parseInt(zoomMinXpath.evaluate(areaNode));
@@ -150,11 +153,11 @@ public class BingAerialTileSource extends TMSTileSource {
                     attr.min = new Coordinate(southLat, westLon);
                     attr.max = new Coordinate(northLat, eastLon);
 
-                    attributions.add(attr);
+                    attributionsList.add(attr);
                 }
             }
 
-            return attributions;
+            return attributionsList;
         } catch (SAXException e) {
             System.err.println("Could not parse Bing aerials attribution metadata.");
             e.printStackTrace();
@@ -181,10 +184,9 @@ public class BingAerialTileSource extends TMSTileSource {
 
     @Override
     public String getAttributionLinkURL() {
-        //return "http://bing.com/maps"
-        // FIXME: I've set attributionLinkURL temporarily to ToU URL to comply with bing ToU
+        // Terms of Use URL to comply with Bing Terms of Use
         // (the requirement is that we have such a link at the bottom of the window)
-        return "http://go.microsoft.com/?linkid=9710837";
+        return "https://www.microsoft.com/maps/assets/docs/terms.aspx";
     }
 
     @Override
@@ -283,7 +285,7 @@ public class BingAerialTileSource extends TMSTileSource {
                 if (zoom <= attr.maxZoom && zoom >= attr.minZoom) {
                     if (topLeft.getLon() < attr.max.getLon() && botRight.getLon() > attr.min.getLon()
                             && topLeft.getLat() > attr.min.getLat() && botRight.getLat() < attr.max.getLat()) {
-                        a.append(attr.attribution);
+                        a.append(attr.attributionText);
                         a.append(' ');
                     }
                 }
