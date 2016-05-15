@@ -12,8 +12,8 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 class MapViewMock extends MapView {
-    private final OsmDataLayer layer;
-    private final DataSet currentDataSet;
+    private final transient OsmDataLayer layer;
+    private final transient DataSet currentDataSet;
 
     MapViewMock(DataSet dataSet, OsmDataLayer layer) {
         super(null, null);

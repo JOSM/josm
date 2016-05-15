@@ -42,7 +42,7 @@ public class DownloadWmsAlongTrackActionTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTmsLayer() throws Exception {
+    public void testTMSLayer() throws Exception {
         // Create new TMS layer and clear cache
         TMSLayer layer = new TMSLayer(new ImageryInfo("OSM TMS", "https://a.tile.openstreetmap.org/{zoom}/{x}/{y}.png", "tms", null, null));
         try {

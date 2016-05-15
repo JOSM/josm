@@ -25,6 +25,8 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.xml.sax.SAXException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests of {@link DefaultNameFormatter} class.
  */
@@ -45,6 +47,7 @@ public class DefaultNameFormatterTest {
      * @throws SAXException if any XML error occurs
      */
     @Test
+    @SuppressFBWarnings(value = "ITA_INEFFICIENT_TO_ARRAY")
     public void testTicket9632() throws IllegalDataException, IOException, SAXException {
         String source = "http://josm.openstreetmap.de/josmfile?page=Presets/BicycleJunction&amp;preset";
         TaggingPresets.addTaggingPresets(TaggingPresetReader.readAll(source, true));

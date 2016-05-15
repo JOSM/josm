@@ -36,12 +36,12 @@ public class EmailValidatorTest {
      * The key used to retrieve the set of validation
      * rules from the xml file.
      */
-    protected static String FORM_KEY = "emailForm";
+    protected static final String FORM_KEY = "emailForm";
 
     /**
      * The key used to retrieve the validator action.
      */
-    protected static String ACTION = "email";
+    protected static final String ACTION = "email";
 
     private EmailValidator validator;
 

@@ -64,10 +64,6 @@ public class MultipolygonTestTest {
         MULTIPOLYGON_TEST.initialize();
         MULTIPOLYGON_TEST.startTest(null);
 
-        List<Node> nodes = new ArrayList<>();
-        nodes.add(new Node(new LatLon(0, 1)));
-        nodes.add(new Node(new LatLon(0, 2)));
-
         // Erroneous tag
         Way w = createUnclosedWay("amenity=parking");
         MULTIPOLYGON_TEST.visit(w);

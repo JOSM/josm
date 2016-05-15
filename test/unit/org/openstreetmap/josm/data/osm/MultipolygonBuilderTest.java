@@ -13,6 +13,8 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.OsmReader;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests of the {@code MultipolygonBuilder} class.
  */
@@ -22,6 +24,7 @@ public class MultipolygonBuilderTest {
      * Global timeout applied to all test methods.
      */
     @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public Timeout globalTimeout = Timeout.seconds(15);
 
     /**

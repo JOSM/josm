@@ -19,6 +19,8 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Integration tests of {@link PluginHandler} class.
  */
@@ -28,6 +30,7 @@ public class PluginHandlerTestIT {
      * Global timeout applied to all test methods.
      */
     @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public Timeout globalTimeout = Timeout.seconds(10*60);
 
     /**

@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests for class {@link LatLon}.
  */
@@ -25,6 +27,7 @@ public class LatLonTest {
     /**
      * Lat/Lon sample values for unit tests
      */
+    @SuppressFBWarnings(value = "MS_PKGPROTECT")
     public static final double[] SAMPLE_VALUES = new double[]{
             -180.0, -179.9, -179.6, -179.5, -179.4, -179.1, -179.0, -100.0, -99.9, -10.0, -9.9, -1.0, -0.1,
             180.0,  179.9,  179.6,  179.5,  179.4,  179.1,  179.0,  100.0,  99.9,  10.0,  9.9,  1.0,  0.1,

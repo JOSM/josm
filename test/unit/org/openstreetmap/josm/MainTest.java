@@ -16,6 +16,8 @@ import org.openstreetmap.josm.Main.DownloadParamType;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests of {@link Main} class.
  */
@@ -56,6 +58,7 @@ public class MainTest {
      * Unit tests on log messages.
      */
     @Test
+    @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     public void testLogs() {
 
         assertNull(Main.getErrorMessage(null));

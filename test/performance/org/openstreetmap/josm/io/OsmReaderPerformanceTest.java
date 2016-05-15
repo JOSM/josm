@@ -19,6 +19,8 @@ import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.DataSet;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * This test tests how fast we are at reading an OSM file.
  * <p>
@@ -34,6 +36,7 @@ public class OsmReaderPerformanceTest {
      * Global timeout applied to all test methods.
      */
     @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public Timeout globalTimeout = Timeout.seconds(15*60);
 
     /**

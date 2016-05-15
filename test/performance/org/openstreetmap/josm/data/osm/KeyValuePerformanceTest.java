@@ -20,6 +20,8 @@ import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.OsmDataGenerator.KeyValueDataGenerator;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * This test measures the performance of {@link OsmPrimitive#get(String)} and related.
  * @author Michael Zangl
@@ -37,6 +39,7 @@ public class KeyValuePerformanceTest {
      * Global timeout applied to all test methods.
      */
     @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public Timeout globalTimeout = Timeout.seconds(15*60);
 
     /**
@@ -51,7 +54,8 @@ public class KeyValuePerformanceTest {
      * See if there is a big difference between Strings that are interned and those that are not.
      */
     @Test
-    public void meassureStringEqualsIntern() {
+    @SuppressFBWarnings(value = "DM_STRING_CTOR", justification = "test Strings that are interned and those that are not")
+    public void measureStringEqualsIntern() {
         String str1Interned = "string1";
         String str1InternedB = "string1";
         String str1 = new String(str1Interned);
@@ -195,6 +199,7 @@ public class KeyValuePerformanceTest {
      * Measure the speed of {@link OsmPrimitive#getKeys()}.get(key)
      */
     @Test
+    @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public void testKeyValueGetKeysGet() {
         for (double tagNodeRatio : TAG_NODE_RATIOS) {
             KeyValueDataGenerator generator = OsmDataGenerator.getKeyValue(tagNodeRatio);

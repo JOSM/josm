@@ -160,6 +160,7 @@ public class FilterTest {
                 filters.addAll(Arrays.asList(new Filter[] {f1, f2}));
                 break;
             }
+            default: throw new AssertionError();
             }
 
             FilterMatcher filterMatcher = new FilterMatcher();

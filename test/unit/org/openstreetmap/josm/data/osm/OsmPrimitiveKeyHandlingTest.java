@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Some unit test cases for basic tag management on {@link OsmPrimitive}. Uses
  * {@link Node} for the tests, {@link OsmPrimitive} is abstract.
@@ -71,6 +73,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * Removes tags from a node with two tags and test the state of the node.
      */
     @Test
+    @SuppressFBWarnings(value = "DM_STRING_CTOR", justification = "test that equals is used and not ==")
     public void remove() {
         Node n = new Node();
         n.put("key.1", "value.1");

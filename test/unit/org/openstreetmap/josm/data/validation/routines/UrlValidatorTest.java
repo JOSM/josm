@@ -30,8 +30,8 @@ import org.junit.Test;
  */
 public class UrlValidatorTest {
 
-   private final boolean printStatus = false;
-   private final boolean printIndex = false; //print index that indicates current scheme,host,port,path, query test were using.
+   private static final boolean printStatus = false;
+   private static final boolean printIndex = false; //print index that indicates current scheme,host,port,path, query test were using.
 
    /**
     * Setup

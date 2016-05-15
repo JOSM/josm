@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 import org.junit.BeforeClass;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Performance test of {@code StyledMapRenderer}.
  */
@@ -26,9 +28,12 @@ public class StyledMapRendererPerformanceTest extends AbstractMapRendererPerform
         return new StyledMapRenderer(g, nc, false);
     }
 
-    /** run this manually to verify that the rendering is set up properly */
+    /**
+     * run this manually to verify that the rendering is set up properly
+     * @throws IOException if any I/O error occurs
+     */
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD")
     private void dumpRenderedImage() throws IOException {
-        File outputfile = new File("test-neubrandenburg.png");
-        ImageIO.write(img, "png", outputfile);
+        ImageIO.write(img, "png", new File("test-neubrandenburg.png"));
     }
 }

@@ -23,6 +23,8 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmReader;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Abstract superclass of {@code StyledMapRendererPerformanceTest} and {@code WireframeMapRendererPerformanceTest}.
  */
@@ -31,8 +33,11 @@ public abstract class AbstractMapRendererPerformanceTestParent {
     private static final int IMG_WIDTH = 1400;
     private static final int IMG_HEIGHT = 1050;
 
+    @SuppressFBWarnings(value = "MS_PKGPROTECT")
     protected static Graphics2D g;
+    @SuppressFBWarnings(value = "MS_PKGPROTECT")
     protected static BufferedImage img;
+    @SuppressFBWarnings(value = "MS_PKGPROTECT")
     protected static NavigatableComponent nc;
     private static DataSet dsRestriction;
     private static DataSet dsMultipolygon;
@@ -42,6 +47,7 @@ public abstract class AbstractMapRendererPerformanceTestParent {
      * Global timeout applied to all test methods.
      */
     @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public Timeout globalTimeout = Timeout.seconds(15*60);
 
     protected static void load() throws Exception {
@@ -120,9 +126,12 @@ public abstract class AbstractMapRendererPerformanceTestParent {
         test(200, dsCity, new Bounds(53.56, 13.295, 53.57, 13.30));
     }
 
-    /** run this manually to verify that the rendering is set up properly */
+    /**
+     * run this manually to verify that the rendering is set up properly
+     * @throws IOException if any I/O error occurs
+     */
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD")
     private void dumpRenderedImage() throws IOException {
-        File outputfile = new File("test-neubrandenburg.png");
-        ImageIO.write(img, "png", outputfile);
+        ImageIO.write(img, "png", new File("test-neubrandenburg.png"));
     }
 }

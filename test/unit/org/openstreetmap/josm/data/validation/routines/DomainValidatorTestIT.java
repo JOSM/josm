@@ -47,6 +47,8 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Integration tests for the DomainValidator.
  *
@@ -81,78 +83,77 @@ public class DomainValidatorTestIT {
         // if the txt file contains entries not found in the html file, try again in a day or two
         download(htmlFile, "http://www.iana.org/domains/root/db", timestamp);
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(txtFile), StandardCharsets.UTF_8));
-        String line;
-        final String header;
-        line = br.readLine(); // header
-        if (line != null && line.startsWith("# Version ")) {
-            header = line.substring(2);
-        } else {
-            br.close();
-            throw new IOException("File does not have expected Version header");
-        }
-        final boolean generateUnicodeTlds = false; // Change this to generate Unicode TLDs as well
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(txtFile), StandardCharsets.UTF_8))) {
+            String line;
+            final String header;
+            line = br.readLine(); // header
+            if (line != null && line.startsWith("# Version ")) {
+                header = line.substring(2);
+            } else {
+                throw new IOException("File does not have expected Version header");
+            }
+            final boolean generateUnicodeTlds = false; // Change this to generate Unicode TLDs as well
 
-        // Parse html page to get entries
-        Map<String, String[]> htmlInfo = getHtmlInfo(htmlFile);
-        Map<String, String> missingTLD = new TreeMap<>(); // stores entry and comments as String[]
-        Map<String, String> missingCC = new TreeMap<>();
-        while ((line = br.readLine()) != null) {
-            if (!line.startsWith("#")) {
-                final String unicodeTld; // only different from asciiTld if that was punycode
-                final String asciiTld = line.toLowerCase(Locale.ENGLISH);
-                if (line.startsWith("XN--")) {
-                    unicodeTld = IDN.toUnicode(line);
-                } else {
-                    unicodeTld = asciiTld;
-                }
-                if (!dv.isValidTld(asciiTld)) {
-                    String[] info = htmlInfo.get(asciiTld);
-                    if (info != null) {
-                        String type = info[0];
-                        String comment = info[1];
-                        if ("country-code".equals(type)) { // Which list to use?
-                            missingCC.put(asciiTld, unicodeTld + " " + comment);
-                            if (generateUnicodeTlds) {
-                                missingCC.put(unicodeTld, asciiTld + " " + comment);
+            // Parse html page to get entries
+            Map<String, String[]> htmlInfo = getHtmlInfo(htmlFile);
+            Map<String, String> missingTLD = new TreeMap<>(); // stores entry and comments as String[]
+            Map<String, String> missingCC = new TreeMap<>();
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith("#")) {
+                    final String unicodeTld; // only different from asciiTld if that was punycode
+                    final String asciiTld = line.toLowerCase(Locale.ENGLISH);
+                    if (line.startsWith("XN--")) {
+                        unicodeTld = IDN.toUnicode(line);
+                    } else {
+                        unicodeTld = asciiTld;
+                    }
+                    if (!dv.isValidTld(asciiTld)) {
+                        String[] info = htmlInfo.get(asciiTld);
+                        if (info != null) {
+                            String type = info[0];
+                            String comment = info[1];
+                            if ("country-code".equals(type)) { // Which list to use?
+                                missingCC.put(asciiTld, unicodeTld + " " + comment);
+                                if (generateUnicodeTlds) {
+                                    missingCC.put(unicodeTld, asciiTld + " " + comment);
+                                }
+                            } else {
+                                missingTLD.put(asciiTld, unicodeTld + " " + comment);
+                                if (generateUnicodeTlds) {
+                                    missingTLD.put(unicodeTld, asciiTld + " " + comment);
+                                }
                             }
                         } else {
-                            missingTLD.put(asciiTld, unicodeTld + " " + comment);
-                            if (generateUnicodeTlds) {
-                                missingTLD.put(unicodeTld, asciiTld + " " + comment);
-                            }
+                            System.err.println("Expected to find HTML info for "+ asciiTld);
                         }
+                    }
+                    ianaTlds.add(asciiTld);
+                    // Don't merge these conditions; generateUnicodeTlds is final so needs to be separate to avoid a warning
+                    if (generateUnicodeTlds) {
+                        if (!unicodeTld.equals(asciiTld)) {
+                            ianaTlds.add(unicodeTld);
+                        }
+                    }
+                }
+            }
+            // List html entries not in TLD text list
+            for (String key : (new TreeMap<>(htmlInfo)).keySet()) {
+                if (!ianaTlds.contains(key)) {
+                    if (isNotInRootZone(key)) {
+                        System.out.println("INFO: HTML entry not yet in root zone: "+key);
                     } else {
-                        System.err.println("Expected to find HTML info for "+ asciiTld);
-                    }
-                }
-                ianaTlds.add(asciiTld);
-                // Don't merge these conditions; generateUnicodeTlds is final so needs to be separate to avoid a warning
-                if (generateUnicodeTlds) {
-                    if (!unicodeTld.equals(asciiTld)) {
-                        ianaTlds.add(unicodeTld);
+                        System.err.println("WARN: Expected to find text entry for html: "+key);
                     }
                 }
             }
-        }
-        br.close();
-        // List html entries not in TLD text list
-        for (String key : (new TreeMap<>(htmlInfo)).keySet()) {
-            if (!ianaTlds.contains(key)) {
-                if (isNotInRootZone(key)) {
-                    System.out.println("INFO: HTML entry not yet in root zone: "+key);
-                } else {
-                    System.err.println("WARN: Expected to find text entry for html: "+key);
-                }
+            if (!missingTLD.isEmpty()) {
+                printMap(header, missingTLD, "TLD");
+                fail("missing TLD");
             }
-        }
-        if (!missingTLD.isEmpty()) {
-            printMap(header, missingTLD, "TLD");
-            fail("missing TLD");
-        }
-        if (!missingCC.isEmpty()) {
-            printMap(header, missingCC, "CC");
-            fail("missing CC");
+            if (!missingCC.isEmpty()) {
+                printMap(header, missingCC, "CC");
+                fail("missing CC");
+            }
         }
         // Check if internal tables contain any additional entries
         assertTrue(isInIanaList("INFRASTRUCTURE_TLDS", ianaTlds));
@@ -174,6 +175,7 @@ public class DomainValidatorTestIT {
         System.out.println("\nDone");
     }
 
+    @SuppressFBWarnings(value = "PERFORMANCE")
     private static Map<String, String[]> getHtmlInfo(final File f) throws IOException {
         final Map<String, String[]> info = new HashMap<>();
 
@@ -185,49 +187,49 @@ public class DomainValidatorTestIT {
 //        <td>Ålands landskapsregering</td>
         final Pattern comment = Pattern.compile("\\s+<td>([^<]+)</td>");
 
-        final BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8));
-        String line;
-        while ((line = br.readLine()) != null) {
-            Matcher m = domain.matcher(line);
-            if (m.lookingAt()) {
-                String dom = m.group(1);
-                String typ = "??";
-                String com = "??";
-                line = br.readLine();
-                while (line != null && line.matches("^\\s*$")) { // extra blank lines introduced
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                Matcher m = domain.matcher(line);
+                if (m.lookingAt()) {
+                    String dom = m.group(1);
+                    String typ = "??";
+                    String com = "??";
                     line = br.readLine();
-                }
-                Matcher t = type.matcher(line);
-                if (t.lookingAt()) {
-                    typ = t.group(1);
-                    line = br.readLine();
-                    if (line != null && line.matches("\\s+<!--.*")) {
-                        while (line != null && !line.matches(".*-->.*")) {
-                            line = br.readLine();
-                        }
+                    while (line != null && line.matches("^\\s*$")) { // extra blank lines introduced
                         line = br.readLine();
                     }
-                    // Should have comment; is it wrapped?
-                    while (line != null && !line.matches(".*</td>.*")) {
-                        line += " " +br.readLine();
-                    }
-                    Matcher n = comment.matcher(line);
-                    if (n.lookingAt()) {
-                        com = n.group(1);
-                    }
-                    // Don't save unused entries
-                    if (com.contains("Not assigned") || com.contains("Retired") || typ.equals("test")) {
-//                        System.out.println("Ignored: " + typ + " " + dom + " " +com);
+                    Matcher t = type.matcher(line);
+                    if (t.lookingAt()) {
+                        typ = t.group(1);
+                        line = br.readLine();
+                        if (line != null && line.matches("\\s+<!--.*")) {
+                            while (line != null && !line.matches(".*-->.*")) {
+                                line = br.readLine();
+                            }
+                            line = br.readLine();
+                        }
+                        // Should have comment; is it wrapped?
+                        while (line != null && !line.matches(".*</td>.*")) {
+                            line += " " +br.readLine();
+                        }
+                        Matcher n = comment.matcher(line);
+                        if (n.lookingAt()) {
+                            com = n.group(1);
+                        }
+                        // Don't save unused entries
+                        if (com.contains("Not assigned") || com.contains("Retired") || typ.equals("test")) {
+    //                        System.out.println("Ignored: " + typ + " " + dom + " " +com);
+                        } else {
+                            info.put(dom.toLowerCase(Locale.ENGLISH), new String[]{typ, com});
+    //                        System.out.println("Storing: " + typ + " " + dom + " " +com);
+                        }
                     } else {
-                        info.put(dom.toLowerCase(Locale.ENGLISH), new String[]{typ, com});
-//                        System.out.println("Storing: " + typ + " " + dom + " " +com);
+                        System.err.println("Unexpected type: " + line);
                     }
-                } else {
-                    System.err.println("Unexpected type: " + line);
                 }
             }
         }
-        br.close();
         return info;
     }
 
@@ -261,15 +263,13 @@ public class DomainValidatorTestIT {
         } else {
             System.out.println("Downloading " + tldurl);
             byte[] buff = new byte[1024];
-            InputStream is = hc.getInputStream();
-
-            FileOutputStream fos = new FileOutputStream(f);
-            int len;
-            while ((len = is.read(buff)) != -1) {
-                fos.write(buff, 0, len);
+            try (InputStream is = hc.getInputStream();
+                 FileOutputStream fos = new FileOutputStream(f)) {
+                int len;
+                while ((len = is.read(buff)) != -1) {
+                    fos.write(buff, 0, len);
+                }
             }
-            fos.close();
-            is.close();
             System.out.println("Done");
         }
         return f.lastModified();

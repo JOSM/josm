@@ -33,7 +33,7 @@ public class RelationTest {
     }
 
     @Test
-    public void testBBox() {
+    public void testBbox() {
         DataSet ds = new DataSet();
 
         Node n1 = new Node(new LatLon(10, 10));

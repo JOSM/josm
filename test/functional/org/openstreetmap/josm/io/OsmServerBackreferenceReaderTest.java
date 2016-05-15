@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -168,7 +169,7 @@ public class OsmServerBackreferenceReaderTest {
                 MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
 
         String p = System.getProperty("useCachedDataset");
-        if (p != null && Boolean.parseBoolean(p.trim().toLowerCase())) {
+        if (p != null && Boolean.parseBoolean(p.trim().toLowerCase(Locale.ENGLISH))) {
             logger.info(MessageFormat.format("property ''{0}'' set, using cached dataset", "useCachedDataset"));
             return;
         }
@@ -515,23 +516,18 @@ public class OsmServerBackreferenceReaderTest {
         reader.setReadFull(true);
         DataSet referers = reader.parseOsm(NullProgressMonitor.INSTANCE);
 
-        Set<Long> referringRelationsIds = new HashSet<>();
         r = lookupRelation(referers, 6);
         assertNotNull(r);
         assertFalse(r.isIncomplete());
-        referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 7);
         assertNotNull(r);
         assertFalse(r.isIncomplete());
-        referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 8);
         assertNotNull(r);
         assertFalse(r.isIncomplete());
-        referringRelationsIds.add(r.getId());
         r = lookupRelation(referers, 9);
         assertNotNull(r);
         assertFalse(r.isIncomplete());
-        referringRelationsIds.add(r.getId());
 
         // all relations are fully loaded
         //
