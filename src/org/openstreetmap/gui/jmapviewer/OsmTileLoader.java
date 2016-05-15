@@ -61,7 +61,7 @@ public class OsmTileLoader implements TileLoader {
                 }
                 tile.setLoaded(true);
                 listener.tileLoadingFinished(tile, true);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 tile.setError(e.getMessage());
                 listener.tileLoadingFinished(tile, false);
                 if (input == null) {

@@ -289,7 +289,7 @@ public class BingAerialTileSource extends TMSTileSource {
                 }
             }
             return a.toString();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
         return "Error loading Bing attribution data";
