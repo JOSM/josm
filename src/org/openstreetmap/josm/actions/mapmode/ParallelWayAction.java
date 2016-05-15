@@ -54,9 +54,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * 4. Visual cues could be better
  *
- * 5. Cursors (Half-done)
- *
- * 6. (long term) Parallelize and adjust offsets of existing ways
+ * 5. (long term) Parallelize and adjust offsets of existing ways
  *
  * == Code quality ==
  *
@@ -82,7 +80,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class ParallelWayAction extends MapMode implements ModifierListener, MapViewPaintable {
 
     private enum Mode {
-        dragging, normal
+        DRAGGING, NORMAL
     }
 
     //// Preferences and flags
@@ -144,7 +142,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     @Override
     public void enterMode() {
         // super.enterMode() updates the status line and cursor so we need our state to be set correctly
-        setMode(Mode.normal);
+        setMode(Mode.NORMAL);
         pWays = null;
         updateAllPreferences(); // All default values should've been set now
 
@@ -189,11 +187,11 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         // TODO: add more detailed feedback based on modifier state.
         // TODO: dynamic messages based on preferences. (Could be problematic translation wise)
         switch (mode) {
-        case normal:
+        case NORMAL:
             // CHECKSTYLE.OFF: LineLength
             return tr("Select ways as in Select mode. Drag selected ways or a single way to create a parallel copy (Alt toggles tag preservation)");
             // CHECKSTYLE.ON: LineLength
-        case dragging:
+        case DRAGGING:
             return tr("Hold Ctrl to toggle snapping");
         }
         return ""; // impossible ..
@@ -202,8 +200,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     // Separated due to "race condition" between default values
     private void updateAllPreferences() {
         updateModeLocalPreferences();
-        // @formatter:off
-        // @formatter:on
     }
 
     private void updateModeLocalPreferences() {
@@ -251,25 +247,19 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     private void updateCursor() {
         Cursor newCursor = null;
         switch (mode) {
-        case normal:
+        case NORMAL:
             if (matchesCurrentModifiers(setSelectedModifierCombo)) {
                 newCursor = ImageProvider.getCursor("normal", "parallel");
             } else if (matchesCurrentModifiers(addToSelectionModifierCombo)) {
-                newCursor = ImageProvider.getCursor("normal", "parallel"); // FIXME
+                newCursor = ImageProvider.getCursor("normal", "parallel_add");
             } else if (matchesCurrentModifiers(toggleSelectedModifierCombo)) {
-                newCursor = ImageProvider.getCursor("normal", "parallel"); // FIXME
-            } else if (Main.isDebugEnabled()) {
-                // TODO: set to a cursor indicating an error
-                Main.debug("TODO: set an error cursor");
+                newCursor = ImageProvider.getCursor("normal", "parallel_remove");
             }
             break;
-        case dragging:
-            if (snap) {
-                // TODO: snapping cursor?
-                newCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
-            } else {
-                newCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
-            }
+        case DRAGGING:
+            newCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+            break;
+        default: throw new AssertionError();
         }
         if (newCursor != null) {
             mv.setNewCursor(newCursor, this);
@@ -351,11 +341,11 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
                 clearSourceWays();
                 addSourceWay(nearestWay);
             } // else -> invalid modifier combination
-        } else if (mode == Mode.dragging) {
+        } else if (mode == Mode.DRAGGING) {
             clearSourceWays();
         }
 
-        setMode(Mode.normal);
+        setMode(Mode.NORMAL);
         resetMouseTrackingState();
         mv.repaint();
     }
@@ -391,7 +381,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         // Setting this after the check above means we tolerate clicks with some movement
         mouseHasBeenDragged = true;
 
-        if (mode == Mode.normal) {
+        if (mode == Mode.NORMAL) {
             // Should we ensure that the copyTags modifiers are still valid?
 
             // Important to use mouse position from the press, since the drag
@@ -400,7 +390,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
                 return;
             if (!initParallelWays(mousePressedPos, copyTags))
                 return;
-            setMode(Mode.dragging);
+            setMode(Mode.DRAGGING);
         }
 
         // Calculate distance to the reference line
@@ -464,7 +454,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds bbox) {
-        if (mode == Mode.dragging) {
+        if (mode == Mode.DRAGGING) {
             // sanity checks
             if (mv == null)
                 return;

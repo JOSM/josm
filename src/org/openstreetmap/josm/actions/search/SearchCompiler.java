@@ -610,11 +610,6 @@ public class SearchCompiler {
                 this.key = key;
                 this.value = value;
 
-            } else if (caseSensitive) {
-                this.key = key;
-                this.value = value;
-                this.keyPattern = null;
-                this.valuePattern = null;
             } else {
                 this.key = key;
                 this.value = value;
