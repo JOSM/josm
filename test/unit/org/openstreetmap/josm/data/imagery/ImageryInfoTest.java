@@ -66,7 +66,7 @@ public class ImageryInfoTest {
         expect.put("ETag", "bar");
         assertEquals(info.noTileHeaders, expect);
         final Set<String> eTag = info.noTileHeaders.get("ETag");
-        assertEquals(eTag, new HashSet<String>(Arrays.asList("foo", "bar")));
+        assertEquals(eTag, new HashSet<>(Arrays.asList("foo", "bar")));
     }
 
     /**

@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.CustomProjection;
-import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 
 /**
@@ -34,6 +33,9 @@ public class TemplatedWMSTileSourceTest {
         JOSMFixture.createUnitTestFixture().init();
     }
 
+    /**
+     * Test EPSG:3857
+     */
     @Test
     public void testEPSG3857() {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
@@ -55,6 +57,9 @@ public class TemplatedWMSTileSourceTest {
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
     }
 
+    /**
+     * Test EPSG:4326
+     */
     @Test
     public void testEPSG4326() {
         Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
@@ -67,6 +72,9 @@ public class TemplatedWMSTileSourceTest {
         verifyTileSquarness(source, 2270, 1323, 12);
     }
 
+    /**
+     * Test EPSG:4326 - wide bounds
+     */
     @Test
     public void testEPSG4326_widebounds() {
         Main.setProjection(new CustomProjection("+proj=lonlat +datum=WGS84 +axis=neu +bounds=-180,53,180,54"));
@@ -76,6 +84,9 @@ public class TemplatedWMSTileSourceTest {
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
     }
 
+    /**
+     * Test EPSG:4326 - narrow bounds
+     */
     @Test
     public void testEPSG4326_narrowbounds() {
         Main.setProjection(new CustomProjection("+proj=lonlat +datum=WGS84 +axis=neu +bounds=18,-90,20,90"));
@@ -85,6 +96,9 @@ public class TemplatedWMSTileSourceTest {
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
     }
 
+    /**
+     * Test EPSG:2180
+     */
     @Test
     public void testEPSG2180() {
         Main.setProjection(Projections.getProjectionByCode("EPSG:2180"));
@@ -98,6 +112,9 @@ public class TemplatedWMSTileSourceTest {
         verifyTileSquarness(source, 2270, 1323, 12);
     }
 
+    /**
+     * Test EPSG:3006 with bounds
+     */
     @Test
     public void testEPSG3006_withbounds() {
         Main.setProjection(
@@ -110,6 +127,9 @@ public class TemplatedWMSTileSourceTest {
         verifyLocation(source, new LatLon(60, 18.1));
     }
 
+    /**
+     * Test EPSG:3006 without bounds
+     */
     @Test
     public void testEPSG3006_withoutbounds() {
         Main.setProjection(
@@ -187,7 +207,6 @@ public class TemplatedWMSTileSourceTest {
     }
 
     private void verifyTileSquarness(TemplatedWMSTileSource source, int x, int y, int z) {
-        Projection proj = Main.getProjection();
         /**
          * t1 | t2
          * -------
@@ -216,7 +235,6 @@ public class TemplatedWMSTileSourceTest {
     }
 
     private TemplatedWMSTileSource getSource() {
-        TemplatedWMSTileSource source = new TemplatedWMSTileSource(testImageryWMS);
-        return source;
+        return new TemplatedWMSTileSource(testImageryWMS);
     }
 }
