@@ -119,7 +119,6 @@ public class BoxTextElement extends StyleElement {
 
     public static BoxTextElement create(Environment env, BoxProvider boxProvider, Rectangle box) {
         initDefaultParameters();
-        Cascade c = env.mc.getCascade(env.layer);
 
         TextLabel text = TextLabel.create(env, DEFAULT_TEXT_COLOR, false);
         if (text == null) return null;
@@ -128,21 +127,22 @@ public class BoxTextElement extends StyleElement {
         // repaint. This way, one BoxTextElement object can be used by multiple primitives (to save memory).
         if (text.labelCompositionStrategy.compose(env.osm) == null) return null;
 
-        HorizontalTextAlignment hAlign = HorizontalTextAlignment.RIGHT;
-        Keyword hAlignKW = c.get(TEXT_ANCHOR_HORIZONTAL, Keyword.RIGHT, Keyword.class);
-        switch (hAlignKW.val) {
+        Cascade c = env.mc.getCascade(env.layer);
+
+        HorizontalTextAlignment hAlign;
+        switch (c.get(TEXT_ANCHOR_HORIZONTAL, Keyword.RIGHT, Keyword.class).val) {
             case "left":
                 hAlign = HorizontalTextAlignment.LEFT;
                 break;
             case "center":
                 hAlign = HorizontalTextAlignment.CENTER;
-        }
-        VerticalTextAlignment vAlign = VerticalTextAlignment.BOTTOM;
-        Keyword vAlignKW = c.get(TEXT_ANCHOR_VERTICAL, Keyword.BOTTOM, Keyword.class);
-        switch (vAlignKW.val) {
-            case "bottom":
-                vAlign = VerticalTextAlignment.BOTTOM;
                 break;
+            case "right":
+            default:
+                hAlign = HorizontalTextAlignment.RIGHT;
+        }
+        VerticalTextAlignment vAlign;
+        switch (c.get(TEXT_ANCHOR_VERTICAL, Keyword.BOTTOM, Keyword.class).val) {
             case "above":
                 vAlign = VerticalTextAlignment.ABOVE;
                 break;
@@ -154,6 +154,10 @@ public class BoxTextElement extends StyleElement {
                 break;
             case "below":
                 vAlign = VerticalTextAlignment.BELOW;
+                break;
+            case "bottom":
+            default:
+                vAlign = VerticalTextAlignment.BOTTOM;
         }
 
         return new BoxTextElement(c, text, boxProvider, box, hAlign, vAlign);

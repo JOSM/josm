@@ -32,6 +32,9 @@ public abstract class SearchTextResultListPanel<T> extends JPanel {
 
     protected abstract void filterItems();
 
+    /**
+     * Constructs a new {@code SearchTextResultListPanel}.
+     */
     public SearchTextResultListPanel() {
         super(new BorderLayout());
 
@@ -74,6 +77,7 @@ public abstract class SearchTextResultListPanel<T> extends JPanel {
                     case KeyEvent.VK_END:
                         selectItem(lsResultModel.getSize());
                         break;
+                    default: // Do nothing
                 }
             }
         });

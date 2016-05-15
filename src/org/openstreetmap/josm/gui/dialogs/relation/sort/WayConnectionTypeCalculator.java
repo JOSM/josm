@@ -265,6 +265,7 @@ public class WayConnectionTypeCalculator {
         case ROUNDABOUT_RIGHT:
             refNodes = wayRef.getNodes();
             break;
+        default: // Do nothing
         }
 
         for (Node n : refNodes) {

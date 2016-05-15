@@ -138,6 +138,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
                         setParticipatingInSynchronizedScrolling(adjustable, false);
                     }
                     break;
+                default: // Do nothing
                 }
             }
         });

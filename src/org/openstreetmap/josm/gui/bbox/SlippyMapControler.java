@@ -264,6 +264,8 @@ public class SlippyMapControler extends MouseAdapter {
                     speedX += ACCELERATION;
                 }
                 break;
+            default:
+                throw new IllegalStateException(Integer.toString(directionX));
             }
 
             // update the y speed
@@ -287,6 +289,8 @@ public class SlippyMapControler extends MouseAdapter {
                     speedY += ACCELERATION;
                 }
                 break;
+            default:
+                throw new IllegalStateException(Integer.toString(directionY));
             }
 
             // move the map

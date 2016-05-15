@@ -66,6 +66,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
             setToolTipText(getText());
             setBackgroundReadable(key, model, isSelected, true);
             break;
+        default: // Do nothing
         }
 
         return this;

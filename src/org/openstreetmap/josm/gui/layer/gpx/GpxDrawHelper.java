@@ -357,6 +357,7 @@ public class GpxDrawHelper implements SoMChangeListener {
                             color = dateScale.getNoDataColor();
                         }
                         break;
+                    default: // Do nothing
                     }
                     if (!noDraw && (maxLineLength == -1 || dist <= maxLineLength)) {
                         trkPnt.drawLine = true;

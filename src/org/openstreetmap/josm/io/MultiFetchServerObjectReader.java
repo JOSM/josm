@@ -310,12 +310,13 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * @throws OsmTransferException if an error occurs while communicating with the API server
      */
     protected void fetchPrimitives(Set<Long> ids, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException {
-        String msg = "";
+        String msg;
         final String baseUrl = getBaseUrl();
         switch (type) {
             case NODE:     msg = tr("Fetching a package of nodes from ''{0}''",     baseUrl); break;
             case WAY:      msg = tr("Fetching a package of ways from ''{0}''",      baseUrl); break;
             case RELATION: msg = tr("Fetching a package of relations from ''{0}''", baseUrl); break;
+            default: throw new AssertionError();
         }
         progressMonitor.setTicksCount(ids.size());
         progressMonitor.setTicks(0);

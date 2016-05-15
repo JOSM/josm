@@ -59,6 +59,7 @@ public class ChangesetCacheTableCellRenderer extends AbstractCellRenderer {
         case 4: /* created at */ renderDate(cs.getCreatedAt()); break;
         case 5: /* closed at */ renderDate(cs.getClosedAt()); break;
         case 6: /* discussions */ renderDiscussions(cs); break;
+        default: // Do nothing
         }
         return this;
     }

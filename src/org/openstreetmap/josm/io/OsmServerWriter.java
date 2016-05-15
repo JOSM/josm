@@ -38,6 +38,11 @@ public class OsmServerWriter {
     private Collection<OsmPrimitive> processed;
 
     private static volatile List<OsmServerWritePostprocessor> postprocessors;
+
+    /**
+     * Registers a post-processor.
+     * @param pp post-processor to register
+     */
     public static void registerPostprocessor(OsmServerWritePostprocessor pp) {
         if (postprocessors == null) {
             postprocessors = new ArrayList<>();
@@ -45,6 +50,10 @@ public class OsmServerWriter {
         postprocessors.add(pp);
     }
 
+    /**
+     * Unregisters a post-processor.
+     * @param pp post-processor to unregister
+     */
     public static void unregisterPostprocessor(OsmServerWritePostprocessor pp) {
         if (postprocessors != null) {
             postprocessors.remove(pp);
@@ -60,7 +69,7 @@ public class OsmServerWriter {
 
     private long uploadStartTime;
 
-    public String timeLeft(int progress, int listSize) {
+    protected String timeLeft(int progress, int listSize) {
         long now = System.currentTimeMillis();
         long elapsed = now - uploadStartTime;
         if (elapsed == 0) {
@@ -92,22 +101,21 @@ public class OsmServerWriter {
             progressMonitor.setTicksCount(primitives.size());
             uploadStartTime = System.currentTimeMillis();
             for (OsmPrimitive osm : primitives) {
-                int progress = progressMonitor.getTicks();
-                String timeLeftStr = timeLeft(progress, primitives.size());
-                String msg = "";
+                String msg;
                 switch(OsmPrimitiveType.from(osm)) {
                 case NODE: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading node ''{4}'' (id: {5})"); break;
                 case WAY: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading way ''{4}'' (id: {5})"); break;
                 case RELATION: msg = marktr("{0}% ({1}/{2}), {3} left. Uploading relation ''{4}'' (id: {5})"); break;
+                default: throw new AssertionError();
                 }
+                int progress = progressMonitor.getTicks();
                 progressMonitor.subTask(
                         tr(msg,
                                 Math.round(100.0*progress/primitives.size()),
                                 progress,
                                 primitives.size(),
-                                timeLeftStr,
-                                osm.getName() == null ? osm.getId() : osm.getName(),
-                                        osm.getId()));
+                                timeLeft(progress, primitives.size()),
+                                osm.getName() == null ? osm.getId() : osm.getName(), osm.getId()));
                 makeApiRequest(osm, progressMonitor);
                 processed.add(osm);
                 progressMonitor.worked(1);
@@ -133,8 +141,6 @@ public class OsmServerWriter {
         try {
             progressMonitor.beginTask(tr("Starting to upload in one request ..."));
             processed.addAll(api.uploadDiff(primitives, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
-        } catch (OsmTransferException e) {
-            throw e;
         } finally {
             progressMonitor.finishTask();
         }
@@ -150,7 +156,7 @@ public class OsmServerWriter {
      * @throws OsmTransferException if an exception occurs
      */
     protected void uploadChangesInChunks(Collection<? extends OsmPrimitive> primitives, ProgressMonitor progressMonitor, int chunkSize)
-            throws OsmTransferException, IllegalArgumentException {
+            throws OsmTransferException {
         if (chunkSize <= 0)
             throw new IllegalArgumentException(tr("Value >0 expected for parameter ''{0}'', got {1}", "chunkSize", chunkSize));
         try {
@@ -175,8 +181,6 @@ public class OsmServerWriter {
                                 chunk.size(), i, numChunks, chunk.size()));
                 processed.addAll(api.uploadDiff(chunk, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
             }
-        } catch (OsmTransferException e) {
-            throw e;
         } finally {
             progressMonitor.finishTask();
         }
@@ -222,8 +226,6 @@ public class OsmServerWriter {
                 uploadChangesInChunks(primitives, monitor.createSubTaskMonitor(0, false), strategy.getChunkSize());
                 break;
             }
-        } catch (OsmTransferException e) {
-            throw e;
         } finally {
             executePostprocessors(monitor);
             monitor.finishTask();
@@ -241,6 +243,9 @@ public class OsmServerWriter {
         }
     }
 
+    /**
+     * Cancel operation.
+     */
     public void cancel() {
         this.canceled = true;
         if (api != null) {

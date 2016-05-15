@@ -254,16 +254,16 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
 
     public UploadStrategySpecification getUploadStrategySpecification() {
         UploadStrategy strategy = getUploadStrategy();
-        int chunkSize = getChunkSize();
         UploadStrategySpecification spec = new UploadStrategySpecification();
         if (strategy != null) {
             switch(strategy) {
+            case CHUNKED_DATASET_STRATEGY:
+                spec.setStrategy(strategy).setChunkSize(getChunkSize());
+                break;
             case INDIVIDUAL_OBJECTS_STRATEGY:
             case SINGLE_REQUEST_STRATEGY:
+            default:
                 spec.setStrategy(strategy);
-                break;
-            case CHUNKED_DATASET_STRATEGY:
-                spec.setStrategy(strategy).setChunkSize(chunkSize);
                 break;
             }
         }

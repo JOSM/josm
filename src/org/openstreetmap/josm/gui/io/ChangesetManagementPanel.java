@@ -47,15 +47,26 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * </ul>
  */
 public class ChangesetManagementPanel extends JPanel implements ListDataListener {
-    public static final String SELECTED_CHANGESET_PROP = ChangesetManagementPanel.class.getName() + ".selectedChangeset";
-    public static final String CLOSE_CHANGESET_AFTER_UPLOAD = ChangesetManagementPanel.class.getName() + ".closeChangesetAfterUpload";
+    static final String SELECTED_CHANGESET_PROP = ChangesetManagementPanel.class.getName() + ".selectedChangeset";
+    static final String CLOSE_CHANGESET_AFTER_UPLOAD = ChangesetManagementPanel.class.getName() + ".closeChangesetAfterUpload";
 
     private JRadioButton rbUseNew;
     private JRadioButton rbExisting;
     private JosmComboBox<Changeset> cbOpenChangesets;
     private JCheckBox cbCloseAfterUpload;
     private OpenChangesetComboBoxModel model;
-    private final transient ChangesetCommentModel changesetCommentModel;
+
+    /**
+     * Constructs a new {@code ChangesetManagementPanel}.
+     *
+     * @param changesetCommentModel the changeset comment model. Must not be null.
+     * @throws IllegalArgumentException if {@code changesetCommentModel} is null
+     */
+    public ChangesetManagementPanel(ChangesetCommentModel changesetCommentModel) {
+        CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");
+        build();
+        refreshGUI();
+    }
 
     /**
      * builds the GUI
@@ -158,25 +169,10 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         rbExisting.getModel().addItemListener(new RadioButtonHandler());
     }
 
-    /**
-     * Creates a new panel
-     *
-     * @param changesetCommentModel the changeset comment model. Must not be null.
-     * @throws IllegalArgumentException if {@code changesetCommentModel} is null
-     */
-    public ChangesetManagementPanel(ChangesetCommentModel changesetCommentModel) {
-        CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");
-        this.changesetCommentModel = changesetCommentModel;
-        build();
-        refreshGUI();
-    }
-
     protected void refreshGUI() {
         rbExisting.setEnabled(model.getSize() > 0);
-        if (model.getSize() == 0) {
-            if (!rbUseNew.isSelected()) {
-                rbUseNew.setSelected(true);
-            }
+        if (model.getSize() == 0 && !rbUseNew.isSelected()) {
+            rbUseNew.setSelected(true);
         }
         cbOpenChangesets.setEnabled(model.getSize() > 0 && rbExisting.isSelected());
     }
@@ -234,9 +230,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
     }
 
     /**
-     * Listens to changes in the selected changeset and fires property
-     * change events.
-     *
+     * Listens to changes in the selected changeset and fires property change events.
      */
     class ChangesetListItemStateListener implements ItemListener {
         @Override
@@ -250,9 +244,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
     }
 
     /**
-     * Listens to changes in "close after upload" flag and fires
-     * property change events.
-     *
+     * Listens to changes in "close after upload" flag and fires property change events.
      */
     class CloseAfterUploadItemStateListener implements ItemListener {
         @Override
@@ -268,13 +260,13 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
                 firePropertyChange(CLOSE_CHANGESET_AFTER_UPLOAD, true, false);
                 Main.pref.put("upload.changeset.close", false);
                 break;
+            default: // Do nothing
             }
         }
     }
 
     /**
      * Listens to changes in the two radio buttons rbUseNew and rbUseExisting.
-     *
      */
     class RadioButtonHandler implements ItemListener {
         @Override

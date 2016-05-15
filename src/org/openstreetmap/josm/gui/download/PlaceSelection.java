@@ -581,6 +581,7 @@ public class PlaceSelection implements DownloadSelection {
                     setText(sr.zoom != 0 ? Integer.toString(sr.zoom) : tr("unknown"));
                 }
                 break;
+            default: // Do nothing
             }
             setToolTipText(lineWrapDescription(sr.description));
             return this;

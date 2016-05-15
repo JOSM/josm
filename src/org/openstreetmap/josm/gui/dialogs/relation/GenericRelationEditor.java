@@ -819,6 +819,7 @@ public class GenericRelationEditor extends RelationEditor  {
             case JOptionPane.YES_OPTION:
                 memberTableModel.removeMembersReferringTo(toCheck);
                 break;
+            default: // Do nothing
             }
         }
     }

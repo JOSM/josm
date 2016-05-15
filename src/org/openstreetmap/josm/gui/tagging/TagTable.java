@@ -209,12 +209,13 @@ public class TagTable extends JosmTable  {
             case 2:
                 deleteTags();
                 break;
+            default: // Do nothing
             }
 
             if (isEditing()) {
-                CellEditor editor = getCellEditor();
-                if (editor != null) {
-                    editor.cancelCellEditing();
+                CellEditor cEditor = getCellEditor();
+                if (cEditor != null) {
+                    cEditor.cancelCellEditing();
                 }
             }
 
@@ -259,9 +260,9 @@ public class TagTable extends JosmTable  {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            CellEditor editor = getCellEditor();
-            if (editor != null) {
-                getCellEditor().stopCellEditing();
+            CellEditor cEditor = getCellEditor();
+            if (cEditor != null) {
+                cEditor.stopCellEditing();
             }
             final int rowIdx = model.getRowCount()-1;
             if (rowIdx < 0 || !((TagModel) model.getValueAt(rowIdx, 0)).getName().trim().isEmpty()) {
@@ -598,10 +599,8 @@ public class TagTable extends JosmTable  {
                     // focus remains on one of the associated components
                     return;
                 else if (c instanceof Window) {
-                    if (c == SwingUtilities.getRoot(TagTable.this)) {
-                        if (!getCellEditor().stopCellEditing()) {
-                            getCellEditor().cancelCellEditing();
-                        }
+                    if (c == SwingUtilities.getRoot(TagTable.this) && !getCellEditor().stopCellEditing()) {
+                        getCellEditor().cancelCellEditing();
                     }
                     break;
                 }

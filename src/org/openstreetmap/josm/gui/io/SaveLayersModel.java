@@ -115,6 +115,7 @@ public class SaveLayersModel extends DefaultTableModel {
             info.setDoUploadToServer(values[0]);
             info.setDoSaveToFile(values[1]);
             break;
+        default: // Do nothing
         }
         fireTableDataChanged();
     }

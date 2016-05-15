@@ -180,6 +180,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
             case SUM_ALL_NUMERIC:
                 decision.sumAllNumeric();
                 break;
+            default: // Do nothing
             }
         }
         GuiHelper.runInEDTAndWait(new Runnable() {
