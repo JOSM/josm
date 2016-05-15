@@ -399,7 +399,7 @@ public class ChangesetQuery {
                 return new Date[]{parseDate(dates[0], "time")};
             else if (dates.length == 2)
                 return new Date[]{parseDate(dates[0], "time"), parseDate(dates[1], "time")};
-            return null;
+            return new Date[]{};
         }
 
         protected Collection<Long> parseLongs(String value) {
@@ -446,6 +446,8 @@ public class ChangesetQuery {
                     case 2:
                         csQuery.closedAfterAndCreatedBefore(dates[0], dates[1]);
                         break;
+                    default:
+                        Main.warn("Unable to parse time: " + entry.getValue());
                     }
                     break;
                 case "bbox":

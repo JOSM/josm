@@ -210,6 +210,9 @@ public class TagChecker extends TagTest {
                             break;
                         case "K:":
                             ignoreDataTag.add(Tag.ofString(line));
+                            break;
+                        default:
+                            Main.warn("Unsupported TagChecker key: " + key);
                         }
                     } else if (tagcheckerfile) {
                         if (!line.isEmpty()) {

@@ -159,8 +159,8 @@ public class DeleteCommand extends Command {
         // Do nothing
     }
 
-    private Set<OsmPrimitiveType> getTypesToDelete() {
-        Set<OsmPrimitiveType> typesToDelete = EnumSet.noneOf(OsmPrimitiveType.class);
+    private EnumSet<OsmPrimitiveType> getTypesToDelete() {
+        EnumSet<OsmPrimitiveType> typesToDelete = EnumSet.noneOf(OsmPrimitiveType.class);
         for (OsmPrimitive osm : toDelete) {
             typesToDelete.add(OsmPrimitiveType.from(osm));
         }
@@ -171,17 +171,18 @@ public class DeleteCommand extends Command {
     public String getDescriptionText() {
         if (toDelete.size() == 1) {
             OsmPrimitive primitive = toDelete.iterator().next();
-            String msg = "";
+            String msg;
             switch(OsmPrimitiveType.from(primitive)) {
             case NODE: msg = marktr("Delete node {0}"); break;
             case WAY: msg = marktr("Delete way {0}"); break;
             case RELATION:msg = marktr("Delete relation {0}"); break;
+            default: throw new AssertionError();
             }
 
             return tr(msg, primitive.getDisplayName(DefaultNameFormatter.getInstance()));
         } else {
             Set<OsmPrimitiveType> typesToDelete = getTypesToDelete();
-            String msg = "";
+            String msg;
             if (typesToDelete.size() > 1) {
                 msg = trn("Delete {0} object", "Delete {0} objects", toDelete.size(), toDelete.size());
             } else {
@@ -190,6 +191,7 @@ public class DeleteCommand extends Command {
                 case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
                 case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
                 case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
+                default: throw new AssertionError();
                 }
             }
             return msg;

@@ -125,6 +125,7 @@ public class NoteReader {
                     commentIsNew = Boolean.parseBoolean(isNew);
                 }
                 break;
+            default: // Do nothing
             }
         }
 

@@ -117,12 +117,14 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             return;
         }
         KeyEvent kev = (KeyEvent) event;
-        int dx = 0, dy = 0;
+        int dx = 0;
+        int dy = 0;
         switch (kev.getKeyCode()) {
         case KeyEvent.VK_UP : dy = +1; break;
         case KeyEvent.VK_DOWN : dy = -1; break;
         case KeyEvent.VK_LEFT : dx = -1; break;
         case KeyEvent.VK_RIGHT : dx = +1; break;
+        default: // Do nothing
         }
         if (dx != 0 || dy != 0) {
             double ppd = layer.getPPD();

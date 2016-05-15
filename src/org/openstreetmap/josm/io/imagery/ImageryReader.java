@@ -227,6 +227,7 @@ public class ImageryReader implements Closeable {
                     newState = State.CODE;
                 }
                 break;
+            default: // Do nothing
             }
             /**
              * Did not recognize the element, so the new state is UNKNOWN.
@@ -432,6 +433,7 @@ public class ImageryReader implements Closeable {
                 case "epsg4326to3857Supported":
                     entry.setEpsg4326To3857Supported(Boolean.valueOf(accumulator.toString()));
                     break;
+                default: // Do nothing
                 }
                 break;
             case BOUNDS:

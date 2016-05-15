@@ -191,14 +191,14 @@ public final class CustomConfigurator {
      * @param text - message to display, HTML allowed
      */
     public static void messageBox(String type, String text) {
-        if (type == null || type.isEmpty()) type = "plain";
-
-        switch (type.charAt(0)) {
+        char c = (type == null || type.isEmpty() ? "plain" : type).charAt(0);
+        switch (c) {
             case 'i': JOptionPane.showMessageDialog(Main.parent, text, tr("Information"), JOptionPane.INFORMATION_MESSAGE); break;
             case 'w': JOptionPane.showMessageDialog(Main.parent, text, tr("Warning"), JOptionPane.WARNING_MESSAGE); break;
             case 'e': JOptionPane.showMessageDialog(Main.parent, text, tr("Error"), JOptionPane.ERROR_MESSAGE); break;
             case 'q': JOptionPane.showMessageDialog(Main.parent, text, tr("Question"), JOptionPane.QUESTION_MESSAGE); break;
             case 'p': JOptionPane.showMessageDialog(Main.parent, text, tr("Message"), JOptionPane.PLAIN_MESSAGE); break;
+            default: Main.warn("Unsupported messageBox type: " + c);
         }
     }
 

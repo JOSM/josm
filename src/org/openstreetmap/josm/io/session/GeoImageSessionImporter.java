@@ -48,55 +48,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                     for (int j = 0; j < attrNodes.getLength(); ++j) {
                         Node attrNode = attrNodes.item(j);
                         if (attrNode.getNodeType() == Node.ELEMENT_NODE) {
-                            Element attrElem = (Element) attrNode;
-                            try {
-                                switch(attrElem.getTagName()) {
-                                case "file":
-                                    entry.setFile(new File(attrElem.getTextContent()));
-                                    break;
-                                case "position":
-                                    double lat = Double.parseDouble(attrElem.getAttribute("lat"));
-                                    double lon = Double.parseDouble(attrElem.getAttribute("lon"));
-                                    entry.setPos(new LatLon(lat, lon));
-                                    break;
-                                case "speed":
-                                    entry.setSpeed(Double.valueOf(attrElem.getTextContent()));
-                                    break;
-                                case "elevation":
-                                    entry.setElevation(Double.valueOf(attrElem.getTextContent()));
-                                    break;
-                                case "gps-time":
-                                    entry.setGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                    break;
-                                case "exif-orientation":
-                                    entry.setExifOrientation(Integer.valueOf(attrElem.getTextContent()));
-                                    break;
-                                case "exif-time":
-                                    entry.setExifTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                    break;
-                                case "exif-gps-time":
-                                    entry.setExifGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
-                                    break;
-                                case "exif-coordinates":
-                                    entry.setExifCoor(new LatLon(
-                                            Double.parseDouble(attrElem.getAttribute("lat")),
-                                            Double.parseDouble(attrElem.getAttribute("lon"))));
-                                    break;
-                                case "exif-image-direction":
-                                    entry.setExifImgDir(Double.parseDouble(attrElem.getTextContent()));
-                                    break;
-                                case "is-new-gps-data":
-                                    if (Boolean.parseBoolean(attrElem.getTextContent())) {
-                                        entry.flagNewGpsData();
-                                    }
-                                }
-                                // TODO: handle thumbnail loading
-                            } catch (NumberFormatException e) {
-                                // do nothing
-                                if (Main.isTraceEnabled()) {
-                                    Main.trace(e.getMessage());
-                                }
-                            }
+                            handleElement(entry, (Element) attrNode);
                         }
                     }
                     entries.add(entry);
@@ -116,5 +68,57 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
         }
 
         return new GeoImageLayer(entries, gpxLayer, useThumbs);
+    }
+
+    private static void handleElement(ImageEntry entry, Element attrElem) {
+        try {
+            switch(attrElem.getTagName()) {
+            case "file":
+                entry.setFile(new File(attrElem.getTextContent()));
+                break;
+            case "position":
+                double lat = Double.parseDouble(attrElem.getAttribute("lat"));
+                double lon = Double.parseDouble(attrElem.getAttribute("lon"));
+                entry.setPos(new LatLon(lat, lon));
+                break;
+            case "speed":
+                entry.setSpeed(Double.valueOf(attrElem.getTextContent()));
+                break;
+            case "elevation":
+                entry.setElevation(Double.valueOf(attrElem.getTextContent()));
+                break;
+            case "gps-time":
+                entry.setGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
+                break;
+            case "exif-orientation":
+                entry.setExifOrientation(Integer.valueOf(attrElem.getTextContent()));
+                break;
+            case "exif-time":
+                entry.setExifTime(new Date(Long.parseLong(attrElem.getTextContent())));
+                break;
+            case "exif-gps-time":
+                entry.setExifGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
+                break;
+            case "exif-coordinates":
+                entry.setExifCoor(new LatLon(
+                        Double.parseDouble(attrElem.getAttribute("lat")),
+                        Double.parseDouble(attrElem.getAttribute("lon"))));
+                break;
+            case "exif-image-direction":
+                entry.setExifImgDir(Double.parseDouble(attrElem.getTextContent()));
+                break;
+            case "is-new-gps-data":
+                if (Boolean.parseBoolean(attrElem.getTextContent())) {
+                    entry.flagNewGpsData();
+                }
+                break;
+            default: // Do nothing
+            }
+            // TODO: handle thumbnail loading
+        } catch (NumberFormatException e) {
+            if (Main.isTraceEnabled()) {
+                Main.trace(e.getMessage());
+            }
+        }
     }
 }

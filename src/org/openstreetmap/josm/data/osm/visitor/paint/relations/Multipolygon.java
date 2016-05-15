@@ -263,6 +263,8 @@ public class Multipolygon {
                             contains++;
                         }
                         total++;
+                        break;
+                    default: // Do nothing
                 }
             }
             if (contains == total) return Intersection.INSIDE;

@@ -1090,6 +1090,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         if (via == null) {
                             via = w;
                         }
+                        break;
+                    default: // Do nothing
                     }
                 } else if (m.isNode()) {
                     Node n = m.getNode();

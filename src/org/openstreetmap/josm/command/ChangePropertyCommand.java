@@ -160,6 +160,7 @@ public class ChangePropertyCommand extends Command {
                 case NODE: msg = marktr("Remove \"{0}\" for node ''{1}''"); break;
                 case WAY: msg = marktr("Remove \"{0}\" for way ''{1}''"); break;
                 case RELATION: msg = marktr("Remove \"{0}\" for relation ''{1}''"); break;
+                default: throw new AssertionError();
                 }
                 text = tr(msg, entry.getKey(), primitive.getDisplayName(DefaultNameFormatter.getInstance()));
             } else {
@@ -167,6 +168,7 @@ public class ChangePropertyCommand extends Command {
                 case NODE: msg = marktr("Set {0}={1} for node ''{2}''"); break;
                 case WAY: msg = marktr("Set {0}={1} for way ''{2}''"); break;
                 case RELATION: msg = marktr("Set {0}={1} for relation ''{2}''"); break;
+                default: throw new AssertionError();
                 }
                 text = tr(msg, entry.getKey(), entry.getValue(), primitive.getDisplayName(DefaultNameFormatter.getInstance()));
             }

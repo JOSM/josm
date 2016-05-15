@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.util.EnumMap;
 import java.util.Map;
@@ -47,30 +46,27 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
     }
 
     protected void renderRole(Item diffItem) {
-        String text = "";
-        Color bgColor = diffItem.state.getColor();
         RelationMemberData member = (RelationMemberData) diffItem.value;
-        text = member == null ? "" : member.getRole();
+        String text = member == null ? "" : member.getRole();
         setText(text);
         setToolTipText(text);
-        GuiHelper.setBackgroundReadable(this, bgColor);
+        GuiHelper.setBackgroundReadable(this, diffItem.state.getColor());
     }
 
     protected void renderPrimitive(Item diffItem) {
         String text = "";
-        Color bgColor = diffItem.state.getColor();
         RelationMemberData member = (RelationMemberData) diffItem.value;
-        text = "";
         if (member != null) {
             switch(member.getMemberType()) {
             case NODE: text = tr("Node {0}", member.getMemberId()); break;
             case WAY: text = tr("Way {0}", member.getMemberId()); break;
             case RELATION: text = tr("Relation {0}", member.getMemberId()); break;
+            default: throw new AssertionError();
             }
         }
         setText(text);
         setToolTipText(text);
-        GuiHelper.setBackgroundReadable(this, bgColor);
+        GuiHelper.setBackgroundReadable(this, diffItem.state.getColor());
     }
 
     // Warning: The model pads with null-rows to match the size of the opposite table. 'value' could be null
@@ -88,6 +84,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         case 1:
             renderPrimitive(member);
             break;
+        default: // Do nothing
         }
 
         return this;
