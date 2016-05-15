@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.Locale;
 
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -105,7 +106,7 @@ public class JOSMFixture {
 
         // make sure we don't upload to or test against production
         //
-        String url = OsmApi.getOsmApi().getBaseUrl().toLowerCase().trim();
+        String url = OsmApi.getOsmApi().getBaseUrl().toLowerCase(Locale.ENGLISH).trim();
         if (url.startsWith("http://www.openstreetmap.org") || url.startsWith("http://api.openstreetmap.org")
             || url.startsWith("https://www.openstreetmap.org") || url.startsWith("https://api.openstreetmap.org")) {
             fail(MessageFormat.format("configured server url ''{0}'' seems to be a productive url, aborting.", url));

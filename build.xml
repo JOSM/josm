@@ -675,6 +675,7 @@ Build-Date: ${build.tstamp}
                 pluginList=""
                 excludeFilter="tools/findbugs/josm-filter.xml"
                 effort="max"
+        	    reportLevel="low"
                 >
             <sourcePath path="${base.dir}/src" />
             <class location="${dist.dir}/josm-custom.jar" />

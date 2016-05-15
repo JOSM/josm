@@ -61,7 +61,7 @@ public class TaggingPresetReaderTest {
         final List<String> keys = Utils.transform(abc.data, new Utils.Function<TaggingPresetItem, String>() {
             @Override
             public String apply(TaggingPresetItem x) {
-                return ((Key) x).key;
+                return x instanceof Key ? ((Key) x).key : null;
             }
         });
         assertEquals("[A1, A2, A3, B1, B2, B3, C1, C2, C3]", keys.toString());

@@ -23,7 +23,7 @@ public final class UnJoinNodeWayActionTest {
     /**
      * Prepare the class for the test. The notification system must be disabled.
      */
-    public class UnJoinNodeWayActionTestClass extends UnJoinNodeWayAction {
+    public static class UnJoinNodeWayActionTestClass extends UnJoinNodeWayAction {
 
         /**
          * Disable notification.

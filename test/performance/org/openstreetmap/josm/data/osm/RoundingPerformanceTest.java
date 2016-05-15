@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.LatLonTest;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Checks that rounding of coordinates is not too slow.
  */
@@ -21,6 +23,7 @@ public class RoundingPerformanceTest {
      * Checks that rounding of coordinates is not too slow.
      */
     @Test
+    @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public void test() {
         final int n = 1000000;
         long start = System.nanoTime();

@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import org.junit.Before;
@@ -150,7 +151,7 @@ public class MultiFetchServerObjectReaderTest {
                 MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
 
         String p = System.getProperties().getProperty("useCachedDataset");
-        if (p != null && Boolean.parseBoolean(p.trim().toLowerCase())) {
+        if (p != null && Boolean.parseBoolean(p.trim().toLowerCase(Locale.ENGLISH))) {
             logger.info(MessageFormat.format("property ''{0}'' set, using cached dataset", "useCachedDataset"));
             return;
         }

@@ -11,12 +11,12 @@ class ChangesetQueryUrlParserTest {
     final shouldFail = new GroovyTestCase().&shouldFail
 
     @Test
-    public void test_constructor() {
+    public void testConstructor() {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
     }
 
     @Test
-    public void test_parse_basic() {
+    public void testParseBasic() {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
 
         // OK
@@ -32,7 +32,7 @@ class ChangesetQueryUrlParserTest {
     }
 
     @Test
-    public void test_uid() {
+    public void testUid() {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         def ChangesetQuery q
 
@@ -54,7 +54,7 @@ class ChangesetQueryUrlParserTest {
     }
 
     @Test
-    public void test_display_name() {
+    public void testDisplayName() {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         def ChangesetQuery q
 
@@ -64,9 +64,8 @@ class ChangesetQueryUrlParserTest {
         assert q.@userName == "abcd"
     }
 
-
     @Test
-    public void test_open() {
+    public void testOpen() {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         def ChangesetQuery q
 
@@ -87,7 +86,7 @@ class ChangesetQueryUrlParserTest {
     }
 
     @Test
-    public void test_closed() {
+    public void testClosed() {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         def ChangesetQuery q
 
@@ -107,9 +106,8 @@ class ChangesetQueryUrlParserTest {
         }
     }
 
-
     @Test
-    public void test_uid_and_display_name() {
+    public void testUidAndDisplayName() {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         def ChangesetQuery q
 
@@ -120,7 +118,7 @@ class ChangesetQueryUrlParserTest {
     }
 
     @Test
-    public void test_time() {
+    public void testTime() {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         def ChangesetQuery q
 
@@ -150,7 +148,7 @@ class ChangesetQueryUrlParserTest {
     }
 
     @Test
-    public void test_bbox() {
+    public void testBbox() {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         def ChangesetQuery q
 
@@ -184,7 +182,7 @@ class ChangesetQueryUrlParserTest {
     }
 
     @Test
-    public void test_changeset_ids() {
+    public void testChangesetIds() {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         def ChangesetQuery q
 

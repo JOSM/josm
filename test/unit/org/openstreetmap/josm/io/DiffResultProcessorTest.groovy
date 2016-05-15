@@ -21,9 +21,9 @@ class DiffResultProcessorTest {
         Node n = new Node(1)
         // these calls should not fail
         //
-        def DiffResultProcessor processor  = new DiffResultProcessor(null)
-        processor  = new DiffResultProcessor([])
-        processor  = new DiffResultProcessor([n])
+        new DiffResultProcessor(null)
+        new DiffResultProcessor([])
+        new DiffResultProcessor([n])
     }
 
     @Test

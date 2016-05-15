@@ -11,6 +11,7 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmApi;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 /**
@@ -30,6 +31,7 @@ public class OAuthParametersTest {
      * Unit test of method {@link OAuthParameters#createDefault}.
      */
     @Test
+    @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     public void testCreateDefault() {
         OAuthParameters def = OAuthParameters.createDefault();
         assertNotNull(def);

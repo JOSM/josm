@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests of {@link DateUtils} class.
  */
@@ -191,6 +193,7 @@ public class DateUtilsTest {
      * Unit test to reach 100% code coverage.
      */
     @Test
+    @SuppressFBWarnings(value = "ISC_INSTANTIATE_STATIC_CLASS")
     public void testCoverage() {
         assertNotNull(new DateUtils());
     }

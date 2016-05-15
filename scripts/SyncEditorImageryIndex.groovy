@@ -24,6 +24,8 @@ import javax.json.JsonReader
 import org.openstreetmap.josm.data.imagery.ImageryInfo
 import org.openstreetmap.josm.io.imagery.ImageryReader
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
+
 class SyncEditorImageryIndex {
 
     List<ImageryInfo> josmEntries;
@@ -176,6 +178,7 @@ class SyncEditorImageryIndex {
         }
     }
 
+    @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     void myprintln(String s) {
         if(skipEntries.containsKey(s)) {
             skipCount = skipEntries.get(s)

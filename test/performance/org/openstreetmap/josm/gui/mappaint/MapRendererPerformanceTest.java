@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -40,6 +41,8 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmReader;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class MapRendererPerformanceTest {
 
     private static final boolean DUMP_IMAGE = false; // dump images to file for debugging purpose
@@ -64,7 +67,7 @@ public class MapRendererPerformanceTest {
     private enum Feature {
         ICON, SYMBOL, NODE_TEXT, LINE, LINE_TEXT, AREA;
         public String label() {
-            return name().toLowerCase();
+            return name().toLowerCase(Locale.ENGLISH);
         }
     }
 
@@ -74,6 +77,7 @@ public class MapRendererPerformanceTest {
      * Global timeout applied to all test methods.
      */
     @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public Timeout globalTimeout = Timeout.seconds(15*60);
 
     @BeforeClass
@@ -170,6 +174,7 @@ public class MapRendererPerformanceTest {
         private final List<Long> drawTimes = new ArrayList<>();
         private final List<Long> totalTimes = new ArrayList<>();
 
+        @SuppressFBWarnings(value = "DM_GC")
         public void run() throws IOException {
             boolean checkScale = false;
             if (scale == 0) {
@@ -313,7 +318,7 @@ public class MapRendererPerformanceTest {
     }
 
     public static void dumpTimes(StyledMapRenderer.BenchmarkData bd) {
-        System.out.print(String.format("gen. %3d, sort %3d, draw %3d\n", bd.generateTime, bd.sortTime, bd.drawTime));
+        System.out.print(String.format("gen. %3d, sort %3d, draw %3d%n", bd.generateTime, bd.sortTime, bd.drawTime));
     }
 
     public static void dumpElementCount(StyledMapRenderer.BenchmarkData bd) {

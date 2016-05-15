@@ -8,6 +8,8 @@ import static org.junit.Assert.fail;
 import java.awt.geom.Area;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,12 +57,18 @@ public final class CreateCircleActionTest {
      */
     public void addSelected(OsmPrimitive p, DataSet ds) {
         try {
-            Method method = ds.getClass()
+            final Method method = ds.getClass()
                 .getDeclaredMethod("addSelected",
                                    new Class<?>[] {Collection.class, boolean.class});
-            method.setAccessible(true);
+            AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                @Override
+                public Object run() {
+                    method.setAccessible(true);
+                    return null;
+                }
+            });
             method.invoke(ds, Collections.singleton(p), false);
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             fail("Can't add OsmPrimitive to dataset: " + e.getMessage());
         }
@@ -161,8 +169,8 @@ public final class CreateCircleActionTest {
             Field rlCache = RightAndLefthandTraffic.class.getDeclaredField("rlCache");
             rlCache.setAccessible(true);
             ConstantTrafficHand trafficHand = new ConstantTrafficHand(true);
-            rlCache.set(null, new GeoPropertyIndex<Boolean>(trafficHand, 24));
-        } catch (Exception e) {
+            rlCache.set(null, new GeoPropertyIndex<>(trafficHand, 24));
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             fail("Impossible to mock left/right hand database: " + e.getMessage());
         }

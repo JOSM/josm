@@ -46,7 +46,7 @@ public class PostDownloadHandlerTest {
 
             @Override
             public String[] getPatterns() {
-                return null;
+                return new String[0];
             }
 
             @Override

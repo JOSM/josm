@@ -12,6 +12,8 @@ import org.openstreetmap.josm.data.osm.OsmDataGenerator;
 import org.openstreetmap.josm.data.osm.OsmDataGenerator.KeyValueDataGenerator;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Tests how fast {@link MapCSSStyleSource} finds the right style candidates for one object.
  * @author Michael Zangl
@@ -20,7 +22,7 @@ public class MapCSSStyleSourceFilterTest {
 
     private static final int TEST_RULE_COUNT = 10000;
 
-    private class CssGenerator {
+    private static class CssGenerator {
         StringBuilder sb = new StringBuilder();
         private KeyValueDataGenerator generator;
 
@@ -82,6 +84,7 @@ public class MapCSSStyleSourceFilterTest {
      * Global timeout applied to all test methods.
      */
     @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public Timeout globalTimeout = Timeout.seconds(15*60);
 
     /**

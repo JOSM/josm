@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 @Ignore
 public class UploadStrategySelectionPanelTest extends JFrame {
 
-    private UploadStrategySelectionPanel uploadStrategySelectionPanel;
+    protected UploadStrategySelectionPanel uploadStrategySelectionPanel;
 
     protected void build()  {
         getContentPane().setLayout(new BorderLayout());
@@ -36,7 +36,8 @@ public class UploadStrategySelectionPanelTest extends JFrame {
         pnl.add(tf = new JTextField(8));
         tf.addActionListener(
                 new ActionListener() {
-                    public void actionPerformed(ActionEvent arg0) {
+                    @Override
+                    public void actionPerformed(ActionEvent ae) {
                         int n = 0;
                         try {
                             n = Integer.parseInt(tf.getText());

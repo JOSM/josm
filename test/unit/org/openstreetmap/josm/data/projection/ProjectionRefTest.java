@@ -221,14 +221,13 @@ public class ProjectionRefTest {
         try {
             Process process = pb.start();
             OutputStream stdin = process.getOutputStream();
-            final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin, StandardCharsets.UTF_8));
             InputStream stdout = process.getInputStream();
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(stdout, StandardCharsets.UTF_8));
-            String input = String.format("%.9f %.9f\n", ll.lon(), ll.lat());
-            writer.write(input);
-            writer.close();
-            output = reader.readLine();
-            reader.close();
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin, StandardCharsets.UTF_8))) {
+                writer.write(String.format("%.9f %.9f%n", ll.lon(), ll.lat()));
+            }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stdout, StandardCharsets.UTF_8))) {
+                output = reader.readLine();
+            }
         } catch (IOException e) {
             System.err.println("Error: Running external command failed: " + e + "\nCommand was: "+Utils.join(" ", args));
             return null;

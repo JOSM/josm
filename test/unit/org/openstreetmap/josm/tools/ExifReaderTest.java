@@ -85,8 +85,7 @@ public class ExifReaderTest {
      */
     @Test
     public void testReadDirection() {
-        Double direction = ExifReader.readDirection(directionSampleFile);
-        assertEquals(new Double(46.5), direction);
+        assertEquals(Double.valueOf(46.5), ExifReader.readDirection(directionSampleFile));
     }
 
     /**

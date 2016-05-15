@@ -46,6 +46,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.io.Compression;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Various utils, useful for unit tests.
  */
@@ -104,6 +106,7 @@ public final class TestUtils {
      * @param comparator The comparator to test
      * @param array The array sorted for test purpose
      */
+    @SuppressFBWarnings(value = "RV_NEGATING_RESULT_OF_COMPARETO")
     public static <T> void checkComparableContract(Comparator<T> comparator, T[] array) {
         System.out.println("Validating Comparable contract on array of "+array.length+" elements");
         // Check each compare possibility

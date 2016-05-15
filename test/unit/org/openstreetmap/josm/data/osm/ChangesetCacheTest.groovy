@@ -8,13 +8,13 @@ import org.junit.Test
 class ChangesetCacheTest {
 
     @Test
-    public void test_Constructor() {
+    public void testConstructor() {
         ChangesetCache cache = ChangesetCache.getInstance()
         assert cache != null
     }
 
     @Test
-    public void test_addAndRemoveListeners() {
+    public void testAddAndRemoveListeners() {
         ChangesetCache cache = ChangesetCache.getInstance()
         cache.clear()
 
@@ -37,7 +37,7 @@ class ChangesetCacheTest {
     }
 
     @Test
-    public void update_get_remove_cycle() {
+    public void updateGetRemoveCycle() {
         ChangesetCache cache = ChangesetCache.getInstance()
         cache.clear()
 
@@ -96,7 +96,7 @@ class ChangesetCacheTest {
     }
 
     @Test
-    public void fireingEvents_AddAChangeset() {
+    public void fireingEventsAddAChangeset() {
         ChangesetCache cache = ChangesetCache.getInstance()
         cache.clear()
         cache.@listeners.clear()
@@ -117,7 +117,7 @@ class ChangesetCacheTest {
     }
 
     @Test
-    public void fireingEvents_UpdateChangeset() {
+    public void fireingEventsUpdateChangeset() {
         ChangesetCache cache = ChangesetCache.getInstance()
         cache.clear()
         cache.@listeners.clear()
@@ -140,7 +140,7 @@ class ChangesetCacheTest {
     }
 
     @Test
-    public void fireingEvents_RemoveChangeset() {
+    public void fireingEventsRemoveChangeset() {
         ChangesetCache cache = ChangesetCache.getInstance()
         cache.clear()
         cache.@listeners.clear()

@@ -13,6 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests for class {@link JCSCachedTileLoaderJob}.
  */
@@ -58,7 +60,7 @@ public class JCSCachedTileLoaderJobTest {
         public synchronized void loadingFinished(CacheEntry data, CacheEntryAttributes attributes, LoadResult result) {
             this.attributes = attributes;
             this.ready = true;
-            this.notify();
+            this.notifyAll();
         }
     }
 
@@ -70,8 +72,13 @@ public class JCSCachedTileLoaderJobTest {
         JOSMFixture.createUnitTestFixture().init();
     }
 
+    /**
+     * Test status codes
+     * @throws InterruptedException in case of thread interruption
+     * @throws IOException in case of I/O error
+     */
     @Test
-    public void testStatusCodes() throws Exception {
+    public void testStatusCodes() throws IOException, InterruptedException  {
         doTestStatusCode(200);
         // can't test for 3xx, as httpstat.us redirects finally to 200 page
         doTestStatusCode(401);
@@ -84,8 +91,14 @@ public class JCSCachedTileLoaderJobTest {
         doTestStatusCode(502);
     }
 
+    /**
+     * Test unknown host
+     * @throws InterruptedException in case of thread interruption
+     * @throws IOException in case of I/O error
+     */
     @Test
-    public void testUnknownHost() throws Exception {
+    @SuppressFBWarnings(value = "WA_NOT_IN_LOOP")
+    public void testUnknownHost() throws IOException, InterruptedException {
         TestCachedTileLoaderJob job = new TestCachedTileLoaderJob("http://unkownhost.unkownhost/unkown");
         Listener listener = new Listener();
         job.submit(listener, true);
@@ -97,7 +110,8 @@ public class JCSCachedTileLoaderJobTest {
         assertEquals("java.net.UnknownHostException: unkownhost.unkownhost", listener.attributes.getErrorMessage());
     }
 
-    private void doTestStatusCode(int responseCode) throws Exception {
+    @SuppressFBWarnings(value = "WA_NOT_IN_LOOP")
+    private void doTestStatusCode(int responseCode) throws IOException, InterruptedException {
         TestCachedTileLoaderJob job = getStatusLoaderJob(responseCode);
         Listener listener = new Listener();
         job.submit(listener, true);
