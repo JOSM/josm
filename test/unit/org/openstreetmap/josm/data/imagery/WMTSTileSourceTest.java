@@ -57,7 +57,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testPseudoMercator() throws MalformedURLException, IOException {
+    public void testPseudoMercator() throws IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryPSEUDO_MERCATOR);
         testSource.initProjection(Main.getProjection());
@@ -87,7 +87,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testWALLONIE() throws MalformedURLException, IOException {
+    public void testWALLONIE() throws IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWALLONIE);
         testSource.initProjection(Main.getProjection());
@@ -107,7 +107,7 @@ public class WMTSTileSourceTest {
 
     @Test
     @Ignore("disable this test, needs further working") // XXX
-    public void testWALLONIENoMatrixDimension() throws MalformedURLException, IOException {
+    public void testWALLONIENoMatrixDimension() throws IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(getImagery("test/data/wmts/WMTSCapabilities-Wallonie-nomatrixdimension.xml"));
         testSource.initProjection(Main.getProjection());
@@ -131,7 +131,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testWIEN() throws MalformedURLException, IOException {
+    public void testWIEN() throws IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWIEN);
         testSource.initProjection(Main.getProjection());
