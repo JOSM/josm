@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -67,11 +68,12 @@ public class SystemOfMeasurement {
      */
     public static final Map<String, SystemOfMeasurement> ALL_SYSTEMS;
     static {
-        ALL_SYSTEMS = new LinkedHashMap<>();
-        ALL_SYSTEMS.put(marktr("Metric"), METRIC);
-        ALL_SYSTEMS.put(marktr("Chinese"), CHINESE);
-        ALL_SYSTEMS.put(marktr("Imperial"), IMPERIAL);
-        ALL_SYSTEMS.put(marktr("Nautical Mile"), NAUTICAL_MILE);
+        Map<String, SystemOfMeasurement> map = new LinkedHashMap<>();
+        map.put(marktr("Metric"), METRIC);
+        map.put(marktr("Chinese"), CHINESE);
+        map.put(marktr("Imperial"), IMPERIAL);
+        map.put(marktr("Nautical Mile"), NAUTICAL_MILE);
+        ALL_SYSTEMS = Collections.unmodifiableMap(map);
     }
 
     private static final CopyOnWriteArrayList<SoMChangeListener> somChangeListeners = new CopyOnWriteArrayList<>();
