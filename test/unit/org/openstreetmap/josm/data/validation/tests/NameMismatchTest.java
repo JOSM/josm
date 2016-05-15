@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
 import java.util.List;
 
@@ -37,7 +36,7 @@ public class NameMismatchTest {
     @Test
     public void test0() {
         final List<TestError> errors = test("node name:de=Europa");
-        assertSame(1, errors.size());
+        assertEquals(1, errors.size());
         assertEquals("A name is missing, even though name:* exists.", errors.get(0).getMessage());
     }
 
@@ -47,7 +46,7 @@ public class NameMismatchTest {
     @Test
     public void test1() {
         final List<TestError> errors = test("node name=Europe name:de=Europa");
-        assertSame(1, errors.size());
+        assertEquals(1, errors.size());
         assertEquals("Missing name:*=Europe. Add tag with correct language key.", errors.get(0).getDescription());
     }
 
@@ -57,7 +56,7 @@ public class NameMismatchTest {
     @Test
     public void test2() {
         final List<TestError> errors = test("node name=Europe name:de=Europa name:en=Europe");
-        assertSame(0, errors.size());
+        assertEquals(0, errors.size());
     }
 
     /**
@@ -67,13 +66,13 @@ public class NameMismatchTest {
     public void test3() {
         List<TestError> errors;
         errors = test("node \"name\"=\"Italia - Italien - Italy\"");
-        assertSame(0, errors.size());
+        assertEquals(0, errors.size());
         errors = test("node name=\"Italia - Italien - Italy\" name:it=Italia");
-        assertSame(2, errors.size());
+        assertEquals(2, errors.size());
         errors = test("node name=\"Italia - Italien - Italy\" name:it=Italia name:de=Italien");
-        assertSame(1, errors.size());
+        assertEquals(1, errors.size());
         assertEquals("Missing name:*=Italy. Add tag with correct language key.", errors.get(0).getDescription());
         errors = test("node name=\"Italia - Italien - Italy\" name:it=Italia name:de=Italien name:en=Italy");
-        assertSame(0, errors.size());
+        assertEquals(0, errors.size());
     }
 }
