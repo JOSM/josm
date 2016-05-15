@@ -390,13 +390,7 @@ public final class Entities {
                             }
                         }
                     } else { // escaped value content is an entity name
-                        if (mapNameToValue == null) {
-                            mapNameToValue = new HashMap<>();
-                            for (String[] pair : ARRAY) {
-                                mapNameToValue.put(pair[0], pair[1]);
-                            }
-                        }
-                        String value = mapNameToValue.get(entityContent);
+                        String value = getMapNameToValue().get(entityContent);
                         entityValue = value == null ? -1 : Integer.parseInt(value);
                     }
                 }
@@ -412,5 +406,15 @@ public final class Entities {
             }
         }
         return res.toString();
+    }
+
+    private static synchronized Map<String, String> getMapNameToValue() {
+        if (mapNameToValue == null) {
+            mapNameToValue = new HashMap<>();
+            for (String[] pair : ARRAY) {
+                mapNameToValue.put(pair[0], pair[1]);
+            }
+        }
+        return mapNameToValue;
     }
 }
