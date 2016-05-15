@@ -166,6 +166,7 @@ public class ScrollViewport extends JPanel {
         case LEFT_DIRECTION :
             deltaX *= -1;
             break;
+        default: // Do nothing
         }
 
         scroll(deltaX, deltaY);

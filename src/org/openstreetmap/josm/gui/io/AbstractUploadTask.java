@@ -37,14 +37,34 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 public abstract class AbstractUploadTask extends PleaseWaitRunnable {
+
+    /**
+     * Constructs a new {@code AbstractUploadTask}.
+     * @param title message for the user
+     * @param ignoreException If true, exception will be silently ignored. If false then
+     * exception will be handled by showing a dialog. When this runnable is executed using executor framework
+     * then use false unless you read result of task (because exception will get lost if you don't)
+     */
     public AbstractUploadTask(String title, boolean ignoreException) {
         super(title, ignoreException);
     }
 
+    /**
+     * Constructs a new {@code AbstractUploadTask}.
+     * @param title message for the user
+     * @param progressMonitor progress monitor
+     * @param ignoreException If true, exception will be silently ignored. If false then
+     * exception will be handled by showing a dialog. When this runnable is executed using executor framework
+     * then use false unless you read result of task (because exception will get lost if you don't)
+     */
     public AbstractUploadTask(String title, ProgressMonitor progressMonitor, boolean ignoreException) {
         super(title, progressMonitor, ignoreException);
     }
 
+    /**
+     * Constructs a new {@code AbstractUploadTask}.
+     * @param title message for the user
+     */
     public AbstractUploadTask(String title) {
         super(title);
     }
@@ -92,11 +112,12 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      */
     protected void handleUploadConflictForKnownConflict(final OsmPrimitiveType primitiveType, final long id, String serverVersion,
             String myVersion) {
-        String lbl = "";
+        String lbl;
         switch(primitiveType) {
         case NODE: lbl =  tr("Synchronize node {0} only", id); break;
         case WAY: lbl =  tr("Synchronize way {0} only", id); break;
         case RELATION: lbl =  tr("Synchronize relation {0} only", id); break;
+        default: throw new AssertionError();
         }
         ButtonSpec[] spec = new ButtonSpec[] {
                 new ButtonSpec(

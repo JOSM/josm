@@ -54,6 +54,13 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     private transient UseDefaultItemListener ilUseDefault;
     private String apiUrl;
 
+    /**
+     * Constructs a new {@code AdvancedOAuthPropertiesPanel}.
+     */
+    public AdvancedOAuthPropertiesPanel() {
+        build();
+    }
+
     protected final void build() {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
@@ -110,7 +117,6 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         add(tfAccessTokenURL, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfAccessTokenURL);
 
-
         // -- authorise URL
         gc.gridy = 5;
         gc.gridx = 0;
@@ -122,7 +128,6 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         add(tfAuthoriseURL, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfAuthoriseURL);
 
-
         // -- OSM login URL
         gc.gridy = 6;
         gc.gridx = 0;
@@ -133,7 +138,6 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         gc.weightx = 1.0;
         add(tfOsmLoginURL, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmLoginURL);
-
 
         // -- OSM logout URL
         gc.gridy = 7;
@@ -249,13 +253,6 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     }
 
     /**
-     * Constructs a new {@code AdvancedOAuthPropertiesPanel}.
-     */
-    public AdvancedOAuthPropertiesPanel() {
-        build();
-    }
-
-    /**
      * Initializes the panel from the values in the preferences <code>preferences</code>.
      *
      * @param pref the preferences. Must not be null.
@@ -307,6 +304,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
             case ItemEvent.DESELECTED:
                 setChildComponentsEnabled(true);
                 break;
+            default: // Do nothing
             }
         }
 

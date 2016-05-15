@@ -37,6 +37,8 @@ public class ChangesetDiscussionTableCellRenderer extends AbstractCellRenderer {
             ((JosmTextArea) comp).setWrapStyleWord(true);
             reset(comp, false);
             renderColors(comp, isSelected);
+            break;
+        default: // Do nothing
         }
         return comp;
     }

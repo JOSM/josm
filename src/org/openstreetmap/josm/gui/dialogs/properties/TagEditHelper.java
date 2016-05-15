@@ -1089,7 +1089,8 @@ public class TagEditHelper {
         private void refreshRecentTags() {
             switch (PROPERTY_REFRESH_RECENT.get()) {
                 case REFRESH: cacheRecentTags(); // break missing intentionally
-                case STATUS: suggestRecentlyAddedTags();
+                case STATUS: suggestRecentlyAddedTags(); break;
+                default: // Do nothing
             }
         }
     }

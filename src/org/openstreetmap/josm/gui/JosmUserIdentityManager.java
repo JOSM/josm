@@ -277,7 +277,6 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
                 }
             }
             return;
-
         case "osm-server.url":
             String newUrl = null;
             if (evt.getNewValue() instanceof StringSetting) {
@@ -289,14 +288,13 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
                 setPartiallyIdentified(getUserName());
             }
             break;
-
         case "oauth.access-token.key":
             accessTokenKeyChanged = true;
             break;
-
         case "oauth.access-token.secret":
             accessTokenSecretChanged = true;
             break;
+        default: // Do nothing
         }
 
         if (accessTokenKeyChanged && accessTokenSecretChanged) {

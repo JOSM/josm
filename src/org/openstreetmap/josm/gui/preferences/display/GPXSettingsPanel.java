@@ -356,12 +356,14 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             colorDynamic.setSelected(false);
             colorDynamic.setEnabled(false);
         } else {
-            switch(Main.pref.getInteger("draw.rawgps.colors", layerName, 0)) {
+            int colorType = Main.pref.getInteger("draw.rawgps.colors", layerName, 0);
+            switch (colorType) {
             case 0: colorTypeNone.setSelected(true);   break;
             case 1: colorTypeVelocity.setSelected(true);  break;
             case 2: colorTypeDilution.setSelected(true);  break;
             case 3: colorTypeDirection.setSelected(true); break;
             case 4: colorTypeTime.setSelected(true);  break;
+            default: Main.warn("Unknown color type: " + colorType);
             }
             int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune", layerName, 45);
             colorTypeVelocityTune.setSelectedIndex(ccts == 10 ? 2 : (ccts == 20 ? 1 : 0));

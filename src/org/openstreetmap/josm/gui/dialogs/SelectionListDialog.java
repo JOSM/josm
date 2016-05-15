@@ -511,6 +511,7 @@ public class SelectionListDialog extends ToggleDialog  {
                 case NODE: numNodes++; break;
                 case WAY: numWays++; break;
                 case RELATION: numRelations++; break;
+                default: throw new AssertionError();
                 }
             }
             return tr("Sel.: Rel.:{0} / Ways:{1} / Nodes:{2}", numRelations, numWays, numNodes);

@@ -91,6 +91,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
                 case "down":
                     nc.zoomTo(new EastNorth(center.east(), newcenter.north()));
                     break;
+                default: // Do nothing
                 }
             }
         }

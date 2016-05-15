@@ -53,10 +53,27 @@ public class ImageryReader implements Closeable {
         UNKNOWN,            // element is not recognized in the current context
     }
 
+    /**
+     * Constructs a {@code ImageryReader} from a given filename, URL or internal resource.
+     *
+     * @param source can be:<ul>
+     *  <li>relative or absolute file name</li>
+     *  <li>{@code file:///SOME/FILE} the same as above</li>
+     *  <li>{@code http://...} a URL. It will be cached on disk.</li>
+     *  <li>{@code resource://SOME/FILE} file from the classpath (usually in the current *.jar)</li>
+     *  <li>{@code josmdir://SOME/FILE} file inside josm user data directory (since r7058)</li>
+     *  <li>{@code josmplugindir://SOME/FILE} file inside josm plugin directory (since r7834)</li></ul>
+     */
     public ImageryReader(String source) {
         this.source = source;
     }
 
+    /**
+     * Parses imagery source.
+     * @return list of imagery info
+     * @throws SAXException if any SAX error occurs
+     * @throws IOException if any I/O error occurs
+     */
     public List<ImageryInfo> parse() throws SAXException, IOException {
         Parser parser = new Parser();
         try {
@@ -327,6 +344,7 @@ public class ImageryReader implements Closeable {
                             entry.setTileSize(tileSize.intValue());
                         }
                         break;
+                    default: // Do nothing
                     }
                 }
                 break;
@@ -455,13 +473,12 @@ public class ImageryReader implements Closeable {
                 mirrorEntry.setServerProjections(projections);
                 projections = null;
                 break;
-            /* nothing to do for these or the unknown type:
             case NO_TILE:
             case NO_TILESUM:
             case METADATA:
             case UNKNOWN:
-                break;
-            */
+            default:
+                // nothing to do for these or the unknown type
             }
         }
     }

@@ -314,6 +314,7 @@ public class FilterTableModel extends AbstractTableModel {
             savePrefs();
             updateFilters();
             break;
+        default: // Do nothing
         }
         if (column != 0) {
             fireTableCellUpdated(row, column);
@@ -345,7 +346,11 @@ public class FilterTableModel extends AbstractTableModel {
                 return trc("filter", "D");
             case in_selection: /* filter mode: in selection */
                 return trc("filter", "F");
+            default:
+                Main.warn("Unknown filter mode: " + f.mode);
             }
+            break;
+        default: // Do nothing
         }
         return null;
     }
@@ -405,6 +410,10 @@ public class FilterTableModel extends AbstractTableModel {
         g.translate(-dx, -dy);
     }
 
+    /**
+     * Returns the list of filters.
+     * @return the list of filters
+     */
     public List<Filter> getFilters() {
         return filters;
     }

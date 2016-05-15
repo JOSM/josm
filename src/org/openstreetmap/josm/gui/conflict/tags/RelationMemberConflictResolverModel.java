@@ -131,6 +131,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
             d.decide((RelationMemberConflictDecisionType) value);
             refresh();
             break;
+        default: // Do nothing
         }
         fireTableDataChanged();
     }

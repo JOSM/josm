@@ -254,7 +254,7 @@ public class MainApplication extends Main {
 
         int c;
         while ((c = g.getopt()) != -1) {
-            Option opt = null;
+            Option opt;
             switch (c) {
                 case 'h':
                     opt = Option.HELP;
@@ -265,6 +265,8 @@ public class MainApplication extends Main {
                 case 0:
                     opt = Option.values()[g.getLongind()];
                     break;
+                default:
+                    opt = null;
             }
             if (opt != null) {
                 Collection<String> values = argMap.get(opt);

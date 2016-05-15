@@ -79,6 +79,10 @@ public class TagEditorModel extends AbstractTableModel {
         this.colSelectionModel = colSelectionModel;
     }
 
+    /**
+     * Adds property change listener.
+     * @param listener property change listener to add
+     */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propChangeSupport.addPropertyChangeListener(listener);
     }
@@ -101,6 +105,10 @@ public class TagEditorModel extends AbstractTableModel {
         return colSelectionModel;
     }
 
+    /**
+     * Removes property change listener.
+     * @param listener property change listener to remove
+     */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propChangeSupport.removePropertyChangeListener(listener);
     }
@@ -145,11 +153,11 @@ public class TagEditorModel extends AbstractTableModel {
                 break;
             case 1:
                 String v = (String) value;
-                if (tag.getValueCount() > 1 && !v.isEmpty()) {
-                    updateTagValue(tag, v);
-                } else if (tag.getValueCount() <= 1) {
+                if ((tag.getValueCount() > 1 && !v.isEmpty()) || tag.getValueCount() <= 1) {
                     updateTagValue(tag, v);
                 }
+                break;
+            default: // Do nothing
             }
         }
     }
@@ -652,7 +660,7 @@ public class TagEditorModel extends AbstractTableModel {
             colMax = colSelectionModel.getMaxSelectionIndex();
         }
 
-        public void apply() {
+        void apply() {
             rowSelectionModel.setValueIsAdjusting(true);
             colSelectionModel.setValueIsAdjusting(true);
             if (rowMin >= 0 && rowMax >= 0) {

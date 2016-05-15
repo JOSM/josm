@@ -156,7 +156,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         g.drawLine(xoff+xowloop, y1, xoff+xowloop, y2);
 
         /* special icons */
-        Image arrow = null;
+        Image arrow;
         switch (value.direction) {
         case FORWARD:
             arrow = arrowDown;
@@ -164,6 +164,8 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         case BACKWARD:
             arrow = arrowUp;
             break;
+        default:
+            arrow = null;
         }
         if (value.direction == Direction.ROUNDABOUT_LEFT) {
             g.drawImage(roundabout_left, xoff-6, 1, null);
