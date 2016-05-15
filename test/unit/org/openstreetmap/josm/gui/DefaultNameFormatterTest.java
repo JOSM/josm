@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,13 +66,13 @@ public class DefaultNameFormatterTest {
             // route(lcn Sal  Salier-Radweg(412 members)
             System.out.println("p3: "+DefaultNameFormatter.getInstance().format(p3)+" - "+p3);
 
-            assertSame(comparator.compare(p1, p2), -1); // p1 < p2
-            assertSame(comparator.compare(p2, p1),  1); // p2 > p1
+            assertEquals(comparator.compare(p1, p2), -1); // p1 < p2
+            assertEquals(comparator.compare(p2, p1),  1); // p2 > p1
 
-            assertSame(comparator.compare(p1, p3), -1); // p1 < p3
-            assertSame(comparator.compare(p3, p1),  1); // p3 > p1
-            assertSame(comparator.compare(p2, p3),  1); // p2 > p3
-            assertSame(comparator.compare(p3, p2), -1); // p3 < p2
+            assertEquals(comparator.compare(p1, p3), -1); // p1 < p3
+            assertEquals(comparator.compare(p3, p1),  1); // p3 > p1
+            assertEquals(comparator.compare(p2, p3),  1); // p2 > p3
+            assertEquals(comparator.compare(p3, p2), -1); // p3 < p2
 
             Relation[] relations = new ArrayList<>(ds.getRelations()).toArray(new Relation[0]);
 

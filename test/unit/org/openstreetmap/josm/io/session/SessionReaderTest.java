@@ -3,7 +3,6 @@ package org.openstreetmap.josm.io.session;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -68,7 +67,7 @@ public class SessionReaderTest {
     public void testReadOsm() throws IOException, IllegalDataException {
         for (String file : new String[]{"osm.jos", "osm.joz"}) {
             List<Layer> layers = testRead(file);
-            assertSame(layers.size(), 1);
+            assertEquals(layers.size(), 1);
             assertTrue(layers.get(0) instanceof OsmDataLayer);
             OsmDataLayer osm = (OsmDataLayer) layers.get(0);
             assertEquals(osm.getName(), "OSM layer name");
@@ -84,7 +83,7 @@ public class SessionReaderTest {
     public void testReadGpx() throws IOException, IllegalDataException {
         for (String file : new String[]{"gpx.jos", "gpx.joz", "nmea.jos"}) {
             List<Layer> layers = testRead(file);
-            assertSame(layers.size(), 1);
+            assertEquals(layers.size(), 1);
             assertTrue(layers.get(0) instanceof GpxLayer);
             GpxLayer gpx = (GpxLayer) layers.get(0);
             assertEquals(gpx.getName(), "GPX layer name");
@@ -99,7 +98,7 @@ public class SessionReaderTest {
     @Test
     public void testReadGpxAndMarker() throws IOException, IllegalDataException {
         List<Layer> layers = testRead("gpx_markers.joz");
-        assertSame(layers.size(), 2);
+        assertEquals(layers.size(), 2);
         GpxLayer gpx = null;
         MarkerLayer marker = null;
         for (Layer layer : layers) {
@@ -123,7 +122,7 @@ public class SessionReaderTest {
     @Test
     public void testReadImage() throws IOException, IllegalDataException {
         final List<Layer> layers = testRead("bing.jos");
-        assertSame(layers.size(), 1);
+        assertEquals(layers.size(), 1);
         assertTrue(layers.get(0) instanceof ImageryLayer);
         final ImageryLayer image = (ImageryLayer) layers.get(0);
         assertEquals("Bing aerial imagery", image.getName());
@@ -144,7 +143,7 @@ public class SessionReaderTest {
             }
         }
         final List<Layer> layers = testRead("notes.joz");
-        assertSame(layers.size(), 1);
+        assertEquals(layers.size(), 1);
         assertTrue(layers.get(0) instanceof NoteLayer);
         final NoteLayer layer = (NoteLayer) layers.get(0);
         assertEquals("Notes", layer.getName());
