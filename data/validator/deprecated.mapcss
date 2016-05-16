@@ -841,3 +841,10 @@ way[barrier=wall][type=noise_barrier][wall][wall!=noise_barrier] {
   suggestAlternative: "service=drive-through";
   fixAdd: "service=drive-through";
 }
+
+/* #12771 */
+way[highway=service][service][service !~ /^(alley|drive-through|driveway|emergency_access|parking_aisle|rest_area)$/],
+way[railway=rail][service][service !~ /^(crossover|siding|spur|yard)$/],
+way[waterway=canal][service][service !~ /^(irrigation|transportation|water_power)$/] {
+  throwWarning: tr("The key {0} has an uncommon value.", "{1.key}");
+}
