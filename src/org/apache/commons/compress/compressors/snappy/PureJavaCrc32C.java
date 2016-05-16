@@ -32,7 +32,7 @@ import java.util.zip.Checksum;
  * @NotThreadSafe
  * @since 1.7
  */
-class PureJavaCrc32C implements Checksum {
+final class PureJavaCrc32C implements Checksum {
 
   /** the current CRC value, bit-flipped */
   private int crc;
