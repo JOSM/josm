@@ -375,7 +375,7 @@
   fixAdd: "park_ride=yes";
 }
 
-/* see #10661, #10837, #11737 */
+/* see #10661, #10837, #11737, #12771 */
 *[traffic_calming=yes],
 *[access=restricted],
 *[barrier=yes],
@@ -383,6 +383,7 @@
 *[amenity=yes],
 *[shop="*"],
 *[craft=yes],
+*[service=yes],
 *[place=yes] {
   throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by a specific value.", "{0.key}", "{0.value}");
 }
@@ -832,4 +833,11 @@ way[barrier=wall][type=noise_barrier][wall][wall!=noise_barrier] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "vending=newspapers";
   fixAdd: "vending=newspapers";
+}
+
+/* #12771 */
+*[service=drive_through] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "service=drive-through";
+  fixAdd: "service=drive-through";
 }
