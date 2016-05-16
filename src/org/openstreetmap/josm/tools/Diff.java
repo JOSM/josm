@@ -385,14 +385,10 @@ public class Diff {
         filevec[1].discard_confusing_lines(filevec[0]);
     }
 
-    private boolean inhibit;
-
     /**
      * Adjust inserts/deletes of blank lines to join changes as much as possible.
      */
     private void shift_boundaries() {
-        if (inhibit)
-            return;
         filevec[0].shift_boundaries(filevec[1]);
         filevec[1].shift_boundaries(filevec[0]);
     }

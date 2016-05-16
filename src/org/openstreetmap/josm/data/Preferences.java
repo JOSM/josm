@@ -1202,7 +1202,7 @@ public class Preferences {
         try {
             structPrototype = klass.getConstructor().newInstance();
         } catch (ReflectiveOperationException ex) {
-            throw new RuntimeException(ex);
+            throw new IllegalArgumentException(ex);
         }
 
         Map<String, String> hash = new LinkedHashMap<>();
@@ -1210,23 +1210,21 @@ public class Preferences {
             if (f.getAnnotation(pref.class) == null) {
                 continue;
             }
-            f.setAccessible(true);
+            Utils.setObjectsAccessible(f);
             try {
                 Object fieldValue = f.get(struct);
                 Object defaultFieldValue = f.get(structPrototype);
-                if (fieldValue != null) {
-                    if (f.getAnnotation(writeExplicitly.class) != null || !Objects.equals(fieldValue, defaultFieldValue)) {
-                        String key = f.getName().replace('_', '-');
-                        if (fieldValue instanceof Map) {
-                            hash.put(key, mapToJson((Map) fieldValue));
-                        } else if (fieldValue instanceof MultiMap) {
-                            hash.put(key, multiMapToJson((MultiMap) fieldValue));
-                        } else {
-                            hash.put(key, fieldValue.toString());
-                        }
+                if (fieldValue != null && (f.getAnnotation(writeExplicitly.class) != null || !Objects.equals(fieldValue, defaultFieldValue))) {
+                    String key = f.getName().replace('_', '-');
+                    if (fieldValue instanceof Map) {
+                        hash.put(key, mapToJson((Map<?, ?>) fieldValue));
+                    } else if (fieldValue instanceof MultiMap) {
+                        hash.put(key, multiMapToJson((MultiMap<?, ?>) fieldValue));
+                    } else {
+                        hash.put(key, fieldValue.toString());
                     }
                 }
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
+            } catch (IllegalAccessException ex) {
                 throw new RuntimeException(ex);
             }
         }
@@ -1260,13 +1258,11 @@ public class Preferences {
                 f = klass.getDeclaredField(key_value.getKey().replace('-', '_'));
             } catch (NoSuchFieldException ex) {
                 continue;
-            } catch (SecurityException ex) {
-                throw new RuntimeException(ex);
             }
             if (f.getAnnotation(pref.class) == null) {
                 continue;
             }
-            f.setAccessible(true);
+            Utils.setObjectsAccessible(f);
             if (f.getType() == Boolean.class || f.getType() == boolean.class) {
                 value = Boolean.valueOf(key_value.getValue());
             } else if (f.getType() == Integer.class || f.getType() == int.class) {
@@ -1325,7 +1321,7 @@ public class Preferences {
         if (!GraphicsEnvironment.isHeadless()) {
             try {
                 Field field = Toolkit.class.getDeclaredField("resources");
-                field.setAccessible(true);
+                Utils.setObjectsAccessible(field);
                 field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
             } catch (ReflectiveOperationException e) {
                 if (Main.isTraceEnabled()) {

@@ -95,9 +95,14 @@ public enum Compression {
      * @return un-compressing input stream
      * @throws IOException if any I/O error occurs
      */
-    @SuppressWarnings("resource")
     public static InputStream getUncompressedFileInputStream(File file) throws IOException {
-        return byExtension(file.getName()).getUncompressedInputStream(new FileInputStream(file));
+        FileInputStream in = new FileInputStream(file);
+        try {
+            return byExtension(file.getName()).getUncompressedInputStream(in);
+        } catch (IOException e) {
+            Utils.close(in);
+            throw e;
+        }
     }
 
     /**
@@ -128,8 +133,13 @@ public enum Compression {
      *
      * @throws IOException if any I/O error occurs
      */
-    @SuppressWarnings("resource")
     public static OutputStream getCompressedFileOutputStream(File file) throws IOException {
-        return byExtension(file.getName()).getCompressedOutputStream(new FileOutputStream(file));
+        FileOutputStream out = new FileOutputStream(file);
+        try {
+            return byExtension(file.getName()).getCompressedOutputStream(out);
+        } catch (IOException e) {
+            Utils.close(out);
+            throw e;
+        }
     }
 }

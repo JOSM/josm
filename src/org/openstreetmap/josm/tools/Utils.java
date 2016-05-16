@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.AccessibleObject;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -33,8 +34,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.security.AccessController;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivilegedAction;
 import java.text.Bidi;
 import java.text.MessageFormat;
 import java.util.AbstractCollection;
@@ -1536,4 +1539,23 @@ public final class Utils {
         return gvs;
     }
 
+    /**
+     * Sets {@code AccessibleObject}(s) accessible.
+     * @param objects objects
+     * @see AccessibleObject#setAccessible
+     * @since 10223
+     */
+    public static void setObjectsAccessible(final AccessibleObject ... objects) {
+        if (objects != null && objects.length > 0) {
+            AccessController.doPrivileged(new PrivilegedAction<Object>() {
+                @Override
+                public Object run() {
+                    for (AccessibleObject o : objects) {
+                        o.setAccessible(true);
+                    }
+                    return null;
+                }
+            });
+        }
+    }
 }
