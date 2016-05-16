@@ -718,7 +718,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
         Collections.sort(sortedRelations, new Comparator<Relation>() {
             @Override
             public int compare(Relation o1, Relation o2) {
-                int comp = Boolean.valueOf(o1.isDisabledAndHidden()).compareTo(o2.isDisabledAndHidden());
+                int comp = Boolean.compare(o1.isDisabledAndHidden(), o2.isDisabledAndHidden());
                 return comp != 0 ? comp : DefaultNameFormatter.getInstance().getRelationComparator().compare(o1, o2);
             }
         });

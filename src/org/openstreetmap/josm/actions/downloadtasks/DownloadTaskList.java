@@ -273,7 +273,7 @@ public class DownloadTaskList {
                     @Override
                     public void run() {
                         if (items.size() == 1 && tr("No data found in this area.").equals(items.iterator().next())) {
-                            new Notification(items.iterator().next().toString()).setIcon(JOptionPane.WARNING_MESSAGE).show();
+                            new Notification(items.iterator().next()).setIcon(JOptionPane.WARNING_MESSAGE).show();
                         } else {
                             JOptionPane.showMessageDialog(Main.parent, "<html>"
                                     + tr("The following errors occurred during mass download: {0}",

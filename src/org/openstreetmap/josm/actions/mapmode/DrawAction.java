@@ -895,8 +895,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     /**
-     * if one of the ends of {@code way} is given {@code  node},
-     * then set  currentBaseNode = node and previousNode = adjacent node of way
+     * if one of the ends of {@code way} is given {@code node},
+     * then set currentBaseNode = node and previousNode = adjacent node of way
      * @param way way to continue
      * @param node starting node
      */
@@ -1691,23 +1691,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             customBaseHeading = hdg;
         }
 
-        private void nextSnapMode() {
-            if (snapOn) {
-                // turn off snapping if we are in fixed mode or no actile snapping line exist
-                if (fixed || !active) {
-                    snapOn = false;
-                    unsetFixedMode();
-                } else {
-                    setFixedMode();
-                }
-            } else {
-                snapOn = true;
-                unsetFixedMode();
-            }
-            checkBox.setState(snapOn);
-            customBaseHeading = -1;
-        }
-
         private void enableSnapping() {
             snapOn = true;
             checkBox.setState(snapOn);
@@ -1728,18 +1711,18 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
         }
 
-        public  void unsetFixedMode() {
+        public void unsetFixedMode() {
             fixed = false;
             absoluteFix = false;
             lastAngle = 0;
             active = false;
         }
 
-        public  boolean isActive() {
+        public boolean isActive() {
             return active;
         }
 
-        public  boolean isSnapOn() {
+        public boolean isSnapOn() {
             return snapOn;
         }
 

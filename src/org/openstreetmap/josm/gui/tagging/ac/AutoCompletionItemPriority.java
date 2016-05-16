@@ -116,15 +116,15 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
         if (ui != 0)
             return ui;
 
-        int sel = Boolean.valueOf(selected).compareTo(other.selected);
+        int sel = Boolean.compare(selected, other.selected);
         if (sel != 0)
             return sel;
 
-        int ds = Boolean.valueOf(inDataSet).compareTo(other.inDataSet);
+        int ds = Boolean.compare(inDataSet, other.inDataSet);
         if (ds != 0)
             return ds;
 
-        int std = Boolean.valueOf(inStandard).compareTo(other.inStandard);
+        int std = Boolean.compare(inStandard, other.inStandard);
         if (std != 0)
             return std;
 

@@ -69,7 +69,7 @@ public class PowerLines extends Test {
                     if (!isPowerTower(n)) {
                         if (!isPowerAllowed(n) && IN_DOWNLOADED_AREA.evaluate(n)) {
                             if (!w.isFirstLastNode(n) || !isPowerStation(n)) {
-                                potentialErrors.add(new PowerLineError(n, w));
+                                potentialErrors.add(new PowerLineError(this, n, w));
                                 erroneous = true;
                             }
                         }
@@ -208,8 +208,8 @@ public class PowerLines extends Test {
     protected class PowerLineError extends TestError {
         private final Way line;
 
-        public PowerLineError(Node n, Way line) {
-            super(PowerLines.this, Severity.WARNING,
+        public PowerLineError(PowerLines tester, Node n, Way line) {
+            super(tester, Severity.WARNING,
                     tr("Missing power tower/pole within power line"), POWER_LINES, n);
             this.line = line;
         }

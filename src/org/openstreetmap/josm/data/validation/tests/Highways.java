@@ -74,12 +74,12 @@ public class Highways extends Test {
         super(tr("Highways"), tr("Performs semantic checks on highways."));
     }
 
-    protected class WrongRoundaboutHighway extends TestError {
+    protected static class WrongRoundaboutHighway extends TestError {
 
         public final String correctValue;
 
-        public WrongRoundaboutHighway(Way w, String key) {
-            super(Highways.this, Severity.WARNING,
+        public WrongRoundaboutHighway(Highways tester, Way w, String key) {
+            super(tester, Severity.WARNING,
                     tr("Incorrect roundabout (highway: {0} instead of {1})", w.get("highway"), key),
                     WRONG_ROUNDABOUT_HIGHWAY, w);
             this.correctValue = key;
@@ -145,7 +145,7 @@ public class Highways extends Test {
                 if (list.size() > 2 || oneway1 == null || oneway2 == null || !oneway1 || !oneway2) {
                     // Error when the highway tags do not match
                     if (!w.get("highway").equals(s)) {
-                        errors.add(new WrongRoundaboutHighway(w, s));
+                        errors.add(new WrongRoundaboutHighway(this, w, s));
                     }
                     break;
                 }
