@@ -66,7 +66,7 @@ public abstract class RotationAngle {
         switch (cardinal.toLowerCase(Locale.ENGLISH)) {
             case "n":
             case "north":
-                return Math.toRadians(0);
+                return 0; // 0 degree => 0 radian
             case "ne":
             case "northeast":
                 return Math.toRadians(45);
@@ -78,7 +78,7 @@ public abstract class RotationAngle {
                 return Math.toRadians(135);
             case "s":
             case "south":
-                return Math.toRadians(180);
+                return Math.PI; // 180 degree
             case "sw":
             case "southwest":
                 return Math.toRadians(225);

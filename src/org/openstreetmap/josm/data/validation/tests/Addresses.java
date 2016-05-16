@@ -49,23 +49,24 @@ public class Addresses extends Test {
     protected static final String ADDR_STREET        = "addr:street";
     protected static final String ASSOCIATED_STREET  = "associatedStreet";
 
-    protected class AddressError extends TestError {
+    protected static class AddressError extends TestError {
 
-        public AddressError(int code, OsmPrimitive p, String message) {
-            this(code, Collections.singleton(p), message);
+        public AddressError(Addresses tester, int code, OsmPrimitive p, String message) {
+            this(tester, code, Collections.singleton(p), message);
         }
 
-        public AddressError(int code, Collection<OsmPrimitive> collection, String message) {
-            this(code, collection, message, null, null);
+        public AddressError(Addresses tester, int code, Collection<OsmPrimitive> collection, String message) {
+            this(tester, code, collection, message, null, null);
         }
 
-        public AddressError(int code, Collection<OsmPrimitive> collection, String message, String description, String englishDescription) {
-            this(code, Severity.WARNING, collection, message, description, englishDescription);
+        public AddressError(Addresses tester, int code, Collection<OsmPrimitive> collection, String message,
+                String description, String englishDescription) {
+            this(tester, code, Severity.WARNING, collection, message, description, englishDescription);
         }
 
-        public AddressError(int code, Severity severity, Collection<OsmPrimitive> collection, String message, String description,
-                String englishDescription) {
-            super(Addresses.this, severity, message, description, englishDescription, code, collection);
+        public AddressError(Addresses tester, int code, Severity severity, Collection<OsmPrimitive> collection, String message,
+                String description, String englishDescription) {
+            super(tester, severity, message, description, englishDescription, code, collection);
         }
     }
 
@@ -100,7 +101,7 @@ public class Addresses extends Test {
             }
             List<OsmPrimitive> errorList = new ArrayList<OsmPrimitive>(list);
             errorList.add(0, p);
-            errors.add(new AddressError(MULTIPLE_STREET_RELATIONS, level, errorList,
+            errors.add(new AddressError(this, MULTIPLE_STREET_RELATIONS, level, errorList,
                     tr("Multiple associatedStreet relations"), null, null));
         }
         return list;
@@ -121,7 +122,7 @@ public class Addresses extends Test {
                 }
             }
             // No street found
-            errors.add(new AddressError(HOUSE_NUMBER_WITHOUT_STREET, p, tr("House number without street")));
+            errors.add(new AddressError(this, HOUSE_NUMBER_WITHOUT_STREET, p, tr("House number without street")));
         }
     }
 
@@ -185,13 +186,13 @@ public class Addresses extends Test {
             for (Entry<String, List<OsmPrimitive>> entry : map.entrySet()) {
                 List<OsmPrimitive> list = entry.getValue();
                 if (list.size() > 1) {
-                    errors.add(new AddressError(DUPLICATE_HOUSE_NUMBER, list,
+                    errors.add(new AddressError(this, DUPLICATE_HOUSE_NUMBER, list,
                             tr("Duplicate house numbers"), tr(englishDescription, entry.getKey()), englishDescription));
                 }
             }
             // Report wrong street names
             if (!wrongStreetNames.isEmpty()) {
-                errors.add(new AddressError(MULTIPLE_STREET_NAMES, wrongStreetNames,
+                errors.add(new AddressError(this, MULTIPLE_STREET_NAMES, wrongStreetNames,
                         tr("Multiple street names in relation")));
             }
             // Report addresses too far away
@@ -247,7 +248,7 @@ public class Addresses extends Test {
         if (hasIncompleteWays) return;
         List<OsmPrimitive> errorList = new ArrayList<OsmPrimitive>(street);
         errorList.add(0, house);
-        errors.add(new AddressError(HOUSE_NUMBER_TOO_FAR, errorList,
+        errors.add(new AddressError(this, HOUSE_NUMBER_TOO_FAR, errorList,
                 tr("House number too far from street")));
     }
 }

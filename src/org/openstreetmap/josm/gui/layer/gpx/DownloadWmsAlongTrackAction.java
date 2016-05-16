@@ -59,13 +59,13 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             precacheTask = layer.downloadAreaToCache(progressMonitor, points, 0, 0);
-            while (!precacheTask.isFinished() && !progressMonitor.isCanceled()) {
-                synchronized (this) {
-                    try {
+            synchronized (this) {
+                try {
+                    while (!precacheTask.isFinished() && !progressMonitor.isCanceled()) {
                         wait(200);
-                    } catch (InterruptedException ex) {
-                        Main.warn("InterruptedException in "+getClass().getSimpleName()+" while precaching WMS");
                     }
+                } catch (InterruptedException ex) {
+                    Main.warn("InterruptedException in "+getClass().getSimpleName()+" while precaching WMS");
                 }
             }
         }

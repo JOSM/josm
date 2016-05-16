@@ -92,7 +92,7 @@ import org.openstreetmap.josm.tools.Predicate;
  *
  * @author imi
  */
-public class MapStatus extends JPanel implements Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener {
+public final class MapStatus extends JPanel implements Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener {
 
     private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(Main.pref.get("statusbar.decimal-format", "0.0"));
     private final double DISTANCE_THRESHOLD = Main.pref.getDouble("statusbar.distance-threshold", 0.01);

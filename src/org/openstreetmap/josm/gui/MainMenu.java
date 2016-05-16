@@ -823,17 +823,6 @@ public class MainMenu extends JMenuBar {
         new PresetsMenuEnabler(presetsMenu).refreshEnabled();
     }
 
-    private int getMaximumAvailableWidth() {
-        int maxWidth = getSize().width;
-        for (int i = 0; i < getMenuCount(); i++) {
-            JMenu menu = getMenu(i);
-            if (menu != null) {
-                maxWidth -= menu.getPreferredSize().width;
-            }
-        }
-        return maxWidth;
-    }
-
     /**
      * Search main menu for items with {@code textToFind} in title.
      * @param textToFind The text to find

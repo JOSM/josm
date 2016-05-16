@@ -40,6 +40,6 @@ public class AllFormatsImporter extends FileImporter {
             ext.append(fi.filter.getExtensions()).append(',');
         }
         // remove last comma
-        return ext.substring(0, ext.length()-1).toString();
+        return ext.substring(0, ext.length()-1);
     }
 }
