@@ -205,7 +205,7 @@ public class PowerLines extends Test {
         return v != null && values != null && values.contains(v);
     }
 
-    protected class PowerLineError extends TestError {
+    protected static class PowerLineError extends TestError {
         private final Way line;
 
         public PowerLineError(PowerLines tester, Node n, Way line) {

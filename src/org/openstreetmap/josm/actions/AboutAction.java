@@ -41,7 +41,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class AboutAction extends JosmAction {
+public final class AboutAction extends JosmAction {
 
     /**
      * Constructs a new {@code AboutAction}.
@@ -129,13 +129,12 @@ public class AboutAction extends JosmAction {
         if (is == null) {
             displayErrorMessage(ta, tr("Failed to locate resource ''{0}''.", filePath));
         } else {
-            try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            try (InputStreamReader reader = new InputStreamReader(is, "UTF-8");
+                 BufferedReader br = new BufferedReader(reader)) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     ta.append(line+'\n');
                 }
-                br.close();
             } catch (IOException e) {
                 Main.warn(e);
                 displayErrorMessage(ta, tr("Failed to load resource ''{0}'', error is {1}.", filePath, e.toString()));

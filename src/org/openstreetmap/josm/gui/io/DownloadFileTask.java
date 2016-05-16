@@ -118,12 +118,13 @@ public class DownloadFileTask extends PleaseWaitRunnable {
             ) {
                 byte[] buffer = new byte[32768];
                 int count = 0;
-                long p1 = 0, p2 = 0;
+                long p1 = 0;
+                long p2;
                 for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
                     out.write(buffer, 0, read);
                     count += read;
                     if (canceled) break;
-                    p2 = 100 * count / size;
+                    p2 = 100L * count / size;
                     if (p2 != p1) {
                         progressMonitor.setTicks((int) p2);
                         p1 = p2;

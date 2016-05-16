@@ -1117,7 +1117,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @see #getNearestWaySegments(Point, Collection, Predicate)
      */
     public final WaySegment getNearestWaySegment(Point p, Predicate<OsmPrimitive> predicate, boolean useSelected) {
-        WaySegment wayseg = null, ntsel = null;
+        WaySegment wayseg = null;
+        WaySegment ntsel = null;
 
         for (List<WaySegment> wslist : getNearestWaySegmentsImpl(p, predicate).values()) {
             if (wayseg != null && ntsel != null) {
@@ -1152,9 +1153,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @since 6065
      */
     public final WaySegment getNearestWaySegment(Point p, Predicate<OsmPrimitive> predicate,
-            boolean useSelected,  Collection<OsmPrimitive> preferredRefs) {
-        WaySegment wayseg = null, ntsel = null, ntref = null;
-        if (preferredRefs != null && preferredRefs.isEmpty()) preferredRefs = null;
+            boolean useSelected, Collection<OsmPrimitive> preferredRefs) {
+        WaySegment wayseg = null;
+        WaySegment ntsel = null;
+        WaySegment ntref = null;
+        if (preferredRefs != null && preferredRefs.isEmpty())
+            preferredRefs = null;
 
         searchLoop: for (List<WaySegment> wslist : getNearestWaySegmentsImpl(p, predicate).values()) {
             for (WaySegment ws : wslist) {

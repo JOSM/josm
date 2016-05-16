@@ -972,10 +972,10 @@ public class LayerListDialog extends ToggleDialog {
             if (row >= 0 && row < layers.size()) {
                 switch (col) {
                 case 0: return layers.get(row) == getActiveLayer();
-                case 1: return layers.get(row);
-                case 2: return layers.get(row);
+                case 1:
+                case 2:
                 case 3: return layers.get(row);
-                default: throw new RuntimeException();
+                default: // Do nothing
                 }
             }
             return null;

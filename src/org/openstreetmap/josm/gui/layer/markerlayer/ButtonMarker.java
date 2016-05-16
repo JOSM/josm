@@ -65,7 +65,7 @@ public class ButtonMarker extends Marker {
         b.paintBorder(mv, g, r.x, r.y, r.width, r.height);
 
         String labelText = getText();
-        if ((labelText != null) && showTextOrIcon && Main.pref.getBoolean("marker.buttonlabels", true)) {
+        if (labelText != null && Main.pref.getBoolean("marker.buttonlabels", true)) {
             g.drawString(labelText, screen.x+4, screen.y+2);
         }
     }
