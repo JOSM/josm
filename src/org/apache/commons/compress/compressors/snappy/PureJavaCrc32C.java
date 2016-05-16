@@ -39,7 +39,7 @@ final class PureJavaCrc32C implements Checksum {
 
   /** Create a new PureJavaCrc32 object. */
   public PureJavaCrc32C() {
-    reset();
+    reset(); // non-private, but the class is now final
   }
 
   @Override
@@ -49,6 +49,7 @@ final class PureJavaCrc32C implements Checksum {
   }
 
   @Override
+  // called by ctor but the class is final so this is safe
   public void reset() {
     crc = 0xffffffff;
   }
