@@ -16,6 +16,7 @@ import javax.swing.text.html.ImageView;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Specialized Image View allowing to display SVG images.
@@ -46,10 +47,7 @@ public class JosmImageView extends ImageView {
         stateField = ImageView.class.getDeclaredField("state");
         widthField = ImageView.class.getDeclaredField("width");
         heightField = ImageView.class.getDeclaredField("height");
-        imageField.setAccessible(true);
-        stateField.setAccessible(true);
-        widthField.setAccessible(true);
-        heightField.setAccessible(true);
+        Utils.setObjectsAccessible(imageField, stateField, widthField, heightField);
     }
 
     /**
@@ -101,7 +99,7 @@ public class JosmImageView extends ImageView {
 
             // And update the size params
             Method updateImageSize = ImageView.class.getDeclaredMethod("updateImageSize");
-            updateImageSize.setAccessible(true);
+            Utils.setObjectsAccessible(updateImageSize);
             updateImageSize.invoke(this);
         } finally {
             synchronized (this) {
@@ -129,7 +127,7 @@ public class JosmImageView extends ImageView {
                 imageField.set(this, imgIcon != null ? imgIcon.getImage() : null);
             } else {
                 Method loadImage = ImageView.class.getDeclaredMethod("loadImage");
-                loadImage.setAccessible(true);
+                Utils.setObjectsAccessible(loadImage);
                 loadImage.invoke(this);
             }
         } else {

@@ -9,8 +9,6 @@ import static org.junit.Assert.fail;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -25,6 +23,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -53,14 +52,8 @@ public class SelectActionTest {
         SelectActionMock(MapFrame mapFrame, DataSet dataSet, OsmDataLayer layer) {
             super(mapFrame);
             try {
-                final Field mv = SelectAction.class.getDeclaredField("mv");
-                AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                    @Override
-                    public Object run() {
-                        mv.setAccessible(true);
-                        return null;
-                    }
-                });
+                Field mv = SelectAction.class.getDeclaredField("mv");
+                Utils.setObjectsAccessible(mv);
                 mv.set(this, new MapViewMock(dataSet, layer));
             } catch (ReflectiveOperationException e) {
                 e.printStackTrace();

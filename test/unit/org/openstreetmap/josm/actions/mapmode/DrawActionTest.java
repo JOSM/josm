@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Unit tests for class {@link DrawAction}.
@@ -53,7 +54,7 @@ public class DrawActionTest {
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
         Field mapView = MapFrame.class.getDeclaredField("mapView");
-        mapView.setAccessible(true);
+        Utils.setObjectsAccessible(mapView);
         mapView.set(Main.map, new MapViewMock(dataSet, layer));
 
         Node n1 = new Node(new EastNorth(0, 0));

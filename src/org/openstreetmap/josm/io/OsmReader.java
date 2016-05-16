@@ -10,6 +10,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -354,7 +355,7 @@ public class OsmReader extends AbstractReader {
             id = getLong("id");
         }
         // Read changeset info if neither upload-changeset nor id are set, or if they are both set to the same value
-        if (id == uploadChangesetId || (id != null && id.equals(uploadChangesetId))) {
+        if (Objects.equals(id, uploadChangesetId)) {
             uploadChangeset = new Changeset(id != null ? id.intValue() : 0);
             while (true) {
                 int event = parser.next();

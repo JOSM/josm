@@ -24,7 +24,6 @@ import org.xml.sax.SAXException;
  * @author Imi
  */
 public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
-    private boolean canceled;
     private boolean ignoreException;
     private final String title;
 
@@ -149,9 +148,6 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
 
     @Override
     public final void run() {
-        if (canceled)
-            return; // since realRun isn't executed, do not call to finish
-
         if (EventQueue.isDispatchThread()) {
             new Thread(new Runnable() {
                 @Override

@@ -15,6 +15,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.tools.Utils;
 import org.reflections.Reflections;
 
 /**
@@ -98,7 +99,7 @@ public class TableCellRendererTest {
         } catch (SecurityException ex) {
             throw new RuntimeException(ex);
         }
-        c.setAccessible(true);
+        Utils.setObjectsAccessible(c);
         T o;
         try {
             if (needOuterClass) {

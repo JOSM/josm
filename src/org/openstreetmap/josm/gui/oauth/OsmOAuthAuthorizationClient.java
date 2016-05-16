@@ -90,9 +90,8 @@ public class OsmOAuthAuthorizationClient {
         canceled = true;
         if (provider != null) {
             try {
-                // TODO
-                Field f =  provider.getClass().getDeclaredField("connection");
-                f.setAccessible(true);
+                Field f = provider.getClass().getDeclaredField("connection");
+                Utils.setObjectsAccessible(f);
                 HttpURLConnection con = (HttpURLConnection) f.get(provider);
                 if (con != null) {
                     con.disconnect();
