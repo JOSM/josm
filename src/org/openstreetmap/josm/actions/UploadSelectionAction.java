@@ -340,7 +340,6 @@ public class UploadSelectionAction extends JosmAction {
                         OsmPrimitive myDeletedParent = layer.data.getPrimitiveById(p);
                         // our local dataset includes a deleted parent of a primitive we want
                         // to delete. Include this parent in the collection of uploaded primitives
-                        //
                         if (myDeletedParent != null && myDeletedParent.isDeleted()) {
                             if (!toUpload.contains(myDeletedParent)) {
                                 toUpload.add(myDeletedParent);
@@ -351,7 +350,7 @@ public class UploadSelectionAction extends JosmAction {
                         }
                     }
                 }
-            } catch (Exception e) {
+            } catch (OsmTransferException e) {
                 if (canceled)
                     // ignore exception
                     return;
