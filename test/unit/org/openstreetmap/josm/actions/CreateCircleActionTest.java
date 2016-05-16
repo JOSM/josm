@@ -8,8 +8,6 @@ import static org.junit.Assert.fail;
 import java.awt.geom.Area;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +29,7 @@ import org.openstreetmap.josm.tools.GeoPropertyIndex;
 import org.openstreetmap.josm.tools.GeoPropertyIndex.GeoProperty;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Unit tests for class {@link CreateCircleAction}.
@@ -57,16 +56,10 @@ public final class CreateCircleActionTest {
      */
     public void addSelected(OsmPrimitive p, DataSet ds) {
         try {
-            final Method method = ds.getClass()
+            Method method = ds.getClass()
                 .getDeclaredMethod("addSelected",
                                    new Class<?>[] {Collection.class, boolean.class});
-            AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                @Override
-                public Object run() {
-                    method.setAccessible(true);
-                    return null;
-                }
-            });
+            Utils.setObjectsAccessible(method);
             method.invoke(ds, Collections.singleton(p), false);
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
@@ -164,12 +157,10 @@ public final class CreateCircleActionTest {
         try {
             Field leftHandTrafficPolygons = RightAndLefthandTraffic.class
                 .getDeclaredField("leftHandTrafficPolygons");
-            leftHandTrafficPolygons.setAccessible(true);
-            leftHandTrafficPolygons.set(null, new ArrayList<Area>());
             Field rlCache = RightAndLefthandTraffic.class.getDeclaredField("rlCache");
-            rlCache.setAccessible(true);
-            ConstantTrafficHand trafficHand = new ConstantTrafficHand(true);
-            rlCache.set(null, new GeoPropertyIndex<>(trafficHand, 24));
+            Utils.setObjectsAccessible(leftHandTrafficPolygons, rlCache);
+            leftHandTrafficPolygons.set(null, new ArrayList<Area>());
+            rlCache.set(null, new GeoPropertyIndex<>(new ConstantTrafficHand(true), 24));
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             fail("Impossible to mock left/right hand database: " + e.getMessage());
