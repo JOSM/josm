@@ -32,6 +32,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -159,6 +160,11 @@ public final class ShowStatusReportAction extends JosmAction {
         appendCollection(text, "Map paint styles", getCustomUrls(MapPaintPreference.MapPaintPrefHelper.INSTANCE));
         appendCollection(text, "Validator rules", getCustomUrls(ValidatorTagCheckerRulesPreference.RulePrefHelper.INSTANCE));
         appendCollection(text, "Last errors/warnings", Main.getLastErrorAndWarnings());
+
+        String osmApi = OsmApi.getOsmApi().getServerUrl();
+        if (!OsmApi.DEFAULT_API_URL.equals(osmApi.trim())) {
+            text.append("OSM API: ").append(osmApi).append("\n\n");
+        }
 
         return text.toString();
     }
