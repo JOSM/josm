@@ -1304,6 +1304,7 @@
             <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no" />
             <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" />
             <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
+            <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             <check key="bicycle" text="Cross by bicycle" />
             <check key="horse" text="Cross on horseback" />
             <label text="In case of traffic signals:" />
@@ -1748,6 +1749,7 @@
             <key key="barrier" value="kerb" />
             <reference ref="optional_height" />
             <reference ref="wheelchair" />
+            <combo key="tactile_paving" text="Tactile paving" values="yes,no,incorrect" />
         </item> <!-- Kerb -->
         <separator/> <!-- *** Access *** -->
         <item name="Entrance (Barrier Opening)" icon="styles/standard/vehicle/entrance.png" type="node" preset_name_label="true">
@@ -3173,6 +3175,7 @@
                 <text key="uic_name" text="UIC name" />
                 <text key="operator" text="Operator" />
                 <text key="network" text="Network" />
+                <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             </optional>
             <check key="bus" text="Bus" />
             <check key="highway" value_on="bus_stop" value_off="" text="Bus stop (legacy)" />
@@ -3199,6 +3202,7 @@
             <check key="bin" text="Waste Basket/Trash Can" />
             <check key="covered" text="Covered" />
             <reference ref="wheelchair" />
+            <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             <optional>
                 <text key="ref" text="Reference" />
                 <text key="uic_ref" text="UIC reference" />
@@ -3381,6 +3385,7 @@
             <text key="ref" text="Reference (track number)" />
             <text key="width" text="Width (meters)" />
             <check key="area" text="Area" />
+            <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
         </item> <!-- Bus Platform -->
     </group> <!-- Public Transport -->
     <item name="Taxi" icon="presets/taxi.png" type="node,closedway,multipolygon" preset_name_label="true">
