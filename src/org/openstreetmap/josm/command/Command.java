@@ -62,7 +62,7 @@ public abstract class Command extends PseudoCommand {
      */
     public static class OldNodeState {
 
-        private final LatLon latlon;
+        private final LatLon latLon;
         private final EastNorth eastNorth; // cached EastNorth to be used for applying exact displacement
         private final boolean modified;
 
@@ -71,7 +71,7 @@ public abstract class Command extends PseudoCommand {
          * @param node The node whose state has to be remembered
          */
         public OldNodeState(Node node) {
-            latlon = node.getCoor();
+            latLon = node.getCoor();
             eastNorth = node.getEastNorth();
             modified = node.isModified();
         }
@@ -80,9 +80,10 @@ public abstract class Command extends PseudoCommand {
          * Returns old lat/lon.
          * @return old lat/lon
          * @see Node#getCoor()
+         * @since 10248
          */
-        public final LatLon getLatlon() {
-            return latlon;
+        public final LatLon getLatLon() {
+            return latLon;
         }
 
         /**
@@ -105,7 +106,7 @@ public abstract class Command extends PseudoCommand {
 
         @Override
         public int hashCode() {
-            return Objects.hash(latlon, eastNorth, modified);
+            return Objects.hash(latLon, eastNorth, modified);
         }
 
         @Override
@@ -114,7 +115,7 @@ public abstract class Command extends PseudoCommand {
             if (obj == null || getClass() != obj.getClass()) return false;
             OldNodeState that = (OldNodeState) obj;
             return modified == that.modified &&
-                    Objects.equals(latlon, that.latlon) &&
+                    Objects.equals(latLon, that.latLon) &&
                     Objects.equals(eastNorth, that.eastNorth);
         }
     }
