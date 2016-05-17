@@ -23,9 +23,6 @@ public abstract class StyleElement implements StyleKeys {
     protected static final int ICON_OPACITY_IDX = 3;
     protected static final int ICON_OFFSET_X_IDX = 4;
     protected static final int ICON_OFFSET_Y_IDX = 5;
-    protected static final String[] ICON_KEYS = {ICON_IMAGE, ICON_WIDTH, ICON_HEIGHT, ICON_OPACITY, ICON_OFFSET_X, ICON_OFFSET_Y};
-    protected static final String[] REPEAT_IMAGE_KEYS = {REPEAT_IMAGE, REPEAT_IMAGE_WIDTH, REPEAT_IMAGE_HEIGHT, REPEAT_IMAGE_OPACITY,
-            null, null};
 
     public float majorZIndex;
     public float zIndex;

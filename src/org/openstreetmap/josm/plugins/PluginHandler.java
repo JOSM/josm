@@ -219,13 +219,13 @@ public final class PluginHandler {
     /**
      * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not maintained after a few months, sadly...
      */
-    static final String[] UNMAINTAINED_PLUGINS = new String[] {
+    static final List<String> UNMAINTAINED_PLUGINS = Collections.unmodifiableList(Arrays.asList(
         "gpsbabelgui",
         "Intersect_way",
         "ContourOverlappingMerge", // See #11202, #11518, https://github.com/bularcasergiu/ContourOverlappingMerge/issues/1
         "LaneConnector",           // See #11468, #11518, https://github.com/TrifanAdrian/LanecConnectorPlugin/issues/1
         "Remove.redundant.points"  // See #11468, #11518, https://github.com/bularcasergiu/RemoveRedundantPoints (not even created an issue...)
-    };
+    ));
 
     /**
      * Default time-based update interval, in days (pluginmanager.time-based-update.interval)
@@ -1485,11 +1485,11 @@ public final class PluginHandler {
      * @since 8938
      */
     public static Set<String> getDeprecatedAndUnmaintainedPlugins() {
-        Set<String> result = new HashSet<>(DEPRECATED_PLUGINS.size() + UNMAINTAINED_PLUGINS.length);
+        Set<String> result = new HashSet<>(DEPRECATED_PLUGINS.size() + UNMAINTAINED_PLUGINS.size());
         for (DeprecatedPlugin dp : DEPRECATED_PLUGINS) {
             result.add(dp.name);
         }
-        result.addAll(Arrays.asList(UNMAINTAINED_PLUGINS));
+        result.addAll(UNMAINTAINED_PLUGINS);
         return result;
     }
 
