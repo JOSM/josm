@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
 import java.util.Locale;
 
@@ -97,7 +98,7 @@ public class JOSMFixture {
 
         try {
             CertificateAmendment.addMissingCertificates();
-        } catch (IOException ex) {
+        } catch (IOException | GeneralSecurityException ex) {
             throw new RuntimeException(ex);
         }
 

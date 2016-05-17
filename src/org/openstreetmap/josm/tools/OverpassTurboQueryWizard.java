@@ -51,7 +51,7 @@ public final class OverpassTurboQueryWizard {
                     "  });" +
                     "}");
         } catch (ScriptException | IOException ex) {
-            throw new RuntimeException("Failed to initialize OverpassTurboQueryWizard", ex);
+            throw new IllegalStateException("Failed to initialize OverpassTurboQueryWizard", ex);
         }
     }
 

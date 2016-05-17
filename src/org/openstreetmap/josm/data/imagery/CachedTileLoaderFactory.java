@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.imagery;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,7 +31,7 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
     /**
      * @param cache cache instance which will be used by tile loaders created by this tile loader
      * @param tileLoaderClass tile loader class that will be created
-     *
+     * @throws IllegalArgumentException if a suitable constructor cannot be found for {@code tileLoaderClass}
      */
     public CachedTileLoaderFactory(ICacheAccess<String, BufferedImageCacheEntry> cache, Class<? extends TileLoader> tileLoaderClass) {
         this.cache = cache;
@@ -45,7 +44,7 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
                     Map.class);
         } catch (NoSuchMethodException | SecurityException e) {
             Main.warn(e);
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -87,9 +86,12 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
                     connectTimeout,
                     readTimeout,
                     headers);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (IllegalArgumentException e) {
             Main.warn(e);
-            throw new RuntimeException(e);
+            throw e;
+        } catch (ReflectiveOperationException e) {
+            Main.warn(e);
+            throw new IllegalArgumentException(e);
         }
     }
 }

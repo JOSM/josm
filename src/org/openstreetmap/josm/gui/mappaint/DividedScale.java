@@ -22,12 +22,14 @@ import org.openstreetmap.josm.tools.Pair;
  */
 public class DividedScale<T> {
 
-    // this exception type is for debugging #8997 and can later be replaced
-    // by AssertionError
-    public static class RangeViolatedError extends Error {
-        public RangeViolatedError() {
-        }
-
+    /**
+     * This exception type is for debugging #8997 and can later be replaced by AssertionError
+     */
+    public static class RangeViolatedError extends RuntimeException {
+        /**
+         * Constructs a new {@code RangeViolatedError}
+         * @param message error message
+         */
         public RangeViolatedError(String message) {
             super(message);
         }

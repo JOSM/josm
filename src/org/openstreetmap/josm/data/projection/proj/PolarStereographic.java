@@ -162,7 +162,7 @@ public class PolarStereographic extends AbstractProj {
             }
             phi0 = phi;
             if (--i < 0) {
-                throw new RuntimeException("no convergence");
+                throw new IllegalStateException("no convergence for x="+x+", y="+y);
             }
         }
         return new double[] {y, x};

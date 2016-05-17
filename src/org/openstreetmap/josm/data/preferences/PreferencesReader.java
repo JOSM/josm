@@ -30,14 +30,13 @@ import javax.xml.validation.Validator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.io.XmlStreamParsingException;
 import org.xml.sax.SAXException;
 
 /**
  * Loads preferences from XML.
  */
 public class PreferencesReader {
-
-    private static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
 
     private final SortedMap<String, Setting<?>> settings = new TreeMap<>();
     private XMLStreamReader parser;
@@ -117,6 +116,11 @@ public class PreferencesReader {
         return version;
     }
 
+    /**
+     * Parse preferences.
+     * @throws XMLStreamException if any XML parsing error occurs
+     * @throws IOException if any I/O error occurs
+     */
     public void parse() throws XMLStreamException, IOException {
         if (reader != null) {
             this.parser = XMLInputFactory.newInstance().createXMLStreamReader(reader);
@@ -167,7 +171,7 @@ public class PreferencesReader {
                 String localName = parser.getLocalName();
                 switch(localName) {
                 case "tag":
-                    Setting setting;
+                    StringSetting setting;
                     if (defaults && isNil()) {
                         setting = new StringSetting(null);
                     } else {
@@ -220,7 +224,7 @@ public class PreferencesReader {
         List<List<String>> lists = null;
         List<Map<String, String>> maps = null;
         if (defaults && isNil()) {
-            Setting setting;
+            Setting<?> setting;
             switch (name) {
                 case "lists":
                     setting = new ListListSetting(null);
@@ -267,7 +271,7 @@ public class PreferencesReader {
                     break;
                 }
             }
-            Setting setting;
+            Setting<?> setting;
             if (entries != null) {
                 setting = new ListSetting(Collections.unmodifiableList(entries));
             } else if (lists != null) {
@@ -336,18 +340,18 @@ public class PreferencesReader {
      * @see <a href="https://msdn.microsoft.com/en-us/library/2b314yt2(v=vs.85).aspx">Nillable Attribute on MS Developer Network</a>
      */
     private boolean isNil() {
-        String nil = parser.getAttributeValue(XSI_NS, "nil");
+        String nil = parser.getAttributeValue(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "nil");
         return "true".equals(nil) || "1".equals(nil);
     }
 
     /**
-     * Throw RuntimeException with line and column number.
+     * Throw XmlStreamParsingException with line and column number.
      *
      * Only use this for errors that should not be possible after schema validation.
      * @param msg the error message
+     * @throws XmlStreamParsingException always
      */
-    private void throwException(String msg) {
-        throw new RuntimeException(msg + tr(" (at line {0}, column {1})",
-                parser.getLocation().getLineNumber(), parser.getLocation().getColumnNumber()));
+    private void throwException(String msg) throws XmlStreamParsingException {
+        throw new XmlStreamParsingException(msg, parser.getLocation());
     }
 }

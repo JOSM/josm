@@ -72,12 +72,12 @@ public class MapListSetting extends AbstractSetting<List<Map<String, String>>> {
         if (value == null)
             return;
         if (value.contains(null))
-            throw new RuntimeException("Error: Null as list element in preference setting");
+            throw new IllegalArgumentException("Error: Null as list element in preference setting");
         for (Map<String, String> map : value) {
             if (map.keySet().contains(null))
-                throw new RuntimeException("Error: Null as map key in preference setting");
+                throw new IllegalArgumentException("Error: Null as map key in preference setting");
             if (map.values().contains(null))
-                throw new RuntimeException("Error: Null as map value in preference setting");
+                throw new IllegalArgumentException("Error: Null as map value in preference setting");
         }
     }
 

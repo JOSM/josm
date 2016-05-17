@@ -21,6 +21,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.security.AllPermission;
 import java.security.CodeSource;
+import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PermissionCollection;
@@ -412,7 +413,7 @@ public class MainApplication extends Main {
 
         try {
             CertificateAmendment.addMissingCertificates();
-        } catch (IOException ex) {
+        } catch (IOException | GeneralSecurityException ex) {
             ex.printStackTrace();
             Main.warn(getErrorMessage(Utils.getRootCause(ex)));
         }

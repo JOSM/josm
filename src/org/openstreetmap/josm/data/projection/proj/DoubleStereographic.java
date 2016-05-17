@@ -99,7 +99,7 @@ public class DoubleStereographic extends AbstractProj {
         double phi = 2 * atan(exp(psi)) - PI/2;
         while (abs(phi - phiprev) > EPSILON) {
             if (++iteration > 10)
-                throw new RuntimeException("Too many iterations");
+                throw new IllegalStateException("Too many iterations");
             phiprev = phi;
             double psii = log(tan(phi/2 + PI/4) * pow((1 - e * sin(phi)) / (1 + e * sin(phi)), e/2));
             phi = phi - (psii - psi) * cos(phi) * (1 - e2 * pow(sin(phi), 2)) / (1 - e2);
