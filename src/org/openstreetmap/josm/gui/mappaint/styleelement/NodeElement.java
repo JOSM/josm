@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleElementList;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvider;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.SimpleBoxProvider;
 import org.openstreetmap.josm.gui.util.RotationAngle;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -78,6 +79,8 @@ public class NodeElement extends StyleElement {
         }
     }
 
+    private static final String[] ICON_KEYS = {ICON_IMAGE, ICON_WIDTH, ICON_HEIGHT, ICON_OPACITY, ICON_OFFSET_X, ICON_OFFSET_Y};
+
     public static final NodeElement SIMPLE_NODE_ELEMSTYLE;
     public static final BoxProvider SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER;
     static {
@@ -91,8 +94,6 @@ public class NodeElement extends StyleElement {
     public static final StyleElementList DEFAULT_NODE_STYLELIST = new StyleElementList(NodeElement.SIMPLE_NODE_ELEMSTYLE);
     public static final StyleElementList DEFAULT_NODE_STYLELIST_TEXT = new StyleElementList(NodeElement.SIMPLE_NODE_ELEMSTYLE,
             BoxTextElement.SIMPLE_NODE_TEXT_ELEMSTYLE);
-
-    private static final String[] ICON_KEYS = {ICON_IMAGE, ICON_WIDTH, ICON_HEIGHT, ICON_OPACITY, ICON_OFFSET_X, ICON_OFFSET_Y};
 
     protected NodeElement(Cascade c, MapImage mapImage, Symbol symbol, float defaultMajorZindex, RotationAngle rotationAngle) {
         super(c, defaultMajorZindex);
@@ -143,6 +144,9 @@ public class NodeElement extends StyleElement {
     }
 
     public static MapImage createIcon(final Environment env, final String[] keys) {
+        CheckParameterUtil.ensureParameterNotNull(env, "env");
+        CheckParameterUtil.ensureParameterNotNull(keys, "keys");
+
         Cascade c = env.mc.getCascade(env.layer);
 
         final IconReference iconRef = c.get(keys[ICON_IMAGE_IDX], null, IconReference.class, true);

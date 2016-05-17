@@ -245,7 +245,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addMapMode(new IconToggleButton(mapModeSelect));
         addMapMode(new IconToggleButton(mapModeSelectLasso, true));
         addMapMode(new IconToggleButton(mapModeDraw));
-        addMapMode(new IconToggleButton(mapModeZoom));
+        addMapMode(new IconToggleButton(mapModeZoom, true));
         addMapMode(new IconToggleButton(new DeleteAction(this), true));
         addMapMode(new IconToggleButton(new ParallelWayAction(this), true));
         addMapMode(new IconToggleButton(new ExtrudeAction(this), true));
