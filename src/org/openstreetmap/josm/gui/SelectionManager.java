@@ -200,8 +200,8 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1 && Main.main.getCurrentDataSet() != null) {
             SelectByInternalPointAction.performSelection(Main.map.mapView.getEastNorth(e.getX(), e.getY()),
-                    (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) > 0,
-                    (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) > 0);
+                    (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0,
+                    (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0);
         } else if (e.getButton() == MouseEvent.BUTTON1) {
             mousePosStart = mousePos = e.getPoint();
 

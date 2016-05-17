@@ -89,7 +89,7 @@ public class ScrollViewport extends JPanel {
         JButton button;
 
         // UP
-        if ((direction & UP_DIRECTION) > 0) {
+        if ((direction & UP_DIRECTION) != 0) {
             button = new JButton();
             button.addMouseListener(new ScrollViewPortMouseListener(UP_DIRECTION));
             button.setPreferredSize(new Dimension(10, 10));
@@ -99,7 +99,7 @@ public class ScrollViewport extends JPanel {
         }
 
         // DOWN
-        if ((direction & DOWN_DIRECTION) > 0) {
+        if ((direction & DOWN_DIRECTION) != 0) {
             button = new JButton();
             button.addMouseListener(new ScrollViewPortMouseListener(DOWN_DIRECTION));
             button.setPreferredSize(new Dimension(10, 10));
@@ -109,7 +109,7 @@ public class ScrollViewport extends JPanel {
         }
 
         // LEFT
-        if ((direction & LEFT_DIRECTION) > 0) {
+        if ((direction & LEFT_DIRECTION) != 0) {
             button = new JButton();
             button.addMouseListener(new ScrollViewPortMouseListener(LEFT_DIRECTION));
             button.setPreferredSize(new Dimension(10, 10));
@@ -119,7 +119,7 @@ public class ScrollViewport extends JPanel {
         }
 
         // RIGHT
-        if ((direction & RIGHT_DIRECTION) > 0) {
+        if ((direction & RIGHT_DIRECTION) != 0) {
             button = new JButton();
             button.addMouseListener(new ScrollViewPortMouseListener(RIGHT_DIRECTION));
             button.setPreferredSize(new Dimension(10, 10));
