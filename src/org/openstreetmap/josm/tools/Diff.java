@@ -103,15 +103,6 @@ public class Diff {
      sibling file. */
     private int equivMax = 1;
 
-    /** When set to true, the comparison uses a heuristic to speed it up.
-    With this heuristic, for files with a constant small density
-    of changes, the algorithm is linear in the file size.  */
-    public boolean heuristic;
-
-    /** When set to true, the algorithm returns a guarranteed minimal
-      set of changes.  This makes things slower, sometimes much slower. */
-    public boolean noDiscards;
-
     private int[] xvec, yvec; /* Vectors being compared. */
     private int[] fdiag;      /* Vector, indexed by diagonal, containing
                    the X coordinate of the point furthest
@@ -243,76 +234,6 @@ public class Diff {
                 if (!odd && fmin <= d && d <= fmax && bd[bdiagoff + d] <= fd[fdiagoff + d]) {
                     cost = 2 * c;
                     return d;
-                }
-            }
-
-            /* Heuristic: check occasionally for a diagonal that has made
-       lots of progress compared with the edit distance.
-       If we have any such, find the one that has made the most
-       progress and return it as if it had succeeded.
-
-       With this heuristic, for files with a constant small density
-       of changes, the algorithm is linear in the file size.  */
-
-            if (c > 200 && bigSnake && heuristic) {
-                int best = 0;
-                int bestpos = -1;
-
-                for (d = fmax; d >= fmin; d -= 2) {
-                    int dd = d - fmid;
-                    int x = fd[fdiagoff + d];
-                    int y = x - d;
-                    int v = (x - xoff) * 2 - dd;
-                    if (v > 12 * (c + (dd < 0 ? -dd : dd))) {
-                        if (v > best
-                                && xoff + SNAKE_LIMIT <= x && x < xlim
-                                && yoff + SNAKE_LIMIT <= y && y < ylim) {
-                            /* We have a good enough best diagonal.
-                               now insist that it end with a significant snake.  */
-                            int k;
-
-                            for (k = 1; xvec[x - k] == yvec[y - k]; k++) {
-                                if (k == SNAKE_LIMIT) {
-                                    best = v;
-                                    bestpos = d;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (best > 0) {
-                    cost = 2 * c - 1;
-                    return bestpos;
-                }
-
-                best = 0;
-                for (d = bmax; d >= bmin; d -= 2) {
-                    int dd = d - bmid;
-                    int x = bd[bdiagoff + d];
-                    int y = x - d;
-                    int v = (xlim - x) * 2 + dd;
-                    if (v > 12 * (c + (dd < 0 ? -dd : dd))) {
-                        if (v > best
-                                && xoff < x && x <= xlim - SNAKE_LIMIT
-                                && yoff < y && y <= ylim - SNAKE_LIMIT) {
-                            /* We have a good enough best diagonal.
-                               now insist that it end with a significant snake.  */
-                            int k;
-
-                            for (k = 0; xvec[x + k] == yvec[y + k]; k++) {
-                                if (k == SNAKE_LIMIT) {
-                                    best = v;
-                                    bestpos = d;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (best > 0) {
-                    cost = 2 * c - 1;
-                    return bestpos;
                 }
             }
         }
@@ -804,7 +725,7 @@ public class Diff {
             final int end = bufferedLines;
             int j = 0;
             for (int i = 0; i < end; ++i) {
-                if (noDiscards || discards[i] == 0) {
+                if (discards[i] == 0) {
                     undiscarded[j] = equivs[i];
                     realindexes[j++] = i;
                 } else {

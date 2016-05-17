@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author Michael Zangl
  */
 public final class LayerVisibilityAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
-    protected static final int SLIDER_STEPS = 100;
+    private static final int SLIDER_STEPS = 100;
     private static final double MAX_SHARPNESS_FACTOR = 2;
     private static final double MAX_COLORFUL_FACTOR = 2;
     private final LayerListModel model;

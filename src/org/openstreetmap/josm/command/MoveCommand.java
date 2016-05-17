@@ -217,7 +217,7 @@ public class MoveCommand extends Command {
         Iterator<OldNodeState> it = oldState.iterator();
         for (Node n : nodes) {
             OldNodeState os = it.next();
-            n.setCoor(os.getLatlon());
+            n.setCoor(os.getLatLon());
             n.setModified(os.isModified());
         }
     }

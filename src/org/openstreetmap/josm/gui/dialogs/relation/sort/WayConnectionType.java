@@ -72,7 +72,12 @@ public class WayConnectionType {
                 ";OH " + isOnewayHead+";OT " + isOnewayTail+']';
     }
 
-    public String getToolTip() {
+    /**
+     * Returns tooltip.
+     * @return tooltip
+     * @since 10248
+     */
+    public String getTooltip() {
         if (!isValid())
             return "";
         else if (linkPrev && linkNext)

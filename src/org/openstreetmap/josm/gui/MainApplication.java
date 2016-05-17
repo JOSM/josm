@@ -572,6 +572,7 @@ public class MainApplication extends Main {
     private static void checkIPv6() {
         if ("auto".equals(Main.pref.get("prefer.ipv6", "auto"))) {
              new Thread(new Runnable() { /* this may take some time (DNS, Connect) */
+                @Override
                 public void run() {
                     boolean hasv6 = false;
                     boolean wasv6 = Main.pref.getBoolean("validated.ipv6", false);
