@@ -16,6 +16,8 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
+import javax.swing.SwingUtilities;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
@@ -25,12 +27,10 @@ import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.Base64;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Utils;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.exception.OAuthException;
-import org.openstreetmap.josm.tools.Utils;
-
-import javax.swing.SwingUtilities;
 
 /**
  * Base class that handles common things like authentication for the reader and writer
@@ -150,7 +150,7 @@ public class OsmConnection {
                 SwingUtilities.invokeAndWait(authTask);
             }
         } catch (MalformedURLException | InterruptedException | InvocationTargetException e) {
-            throw new MissingOAuthAccessTokenException();
+            throw new MissingOAuthAccessTokenException(e);
         }
     }
 
