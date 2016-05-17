@@ -92,6 +92,8 @@ public class NodeElement extends StyleElement {
     public static final StyleElementList DEFAULT_NODE_STYLELIST_TEXT = new StyleElementList(NodeElement.SIMPLE_NODE_ELEMSTYLE,
             BoxTextElement.SIMPLE_NODE_TEXT_ELEMSTYLE);
 
+    private static final String[] ICON_KEYS = {ICON_IMAGE, ICON_WIDTH, ICON_HEIGHT, ICON_OPACITY, ICON_OFFSET_X, ICON_OFFSET_Y};
+
     protected NodeElement(Cascade c, MapImage mapImage, Symbol symbol, float defaultMajorZindex, RotationAngle rotationAngle) {
         super(c, defaultMajorZindex);
         this.mapImage = mapImage;

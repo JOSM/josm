@@ -22,6 +22,9 @@ public class RepeatImageElement extends StyleElement {
     public float phase;
     public LineImageAlignment align;
 
+    private static final String[] REPEAT_IMAGE_KEYS = {REPEAT_IMAGE, REPEAT_IMAGE_WIDTH, REPEAT_IMAGE_HEIGHT, REPEAT_IMAGE_OPACITY,
+            null, null};
+
     public RepeatImageElement(Cascade c, MapImage pattern, float offset, float spacing, float phase, LineImageAlignment align) {
         super(c, 2.9f);
         CheckParameterUtil.ensureParameterNotNull(pattern);
