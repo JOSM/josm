@@ -74,12 +74,16 @@ public class SearchNotesDownloadAction extends JosmAction {
         performSearch(searchTerm);
     }
 
+    /**
+     * Perform search.
+     * @param searchTerm search term
+     */
     public void performSearch(String searchTerm) {
 
-        searchTerm = searchTerm.trim();
+        String trimmedSearchTerm = searchTerm.trim();
 
         try {
-            final long id = Long.parseLong(searchTerm);
+            final long id = Long.parseLong(trimmedSearchTerm);
             new DownloadNotesTask().download(id, null);
             return;
         } catch (NumberFormatException ignore) {
@@ -91,14 +95,14 @@ public class SearchNotesDownloadAction extends JosmAction {
         int noteLimit = Main.pref.getInteger("osm.notes.downloadLimit", 1000);
         int closedLimit = Main.pref.getInteger("osm.notes.daysCloased", 7);
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
         sb.append(OsmApi.getOsmApi().getBaseUrl())
             .append("notes/search?limit=")
             .append(noteLimit)
             .append("&closed=")
             .append(closedLimit)
             .append("&q=")
-            .append(Utils.encodeUrl(searchTerm));
+            .append(Utils.encodeUrl(trimmedSearchTerm));
 
         new DownloadNotesTask().loadUrl(false, sb.toString(), null);
     }

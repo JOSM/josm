@@ -266,7 +266,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(32);
         result.append("{Relation id=")
               .append(getUniqueId())
               .append(" version=")

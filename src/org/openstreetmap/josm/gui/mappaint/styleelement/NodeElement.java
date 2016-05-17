@@ -378,9 +378,8 @@ public class NodeElement extends StyleElement {
     }
 
     @Override
-
     public String toString() {
-        StringBuilder s = new StringBuilder("NodeElemStyle{");
+        StringBuilder s = new StringBuilder(64).append("NodeElemStyle{");
         s.append(super.toString());
         if (mapImage != null) {
             s.append(" icon=[" + mapImage + ']');

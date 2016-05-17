@@ -1513,7 +1513,7 @@ public abstract class SourceEditor extends JPanel {
         private static String fromSourceEntry(SourceEntry entry) {
             if (entry == null)
                 return null;
-            StringBuilder s = new StringBuilder("<html><b>");
+            StringBuilder s = new StringBuilder(128).append("<html><b>");
             if (entry.title != null) {
                 s.append(entry.title).append("</b> <span color=\"gray\">");
             }

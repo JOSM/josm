@@ -322,7 +322,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements InvocationHa
         if (lafid.contains("Mac") || lafid.contains("Aqua")) {
             canHtml = false;
         }
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(48);
         if (canHtml) {
             result.append("<html>");
         }
