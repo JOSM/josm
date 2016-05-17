@@ -62,7 +62,6 @@ public class ParallelWays {
             }
             ways.add(wCopy);
         }
-        sourceWays = null; // Ensure that we only use the copies from now
 
         // Find a linear ordering of the nodes. Fail if there isn't one.
         CombineWayAction.NodeGraph nodeGraph = CombineWayAction.NodeGraph.createUndirectedGraphFromNodeWays(ways);

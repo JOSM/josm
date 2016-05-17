@@ -113,7 +113,6 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         Map<DataSet, Map<Relation, Multipolygon>> map = cache.remove(nc);
         if (map != null) {
             map.clear();
-            map = null;
         }
     }
 
@@ -126,7 +125,6 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
             Map<Relation, Multipolygon> map2 = map1.remove(ds);
             if (map2 != null) {
                 map2.clear();
-                map2 = null;
             }
         }
     }

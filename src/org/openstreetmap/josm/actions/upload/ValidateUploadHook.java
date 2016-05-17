@@ -72,7 +72,6 @@ public class ValidateUploadHook implements UploadHook {
                 }
             }
         }
-        tests = null;
         OsmDataLayer editLayer = JosmAction.getEditLayer();
         if (editLayer != null) {
             editLayer.validationErrors.clear();
