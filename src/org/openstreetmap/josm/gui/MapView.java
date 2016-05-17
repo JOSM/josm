@@ -831,7 +831,34 @@ implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.Layer
             playHeadMarker.paint(tempG, this);
         }
 
-        g.drawImage(offscreenBuffer, 0, 0, null);
+        try {
+            g.drawImage(offscreenBuffer, 0, 0, null);
+        } catch (ClassCastException e) {
+            // See #11002 and duplicate tickets. On Linux with Java >= 8 Many users face this error here:
+            //
+            // java.lang.ClassCastException: sun.awt.image.BufImgSurfaceData cannot be cast to sun.java2d.xr.XRSurfaceData
+            //   at sun.java2d.xr.XRPMBlitLoops.cacheToTmpSurface(XRPMBlitLoops.java:145)
+            //   at sun.java2d.xr.XrSwToPMBlit.Blit(XRPMBlitLoops.java:353)
+            //   at sun.java2d.pipe.DrawImage.blitSurfaceData(DrawImage.java:959)
+            //   at sun.java2d.pipe.DrawImage.renderImageCopy(DrawImage.java:577)
+            //   at sun.java2d.pipe.DrawImage.copyImage(DrawImage.java:67)
+            //   at sun.java2d.pipe.DrawImage.copyImage(DrawImage.java:1014)
+            //   at sun.java2d.pipe.ValidatePipe.copyImage(ValidatePipe.java:186)
+            //   at sun.java2d.SunGraphics2D.drawImage(SunGraphics2D.java:3318)
+            //   at sun.java2d.SunGraphics2D.drawImage(SunGraphics2D.java:3296)
+            //   at org.openstreetmap.josm.gui.MapView.paint(MapView.java:834)
+            //
+            // It seems to be this JDK bug, but Oracle does not seem to be fixing it:
+            // https://bugs.openjdk.java.net/browse/JDK-7172749
+            //
+            // According to bug reports it can happen for a variety of reasons such as:
+            // - long period of time
+            // - change of screen resolution
+            // - addition/removal of a secondary monitor
+            //
+            // But the application seems to work fine after, so let's just log the error
+            Main.error(e);
+        }
         super.paint(g);
     }
 
