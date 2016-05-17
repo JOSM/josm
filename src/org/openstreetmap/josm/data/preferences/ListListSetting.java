@@ -73,10 +73,10 @@ public class ListListSetting extends AbstractSetting<List<List<String>>> {
     private void consistencyTest() {
         if (value != null) {
             if (value.contains(null))
-                throw new RuntimeException("Error: Null as list element in preference setting");
+                throw new IllegalArgumentException("Error: Null as list element in preference setting");
             for (Collection<String> lst : value) {
                 if (lst.contains(null)) {
-                    throw new RuntimeException("Error: Null as inner list element in preference setting");
+                    throw new IllegalArgumentException("Error: Null as inner list element in preference setting");
                 }
             }
         }

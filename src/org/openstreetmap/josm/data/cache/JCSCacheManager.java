@@ -157,7 +157,8 @@ public final class JCSCacheManager {
     }
 
     @SuppressWarnings("unchecked")
-    private static <K, V> CacheAccess<K, V> getCacheInner(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) {
+    private static <K, V> CacheAccess<K, V> getCacheInner(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath)
+            throws IOException {
         CompositeCache<K, V> cc = cacheManager.getCache(cacheName, getCacheAttributes(maxMemoryObjects));
 
         if (cachePath != null && cacheDirLock != null) {
@@ -168,8 +169,10 @@ public final class JCSCacheManager {
                     AuxiliaryCache<K, V> diskCache = diskCacheFactory.createCache(diskAttributes, cacheManager, null, new StandardSerializer());
                     cc.setAuxCaches(new AuxiliaryCache[]{diskCache});
                 }
+            } catch (IOException e) {
+                throw e;
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new IOException(e);
             }
         }
         return new CacheAccess<>(cc);

@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.preferences.map;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,7 +22,6 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.AssignmentInstruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
-import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -50,11 +48,10 @@ public class MapPaintPreferenceTestIT {
 
     /**
      * Test that available map paint styles are valid.
-     * @throws IOException if any I/O error occurs
-     * @throws ParseException if the config file does not match MapCSS syntax
+     * @throws Exception in case of error
      */
     @Test
-    public void testValidityOfAvailableStyles() throws ParseException, IOException {
+    public void testValidityOfAvailableStyles() throws Exception {
         Collection<ExtendedSourceEntry> sources = new MapPaintPreference.MapPaintSourceEditor()
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());

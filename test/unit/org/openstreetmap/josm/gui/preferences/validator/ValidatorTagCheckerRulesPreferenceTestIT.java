@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
-import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 
 /**
@@ -31,11 +30,10 @@ public class ValidatorTagCheckerRulesPreferenceTestIT {
 
     /**
      * Test that available tag checker rules are valid.
-     * @throws IOException if any I/O error occurs
-     * @throws ParseException if the config file does not match MapCSS syntax
+     * @throws Exception in case of error
      */
     @Test
-    public void testValidityOfAvailableRules() throws ParseException, IOException {
+    public void testValidityOfAvailableRules() throws Exception {
         Collection<ExtendedSourceEntry> sources = new ValidatorTagCheckerRulesPreference.TagCheckerRulesSourceEditor()
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());

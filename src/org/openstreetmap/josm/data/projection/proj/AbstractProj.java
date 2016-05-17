@@ -137,7 +137,7 @@ public abstract class AbstractProj implements Proj {
         phi = arg;
         for (i = MAXIMUM_ITERATIONS; true;) { // rarely goes over 5 iterations
             if (--i < 0) {
-                throw new RuntimeException("Too many iterations");
+                throw new IllegalStateException("Too many iterations");
             }
             s = Math.sin(phi);
             t = 1.0 - e2 * s * s;
@@ -161,7 +161,7 @@ public abstract class AbstractProj implements Proj {
                 return phi;
             }
         }
-        throw new RuntimeException("no convergence");
+        throw new IllegalStateException("no convergence for ts="+ts);
     }
 
     /**

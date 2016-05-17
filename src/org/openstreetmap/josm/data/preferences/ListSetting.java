@@ -43,7 +43,7 @@ public class ListSetting extends AbstractSetting<List<String>> {
 
     private void consistencyTest() {
         if (value != null && value.contains(null))
-            throw new RuntimeException("Error: Null as list element in preference setting");
+            throw new IllegalArgumentException("Error: Null as list element in preference setting");
     }
 
     @Override

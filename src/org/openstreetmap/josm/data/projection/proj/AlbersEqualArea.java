@@ -125,7 +125,7 @@ public class AlbersEqualArea extends AbstractProj {
             if (rho > -EPSILON) {
                 rho = 0.0;
             } else {
-                throw new RuntimeException();
+                throw new AssertionError();
             }
         }
         rho = Math.sqrt(rho) / n;
@@ -183,7 +183,7 @@ public class AlbersEqualArea extends AbstractProj {
                 return phi;
             }
         }
-        throw new RuntimeException("no convergence for q="+qs);
+        throw new IllegalStateException("no convergence for qs="+qs);
     }
 
     /**

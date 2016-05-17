@@ -45,9 +45,10 @@ public class TaggingPresetPreferenceTestIT {
 
     /**
      * Test that available tagging presets are valid.
+     * @throws Exception in case of error
      */
     @Test
-    public void testValidityOfAvailablePresets() {
+    public void testValidityOfAvailablePresets() throws Exception {
         Collection<ExtendedSourceEntry> sources = new TaggingPresetPreference.TaggingPresetSourceEditor()
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());

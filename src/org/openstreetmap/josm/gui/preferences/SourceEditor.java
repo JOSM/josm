@@ -497,15 +497,14 @@ public abstract class SourceEditor extends JPanel {
     /**
      * Synchronously loads available sources and returns the parsed list.
      * @return list of available sources
+     * @throws OsmTransferException in case of OSM transfer error
+     * @throws IOException in case of any I/O error
+     * @throws SAXException in case of any SAX error
      */
-    public final Collection<ExtendedSourceEntry> loadAndGetAvailableSources() {
-        try {
-            final SourceLoader loader = new SourceLoader(availableSourcesUrl, sourceProviders);
-            loader.realRun();
-            return loader.sources;
-        } catch (IOException | SAXException | OsmTransferException ex) {
-            throw new RuntimeException(ex);
-        }
+    public final Collection<ExtendedSourceEntry> loadAndGetAvailableSources() throws SAXException, IOException, OsmTransferException {
+        final SourceLoader loader = new SourceLoader(availableSourcesUrl, sourceProviders);
+        loader.realRun();
+        return loader.sources;
     }
 
     /**

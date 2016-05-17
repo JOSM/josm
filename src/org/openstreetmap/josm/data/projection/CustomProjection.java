@@ -774,7 +774,7 @@ public class CustomProjection extends AbstractProjection {
             ret.put("athens", parseAngle("23d42'58.815\"E", null));
             ret.put("oslo", parseAngle("10d43'22.5\"E", null));
         } catch (ProjectionConfigurationException ex) {
-            throw new RuntimeException();
+            throw new IllegalStateException(ex);
         }
         return ret;
     }
