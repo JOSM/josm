@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016051400, Last Updated Sat May 14 07:07:01 2016 UTC
+        // Taken from Version 2016051700, Last Updated Tue May 17 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -1285,6 +1285,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--vhquv", // 企业 Dash McCook, LLC
         "xn--vuq861b", // 信息 Beijing Tele-info Network Technology Co., Ltd.
         "xn--w4r85el8fhu5dnra", // 嘉里大酒店 Kerry Trading Co. Limited
+        "xn--w4rs40l", // 嘉里 Kerry Trading Co. Limited
         "xn--xhq521b", // 广东 Guangzhou YU Wei Information Technology Co., Ltd.
         "xn--zfr164b", // 政务 China Organizational Name Administration Center
         "xperia", // xperia Sony Mobile Communications AB
