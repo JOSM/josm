@@ -163,7 +163,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
         }
 
         private static JComponent build() {
-            StringBuilder s = new StringBuilder();
+            StringBuilder s = new StringBuilder(1024);
             s.append("<b>+proj=...</b> - <i>").append(tr("Projection name"))
              .append("</i><br>&nbsp;&nbsp;&nbsp;&nbsp;").append(tr("Supported values:")).append(' ')
              .append(Projections.listProjs())

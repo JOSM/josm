@@ -480,7 +480,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     private static String buildDefaultToolTip(long id, Map<String, String> tags) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(128);
         sb.append("<html><strong>id</strong>=")
           .append(id)
           .append("<br>");

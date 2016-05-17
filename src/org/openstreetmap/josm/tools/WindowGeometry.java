@@ -261,7 +261,7 @@ public class WindowGeometry {
      * @param preferenceKey the preference key
      */
     public void remember(String preferenceKey) {
-        StringBuilder value = new StringBuilder();
+        StringBuilder value = new StringBuilder(32);
         value.append("x=").append(topLeft.x).append(",y=").append(topLeft.y)
              .append(",width=").append(extent.width).append(",height=").append(extent.height);
         Main.pref.put(preferenceKey, value.toString());

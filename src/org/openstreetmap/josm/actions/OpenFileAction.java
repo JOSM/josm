@@ -182,20 +182,18 @@ public class OpenFileAction extends DiskAccessAction {
         }
 
         protected void alertFilesNotMatchingWithImporter(Collection<File> files, FileImporter importer) {
-            final StringBuilder msg = new StringBuilder();
-            msg.append("<html>").append(
-                    trn(
-                            "Cannot open {0} file with the file importer ''{1}''.",
-                            "Cannot open {0} files with the file importer ''{1}''.",
-                            files.size(),
-                            files.size(),
-                            importer.filter.getDescription()
+            final StringBuilder msg = new StringBuilder(128).append("<html>").append(
+                    trn("Cannot open {0} file with the file importer ''{1}''.",
+                        "Cannot open {0} files with the file importer ''{1}''.",
+                        files.size(),
+                        files.size(),
+                        importer.filter.getDescription()
                     )
             ).append("<br><ul>");
             for (File f: files) {
                 msg.append("<li>").append(f.getAbsolutePath()).append("</li>");
             }
-            msg.append("</ul>");
+            msg.append("</ul></html>");
 
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
@@ -207,13 +205,11 @@ public class OpenFileAction extends DiskAccessAction {
         }
 
         protected void alertFilesWithUnknownImporter(Collection<File> files) {
-            final StringBuilder msg = new StringBuilder();
-            msg.append("<html>").append(
-                    trn(
-                            "Cannot open {0} file because file does not exist or no suitable file importer is available.",
-                            "Cannot open {0} files because files do not exist or no suitable file importer is available.",
-                            files.size(),
-                            files.size()
+            final StringBuilder msg = new StringBuilder(128).append("<html>").append(
+                    trn("Cannot open {0} file because file does not exist or no suitable file importer is available.",
+                        "Cannot open {0} files because files do not exist or no suitable file importer is available.",
+                        files.size(),
+                        files.size()
                     )
             ).append("<br><ul>");
             for (File f: files) {
@@ -221,7 +217,7 @@ public class OpenFileAction extends DiskAccessAction {
                    .append(f.exists() ? tr("no importer") : tr("does not exist"))
                    .append("</i>)</li>");
             }
-            msg.append("</ul>");
+            msg.append("</ul></html>");
 
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
@@ -271,8 +267,7 @@ public class OpenFileAction extends DiskAccessAction {
                                             f.getAbsolutePath()), tr("Open file"), JOptionPane.ERROR_MESSAGE);
                                 }
                             });
-                            // TODO when changing to Java 6: Don't cancel the
-                            // task here but use different modality. (Currently 2 dialogs
+                            // TODO when changing to Java 6: Don't cancel the task here but use different modality. (Currently 2 dialogs
                             // would block each other.)
                             return;
                         } else {

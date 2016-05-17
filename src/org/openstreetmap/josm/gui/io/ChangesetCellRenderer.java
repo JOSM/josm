@@ -33,7 +33,7 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Ch
     }
 
     protected String buildToolTipText(Changeset cs) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(64);
         sb.append("<html><strong>").append(tr("Changeset id:")).append("</strong>").append(cs.getId()).append("<br>");
         if (cs.getCreatedAt() != null) {
             sb.append("<strong>").append(tr("Created at:")).append("</strong>").append(

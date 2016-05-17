@@ -98,7 +98,7 @@ public class AddTagsDialog extends ExtendedDialog {
         }
 
         private String getToolTip() {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(64);
             sb.append("<html>")
               .append(tr("Old values of"))
               .append(" <b>")

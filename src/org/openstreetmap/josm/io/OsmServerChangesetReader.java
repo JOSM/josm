@@ -44,8 +44,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
 
     protected final InputStream getChangesetInputStream(long id, boolean includeDiscussion, ProgressMonitor monitor)
             throws OsmTransferException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("changeset/").append(id);
+        StringBuilder sb = new StringBuilder(48).append("changeset/").append(id);
         if (includeDiscussion) {
             sb.append("?include_discussion=true");
         }
@@ -200,8 +199,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
         ChangesetDataSet result = null;
         try {
             monitor.beginTask(tr("Downloading changeset content"));
-            StringBuilder sb = new StringBuilder();
-            sb.append("changeset/").append(id).append("/download");
+            StringBuilder sb = new StringBuilder(32).append("changeset/").append(id).append("/download");
             try (InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true))) {
                 if (in == null)
                     return null;

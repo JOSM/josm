@@ -77,7 +77,7 @@ public final class ShowStatusReportAction extends JosmAction {
      * @return The report header (software and system info)
      */
     public static String getReportHeader() {
-        StringBuilder text = new StringBuilder();
+        StringBuilder text = new StringBuilder(256);
         String runtimeVersion = System.getProperty("java.runtime.version");
         text.append(Version.getInstance().getReleaseAttributes())
             .append("\nIdentification: ").append(Version.getInstance().getAgentString())

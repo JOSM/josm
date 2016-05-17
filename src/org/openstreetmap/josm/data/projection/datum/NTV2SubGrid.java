@@ -294,7 +294,7 @@ public class NTV2SubGrid implements Serializable {
      * @return textual details about the sub grid
      */
     public String getDetails() {
-        StringBuilder buff = new StringBuilder("Sub Grid : ");
+        StringBuilder buff = new StringBuilder(256).append("Sub Grid : ");
         buff.append(subGridName)
             .append("\nParent   : ")
             .append(parentSubGridName)

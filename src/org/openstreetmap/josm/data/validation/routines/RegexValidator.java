@@ -218,7 +218,7 @@ public class RegexValidator extends AbstractValidator {
      */
     @Override
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(32);
         buffer.append("RegexValidator{");
         for (int i = 0; i < patterns.length; i++) {
             if (i > 0) {
