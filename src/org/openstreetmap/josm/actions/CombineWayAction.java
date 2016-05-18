@@ -440,8 +440,8 @@ public class CombineWayAction extends JosmAction {
 
         private final Set<NodePair> edges;
         private int numUndirectedEges;
-        private Map<Node, List<NodePair>> successors;
-        private Map<Node, List<NodePair>> predecessors;
+        private final Map<Node, List<NodePair>> successors = new LinkedHashMap<>();
+        private final Map<Node, List<NodePair>> predecessors = new LinkedHashMap<>();
 
         protected void rememberSuccessor(NodePair pair) {
             if (successors.containsKey(pair.getA())) {
@@ -481,8 +481,8 @@ public class CombineWayAction extends JosmAction {
 
         protected void prepare() {
             Set<NodePair> undirectedEdges = new LinkedHashSet<>();
-            successors = new LinkedHashMap<>();
-            predecessors = new LinkedHashMap<>();
+            successors.clear();
+            predecessors.clear();
 
             for (NodePair pair: edges) {
                 if (!undirectedEdges.contains(pair) && !undirectedEdges.contains(pair.swap())) {

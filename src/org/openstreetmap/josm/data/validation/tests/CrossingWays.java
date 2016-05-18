@@ -39,11 +39,11 @@ public abstract class CrossingWays extends Test {
     private static final String WATERWAY = "waterway";
 
     /** All way segments, grouped by cells */
-    private Map<Point2D, List<WaySegment>> cellSegments;
+    private final Map<Point2D, List<WaySegment>> cellSegments = new HashMap<>(1000);
     /** The already detected errors */
-    private Set<WaySegment> errorSegments;
+    private final Set<WaySegment> errorSegments = new HashSet<>();
     /** The already detected ways in error */
-    private Map<List<Way>, List<WaySegment>> seenWays;
+    private final Map<List<Way>, List<WaySegment>> seenWays = new HashMap<>(50);
 
     /**
      * General crossing ways test.
@@ -187,17 +187,17 @@ public abstract class CrossingWays extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        cellSegments = new HashMap<>(1000);
-        errorSegments = new HashSet<>();
-        seenWays = new HashMap<>(50);
+        cellSegments.clear();
+        errorSegments.clear();
+        seenWays.clear();
     }
 
     @Override
     public void endTest() {
         super.endTest();
-        cellSegments = null;
-        errorSegments = null;
-        seenWays = null;
+        cellSegments.clear();
+        errorSegments.clear();
+        seenWays.clear();
     }
 
     static String getLayer(OsmPrimitive w) {

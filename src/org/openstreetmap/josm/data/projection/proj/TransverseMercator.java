@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Transverse Mercator Projection (EPSG code 9807). This
@@ -118,6 +119,8 @@ public class TransverseMercator extends AbstractProj {
     @Override
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
         super.initialize(params);
+        CheckParameterUtil.ensureParameterNotNull(params, "params");
+        CheckParameterUtil.ensureParameterNotNull(params.ellps, "params.ellps");
         eb2 = params.ellps.eb2;
         latitudeOfOrigin = params.lat0 == null ? 0 : Math.toRadians(params.lat0);
         ml0 = mlfn(latitudeOfOrigin, Math.sin(latitudeOfOrigin), Math.cos(latitudeOfOrigin));

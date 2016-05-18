@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.projection.proj;
 
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Abstract base class providing utilities for implementations of the Proj
@@ -83,6 +84,8 @@ public abstract class AbstractProj implements Proj {
 
     @Override
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
+        CheckParameterUtil.ensureParameterNotNull(params, "params");
+        CheckParameterUtil.ensureParameterNotNull(params.ellps, "params.ellps");
         e2 = params.ellps.e2;
         e = params.ellps.e;
         spherical = params.ellps.spherical;

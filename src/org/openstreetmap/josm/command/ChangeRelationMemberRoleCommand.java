@@ -62,7 +62,9 @@ public class ChangeRelationMemberRoleCommand extends Command {
     @Override
     public void undoCommand() {
         relation.setMember(position, new RelationMember(oldRole, relation.getMember(position).getMember()));
-        relation.setModified(oldModified);
+        if (oldModified != null) {
+            relation.setModified(oldModified);
+        }
     }
 
     @Override

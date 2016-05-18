@@ -126,17 +126,19 @@ public abstract class AbstractChangesetDownloadTask extends AbstractDownloadTask
      * @return the future representing the asynchronous task
      */
     public final Future<?> download() {
-        return Main.worker.submit(downloadTaskRunnable);
+        return downloadTaskRunnable != null ? Main.worker.submit(downloadTaskRunnable) : null;
     }
 
     @Override
     public final Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
-        return Main.worker.submit(downloadTaskRunnable);
+        return downloadTaskRunnable != null ? Main.worker.submit(downloadTaskRunnable) : null;
     }
 
     @Override
     public final void cancel() {
-        downloadTaskRunnable.cancel();
+        if (downloadTaskRunnable != null) {
+            downloadTaskRunnable.cancel();
+        }
     }
 
     @Override

@@ -396,7 +396,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             return result;
         }
 
-        protected boolean isLastFilterValid() {
+        protected final boolean isLastFilterValid() {
             return lastFilter != null && filterModel.getFilters().contains(lastFilter);
         }
 
