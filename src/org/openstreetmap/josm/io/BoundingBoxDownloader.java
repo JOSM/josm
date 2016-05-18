@@ -67,6 +67,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 } else {
                     done = true;
                 }
+            } catch (OsmApiException ex) {
+                throw ex; // this avoids infinite loop in case of API error such as bad request (ex: bbox too large, see #12853)
             } catch (OsmTransferException | SocketException ex) {
                 if (isCanceled()) {
                     final OsmTransferCanceledException canceledException = new OsmTransferCanceledException("Operation canceled");
