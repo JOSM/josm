@@ -119,8 +119,8 @@ public class OverpassDownloadAction extends JosmAction {
 
     private static final class OverpassDownloadDialog extends DownloadDialog {
 
-        private final HistoryComboBox overpassWizard = new HistoryComboBox();
-        private final JosmTextArea overpassQuery = new JosmTextArea("", 8, 80);
+        private HistoryComboBox overpassWizard;
+        private JosmTextArea overpassQuery;
         private static OverpassDownloadDialog instance;
         private static final CollectionProperty OVERPASS_WIZARD_HISTORY = new CollectionProperty("download.overpass.wizard",
                 new ArrayList<String>());
@@ -150,6 +150,7 @@ public class OverpassDownloadAction extends JosmAction {
             pnl.add(new JLabel(), GBC.eol()); // needed for the invisible checkboxes cbDownloadGpxData, cbDownloadNotes
 
             final String tooltip = tr("Builds an Overpass query using the Overpass Turbo query wizard");
+            overpassWizard = new HistoryComboBox();
             overpassWizard.setToolTipText(tooltip);
             overpassWizard.getEditorComponent().addFocusListener(disableActionsFocusListener);
             final JButton buildQuery = new JButton(tr("Build query"));
@@ -176,6 +177,7 @@ public class OverpassDownloadAction extends JosmAction {
             pnl.add(buildQuery, GBC.std().insets(5, 5, 5, 5));
             pnl.add(overpassWizard, GBC.eol().fill(GBC.HORIZONTAL));
 
+            overpassQuery = new JosmTextArea("", 8, 80);
             overpassQuery.setFont(GuiHelper.getMonospacedFont(overpassQuery));
             overpassQuery.addFocusListener(disableActionsFocusListener);
             JScrollPane scrollPane = new JScrollPane(overpassQuery);
