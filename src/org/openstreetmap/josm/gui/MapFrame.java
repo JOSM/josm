@@ -619,8 +619,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
                     }
                 }));
             }
-            Rectangle bounds = button.getBounds();
-            menu.show(button, bounds.x + bounds.width, 0);
+            if (button != null) {
+                Rectangle bounds = button.getBounds();
+                menu.show(button, bounds.x + bounds.width, 0);
+            }
         }
     }
 

@@ -26,8 +26,6 @@ import org.xml.sax.SAXException;
  */
 public class ChangesetContentDownloadTask extends AbstractChangesetDownloadTask {
 
-    private final DownloadTask downloadTask;
-
     class DownloadTask extends RunnableDownloadTask {
         /** the list of changeset ids to download */
         private final List<Integer> toDownload = new ArrayList<>();
@@ -128,8 +126,7 @@ public class ChangesetContentDownloadTask extends AbstractChangesetDownloadTask 
         if (changesetId <= 0)
             throw new IllegalArgumentException(
                     MessageFormat.format("Expected integer value > 0 for parameter ''{0}'', got ''{1}''", "changesetId", changesetId));
-        downloadTask = new DownloadTask(parent, Collections.singleton(changesetId));
-        setDownloadTask(downloadTask);
+        setDownloadTask(new DownloadTask(parent, Collections.singleton(changesetId)));
     }
 
     /**
@@ -141,8 +138,7 @@ public class ChangesetContentDownloadTask extends AbstractChangesetDownloadTask 
      * @throws IllegalArgumentException if parent is {@code null}
      */
     public ChangesetContentDownloadTask(Component parent, Collection<Integer> changesetIds) {
-        downloadTask = new DownloadTask(parent, changesetIds);
-        setDownloadTask(downloadTask);
+        setDownloadTask(new DownloadTask(parent, changesetIds));
     }
 
     /**

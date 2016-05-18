@@ -26,8 +26,6 @@ import org.xml.sax.SAXException;
  */
 public class ChangesetQueryTask extends AbstractChangesetDownloadTask {
 
-    private final DownloadTask downloadTask;
-
     class DownloadTask extends RunnableDownloadTask {
         /** the changeset query */
         private ChangesetQuery query;
@@ -133,7 +131,6 @@ public class ChangesetQueryTask extends AbstractChangesetDownloadTask {
      */
     public ChangesetQueryTask(Component parent, ChangesetQuery query) {
         CheckParameterUtil.ensureParameterNotNull(query, "query");
-        downloadTask = new DownloadTask(parent, query);
-        setDownloadTask(downloadTask);
+        setDownloadTask(new DownloadTask(parent, query));
     }
 }

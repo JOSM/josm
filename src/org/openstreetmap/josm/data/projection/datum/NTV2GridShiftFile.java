@@ -102,7 +102,6 @@ public class NTV2GridShiftFile implements Serializable {
      */
     public void loadGridShiftFile(InputStream in, boolean loadAccuracy) throws IOException {
         byte[] b8 = new byte[8];
-        boolean bigEndian = true;
         fromEllipsoid = "";
         toEllipsoid = "";
         topLevelSubGrid = null;
@@ -110,6 +109,7 @@ public class NTV2GridShiftFile implements Serializable {
         String overviewHeaderCountId = new String(b8, StandardCharsets.UTF_8);
         if (!"NUM_OREC".equals(overviewHeaderCountId))
             throw new IllegalArgumentException("Input file is not an NTv2 grid shift file");
+        boolean bigEndian;
         readBytes(in, b8);
         overviewHeaderCount = NTV2Util.getIntBE(b8, 0);
         if (overviewHeaderCount == 11) {
@@ -203,14 +203,17 @@ public class NTV2GridShiftFile implements Serializable {
      * @return True if the coordinate is within a Sub Grid, false if not
      */
     public boolean gridShiftForward(NTV2GridShift gs) {
-        // Try the last sub grid first, big chance the coord is still within it
-        NTV2SubGrid subGrid = lastSubGrid.getSubGridForCoord(gs.getLonPositiveWestSeconds(), gs.getLatSeconds());
-        if (subGrid == null) {
-            subGrid = getSubGrid(gs.getLonPositiveWestSeconds(), gs.getLatSeconds());
+        NTV2SubGrid subGrid = null;
+        if (lastSubGrid != null) {
+            // Try the last sub grid first, big chance the coord is still within it
+            subGrid = lastSubGrid.getSubGridForCoord(gs.getLonPositiveWestSeconds(), gs.getLatSeconds());
         }
-        if (subGrid == null)
+        if (subGrid == null) {
+            subGrid = getSubGrid(topLevelSubGrid, gs.getLonPositiveWestSeconds(), gs.getLatSeconds());
+        }
+        if (subGrid == null) {
             return false;
-        else {
+        } else {
             subGrid.interpolateGridShift(gs);
             gs.setSubGridName(subGrid.getSubGridName());
             lastSubGrid = subGrid;
@@ -250,14 +253,13 @@ public class NTV2GridShiftFile implements Serializable {
     }
 
     /**
-     * Find the finest SubGrid containing the coordinate, specified
-     * in Positive West Seconds
-     *
+     * Find the finest SubGrid containing the coordinate, specified in Positive West Seconds
+     * @param topLevelSubGrid top level subgrid
      * @param lon Longitude in Positive West Seconds
      * @param lat Latitude in Seconds
      * @return The SubGrid found or null
      */
-    private NTV2SubGrid getSubGrid(double lon, double lat) {
+    private static NTV2SubGrid getSubGrid(NTV2SubGrid[] topLevelSubGrid, double lon, double lat) {
         NTV2SubGrid sub = null;
         for (int i = 0; i < topLevelSubGrid.length; i++) {
             sub = topLevelSubGrid[i].getSubGridForCoord(lon, lat);

@@ -231,9 +231,7 @@ public class WayConnectionTypeCalculator {
      * @return direction of way {@code k}
      */
     private Direction determineDirection(int refI, final Direction refDirection, int k, boolean reversed) {
-        if (refI < 0 || k < 0 || refI >= members.size() || k >= members.size())
-            return NONE;
-        if (refDirection == NONE)
+        if (members == null || refI < 0 || k < 0 || refI >= members.size() || k >= members.size() || refDirection == NONE)
             return NONE;
 
         final RelationMember mRef = members.get(refI);

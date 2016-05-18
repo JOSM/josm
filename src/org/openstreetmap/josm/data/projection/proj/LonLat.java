@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Simple Lat/Lon (pseudo-)projection.
@@ -25,6 +26,8 @@ public class LonLat implements Proj {
 
     @Override
     public void initialize(ProjParameters params) throws ProjectionConfigurationException {
+        CheckParameterUtil.ensureParameterNotNull(params, "params");
+        CheckParameterUtil.ensureParameterNotNull(params.ellps, "params.ellps");
         a = params.ellps.a;
     }
 

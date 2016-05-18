@@ -1009,8 +1009,10 @@ public class TagEditHelper {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    recentTags.ignoreTag(tag, tagsToIgnore);
-                    PROPERTY_TAGS_TO_IGNORE.put(tagsToIgnore.writeToString());
+                    if (tagsToIgnore != null) {
+                        recentTags.ignoreTag(tag, tagsToIgnore);
+                        PROPERTY_TAGS_TO_IGNORE.put(tagsToIgnore.writeToString());
+                    }
                 } catch (SearchCompiler.ParseError parseError) {
                     throw new IllegalStateException(parseError);
                 }

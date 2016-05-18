@@ -27,8 +27,6 @@ import org.xml.sax.SAXException;
  */
 public class ChangesetHeaderDownloadTask extends AbstractChangesetDownloadTask {
 
-    private final DownloadTask downloadTask;
-
     class DownloadTask extends RunnableDownloadTask {
         /** the list of changeset ids to download */
         private final Set<Integer> toDownload = new HashSet<>();
@@ -111,8 +109,7 @@ public class ChangesetHeaderDownloadTask extends AbstractChangesetDownloadTask {
      * @since 7704
      */
     public ChangesetHeaderDownloadTask(Component dialogParent, Collection<Integer> ids, boolean includeDiscussion) {
-        downloadTask = new DownloadTask(dialogParent, ids, includeDiscussion);
-        setDownloadTask(downloadTask);
+        setDownloadTask(new DownloadTask(dialogParent, ids, includeDiscussion));
     }
 
     /**

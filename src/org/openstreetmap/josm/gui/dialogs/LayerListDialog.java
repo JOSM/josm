@@ -737,7 +737,7 @@ public class LayerListDialog extends ToggleDialog {
          *
          * @param layer the layer which is removed
          */
-        protected void onRemoveLayer(Layer layer) {
+        private void onRemoveLayer(Layer layer) {
             if (layer == null)
                 return;
             layer.removePropertyChangeListener(this);
@@ -761,13 +761,15 @@ public class LayerListDialog extends ToggleDialog {
          *
          * @param layer the layer
          */
-        protected void onAddLayer(Layer layer) {
+        private void onAddLayer(Layer layer) {
             if (layer == null)
                 return;
             layer.addPropertyChangeListener(this);
             fireTableDataChanged();
             int idx = getLayers().indexOf(layer);
-            layerList.setRowHeight(idx, Math.max(16, layer.getIcon().getIconHeight()));
+            if (layerList != null) {
+                layerList.setRowHeight(idx, Math.max(16, layer.getIcon().getIconHeight()));
+            }
             selectionModel.setSelectionInterval(idx, idx);
             ensureSelectedIsVisible();
         }

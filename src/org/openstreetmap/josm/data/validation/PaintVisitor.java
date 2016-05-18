@@ -122,7 +122,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
             Point p = mv.getPoint(n);
 
             if (selected) {
-                g.setColor(getHighlightColor());
+                g.setColor(getHighlightColor(color));
                 g.fillOval(p.x - 5, p.y - 5, 10, 10);
             }
             g.setColor(color);
@@ -145,7 +145,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
         double sinT = 5 * Math.sin(t);
         int deg = (int) Math.toDegrees(t);
         if (selected) {
-            g.setColor(getHighlightColor());
+            g.setColor(getHighlightColor(color));
             int[] x = new int[] {(int) (p1.x + cosT), (int) (p2.x + cosT),
                                  (int) (p2.x - cosT), (int) (p1.x - cosT)};
             int[] y = new int[] {(int) (p1.y - sinT), (int) (p2.y - sinT),
@@ -259,9 +259,10 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
 
     /**
      * Gets the color to draw highlight markers with.
+     * @param color severity color
      * @return The color.
      */
-    private Color getHighlightColor() {
+    private static Color getHighlightColor(Color color) {
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (color.getAlpha() * .4));
     }
 

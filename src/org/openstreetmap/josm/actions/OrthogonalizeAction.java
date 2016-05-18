@@ -419,10 +419,10 @@ public final class OrthogonalizeAction extends JosmAction {
      * Class contains everything we need to know about a single way.
      */
     private static class WayData {
-        public final List<Node> wayNodes;             // The assigned way
-        public final int nSeg;            // Number of Segments of the Way
-        public final int nNode;           // Number of Nodes of the Way
-        public Direction[] segDirections; // Direction of the segments
+        public final List<Node> wayNodes;       // The assigned way
+        public final int nSeg;                  // Number of Segments of the Way
+        public final int nNode;                 // Number of Nodes of the Way
+        public final Direction[] segDirections; // Direction of the segments
         // segment i goes from node i to node (i+1)
         public EastNorth segSum;          // (Vector-)sum of all horizontal segments plus the sum of all vertical
         // segments turned by 90 degrees
@@ -432,6 +432,7 @@ public final class OrthogonalizeAction extends JosmAction {
             this.wayNodes = wayNodes;
             this.nNode = wayNodes.size();
             this.nSeg = nNode - 1;
+            this.segDirections = new Direction[nSeg];
         }
 
         /**
@@ -447,7 +448,6 @@ public final class OrthogonalizeAction extends JosmAction {
             for (int i = 0; i < nNode; i++) {
                 en[i] = wayNodes.get(i).getEastNorth();
             }
-            segDirections = new Direction[nSeg];
             Direction direction = pInitialDirection;
             segDirections[0] = direction;
             for (int i = 0; i < nSeg - 1; i++) {
