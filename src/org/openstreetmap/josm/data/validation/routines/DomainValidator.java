@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016051700, Last Updated Tue May 17 07:07:01 2016 UTC
+        // Taken from Version 2016052000, Last Updated Fri May 20 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -379,6 +379,7 @@ public final class DomainValidator extends AbstractValidator {
         "biz", // biz Neustar, Inc.
         "black", // black Afilias Limited
         "blackfriday", // blackfriday Uniregistry, Corp.
+        "blog", // blog Knock Knock WHOIS There, LLC
         "bloomberg", // bloomberg Bloomberg IP Holdings LLC
         "blue", // blue Afilias Limited
         "bms", // bms Bristol-Myers Squibb Company
@@ -534,6 +535,7 @@ public final class DomainValidator extends AbstractValidator {
         "dog", // dog Koko Mill, LLC
         "doha", // doha Communications Regulatory Authority (CRA)
         "domains", // domains Sugar Cross, LLC
+        "dot", // dot Dish DBS Corporation
         "download", // download dot Support Limited
         "drive", // drive Charleston Road Registry Inc.
         "dubai", // dubai Dubai Smart Government Department
