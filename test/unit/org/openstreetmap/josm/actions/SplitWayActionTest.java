@@ -38,8 +38,6 @@ public final class SplitWayActionTest {
     @BeforeClass
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init(true);
-
-        // Enable "Align in line" feature.
         action = Main.main.menu.splitWay;
         action.setEnabled(true);
     }
