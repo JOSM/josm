@@ -57,7 +57,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * This wizard walks the user to the necessary steps to retrieve an OAuth Access Token which
  * allows JOSM to access the OSM API on the users behalf.
- *
+ * @since 2746
  */
 public class OAuthAuthorizationWizard extends JDialog {
     private boolean canceled;
@@ -68,7 +68,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     private SemiAutomaticAuthorizationUI pnlSemiAutomaticAuthorisationUI;
     private ManualAuthorizationUI pnlManualAuthorisationUI;
     private JScrollPane spAuthorisationProcedureUI;
-    private final Executor executor;
+    private final transient Executor executor;
 
     /**
      * Launches the wizard, {@link OAuthAccessTokenHolder#setAccessToken(OAuthToken) sets the token}

@@ -49,7 +49,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class SplashScreen extends JFrame implements ChangeListener {
 
-    private final SplashProgressMonitor progressMonitor;
+    private final transient SplashProgressMonitor progressMonitor;
     private final SplashScreenProgressRenderer progressRenderer;
 
     /**

@@ -80,7 +80,7 @@ public final class TaggingPresetReader {
     }
 
     static class HashSetWithLast<E> extends LinkedHashSet<E> {
-        protected E last;
+        protected transient E last;
 
         @Override
         public boolean add(E e) {
