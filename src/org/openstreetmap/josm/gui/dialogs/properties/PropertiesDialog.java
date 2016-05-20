@@ -1229,7 +1229,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
 
     class TaginfoAction extends JosmAction {
 
-        final StringProperty TAGINFO_URL_PROP = new StringProperty("taginfo.url", "https://taginfo.openstreetmap.org/");
+        final transient StringProperty TAGINFO_URL_PROP = new StringProperty("taginfo.url", "https://taginfo.openstreetmap.org/");
 
         TaginfoAction() {
             super(tr("Go to Taginfo"), "dialogs/taginfo", tr("Launch browser with Taginfo statistics for selected object"), null, false);

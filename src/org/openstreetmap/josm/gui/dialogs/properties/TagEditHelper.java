@@ -999,7 +999,7 @@ public class TagEditHelper {
         }
 
         class IgnoreTagAction extends AbstractAction {
-            final Tag tag;
+            final transient Tag tag;
 
             IgnoreTagAction(String name, Tag tag) {
                 super(name);

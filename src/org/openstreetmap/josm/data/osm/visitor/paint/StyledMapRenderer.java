@@ -1793,10 +1793,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     private class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> implements Visitor {
-        private final List<? extends OsmPrimitive> input;
-        private final List<StyleRecord> output;
+        private final transient List<? extends OsmPrimitive> input;
+        private final transient List<StyleRecord> output;
 
-        private final ElemStyles styles = MapPaintStyles.getStyles();
+        private final transient ElemStyles styles = MapPaintStyles.getStyles();
         private final int directExecutionTaskSize;
 
         private final boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000);

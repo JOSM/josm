@@ -202,8 +202,8 @@ public class UnGlueAction extends JosmAction {
      */
     static final class PropertiesMembershipDialog extends ExtendedDialog {
 
-        final ExistingBothNewChoice tags;
-        final ExistingBothNewChoice memberships;
+        final transient ExistingBothNewChoice tags;
+        final transient ExistingBothNewChoice memberships;
 
         private PropertiesMembershipDialog(boolean preselectNew, boolean queryTags, boolean queryMemberships) {
             super(Main.parent, tr("Tags / Memberships"), new String[]{tr("Unglue"), tr("Cancel")});

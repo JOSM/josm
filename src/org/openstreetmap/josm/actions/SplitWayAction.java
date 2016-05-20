@@ -225,11 +225,11 @@ public class SplitWayAction extends JosmAction {
      */
     static class SegmentToKeepSelectionDialog extends ExtendedDialog {
         static final AtomicInteger DISPLAY_COUNT = new AtomicInteger();
-        final Way selectedWay;
-        final List<Way> newWays;
+        final transient Way selectedWay;
+        final transient List<Way> newWays;
         final JList<Way> list;
-        final List<OsmPrimitive> selection;
-        final Way wayToKeep;
+        final transient List<OsmPrimitive> selection;
+        final transient Way wayToKeep;
 
         SegmentToKeepSelectionDialog(Way selectedWay, List<Way> newWays, Way wayToKeep, List<OsmPrimitive> selection) {
             super(Main.parent, tr("Which way segment should reuse the history of {0}?", selectedWay.getId()),

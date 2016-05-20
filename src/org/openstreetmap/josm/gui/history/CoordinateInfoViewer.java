@@ -244,7 +244,7 @@ public class CoordinateInfoViewer extends JPanel {
 
         private final JosmTextArea lblLat = newTextArea();
         private final JosmTextArea lblLon = newTextArea();
-        private final Updater updater;
+        private final transient Updater updater;
         private final Color modifiedColor;
 
         protected void build() {
@@ -330,7 +330,7 @@ public class CoordinateInfoViewer extends JPanel {
 
     private static class MapViewer extends JMapViewer implements ChangeListener {
 
-        private final Updater updater;
+        private final transient Updater updater;
 
         MapViewer(HistoryBrowserModel model) {
             this.updater = new Updater(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
@@ -364,7 +364,7 @@ public class CoordinateInfoViewer extends JPanel {
     private static class DistanceViewer extends JPanel implements ChangeListener {
 
         private final JosmTextArea lblDistance = newTextArea();
-        private final Updater updater;
+        private final transient Updater updater;
 
         DistanceViewer(HistoryBrowserModel model) {
             this.updater = new Updater(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
