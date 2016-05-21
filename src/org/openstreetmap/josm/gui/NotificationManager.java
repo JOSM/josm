@@ -108,21 +108,24 @@ class NotificationManager {
         currentNotificationPanel.validate();
 
         int margin = 5;
-        int x, y;
         JFrame parentWindow = (JFrame) Main.parent;
         Dimension size = currentNotificationPanel.getPreferredSize();
-        if (Main.isDisplayingMapView() && Main.map.mapView.getHeight() > 0) {
-            MapView mv = Main.map.mapView;
-            Point mapViewPos = SwingUtilities.convertPoint(mv.getParent(), mv.getX(), mv.getY(), Main.parent);
-            x = mapViewPos.x + margin;
-            y = mapViewPos.y + mv.getHeight() - Main.map.statusLine.getHeight() - size.height - margin;
-        } else {
-            x = margin;
-            y = parentWindow.getHeight() - Main.toolbar.control.getSize().height - size.height - margin;
-        }
-        parentWindow.getLayeredPane().add(currentNotificationPanel, JLayeredPane.POPUP_LAYER, 0);
+        if (parentWindow != null) {
+            int x;
+            int y;
+            if (Main.isDisplayingMapView() && Main.map.mapView.getHeight() > 0) {
+                MapView mv = Main.map.mapView;
+                Point mapViewPos = SwingUtilities.convertPoint(mv.getParent(), mv.getX(), mv.getY(), Main.parent);
+                x = mapViewPos.x + margin;
+                y = mapViewPos.y + mv.getHeight() - Main.map.statusLine.getHeight() - size.height - margin;
+            } else {
+                x = margin;
+                y = parentWindow.getHeight() - Main.toolbar.control.getSize().height - size.height - margin;
+            }
+            parentWindow.getLayeredPane().add(currentNotificationPanel, JLayeredPane.POPUP_LAYER, 0);
 
-        currentNotificationPanel.setLocation(x, y);
+            currentNotificationPanel.setLocation(x, y);
+        }
         currentNotificationPanel.setSize(size);
 
         currentNotificationPanel.setVisible(true);
