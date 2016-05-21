@@ -699,8 +699,6 @@ Build-Date: ${build.tstamp}
             destdir="${proj-build.dir}" target="1.7" source="1.7" debug="on"
             includeantruntime="false" createMissingPackageInfoClass="false"
             encoding="UTF-8" classpath="${proj-classpath}">
-            <!-- workaround to https://bz.apache.org/bugzilla/show_bug.cgi?id=59556 -->
-            <compilerarg value="-XaddExports:java.base/jdk.internal.reflect=ALL-UNNAMED" compiler="javac1.9" />
         </javac>
     </target>
     <!--
@@ -716,6 +714,8 @@ Build-Date: ${build.tstamp}
                 <pathelement path="${proj-build.dir}"/>
             </classpath>
             <arg value="${base.dir}"/>
+            <!-- workaround to https://bz.apache.org/bugzilla/show_bug.cgi?id=59556 -->
+            <jvmarg value="-XaddExports:java.base/jdk.internal.reflect=ALL-UNNAMED" if:set="isJava9" />
         </java>
     </target>
 </project>
