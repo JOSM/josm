@@ -32,10 +32,11 @@ import org.apache.commons.compress.utils.IOUtils;
  *
  * <p>Based on the "spec" in the version "Last revised: 2013-10-25"</p>
  *
- * @see <a href="http://code.google.com/p/snappy/source/browse/trunk/framing_format.txt">Snappy framing format description</a>
+ * @see <a href="https://github.com/google/snappy/blob/master/framing_format.txt">Snappy framing format description</a>
  * @since 1.7
  */
 public class FramedSnappyCompressorInputStream extends CompressorInputStream {
+
     /**
      * package private for tests only.
      */
@@ -57,6 +58,8 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
 
     /** The underlying stream to read compressed data from */
     private final PushbackInputStream in;
+    /** The dialect to expect */
+    private final FramedSnappyDialect dialect;
 
     private SnappyCompressorInputStream currentCompressedChunk;
 
@@ -70,14 +73,31 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
     private final PureJavaCrc32C checksum = new PureJavaCrc32C();
 
     /**
-     * Constructs a new input stream that decompresses snappy-framed-compressed data
-     * from the specified input stream.
+     * Constructs a new input stream that decompresses
+     * snappy-framed-compressed data from the specified input stream
+     * using the {@link FramedSnappyDialect#STANDARD} dialect.
      * @param in  the InputStream from which to read the compressed data
      * @throws IOException if reading fails
      */
     public FramedSnappyCompressorInputStream(final InputStream in) throws IOException {
+        this(in, FramedSnappyDialect.STANDARD);
+    }
+
+    /**
+     * Constructs a new input stream that decompresses snappy-framed-compressed data
+     * from the specified input stream.
+     * @param in  the InputStream from which to read the compressed data
+     * @param dialect the dialect used by the compressed stream
+     * @throws IOException if reading fails
+     */
+    public FramedSnappyCompressorInputStream(final InputStream in,
+                                             final FramedSnappyDialect dialect)
+        throws IOException {
         this.in = new PushbackInputStream(in, 1);
-        readStreamIdentifier();
+        this.dialect = dialect;
+        if (dialect.hasStreamIdentifier()) {
+            readStreamIdentifier();
+        }
     }
 
     /** {@inheritDoc} */
@@ -181,8 +201,13 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
             uncompressedBytesRemaining = readSize() - 4 /* CRC */;
             expectedChecksum = unmask(readCrc());
         } else if (type == COMPRESSED_CHUNK_TYPE) {
-            final long size = readSize() - 4 /* CRC */;
-            expectedChecksum = unmask(readCrc());
+            boolean expectChecksum = dialect.usesChecksumWithCompressedChunks();
+            final long size = readSize() - (expectChecksum ? 4 : 0);
+            if (expectChecksum) {
+                expectedChecksum = unmask(readCrc());
+            } else {
+                expectedChecksum = -1;
+            }
             currentCompressedChunk =
                 new SnappyCompressorInputStream(new BoundedInputStream(in, size));
             // constructor reads uncompressed size
