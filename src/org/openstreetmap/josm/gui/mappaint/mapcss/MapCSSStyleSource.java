@@ -638,8 +638,8 @@ public class MapCSSStyleSource extends StyleSource {
         while (candidates.hasNext()) {
             MapCSSRule r = candidates.next();
             env.clearSelectorMatchingInformation();
-            env.layer = null;
-            String sub = env.layer = r.selector.getSubpart().getId(env);
+            env.layer = r.selector.getSubpart().getId(env);
+            String sub = env.layer;
             if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
                 Selector s = r.selector;
                 if (s.getRange().contains(scale)) {
