@@ -150,7 +150,8 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         add(tfOsmLogoutURL, gc);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmLogoutURL);
 
-        cbUseDefaults.addItemListener(ilUseDefault = new UseDefaultItemListener());
+        ilUseDefault = new UseDefaultItemListener();
+        cbUseDefaults.addItemListener(ilUseDefault);
     }
 
     protected boolean hasCustomSettings() {
