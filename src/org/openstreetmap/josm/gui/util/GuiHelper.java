@@ -130,6 +130,33 @@ public final class GuiHelper {
     }
 
     /**
+     * Executes synchronously a runnable in
+     * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
+     * <p>
+     * Passes on the exception that was thrown to the thread calling this. The exception is wrapped in a {@link RuntimeException} if it was a normal {@link Throwable}.
+     * @param task The runnable to execute
+     * @see SwingUtilities#invokeAndWait
+     * @since 10271
+     */
+    public static void runInEDTAndWaitWithException(Runnable task) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            task.run();
+        } else {
+            try {
+                SwingUtilities.invokeAndWait(task);
+            } catch (InterruptedException e) {
+                Main.error(e);
+            } catch (InvocationTargetException e) {
+                if (e.getCause() instanceof RuntimeException) {
+                    throw (RuntimeException) e.getCause();
+                } else {
+                    throw new RuntimeException("Exception while clling " + task, e.getCause());
+                }
+            }
+        }
+    }
+
+    /**
      * Executes synchronously a callable in
      * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>
      * and return a value.
@@ -155,6 +182,18 @@ public final class GuiHelper {
                 Main.error(e);
                 return null;
             }
+        }
+    }
+
+    /**
+     * This function fails if it was not called from the EDT thread.
+     * @throws IllegalStateException if called from wrong thread.
+     * @since 10271
+     */
+    public static void assertCallFromEdt() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            throw new IllegalStateException(
+                    "Needs to be called from the EDT thread, not from " + Thread.currentThread().getName());
         }
     }
 

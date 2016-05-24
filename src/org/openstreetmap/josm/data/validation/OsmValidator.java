@@ -58,8 +58,10 @@ import org.openstreetmap.josm.data.validation.tests.UntaggedNode;
 import org.openstreetmap.josm.data.validation.tests.UntaggedWay;
 import org.openstreetmap.josm.data.validation.tests.WayConnectedToArea;
 import org.openstreetmap.josm.data.validation.tests.WronglyOrderedWays;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
@@ -338,22 +340,22 @@ public class OsmValidator implements LayerChangeListener {
     /* interface LayerChangeListener                                              */
     /* -------------------------------------------------------------------------- */
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        // Do nothing
+    public void layerAdded(LayerAddEvent e) {
+        // do nothing
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {
-        // Do nothing
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
+        // do nothing
     }
 
     @Override
-    public void layerRemoved(Layer oldLayer) {
-        if (oldLayer == errorLayer) {
+    public void layerRemoving(LayerRemoveEvent e) {
+        if (e.getRemovedLayer() == errorLayer) {
             errorLayer = null;
             return;
         }
-        if (Main.map.mapView.getLayersOfType(OsmDataLayer.class).isEmpty()) {
+        if (e.getSource().getLayersOfType(OsmDataLayer.class).isEmpty()) {
             if (errorLayer != null) {
                 Main.main.removeLayer(errorLayer);
             }

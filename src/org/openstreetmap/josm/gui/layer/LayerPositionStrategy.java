@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.layer;
 
 import java.util.List;
 
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Predicates;
 
@@ -19,7 +18,7 @@ public abstract class LayerPositionStrategy {
      */
     public static final LayerPositionStrategy IN_FRONT = new LayerPositionStrategy() {
         @Override
-        public int getPosition(MapView manager) {
+        public int getPosition(LayerManager manager) {
             return 0;
         }
     };
@@ -72,8 +71,8 @@ public abstract class LayerPositionStrategy {
     public static LayerPositionStrategy inFrontOfFirst(final Predicate<Layer> what) {
         return new LayerPositionStrategy() {
             @Override
-            public int getPosition(MapView manager) {
-                List<Layer> layers = manager.getAllLayersAsList();
+            public int getPosition(LayerManager manager) {
+                List<Layer> layers = manager.getLayers();
                 for (int i = 0; i < layers.size(); i++) {
                     if (what.evaluate(layers.get(i))) {
                         return i;
@@ -92,8 +91,8 @@ public abstract class LayerPositionStrategy {
     public static LayerPositionStrategy afterLast(final Predicate<Layer> what) {
         return new LayerPositionStrategy() {
             @Override
-            public int getPosition(MapView manager) {
-                List<Layer> layers = manager.getAllLayersAsList();
+            public int getPosition(LayerManager manager) {
+                List<Layer> layers = manager.getLayers();
                 for (int i = layers.size() - 1; i >= 0; i--) {
                     if (what.evaluate(layers.get(i))) {
                         return i + 1;
@@ -109,5 +108,5 @@ public abstract class LayerPositionStrategy {
      * @param manager The layer manager to insert the layer in.
      * @return The position in the range 0...layers.size
      */
-    public abstract int getPosition(MapView manager);
+    public abstract int getPosition(LayerManager manager);
 }
