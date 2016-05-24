@@ -381,6 +381,7 @@
 *[barrier=yes],
 *[aerialway=yes][!public_transport],
 *[amenity=yes],
+*[leisure=yes],
 *[shop="*"],
 *[craft=yes],
 *[service=yes],
