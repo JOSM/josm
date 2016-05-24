@@ -75,6 +75,7 @@ import org.openstreetmap.josm.gui.dialogs.UserListDialog;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog;
 import org.openstreetmap.josm.gui.dialogs.properties.PropertiesDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager;
 import org.openstreetmap.josm.gui.util.AdvancedKeyPressDetector;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
@@ -97,6 +98,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
     /**
      * The view control displayed.
+     * <p>
+     * Accessing this is discouraged. Use the {@link LayerManager} to access map data.
      */
     public final MapView mapView;
 
@@ -189,7 +192,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         setSize(400, 400);
         setLayout(new BorderLayout());
 
-        mapView = new MapView(contentPane, viewportData);
+        mapView = new MapView(Main.getLayerManager(), contentPane, viewportData);
         if (!GraphicsEnvironment.isHeadless()) {
             new FileDrop(mapView);
         }
@@ -774,7 +777,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
                 mapMode.enterMode();
             }
             // invalidate repaint cache
-            Main.map.mapView.preferenceChanged(null);
+            mapView.preferenceChanged(null);
         }
 
         // After all listeners notice new layer, some buttons will be disabled/enabled

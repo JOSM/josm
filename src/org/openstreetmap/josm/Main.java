@@ -86,12 +86,12 @@ import org.openstreetmap.josm.gui.MainApplication.Option;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManagerWithActive;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
@@ -189,8 +189,16 @@ public abstract class Main {
 
     /**
      * The MapFrame. Use {@link Main#setMapFrame} to set or clear it.
+     * <p>
+     * There should be no need to access this to access any map data. Use {@link #layerManager} instead.
      */
     public static MapFrame map;
+
+    /**
+     * Provides access to the layers displayed in the main view.
+     * @since 10271
+     */
+    private static final LayerManagerWithActive layerManager = new LayerManagerWithActive();
 
     /**
      * The toolbar preference control to register new actions.
@@ -530,8 +538,8 @@ public abstract class Main {
      */
     public final synchronized void removeLayer(final Layer layer) {
         if (map != null) {
-            map.mapView.removeLayer(layer);
-            if (isDisplayingMapView() && map.mapView.getAllLayers().isEmpty()) {
+            getLayerManager().removeLayer(layer);
+            if (isDisplayingMapView() && getLayerManager().getLayers().isEmpty()) {
                 setMapFrame(null);
             }
         }
@@ -607,7 +615,7 @@ public abstract class Main {
             @Override
             public void initialize() {
                 validator = new OsmValidator();
-                MapView.addLayerChangeListener(validator);
+                getLayerManager().addLayerChangeListener(validator);
             }
         });
 
@@ -729,6 +737,15 @@ public abstract class Main {
     }
 
     /**
+     * Returns the main layer manager that is used by the map view.
+     * @return The layer manager. The value returned will never change.
+     * @since 10271
+     */
+    public static LayerManagerWithActive getLayerManager() {
+        return layerManager;
+    }
+
+    /**
      * Add a new layer to the map.
      *
      * If no map exists, create one.
@@ -772,7 +789,7 @@ public abstract class Main {
             createMapFrame(layer, viewport);
         }
         layer.hookUpMapView();
-        map.mapView.addLayer(layer);
+        getLayerManager().addLayer(layer);
         if (noMap) {
             Main.map.setVisible(true);
         } else if (viewport != null) {
@@ -812,7 +829,7 @@ public abstract class Main {
      */
     public OsmDataLayer getEditLayer() {
         if (!isDisplayingMapView()) return null;
-        return map.mapView.getEditLayer();
+        return getLayerManager().getEditLayer();
     }
 
     /**
@@ -851,7 +868,7 @@ public abstract class Main {
      */
     public Layer getActiveLayer() {
         if (!isDisplayingMapView()) return null;
-        return map.mapView.getActiveLayer();
+        return getLayerManager().getActiveLayer();
     }
 
     protected static final JPanel contentPanePrivate = new JPanel(new BorderLayout());
@@ -1032,7 +1049,7 @@ public abstract class Main {
      */
     public static boolean saveUnsavedModifications() {
         if (!isDisplayingMapView()) return true;
-        return saveUnsavedModifications(map.mapView.getLayersOfType(AbstractModifiableLayer.class), true);
+        return saveUnsavedModifications(getLayerManager().getLayersOfType(AbstractModifiableLayer.class), true);
     }
 
     /**
@@ -1099,7 +1116,7 @@ public abstract class Main {
             pref.put("gui.maximized", (windowState & JFrame.MAXIMIZED_BOTH) != 0);
             // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
             if (Main.isDisplayingMapView()) {
-                Collection<Layer> layers = new ArrayList<>(Main.map.mapView.getAllLayers());
+                Collection<Layer> layers = new ArrayList<>(getLayerManager().getLayers());
                 for (Layer l: layers) {
                     Main.main.removeLayer(l);
                 }
