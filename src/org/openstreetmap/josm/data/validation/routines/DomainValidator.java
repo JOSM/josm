@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016052100, Last Updated Sat May 21 07:07:01 2016 UTC
+        // Taken from Version 2016052400, Last Updated Tue May 24 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -952,6 +952,7 @@ public final class DomainValidator extends AbstractValidator {
         "quest", // quest Quest ION Limited
         "racing", // racing Premier Registry Limited
         "read", // read Amazon Registry Services, Inc.
+        "realestate", // realestate dotRealEstate LLC
         "realtor", // realtor Real Estate Domains LLC
         "realty", // realty Fegistry, LLC
         "recipes", // recipes Grand Island, LLC
@@ -1032,6 +1033,7 @@ public final class DomainValidator extends AbstractValidator {
         "shia", // shia Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
         "shiksha", // shiksha Afilias Limited
         "shoes", // shoes Binky Galley, LLC
+        "shop", // shop GMO Registry, Inc.
         "shouji", // shouji QIHOO 360 TECHNOLOGY CO. LTD.
         "show", // show Snow Beach, LLC
         "shriram", // shriram Shriram Capital Ltd.
