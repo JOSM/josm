@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Methods of this manager may be called from any thread in any order. Listeners are called while this layer manager is locked, so they should not block.
  *
  * @author Michael Zangl
- * @since 10272
+ * @since 10273
  */
 public class LayerManager {
     /**
