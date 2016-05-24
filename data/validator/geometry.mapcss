@@ -228,7 +228,7 @@ way[highway] > node[tourism=information][information=guidepost] {
 }
 way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking|bus_station|car_wash)$/],
 way[highway] > node[building][!entrance],
-way[highway] > node[leisure][!entrance],
+way[highway] > node[leisure][!entrance][leisure!=slipway],
 way[highway] > node[office][!entrance],
 way[highway] > node[shop][!entrance],
 way[highway] > node[tourism][!entrance][tourism!=viewpoint]!.guidepost {
