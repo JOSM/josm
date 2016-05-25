@@ -1290,4 +1290,13 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
         super.repaint();
     }
+
+    /**
+     * Returns the layer manager.
+     * @return the layer manager
+     * @since 10282
+     */
+    public final MainLayerManager getLayerManager() {
+        return layerManager;
+    }
 }
