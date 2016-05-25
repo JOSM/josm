@@ -91,7 +91,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.LayerManagerWithActive;
+import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
@@ -198,7 +198,7 @@ public abstract class Main {
      * Provides access to the layers displayed in the main view.
      * @since 10271
      */
-    private static final LayerManagerWithActive layerManager = new LayerManagerWithActive();
+    private static final MainLayerManager layerManager = new MainLayerManager();
 
     /**
      * The toolbar preference control to register new actions.
@@ -739,9 +739,9 @@ public abstract class Main {
     /**
      * Returns the main layer manager that is used by the map view.
      * @return The layer manager. The value returned will never change.
-     * @since 10271
+     * @since 10279
      */
-    public static LayerManagerWithActive getLayerManager() {
+    public static MainLayerManager getLayerManager() {
         return layerManager;
     }
 

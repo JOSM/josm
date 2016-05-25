@@ -12,19 +12,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.gui.layer.LayerManagerWithActive.ActiveLayerChangeEvent;
-import org.openstreetmap.josm.gui.layer.LayerManagerWithActive.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Predicates;
 
 /**
- * Tests {@link LayerManagerWithActive}
+ * Tests {@link MainLayerManager}.
  * @author Michael Zangl
- *
  */
-public class LayerManagerWithActiveTest extends LayerManagerTest {
+public class MainLayerManagerTest extends LayerManagerTest {
 
-    private LayerManagerWithActive layerManagerWithActive;
+    private MainLayerManager layerManagerWithActive;
 
     private class CapturingActiveLayerChangeListener implements ActiveLayerChangeListener {
         private ActiveLayerChangeEvent lastEvent;
@@ -63,7 +62,7 @@ public class LayerManagerWithActiveTest extends LayerManagerTest {
     @Override
     @Before
     public void setUp() {
-        layerManager = layerManagerWithActive = new LayerManagerWithActive();
+        layerManager = layerManagerWithActive = new MainLayerManager();
     }
 
     @Test
@@ -136,7 +135,7 @@ public class LayerManagerWithActiveTest extends LayerManagerTest {
     }
 
     /**
-     * Test if {@link LayerManagerWithActive#addActiveLayerChangeListener(ActiveLayerChangeListener)} prevents listener from beeing added twice.
+     * Test if {@link MainLayerManager#addActiveLayerChangeListener(ActiveLayerChangeListener)} prevents listener from beeing added twice.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testAddActiveLayerChangeListenerTwice() {
@@ -146,7 +145,7 @@ public class LayerManagerWithActiveTest extends LayerManagerTest {
     }
 
     /**
-     * Test if {@link LayerManagerWithActive#removeActiveLayerChangeListener(ActiveLayerChangeListener)} works.
+     * Test if {@link MainLayerManager#removeActiveLayerChangeListener(ActiveLayerChangeListener)} works.
      */
     @Test
     public void testRemoveActiveLayerChangeListener() {
@@ -164,7 +163,7 @@ public class LayerManagerWithActiveTest extends LayerManagerTest {
     }
 
     /**
-     * Test if {@link LayerManagerWithActive#removeActiveLayerChangeListener(ActiveLayerChangeListener)} checks if listener is in list.
+     * Test if {@link MainLayerManager#removeActiveLayerChangeListener(ActiveLayerChangeListener)} checks if listener is in list.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testRemoveActiveLayerChangeListenerNotInList() {
@@ -172,7 +171,7 @@ public class LayerManagerWithActiveTest extends LayerManagerTest {
     }
 
     /**
-     * Tests {@link LayerManagerWithActive#setActiveLayer(Layer)} and {@link LayerManagerWithActive#getActiveLayer()}.
+     * Tests {@link MainLayerManager#setActiveLayer(Layer)} and {@link MainLayerManager#getActiveLayer()}.
      * <p>
      * Edit and active layer getters are also tested in {@link #testAddLayerSetsActiveLayer()}
      */
@@ -191,7 +190,7 @@ public class LayerManagerWithActiveTest extends LayerManagerTest {
     }
 
     /**
-     * Tests {@link LayerManagerWithActive#getEditDataSet()}
+     * Tests {@link MainLayerManager#getEditDataSet()}
      */
     @Test
     public void testGetEditDataSet() {
@@ -213,7 +212,7 @@ public class LayerManagerWithActiveTest extends LayerManagerTest {
     }
 
     /**
-     * Tests {@link LayerManagerWithActive#getVisibleLayersInZOrder()}
+     * Tests {@link MainLayerManager#getVisibleLayersInZOrder()}
      */
     @Test
     public void testGetVisibleLayersInZOrder() {

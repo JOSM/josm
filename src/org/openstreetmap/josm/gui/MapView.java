@@ -60,9 +60,9 @@ import org.openstreetmap.josm.gui.layer.LayerManager;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
-import org.openstreetmap.josm.gui.layer.LayerManagerWithActive;
-import org.openstreetmap.josm.gui.layer.LayerManagerWithActive.ActiveLayerChangeEvent;
-import org.openstreetmap.josm.gui.layer.LayerManagerWithActive.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.layer.MainLayerManager;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationEvent;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationListener;
@@ -90,7 +90,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  */
 public class MapView extends NavigatableComponent
 implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.LayerStateChangeListener,
-LayerManager.LayerChangeListener, LayerManagerWithActive.ActiveLayerChangeListener {
+LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     /**
      * Interface to notify listeners of a layer change.
      * <p>
@@ -264,7 +264,7 @@ LayerManager.LayerChangeListener, LayerManagerWithActive.ActiveLayerChangeListen
     /**
      * This class is an adapter for the old layer change interface.
      * <p>
-     * New implementations should use {@link org.openstreetmap.josm.gui.layer.LayerManagerWithActive.ActiveLayerChangeListener}
+     * New implementations should use {@link org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener}
      * @author Michael Zangl
      * @since 10271
      */
@@ -437,7 +437,7 @@ LayerManager.LayerChangeListener, LayerManagerWithActive.ActiveLayerChangeListen
     /**
      * A list of all layers currently loaded. If we support multiple map views, this list may be different for each of them.
      */
-    private final LayerManagerWithActive layerManager;
+    private final MainLayerManager layerManager;
 
     /**
      * The play head marker: there is only one of these so it isn't in any specific layer
@@ -478,8 +478,9 @@ LayerManager.LayerChangeListener, LayerManagerWithActive.ActiveLayerChangeListen
      * {@link InputMap} and {@link ActionMap}
      * @param viewportData the initial viewport of the map. Can be null, then
      * the viewport is derived from the layer data.
+     * @since 10279
      */
-    public MapView(LayerManagerWithActive layerManager, final JPanel contentPane, final ViewportData viewportData) {
+    public MapView(MainLayerManager layerManager, final JPanel contentPane, final ViewportData viewportData) {
         this.layerManager = layerManager;
         initialViewport = viewportData;
         layerManager.addLayerChangeListener(this);
@@ -631,7 +632,7 @@ LayerManager.LayerChangeListener, LayerManagerWithActive.ActiveLayerChangeListen
      * @param layersList lit of layers
      *
      * @return the next active data layer
-     * @deprecated now handled by {@link LayerManagerWithActive}
+     * @deprecated now handled by {@link MainLayerManager}
      */
     @Deprecated
     protected Layer determineNextActiveLayer(List<Layer> layersList) {
