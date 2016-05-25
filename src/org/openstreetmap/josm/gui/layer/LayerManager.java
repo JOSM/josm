@@ -14,7 +14,8 @@ import org.openstreetmap.josm.tools.Utils;
  * <p>
  * This manager handles a list of layers with the first layer being the front layer.
  * <h1>Threading</h1>
- * Methods of this manager may be called from any thread in any order. Listeners are called while this layer manager is locked, so they should not block.
+ * Methods of this manager may be called from any thread in any order.
+ * Listeners are called while this layer manager is locked, so they should not block.
  *
  * @author Michael Zangl
  * @since 10273

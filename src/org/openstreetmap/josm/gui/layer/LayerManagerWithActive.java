@@ -33,7 +33,7 @@ public class LayerManagerWithActive extends LayerManager {
          * Listeners are called in the EDT thread and you can manipulate the layer manager in the current thread.
          * @param e The change event.
          */
-        public void activeOrEditLayerChanged(ActiveLayerChangeEvent e);
+        void activeOrEditLayerChanged(ActiveLayerChangeEvent e);
     }
 
     /**

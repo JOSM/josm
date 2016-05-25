@@ -133,7 +133,8 @@ public final class GuiHelper {
      * Executes synchronously a runnable in
      * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
      * <p>
-     * Passes on the exception that was thrown to the thread calling this. The exception is wrapped in a {@link RuntimeException} if it was a normal {@link Throwable}.
+     * Passes on the exception that was thrown to the thread calling this.
+     * The exception is wrapped in a {@link RuntimeException} if it was a normal {@link Throwable}.
      * @param task The runnable to execute
      * @see SwingUtilities#invokeAndWait
      * @since 10271
