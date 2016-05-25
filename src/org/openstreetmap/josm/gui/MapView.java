@@ -731,6 +731,23 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         return curLayerPos;
     }
 
+    /**
+     * Creates a list of the visible layers in Z-Order, the layer with the lowest Z-Order
+     * first, layer with the highest Z-Order last.
+     * <p>
+     * The active data layer is pulled above all adjacent data layers.
+     * <p>
+     * To be removed: end of 2016.
+     *
+     * @return a list of the visible in Z-Order, the layer with the lowest Z-Order
+     * first, layer with the highest Z-Order last.
+     * @deprecated Access the layer list using {@link Main#getLayerManager()} instead.
+     */
+    @Deprecated
+    public List<Layer> getVisibleLayersInZOrder() {
+        return layerManager.getVisibleLayersInZOrder();
+    }
+
     private void paintLayer(Layer layer, Graphics2D g, Bounds box) {
         if (layer.getOpacity() < 1) {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) layer.getOpacity()));
