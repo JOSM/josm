@@ -158,7 +158,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      */
     public void setRecentRelation(Relation relation) {
         recentRelations.put(relation, null);
-        Main.map.relationListDialog.enableRecentRelations();
+        if (Main.map != null && Main.map.relationListDialog != null) {
+            Main.map.relationListDialog.enableRecentRelations();
+        }
     }
 
     /**
@@ -168,7 +170,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      */
     public void removeRecentRelation(Relation relation) {
         recentRelations.remove(relation);
-        Main.map.relationListDialog.enableRecentRelations();
+        if (Main.map != null && Main.map.relationListDialog != null) {
+            Main.map.relationListDialog.enableRecentRelations();
+        }
     }
 
     protected void setRequiresSaveToFile(boolean newValue) {

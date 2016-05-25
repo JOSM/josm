@@ -79,7 +79,7 @@ public class LayerManagerTest {
 
         @Override
         public LayerPositionStrategy getDefaultLayerPosition() {
-            return LayerPositionStrategy.afterLast(Predicates.<Layer> alwaysTrue());
+            return LayerPositionStrategy.afterLast(Predicates.<Layer>alwaysTrue());
         }
     }
 

@@ -16,9 +16,9 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  * <p>
  * The edit layer is an data layer that we currently work with.
  * @author Michael Zangl
- * @since 10271
+ * @since 10279
  */
-public class LayerManagerWithActive extends LayerManager {
+public class MainLayerManager extends LayerManager {
     /**
      * This listener listens to changes of the active or the edit layer.
      * @author Michael Zangl
@@ -33,7 +33,7 @@ public class LayerManagerWithActive extends LayerManager {
          * Listeners are called in the EDT thread and you can manipulate the layer manager in the current thread.
          * @param e The change event.
          */
-        public void activeOrEditLayerChanged(ActiveLayerChangeEvent e);
+        void activeOrEditLayerChanged(ActiveLayerChangeEvent e);
     }
 
     /**
@@ -52,7 +52,7 @@ public class LayerManagerWithActive extends LayerManager {
          * @param previousEditLayer the previous edit layer
          * @param previousActiveLayer the previous active layer
          */
-        ActiveLayerChangeEvent(LayerManagerWithActive source, OsmDataLayer previousEditLayer,
+        ActiveLayerChangeEvent(MainLayerManager source, OsmDataLayer previousEditLayer,
                 Layer previousActiveLayer) {
             super(source);
             this.previousEditLayer = previousEditLayer;
@@ -76,8 +76,8 @@ public class LayerManagerWithActive extends LayerManager {
         }
 
         @Override
-        public LayerManagerWithActive getSource() {
-            return (LayerManagerWithActive) super.getSource();
+        public MainLayerManager getSource() {
+            return (MainLayerManager) super.getSource();
         }
     }
 
