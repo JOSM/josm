@@ -476,7 +476,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     }
 
 
-    public void finish() throws IOException {
+    public synchronized void finish() throws IOException {
         if (out != null) {
             try {
                 if (this.runLength > 0) {
