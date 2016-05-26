@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016052400, Last Updated Tue May 24 07:07:01 2016 UTC
+        // Taken from Version 2016052600, Last Updated Thu May 26 07:07:02 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -825,6 +825,7 @@ public final class DomainValidator extends AbstractValidator {
         "microsoft", // microsoft Microsoft Corporation
         "mil", // mil DoD Network Information Center
         "mini", // mini Bayerische Motoren Werke Aktiengesellschaft
+        "mlb", // mlb MLB Advanced Media DH, LLC
         "mls", // mls The Canadian Real Estate Association
         "mma", // mma MMA IARD
         "mobi", // mobi Afilias Technologies Limited dba dotMobi
