@@ -79,13 +79,33 @@ public final class Predicates {
      * Creates a new predicate that checks if elements are exactly of that class.
      * @param <T> The predicate type.
      * @param clazz The class the elements must have.
-     * @return A predicate.
+     * @return The new predicate.
+     * @throws IllegalArgumentException if clazz is null
      */
     public static <T> Predicate<T> isOfClass(final Class<? extends T> clazz) {
+        CheckParameterUtil.ensureParameterNotNull(clazz, "clazz");
         return new Predicate<T>() {
             @Override
             public boolean evaluate(T obj) {
                 return obj != null && obj.getClass() == clazz;
+            }
+        };
+    }
+
+    /**
+     * Creates a new predicate that checks if the object is of a given class.
+     * @param <T> The predicate type.
+     * @param clazz The class objects need to be of.
+     * @return The new predicate.
+     * @throws IllegalArgumentException if clazz is null
+     * @since 10286
+     */
+    public static <T> Predicate<T> isInstanceOf(final Class<? extends T> clazz) {
+        CheckParameterUtil.ensureParameterNotNull(clazz, "clazz");
+        return new Predicate<T>() {
+            @Override
+            public boolean evaluate(T o) {
+                return clazz.isInstance(o);
             }
         };
     }
@@ -189,4 +209,5 @@ public final class Predicates {
             }
         };
     }
+
 }

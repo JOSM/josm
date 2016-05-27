@@ -59,6 +59,13 @@ import org.openstreetmap.josm.gui.dialogs.layer.MoveUpAction;
 import org.openstreetmap.josm.gui.dialogs.layer.ShowHideLayerAction;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
@@ -74,6 +81,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  * This is a toggle dialog which displays the list of layers. Actions allow to
  * change the ordering of the layers, to hide/show layers, to activate layers,
  * and to delete layers.
+ * <p>
+ * Support for multiple {@link LayerListDialog} is currently not complete but intended for the future.
  * @since 17
  */
 public class LayerListDialog extends ToggleDialog {
@@ -135,6 +144,11 @@ public class LayerListDialog extends ToggleDialog {
     private final ToggleLayerIndexVisibility[] visibilityToggleActions = new ToggleLayerIndexVisibility[10];
 
     /**
+     * The {@link MainLayerManager} this list is for.
+     */
+    private final transient MainLayerManager layerManager;
+
+    /**
      * registers (shortcut to toggle right hand side toggle dialogs)+(number keys) shortcuts
      * to toggle the visibility of the first ten layers.
      */
@@ -154,9 +168,18 @@ public class LayerListDialog extends ToggleDialog {
      * @param mapFrame map frame
      */
     protected LayerListDialog(MapFrame mapFrame) {
+        this(mapFrame.mapView.getLayerManager());
+    }
+
+    /**
+     * Creates a layer list and attach it to the given mapView.
+     * @param layerManager The layer manager this list is for
+     */
+    private LayerListDialog(MainLayerManager layerManager) {
         super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
                 Shortcut.registerShortcut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L,
                         Shortcut.ALT_SHIFT), 100, true);
+        this.layerManager = layerManager;
 
         // create the models
         //
@@ -166,7 +189,7 @@ public class LayerListDialog extends ToggleDialog {
 
         // create the list control
         //
-        layerList = new LayerList(model);
+        layerList = new LayerList(model, layerManager);
         layerList.setSelectionModel(selectionModel);
         layerList.addMouseListener(new PopupMenuHandler());
         layerList.setBackground(UIManager.getColor("Button.background"));
@@ -218,9 +241,8 @@ public class LayerListDialog extends ToggleDialog {
 
         // init the model
         //
-        final MapView mapView = mapFrame.mapView;
         model.populate();
-        model.setSelectedLayer(mapView.getActiveLayer());
+        model.setSelectedLayer(layerManager.getActiveLayer());
         model.addLayerListModelListener(
                 new LayerListModelListener() {
                     @Override
@@ -296,16 +318,27 @@ public class LayerListDialog extends ToggleDialog {
         createVisibilityToggleShortcuts();
     }
 
+    /**
+     * Gets the layer manager this dialog is for.
+     * @return The layer manager.
+     * @since 10288
+     */
+    public MainLayerManager getLayerManager() {
+        return layerManager;
+    }
+
     @Override
     public void showNotify() {
         MapView.addLayerChangeListener(activateLayerAction);
-        MapView.addLayerChangeListener(model);
+        layerManager.addLayerChangeListener(model);
+        layerManager.addActiveLayerChangeListener(model, true);
         model.populate();
     }
 
     @Override
     public void hideNotify() {
-        MapView.removeLayerChangeListener(model);
+        layerManager.removeLayerChangeListener(model);
+        layerManager.removeActiveLayerChangeListener(model);
         MapView.removeLayerChangeListener(activateLayerAction);
     }
 
@@ -512,9 +545,7 @@ public class LayerListDialog extends ToggleDialog {
     private class LayerNameCellRenderer extends DefaultTableCellRenderer {
 
         protected boolean isActiveLayer(Layer layer) {
-            if (!Main.isDisplayingMapView())
-                return false;
-            return Main.map.mapView.getActiveLayer() == layer;
+            return getLayerManager().getActiveLayer() == layer;
         }
 
         @Override
@@ -611,7 +642,8 @@ public class LayerListDialog extends ToggleDialog {
      * It also listens to {@link PropertyChangeEvent}s of every {@link Layer} it manages, in particular to
      * the properties {@link Layer#VISIBLE_PROP} and {@link Layer#NAME_PROP}.
      */
-    public static final class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener, PropertyChangeListener {
+    public static final class LayerListModel extends AbstractTableModel
+            implements LayerChangeListener, ActiveLayerChangeListener, PropertyChangeListener {
         /** manages list selection state*/
         private final DefaultListSelectionModel selectionModel;
         private final CopyOnWriteArrayList<LayerListModelListener> listeners;
@@ -627,8 +659,17 @@ public class LayerListDialog extends ToggleDialog {
             listeners = new CopyOnWriteArrayList<>();
         }
 
-        void setlayerList(LayerList layerList) {
+        void setLayerList(LayerList layerList) {
             this.layerList = layerList;
+        }
+
+        private MainLayerManager getLayerManager() {
+            // layerList should never be null. But if it is, we should not crash.
+            if (layerList == null) {
+                return new MainLayerManager();
+            } else {
+                return layerList.getLayerManager();
+            }
         }
 
         /**
@@ -743,17 +784,13 @@ public class LayerListDialog extends ToggleDialog {
             layer.removePropertyChangeListener(this);
             final int size = getRowCount();
             final List<Integer> rows = getSelectedRows();
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    if (rows.isEmpty() && size > 0) {
-                        selectionModel.setSelectionInterval(size-1, size-1);
-                    }
-                    fireTableDataChanged();
-                    fireRefresh();
-                    ensureActiveSelected();
-                }
-            });
+
+            if (rows.isEmpty() && size > 0) {
+                selectionModel.setSelectionInterval(size-1, size-1);
+            }
+            fireTableDataChanged();
+            fireRefresh();
+            ensureActiveSelected();
         }
 
         /**
@@ -887,10 +924,10 @@ public class LayerListDialog extends ToggleDialog {
          */
         public List<Layer> getPossibleMergeTargets(Layer source) {
             List<Layer> targets = new ArrayList<>();
-            if (source == null || !Main.isDisplayingMapView()) {
+            if (source == null) {
                 return targets;
             }
-            for (Layer target : Main.map.mapView.getAllLayersAsList()) {
+            for (Layer target : getLayers()) {
                 if (source == target) {
                     continue;
                 }
@@ -909,9 +946,7 @@ public class LayerListDialog extends ToggleDialog {
          * Never null, but can be empty.
          */
         public List<Layer> getLayers() {
-            if (!Main.isDisplayingMapView())
-                return Collections.<Layer>emptyList();
-            return Main.map.mapView.getAllLayersAsList();
+            return getLayerManager().getLayers();
         }
 
         /**
@@ -941,14 +976,17 @@ public class LayerListDialog extends ToggleDialog {
          * @return the active layer. null, if no active layer is available
          */
         protected Layer getActiveLayer() {
-            return Main.isDisplayingMapView() ? Main.map.mapView.getActiveLayer() : null;
+            return getLayerManager().getActiveLayer();
         }
 
         /**
-         * Replies the scale layer. null, if no active layer is available
+         * Replies the scale layer. null, if no active layer is available.
          *
          * @return the scale layer. null, if no active layer is available
+         * @deprecated Deprecated since it is unused in JOSM and does not really belong here. Can be removed soon (August 2016).
+         *             You can directly query MapView.
          */
+        @Deprecated
         protected NativeScaleLayer getNativeScaleLayer() {
             return Main.isDisplayingMapView() ? Main.map.mapView.getNativeScaleLayer() : null;
         }
@@ -997,7 +1035,7 @@ public class LayerListDialog extends ToggleDialog {
                 Layer l = layers.get(row);
                 switch (col) {
                 case 0:
-                    Main.map.mapView.setActiveLayer(l);
+                    getLayerManager().setActiveLayer(l);
                     l.setVisible(true);
                     break;
                 case 1:
@@ -1027,39 +1065,44 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         /* ------------------------------------------------------------------------------ */
+        /* Interface ActiveLayerChangeListener                                            */
+        /* ------------------------------------------------------------------------------ */
+        @Override
+        public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+            Layer oldLayer = e.getPreviousActiveLayer();
+            if (oldLayer != null) {
+                int idx = getLayers().indexOf(oldLayer);
+                if (idx >= 0) {
+                    fireTableRowsUpdated(idx, idx);
+                }
+            }
+
+            Layer newLayer = getActiveLayer();
+            if (newLayer != null) {
+                int idx = getLayers().indexOf(newLayer);
+                if (idx >= 0) {
+                    fireTableRowsUpdated(idx, idx);
+                }
+            }
+            ensureActiveSelected();
+        }
+
+        /* ------------------------------------------------------------------------------ */
         /* Interface LayerChangeListener                                                  */
         /* ------------------------------------------------------------------------------ */
         @Override
-        public void activeLayerChange(final Layer oldLayer, final Layer newLayer) {
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    if (oldLayer != null) {
-                        int idx = getLayers().indexOf(oldLayer);
-                        if (idx >= 0) {
-                            fireTableRowsUpdated(idx, idx);
-                        }
-                    }
-
-                    if (newLayer != null) {
-                        int idx = getLayers().indexOf(newLayer);
-                        if (idx >= 0) {
-                            fireTableRowsUpdated(idx, idx);
-                        }
-                    }
-                    ensureActiveSelected();
-                }
-            });
+        public void layerAdded(LayerAddEvent e) {
+            onAddLayer(e.getAddedLayer());
         }
 
         @Override
-        public void layerAdded(Layer newLayer) {
-            onAddLayer(newLayer);
+        public void layerRemoving(LayerRemoveEvent e) {
+            onRemoveLayer(e.getRemovedLayer());
         }
 
         @Override
-        public void layerRemoved(final Layer oldLayer) {
-            onRemoveLayer(oldLayer);
+        public void layerOrderChanged(LayerOrderChangeEvent e) {
+            // ignored for now, since only we change layer order.
         }
 
         /* ------------------------------------------------------------------------------ */
@@ -1077,10 +1120,16 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
+    /**
+     * This component displays a list of layers and provides the methods needed by {@link LayerListModel}.
+     */
     static class LayerList extends JTable {
-        LayerList(LayerListModel dataModel) {
+        private final transient MainLayerManager layerManager;
+
+        LayerList(LayerListModel dataModel, MainLayerManager layerManager) {
             super(dataModel);
-            dataModel.setlayerList(this);
+            this.layerManager = layerManager;
+            dataModel.setLayerList(this);
         }
 
         public void scrollToVisible(int row, int col) {
@@ -1091,6 +1140,15 @@ public class LayerListDialog extends ToggleDialog {
             Point pt = viewport.getViewPosition();
             rect.setLocation(rect.x - pt.x, rect.y - pt.y);
             viewport.scrollRectToVisible(rect);
+        }
+
+        /**
+         * Gets you the layer manager used for this list.
+         * @return The layer manager.
+         * @since 10288
+         */
+        public MainLayerManager getLayerManager() {
+            return layerManager;
         }
     }
 
@@ -1148,10 +1206,7 @@ public class LayerListDialog extends ToggleDialog {
      * @return the layer at given index, or {@code null} if index out of range
      */
     public static Layer getLayerForIndex(int index) {
-        if (!Main.isDisplayingMapView())
-            return null;
-
-        List<Layer> layers = Main.map.mapView.getAllLayersAsList();
+        List<Layer> layers = Main.getLayerManager().getLayers();
 
         if (index < layers.size() && index >= 0)
             return layers.get(index);
@@ -1168,10 +1223,7 @@ public class LayerListDialog extends ToggleDialog {
     public static List<MultikeyInfo> getLayerInfoByClass(Class<?> layerClass) {
         List<MultikeyInfo> result = new ArrayList<>();
 
-        if (!Main.isDisplayingMapView())
-            return result;
-
-        List<Layer> layers = Main.map.mapView.getAllLayersAsList();
+        List<Layer> layers = Main.getLayerManager().getLayers();
 
         int index = 0;
         for (Layer l: layers) {
@@ -1185,15 +1237,15 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /**
-     * Determines if a layer is valid (contained in layer list).
+     * Determines if a layer is valid (contained in global layer list).
      * @param l the layer
      * @return {@code true} if layer {@code l} is contained in current layer list
      */
     public static boolean isLayerValid(Layer l) {
-        if (l == null || !Main.isDisplayingMapView())
+        if (l == null)
             return false;
 
-        return Main.map.mapView.getAllLayersAsList().contains(l);
+        return Main.getLayerManager().containsLayer(l);
     }
 
     /**
@@ -1202,10 +1254,10 @@ public class LayerListDialog extends ToggleDialog {
      * @return info about layer {@code l}
      */
     public static MultikeyInfo getLayerInfo(Layer l) {
-        if (l == null || !Main.isDisplayingMapView())
+        if (l == null)
             return null;
 
-        int index = Main.map.mapView.getAllLayersAsList().indexOf(l);
+        int index = Main.getLayerManager().getLayers().indexOf(l);
         if (index < 0)
             return null;
 

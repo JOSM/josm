@@ -143,6 +143,8 @@ public abstract class Main {
     /**
      * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
      * it only shows the MOTD panel.
+     * <p>
+     * You do not need this when accessing the layer manager. The layer manager will be empty if no map view is shown.
      *
      * @return <code>true</code> if JOSM currently displays a map view
      */

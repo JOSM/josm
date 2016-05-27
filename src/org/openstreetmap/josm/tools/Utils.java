@@ -81,20 +81,23 @@ public final class Utils {
     /** Pattern matching white spaces */
     public static final Pattern WHITE_SPACES_PATTERN = Pattern.compile("\\s+");
 
-    private Utils() {
-        // Hide default constructor for utils classes
-    }
-
     private static final int MILLIS_OF_SECOND = 1000;
     private static final int MILLIS_OF_MINUTE = 60000;
     private static final int MILLIS_OF_HOUR = 3600000;
     private static final int MILLIS_OF_DAY = 86400000;
 
+    /**
+     * A list of all characters allowed in URLs
+     */
     public static final String URL_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
 
     private static final char[] DEFAULT_STRIP = {'\u200B', '\uFEFF'};
 
     private static final String[] SIZE_UNITS = {"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
+
+    private Utils() {
+        // Hide default constructor for utils classes
+    }
 
     /**
      * Tests whether {@code predicate} applies to at least one element from {@code collection}.
@@ -105,8 +108,9 @@ public final class Utils {
      */
     public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
-            if (predicate.evaluate(item))
+            if (predicate.evaluate(item)) {
                 return true;
+            }
         }
         return false;
     }
@@ -122,31 +126,52 @@ public final class Utils {
         return !exists(collection, Predicates.not(predicate));
     }
 
-    public static <T> boolean exists(Iterable<T> collection, Class<? extends T> klass) {
-        for (Object item : collection) {
-            if (klass.isInstance(item))
-                return true;
-        }
-        return false;
+    /**
+     * Checks if an item that is an instance of clazz exists in the collection
+     * @param <T> The collection type.
+     * @param collection The collection
+     * @param clazz The class to search for.
+     * @return <code>true</code> if that item exists in the collection.
+     */
+    public static <T> boolean exists(Iterable<T> collection, Class<? extends T> clazz) {
+        return exists(collection, Predicates.isInstanceOf(clazz));
     }
 
+    /**
+     * Finds the first item in the iterable for which the predicate matches.
+     * @param <T> The iterable type.
+     * @param collection The iterable to search in.
+     * @param predicate The predicate to match
+     * @return the item or <code>null</code> if there was not match.
+     */
     public static <T> T find(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
-            if (predicate.evaluate(item))
+            if (predicate.evaluate(item)) {
                 return item;
+            }
         }
         return null;
     }
 
+    /**
+     * Finds the first item in the iterable which is of the given type.
+     * @param <T> The iterable type.
+     * @param collection The iterable to search in.
+     * @param clazz The class to search for.
+     * @return the item or <code>null</code> if there was not match.
+     */
     @SuppressWarnings("unchecked")
-    public static <T> T find(Iterable<? super T> collection, Class<? extends T> klass) {
-        for (Object item : collection) {
-            if (klass.isInstance(item))
-                return (T) item;
-        }
-        return null;
+    public static <T> T find(Iterable<? extends Object> collection, Class<? extends T> clazz) {
+        return (T) find(collection, Predicates.<Object>isInstanceOf(clazz));
     }
 
+    /**
+     * Creates a new {@link FilteredCollection}.
+     * @param <T> The collection type.
+     * @param collection The collection to filter.
+     * @param predicate The predicate to filter for.
+     * @return The new {@link FilteredCollection}
+     */
     @SuppressWarnings("unused")
     public static <T> Collection<T> filter(Collection<? extends T> collection, Predicate<? super T> predicate) {
         // Diamond operator does not work with Java 9 here
@@ -175,18 +200,20 @@ public final class Utils {
      * @param <S> Super type of items
      * @param <T> type of items
      * @param collection the collection
-     * @param klass the (sub)class
+     * @param clazz the (sub)class
      * @return a read-only filtered collection
      */
-    public static <S, T extends S> SubclassFilteredCollection<S, T> filteredCollection(Collection<S> collection, final Class<T> klass) {
-        return new SubclassFilteredCollection<>(collection, new Predicate<S>() {
-            @Override
-            public boolean evaluate(S o) {
-                return klass.isInstance(o);
-            }
-        });
+    public static <S, T extends S> SubclassFilteredCollection<S, T> filteredCollection(Collection<S> collection, final Class<T> clazz) {
+        return new SubclassFilteredCollection<>(collection, Predicates.<S>isInstanceOf(clazz));
     }
 
+    /**
+     * Find the index of the first item that matches the predicate.
+     * @param <T> The iterable type
+     * @param collection The iterable to iterate over.
+     * @param predicate The predicate to search for.
+     * @return The index of the first item or -1 if none was found.
+     */
     public static <T> int indexOf(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         int i = 0;
         for (T item : collection) {
