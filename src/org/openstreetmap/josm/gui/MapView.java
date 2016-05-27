@@ -74,6 +74,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
@@ -749,11 +750,15 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     }
 
     private void paintLayer(Layer layer, Graphics2D g, Bounds box) {
-        if (layer.getOpacity() < 1) {
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) layer.getOpacity()));
+        try {
+            if (layer.getOpacity() < 1) {
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) layer.getOpacity()));
+            }
+            layer.paint(g, this, box);
+            g.setPaintMode();
+        } catch (RuntimeException t) {
+            throw BugReport.intercept(t).put("layer", layer).put("bounds", box);
         }
-        layer.paint(g, this, box);
-        g.setPaintMode();
     }
 
     /**
