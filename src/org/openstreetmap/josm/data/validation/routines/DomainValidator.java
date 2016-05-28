@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016052600, Last Updated Thu May 26 07:07:02 2016 UTC
+        // Taken from Version 2016052800, Last Updated Sat May 28 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -539,6 +539,7 @@ public final class DomainValidator extends AbstractValidator {
         "dot", // dot Dish DBS Corporation
         "download", // download dot Support Limited
         "drive", // drive Charleston Road Registry Inc.
+        "dtv", // dtv Dish DBS Corporation
         "dubai", // dubai Dubai Smart Government Department
         "durban", // durban ZA Central Registry NPC trading as ZA Central Registry
         "dvag", // dvag Deutsche Vermögensberatung Aktiengesellschaft DVAG
@@ -788,6 +789,7 @@ public final class DomainValidator extends AbstractValidator {
         "lixil", // lixil LIXIL Group Corporation
         "loan", // loan dot Loan Limited
         "loans", // loans June Woods, LLC
+        "locker", // locker Dish DBS Corporation
         "locus", // locus Locus Analytics LLC
         "lol", // lol Uniregistry, Corp.
         "london", // london Dot London Domains Limited
@@ -886,6 +888,7 @@ public final class DomainValidator extends AbstractValidator {
         "okinawa", // okinawa BusinessRalliart inc.
         "olayan", // olayan Crescent Holding GmbH
         "olayangroup", // olayangroup Crescent Holding GmbH
+        "ollo", // ollo Dish DBS Corporation
         "omega", // omega The Swatch Group Ltd
         "one", // one One.com A/S
         "ong", // ong Public Interest Registry
@@ -899,6 +902,7 @@ public final class DomainValidator extends AbstractValidator {
         "origins", // origins The Estée Lauder Companies Inc.
         "osaka", // osaka Interlink Co., Ltd.
         "otsuka", // otsuka Otsuka Holdings Co., Ltd.
+        "ott", // ott Dish DBS Corporation
         "ovh", // ovh OVH SAS
         "page", // page Charleston Road Registry Inc.
         "pamperedchef", // pamperedchef The Pampered Chef, Ltd.
