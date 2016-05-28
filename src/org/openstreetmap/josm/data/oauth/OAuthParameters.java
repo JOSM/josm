@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.oauth;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Objects;
 
-import oauth.signpost.OAuthConsumer;
-import oauth.signpost.OAuthProvider;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
+
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.OAuthProvider;
 
 /**
  * This class manages an immutable set of OAuth parameters.
@@ -51,13 +51,8 @@ public class OAuthParameters {
         final String consumerSecret;
         final String serverUrl;
 
-        if (apiUrl != null) {
-            // validate URL syntax
-            try {
-                new URL(apiUrl);
-            } catch (MalformedURLException e) {
-                apiUrl = null;
-            }
+        if (!Utils.isValidUrl(apiUrl)) {
+            apiUrl = null;
         }
 
         if (apiUrl != null && !OsmApi.DEFAULT_API_URL.equals(apiUrl)) {

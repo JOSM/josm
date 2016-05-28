@@ -133,12 +133,11 @@ public class UrlBasedQueryPanel extends JPanel {
             return null;
         }
         String path = url.getPath();
-        String query = url.getQuery();
         if (path == null || !path.endsWith("/changesets"))
             return null;
 
         try {
-            return ChangesetQuery.buildFromUrlQuery(query);
+            return ChangesetQuery.buildFromUrlQuery(url.getQuery());
         } catch (ChangesetQueryUrlException e) {
             Main.warn(e.getMessage());
             return null;
