@@ -1601,7 +1601,7 @@ public abstract class SourceEditor extends JPanel {
         public boolean isCellEditable(EventObject anEvent) {
             if (anEvent instanceof MouseEvent)
                 return ((MouseEvent) anEvent).getClickCount() >= 2;
-                return true;
+            return true;
         }
 
         @Override
