@@ -414,7 +414,7 @@ public class MainApplication extends Main {
         try {
             CertificateAmendment.addMissingCertificates();
         } catch (IOException | GeneralSecurityException ex) {
-            ex.printStackTrace();
+            Main.warn(ex);
             Main.warn(getErrorMessage(Utils.getRootCause(ex)));
         }
         Authenticator.setDefault(DefaultAuthenticator.getInstance());
