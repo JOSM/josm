@@ -134,7 +134,7 @@ public final class Utils {
      * @return <code>true</code> if that item exists in the collection.
      */
     public static <T> boolean exists(Iterable<T> collection, Class<? extends T> clazz) {
-        return exists(collection, Predicates.isInstanceOf(clazz));
+        return exists(collection, Predicates.<T>isInstanceOf(clazz));
     }
 
     /**
