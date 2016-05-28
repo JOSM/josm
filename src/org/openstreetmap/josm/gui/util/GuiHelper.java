@@ -151,7 +151,7 @@ public final class GuiHelper {
                 if (e.getCause() instanceof RuntimeException) {
                     throw (RuntimeException) e.getCause();
                 } else {
-                    throw new RuntimeException("Exception while clling " + task, e.getCause());
+                    throw new RuntimeException("Exception while calling " + task, e.getCause());
                 }
             }
         }
