@@ -13,8 +13,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 
 import javax.swing.AbstractAction;
@@ -257,13 +255,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         public boolean isValid() {
             if (getComponent().getText().trim().isEmpty())
                 return false;
-
-            try {
-                new URL(getComponent().getText().trim());
-                return true;
-            } catch (MalformedURLException e) {
-                return false;
-            }
+            return Utils.isValidUrl(getComponent().getText().trim());
         }
 
         @Override

@@ -1323,6 +1323,21 @@ public final class Utils {
     }
 
     /**
+     * Determines if the given URL is valid.
+     * @param url The URL to test
+     * @return {@code true} if the url is valid
+     * @since 10294
+     */
+    public static boolean isValidUrl(String url) {
+        try {
+            new URL(url);
+            return true;
+        } catch (MalformedURLException | NullPointerException e) {
+            return false;
+        }
+    }
+
+    /**
      * Creates a new {@link ThreadFactory} which creates threads with names according to {@code nameFormat}.
      * @param nameFormat a {@link String#format(String, Object...)} compatible name format; its first argument is a unique thread index
      * @param threadPriority the priority of the created threads, see {@link Thread#setPriority(int)}

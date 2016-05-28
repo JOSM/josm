@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -205,13 +204,9 @@ public class PluginInformation {
         if (s == null) {
             s = attr.getValue("Plugin-Link");
         }
-        if (s != null) {
-            try {
-                new URL(s);
-            } catch (MalformedURLException e) {
-                Main.info(tr("Invalid URL ''{0}'' in plugin {1}", s, name));
-                s = null;
-            }
+        if (s != null && !Utils.isValidUrl(s)) {
+            Main.info(tr("Invalid URL ''{0}'' in plugin {1}", s, name));
+            s = null;
         }
         link = s;
         requires = attr.getValue("Plugin-Requires");
