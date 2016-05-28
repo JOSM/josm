@@ -267,6 +267,6 @@ public class SystemOfMeasurement {
         if (format != null) {
             return format.format(v) + ' ' + unit;
         }
-        return String.format(Locale.US, "%." + (v < 9.999999 ? 2 : 1) + "f %s", v, unit);
+        return String.format(Locale.US, v < 9.999999 ? "%.2f %s" : "%.1f %s", v, unit);
     }
 }
