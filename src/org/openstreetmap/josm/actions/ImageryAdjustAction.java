@@ -260,8 +260,8 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             int precision = Main.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
             // US locale to force decimal separator to be '.'
             try (Formatter us = new Formatter(Locale.US)) {
-                tOffset.setText(us.format(
-                    "%1." + precision + "f; %1." + precision + 'f',
+                tOffset.setText(us.format(new StringBuilder()
+                    .append("%1.").append(precision).append("f; %1.").append(precision).append('f').toString(),
                     layer.getDx(), layer.getDy()).toString());
             }
         }
