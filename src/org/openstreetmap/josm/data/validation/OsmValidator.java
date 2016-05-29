@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -86,11 +87,16 @@ public class OsmValidator implements LayerChangeListener {
     private static final Collection<String> ignoredErrors = new TreeSet<>();
 
     /**
-     * All available tests
-     * TODO: is there any way to find out automatically all available tests?
+     * All registered tests
+     */
+    private static final Collection<Class<? extends Test>> allTests = new ArrayList<>();
+    private static final Map<String, Test> allTestsMap = new HashMap<>();
+
+    /**
+     * All available tests in core
      */
     @SuppressWarnings("unchecked")
-    private static final Class<Test>[] allAvailableTests = new Class[] {
+    private static final Class<Test>[] CORE_TEST_CLASSES = new Class[] {
         /* FIXME - unique error numbers for tests aren't properly unique - ignoring will not work as expected */
         DuplicateNode.class, // ID    1 ..   99
         OverlappingWays.class, // ID  101 ..  199
@@ -132,15 +138,18 @@ public class OsmValidator implements LayerChangeListener {
         PublicTransportRouteTest.class, // 3600 .. 3699
     };
 
-    private static Map<String, Test> allTestsMap;
+    public static void addTest(Class<? extends Test> testClass) {
+        allTests.add(testClass);
+        try {
+            allTestsMap.put(testClass.getName(), testClass.getConstructor().newInstance());
+        } catch (ReflectiveOperationException e) {
+            Main.error(e);
+        }
+    }
+
     static {
-        allTestsMap = new HashMap<>();
-        for (Class<Test> testClass : allAvailableTests) {
-            try {
-                allTestsMap.put(testClass.getName(), testClass.getConstructor().newInstance());
-            } catch (ReflectiveOperationException e) {
-                Main.error(e);
-            }
+        for (Class<? extends Test> testClass : CORE_TEST_CLASSES) {
+            addTest(testClass);
         }
     }
 
@@ -273,10 +282,10 @@ public class OsmValidator implements LayerChangeListener {
     /**
      * Gets the list of all available test classes
      *
-     * @return An array of the test classes
+     * @return A collection of the test classes
      */
-    public static Class<Test>[] getAllAvailableTests() {
-        return Utils.copyArray(allAvailableTests);
+    public static Collection<Class<? extends Test>> getAllAvailableTestClasses() {
+        return Collections.unmodifiableCollection(allTests);
     }
 
     /**
