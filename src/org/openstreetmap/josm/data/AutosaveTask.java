@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Deque;
@@ -72,11 +73,15 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     /** Defines if a notification should be displayed after each autosave */
     public static final BooleanProperty PROP_NOTIFICATION = new BooleanProperty("autosave.notification", false);
 
-    private static class AutosaveLayerInfo {
-        private OsmDataLayer layer;
+    protected static final class AutosaveLayerInfo {
+        private final OsmDataLayer layer;
         private String layerName;
         private String layerFileName;
         private final Deque<File> backupFiles = new LinkedList<>();
+
+        AutosaveLayerInfo(OsmDataLayer layer) {
+            this.layer = layer;
+        }
     }
 
     private final DataSetListenerAdapter datasetAdapter = new DataSetListenerAdapter(this);
@@ -88,6 +93,15 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
 
     private final File autosaveDir = new File(Main.pref.getUserDataDirectory(), AUTOSAVE_DIR);
     private final File deletedLayersDir = new File(Main.pref.getUserDataDirectory(), DELETED_LAYERS_DIR);
+
+    /**
+     * Replies the autosave directory.
+     * @return the autosave directory
+     * @since 10299
+     */
+    public final Path getAutosaveDir() {
+        return autosaveDir.toPath();
+    }
 
     public void schedule() {
         if (PROP_INTERVAL.get() > 0) {
@@ -152,26 +166,20 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
     }
 
-    private File getNewLayerFile(AutosaveLayerInfo layer) {
-        int index = 0;
-        Date now = new Date();
+    protected File getNewLayerFile(AutosaveLayerInfo layer, Date now, int startIndex) {
+        int index = startIndex;
         while (true) {
             String filename = String.format("%1$s_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS%2$tL%3$s",
-                    layer.layerFileName, now, index == 0 ? "" : '_' + index);
-            File result = new File(autosaveDir, filename + "." + Main.pref.get("autosave.extension", "osm"));
+                    layer.layerFileName, now, index == 0 ? "" : ("_" + index));
+            File result = new File(autosaveDir, filename + '.' + Main.pref.get("autosave.extension", "osm"));
             try {
+                if (index > PROP_INDEX_LIMIT.get())
+                    throw new IOException("index limit exceeded");
                 if (result.createNewFile()) {
-                    File pidFile = new File(autosaveDir, filename+".pid");
-                    try (PrintStream ps = new PrintStream(pidFile, "UTF-8")) {
-                        ps.println(ManagementFactory.getRuntimeMXBean().getName());
-                    } catch (IOException | SecurityException t) {
-                        Main.error(t);
-                    }
+                    createNewPidFile(autosaveDir, filename);
                     return result;
                 } else {
                     Main.warn(tr("Unable to create file {0}, other filename will be used", result.getAbsolutePath()));
-                    if (index > PROP_INDEX_LIMIT.get())
-                        throw new IOException("index limit exceeded");
                 }
             } catch (IOException e) {
                 Main.error(tr("IOError while creating file, autosave will be skipped: {0}", e.getMessage()));
@@ -181,13 +189,22 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
     }
 
+    private static void createNewPidFile(File autosaveDir, String filename) {
+        File pidFile = new File(autosaveDir, filename+".pid");
+        try (PrintStream ps = new PrintStream(pidFile, "UTF-8")) {
+            ps.println(ManagementFactory.getRuntimeMXBean().getName());
+        } catch (IOException | SecurityException t) {
+            Main.error(t);
+        }
+    }
+
     private void savelayer(AutosaveLayerInfo info) {
         if (!info.layer.getName().equals(info.layerName)) {
             setLayerFileName(info);
             info.layerName = info.layer.getName();
         }
         if (changedDatasets.remove(info.layer.data)) {
-            File file = getNewLayerFile(info);
+            File file = getNewLayerFile(info, new Date(), 0);
             if (file != null) {
                 info.backupFiles.add(file);
                 new OsmExporter().exportData(file, info.layer, true /* no backup with appended ~ */);
@@ -239,9 +256,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private void registerNewlayer(OsmDataLayer layer) {
         synchronized (layersLock) {
             layer.data.addDataSetListener(datasetAdapter);
-            AutosaveLayerInfo info = new AutosaveLayerInfo();
-            info.layer = layer;
-            layersInfo.add(info);
+            layersInfo.add(new AutosaveLayerInfo(layer));
         }
     }
 
@@ -286,7 +301,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         changedDatasets.add(event.getDataset());
     }
 
-    private File getPidFile(File osmFile) {
+    protected File getPidFile(File osmFile) {
         return new File(autosaveDir, osmFile.getName().replaceFirst("[.][^.]+$", ".pid"));
     }
 

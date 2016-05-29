@@ -243,7 +243,7 @@ public class SearchCompiler {
     }
 
     public interface BinaryMatchFactory extends MatchFactory {
-        BinaryMatch get(String keyword, Match lhs, Match rhs, PushbackTokenizer tokenizer) throws ParseError;
+        AbstractBinaryMatch get(String keyword, Match lhs, Match rhs, PushbackTokenizer tokenizer) throws ParseError;
     }
 
     /**
@@ -336,21 +336,34 @@ public class SearchCompiler {
     /**
      * A binary search operator which may take data parameters.
      */
-    public abstract static class BinaryMatch extends Match {
+    public abstract static class AbstractBinaryMatch extends Match {
 
         protected final Match lhs;
         protected final Match rhs;
 
-        public BinaryMatch(Match lhs, Match rhs) {
+        /**
+         * Constructs a new {@code BinaryMatch}.
+         * @param lhs Left hand side
+         * @param rhs Right hand side
+         */
+        public AbstractBinaryMatch(Match lhs, Match rhs) {
             this.lhs = lhs;
             this.rhs = rhs;
         }
 
-        public Match getLhs() {
+        /**
+         * Returns left hand side.
+         * @return left hand side
+         */
+        public final Match getLhs() {
             return lhs;
         }
 
-        public Match getRhs() {
+        /**
+         * Returns right hand side.
+         * @return right hand side
+         */
+        public final Match getRhs() {
             return rhs;
         }
     }
@@ -437,7 +450,12 @@ public class SearchCompiler {
     /**
      * Matches if both left and right expressions match.
      */
-    public static class And extends BinaryMatch {
+    public static class And extends AbstractBinaryMatch {
+        /**
+         * Constructs a new {@code And} match.
+         * @param lhs left hand side
+         * @param rhs right hand side
+         */
         public And(Match lhs, Match rhs) {
             super(lhs, rhs);
         }
@@ -454,15 +472,20 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return (lhs instanceof BinaryMatch && !(lhs instanceof And) ? "(" + lhs + ")" : lhs) + " && "
-                    + (rhs instanceof BinaryMatch && !(rhs instanceof And) ? "(" + rhs + ")" : rhs);
+            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof And) ? ("(" + lhs + ')') : lhs) + " && "
+                    + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof And) ? ("(" + rhs + ')') : rhs);
         }
     }
 
     /**
      * Matches if the left OR the right expression match.
      */
-    public static class Or extends BinaryMatch {
+    public static class Or extends AbstractBinaryMatch {
+        /**
+         * Constructs a new {@code Or} match.
+         * @param lhs left hand side
+         * @param rhs right hand side
+         */
         public Or(Match lhs, Match rhs) {
             super(lhs, rhs);
         }
@@ -479,15 +502,20 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return (lhs instanceof BinaryMatch && !(lhs instanceof Or) ? "(" + lhs + ")" : lhs) + " || "
-                    + (rhs instanceof BinaryMatch && !(rhs instanceof Or) ? "(" + rhs + ")" : rhs);
+            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof Or) ? ("(" + lhs + ')') : lhs) + " || "
+                    + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof Or) ? ("(" + rhs + ')') : rhs);
         }
     }
 
     /**
      * Matches if the left OR the right expression match, but not both.
      */
-    public static class Xor extends BinaryMatch {
+    public static class Xor extends AbstractBinaryMatch {
+        /**
+         * Constructs a new {@code Xor} match.
+         * @param lhs left hand side
+         * @param rhs right hand side
+         */
         public Xor(Match lhs, Match rhs) {
             super(lhs, rhs);
         }
@@ -504,8 +532,8 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return (lhs instanceof BinaryMatch && !(lhs instanceof Xor) ? "(" + lhs + ")" : lhs) + " ^ "
-                    + (rhs instanceof BinaryMatch && !(rhs instanceof Xor) ? "(" + rhs + ")" : rhs);
+            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof Xor) ? ("(" + lhs + ')') : lhs) + " ^ "
+                    + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof Xor) ? ("(" + rhs + ')') : rhs);
         }
     }
 
@@ -1754,7 +1782,7 @@ public class SearchCompiler {
     public static String buildSearchStringForTag(String key, String value) {
         final String forKey = '"' + escapeStringForSearch(key) + '"' + '=';
         if (value == null || value.isEmpty()) {
-            return forKey + "*";
+            return forKey + '*';
         } else {
             return forKey + '"' + escapeStringForSearch(value) + '"';
         }

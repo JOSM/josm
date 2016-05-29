@@ -318,7 +318,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
             Utils.join(",", extensionsPlusArchive),
             defaultExtension,
             description + (!extensionsForDescription.isEmpty()
-                ? (" (" + Utils.join(", ", extensionsForDescription) + ")")
+                ? (" (" + Utils.join(", ", extensionsForDescription) + ')')
                 : "")
             );
     }

@@ -426,6 +426,10 @@ public class SearchCompilerTest {
         assertEquals("foo || (bar && baz)", c3.toString());
         final SearchCompiler.Match c4 = SearchCompiler.compile("foo1 OR (bar1 bar2 baz1 XOR baz2) OR foo2");
         assertEquals("foo1 || (bar1 && bar2 && (baz1 ^ baz2)) || foo2", c4.toString());
+        final SearchCompiler.Match c5 = SearchCompiler.compile("foo1 XOR (baz1 XOR (bar baz))");
+        assertEquals("foo1 ^ baz1 ^ (bar && baz)", c5.toString());
+        final SearchCompiler.Match c6 = SearchCompiler.compile("foo1 XOR ((baz1 baz2) XOR (bar OR baz))");
+        assertEquals("foo1 ^ (baz1 && baz2) ^ (bar || baz)", c6.toString());
     }
 
     /**
