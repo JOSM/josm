@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016052800, Last Updated Sat May 28 07:07:01 2016 UTC
+        // Taken from Version 2016052900, Last Updated Sun May 29 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -812,6 +812,7 @@ public final class DomainValidator extends AbstractValidator {
         "marketing", // marketing Fern Pass, LLC
         "markets", // markets DOTMARKETS REGISTRY LTD
         "marriott", // marriott Marriott Worldwide Corporation
+        "mattel", // mattel Mattel Sites, Inc.
         "mba", // mba Lone Hollow, LLC
         "med", // med Medistry LLC
         "media", // media Grand Glen, LLC
@@ -860,6 +861,7 @@ public final class DomainValidator extends AbstractValidator {
         "nec", // nec NEC Corporation
         "net", // net VeriSign Global Registry Services
         "netbank", // netbank COMMONWEALTH BANK OF AUSTRALIA
+        "netflix", // netflix Netflix, Inc.
         "network", // network Trixy Manor, LLC
         "neustar", // neustar NeuStar, Inc.
         "new", // new Charleston Road Registry Inc.
