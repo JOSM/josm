@@ -69,7 +69,7 @@ public class BugReport {
             StackTraceElement element = stackTrace[i];
             if (className.equals(element.getClassName()) && "getCallingMethod".equals(element.getMethodName())) {
                 StackTraceElement toReturn = stackTrace[i + offset];
-                return toReturn.getClassName().replaceFirst(".*\\.", "") + "#" + toReturn.getMethodName();
+                return toReturn.getClassName().replaceFirst(".*\\.", "") + '#' + toReturn.getMethodName();
             }
         }
         return "?";

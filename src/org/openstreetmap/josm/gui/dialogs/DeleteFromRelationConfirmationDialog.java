@@ -113,7 +113,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
                 "{0} relations are affected.",
                 numParentRelations, numParentRelations);
         @I18n.QuirkyPluralString
-        final String msg = "<html>" + msg1 + " " + msg2 + "</html>";
+        final String msg = "<html>" + msg1 + ' ' + msg2 + "</html>";
         htmlPanel.getEditorPane().setText(msg);
         invalidate();
     }

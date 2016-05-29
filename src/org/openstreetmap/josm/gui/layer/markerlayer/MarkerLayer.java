@@ -221,19 +221,20 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
     @Override
     public String getToolTipText() {
-        return data.size()+" "+trn("marker", "markers", data.size());
+        return Integer.toString(data.size())+' '+trn("marker", "markers", data.size());
     }
 
     @Override
     public void mergeFrom(Layer from) {
-        MarkerLayer layer = (MarkerLayer) from;
-        data.addAll(layer.data);
-        Collections.sort(data, new Comparator<Marker>() {
-            @Override
-            public int compare(Marker o1, Marker o2) {
-                return Double.compare(o1.time, o2.time);
-            }
-        });
+        if (from instanceof MarkerLayer) {
+            data.addAll(((MarkerLayer) from).data);
+            Collections.sort(data, new Comparator<Marker>() {
+                @Override
+                public int compare(Marker o1, Marker o2) {
+                    return Double.compare(o1.time, o2.time);
+                }
+            });
+        }
     }
 
     @Override public boolean isMergable(Layer other) {

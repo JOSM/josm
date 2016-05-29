@@ -1228,7 +1228,7 @@ public final class PluginHandler {
             }
             return true;
         } else if (jar != null) {
-            Main.warn("Invalid jar file ''"+jar+"'' (exists: "+jar.exists()+", canRead: "+jar.canRead()+")");
+            Main.warn("Invalid jar file ''"+jar+"'' (exists: "+jar.exists()+", canRead: "+jar.canRead()+')');
         }
         return false;
     }

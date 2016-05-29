@@ -239,7 +239,7 @@ public interface NativeScaleLayer {
         public String toString() {
             StringBuilder stringBuilder = new StringBuilder();
             for (Scale s: this.scales) {
-                stringBuilder.append(s + "\n");
+                stringBuilder.append(s.toString() + '\n');
             }
             return stringBuilder.toString();
         }

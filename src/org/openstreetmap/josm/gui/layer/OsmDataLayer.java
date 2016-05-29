@@ -803,7 +803,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             final GpxData gpxData = toGpxData();
             final GpxLayer gpxLayer = new GpxLayer(gpxData, tr("Converted from: {0}", getName()));
             if (getAssociatedFile() != null) {
-                final String filename = getAssociatedFile().getName().replaceAll(Pattern.quote(".gpx.osm") + "$", "") + ".gpx";
+                String filename = getAssociatedFile().getName().replaceAll(Pattern.quote(".gpx.osm") + '$', "") + ".gpx";
                 gpxLayer.setAssociatedFile(new File(getAssociatedFile().getParentFile(), filename));
             }
             Main.main.addLayer(gpxLayer);

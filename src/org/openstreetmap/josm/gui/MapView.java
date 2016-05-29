@@ -257,9 +257,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
         @Override
         public String toString() {
-            return "LayerChangeAdapter [wrapped=" + wrapped + "]";
+            return "LayerChangeAdapter [wrapped=" + wrapped + ']';
         }
-
     }
 
     /**
@@ -313,9 +312,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
         @Override
         public String toString() {
-            return "EditLayerChangeAdapter [wrapped=" + wrapped + "]";
+            return "EditLayerChangeAdapter [wrapped=" + wrapped + ']';
         }
-
     }
 
     /**

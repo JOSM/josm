@@ -529,7 +529,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     @Override
     public String toString() {
-        return (types == null ? "" : types) + " " + name;
+        return (types == null ? "" : types.toString()) + ' ' + name;
     }
 
     public boolean typeMatches(Collection<TaggingPresetType> t) {

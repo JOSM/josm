@@ -167,7 +167,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
         @Override
         public String toString() {
-            return classification + " " + preset;
+            return Integer.toString(classification) + ' ' + preset;
         }
     }
 

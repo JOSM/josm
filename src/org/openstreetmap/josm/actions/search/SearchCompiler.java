@@ -366,6 +366,10 @@ public class SearchCompiler {
         public final Match getRhs() {
             return rhs;
         }
+
+        protected static String parenthesis(Match m) {
+            return '(' + m.toString() + ')';
+        }
     }
 
     /**
@@ -412,7 +416,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return "!" + match;
+            return '!' + match.toString();
         }
 
         public Match getMatch() {
@@ -472,8 +476,8 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof And) ? ("(" + lhs + ')') : lhs) + " && "
-                    + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof And) ? ("(" + rhs + ')') : rhs);
+            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof And) ? parenthesis(lhs) : lhs) + " && "
+                 + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof And) ? parenthesis(rhs) : rhs);
         }
     }
 
@@ -502,8 +506,8 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof Or) ? ("(" + lhs + ')') : lhs) + " || "
-                    + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof Or) ? ("(" + rhs + ')') : rhs);
+            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof Or) ? parenthesis(lhs) : lhs) + " || "
+                 + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof Or) ? parenthesis(rhs) : rhs);
         }
     }
 
@@ -532,8 +536,8 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof Xor) ? ("(" + lhs + ')') : lhs) + " ^ "
-                    + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof Xor) ? ("(" + rhs + ')') : rhs);
+            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof Xor) ? parenthesis(lhs) : lhs) + " ^ "
+                 + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof Xor) ? parenthesis(rhs) : rhs);
         }
     }
 

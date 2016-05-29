@@ -47,11 +47,13 @@ public class LayerVisibilityActionTest {
             // now check values
             action.updateValues();
             assertEquals(1.0, action.opacitySlider.getRealValue(), 1e-15);
+            assertEquals("OpacitySlider [getRealValue()=1.0]", action.opacitySlider.toString());
 
             action.opacitySlider.setRealValue(.5);
             action.updateValues();
 
             assertEquals(0.5, action.opacitySlider.getRealValue(), 1e-15);
+            assertEquals("OpacitySlider [getRealValue()=0.5]", action.opacitySlider.toString());
 
             action.setVisibleFlag(false);
             action.updateValues();

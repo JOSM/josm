@@ -303,6 +303,11 @@ public abstract class ImageryLayer extends Layer {
             to.getGraphics().drawImage(image, 0, 0, null);
             return process(to);
         }
+
+        @Override
+        public String toString() {
+            return "GammaImageProcessor [gamma=" + gamma + ']';
+        }
     }
 
     /**
@@ -386,7 +391,7 @@ public abstract class ImageryLayer extends Layer {
 
         @Override
         public String toString() {
-            return "SharpenImageProcessor [sharpenLevel=" + sharpenLevel + "]";
+            return "SharpenImageProcessor [sharpenLevel=" + sharpenLevel + ']';
         }
     }
 
@@ -436,7 +441,7 @@ public abstract class ImageryLayer extends Layer {
 
         @Override
         public String toString() {
-            return "ColorfulImageProcessor [colorfulness=" + colorfulness + "]";
+            return "ColorfulImageProcessor [colorfulness=" + colorfulness + ']';
         }
     }
 
@@ -469,7 +474,7 @@ public abstract class ImageryLayer extends Layer {
 
             int type = src.getType();
             if (type != dest.getType()) {
-                Main.trace("Cannot apply color filter: Src / Dest differ in type (" + type + "/" + dest.getType() + ")");
+                Main.trace("Cannot apply color filter: Src / Dest differ in type (" + type + '/' + dest.getType() + ')');
                 return src;
             }
             int redOffset, greenOffset, blueOffset, alphaOffset = 0;

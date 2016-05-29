@@ -298,7 +298,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         @Override
         public String toString() {
-            return "OpacitySlider [getRealValue()=" + getRealValue() + "]";
+            return "OpacitySlider [getRealValue()=" + getRealValue() + ']';
         }
     }
 

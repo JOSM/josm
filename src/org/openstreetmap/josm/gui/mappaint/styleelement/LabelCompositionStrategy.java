@@ -268,7 +268,7 @@ public abstract class LabelCompositionStrategy {
 
         @Override
         public String toString() {
-            return "{" + getClass().getSimpleName() +'}';
+            return '{' + getClass().getSimpleName() + '}';
         }
 
         @Override

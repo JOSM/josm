@@ -1624,7 +1624,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         if (clickedTile == null)
             return null;
         if (Main.isTraceEnabled()) {
-            Main.trace("Clicked on tile: " + clickedTile.getXtile() + " " + clickedTile.getYtile() +
+            Main.trace("Clicked on tile: " + clickedTile.getXtile() + ' ' + clickedTile.getYtile() +
                 " currentZoomLevel: " + currentZoomLevel);
         }
         return clickedTile;

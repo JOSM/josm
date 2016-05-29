@@ -199,7 +199,7 @@ public class LatLonDialog extends ExtendedDialog {
         this.latLonCoordinates = ll;
         tfLatLon.setText(ll.latToString(CoordinateFormat.getDefaultFormat()) + ' ' + ll.lonToString(CoordinateFormat.getDefaultFormat()));
         EastNorth en = Main.getProjection().latlon2eastNorth(ll);
-        tfEastNorth.setText(en.east()+" "+en.north());
+        tfEastNorth.setText(Double.toString(en.east()) + ' ' + Double.toString(en.north()));
         setOkEnabled(true);
     }
 

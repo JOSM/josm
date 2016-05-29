@@ -190,7 +190,7 @@ public class Version {
         if (isLocalBuild() && v != JOSM_UNKNOWN_VERSION) {
             s += " SVN";
         }
-        String result = "JOSM/1.5 ("+ s+' '+LanguageInfo.getJOSMLocaleCode()+")";
+        String result = "JOSM/1.5 ("+ s+' '+LanguageInfo.getJOSMLocaleCode()+')';
         if (includeOsDetails && Main.platform != null) {
             result += ' ' + Main.platform.getOSDescription();
         }

@@ -742,6 +742,10 @@ public abstract class Condition {
 
         private final Expression e;
 
+        /**
+         * Constructs a new {@code ExpressionFactory}
+         * @param e expression
+         */
         public ExpressionCondition(Expression e) {
             this.e = e;
         }
@@ -754,7 +758,7 @@ public abstract class Condition {
 
         @Override
         public String toString() {
-            return "[" + e + ']';
+            return '[' + e.toString() + ']';
         }
     }
 }

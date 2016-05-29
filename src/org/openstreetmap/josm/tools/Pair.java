@@ -41,7 +41,7 @@ public final class Pair<A, B> {
         if (other == null || getClass() != other.getClass()) return false;
         Pair<?, ?> pair = (Pair<?, ?>) other;
         return Objects.equals(a, pair.a) &&
-                Objects.equals(b, pair.b);
+               Objects.equals(b, pair.b);
     }
 
     /**
@@ -61,7 +61,7 @@ public final class Pair<A, B> {
 
     @Override
     public String toString() {
-        return "<"+a+','+b+'>';
+        return '<'+a.toString()+','+b.toString()+'>';
     }
 
     /**

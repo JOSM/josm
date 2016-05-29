@@ -129,7 +129,7 @@ public final class Cascade implements Cloneable {
                 return Float.valueOf((String) o);
             } catch (NumberFormatException e) {
                 if (Main.isDebugEnabled()) {
-                    Main.debug("'"+o+"' cannot be converted to float");
+                    Main.debug('\'' + (String) o + "' cannot be converted to float");
                 }
             }
         }
