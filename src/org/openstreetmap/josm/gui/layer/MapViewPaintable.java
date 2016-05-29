@@ -30,7 +30,6 @@ public interface MapViewPaintable {
          * @param paintable The paintable that is invalidated.
          */
         public PaintableInvalidationEvent(MapViewPaintable paintable) {
-            super();
             this.paintable = paintable;
         }
 
@@ -44,7 +43,7 @@ public interface MapViewPaintable {
 
         @Override
         public String toString() {
-            return "LayerInvalidationEvent [layer=" + paintable + "]";
+            return "LayerInvalidationEvent [layer=" + paintable + ']';
         }
     }
 

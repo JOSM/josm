@@ -121,10 +121,10 @@ public final class HttpClient {
                 connection.connect();
                 final boolean hasReason = reasonForRequest != null && !reasonForRequest.isEmpty();
                 Main.info("{0} {1}{2} -> {3}{4}",
-                        requestMethod, url, hasReason ? " (" + reasonForRequest + ")" : "",
+                        requestMethod, url, hasReason ? (" (" + reasonForRequest + ')') : "",
                         connection.getResponseCode(),
                         connection.getContentLengthLong() > 0
-                                ? " (" + Utils.getSizeString(connection.getContentLengthLong(), Locale.getDefault()) + ")"
+                                ? (" (" + Utils.getSizeString(connection.getContentLengthLong(), Locale.getDefault()) + ')')
                                 : ""
                 );
                 if (Main.isDebugEnabled()) {

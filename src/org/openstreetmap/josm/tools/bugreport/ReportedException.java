@@ -123,7 +123,7 @@ public class ReportedException extends RuntimeException {
     }
 
     private static String niceThreadName(Thread thread) {
-        String name = "Thread: " + thread.getName() + " (" + thread.getId() + ")";
+        String name = "Thread: " + thread.getName() + " (" + thread.getId() + ')';
         ThreadGroup threadGroup = thread.getThreadGroup();
         if (threadGroup != null) {
             name += " of " + threadGroup.getName();
@@ -220,11 +220,11 @@ public class ReportedException extends RuntimeException {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("CrashReportedException [on thread ");
-        builder.append(caughtOnThread);
-        builder.append("]");
-        return builder.toString();
+        return new StringBuilder(48)
+            .append("CrashReportedException [on thread ")
+            .append(caughtOnThread)
+            .append(']')
+            .toString();
     }
 
     private static class SectionEntry {
@@ -234,7 +234,6 @@ public class ReportedException extends RuntimeException {
         SectionEntry(String key, String value) {
             this.key = key;
             this.value = value;
-
         }
 
         /**
@@ -272,7 +271,7 @@ public class ReportedException extends RuntimeException {
          * @param out The stream to print to.
          */
         public void printSection(PrintWriter out) {
-            out.println(sectionName + ":");
+            out.println(sectionName + ':');
             if (entries.isEmpty()) {
                 out.println("No data collected.");
             } else {

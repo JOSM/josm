@@ -1814,7 +1814,7 @@ public final class DomainValidator extends AbstractValidator {
                 case '\u3002': // ideographic full stop
                 case '\uFF0E': // fullwidth full stop
                 case '\uFF61': // halfwidth ideographic full stop
-                    return ascii + "."; // restore the missing stop
+                    return ascii + '.'; // restore the missing stop
                 default:
                     return ascii;
             }

@@ -8,10 +8,15 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Simple literal value, that does not depend on other expressions.
+ * @since 5705
  */
 public class LiteralExpression implements Expression {
     private final Object literal;
 
+    /**
+     * Constructs a new {@code LiteralExpression}.
+     * @param literal literal
+     */
     public LiteralExpression(Object literal) {
         CheckParameterUtil.ensureParameterNotNull(literal);
         this.literal = literal;
@@ -27,6 +32,6 @@ public class LiteralExpression implements Expression {
         if (literal instanceof float[]) {
             return Arrays.toString((float[]) literal);
         }
-        return "<" + literal + '>';
+        return '<' + literal.toString() + '>';
     }
 }

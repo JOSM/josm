@@ -71,7 +71,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
         p.setVisible(false);
 
-        mSpltPane.add(p, "L"+i);
+        mSpltPane.add(p, 'L'+Integer.toString(i));
         panels.add(p);
 
         if (dlg.isDialogShowing()) {
@@ -256,7 +256,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
             if (i != k) {
                 ch.add(new Divider());
             }
-            Leaf l = new Leaf("L"+i);
+            Leaf l = new Leaf('L'+Integer.toString(i));
             l.setWeight(1.0 / numPanels);
             ch.add(l);
         }

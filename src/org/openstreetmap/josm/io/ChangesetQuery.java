@@ -240,7 +240,7 @@ public class ChangesetQuery {
     public ChangesetQuery forChangesetIds(Collection<Long> changesetIds) {
         CheckParameterUtil.ensureParameterNotNull(changesetIds, "changesetIds");
         if (changesetIds.size() > MAX_CHANGESETS_NUMBER) {
-            Main.warn("Changeset query built with more than " + MAX_CHANGESETS_NUMBER + " changeset ids (" + changesetIds.size() + ")");
+            Main.warn("Changeset query built with more than " + MAX_CHANGESETS_NUMBER + " changeset ids (" + changesetIds.size() + ')');
         }
         this.changesetIds = changesetIds;
         return this;

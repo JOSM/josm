@@ -147,6 +147,6 @@ public class Note {
 
     @Override
     public String toString() {
-        return tr("Note") + " " + id + ": " + getFirstComment();
+        return tr("Note") + ' ' + id + ": " + getFirstComment();
     }
 }

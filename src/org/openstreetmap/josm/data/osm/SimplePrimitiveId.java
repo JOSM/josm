@@ -56,7 +56,7 @@ public class SimplePrimitiveId implements PrimitiveId, Serializable {
 
     @Override
     public String toString() {
-        return type + " " + id;
+        return type.toString() + ' ' + id;
     }
 
     /**
