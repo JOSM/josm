@@ -182,7 +182,6 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         Count only tagged nodes (so empty way nodes don't inflate counts).
     */
     protected static String buildListOfEditorsText(Iterable<OsmPrimitive> primitives) {
-        final StringBuilder s = new StringBuilder();
         final Map<String, Integer> editCountByUser = new TreeMap<>(Collator.getInstance(Locale.getDefault()));
 
         // Count who edited each selected object
@@ -199,9 +198,10 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         }
 
         // Print the count in sorted order
-        s.append(trn("{0} user last edited the selection:", "{0} users last edited the selection:",
-                editCountByUser.size(), editCountByUser.size()));
-        s.append("\n\n");
+        final StringBuilder s = new StringBuilder(48)
+            .append(trn("{0} user last edited the selection:", "{0} users last edited the selection:",
+                editCountByUser.size(), editCountByUser.size()))
+            .append("\n\n");
         for (Map.Entry<String, Integer> entry : editCountByUser.entrySet()) {
             final String username = entry.getKey();
             final Integer editCount = entry.getValue();

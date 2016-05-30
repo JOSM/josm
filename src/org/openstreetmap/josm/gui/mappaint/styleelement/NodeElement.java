@@ -373,14 +373,13 @@ public class NodeElement extends StyleElement {
         if (!super.equals(obj)) return false;
         NodeElement that = (NodeElement) obj;
         return Objects.equals(mapImage, that.mapImage) &&
-                Objects.equals(mapImageAngle, that.mapImageAngle) &&
-                Objects.equals(symbol, that.symbol);
+               Objects.equals(mapImageAngle, that.mapImageAngle) &&
+               Objects.equals(symbol, that.symbol);
     }
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder(64).append("NodeElemStyle{");
-        s.append(super.toString());
+        StringBuilder s = new StringBuilder(64).append("NodeElemStyle{").append(super.toString());
         if (mapImage != null) {
             s.append(" icon=[" + mapImage + ']');
         }

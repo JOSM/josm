@@ -209,9 +209,9 @@ public class ReportedException extends RuntimeException {
             if (lines <= MAX_COLLECTION_ENTRIES) {
                 str.append(e);
             } else {
-                str.append("\n    ... (");
-                str.append(value.size());
-                str.append(" entries)");
+                str.append("\n    ... (")
+                   .append(value.size())
+                   .append(" entries)");
                 break;
             }
         }

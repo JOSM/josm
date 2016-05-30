@@ -67,8 +67,8 @@ public class NMEAImporter extends FileImporter {
     }
 
     private static void showNmeaInfobox(boolean success, NmeaReader r) {
-        final StringBuilder msg = new StringBuilder(160).append("<html>");
-        msg.append(tr("Coordinates imported: {0}", r.getNumberOfCoordinates())).append("<br>")
+        final StringBuilder msg = new StringBuilder(160).append("<html>")
+           .append(tr("Coordinates imported: {0}", r.getNumberOfCoordinates())).append("<br>")
            .append(tr("Malformed sentences: {0}", r.getParserMalformed())).append("<br>")
            .append(tr("Checksum errors: {0}", r.getParserChecksumErrors())).append("<br>");
         if (!success) {

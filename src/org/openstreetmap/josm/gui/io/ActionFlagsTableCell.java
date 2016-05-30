@@ -84,19 +84,19 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
     }
 
     private void updatePanel(SaveLayerInfo info) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append(tr("Select which actions to perform for this layer, if you click the leftmost button."));
+        StringBuilder sb = new StringBuilder(128)
+            .append("<html>")
+            .append(tr("Select which actions to perform for this layer, if you click the leftmost button."));
         removeAll();
         if (info != null) {
             if (info.isUploadable()) {
-                sb.append("<br/>");
-                sb.append(tr("Check \"Upload\" to upload the changes to the OSM server."));
+                sb.append("<br/>")
+                  .append(tr("Check \"Upload\" to upload the changes to the OSM server."));
                 add(checkBoxes[0], GBC.eol().fill(GBC.HORIZONTAL));
             }
             if (info.isSavable()) {
-                sb.append("<br/>");
-                sb.append(tr("Check \"Save\" to save the layer to the file specified on the left."));
+                sb.append("<br/>")
+                  .append(tr("Check \"Save\" to save the layer to the file specified on the left."));
                 add(checkBoxes[1], GBC.eol().fill(GBC.HORIZONTAL));
             }
         }
