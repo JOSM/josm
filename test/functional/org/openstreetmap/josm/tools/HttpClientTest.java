@@ -100,6 +100,7 @@ public class HttpClientTest {
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/post"), "POST")
                 .setHeader("Content-Type", "text/plain")
                 .setRequestBody(text.getBytes(StandardCharsets.UTF_8))
+                .setFinishOnCloseOutput(false) // to fix #12583, not sure if it's the best way to do it
                 .connect(progress);
         assertThat(response.getResponseCode(), is(200));
         try (final InputStream in = response.getContent();
@@ -113,6 +114,7 @@ public class HttpClientTest {
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/post"), "POST")
                 .setHeader("Content-Type", "text/plain")
                 .setRequestBody("".getBytes(StandardCharsets.UTF_8))
+                .setFinishOnCloseOutput(false) // to fix #12583, not sure if it's the best way to do it
                 .connect(progress);
         assertThat(response.getResponseCode(), is(200));
         try (final InputStream in = response.getContent();

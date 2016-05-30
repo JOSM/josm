@@ -51,6 +51,7 @@ public final class HttpClient {
     private String reasonForRequest;
     private HttpURLConnection connection; // to allow disconnecting before `response` is set
     private Response response;
+    private boolean finishOnCloseOutput = true;
 
     static {
         CookieHandler.setDefault(new CookieManager());
@@ -110,7 +111,7 @@ public final class HttpClient {
             connection.setFixedLengthStreamingMode(requestBody.length);
             connection.setDoOutput(true);
             try (OutputStream out = new BufferedOutputStream(
-                    new ProgressOutputStream(connection.getOutputStream(), requestBody.length, progressMonitor))) {
+                    new ProgressOutputStream(connection.getOutputStream(), requestBody.length, progressMonitor, finishOnCloseOutput))) {
                 out.write(requestBody);
             }
         }
@@ -594,6 +595,17 @@ public final class HttpClient {
      */
     public HttpClient setReasonForRequest(String reasonForRequest) {
         this.reasonForRequest = reasonForRequest;
+        return this;
+    }
+
+    /**
+     * Sets whether the progress monitor task will be finished when the output stream is closed. This is {@code true} by default.
+     * @param finishOnCloseOutput whether the progress monitor task will be finished when the output stream is closed
+     * @return {@code this}
+     * @since 10302
+     */
+    public HttpClient setFinishOnCloseOutput(boolean finishOnCloseOutput) {
+        this.finishOnCloseOutput = finishOnCloseOutput;
         return this;
     }
 

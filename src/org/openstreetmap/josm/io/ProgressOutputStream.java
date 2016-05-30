@@ -18,6 +18,7 @@ public class ProgressOutputStream extends OutputStream {
 
     private final StreamProgressUpdater updater;
     private final OutputStream out;
+    private final boolean finishOnClose;
 
     /**
      * Constructs a new {@code ProgressOutputStream}.
@@ -25,13 +26,14 @@ public class ProgressOutputStream extends OutputStream {
      * @param out the stream to monitor
      * @param size the total size which will be sent
      * @param progressMonitor the monitor to report to
+     * @param finishOnClose whether to call {@link ProgressMonitor#finishTask} when this stream is closed
+     * @since 10302
      */
-    public ProgressOutputStream(OutputStream out, long size, ProgressMonitor progressMonitor) {
-        if (progressMonitor == null) {
-            progressMonitor = NullProgressMonitor.INSTANCE;
-        }
-        this.updater = new StreamProgressUpdater(size, progressMonitor, tr("Uploading data ..."));
+    public ProgressOutputStream(OutputStream out, long size, ProgressMonitor progressMonitor, boolean finishOnClose) {
+        this.updater = new StreamProgressUpdater(size,
+                progressMonitor != null ? progressMonitor : NullProgressMonitor.INSTANCE, tr("Uploading data ..."));
         this.out = out;
+        this.finishOnClose = finishOnClose;
     }
 
     @Override
@@ -51,7 +53,9 @@ public class ProgressOutputStream extends OutputStream {
         try {
             out.close();
         } finally {
-            updater.finishTask();
+            if (finishOnClose) {
+                updater.finishTask();
+            }
         }
     }
 }
