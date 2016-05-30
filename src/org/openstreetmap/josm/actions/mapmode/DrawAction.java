@@ -1482,7 +1482,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 b = new GeneralPath();
                 if (absoluteFix) {
                     b.moveTo(p2.x, p2.y);
-                    b.lineTo(2f*p1.x-p2.x, 2f*p1.y-p2.y); // bi-directional line
+                    b.lineTo(2d*p1.x-p2.x, 2d*p1.y-p2.y); // bi-directional line
                 } else {
                     b.moveTo(p2.x, p2.y);
                     b.lineTo(p3.x, p3.y);

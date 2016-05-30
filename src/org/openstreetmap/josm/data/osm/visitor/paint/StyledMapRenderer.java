@@ -1502,7 +1502,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
                             while (dist < segmentLength) {
                                 for (int i = 0; i < 2; ++i) {
-                                    float onewaySize = i == 0 ? 3f : 2f;
+                                    double onewaySize = i == 0 ? 3d : 2d;
                                     GeneralPath onewayPath = i == 0 ? onewayArrowsCasing : onewayArrows;
 
                                     // scale such that border is 1 px
