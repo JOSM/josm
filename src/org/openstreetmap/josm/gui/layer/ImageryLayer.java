@@ -320,7 +320,7 @@ public abstract class ImageryLayer extends Layer {
      * @author Michael Zangl
      */
     public static class SharpenImageProcessor implements ImageProcessor {
-        private float sharpenLevel = 0;
+        private float sharpenLevel;
         private ConvolveOp op;
 
         private static float[] KERNEL_IDENTITY = new float[] {
@@ -401,7 +401,7 @@ public abstract class ImageryLayer extends Layer {
      * @author Michael Zangl
      */
     public static class ColorfulImageProcessor implements ImageProcessor {
-        private ColorfulFilter op = null;
+        private ColorfulFilter op;
         private double colorfulness = 1;
 
         /**
@@ -519,7 +519,7 @@ public abstract class ImageryLayer extends Layer {
                 int r = srcPixels[i + redOffset] & 0xff;
                 int g = srcPixels[i + greenOffset] & 0xff;
                 int b = srcPixels[i + blueOffset] & 0xff;
-                float luminosity = r * .21f + g * .72f + b * .07f;
+                double luminosity = r * .21d + g * .72d + b * .07d;
                 destPixels[i + redOffset] = mix(r, luminosity);
                 destPixels[i + greenOffset] = mix(g, luminosity);
                 destPixels[i + blueOffset] = mix(b, luminosity);
@@ -529,7 +529,7 @@ public abstract class ImageryLayer extends Layer {
             }
         }
 
-        private byte mix(int color, float luminosity) {
+        private byte mix(int color, double luminosity) {
             int val = (int) (colorfulness * color +  (1 - colorfulness) * luminosity);
             if (val < 0) {
                 return 0;

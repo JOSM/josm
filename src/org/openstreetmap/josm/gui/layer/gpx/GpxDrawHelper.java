@@ -483,10 +483,10 @@ public class GpxDrawHelper implements SoMChangeListener {
                     Color customColoringTransparent = hdopAlpha < 0 ? trkPnt.customColoring :
                         new Color(trkPnt.customColoring.getRGB() & 0x00ffffff | hdopAlpha << 24, true);
                     g.setColor(customColoringTransparent);
-                    // hdop cirles
+                    // hdop circles
                     int hdopp = mv.getPoint(new LatLon(
                             trkPnt.getCoor().lat(),
-                            trkPnt.getCoor().lon() + 2*6*hdop*360/40000000d)).x - screen.x;
+                            trkPnt.getCoor().lon() + 2d*6*hdop*360/40000000d)).x - screen.x;
                     g.drawArc(screen.x-hdopp/2, screen.y-hdopp/2, hdopp, hdopp, 0, 360);
                 }
                 if (large) {

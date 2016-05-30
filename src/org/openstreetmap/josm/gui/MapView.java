@@ -431,7 +431,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         addEditLayerChangeListener(listener, false);
     }
 
-    public boolean viewportFollowing = false;
+    public boolean viewportFollowing;
 
     /**
      * A list of all layers currently loaded. If we support multiple map views, this list may be different for each of them.
