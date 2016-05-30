@@ -36,7 +36,7 @@ public class AutosaveTaskTest {
      */
     @BeforeClass
     public static void setUpBeforeClass() throws IOException {
-        JOSMFixture.createUnitTestFixture().init(true);
+        JOSMFixture.createUnitTestFixture().init();
         task = new AutosaveTask();
         Files.createDirectories(task.getAutosaveDir());
     }
