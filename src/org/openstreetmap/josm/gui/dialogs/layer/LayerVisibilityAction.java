@@ -44,7 +44,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
     private final LayerListModel model;
     private final JPopupMenu popup;
     private SideButton sideButton;
-    private JCheckBox visibilityCheckbox;
+    private final JCheckBox visibilityCheckbox;
     final OpacitySlider opacitySlider = new OpacitySlider();
     private final ArrayList<FilterSlider<?>> sliders = new ArrayList<>();
 

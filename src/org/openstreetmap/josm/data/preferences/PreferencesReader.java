@@ -41,8 +41,8 @@ public class PreferencesReader {
     private final SortedMap<String, Setting<?>> settings = new TreeMap<>();
     private XMLStreamReader parser;
     private int version;
-    private Reader reader;
-    private File file;
+    private final Reader reader;
+    private final File file;
 
     private final boolean defaults;
 

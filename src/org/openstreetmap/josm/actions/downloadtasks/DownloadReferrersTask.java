@@ -44,11 +44,11 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
     private Exception lastException;
     private OsmServerReader reader;
     /** the target layer */
-    private OsmDataLayer targetLayer;
+    private final OsmDataLayer targetLayer;
     /** the collection of child primitives */
-    private Map<Long, OsmPrimitiveType> children;
+    private final Map<Long, OsmPrimitiveType> children;
     /** the parents */
-    private DataSet parents;
+    private final DataSet parents;
 
     /**
      * constructor

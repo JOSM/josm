@@ -250,8 +250,8 @@ public class ReportedException extends RuntimeException {
 
     private static class Section {
 
-        private String sectionName;
-        private ArrayList<SectionEntry> entries = new ArrayList<>();
+        private final String sectionName;
+        private final ArrayList<SectionEntry> entries = new ArrayList<>();
 
         Section(String sectionName) {
             this.sectionName = sectionName;

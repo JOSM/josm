@@ -26,14 +26,14 @@ public interface NativeScaleLayer {
         /**
          * Scale factor, same unit as in {@link NavigatableComponent}
          */
-        private double scale;
+        private final double scale;
 
         /**
          * True if this scale is native resolution for data source.
          */
-        private boolean isNative;
+        private final boolean isNative;
 
-        private int index;
+        private final int index;
 
         /**
          * Constructs a new Scale with given scale, native defaults to true.
@@ -77,17 +77,10 @@ public interface NativeScaleLayer {
     }
 
     /**
-     * List of scales, may include intermediate steps
-     * between native resolutions
+     * List of scales, may include intermediate steps between native resolutions
      */
     class ScaleList  {
-        private List<Scale> scales = new ArrayList<>();
-
-        protected ScaleList(double[] scales) {
-            for (int i = 0; i < scales.length; i++) {
-                this.scales.add(new Scale(scales[i], i));
-            }
-        }
+        private final List<Scale> scales = new ArrayList<>();
 
         protected ScaleList() {
         }
