@@ -320,7 +320,7 @@ public abstract class ImageryLayer extends Layer {
      * @author Michael Zangl
      */
     public static class SharpenImageProcessor implements ImageProcessor {
-        private float sharpenLevel = 0;
+        private float sharpenLevel;
         private ConvolveOp op;
 
         private static float[] KERNEL_IDENTITY = new float[] {
@@ -401,7 +401,7 @@ public abstract class ImageryLayer extends Layer {
      * @author Michael Zangl
      */
     public static class ColorfulImageProcessor implements ImageProcessor {
-        private ColorfulFilter op = null;
+        private ColorfulFilter op;
         private double colorfulness = 1;
 
         /**
