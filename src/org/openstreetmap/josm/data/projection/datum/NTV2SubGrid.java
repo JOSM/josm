@@ -294,8 +294,9 @@ public class NTV2SubGrid implements Serializable {
      * @return textual details about the sub grid
      */
     public String getDetails() {
-        StringBuilder buff = new StringBuilder(256).append("Sub Grid : ");
-        buff.append(subGridName)
+        return new StringBuilder(256)
+            .append("Sub Grid : ")
+            .append(subGridName)
             .append("\nParent   : ")
             .append(parentSubGridName)
             .append("\nCreated  : ")
@@ -315,8 +316,8 @@ public class NTV2SubGrid implements Serializable {
             .append("\nLon Intvl: ")
             .append(lonInterval)
             .append("\nNode Cnt : ")
-            .append(nodeCount);
-        return buff.toString();
+            .append(nodeCount)
+            .toString();
     }
 
     /**

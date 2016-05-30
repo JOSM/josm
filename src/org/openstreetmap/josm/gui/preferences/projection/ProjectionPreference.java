@@ -299,8 +299,8 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private JPanel projSubPrefPanel;
     private final JPanel projSubPrefPanelWrapper = new JPanel(new GridBagLayout());
 
-    private JLabel projectionCodeLabel = new JLabel(tr("Projection code"));
-    private Component projectionCodeGlue = GBC.glue(5, 0);
+    private final JLabel projectionCodeLabel = new JLabel(tr("Projection code"));
+    private final Component projectionCodeGlue = GBC.glue(5, 0);
     private final JLabel projectionCode = new JLabel();
     private final JLabel projectionNameLabel = new JLabel(tr("Projection name"));
     private final Component projectionNameGlue = GBC.glue(5, 0);

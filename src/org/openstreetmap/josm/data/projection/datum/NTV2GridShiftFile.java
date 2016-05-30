@@ -272,8 +272,9 @@ public class NTV2GridShiftFile implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder buff = new StringBuilder(256).append("Headers  : ");
-        buff.append(overviewHeaderCount)
+        return new StringBuilder(256)
+            .append("Headers  : ")
+            .append(overviewHeaderCount)
             .append("\nSub Hdrs : ")
             .append(subGridHeaderCount)
             .append("\nSub Grids: ")
@@ -293,8 +294,8 @@ public class NTV2GridShiftFile implements Serializable {
             .append("\nTo Maj Ax: ")
             .append(toSemiMajorAxis)
             .append("\nTo Min Ax: ")
-            .append(toSemiMinorAxis);
-        return buff.toString();
+            .append(toSemiMinorAxis)
+            .toString();
     }
 
     public String getFromEllipsoid() {

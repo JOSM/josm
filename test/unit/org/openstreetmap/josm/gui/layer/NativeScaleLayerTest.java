@@ -28,6 +28,5 @@ public class NativeScaleLayerTest {
     @Test
     public void testTicket12255() {
         assertNull(new NativeScaleLayer.ScaleList(Collections.<Double>emptyList()).getSnapScale(10, 2, false));
-        assertNull(new NativeScaleLayer.ScaleList(new double[0]).getSnapScale(10, 2, false));
     }
 }

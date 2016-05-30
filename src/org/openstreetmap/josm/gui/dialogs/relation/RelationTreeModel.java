@@ -19,42 +19,20 @@ import org.openstreetmap.josm.data.osm.RelationMember;
  * The model is initialized with a root relation or with a list of {@link RelationMember}s, see
  * {@link #populate(Relation)} and {@link #populate(List)} respectively.
  *
- *
+ * @since 1828
  */
 public class RelationTreeModel implements TreeModel {
     /** the root relation */
     private Relation root;
 
     /** the tree model listeners */
-    private CopyOnWriteArrayList<TreeModelListener> listeners;
+    private final CopyOnWriteArrayList<TreeModelListener> listeners;
 
     /**
      * constructor
      */
     public RelationTreeModel() {
         this.root = null;
-        listeners = new CopyOnWriteArrayList<>();
-    }
-
-    /**
-     * constructor
-     * @param root the root relation
-     */
-    public RelationTreeModel(Relation root) {
-        this.root = root;
-        listeners = new CopyOnWriteArrayList<>();
-    }
-
-    /**
-     * constructor
-     *
-     * @param members a list of members
-     */
-    public RelationTreeModel(List<RelationMember> members) {
-        if (members == null) return;
-        Relation root = new Relation();
-        root.setMembers(members);
-        this.root = root;
         listeners = new CopyOnWriteArrayList<>();
     }
 

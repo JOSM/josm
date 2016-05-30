@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 10055
  */
 public class DebugTextDisplay extends JScrollPane {
-    private String text;
+    private final String text;
 
     /**
      * Creates a new text are with the fixed text

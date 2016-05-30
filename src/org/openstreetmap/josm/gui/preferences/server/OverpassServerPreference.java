@@ -36,7 +36,7 @@ public class OverpassServerPreference implements SubPreferenceSetting {
             Arrays.asList("https://overpass-api.de/api/", "http://overpass.osm.rambler.ru/cgi/"));
     private static final BooleanProperty FOR_MULTI_FETCH = new BooleanProperty("download.overpass.for-multi-fetch", false);
 
-    private HistoryComboBox overpassServer = new HistoryComboBox();
+    private final HistoryComboBox overpassServer = new HistoryComboBox();
     private final JCheckBox forMultiFetch = new JCheckBox(tr("Use Overpass server for object downloads"));
 
     /**

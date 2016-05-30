@@ -655,7 +655,7 @@ public class TagEditHelper {
     protected class AddTagsDialog extends AbstractTagsDialog {
         private final List<JosmAction> recentTagsActions = new ArrayList<>();
         protected final transient FocusAdapter focus;
-        private JPanel mainPanel;
+        private final JPanel mainPanel;
         private JPanel recentTagsPanel;
 
         // Counter of added commands for possible undo

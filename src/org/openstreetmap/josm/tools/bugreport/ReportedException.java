@@ -209,9 +209,9 @@ public class ReportedException extends RuntimeException {
             if (lines <= MAX_COLLECTION_ENTRIES) {
                 str.append(e);
             } else {
-                str.append("\n    ... (");
-                str.append(value.size());
-                str.append(" entries)");
+                str.append("\n    ... (")
+                   .append(value.size())
+                   .append(" entries)");
                 break;
             }
         }
@@ -250,8 +250,8 @@ public class ReportedException extends RuntimeException {
 
     private static class Section {
 
-        private String sectionName;
-        private ArrayList<SectionEntry> entries = new ArrayList<>();
+        private final String sectionName;
+        private final ArrayList<SectionEntry> entries = new ArrayList<>();
 
         Section(String sectionName) {
             this.sectionName = sectionName;
