@@ -10,7 +10,6 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
-import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -62,9 +61,7 @@ public class OsmConnection {
      * @throws OsmTransferException if something went wrong. Check for nested exceptions
      */
     protected void addBasicAuthorizationHeader(HttpClient con) throws OsmTransferException {
-        CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
         CredentialsAgentResponse response;
-        String token;
         try {
             synchronized (CredentialsManager.getInstance()) {
                 response = CredentialsManager.getInstance().getCredentials(RequestorType.SERVER,
@@ -73,6 +70,7 @@ public class OsmConnection {
         } catch (CredentialsAgentException e) {
             throw new OsmTransferException(e);
         }
+        String token;
         if (response == null) {
             token = ":";
         } else if (response.isCanceled()) {
@@ -83,7 +81,7 @@ public class OsmConnection {
             String password = response.getPassword() == null ? "" : String.valueOf(response.getPassword());
             token = username + ':' + password;
             try {
-                ByteBuffer bytes = encoder.encode(CharBuffer.wrap(token));
+                ByteBuffer bytes = StandardCharsets.UTF_8.newEncoder().encode(CharBuffer.wrap(token));
                 con.setHeader("Authorization", "Basic "+Base64.encode(bytes));
             } catch (CharacterCodingException e) {
                 throw new OsmTransferException(e);

@@ -11,13 +11,19 @@ import javax.swing.table.TableColumn;
  * @since 1709
  */
 public class TagTableColumnModel extends DefaultTableColumnModel {
-    protected void createColumns() {
-        TableColumn col = null;
 
+    /**
+     * Constructs a new {@code TagTableColumnModel}.
+     */
+    public TagTableColumnModel() {
+        createColumns();
+    }
+
+    protected void createColumns() {
         TagTableCellRenderer renderer = new TagTableCellRenderer();
 
         // column 0 - Key
-        col = new TableColumn(0);
+        TableColumn col = new TableColumn(0);
         col.setHeaderValue(tr("Key"));
         col.setCellRenderer(renderer);
         addColumn(col);
@@ -27,13 +33,5 @@ public class TagTableColumnModel extends DefaultTableColumnModel {
         col.setHeaderValue(tr("Value"));
         col.setCellRenderer(renderer);
         addColumn(col);
-
-    }
-
-    /**
-     * Constructs a new {@code TagTableColumnModel}.
-     */
-    public TagTableColumnModel() {
-        createColumns();
     }
 }

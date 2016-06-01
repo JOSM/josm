@@ -100,7 +100,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
             String curText = getText(0, size);
 
             // item for lookup and selection
-            Object item = null;
+            Object item;
             // if the text is a number we don't autocomplete
             if (Main.pref.getBoolean("autocomplete.dont_complete_numbers", true)) {
                 try {

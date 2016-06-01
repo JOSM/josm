@@ -23,14 +23,13 @@ public final class FilterWorker {
     /**
      * Apply the filters to the primitives of the data set.
      *
-     * @param all the collection of primitives for that the filter state should
-     * be updated
+     * @param all the collection of primitives for that the filter state should be updated
      * @param filterMatcher the FilterMatcher
      * @return true, if the filter state (normal / disabled / hidden)
      * of any primitive has changed in the process
      */
     public static boolean executeFilters(Collection<OsmPrimitive> all, FilterMatcher filterMatcher) {
-        boolean changed = false;
+        boolean changed;
         // first relations, then ways and nodes last; this is required to resolve dependencies
         changed = doExecuteFilters(Utils.filter(all, OsmPrimitive.relationPredicate), filterMatcher);
         changed |= doExecuteFilters(Utils.filter(all, OsmPrimitive.wayPredicate), filterMatcher);

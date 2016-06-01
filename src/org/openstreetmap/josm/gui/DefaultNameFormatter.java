@@ -209,7 +209,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     public String format(Way way) {
         StringBuilder name = new StringBuilder();
 
-        char mark = 0;
+        char mark;
         // If current language is left-to-right (almost all languages)
         if (ComponentOrientation.getOrientation(Locale.getDefault()).isLeftToRight()) {
             // will insert Left-To-Right Mark to ensure proper display of text in the case when object name is right-to-left

@@ -301,12 +301,11 @@ public final class AudioPlayer extends Thread {
                                     offset != 0) {
                                 if (audioInputStream != null) {
                                     Utils.close(audioInputStream);
-                                    audioInputStream = null;
                                 }
                                 playingUrl = command.url();
                                 audioInputStream = AudioSystem.getAudioInputStream(playingUrl);
                                 audioFormat = audioInputStream.getFormat();
-                                long nBytesRead = 0;
+                                long nBytesRead;
                                 position = 0.0;
                                 offset -= leadIn;
                                 double calibratedOffset = offset * calibration;

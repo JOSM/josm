@@ -82,12 +82,10 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
     }
 
     protected void build() {
-        TableColumn col = null;
-
         // column 0 - layer name, save path editor
         LayerNameAndFilePathTableCell lnfpRenderer = new LayerNameAndFilePathTableCell();
         LayerNameAndFilePathTableCell lnfpEditor = new LayerNameAndFilePathTableCell();
-        col = new TableColumn(0); // keep in sync with SaveLayersModel#columnFilename
+        TableColumn col = new TableColumn(0); // keep in sync with SaveLayersModel#columnFilename
         col.setHeaderValue(tr("Layer Name and File Path"));
         col.setResizable(true);
         col.setCellRenderer(lnfpRenderer);

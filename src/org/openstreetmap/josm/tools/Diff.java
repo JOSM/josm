@@ -115,8 +115,6 @@ public class Diff {
     private int fdiagoff, bdiagoff;
     private final FileData[] filevec;
     private int cost;
-    /** Snakes bigger than this are considered "big". */
-    private static final int SNAKE_LIMIT = 20;
 
     /**
      * Find the midpoint of the shortest edit script for a specified
@@ -167,7 +165,6 @@ public class Diff {
 
         for (int c = 1;; ++c) {
             int d;          /* Active diagonal. */
-            boolean bigSnake = false;
 
             /* Extend the top-down search by an edit step in each diagonal. */
             if (fmin > dmin) {
@@ -181,20 +178,16 @@ public class Diff {
                 --fmax;
             }
             for (d = fmax; d >= fmin; d -= 2) {
-                int x, y, oldx, tlo = fd[fdiagoff + d - 1], thi = fd[fdiagoff + d + 1];
+                int x, y, tlo = fd[fdiagoff + d - 1], thi = fd[fdiagoff + d + 1];
 
                 if (tlo >= thi) {
                     x = tlo + 1;
                 } else {
                     x = thi;
                 }
-                oldx = x;
                 y = x - d;
                 while (x < xlim && y < ylim && xv[x] == yv[y]) {
                     ++x; ++y;
-                }
-                if (x - oldx > SNAKE_LIMIT) {
-                    bigSnake = true;
                 }
                 fd[fdiagoff + d] = x;
                 if (odd && bmin <= d && d <= bmax && bd[bdiagoff + d] <= fd[fdiagoff + d]) {
@@ -215,20 +208,16 @@ public class Diff {
                 --bmax;
             }
             for (d = bmax; d >= bmin; d -= 2) {
-                int x, y, oldx, tlo = bd[bdiagoff + d - 1], thi = bd[bdiagoff + d + 1];
+                int x, y, tlo = bd[bdiagoff + d - 1], thi = bd[bdiagoff + d + 1];
 
                 if (tlo < thi) {
                     x = tlo;
                 } else {
                     x = thi - 1;
                 }
-                oldx = x;
                 y = x - d;
                 while (x > xoff && y > yoff && xv[x - 1] == yv[y - 1]) {
                     --x; --y;
-                }
-                if (oldx - x > SNAKE_LIMIT) {
-                    bigSnake = true;
                 }
                 bd[bdiagoff + d] = x;
                 if (!odd && fmin <= d && d <= fmax && bd[bdiagoff + d] <= fd[fdiagoff + d]) {

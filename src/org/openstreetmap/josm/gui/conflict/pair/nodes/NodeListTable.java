@@ -11,6 +11,13 @@ import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
 public class NodeListTable extends PairTable {
 
+    /**
+     * Constructs a new {@code NodeListTable}.
+     * @param name table name
+     * @param model node merge model
+     * @param dm table model
+     * @param sm selection model
+     */
     public NodeListTable(String name, ListMergeModel<Node> model, OsmPrimitivesTableModel dm, ListSelectionModel sm) {
         super(name, model, dm, new NodeListColumnModel(new NodeListTableCellRenderer()), sm);
     }

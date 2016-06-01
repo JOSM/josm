@@ -149,7 +149,7 @@ public class RelationChecker extends Test {
             if (matches && r != null) {
                 for (Role role: r.roles) {
                     String key = role.key;
-                    List<Role> roleGroup = null;
+                    List<Role> roleGroup;
                     if (allroles.containsKey(key)) {
                         roleGroup = allroles.get(key).roles;
                     } else {

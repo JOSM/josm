@@ -246,7 +246,7 @@ public final class AlignInCircleAction extends JosmAction {
         // Nodes that are not "fix" will be adjust making regular arcs.
         int nodeCount = nodes.size();
         // Search first fixed node
-        int startPosition = 0;
+        int startPosition;
         for (startPosition = 0; startPosition < nodeCount; startPosition++) {
             if (fixNodes.contains(nodes.get(startPosition % nodeCount)))
                 break;

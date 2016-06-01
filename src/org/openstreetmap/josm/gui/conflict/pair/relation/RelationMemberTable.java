@@ -11,6 +11,13 @@ import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
 public class RelationMemberTable extends PairTable {
 
+    /**
+     * Constructs a new {@code RelationMemberTable}.
+     * @param name table name
+     * @param model relation member merge model
+     * @param dm table model
+     * @param sm selection model
+     */
     public RelationMemberTable(String name, ListMergeModel<RelationMember> model, OsmPrimitivesTableModel dm, ListSelectionModel sm) {
         super(name, model, dm, new RelationMemberListColumnModel(), sm);
     }

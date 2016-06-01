@@ -7,14 +7,24 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+/**
+ * Column model used in {@link NodeListTable}.
+ * @since 1622
+ */
 public class NodeListColumnModel extends DefaultTableColumnModel {
+
+    /**
+     * Constructs a new {@code NodeListColumnModel}.
+     * @param renderer table cell renderer
+     */
+    public NodeListColumnModel(TableCellRenderer renderer) {
+        createColumns(renderer);
+    }
 
     protected final void createColumns(TableCellRenderer renderer) {
 
-        TableColumn col = null;
-
         // column 0 - Row num
-        col = new TableColumn(0);
+        TableColumn col = new TableColumn(0);
         col.setHeaderValue("");
         col.setResizable(true);
         col.setPreferredWidth(32);
@@ -28,9 +38,5 @@ public class NodeListColumnModel extends DefaultTableColumnModel {
         col.setResizable(true);
         col.setCellRenderer(renderer);
         addColumn(col);
-    }
-
-    public NodeListColumnModel(TableCellRenderer renderer) {
-        createColumns(renderer);
     }
 }

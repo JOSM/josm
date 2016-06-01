@@ -10,7 +10,7 @@ import javax.swing.table.TableColumnModel;
 
 /**
  * The {@link TableColumnModel} for the table with the list of versions
- *
+ * @since 1709
  */
 public class VersionTableColumnModel extends DefaultTableColumnModel {
 
@@ -25,12 +25,18 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
     /** Column index for user */
     public static final int COL_USER = 4;
 
+    /**
+     * Creates a new {@code VersionTableColumnModel}.
+     */
+    public VersionTableColumnModel() {
+        createColumns();
+    }
+
     protected void createColumns() {
-        TableColumn col = null;
         VersionTable.RadioButtonRenderer bRenderer = new VersionTable.RadioButtonRenderer();
 
         // column 0 - Version
-        col = new TableColumn(COL_VERSION);
+        TableColumn col = new TableColumn(COL_VERSION);
         /* translation note: 3 letter abbr. for "Version" */
         col.setHeaderValue(tr("Ver"));
         col.setCellRenderer(new VersionTable.AlignedRenderer(SwingConstants.CENTER));
@@ -60,12 +66,5 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
         col.setHeaderValue(tr("User"));
         col.setResizable(false);
         addColumn(col);
-    }
-
-    /**
-     * Creates a new {@code VersionTableColumnModel}.
-     */
-    public VersionTableColumnModel() {
-        createColumns();
     }
 }

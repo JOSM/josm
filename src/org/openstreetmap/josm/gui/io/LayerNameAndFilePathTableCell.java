@@ -31,15 +31,14 @@ import org.openstreetmap.josm.tools.GBC;
 
 /**
  * Display and edit layer name and file path in a <code>JTable</code>.
- * 
+ *
  * Note: Do not use the same object both as <code>TableCellRenderer</code> and
  * <code>TableCellEditor</code> - this can mess up the current editor component
  * by subsequent calls to the renderer (#12462).
  */
 class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
     private static final Color colorError = new Color(255, 197, 197);
-    private static final String separator = System.getProperty("file.separator");
-    private static final String ellipsis = '…' + separator;
+    private static final String ELLIPSIS = '…' + File.separator;
 
     private final JLabel lblLayerName = new JLabel();
     private final JLabel lblFilename = new JLabel("");
@@ -150,7 +149,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
      * @return tooltip that should be added to the panel
      */
     private String addLblFilename(SaveLayerInfo info) {
-        String tooltip = "";
+        String tooltip;
         boolean error = false;
         if (info.getFile() == null) {
             error = info.isDoSaveToFile();
@@ -184,13 +183,13 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
         boolean hasEllipsis = false;
         while (t != null && !t.isEmpty()) {
             int txtwidth = lblFilename.getFontMetrics(lblFilename.getFont()).stringWidth(t);
-            if (txtwidth < lblFilename.getWidth() || t.lastIndexOf(separator) < ellipsis.length()) {
+            if (txtwidth < lblFilename.getWidth() || t.lastIndexOf(File.separator) < ELLIPSIS.length()) {
                 break;
             }
             // remove ellipsis, if present
-            t = hasEllipsis ? t.substring(ellipsis.length()) : t;
+            t = hasEllipsis ? t.substring(ELLIPSIS.length()) : t;
             // cut next block, and re-add ellipsis
-            t = ellipsis + t.substring(t.indexOf(separator) + 1);
+            t = ELLIPSIS + t.substring(t.indexOf(File.separator) + 1);
             hasEllipsis = true;
         }
         return t;

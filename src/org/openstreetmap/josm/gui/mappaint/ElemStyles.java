@@ -280,7 +280,7 @@ public class ElemStyles implements PreferenceChangedListener {
                     }
                     if (!hasIndependentElemStyle && !multipolygon.getOuterWays().isEmpty()) {
                         Color mpColor = null;
-                        StyleElementList mpElemStyles = null;
+                        StyleElementList mpElemStyles;
                         synchronized (ref) {
                             mpElemStyles = get(ref, scale, nc);
                         }

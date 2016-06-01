@@ -153,7 +153,7 @@ public class ChangePropertyCommand extends Command {
         final String text;
         if (objects.size() == 1 && tags.size() == 1) {
             OsmPrimitive primitive = objects.get(0);
-            String msg = "";
+            String msg;
             Map.Entry<String, String> entry = tags.entrySet().iterator().next();
             if (entry.getValue() == null) {
                 switch(OsmPrimitiveType.from(primitive)) {

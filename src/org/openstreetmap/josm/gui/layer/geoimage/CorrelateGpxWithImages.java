@@ -720,7 +720,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         gbc = GBC.eol();
         gbc.gridx = 0;
-        gbc.gridy = y++;
+        gbc.gridy = y;
         panelTf.add(cbShowThumbs, gbc);
 
         final JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -1248,7 +1248,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             return lstSize-1;
 
         // The searched index is somewhere in the middle, do a binary search from the beginning
-        int curIndex = 0;
+        int curIndex;
         int startIndex = 0;
         int endIndex = lstSize-1;
         while (endIndex - startIndex > 1) {

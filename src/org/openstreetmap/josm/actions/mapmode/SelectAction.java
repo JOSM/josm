@@ -1195,9 +1195,8 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 Collection<WaySegment> selVirtualWays = new LinkedList<>();
                 Pair<Node, Node> vnp = null, wnp = new Pair<>(null, null);
 
-                Way w = null;
                 for (WaySegment ws : mv.getNearestWaySegments(p, mv.isSelectablePredicate)) {
-                    w = ws.way;
+                    Way w = ws.way;
 
                     wnp.a = w.getNode(ws.lowerIndex);
                     wnp.b = w.getNode(ws.lowerIndex + 1);

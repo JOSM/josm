@@ -65,10 +65,8 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
         RelationMemberConflictDecisionRenderer decisionRenderer = new RelationMemberConflictDecisionRenderer();
         RelationMemberConflictDecisionEditor decisionEditor = new RelationMemberConflictDecisionEditor();
 
-        TableColumn col = null;
-
         // column 0 - Relation
-        col = new TableColumn(0);
+        TableColumn col = new TableColumn(0);
         col.setHeaderValue("Relation");
         col.setResizable(true);
         col.setWidth(100);

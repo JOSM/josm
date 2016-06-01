@@ -139,10 +139,8 @@ public abstract class AbstractReader {
             );
             List<RelationMember> relationMembers = new ArrayList<>();
             for (RelationMemberData rm : entry.getValue()) {
-                OsmPrimitive primitive = null;
-
                 // lookup the member from the map of already created primitives
-                primitive = externalIdMap.get(new SimplePrimitiveId(rm.getMemberId(), rm.getMemberType()));
+                OsmPrimitive primitive = externalIdMap.get(new SimplePrimitiveId(rm.getMemberId(), rm.getMemberType()));
 
                 if (primitive == null) {
                     if (rm.getMemberId() <= 0)

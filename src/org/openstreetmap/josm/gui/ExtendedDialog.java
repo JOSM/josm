@@ -385,7 +385,7 @@ public class ExtendedDialog extends JDialog {
             cp.add(togglePanel, gc);
         }
 
-        gc.gridy = y++;
+        gc.gridy = y;
         gc.anchor = GridBagConstraints.CENTER;
             gc.insets = new Insets(5, 5, 5, 5);
         cp.add(buttonsPanel, gc);

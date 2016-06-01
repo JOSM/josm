@@ -48,7 +48,7 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
                 GuiHelper.runInEDTAndWait(new Runnable() {
                     @Override
                     public void run() {
-                        CredentialDialog dialog = null;
+                        CredentialDialog dialog;
                         if (requestorType.equals(RequestorType.PROXY))
                             dialog = CredentialDialog.getHttpProxyCredentialDialog(
                                     username, password, host, getSaveUsernameAndPasswordCheckboxText());

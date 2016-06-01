@@ -774,7 +774,7 @@ public class JoinAreasAction extends JosmAction {
      * @param parts the split parts of the way
      * @param isInner - if true, reverts the direction (for multipolygon islands)
      * @return list of parts, marked with the inside orientation.
-     * @throws IllegalArgumentException if parts is empty
+     * @throws IllegalArgumentException if parts is empty or not circular
      */
     private static List<WayInPolygon> markWayInsideSide(List<Way> parts, boolean isInner) {
 
@@ -784,7 +784,7 @@ public class JoinAreasAction extends JosmAction {
         for (int pos = 0; pos < parts.size(); pos++) {
 
             if (!parts.get(pos).lastNode().equals(parts.get((pos + 1) % parts.size()).firstNode()))
-                throw new RuntimeException("Way not circular");
+                throw new IllegalArgumentException("Way not circular");
 
             nextWayMap.put(parts.get(pos), parts.get((pos + 1) % parts.size()));
         }
@@ -817,9 +817,8 @@ public class JoinAreasAction extends JosmAction {
         boolean wayClockwise; // orientation of the top way.
 
         if (topNode.equals(topWay.firstNode()) || topNode.equals(topWay.lastNode())) {
-            Node headNode = null; // the node at junction
-            Node prevNode = null; // last node from previous path
-            wayClockwise = false;
+            Node headNode; // the node at junction
+            Node prevNode; // last node from previous path
 
             //node is in split point - find the outermost way from this point
 

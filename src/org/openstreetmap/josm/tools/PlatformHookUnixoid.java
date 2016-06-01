@@ -236,7 +236,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             boolean rpm  = Files.exists(Paths.get("/bin/rpm"));
             if (dpkg || rpm || eque) {
                 for (String packageName : packageNames) {
-                    String[] args = null;
+                    String[] args;
                     if (dpkg) {
                         args = new String[] {"dpkg-query", "--show", "--showformat", "${Architecture}-${Version}", packageName};
                     } else if (eque) {

@@ -762,13 +762,13 @@ public class HistoryBrowserModel extends ChangeNotifier implements LayerChangeLi
         OsmDataLayer l = (OsmDataLayer) newLayer;
         l.data.addDataSetListener(this);
         OsmPrimitive primitive = history != null ? l.data.getPrimitiveById(history.getId(), history.getType()) : null;
-        HistoryOsmPrimitive latest;
+        HistoryOsmPrimitive newLatest;
         if (canShowAsLatest(primitive)) {
-            latest = new HistoryPrimitiveBuilder().build(primitive);
+            newLatest = new HistoryPrimitiveBuilder().build(primitive);
         } else {
-            latest = null;
+            newLatest = null;
         }
-        setLatest(latest);
+        setLatest(newLatest);
         fireModelChange();
     }
 

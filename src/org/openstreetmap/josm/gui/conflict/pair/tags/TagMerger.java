@@ -359,7 +359,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() != 2)
                 return;
-            JTable table = null;
+            JTable table;
             MergeDecisionType mergeDecision;
 
             if (e.getSource() == mineTable) {
