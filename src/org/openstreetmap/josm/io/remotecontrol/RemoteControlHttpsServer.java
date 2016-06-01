@@ -215,9 +215,6 @@ public class RemoteControlHttpsServer extends Thread {
      */
     public static Path setupJosmKeystore() throws IOException, GeneralSecurityException {
 
-        char[] storePassword = KEYSTORE_PASSWORD.get().toCharArray();
-        char[] entryPassword = KEYENTRY_PASSWORD.get().toCharArray();
-
         Path dir = Paths.get(RemoteControl.getRemoteControlDir());
         Path path = dir.resolve(KEYSTORE_FILENAME);
         Files.createDirectories(dir);
@@ -248,8 +245,8 @@ public class RemoteControlHttpsServer extends Thread {
             KEYSTORE_PASSWORD.put(new BigInteger(130, random).toString(32));
             KEYENTRY_PASSWORD.put(new BigInteger(130, random).toString(32));
 
-            storePassword = KEYSTORE_PASSWORD.get().toCharArray();
-            entryPassword = KEYENTRY_PASSWORD.get().toCharArray();
+            char[] storePassword = KEYSTORE_PASSWORD.get().toCharArray();
+            char[] entryPassword = KEYENTRY_PASSWORD.get().toCharArray();
 
             ks.setKeyEntry(ENTRY_ALIAS, pair.getPrivate(), entryPassword, new Certificate[]{cert});
             ks.store(Files.newOutputStream(path, StandardOpenOption.CREATE), storePassword);

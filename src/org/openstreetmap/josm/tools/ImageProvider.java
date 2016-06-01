@@ -873,7 +873,7 @@ public class ImageProvider {
             String mediatype = m.group(1);
             if ("image/svg+xml".equals(mediatype)) {
                 String s = new String(bytes, StandardCharsets.UTF_8);
-                SVGDiagram svg = null;
+                SVGDiagram svg;
                 synchronized (getSvgUniverse()) {
                     URI uri = getSvgUniverse().loadSVG(new StringReader(s), Utils.encodeUrl(s));
                     svg = getSvgUniverse().getDiagram(uri);
@@ -1002,7 +1002,7 @@ public class ImageProvider {
     private static ImageResource getIfAvailableLocalURL(URL path, ImageType type) {
         switch (type) {
         case SVG:
-            SVGDiagram svg = null;
+            SVGDiagram svg;
             synchronized (getSvgUniverse()) {
                 URI uri = getSvgUniverse().loadSVG(path);
                 svg = getSvgUniverse().getDiagram(uri);
@@ -1048,7 +1048,7 @@ public class ImageProvider {
     }
 
     private static URL getImageUrl(String imageName, Collection<String> dirs, Collection<ClassLoader> additionalClassLoaders) {
-        URL u = null;
+        URL u;
 
         // Try passed directories first
         if (dirs != null) {
@@ -1224,7 +1224,7 @@ public class ImageProvider {
             originalAngle = 360L;
         }
 
-        ImageResource imageResource = null;
+        ImageResource imageResource;
 
         synchronized (ROTATE_CACHE) {
             Map<Long, ImageResource> cacheByAngle = ROTATE_CACHE.get(img);

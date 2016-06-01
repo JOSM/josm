@@ -145,7 +145,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                     OsmPrimitive primitive = entry.getKey();
 
                     // create the clone
-                    OsmPrimitive clone = null;
+                    OsmPrimitive clone;
                     if (primitive instanceof Way) {
                         clone = new Way((Way) primitive);
                     } else if (primitive instanceof Node) {

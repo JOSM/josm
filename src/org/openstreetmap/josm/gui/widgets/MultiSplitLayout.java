@@ -606,7 +606,7 @@ public class MultiSplitLayout implements LayoutManager {
         } else if (root instanceof Split) {
             Split split = (Split) root;
             Iterator<Node> splitChildren = split.getChildren().iterator();
-            Rectangle childBounds = null;
+            Rectangle childBounds;
             int dividerSize = getDividerSize();
 
             /* Layout the Split's child Nodes' along the X axis.  The bounds
@@ -623,7 +623,7 @@ public class MultiSplitLayout implements LayoutManager {
                     Divider dividerChild =
                         splitChildren.hasNext() ? (Divider) (splitChildren.next()) : null;
 
-                    double childWidth = 0.0;
+                    double childWidth;
                     if (getFloatingDividers()) {
                         childWidth = preferredNodeSize(splitChild).getWidth();
                     } else {

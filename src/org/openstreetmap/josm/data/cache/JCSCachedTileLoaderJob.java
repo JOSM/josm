@@ -255,7 +255,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     private void finishLoading(LoadResult result) {
-        Set<ICachedLoaderListener> listeners = null;
+        Set<ICachedLoaderListener> listeners;
         synchronized (inProgress) {
             listeners = inProgress.remove(getUrlNoException().toString());
         }

@@ -19,9 +19,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is the {@link TableCellRenderer} used in the node tables of {@link NodeListMerger}.
- *
+ * @since 1622
  */
-public  class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
+public class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
 
     private final ImageIcon icon;
     private final transient Border rowNumberBorder;
@@ -117,7 +117,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
                 break;
             default:
                 // should not happen
-                throw new RuntimeException(MessageFormat.format("Unexpected column index. Got {0}.", column));
+                throw new IllegalArgumentException(MessageFormat.format("Unexpected column index. Got {0}.", column));
             }
         }
         return this;

@@ -6,14 +6,24 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
+/**
+ * Column model used in {@link RelationMemberTable}.
+ * @since 1622
+ */
 public class RelationMemberListColumnModel extends DefaultTableColumnModel {
 
+    /**
+     * Constructs a new {@code RelationMemberListColumnModel}.
+     */
+    public RelationMemberListColumnModel() {
+        createColumns();
+    }
+
     protected final void createColumns() {
-        TableColumn col = null;
         RelationMemberTableCellRenderer renderer = new RelationMemberTableCellRenderer();
 
         // column 0 - Row num
-        col = new TableColumn(0);
+        TableColumn col = new TableColumn(0);
         col.setHeaderValue("");
         col.setResizable(true);
         col.setPreferredWidth(32);
@@ -36,9 +46,5 @@ public class RelationMemberListColumnModel extends DefaultTableColumnModel {
         col.setResizable(true);
         col.setCellRenderer(renderer);
         addColumn(col);
-    }
-
-    public RelationMemberListColumnModel() {
-        createColumns();
     }
 }

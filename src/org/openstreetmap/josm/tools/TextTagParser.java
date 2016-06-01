@@ -174,7 +174,8 @@ public final class TextTagParser {
          String[] lines = text.split(splitRegex);
          Pattern p = Pattern.compile(tagRegex);
          Map<String, String> tags = new HashMap<>();
-         String k = null, v = null;
+         String k;
+         String v;
          for (String  line: lines) {
             if (line.trim().isEmpty()) continue; // skip empty lines
             Matcher m = p.matcher(line);

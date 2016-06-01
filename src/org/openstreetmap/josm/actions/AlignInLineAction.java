@@ -172,7 +172,7 @@ public final class AlignInLineAction extends JosmAction {
         List<Way> selectedWays = new ArrayList<>(getCurrentDataSet().getSelectedWays());
 
         try {
-            Command cmd = null;
+            Command cmd;
             // Decide what to align based on selection:
 
             if (selectedNodes.isEmpty() && !selectedWays.isEmpty()) {
@@ -181,7 +181,7 @@ public final class AlignInLineAction extends JosmAction {
             } else if (selectedNodes.size() == 1) {
                 // Only 1 node selected -> align this node relative to referers way
                 Node selectedNode = selectedNodes.get(0);
-                List<Way> involvedWays = null;
+                List<Way> involvedWays;
                 if (selectedWays.isEmpty())
                     // No selected way, all way containing this node are used
                     involvedWays = OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class);

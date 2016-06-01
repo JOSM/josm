@@ -59,8 +59,8 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         }
         int w = 2;
         int p = 2 + w + 1;
-        int y1 = 0;
-        int y2 = 0;
+        int y1;
+        int y2;
 
         if (value.linkPrev) {
             g.setColor(Color.black);

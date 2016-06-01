@@ -144,7 +144,7 @@ public class WayConnectionTypeCalculator {
     private void determineOnewayConnectionType(final List<WayConnectionType> con,
             RelationMember m, int i, final WayConnectionType wct) {
         Direction dirFW = determineDirection(lastForwardWay, con.get(lastForwardWay).direction, i);
-        Direction dirBW = NONE;
+        Direction dirBW;
         if (onewayBeginning) {
             if (lastBackwardWay < 0) {
                 dirBW = determineDirection(firstGroupIdx, reverse(con.get(firstGroupIdx).direction), i, true);

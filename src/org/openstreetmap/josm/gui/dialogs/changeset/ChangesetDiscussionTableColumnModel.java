@@ -12,11 +12,17 @@ import javax.swing.table.TableColumn;
  */
 public class ChangesetDiscussionTableColumnModel extends DefaultTableColumnModel {
 
+    /**
+     * Constructs a new {@code ChangesetContentTableColumnModel}.
+     */
+    public ChangesetDiscussionTableColumnModel() {
+        createColumns();
+    }
+
     protected void createColumns() {
-        TableColumn col = null;
         ChangesetDiscussionTableCellRenderer renderer = new ChangesetDiscussionTableCellRenderer();
         // column 0 - Date
-        col = new TableColumn(0, 150);
+        TableColumn col = new TableColumn(0, 150);
         col.setHeaderValue(tr("Date"));
         col.setResizable(true);
         col.setMaxWidth(200);
@@ -37,12 +43,5 @@ public class ChangesetDiscussionTableColumnModel extends DefaultTableColumnModel
         col.setResizable(true);
         col.setCellRenderer(renderer);
         addColumn(col);
-    }
-
-    /**
-     * Constructs a new {@code ChangesetContentTableColumnModel}.
-     */
-    public ChangesetDiscussionTableColumnModel() {
-        createColumns();
     }
 }

@@ -35,7 +35,7 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
             while (!eventsInEDT.isEmpty()) {
                 DataSet dataSet = null;
                 AbstractDatasetChangedEvent consolidatedEvent = null;
-                AbstractDatasetChangedEvent event = null;
+                AbstractDatasetChangedEvent event;
 
                 while ((event = eventsInEDT.poll()) != null) {
                     fireEvents(inEDTListeners, event);

@@ -32,12 +32,11 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
 
     protected void renderNode(TwoColumnDiff.Item item, boolean isSelected) {
         String text = "";
-        Color bgColor = Color.WHITE;
         setIcon(nodeIcon);
         if (item.value != null) {
             text = tr("Node {0}", item.value.toString());
         }
-        bgColor = item.state.getColor();
+        Color bgColor = item.state.getColor();
         if (item.state == DiffItemType.EMPTY) {
             text = "";
             setIcon(null);

@@ -110,7 +110,7 @@ public class DataSetMerger {
         // If we get here we didn't find a suitable primitive in
         // the target dataset. Create a clone and add it to the target dataset.
         //
-        OsmPrimitive target = null;
+        OsmPrimitive target;
         switch(source.getType()) {
         case NODE: target = source.isNew() ? new Node() : new Node(source.getId()); break;
         case WAY: target = source.isNew() ? new Way() : new Way(source.getId()); break;

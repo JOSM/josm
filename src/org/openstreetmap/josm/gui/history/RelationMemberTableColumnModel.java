@@ -8,15 +8,22 @@ import javax.swing.table.TableColumn;
 
 /**
  * The {@link javax.swing.table.TableColumnModel} for the table with the list of relation members.
- *
+ * @since 1709
  */
 public class RelationMemberTableColumnModel extends DefaultTableColumnModel {
+
+    /**
+     * Constructs a new {@code RelationMemberTableColumnModel}.
+     */
+    public RelationMemberTableColumnModel() {
+        createColumns();
+    }
+
     protected void createColumns() {
-        TableColumn col = null;
         RelationMemberListTableCellRenderer renderer = new RelationMemberListTableCellRenderer();
 
         // column 0 - Version
-        col = new TableColumn(0);
+        TableColumn col = new TableColumn(0);
         col.setHeaderValue(tr("Role"));
         col.setCellRenderer(renderer);
         addColumn(col);
@@ -26,9 +33,5 @@ public class RelationMemberTableColumnModel extends DefaultTableColumnModel {
         col.setHeaderValue(tr("Object"));
         col.setCellRenderer(renderer);
         addColumn(col);
-    }
-
-    public RelationMemberTableColumnModel() {
-        createColumns();
     }
 }

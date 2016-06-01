@@ -101,7 +101,6 @@ public class SwissObliqueMercator extends AbstractProj {
 
         double lambda = l / alpha;
         double phi = b;
-        double s = 0;
 
         double prevPhi = -1000;
         int iteration = 0;
@@ -110,7 +109,7 @@ public class SwissObliqueMercator extends AbstractProj {
             if (++iteration > 30)
                 throw new RuntimeException("Two many iterations");
             prevPhi = phi;
-            s = 1 / alpha * (log(tan(PI / 4 + b / 2)) - k) + ellps.e
+            double s = 1 / alpha * (log(tan(PI / 4 + b / 2)) - k) + ellps.e
             * log(tan(PI / 4 + asin(ellps.e * sin(phi)) / 2));
             phi = 2 * atan(exp(s)) - PI / 2;
         }

@@ -315,7 +315,6 @@ public class OsmReader extends AbstractReader {
     }
 
     private RelationMemberData parseRelationMember(Relation r) throws XMLStreamException {
-        String role = null;
         OsmPrimitiveType type = null;
         long id = 0;
         String value = parser.getAttributeValue(null, "ref");
@@ -338,8 +337,7 @@ public class OsmReader extends AbstractReader {
             throwException(tr("Illegal value for attribute ''type'' on member {0} in relation {1}. Got {2}.",
                     Long.toString(id), Long.toString(r.getUniqueId()), value), e);
         }
-        value = parser.getAttributeValue(null, "role");
-        role = value;
+        String role = parser.getAttributeValue(null, "role");
 
         if (id == 0) {
             throwException(tr("Incomplete <member> specification with ref=0"));

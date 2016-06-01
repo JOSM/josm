@@ -683,7 +683,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             Node n2New = new Node(Main.getProjection().eastNorth2latlon(newN2en));
             wnew.addNode(insertionPoint, n2New);
             wayWasModified = true;
-            insertionPoint++;
             cmds.add(new AddCommand(n2New));
             changedNodes.add(n2New);
         }

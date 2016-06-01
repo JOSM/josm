@@ -71,7 +71,7 @@ public final class NTV2Util {
      * @return the float
      */
     public static float getFloat(byte[] b, boolean bigEndian) {
-        int i = 0;
+        int i;
         if (bigEndian) {
             i = getIntBE(b, 0);
         } else {
@@ -88,8 +88,8 @@ public final class NTV2Util {
      * @return the double
      */
     public static double getDouble(byte[] b, boolean bigEndian) {
-        int i = 0;
-        int j = 0;
+        int i;
+        int j;
         if (bigEndian) {
             i = getIntBE(b, 0);
             j = getIntBE(b, 4);
@@ -97,8 +97,7 @@ public final class NTV2Util {
             i = getIntLE(b, 4);
             j = getIntLE(b, 0);
         }
-        long l = ((long) i << 32) |
-        (j & 0x00000000FFFFFFFFL);
+        long l = ((long) i << 32) | (j & 0x00000000FFFFFFFFL);
         return Double.longBitsToDouble(l);
     }
 }

@@ -148,7 +148,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                     // Lookup for the primitive version at the specified timestamp
                     HistoryOsmPrimitive hp = history.getByDate(date);
                     if (hp != null) {
-                        PrimitiveData data = null;
+                        PrimitiveData data;
 
                         switch (p.getType()) {
                         case NODE:

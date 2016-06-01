@@ -397,9 +397,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Collection<OsmPrimitive> selection = new ArrayList<>(ds.getSelected());
 
         boolean newNode = false;
-        Node n = null;
-
-        n = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
+        Node n = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
         if (ctrl) {
             Iterator<Way> it = getCurrentDataSet().getSelectedWays().iterator();
             if (it.hasNext()) {

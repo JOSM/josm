@@ -10,15 +10,21 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 
 /**
  * The column model for the changeset content
- *
+ * @since 2689
  */
 public class ChangesetContentTableColumnModel extends DefaultTableColumnModel {
 
+    /**
+     * Constructs a new {@code ChangesetContentTableColumnModel}.
+     */
+    public ChangesetContentTableColumnModel() {
+        createColumns();
+    }
+
     protected void createColumns() {
-        TableColumn col = null;
         ChangesetContentTableCellRenderer renderer = new ChangesetContentTableCellRenderer();
         // column 0 - type
-        col = new TableColumn(0);
+        TableColumn col = new TableColumn(0);
         col.setHeaderValue("");
         col.setResizable(true);
         col.setWidth(50);
@@ -43,12 +49,5 @@ public class ChangesetContentTableColumnModel extends DefaultTableColumnModel {
         col.setPreferredWidth(200);
         col.setCellRenderer(new OsmPrimitivRenderer());
         addColumn(col);
-    }
-
-    /**
-     * Constructs a new {@code ChangesetContentTableColumnModel}.
-     */
-    public ChangesetContentTableColumnModel() {
-        createColumns();
     }
 }

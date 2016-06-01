@@ -70,7 +70,7 @@ public interface Instruction extends StyleKeys {
 
         @Override
         public void execute(Environment env) {
-            Object value = null;
+            Object value;
             if (val instanceof Expression) {
                 value = ((Expression) val).evaluate(env);
             } else {
@@ -87,7 +87,7 @@ public interface Instruction extends StyleKeys {
         @Override
         public String toString() {
             return key + ": " + (val instanceof float[] ? Arrays.toString((float[]) val) :
-                val instanceof String ? "String<"+val+'>' : val) + ';';
+                (val instanceof String ? ("String<"+val+'>') : val)) + ';';
         }
     }
 }

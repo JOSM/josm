@@ -271,10 +271,8 @@ public class AddTagsDialog extends ExtendedDialog {
 
                 @Override
                 public void run() {
-                    String[] tags = null;
-                    tags = Utils.decodeUrl(args.get("addtags")).split("\\|");
                     Set<String> tagSet = new HashSet<>();
-                    for (String tag : tags) {
+                    for (String tag : Utils.decodeUrl(args.get("addtags")).split("\\|")) {
                         if (!tag.trim().isEmpty() && tag.contains("=")) {
                             tagSet.add(tag.trim());
                         }

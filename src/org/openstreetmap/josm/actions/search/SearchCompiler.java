@@ -679,7 +679,7 @@ public class SearchCompiler {
                     }
                 }
             } else {
-                String mv = null;
+                String mv;
 
                 if ("timestamp".equals(key) && osm instanceof OsmPrimitive) {
                     mv = DateUtils.fromTimestamp(((OsmPrimitive) osm).getRawTimestamp());
