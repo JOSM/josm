@@ -17,7 +17,7 @@ import java.util.RandomAccess;
  * @author nenik
  * @param <E> the type of elements in this list
  */
-public final class CopyList<E> extends AbstractList<E> implements RandomAccess, Cloneable {
+public final class CopyList<E> extends AbstractList<E> implements RandomAccess {
     private E[] array;
     private int size;
     private boolean pristine;
@@ -112,16 +112,6 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
     }
 
     // helpers:
-    /**
-     * Returns another independent copy-on-write copy of this <tt>List</tt>
-     * instance. Neither the elements nor the backing storage are copied.
-     *
-     * @return a clone of this <tt>CopyList</tt> instance
-     */
-    @Override
-    public Object clone() {
-        return new CopyList<>(array, size);
-    }
 
     private void rangeCheck(int index) {
         if (index >= size || index < 0) throw new IndexOutOfBoundsException("Index:" + index + " Size:" + size);

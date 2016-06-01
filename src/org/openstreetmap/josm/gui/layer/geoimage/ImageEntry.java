@@ -311,13 +311,11 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
 
     @Override
     public ImageEntry clone() {
-        Object c;
         try {
-            c = super.clone();
+            return (ImageEntry) super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
-        return (ImageEntry) c;
     }
 
     @Override
