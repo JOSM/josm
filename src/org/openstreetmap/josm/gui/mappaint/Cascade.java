@@ -196,11 +196,15 @@ public final class Cascade implements Cloneable {
 
     @Override
     public Cascade clone() {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> clonedProp = (Map<String, Object>) ((HashMap) this.prop).clone();
-        Cascade c = new Cascade();
-        c.prop = clonedProp;
-        return c;
+        try {
+            Cascade c = (Cascade) super.clone();
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            Map<String, Object> clonedProp = (Map<String, Object>) ((HashMap) this.prop).clone();
+            c.prop = clonedProp;
+            return c;
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override

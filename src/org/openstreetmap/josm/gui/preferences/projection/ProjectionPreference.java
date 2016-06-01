@@ -86,7 +86,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * Lambert conic conform 4 zones using the French geodetic system NTF.
      *
-     * This newer version uses the grid translation NTF<->RGF93 provided by IGN for a submillimetric accuracy.
+     * This newer version uses the grid translation NTF&lt;-&gt;RGF93 provided by IGN for a submillimetric accuracy.
      * (RGF93 is the French geodetic system similar to WGS84 but not mathematically equal)
      *
      * Source: http://geodesie.ign.fr/contenu/fichiers/Changement_systeme_geodesique.pdf

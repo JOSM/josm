@@ -131,10 +131,8 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * Constructs a new {@code DataSet}.
      */
     public DataSet() {
-        /*
-         * Transparently register as projection change lister. No need to explicitly remove the
-         * the listener, projection change listeners are managed as WeakReferences.
-         */
+        // Transparently register as projection change listener. No need to explicitly remove
+        // the listener, projection change listeners are managed as WeakReferences.
         Main.addProjectionChangeListener(this);
     }
 
@@ -878,7 +876,8 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
     public DataSet clone() {
         getReadLock().lock();
         try {
-            DataSet ds = new DataSet();
+            DataSet ds = (DataSet) super.clone();
+            Main.addProjectionChangeListener(ds);
             Map<OsmPrimitive, OsmPrimitive> primMap = new HashMap<>();
             for (Node n : nodes) {
                 Node newNode = new Node(n);
@@ -916,6 +915,8 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
             }
             ds.version = version;
             return ds;
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException(e);
         } finally {
             getReadLock().unlock();
         }
