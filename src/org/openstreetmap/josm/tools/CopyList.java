@@ -165,6 +165,9 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess {
 
         @Override
         public E next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             checkForComodification();
             try {
                 E next = array[cursor];
