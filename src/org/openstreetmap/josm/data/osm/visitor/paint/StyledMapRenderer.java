@@ -621,8 +621,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     int y = (int) (centeredNBounds.getMinY() - nb.getMinY());
                     displayText(null, name, x, y, osm.isDisabled(), text);
                     g.setFont(defaultFont);
-                } else if (Main.isDebugEnabled()) {
-                    Main.debug("Couldn't find a correct label placement for "+osm+" / "+name);
+                } else if (Main.isTraceEnabled()) {
+                    Main.trace("Couldn't find a correct label placement for "+osm+" / "+name);
                 }
             }
         }
