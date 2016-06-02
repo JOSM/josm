@@ -658,7 +658,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     }
                 }
                 drawArea(r, p,
-                        pd.selected ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
+                        pd.isSelected() ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
                         fillImage, extent, pfClip, disabled, text);
             }
         }

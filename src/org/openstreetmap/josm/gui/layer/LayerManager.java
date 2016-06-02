@@ -241,7 +241,7 @@ public class LayerManager {
      * <pre>
      *     List&lt;WMSLayer&gt; wmsLayers = getLayersOfType(WMSLayer.class);
      * </pre>
-     *
+     * @param <T> The layer type
      * @param ofType The layer type.
      * @return an unmodifiable list of layers of a certain type.
      */

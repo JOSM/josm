@@ -123,7 +123,7 @@ public class Multipolygon {
             }
         }
 
-        public boolean isOuterRole(String role) {
+        boolean isOuterRole(String role) {
             if (role == null) return false;
             for (String candidate: outerExactRoles) {
                 if (role.equals(candidate)) return true;
@@ -134,7 +134,7 @@ public class Multipolygon {
             return false;
         }
 
-        public boolean isInnerRole(String role) {
+        boolean isInnerRole(String role) {
             if (role == null) return false;
             for (String candidate: innerExactRoles) {
                 if (role.equals(candidate)) return true;
@@ -163,34 +163,83 @@ public class Multipolygon {
     }
 
     public static class JoinedWay {
-        private final List<Node> nodes;
-        private final Collection<Long> wayIds;
-        private final boolean selected;
+        protected final List<Node> nodes;
+        protected final Collection<Long> wayIds;
+        protected boolean selected;
 
+        /**
+         * Constructs a new {@code JoinedWay}.
+         * @param nodes list of nodes
+         * @param wayIds list of way IDs
+         * @param selected whether joined way is selected or not
+         */
         public JoinedWay(List<Node> nodes, Collection<Long> wayIds, boolean selected) {
-            this.nodes = nodes;
-            this.wayIds = wayIds;
+            this.nodes = new ArrayList<>(nodes);
+            this.wayIds = new ArrayList<>(wayIds);
             this.selected = selected;
         }
 
+        /**
+         * Replies the list of nodes.
+         * @return the list of nodes
+         */
         public List<Node> getNodes() {
-            return nodes;
+            return Collections.unmodifiableList(nodes);
         }
 
+        /**
+         * Replies the list of way IDs.
+         * @return the list of way IDs
+         */
         public Collection<Long> getWayIds() {
-            return wayIds;
+            return Collections.unmodifiableCollection(wayIds);
         }
 
-        public boolean isSelected() {
+        /**
+         * Determines if this is selected.
+         * @return {@code true} if this is selected
+         */
+        public final boolean isSelected() {
             return selected;
         }
 
+        /**
+         * Sets whether this is selected
+         * @param selected {@code true} if this is selected
+         * @since 10312
+         */
+        public final void setSelected(boolean selected) {
+            this.selected = selected;
+        }
+
+        /**
+         * Determines if this joined way is closed.
+         * @return {@code true} if this joined way is closed
+         */
         public boolean isClosed() {
-            return nodes.isEmpty() || nodes.get(nodes.size() - 1).equals(nodes.get(0));
+            return nodes.isEmpty() || getLastNode().equals(getFirstNode());
+        }
+
+        /**
+         * Returns the first node.
+         * @return the first node
+         * @since 10312
+         */
+        public Node getFirstNode() {
+            return nodes.get(0);
+        }
+
+        /**
+         * Returns the last node.
+         * @return the last node
+         * @since 10312
+         */
+        public Node getLastNode() {
+            return nodes.get(nodes.size() - 1);
         }
     }
 
-    public static class PolyData {
+    public static class PolyData extends JoinedWay {
         public enum Intersection {
             INSIDE,
             OUTSIDE,
@@ -198,28 +247,41 @@ public class Multipolygon {
         }
 
         private final Path2D.Double poly;
-        public boolean selected;
         private Rectangle2D bounds;
-        private final Collection<Long> wayIds;
-        private final List<Node> nodes;
         private final List<PolyData> inners;
 
+        /**
+         * Constructs a new {@code PolyData} from a closed way.
+         * @param closedWay closed way
+         */
         public PolyData(Way closedWay) {
             this(closedWay.getNodes(), closedWay.isSelected(), Collections.singleton(closedWay.getUniqueId()));
         }
 
+        /**
+         * Constructs a new {@code PolyData} from a {@link JoinedWay}.
+         * @param joinedWay joined way
+         */
         public PolyData(JoinedWay joinedWay) {
-            this(joinedWay.getNodes(), joinedWay.isSelected(), joinedWay.getWayIds());
+            this(joinedWay.nodes, joinedWay.selected, joinedWay.wayIds);
         }
 
         private PolyData(List<Node> nodes, boolean selected, Collection<Long> wayIds) {
-            this.wayIds = Collections.unmodifiableCollection(wayIds);
-            this.nodes = new ArrayList<>(nodes);
-            this.selected = selected;
+            super(nodes, wayIds, selected);
             this.inners = new ArrayList<>();
             this.poly = new Path2D.Double();
             this.poly.setWindingRule(Path2D.WIND_EVEN_ODD);
             buildPoly();
+        }
+
+        /**
+         * Constructs a new {@code PolyData} from an existing {@code PolyData}.
+         * @param copy existing instance
+         */
+        public PolyData(PolyData copy) {
+            super(copy.nodes, copy.wayIds, copy.selected);
+            this.poly = (Path2D.Double) copy.poly.clone();
+            this.inners = new ArrayList<>(copy.inners);
         }
 
         private void buildPoly() {
@@ -241,14 +303,6 @@ public class Multipolygon {
             for (PolyData inner : inners) {
                 appendInner(inner.poly);
             }
-        }
-
-        public PolyData(PolyData copy) {
-            this.selected = copy.selected;
-            this.poly = (Path2D.Double) copy.poly.clone();
-            this.wayIds = Collections.unmodifiableCollection(copy.wayIds);
-            this.nodes = new ArrayList<>(copy.nodes);
-            this.inners = new ArrayList<>(copy.inners);
         }
 
         public Intersection contains(Path2D.Double p) {
@@ -292,16 +346,8 @@ public class Multipolygon {
             return bounds;
         }
 
-        public Collection<Long> getWayIds() {
-            return wayIds;
-        }
-
-        public List<Node> getNodes() {
-            return nodes;
-        }
-
         public List<PolyData> getInners() {
-            return inners;
+            return Collections.unmodifiableList(inners);
         }
 
         private void resetNodes(DataSet dataSet) {
@@ -369,10 +415,13 @@ public class Multipolygon {
             }
         }
 
+        @Override
         public boolean isClosed() {
-            if (nodes.size() < 3 || nodes.get(0) != nodes.get(nodes.size() - 1)) return false;
+            if (nodes.size() < 3 || !getFirstNode().equals(getLastNode()))
+                return false;
             for (PolyData inner : inners) {
-                if (!inner.isClosed()) return false;
+                if (!inner.isClosed())
+                    return false;
             }
             return true;
         }
@@ -403,6 +452,10 @@ public class Multipolygon {
 
     private boolean incomplete;
 
+    /**
+     * Constructs a new {@code Multipolygon} from a relation.
+     * @param r relation
+     */
     public Multipolygon(Relation r) {
         load(r);
     }
@@ -414,23 +467,19 @@ public class Multipolygon {
         for (RelationMember m : r.getMembers()) {
             if (m.getMember().isIncomplete()) {
                 this.incomplete = true;
-            } else if (m.getMember().isDrawable()) {
-                if (m.isWay()) {
-                    Way w = m.getWay();
+            } else if (m.getMember().isDrawable() && m.isWay()) {
+                Way w = m.getWay();
 
-                    if (w.getNodesCount() < 2) {
-                        continue;
-                    }
+                if (w.getNodesCount() < 2) {
+                    continue;
+                }
 
-                    if (matcher.isInnerRole(m.getRole())) {
-                        innerWays.add(w);
-                    } else if (matcher.isOuterRole(m.getRole())) {
-                        outerWays.add(w);
-                    } else if (!m.hasRole()) {
-                        outerWays.add(w);
-                    } // Remaining roles ignored
-                } // Non ways ignored
-            }
+                if (matcher.isInnerRole(m.getRole())) {
+                    innerWays.add(w);
+                } else if (!m.hasRole() || matcher.isOuterRole(m.getRole())) {
+                    outerWays.add(w);
+                } // Remaining roles ignored
+            } // Non ways ignored
         }
 
         final List<PolyData> innerPolygons = new ArrayList<>();
@@ -442,6 +491,10 @@ public class Multipolygon {
         }
     }
 
+    /**
+     * Determines if this multipolygon is incomplete.
+     * @return {@code true} if this multipolygon is incomplete
+     */
     public final boolean isIncomplete() {
         return incomplete;
     }
@@ -459,8 +512,8 @@ public class Multipolygon {
         for (JoinedWay jw: joinWays(waysToJoin)) {
             result.add(new PolyData(jw));
             if (!jw.isClosed()) {
-                openEnds.add(jw.getNodes().get(0));
-                openEnds.add(jw.getNodes().get(jw.getNodes().size() - 1));
+                openEnds.add(jw.getFirstNode());
+                openEnds.add(jw.getLastNode());
             }
         }
     }
@@ -559,7 +612,6 @@ public class Multipolygon {
     }
 
     public PolyData findOuterPolygon(PolyData inner, List<PolyData> outerPolygons) {
-
         // First try to test only bbox, use precise testing only if we don't get unique result
         Rectangle2D innerBox = inner.getBounds();
         PolyData insidePolygon = null;
@@ -594,7 +646,6 @@ public class Multipolygon {
     }
 
     private void addInnerToOuters(List<PolyData> innerPolygons, List<PolyData> outerPolygons)  {
-
         if (innerPolygons.isEmpty()) {
             combinedPolygons.addAll(outerPolygons);
         } else if (outerPolygons.size() == 1) {
@@ -623,7 +674,7 @@ public class Multipolygon {
      * @return the list of outer ways
      */
     public List<Way> getOuterWays() {
-        return outerWays;
+        return Collections.unmodifiableList(outerWays);
     }
 
     /**
@@ -631,19 +682,31 @@ public class Multipolygon {
      * @return the list of inner ways
      */
     public List<Way> getInnerWays() {
-        return innerWays;
+        return Collections.unmodifiableList(innerWays);
     }
 
+    /**
+     * Replies the list of combined polygons.
+     * @return the list of combined polygons
+     */
     public List<PolyData> getCombinedPolygons() {
-        return combinedPolygons;
+        return Collections.unmodifiableList(combinedPolygons);
     }
 
+    /**
+     * Replies the list of inner polygons.
+     * @return the list of inner polygons
+     */
     public List<PolyData> getInnerPolygons() {
         final List<PolyData> innerPolygons = new ArrayList<>();
         createPolygons(innerWays, innerPolygons);
         return innerPolygons;
     }
 
+    /**
+     * Replies the list of outer polygons.
+     * @return the list of outer polygons
+     */
     public List<PolyData> getOuterPolygons() {
         final List<PolyData> outerPolygons = new ArrayList<>();
         createPolygons(outerWays, outerPolygons);
@@ -655,6 +718,6 @@ public class Multipolygon {
      * @return the start and end node of non-closed rings.
      */
     public List<Node> getOpenEnds() {
-        return openEnds;
+        return Collections.unmodifiableList(openEnds);
     }
 }
