@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collections;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Deletes the active layer.
@@ -41,6 +41,6 @@ public final class DeleteLayerAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.isDisplayingMapView() && Main.map.mapView.getActiveLayer() != null);
+        setEnabled(Main.getLayerManager().getActiveLayer() != null);
     }
 }

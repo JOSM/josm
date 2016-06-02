@@ -112,11 +112,8 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
                 Main.debug("Notes downloaded: " + notesData.size());
             }
 
-            List<NoteLayer> noteLayers = null;
-            if (Main.map != null) {
-                noteLayers = Main.map.mapView.getLayersOfType(NoteLayer.class);
-            }
-            if (noteLayers != null && !noteLayers.isEmpty()) {
+            List<NoteLayer> noteLayers = Main.getLayerManager().getLayersOfType(NoteLayer.class);
+            if (!noteLayers.isEmpty()) {
                 noteLayers.get(0).getNoteData().addNotes(notesData);
             } else {
                 Main.main.addLayer(new NoteLayer(notesData, tr("Notes")));

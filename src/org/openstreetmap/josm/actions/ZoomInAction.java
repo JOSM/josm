@@ -51,10 +51,7 @@ public final class ZoomInAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(
-                Main.isDisplayingMapView()
-                && Main.map.mapView.hasLayers()
-        );
+        setEnabled(!Main.getLayerManager().getLayers().isEmpty());
     }
 
 }

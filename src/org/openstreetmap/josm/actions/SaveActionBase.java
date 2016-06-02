@@ -51,11 +51,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @return {@code true} if the save operation succeeds
      */
     public boolean doSave() {
-        if (Main.isDisplayingMapView()) {
-            Layer layer = Main.map.mapView.getActiveLayer();
-            if (layer != null && layer.isSavable()) {
-                return doSave(layer);
-            }
+        Layer layer = Main.getLayerManager().getActiveLayer();
+        if (layer != null && layer.isSavable()) {
+            return doSave(layer);
         }
         return false;
     }
@@ -133,14 +131,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
      */
     @Override
     protected void updateEnabledState() {
-        boolean check = Main.isDisplayingMapView()
-        && Main.map.mapView.getActiveLayer() != null;
-        if (!check) {
-            setEnabled(false);
-            return;
-        }
-        Layer layer = Main.map.mapView.getActiveLayer();
-        setEnabled(layer != null && layer.isSavable());
+        Layer activeLayer = Main.getLayerManager().getActiveLayer();
+        setEnabled(activeLayer != null && activeLayer.isSavable());
     }
 
     /**

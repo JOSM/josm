@@ -30,26 +30,19 @@ public class UploadNotesAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        List<NoteLayer> noteLayers = null;
-        if (Main.map != null) {
-            noteLayers = Main.map.mapView.getLayersOfType(NoteLayer.class);
-        }
+        List<NoteLayer> noteLayers = Main.getLayerManager().getLayersOfType(NoteLayer.class);
         NoteLayer layer;
-        if (noteLayers != null && !noteLayers.isEmpty()) {
+        if (!noteLayers.isEmpty()) {
             layer = noteLayers.get(0);
         } else {
             Main.error("No note layer found");
             return;
         }
-        if (Main.isDebugEnabled()) {
-            Main.debug("uploading note changes");
-        }
+        Main.debug("uploading note changes");
         NoteData noteData = layer.getNoteData();
 
         if (noteData == null || !noteData.isModified()) {
-            if (Main.isDebugEnabled()) {
-                Main.debug("No changed notes to upload");
-            }
+            Main.debug("No changed notes to upload");
             return;
         }
         new UploadNotesTask().uploadNotes(noteData, new PleaseWaitProgressMonitor(tr("Uploading notes to server")));

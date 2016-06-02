@@ -238,6 +238,6 @@ public class MapRectifierWMSmenuAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.isDisplayingMapView() && !Main.map.mapView.getAllLayers().isEmpty());
+        setEnabled(!Main.getLayerManager().getLayers().isEmpty());
     }
 }

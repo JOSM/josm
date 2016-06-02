@@ -154,13 +154,11 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         }
 
         private GpxLayer findGpxMergeLayer() {
-            if (!Main.isDisplayingMapView())
-                return null;
             boolean merge = Main.pref.getBoolean("download.gps.mergeWithLocal", false);
-            Layer active = Main.map.mapView.getActiveLayer();
+            Layer active = Main.getLayerManager().getActiveLayer();
             if (active instanceof GpxLayer && (merge || ((GpxLayer) active).data.fromServer))
                 return (GpxLayer) active;
-            for (GpxLayer l : Main.map.mapView.getLayersOfType(GpxLayer.class)) {
+            for (GpxLayer l : Main.getLayerManager().getLayersOfType(GpxLayer.class)) {
                 if (merge || l.data.fromServer)
                     return l;
             }
@@ -168,9 +166,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         }
 
         private MarkerLayer findMarkerMergeLayer(GpxLayer fromLayer) {
-            if (!Main.isDisplayingMapView())
-                return null;
-            for (MarkerLayer l : Main.map.mapView.getLayersOfType(MarkerLayer.class)) {
+            for (MarkerLayer l : Main.getLayerManager().getLayersOfType(MarkerLayer.class)) {
                 if (fromLayer != null && l.fromLayer == fromLayer)
                     return l;
             }

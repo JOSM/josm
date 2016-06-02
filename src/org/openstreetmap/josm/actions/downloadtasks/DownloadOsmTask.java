@@ -19,7 +19,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -216,18 +215,11 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         }
 
         protected int getNumDataLayers() {
-            if (!Main.isDisplayingMapView()) return 0;
-            return Utils.filteredCollection(Main.map.mapView.getAllLayers(), OsmDataLayer.class).size();
+            return Main.getLayerManager().getLayersOfType(OsmDataLayer.class).size();
         }
 
         protected OsmDataLayer getFirstDataLayer() {
-            if (!Main.isDisplayingMapView()) return null;
-            Collection<Layer> layers = Main.map.mapView.getAllLayersAsList();
-            for (Layer layer : layers) {
-                if (layer instanceof OsmDataLayer)
-                    return (OsmDataLayer) layer;
-            }
-            return null;
+            return Utils.find(Main.getLayerManager().getLayers(), OsmDataLayer.class);
         }
 
         protected OsmDataLayer createNewLayer(String layerName) {
