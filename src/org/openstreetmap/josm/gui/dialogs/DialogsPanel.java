@@ -235,12 +235,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
                         int hn = Math.min(ha, he);
                         dlg.setPreferredSize(new Dimension(Integer.MAX_VALUE, hn));
                     } else {
-                        int d;
-                        try {
-                            d = (h0-he) * dm / dp;
-                        } catch (ArithmeticException e) { /* D_p may be zero - nothing wrong with that. */
-                            d = 0;
-                        }
+                        int d = dp == 0 ? 0 : ((h0-he) * dm / dp);
                         dlg.setPreferredSize(new Dimension(Integer.MAX_VALUE, h0 - d));
                     }
                 }
