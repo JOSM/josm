@@ -72,7 +72,7 @@ public class DownloadTaskList {
         if (newLayer) {
             Layer l = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
             Main.main.addLayer(l);
-            Main.map.mapView.setActiveLayer(l);
+            Main.getLayerManager().setActiveLayer(l);
         }
 
         int n = (osmData && gpxData ? 2 : 1)*rects.size();

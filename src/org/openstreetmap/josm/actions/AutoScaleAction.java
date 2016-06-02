@@ -260,7 +260,7 @@ public class AutoScaleAction extends JosmAction {
     }
 
     private static BoundingXYVisitor modeData(BoundingXYVisitor v) {
-        for (Layer l : Main.map.mapView.getAllLayers()) {
+        for (Layer l : Main.getLayerManager().getLayers()) {
             l.visitBoundingBox(v);
         }
         return v;
@@ -363,7 +363,7 @@ public class AutoScaleAction extends JosmAction {
             setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasZoomRedoEntries());
             break;
         default:
-            setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasLayers());
+            setEnabled(!Main.getLayerManager().getLayers().isEmpty());
         }
     }
 

@@ -37,9 +37,6 @@ public final class ZoomOutAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(
-                Main.isDisplayingMapView()
-                && Main.map.mapView.hasLayers()
-        );
+        setEnabled(!Main.getLayerManager().getLayers().isEmpty());
     }
 }

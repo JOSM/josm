@@ -168,10 +168,8 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             setEnabled(false);
         } else if (type == ImageryType.TMS || type == ImageryType.BING || type == ImageryType.SCANEX) {
             setEnabled(true);
-        } else if (Main.isDisplayingMapView() && !Main.map.mapView.getAllLayers().isEmpty()) {
-            setEnabled(true);
         } else {
-            setEnabled(false);
+            setEnabled(!Main.getLayerManager().getLayers().isEmpty());
         }
     }
 }

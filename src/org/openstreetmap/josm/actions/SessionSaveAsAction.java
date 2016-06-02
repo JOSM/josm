@@ -160,7 +160,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
         }
 
         int active = -1;
-        Layer activeLayer = Main.map.mapView.getActiveLayer();
+        Layer activeLayer = Main.getLayerManager().getActiveLayer();
         if (activeLayer != null) {
             active = layersOut.indexOf(activeLayer);
         }
@@ -203,7 +203,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
          * Initializes action.
          */
         public final void initialize() {
-            layers = new ArrayList<>(Main.map.mapView.getAllLayersAsList());
+            layers = new ArrayList<>(Main.getLayerManager().getLayers());
             exporters = new HashMap<>();
             dependencies = new MultiMap<>();
 

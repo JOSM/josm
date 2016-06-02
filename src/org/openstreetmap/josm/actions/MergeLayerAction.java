@@ -63,7 +63,7 @@ public class MergeLayerAction extends AbstractMergeAction {
                     }
                 }
                 if (layerMerged) {
-                    Main.map.mapView.setActiveLayer(targetLayer);
+                    Main.getLayerManager().setActiveLayer(targetLayer);
                 }
             }
         });
