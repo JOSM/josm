@@ -604,6 +604,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             return lblTitle.getText();
         }
 
+        /**
+         * This is the popup menu used for the title bar.
+         */
         public class DialogPopupMenu extends JPopupMenu {
 
             /**
@@ -626,6 +629,11 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             }
         }
 
+        /**
+         * Registers the mouse listeners.
+         * <p>
+         * Should be called once after this title was added to the dialog.
+         */
         public final void registerMouseListener() {
             popupMenu = new DialogPopupMenu();
             addMouseListener(new MouseEventHandler());
@@ -825,10 +833,20 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         return isShowing && isDocked && isCollapsed;
     }
 
+    /**
+     * Sets the button from the button list that is used to display this dialog.
+     * <p>
+     * Note: This is ignored by the {@link ToggleDialog} for now.
+     * @param button The button for this dialog.
+     */
     public void setButton(JToggleButton button) {
         this.button = button;
     }
 
+    /**
+     * Gets the button from the button list that is used to display this dialog.
+     * @return button The button for this dialog.
+     */
     public JToggleButton getButton() {
         return button;
     }
@@ -865,6 +883,13 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         // Do nothing
     }
 
+    /**
+     * Create a component with the given layout for this component.
+     * @param data The content to be displayed
+     * @param scroll <code>true</code> if it should be wrapped in a {@link JScrollPane}
+     * @param buttons The buttons to add.
+     * @return The component.
+     */
     protected Component createLayout(Component data, boolean scroll, Collection<SideButton> buttons) {
         return createLayout(data, scroll, buttons, (Collection<SideButton>[]) null);
     }
