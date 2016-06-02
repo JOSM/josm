@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
@@ -177,7 +177,7 @@ public class OsmServerLocationReader extends OsmServerReader {
         public List<Note> parse() throws OsmTransferException, IllegalDataException, IOException, SAXException {
             in = getInputStream(url, progressMonitor.createSubTaskMonitor(1, true));
             if (in == null) {
-                return new ArrayList<>();
+                return Collections.emptyList();
             }
             progressMonitor.subTask(tr("Downloading OSM notes..."));
             NoteReader reader = new NoteReader(compression.getUncompressedInputStream(in));

@@ -394,7 +394,7 @@ public final class Utils {
         if (array != null) {
             return Arrays.copyOf(array, array.length);
         }
-        return null;
+        return array;
     }
 
     /**
@@ -407,7 +407,7 @@ public final class Utils {
         if (array != null) {
             return Arrays.copyOf(array, array.length);
         }
-        return null;
+        return array;
     }
 
     /**
@@ -420,7 +420,7 @@ public final class Utils {
         if (array != null) {
             return Arrays.copyOf(array, array.length);
         }
-        return null;
+        return array;
     }
 
     /**

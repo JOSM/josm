@@ -217,14 +217,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
         protected int getNumDataLayers() {
             if (!Main.isDisplayingMapView()) return 0;
-            int count = 0;
-            Collection<Layer> layers = Main.map.mapView.getAllLayers();
-            for (Layer layer : layers) {
-                if (layer instanceof OsmDataLayer) {
-                    count++;
-                }
-            }
-            return count;
+            return Utils.filteredCollection(Main.map.mapView.getAllLayers(), OsmDataLayer.class).size();
         }
 
         protected OsmDataLayer getFirstDataLayer() {
