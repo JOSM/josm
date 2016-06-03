@@ -13,7 +13,7 @@
 
     <!-- Item chunks -->
     <chunk id="surface">
-        <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground,sett" />
+        <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,concrete:plates,concrete:lanes,paving_stones,sett,cobblestone,grass_paver,compacted,fine_gravel,gravel,pebblestone,ground,mud,sand,grass,wood,metal" />
     </chunk>
     <chunk id="surface_smoothness">
         <reference ref="surface" />
@@ -5463,6 +5463,7 @@
             <key key="leisure" value="track" />
             <text key="name" text="Name" />
             <combo key="sport" text="Sport" values="athletics,cycling,dog_racing,equestrian,horse_racing,running,roller_skating,ice_skating" values_context="sport" />
+            <combo key="surface" text="Surface" values="artificial_turf,asphalt,clay,concrete,decoturf,grass,sand,tartan,ground" />
         </item> <!-- Racetrack -->
         <group name="Golf" icon="styles/standard/sport/golf/golf.svg">
                 <item name="Golf Course" icon="styles/standard/sport/golf/golf.svg" type="node,closedway,multipolygon" preset_name_label="true">
