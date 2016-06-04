@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016060100, Last Updated Wed Jun  1 07:07:01 2016 UTC
+        // Taken from Version 2016060300, Last Updated Fri Jun  3 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -525,6 +525,7 @@ public final class DomainValidator extends AbstractValidator {
         "desi", // desi Desi Networks LLC
         "design", // design Top Level Design, LLC
         "dev", // dev Charleston Road Registry Inc.
+        "dhl", // dhl Deutsche Post AG
         "diamonds", // diamonds John Edge, LLC
         "diet", // diet Uniregistry, Corp.
         "digital", // digital Dash Park, LLC
@@ -619,6 +620,7 @@ public final class DomainValidator extends AbstractValidator {
         "gallo", // gallo Gallo Vineyards, Inc.
         "gallup", // gallup Gallup, Inc.
         "game", // game Uniregistry, Corp.
+        "games", // games United TLD Holdco Ltd.
         "garden", // garden Top Level Domain Holdings Limited
         "gbiz", // gbiz Charleston Road Registry Inc.
         "gdn", // gdn Joint Stock Company "Navigation-information systems"
@@ -670,6 +672,7 @@ public final class DomainValidator extends AbstractValidator {
         "here", // here Charleston Road Registry Inc.
         "hermes", // hermes Hermes International
         "hiphop", // hiphop Uniregistry, Corp.
+        "hisamitsu", // hisamitsu Hisamitsu Pharmaceutical Co.,Inc.
         "hitachi", // hitachi Hitachi, Ltd.
         "hiv", // hiv dotHIV gemeinnuetziger e.V.
         "hkt", // hkt PCCW-HKT DataCom Services Limited
@@ -931,6 +934,7 @@ public final class DomainValidator extends AbstractValidator {
         "pin", // pin Amazon Registry Services, Inc.
         "ping", // ping Ping Registry Provider, Inc.
         "pink", // pink Afilias Limited
+        "pioneer", // pioneer Pioneer Corporation
         "pizza", // pizza Foggy Moon, LLC
         "place", // place Snow Galley, LLC
         "play", // play Charleston Road Registry Inc.
@@ -1314,6 +1318,7 @@ public final class DomainValidator extends AbstractValidator {
         "you", // you Amazon Registry Services, Inc.
         "youtube", // youtube Charleston Road Registry Inc.
         "yun", // yun QIHOO 360 TECHNOLOGY CO. LTD.
+        "zappos", // zappos Amazon Registry Service, Inc.
         "zara", // zara Industria de Diseño Textil, S.A. (INDITEX, S.A.)
         "zero", // zero Amazon Registry Services, Inc.
         "zip", // zip Charleston Road Registry Inc.
