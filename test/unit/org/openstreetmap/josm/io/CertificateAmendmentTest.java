@@ -43,7 +43,8 @@ public class CertificateAmendmentTest {
     public void testLetsEncrypt() throws IOException {
         // signed by letsencrypt's own ISRG root
         // (not included yet)
-        connect("https://helloworld.letsencrypt.org", false);
+        // TODO: they switched to cross-sign CA, re-enable it if ISRG root is used again
+        // connect("https://helloworld.letsencrypt.org", false);
         // signed by letsencrypt's cross-sign CA
         connect("https://letsencrypt.org", true);
         // signed by letsencrypt's cross-sign CA, requires SNI
