@@ -18,6 +18,8 @@ import org.apache.commons.jcs.auxiliary.AuxiliaryCacheFactory;
 import org.apache.commons.jcs.auxiliary.disk.behavior.IDiskCacheAttributes;
 import org.apache.commons.jcs.auxiliary.disk.block.BlockDiskCacheAttributes;
 import org.apache.commons.jcs.auxiliary.disk.block.BlockDiskCacheFactory;
+import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheAttributes;
+import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheFactory;
 import org.apache.commons.jcs.engine.CompositeCacheAttributes;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes.DiskUsagePattern;
 import org.apache.commons.jcs.engine.control.CompositeCache;
@@ -25,6 +27,7 @@ import org.apache.commons.jcs.engine.control.CompositeCacheManager;
 import org.apache.commons.jcs.utils.serialization.StandardSerializer;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 
 /**
@@ -40,7 +43,10 @@ public final class JCSCacheManager {
     private static volatile CompositeCacheManager cacheManager;
     private static long maxObjectTTL        = -1;
     private static final String PREFERENCE_PREFIX = "jcs.cache";
-    private static final AuxiliaryCacheFactory diskCacheFactory = new BlockDiskCacheFactory();
+    private static BooleanProperty USE_BLOCK_CACHE = new BooleanProperty(PREFERENCE_PREFIX + ".use_block_cache", true);
+
+    private static final AuxiliaryCacheFactory diskCacheFactory =
+            USE_BLOCK_CACHE.get() ? new BlockDiskCacheFactory() : new IndexedDiskCacheFactory();
     private static FileLock cacheDirLock;
 
     /**
@@ -162,8 +168,7 @@ public final class JCSCacheManager {
         CompositeCache<K, V> cc = cacheManager.getCache(cacheName, getCacheAttributes(maxMemoryObjects));
 
         if (cachePath != null && cacheDirLock != null) {
-            IDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath);
-            diskAttributes.setCacheName(cacheName);
+            IDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath, cacheName);
             try {
                 if (cc.getAuxCaches().length == 0) {
                     AuxiliaryCache<K, V> diskCache = diskCacheFactory.createCache(diskAttributes, cacheManager, null, new StandardSerializer());
@@ -189,19 +194,38 @@ public final class JCSCacheManager {
         }
     }
 
-    private static IDiskCacheAttributes getDiskCacheAttributes(int maxDiskObjects, String cachePath) {
-        BlockDiskCacheAttributes ret = new BlockDiskCacheAttributes();
-        ret.setDiskLimitType(IDiskCacheAttributes.DiskLimitType.SIZE);
-        ret.setMaxKeySize(maxDiskObjects);
-        if (cachePath != null) {
-            File path = new File(cachePath);
-            if (!path.exists() && !path.mkdirs()) {
-                LOG.log(Level.WARNING, "Failed to create cache path: {0}", cachePath);
-            } else {
-                ret.setDiskPath(path);
-            }
+    private static IDiskCacheAttributes getDiskCacheAttributes(int maxDiskObjects, String cachePath, String cacheName) {
+        IDiskCacheAttributes ret;
+        if (USE_BLOCK_CACHE.get()) {
+            BlockDiskCacheAttributes blockAttr = new BlockDiskCacheAttributes();
+            blockAttr.setMaxKeySize(maxDiskObjects);
+            ret = blockAttr;
+        } else {
+            IndexedDiskCacheAttributes indexAttr = new IndexedDiskCacheAttributes();
+            indexAttr.setMaxKeySize(maxDiskObjects);
+            ret = indexAttr;
         }
+        ret.setDiskLimitType(IDiskCacheAttributes.DiskLimitType.SIZE);
+        File path = new File(cachePath);
+        if (!path.exists() && !path.mkdirs()) {
+            LOG.log(Level.WARNING, "Failed to create cache path: {0}", cachePath);
+        } else {
+            ret.setDiskPath(cachePath);
+        }
+        ret.setCacheName(cacheName + (USE_BLOCK_CACHE.get() ? "_BLOCK" : "_INDEX"));
+
+        removeStaleFiles(cachePath + File.separator + cacheName, (USE_BLOCK_CACHE.get() ? "_INDEX" : "_BLOCK"));
         return ret;
+    }
+
+    private static void removeStaleFiles(String basePathPart, String suffix) {
+        deleteCacheFiles(basePathPart); // TODO: this can be removed around 2016.09
+        deleteCacheFiles(basePathPart + suffix);
+    }
+
+    private static void deleteCacheFiles(String basePathPart) {
+        new File(basePathPart + ".key").delete();
+        new File(basePathPart + ".data").delete();
     }
 
     private static CompositeCacheAttributes getCacheAttributes(int maxMemoryElements) {
