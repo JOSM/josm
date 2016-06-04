@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -1323,10 +1324,8 @@ public class Preferences {
                 Field field = Toolkit.class.getDeclaredField("resources");
                 Utils.setObjectsAccessible(field);
                 field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
-            } catch (ReflectiveOperationException e) {
-                if (Main.isTraceEnabled()) {
-                    Main.trace(e.getMessage());
-                }
+            } catch (ReflectiveOperationException | MissingResourceException e) {
+                Main.warn(e);
             }
         }
         // Possibility to disable SNI (not by default) in case of misconfigured https servers
