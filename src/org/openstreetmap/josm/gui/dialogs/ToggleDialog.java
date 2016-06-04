@@ -438,7 +438,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     @Override
     public void destroy() {
         closeDetachedDialog();
-        hideNotify();
+        if (isShowing) {
+            hideNotify();
+        }
         Main.main.menu.windowMenu.remove(windowMenuItem);
         Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         Main.pref.removePreferenceChangeListener(this);

@@ -89,8 +89,9 @@ public class MapPaintPreferenceTestIT {
                     if (!warnings.isEmpty()) {
                         allWarnings.put(source.url, warnings);
                     }
-                } else if (!source.url.contains("www.freietonne.de")) {
+                } else if (!source.url.contains("www.freietonne.de") && !source.url.contains("yopaseopor/traffic_signs")) {
                     // ignore frequent network errors with www.freietonne.de causing too much Jenkins failures
+                    // also ignore https://github.com/yopaseopor/traffic_signs_style_JOSM because of far too frequent missing icons errors
                     allWarnings.put(source.url, Collections.singleton("MapPaintStyles.addStyle() returned null"));
                 }
             }
