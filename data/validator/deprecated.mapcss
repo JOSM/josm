@@ -101,9 +101,8 @@
 *[shop=organic] {
   /* from http://wiki.openstreetmap.org/wiki/Tag:shop=organic */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
-  suggestAlternative: "shop=supermarket + organic=only";
-  fixAdd: "shop=supermarket";
-  fixAdd: "organic=only";
+  suggestAlternative: "shop=* + organic=yes";
+  suggestAlternative: "shop=* + organic=only";
 }
 
 *[shop=pets] {
