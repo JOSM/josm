@@ -241,13 +241,13 @@ way[junction=roundabout]!:righthandtraffic:anticlockwise {
 }
 
 /* #12496 */
-area:closed[place=islet][eval(areasize()) > 1500] {
+area:closed[place=islet][eval(areasize()) > 1500000] {
   throwWarning: tr("{0} on a large area", "{1.tag}");
   suggestAlternative: "place=island";
   fixAdd: "place=island";
 }
 
-area:closed[place=island][eval(areasize()) < 500] {
+area:closed[place=island][eval(areasize()) < 500000] {
   throwWarning: tr("{0} on a small area", "{1.tag}");
   suggestAlternative: "place=islet";
   fixAdd: "place=islet";
