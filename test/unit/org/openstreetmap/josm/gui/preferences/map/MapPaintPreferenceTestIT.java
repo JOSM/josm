@@ -86,12 +86,12 @@ public class MapPaintPreferenceTestIT {
                     if (!errors.isEmpty()) {
                         allErrors.put(source.url, errors);
                     }
-                    if (!warnings.isEmpty()) {
+                    if (!warnings.isEmpty() && !source.url.contains("yopaseopor/traffic_signs")) {
+                        // ignore https://github.com/yopaseopor/traffic_signs_style_JOSM because of far too frequent missing icons errors
                         allWarnings.put(source.url, warnings);
                     }
-                } else if (!source.url.contains("www.freietonne.de") && !source.url.contains("yopaseopor/traffic_signs")) {
+                } else if (!source.url.contains("www.freietonne.de")) {
                     // ignore frequent network errors with www.freietonne.de causing too much Jenkins failures
-                    // also ignore https://github.com/yopaseopor/traffic_signs_style_JOSM because of far too frequent missing icons errors
                     allWarnings.put(source.url, Collections.singleton("MapPaintStyles.addStyle() returned null"));
                 }
             }
