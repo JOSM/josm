@@ -54,13 +54,14 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -72,7 +73,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * dialog on the right of the main frame.
  * @since 86
  */
-public final class ConflictDialog extends ToggleDialog implements MapView.EditLayerChangeListener, IConflictListener, SelectionChangedListener {
+public final class ConflictDialog extends ToggleDialog implements ActiveLayerChangeListener, IConflictListener, SelectionChangedListener {
 
     /** the collection of conflicts displayed by this conflict dialog */
     private transient ConflictCollection conflicts;
@@ -169,13 +170,13 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     @Override
     public void showNotify() {
         DataSet.addSelectionListener(this);
-        MapView.addEditLayerChangeListener(this, true);
+        Main.getLayerManager().addAndFireActiveLayerChangeListener(this);
         refreshView();
     }
 
     @Override
     public void hideNotify() {
-        MapView.removeEditLayerChangeListener(this);
+        Main.getLayerManager().removeActiveLayerChangeListener(this);
         DataSet.removeSelectionListener(this);
     }
 
@@ -278,10 +279,12 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     }
 
     @Override
-    public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+        OsmDataLayer oldLayer = e.getPreviousEditLayer();
         if (oldLayer != null) {
             oldLayer.getConflicts().removeConflictListener(this);
         }
+        OsmDataLayer newLayer = e.getSource().getEditLayer();
         if (newLayer != null) {
             newLayer.getConflicts().addConflictListener(this);
         }

@@ -109,6 +109,10 @@ public class MainLayerManagerTest extends LayerManagerTest {
         assertNull(layerManagerWithActive.getEditLayer());
     }
 
+    /**
+     * Test {@link MainLayerManager#addActiveLayerChangeListener(ActiveLayerChangeListener)} and
+     * {@link MainLayerManager#addAndFireActiveLayerChangeListener(ActiveLayerChangeListener)}
+     */
     @Test
     public void testAddActiveLayerChangeListener() {
         AbstractTestLayer layer1 = new AbstractTestLayer();
@@ -117,11 +121,11 @@ public class MainLayerManagerTest extends LayerManagerTest {
         layerManagerWithActive.addLayer(layer2);
 
         CapturingActiveLayerChangeListener listener = new CapturingThreadCheckingActiveLayerChangeListener();
-        layerManagerWithActive.addActiveLayerChangeListener(listener, false);
+        layerManagerWithActive.addActiveLayerChangeListener(listener);
         assertNull(listener.lastEvent);
 
         CapturingActiveLayerChangeListener listener2 = new CapturingActiveLayerChangeListener();
-        layerManagerWithActive.addActiveLayerChangeListener(listener2, true);
+        layerManagerWithActive.addAndFireActiveLayerChangeListener(listener2);
         assertSame(listener2.lastEvent.getPreviousActiveLayer(), null);
         assertSame(listener2.lastEvent.getPreviousEditLayer(), null);
 
@@ -140,8 +144,8 @@ public class MainLayerManagerTest extends LayerManagerTest {
     @Test(expected = IllegalArgumentException.class)
     public void testAddActiveLayerChangeListenerTwice() {
         CapturingActiveLayerChangeListener listener = new CapturingActiveLayerChangeListener();
-        layerManagerWithActive.addActiveLayerChangeListener(listener, false);
-        layerManagerWithActive.addActiveLayerChangeListener(listener, false);
+        layerManagerWithActive.addActiveLayerChangeListener(listener);
+        layerManagerWithActive.addActiveLayerChangeListener(listener);
     }
 
     /**
@@ -155,7 +159,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
         layerManagerWithActive.addLayer(layer2);
 
         CapturingActiveLayerChangeListener listener = new CapturingActiveLayerChangeListener();
-        layerManagerWithActive.addActiveLayerChangeListener(listener, false);
+        layerManagerWithActive.addActiveLayerChangeListener(listener);
         layerManagerWithActive.removeActiveLayerChangeListener(listener);
 
         layerManagerWithActive.setActiveLayer(layer2);
