@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
@@ -265,17 +266,16 @@ public class BBox {
 
     @Override
     public int hashCode() {
-        return (int) (ymin * xmin);
+        return Objects.hash(xmin, xmax, ymin, ymax);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof BBox) {
-            BBox b = (BBox) o;
-            return b.xmax == xmax && b.ymax == ymax
-                    && b.xmin == xmin && b.ymin == ymin;
-        } else
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BBox b = (BBox) o;
+        return Double.compare(b.xmax, xmax) == 0 && Double.compare(b.ymax, ymax) == 0
+            && Double.compare(b.xmin, xmin) == 0 && Double.compare(b.ymin, ymin) == 0;
     }
 
     @Override
