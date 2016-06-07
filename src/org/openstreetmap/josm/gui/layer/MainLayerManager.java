@@ -75,6 +75,18 @@ public class MainLayerManager extends LayerManager {
             return previousActiveLayer;
         }
 
+        /**
+         * Gets the data set that was previously used.
+         * @return The data set of {@link #getPreviousEditLayer()}.
+         */
+        public DataSet getPreviousEditDataSet() {
+            if (previousEditLayer != null) {
+                return previousEditLayer.data;
+            } else {
+                return null;
+            }
+        }
+
         @Override
         public MainLayerManager getSource() {
             return (MainLayerManager) super.getSource();
@@ -97,17 +109,38 @@ public class MainLayerManager extends LayerManager {
      * Adds a active/edit layer change listener
      *
      * @param listener the listener.
-     * @param initialFire fire a fake active-layer-changed-event right after adding
-     * the listener. The previous layers will be null. The listener is notified in the current thread.
+     * @param initialFire use {@link #addAndFireActiveLayerChangeListener(ActiveLayerChangeListener)} instead.
+     * @deprecated Do not use the second parameter. To be removed in a few weeks.
      */
+    @Deprecated
     public synchronized void addActiveLayerChangeListener(ActiveLayerChangeListener listener, boolean initialFire) {
+        if (initialFire) {
+            addAndFireActiveLayerChangeListener(listener);
+        } else {
+            addActiveLayerChangeListener(listener);
+        }
+    }
+
+    /**
+     * Adds a active/edit layer change listener
+     *
+     * @param listener the listener.
+     */
+    public synchronized void addActiveLayerChangeListener(ActiveLayerChangeListener listener) {
         if (activeLayerChangeListeners.contains(listener)) {
             throw new IllegalArgumentException("Attempted to add listener that was already in list: " + listener);
         }
         activeLayerChangeListeners.add(listener);
-        if (initialFire) {
-            listener.activeOrEditLayerChanged(new ActiveLayerChangeEvent(this, null, null));
-        }
+    }
+
+    /**
+     * Adds a active/edit layer change listener. Fire a fake active-layer-changed-event right after adding
+     * the listener. The previous layers will be null. The listener is notified in the current thread.
+     * @param listener the listener.
+     */
+    public synchronized void addAndFireActiveLayerChangeListener(ActiveLayerChangeListener listener) {
+        addActiveLayerChangeListener(listener);
+        listener.activeOrEditLayerChanged(new ActiveLayerChangeEvent(this, null, null));
     }
 
     /**

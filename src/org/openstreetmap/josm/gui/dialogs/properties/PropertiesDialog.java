@@ -84,17 +84,16 @@ import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.CompileSearchTextDecorator;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
@@ -129,7 +128,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public class PropertiesDialog extends ToggleDialog
-implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetListenerAdapter.Listener {
+implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerAdapter.Listener {
 
     /**
      * hook for roadsigns plugin to display a small button in the upper right corner of this dialog
@@ -589,7 +588,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     public void showNotify() {
         DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
-        MapView.addEditLayerChangeListener(this);
+        Main.getLayerManager().addActiveLayerChangeListener(this);
         for (JosmAction action : josmActions) {
             Main.registerActionShortcut(action);
         }
@@ -600,7 +599,7 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     public void hideNotify() {
         DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         SelectionEventManager.getInstance().removeSelectionListener(this);
-        MapView.removeEditLayerChangeListener(this);
+        Main.getLayerManager().removeActiveLayerChangeListener(this);
         for (JosmAction action : josmActions) {
             Main.unregisterActionShortcut(action);
         }
@@ -769,17 +768,15 @@ implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetLis
     }
 
     /* ---------------------------------------------------------------------------------- */
-    /* EditLayerChangeListener                                                            */
+    /* ActiveLayerChangeListener                                                          */
     /* ---------------------------------------------------------------------------------- */
     @Override
-    public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
-        if (newLayer == null) editHelper.saveTagsIfNeeded();
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+        if (e.getSource().getEditLayer() != null) {
+            editHelper.saveTagsIfNeeded();
+        }
         // it is time to save history of tags
-        GuiHelper.runInEDT(new Runnable() {
-            @Override public void run() {
-                updateSelection();
-            }
-        });
+        updateSelection();
     }
 
     @Override

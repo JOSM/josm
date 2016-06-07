@@ -45,6 +45,7 @@ import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
@@ -64,13 +65,13 @@ import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
@@ -176,24 +177,19 @@ public class SelectionListDialog extends ToggleDialog  {
 
     @Override
     public void showNotify() {
-        MapView.addEditLayerChangeListener(model);
         SelectionEventManager.getInstance().addSelectionListener(actShowHistory, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListener(model, FireMode.IN_EDT_CONSOLIDATED);
         DatasetEventManager.getInstance().addDatasetListener(model, FireMode.IN_EDT);
-        MapView.addEditLayerChangeListener(actSearch);
-        // editLayerChanged also gets the selection history of the level
-        OsmDataLayer editLayer = Main.main.getEditLayer();
-        model.editLayerChanged(null, editLayer);
-        if (editLayer != null) {
-            model.setJOSMSelection(editLayer.data.getAllSelected());
-        }
+        Main.getLayerManager().addActiveLayerChangeListener(actSearch);
+        // editLayerChanged also gets the selection history of the level. Listener calls setJOSMSelection when fired.
+        Main.getLayerManager().addAndFireActiveLayerChangeListener(model);
         actSearch.updateEnabledState();
     }
 
     @Override
     public void hideNotify() {
-        MapView.removeEditLayerChangeListener(actSearch);
-        MapView.removeEditLayerChangeListener(model);
+        Main.getLayerManager().removeActiveLayerChangeListener(actSearch);
+        Main.getLayerManager().removeActiveLayerChangeListener(model);
         SelectionEventManager.getInstance().removeSelectionListener(actShowHistory);
         SelectionEventManager.getInstance().removeSelectionListener(model);
         DatasetEventManager.getInstance().removeDatasetListener(model);
@@ -295,7 +291,7 @@ public class SelectionListDialog extends ToggleDialog  {
     /**
      * Launches the search dialog
      */
-    static class SearchAction extends AbstractAction implements EditLayerChangeListener {
+    static class SearchAction extends AbstractAction implements ActiveLayerChangeListener {
         /**
          * Constructs a new {@code SearchAction}.
          */
@@ -317,7 +313,7 @@ public class SelectionListDialog extends ToggleDialog  {
         }
 
         @Override
-        public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+        public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
             updateEnabledState();
         }
     }
@@ -479,7 +475,7 @@ public class SelectionListDialog extends ToggleDialog  {
      *
      */
     private static class SelectionListModel extends AbstractListModel<OsmPrimitive>
-    implements EditLayerChangeListener, SelectionChangedListener, DataSetListener {
+    implements ActiveLayerChangeListener, SelectionChangedListener, DataSetListener {
 
         private static final int SELECTION_HISTORY_SIZE = 10;
 
@@ -671,16 +667,17 @@ public class SelectionListDialog extends ToggleDialog  {
         }
 
         /* ------------------------------------------------------------------------ */
-        /* interface EditLayerChangeListener                                        */
+        /* interface ActiveLayerChangeListener                                      */
         /* ------------------------------------------------------------------------ */
         @Override
-        public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
-            if (newLayer == null) {
+        public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+            DataSet newData = e.getSource().getEditDataSet();
+            if (newData == null) {
                 setJOSMSelection(null);
                 history = null;
             } else {
-                history = newLayer.data.getSelectionHistory();
-                setJOSMSelection(newLayer.data.getAllSelected());
+                history = newData.getSelectionHistory();
+                setJOSMSelection(newData.getAllSelected());
             }
         }
 

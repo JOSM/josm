@@ -395,7 +395,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
             LayerChangeAdapter adapter = new LayerChangeAdapter(listener, initialFire);
             Main.getLayerManager().addLayerChangeListener(adapter, false);
-            Main.getLayerManager().addActiveLayerChangeListener(adapter, initialFire);
+            if (initialFire) {
+                Main.getLayerManager().addAndFireActiveLayerChangeListener(adapter);
+            } else {
+                Main.getLayerManager().addActiveLayerChangeListener(adapter);
+            }
             adapter.receiveOneInitialFire = false;
         }
     }
@@ -413,8 +417,12 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     @Deprecated
     public static void addEditLayerChangeListener(EditLayerChangeListener listener, boolean initialFire) {
         if (listener != null) {
-            Main.getLayerManager().addActiveLayerChangeListener(new EditLayerChangeAdapter(listener),
-                    initialFire && Main.isDisplayingMapView() && Main.map.mapView.getEditLayer() != null);
+            boolean doFire = initialFire && Main.isDisplayingMapView() && Main.map.mapView.getEditLayer() != null;
+            if (doFire) {
+                Main.getLayerManager().addAndFireActiveLayerChangeListener(new EditLayerChangeAdapter(listener));
+            } else {
+                Main.getLayerManager().addActiveLayerChangeListener(new EditLayerChangeAdapter(listener));
+            }
         }
     }
 
@@ -483,7 +491,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         this.layerManager = layerManager;
         initialViewport = viewportData;
         layerManager.addLayerChangeListener(this);
-        layerManager.addActiveLayerChangeListener(this, false);
+        layerManager.addActiveLayerChangeListener(this);
         Main.pref.addPreferenceChangeListener(this);
 
         addComponentListener(new ComponentAdapter() {

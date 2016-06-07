@@ -12,14 +12,15 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
-import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * This is the list model for the list of changeset in the current edit layer.
  *
  */
-public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel implements DataSetListener, EditLayerChangeListener {
+public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel implements DataSetListener, ActiveLayerChangeListener {
 
     public ChangesetsInActiveDataLayerListModel(DefaultListSelectionModel selectionModel) {
         super(selectionModel);
@@ -69,14 +70,15 @@ public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel imp
     }
 
     /* ------------------------------------------------------------------------------ */
-    /* interface EditLayerListener                                                    */
+    /* interface ActiveLayerChangeListener                                                    */
     /* ------------------------------------------------------------------------------ */
     @Override
-    public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
         // just init the model content. Don't register as DataSetListener. The mode
         // is already registered to receive DataChangedEvents from the current edit layer
-        if (newLayer != null) {
-            initFromDataSet(newLayer.data);
+        OsmDataLayer editLayer = e.getSource().getEditLayer();
+        if (editLayer != null) {
+            initFromDataSet(editLayer.data);
         } else {
             initFromDataSet(null);
         }

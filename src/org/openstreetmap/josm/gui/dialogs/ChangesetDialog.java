@@ -42,7 +42,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetInSelectionListModel;
@@ -114,13 +113,13 @@ public class ChangesetDialog extends ToggleDialog {
     protected void registerAsListener() {
         // let the model for changesets in the current selection listen to various events
         ChangesetCache.getInstance().addChangesetCacheListener(inSelectionModel);
-        MapView.addEditLayerChangeListener(inSelectionModel);
+        Main.getLayerManager().addActiveLayerChangeListener(inSelectionModel);
         DataSet.addSelectionListener(inSelectionModel);
 
         // let the model for changesets in the current layer listen to various
         // events and bootstrap it's content
         ChangesetCache.getInstance().addChangesetCacheListener(inActiveDataLayerModel);
-        MapView.addEditLayerChangeListener(inActiveDataLayerModel);
+        Main.getLayerManager().addActiveLayerChangeListener(inActiveDataLayerModel);
         OsmDataLayer editLayer = Main.main.getEditLayer();
         if (editLayer != null) {
             editLayer.data.addDataSetListener(inActiveDataLayerModel);
@@ -133,7 +132,7 @@ public class ChangesetDialog extends ToggleDialog {
         // remove the list model for the current edit layer as listener
         //
         ChangesetCache.getInstance().removeChangesetCacheListener(inActiveDataLayerModel);
-        MapView.removeEditLayerChangeListener(inActiveDataLayerModel);
+        Main.getLayerManager().removeActiveLayerChangeListener(inActiveDataLayerModel);
         OsmDataLayer editLayer = Main.main.getEditLayer();
         if (editLayer != null) {
             editLayer.data.removeDataSetListener(inActiveDataLayerModel);
@@ -142,7 +141,7 @@ public class ChangesetDialog extends ToggleDialog {
         // remove the list model for the changesets in the current selection as
         // listener
         //
-        MapView.removeEditLayerChangeListener(inSelectionModel);
+        Main.getLayerManager().removeActiveLayerChangeListener(inSelectionModel);
         DataSet.removeSelectionListener(inSelectionModel);
     }
 
