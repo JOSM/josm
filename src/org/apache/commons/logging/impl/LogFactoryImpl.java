@@ -59,7 +59,7 @@ import org.apache.commons.logging.LogFactory;
  * for the same name, and will return them on repeated requests to the
  * <code>getInstance()</code> method.
  *
- * @version $Id: LogFactoryImpl.java 1449064 2013-02-22 14:49:22Z tn $
+ * @version $Id: LogFactoryImpl.java 1747117 2016-06-07 02:19:52Z ggregory $
  */
 public class LogFactoryImpl extends LogFactory {
 
@@ -262,7 +262,7 @@ public class LogFactoryImpl extends LogFactory {
      *
      * @param clazz Class for which a suitable Log name will be derived
      *
-     * @exception LogConfigurationException if a suitable <code>Log</code>
+     * @throws LogConfigurationException if a suitable <code>Log</code>
      *  instance cannot be returned
      */
     public Log getInstance(Class clazz) throws LogConfigurationException {
@@ -283,7 +283,7 @@ public class LogFactoryImpl extends LogFactory {
      *  returned (the meaning of this name is only known to the underlying
      *  logging implementation that is being wrapped)
      *
-     * @exception LogConfigurationException if a suitable <code>Log</code>
+     * @throws LogConfigurationException if a suitable <code>Log</code>
      *  instance cannot be returned
      */
     public Log getInstance(String name) throws LogConfigurationException {
@@ -469,7 +469,7 @@ public class LogFactoryImpl extends LogFactory {
      * the same <code>Constructor</code> instance will ultimately be derived
      * in all circumstances.</p>
      *
-     * @exception LogConfigurationException if a suitable constructor
+     * @throws LogConfigurationException if a suitable constructor
      *  cannot be returned
      *
      * @deprecated  Never invoked by this class; subclasses should not assume
@@ -531,7 +531,7 @@ public class LogFactoryImpl extends LogFactory {
      *
      * @param name Name of the new logger
      *
-     * @exception LogConfigurationException if a new instance cannot
+     * @throws LogConfigurationException if a new instance cannot
      *  be created
      */
     protected Log newInstance(String name) throws LogConfigurationException {

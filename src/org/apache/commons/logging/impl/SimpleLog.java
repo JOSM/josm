@@ -66,7 +66,7 @@ import org.apache.commons.logging.LogConfigurationException;
  * <code>"simplelog.properties"</code>, and includes any matching definitions
  * from this resource (if it exists).
  *
- * @version $Id: SimpleLog.java 1435115 2013-01-18 12:40:19Z tn $
+ * @version $Id: SimpleLog.java 1747117 2016-06-07 02:19:52Z ggregory $
  */
 public class SimpleLog implements Log, Serializable {
 
@@ -577,7 +577,7 @@ public class SimpleLog implements Log, Serializable {
      * The thread context class loader is available for JDK 1.2
      * or later, if certain security conditions are met.
      *
-     * @exception LogConfigurationException if a suitable class loader
+     * @throws LogConfigurationException if a suitable class loader
      * cannot be identified.
      */
     private static ClassLoader getContextClassLoader() {
