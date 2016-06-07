@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.coor;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.Projection;
 
@@ -53,11 +55,24 @@ public class CachedLatLon extends LatLon {
      * @return the internally cached east/north coordinates. null, if the globally defined projection is null
      */
     public final EastNorth getEastNorth() {
-        if (proj != Main.getProjection()) {
+        if (!Objects.equals(proj, Main.getProjection())) {
             proj = Main.getProjection();
             eastNorth = proj.latlon2eastNorth(this);
         }
         return eastNorth;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, eastNorth);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj))
+            return false;
+        CachedLatLon other = (CachedLatLon) obj;
+        return Objects.equals(eastNorth, other.eastNorth);
     }
 
     @Override

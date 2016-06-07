@@ -55,10 +55,9 @@ public class LatLon extends Coordinate {
      */
     public static final LatLon ZERO = new LatLon(0, 0);
 
-    /**
-     * North and south pole.
-     */
+    /** North pole. */
     public static final LatLon NORTH_POLE = new LatLon(90, 0);
+    /** South pole. */
     public static final LatLon SOUTH_POLE = new LatLon(-90, 0);
 
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
@@ -225,7 +224,6 @@ public class LatLon extends Coordinate {
     public LatLon(ICoordinate coor) {
         this(coor.getLat(), coor.getLon());
     }
-
 
     /**
      * Returns the latitude, i.e., the north-south position in degrees.
@@ -486,10 +484,10 @@ public class LatLon extends Coordinate {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof LatLon)) return false;
+        if (obj == null || getClass() != obj.getClass()) return false;
         LatLon that = (LatLon) obj;
         return Double.compare(that.x, x) == 0 &&
-                Double.compare(that.y, y) == 0;
+               Double.compare(that.y, y) == 0;
     }
 
     /**
