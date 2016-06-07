@@ -11,7 +11,7 @@ import java.util.TimeZone;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.tools.Pair;
@@ -57,10 +57,10 @@ public class CorrelateGpxWithImagesTest {
         i3.createTmp();
 
         assertEquals(4, CorrelateGpxWithImages.matchGpxTrack(Arrays.asList(i0, i1, i2, i3), gpx, 0));
-        assertEquals(new LatLon(47.19286847859621, 8.79732714034617), i0.getPos()); // start of track
-        assertEquals(new LatLon(47.196979885920882, 8.79541271366179), i1.getPos()); // exact match
-        assertEquals(new LatLon(47.197319911792874, 8.792139580473304), i3.getPos()); // exact match
-        assertEquals(new LatLon((47.197131179273129 + 47.197186248376966) / 2, (8.792974585667253 + 8.792809881269932) / 2),
+        assertEquals(new CachedLatLon(47.19286847859621, 8.79732714034617), i0.getPos()); // start of track
+        assertEquals(new CachedLatLon(47.196979885920882, 8.79541271366179), i1.getPos()); // exact match
+        assertEquals(new CachedLatLon(47.197319911792874, 8.792139580473304), i3.getPos()); // exact match
+        assertEquals(new CachedLatLon((47.197131179273129 + 47.197186248376966) / 2, (8.792974585667253 + 8.792809881269932) / 2),
                 i2.getPos()); // interpolated
     }
 
