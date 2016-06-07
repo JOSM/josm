@@ -3,11 +3,14 @@ package org.openstreetmap.josm.data.coor;
 
 import static org.junit.Assert.assertEquals;
 
+import java.text.DecimalFormat;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 /**
  * Unit tests for class {@link LatLon}.
@@ -119,27 +122,13 @@ public class LatLonTest {
     }
 
     /**
-     * Test of {@link LatLon#equals}
+     * Unit test of methods {@link LatLon#equals} and {@link LatLon#hashCode}.
      */
     @Test
-    public void testEquals() {
-        for (int i = 1; i < SAMPLE_VALUES.length; i++) {
-            LatLon a = new LatLon(SAMPLE_VALUES[i-1], SAMPLE_VALUES[i]);
-            LatLon b = new LatLon(SAMPLE_VALUES[i-1], SAMPLE_VALUES[i]);
-            assertEquals(a, b);
-        }
-    }
-
-    /**
-     * Test of {@link LatLon#hashCode}
-     */
-    @Test
-    public void testHashCode() {
-        for (int i = 1; i < SAMPLE_VALUES.length; i++) {
-            LatLon a = new LatLon(SAMPLE_VALUES[i-1], SAMPLE_VALUES[i]);
-            LatLon b = new LatLon(SAMPLE_VALUES[i-1], SAMPLE_VALUES[i]);
-            assertEquals(a.hashCode(), b.hashCode());
-        }
+    public void equalsContract() {
+        EqualsVerifier.forClass(LatLon.class).usingGetClass()
+            .withPrefabValues(DecimalFormat.class, new DecimalFormat("00.0"), new DecimalFormat("00.000"))
+            .verify();
     }
 
     /**
