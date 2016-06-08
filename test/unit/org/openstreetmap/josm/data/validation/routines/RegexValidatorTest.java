@@ -31,7 +31,7 @@ import org.openstreetmap.josm.Main;
 /**
  * Test Case for RegexValidatorTest.
  *
- * @version $Revision: 1649191 $
+ * @version $Revision: 1741724 $
  * @since Validator 1.4
  */
 public class RegexValidatorTest {

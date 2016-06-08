@@ -28,7 +28,7 @@ import org.junit.Test;
  * Performs Validation Test for e-mail validations.
  *
  *
- * @version $Revision: 1723573 $
+ * @version $Revision: 1741724 $
  */
 public class EmailValidatorTest {
 

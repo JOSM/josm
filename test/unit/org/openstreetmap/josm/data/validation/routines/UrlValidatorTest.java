@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * Performs Validation Test for url validations.
  *
- * @version $Revision: 1715076 $
+ * @version $Revision: 1741724 $
  */
 public class UrlValidatorTest {
 

@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  * Test cases for InetAddressValidator.
  *
- * @version $Revision: 1649163 $
+ * @version $Revision: 1741724 $
  */
 public class InetAddressValidatorTest {
 

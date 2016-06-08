@@ -29,7 +29,7 @@ import java.util.List;
  * This class is a Singleton; you can retrieve the instance via the {@link #getInstance()} method.
  * </p>
  *
- * @version $Revision: 1715439 $
+ * @version $Revision: 1741724 $
  * @since Validator 1.4
  */
 public class InetAddressValidator extends AbstractValidator {
@@ -165,7 +165,7 @@ public class InetAddressValidator extends AbstractValidator {
                     if (!inet6Address.endsWith(octet)) {
                         return false;
                     }
-                    if (index > octets.length - 1 || index > 6) { // TODO magic number (sort of)
+                    if (index > octets.length - 1 || index > 6) { // CHECKSTYLE IGNORE MagicNumber
                         // IPV4 occupies last two octets
                         return false;
                     }
