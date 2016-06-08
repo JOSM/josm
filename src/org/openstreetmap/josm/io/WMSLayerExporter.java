@@ -11,6 +11,7 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -43,11 +44,10 @@ public class WMSLayerExporter extends FileExporter {
                 oos.writeObject(Preferences.serializeStruct(entry, ImageryPreferenceEntry.class));
             }
         }
-
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        setEnabled(newLayer instanceof AbstractTileSourceLayer);
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+        setEnabled(e.getSource().getActiveLayer() instanceof AbstractTileSourceLayer);
     }
 }

@@ -10,16 +10,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * RelationDialogManager keeps track of the open relation editors.
  *
  */
-public class RelationDialogManager extends WindowAdapter implements MapView.LayerChangeListener {
+public class RelationDialogManager extends WindowAdapter implements LayerChangeListener {
 
     /** keeps track of open relation editors */
     private static RelationDialogManager relationDialogManager;
@@ -32,7 +36,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     public static RelationDialogManager getRelationDialogManager() {
         if (RelationDialogManager.relationDialogManager == null) {
             RelationDialogManager.relationDialogManager = new RelationDialogManager();
-            MapView.addLayerChangeListener(RelationDialogManager.relationDialogManager);
+            Main.getLayerManager().addLayerChangeListener(RelationDialogManager.relationDialogManager);
         }
         return RelationDialogManager.relationDialogManager;
     }
@@ -166,12 +170,9 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
         return openDialogs.get(context);
     }
 
-    /**
-     * called when a layer is removed
-     *
-     */
     @Override
-    public void layerRemoved(Layer oldLayer) {
+    public void layerRemoving(LayerRemoveEvent e) {
+        Layer oldLayer = e.getRemovedLayer();
         if (!(oldLayer instanceof OsmDataLayer))
             return;
         OsmDataLayer dataLayer = (OsmDataLayer) oldLayer;
@@ -189,13 +190,13 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        // do nothing
+    public void layerAdded(LayerAddEvent e) {
+        // ignore
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {
-        // do nothing
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
+        // ignore
     }
 
     @Override

@@ -46,6 +46,7 @@ import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
@@ -364,13 +365,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public ProjectionBounds getProjectionBounds() {
-        return new ProjectionBounds(
-                new EastNorth(
-                        center.east() - getWidth()/2.0*scale,
-                        center.north() - getHeight()/2.0*scale),
-                        new EastNorth(
-                                center.east() + getWidth()/2.0*scale,
-                                center.north() + getHeight()/2.0*scale));
+        return new MapViewState(this).getViewArea().getProjectionBounds();
     }
 
     /* FIXME: replace with better method - used by MapSlider */
@@ -382,13 +377,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /* FIXME: replace with better method - used by Main to reset Bounds when projection changes, don't use otherwise */
     public Bounds getRealBounds() {
-        return new Bounds(
-                getProjection().eastNorth2latlon(new EastNorth(
-                        center.east() - getWidth()/2.0*scale,
-                        center.north() - getHeight()/2.0*scale)),
-                        getProjection().eastNorth2latlon(new EastNorth(
-                                center.east() + getWidth()/2.0*scale,
-                                center.north() + getHeight()/2.0*scale)));
+        return new MapViewState(this).getViewArea().getCornerBounds();
     }
 
     /**
@@ -407,11 +396,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public ProjectionBounds getProjectionBounds(Rectangle r) {
-        EastNorth p1 = getEastNorth(r.x, r.y);
-        EastNorth p2 = getEastNorth(r.x + r.width, r.y + r.height);
-        ProjectionBounds pb = new ProjectionBounds(p1);
-        pb.extend(p2);
-        return pb;
+        MapViewState state = new MapViewState(this);
+        MapViewPoint p1 = state.getForView(r.getMinX(), r.getMinY());
+        MapViewPoint p2 = state.getForView(r.getMaxX(), r.getMaxY());
+        return p1.rectTo(p2).getProjectionBounds();
     }
 
     /**

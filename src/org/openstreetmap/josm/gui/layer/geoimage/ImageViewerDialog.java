@@ -22,16 +22,20 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
-public final class ImageViewerDialog extends ToggleDialog implements LayerChangeListener {
+public final class ImageViewerDialog extends ToggleDialog implements LayerChangeListener, ActiveLayerChangeListener {
 
     private static final String COMMAND_ZOOM = "zoom";
     private static final String COMMAND_CENTERVIEW = "centre";
@@ -75,7 +79,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged",
         tr("Tool: {0}", tr("Display geotagged images")), KeyEvent.VK_Y, Shortcut.DIRECT), 200);
         build();
-        MapView.addLayerChangeListener(this);
+        Main.getLayerManager().addActiveLayerChangeListener(this);
+        Main.getLayerManager().addLayerChangeListener(this);
     }
 
     protected void build() {
@@ -195,7 +200,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     @Override
     public void destroy() {
-        MapView.removeLayerChangeListener(this);
+        Main.getLayerManager().removeActiveLayerChangeListener(this);
+        Main.getLayerManager().removeLayerChangeListener(this);
         super.destroy();
     }
 
@@ -409,28 +415,36 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        if (currentLayer == null && newLayer instanceof GeoImageLayer) {
-            ((GeoImageLayer) newLayer).showFirstPhoto();
-        }
+    public void layerAdded(LayerAddEvent e) {
+        showLayer(e.getAddedLayer());
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {
-        if (currentLayer == null && newLayer instanceof GeoImageLayer) {
-            ((GeoImageLayer) newLayer).showFirstPhoto();
-        }
-    }
-
-    @Override
-    public void layerRemoved(Layer oldLayer) {
+    public void layerRemoving(LayerRemoveEvent e) {
         // Clear current image and layer if current layer is deleted
-        if (currentLayer != null && currentLayer.equals(oldLayer)) {
+        if (currentLayer != null && currentLayer.equals(e.getRemovedLayer())) {
             showImage(null, null);
         }
         // Check buttons state in case of layer merging
-        if (currentLayer != null && oldLayer instanceof GeoImageLayer) {
+        if (currentLayer != null && e.getRemovedLayer() instanceof GeoImageLayer) {
             currentLayer.checkPreviousNextButtons();
         }
     }
+
+    @Override
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
+        // ignored
+    }
+
+    @Override
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+        showLayer(e.getSource().getActiveLayer());
+    }
+
+    private void showLayer(Layer newLayer) {
+        if (currentLayer == null && newLayer instanceof GeoImageLayer) {
+            ((GeoImageLayer) newLayer).showFirstPhoto();
+        }
+    }
+
 }

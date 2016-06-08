@@ -113,7 +113,7 @@ public class MainFrame extends JFrame {
             public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
                 refreshTitle();
             }
-        }, false);
+        });
         Main.getLayerManager().addLayerChangeListener(new ManageLayerListeners(), true);
 
         refreshTitle();

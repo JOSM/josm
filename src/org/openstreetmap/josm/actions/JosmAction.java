@@ -15,12 +15,11 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -183,7 +182,9 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         if (sc != null) {
             Main.unregisterActionShortcut(this);
         }
-        MapView.removeLayerChangeListener(layerChangeAdapter);
+        if (layerChangeAdapter != null) {
+            Main.getLayerManager().removeActiveLayerChangeListener(layerChangeAdapter);
+        }
         DataSet.removeSelectionListener(selectionChangeAdapter);
     }
 
@@ -225,10 +226,9 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
 
     protected void installAdapters() {
         // make this action listen to layer change and selection change events
-        //
         layerChangeAdapter = new LayerChangeAdapter();
         selectionChangeAdapter = new SelectionChangeAdapter();
-        MapView.addLayerChangeListener(layerChangeAdapter);
+        Main.getLayerManager().addActiveLayerChangeListener(layerChangeAdapter);
         DataSet.addSelectionListener(selectionChangeAdapter);
         initEnabledState();
     }
@@ -290,41 +290,32 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     }
 
     /**
-     * Adapter for layer change events
-     *
+     * Adapter for layer change events. Runs updateEnabledState() whenever the active layer changed.
      */
-    protected class LayerChangeAdapter implements MapView.LayerChangeListener {
-        private void updateEnabledStateInEDT() {
-            GuiHelper.runInEDT(new Runnable() {
-                @Override public void run() {
-                    updateEnabledState();
-                }
-            });
+    protected class LayerChangeAdapter implements ActiveLayerChangeListener {
+        @Override
+        public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+            updateEnabledState();
         }
 
         @Override
-        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-            updateEnabledStateInEDT();
-        }
-
-        @Override
-        public void layerAdded(Layer newLayer) {
-            updateEnabledStateInEDT();
-        }
-
-        @Override
-        public void layerRemoved(Layer oldLayer) {
-            updateEnabledStateInEDT();
+        public String toString() {
+            return "LayerChangeAdapter [" + JosmAction.this.toString() + ']';
         }
     }
 
     /**
-     * Adapter for selection change events
+     * Adapter for selection change events. Runs updateEnabledState() whenever the selection changed.
      */
     protected class SelectionChangeAdapter implements SelectionChangedListener {
         @Override
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             updateEnabledState(newSelection);
+        }
+
+        @Override
+        public String toString() {
+            return "SelectionChangeAdapter [" + JosmAction.this.toString() + ']';
         }
     }
 }

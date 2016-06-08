@@ -116,7 +116,8 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.gui.dialogs.MenuItemSearchDialog;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
@@ -821,7 +822,7 @@ public class MainMenu extends JMenuBar {
 
         windowMenu.addMenuListener(menuSeparatorHandler);
 
-        new PresetsMenuEnabler(presetsMenu).refreshEnabled();
+        new PresetsMenuEnabler(presetsMenu);
     }
 
     /**
@@ -885,35 +886,17 @@ public class MainMenu extends JMenuBar {
         }
     }
 
-    static class PresetsMenuEnabler implements MapView.LayerChangeListener {
+    static class PresetsMenuEnabler implements ActiveLayerChangeListener {
         private final JMenu presetsMenu;
 
         PresetsMenuEnabler(JMenu presetsMenu) {
-            MapView.addLayerChangeListener(this);
             this.presetsMenu = presetsMenu;
-        }
-
-        /**
-         * Refreshes the enabled state
-         */
-        protected void refreshEnabled() {
-            presetsMenu.setEnabled(Main.main.hasEditLayer());
+            Main.getLayerManager().addAndFireActiveLayerChangeListener(this);
         }
 
         @Override
-        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-            refreshEnabled();
-        }
-
-        @Override
-        public void layerAdded(Layer newLayer) {
-            refreshEnabled();
-        }
-
-        @Override
-        public void layerRemoved(Layer oldLayer) {
-            refreshEnabled();
+        public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+            presetsMenu.setEnabled(e.getSource().getEditLayer() != null);
         }
     }
-
 }

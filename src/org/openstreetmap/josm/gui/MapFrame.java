@@ -37,7 +37,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -58,7 +57,6 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.ViewportData;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.ChangesetDialog;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
@@ -76,6 +74,12 @@ import org.openstreetmap.josm.gui.dialogs.ValidatorDialog;
 import org.openstreetmap.josm.gui.dialogs.properties.PropertiesDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.AdvancedKeyPressDetector;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
@@ -89,7 +93,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class MapFrame extends JPanel implements Destroyable, LayerChangeListener {
+public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeListener, LayerChangeListener {
 
     /**
      * The current mode, this frame operates.
@@ -284,7 +288,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         // status line below the map
         statusLine = new MapStatus(this);
-        MapView.addLayerChangeListener(this);
+        Main.getLayerManager().addLayerChangeListener(this);
+        Main.getLayerManager().addActiveLayerChangeListener(this);
 
         boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0) != null;
         if (unregisterTab) {
@@ -328,7 +333,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      */
     @Override
     public void destroy() {
-        MapView.removeLayerChangeListener(this);
+        Main.getLayerManager().removeLayerChangeListener(this);
+        Main.getLayerManager().removeActiveLayerChangeListener(this);
         dialogsPanel.destroy();
         Main.pref.removePreferenceChangeListener(sidetoolbarPreferencesChangedListener);
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i) {
@@ -756,8 +762,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
         boolean modeChanged = false;
+        Layer newLayer = e.getSource().getActiveLayer();
         if (mapMode == null || !mapMode.layerIsSupported(newLayer)) {
             MapMode newMapMode = getLastMapMode(newLayer);
             modeChanged = newMapMode != mapMode;
@@ -770,7 +777,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             }
         }
         // if this is really a change (and not the first active layer)
-        if (oldLayer != null) {
+        if (e.getPreviousActiveLayer() != null) {
             if (!modeChanged && mapMode != null) {
                 // Let mapmodes know about new active layer
                 mapMode.exitMode();
@@ -782,11 +789,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
 
         // After all listeners notice new layer, some buttons will be disabled/enabled
         // and possibly need to be hidden/shown.
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                validateToolBarsVisibility();
-            }
-        });
+        validateToolBarsVisibility();
     }
 
     private MapMode getLastMapMode(Layer newLayer) {
@@ -802,12 +805,18 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {
-        // Do nothing
+    public void layerAdded(LayerAddEvent e) {
+        // ignored
     }
 
     @Override
-    public void layerRemoved(Layer oldLayer) {
-        lastMapMode.remove(oldLayer);
+    public void layerRemoving(LayerRemoveEvent e) {
+        lastMapMode.remove(e.getRemovedLayer());
     }
+
+    @Override
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
+        // ignored
+    }
+
 }

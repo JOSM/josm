@@ -335,7 +335,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         big.setComposite(comp);
         big.fillRect(0, 0, 15, 15);
         big.setColor(getOutsideColor());
-        big.drawLine(0, 15, 15, 0);
+        big.drawLine(-1, 6, 6, -1);
+        big.drawLine(4, 16, 16, 4);
         Rectangle r = new Rectangle(0, 0, 15, 15);
         hatched = new TexturePaint(bi, r);
     }

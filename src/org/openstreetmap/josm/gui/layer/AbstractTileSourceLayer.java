@@ -77,11 +77,14 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.WMSLayerImporter;
@@ -163,7 +166,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         super(info);
         setBackgroundLayer(true);
         this.setVisible(true);
-        MapView.addZoomChangeListener(this);
     }
 
     protected abstract TileLoaderFactory getTileLoaderFactory();
@@ -625,29 +627,30 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
                 }
             }
         };
-        Main.map.mapView.addMouseListener(adapter);
-
-        MapView.addLayerChangeListener(new LayerChangeListener() {
-            @Override
-            public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-                //
-            }
+        Main.getLayerManager().addLayerChangeListener(new LayerChangeListener() {
 
             @Override
-            public void layerAdded(Layer newLayer) {
-                //
-            }
-
-            @Override
-            public void layerRemoved(Layer oldLayer) {
-                if (oldLayer == AbstractTileSourceLayer.this) {
+            public void layerRemoving(LayerRemoveEvent e) {
+                if (e.getRemovedLayer() == AbstractTileSourceLayer.this) {
                     Main.map.mapView.removeMouseListener(adapter);
-                    MapView.removeLayerChangeListener(this);
+                    e.getSource().removeLayerChangeListener(this);
                     MapView.removeZoomChangeListener(AbstractTileSourceLayer.this);
                 }
             }
-        });
 
+            @Override
+            public void layerOrderChanged(LayerOrderChangeEvent e) {
+                // ignored
+            }
+
+            @Override
+            public void layerAdded(LayerAddEvent e) {
+                if (e.getAddedLayer() == AbstractTileSourceLayer.this) {
+                    Main.map.mapView.addMouseListener(adapter);
+                    MapView.addZoomChangeListener(AbstractTileSourceLayer.this);
+                }
+            }
+        });
         // FIXME: why do we need this? Without this, if you add a WMS layer and do not move the mouse, sometimes, tiles do not
         // start loading.
         Main.map.repaint(500);

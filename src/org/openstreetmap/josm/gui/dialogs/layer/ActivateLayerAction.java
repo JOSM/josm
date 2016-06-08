@@ -9,12 +9,12 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * The action to activate the currently selected layer
  */
 public final class ActivateLayerAction extends AbstractAction
-implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutAction {
+implements IEnabledStateUpdating, ActiveLayerChangeListener, MultikeyShortcutAction {
     private transient Layer layer;
     private transient Shortcut multikeyShortcut;
     private final LayerListModel model;
@@ -76,14 +76,12 @@ implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutA
 
     private void execute(Layer layer) {
         // model is going to be updated via LayerChangeListener and PropertyChangeEvents
-        Main.map.mapView.setActiveLayer(layer);
+        model.getLayerManager().setActiveLayer(layer);
         layer.setVisible(true);
     }
 
-    protected boolean isActiveLayer(Layer layer) {
-        if (!Main.isDisplayingMapView())
-            return false;
-        return Main.map.mapView.getActiveLayer() == layer;
+    boolean isActiveLayer(Layer layer) {
+        return model.getLayerManager().getActiveLayer() == layer;
     }
 
     @Override
@@ -105,17 +103,7 @@ implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutA
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        updateEnabledState();
-    }
-
-    @Override
-    public void layerAdded(Layer newLayer) {
-        updateEnabledState();
-    }
-
-    @Override
-    public void layerRemoved(Layer oldLayer) {
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
         updateEnabledState();
     }
 
@@ -136,4 +124,5 @@ implements IEnabledStateUpdating, MapView.LayerChangeListener, MultikeyShortcutA
     public MultikeyInfo getLastMultikeyAction() {
         return null; // Repeating action doesn't make much sense for activating
     }
+
 }
