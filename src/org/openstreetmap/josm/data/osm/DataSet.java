@@ -137,6 +137,56 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
     }
 
     /**
+     * Creates a new {@link DataSet}.
+     * @param copyFrom An other {@link DataSet} to copy the contents of this dataset from.
+     * @since 10346
+     */
+    public DataSet(DataSet copyFrom) {
+        this();
+        copyFrom.getReadLock().lock();
+        try {
+            Map<OsmPrimitive, OsmPrimitive> primMap = new HashMap<>();
+            for (Node n : copyFrom.nodes) {
+                Node newNode = new Node(n);
+                primMap.put(n, newNode);
+                addPrimitive(newNode);
+            }
+            for (Way w : copyFrom.ways) {
+                Way newWay = new Way(w);
+                primMap.put(w, newWay);
+                List<Node> newNodes = new ArrayList<>();
+                for (Node n: w.getNodes()) {
+                    newNodes.add((Node) primMap.get(n));
+                }
+                newWay.setNodes(newNodes);
+                addPrimitive(newWay);
+            }
+            // Because relations can have other relations as members we first clone all relations
+            // and then get the cloned members
+            for (Relation r : copyFrom.relations) {
+                Relation newRelation = new Relation(r, r.isNew());
+                newRelation.setMembers(null);
+                primMap.put(r, newRelation);
+                addPrimitive(newRelation);
+            }
+            for (Relation r : copyFrom.relations) {
+                Relation newRelation = (Relation) primMap.get(r);
+                List<RelationMember> newMembers = new ArrayList<>();
+                for (RelationMember rm: r.getMembers()) {
+                    newMembers.add(new RelationMember(rm.getRole(), primMap.get(rm.getMember())));
+                }
+                newRelation.setMembers(newMembers);
+            }
+            for (DataSource source : copyFrom.dataSources) {
+                dataSources.add(new DataSource(source));
+            }
+            version = copyFrom.version;
+        } finally {
+            copyFrom.getReadLock().unlock();
+        }
+    }
+
+    /**
      * Returns the lock used for reading.
      * @return the lock used for reading
      */
@@ -872,54 +922,14 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
         }
     }
 
+    /**
+     * Return a copy of this dataset
+     * @deprecated Use the copy constructor instead. Remove in July 2016
+     */
+    @Deprecated
     @Override
     public DataSet clone() {
-        getReadLock().lock();
-        try {
-            DataSet ds = (DataSet) super.clone();
-            Main.addProjectionChangeListener(ds);
-            Map<OsmPrimitive, OsmPrimitive> primMap = new HashMap<>();
-            for (Node n : nodes) {
-                Node newNode = new Node(n);
-                primMap.put(n, newNode);
-                ds.addPrimitive(newNode);
-            }
-            for (Way w : ways) {
-                Way newWay = new Way(w);
-                primMap.put(w, newWay);
-                List<Node> newNodes = new ArrayList<>();
-                for (Node n: w.getNodes()) {
-                    newNodes.add((Node) primMap.get(n));
-                }
-                newWay.setNodes(newNodes);
-                ds.addPrimitive(newWay);
-            }
-            // Because relations can have other relations as members we first clone all relations
-            // and then get the cloned members
-            for (Relation r : relations) {
-                Relation newRelation = new Relation(r, r.isNew());
-                newRelation.setMembers(null);
-                primMap.put(r, newRelation);
-                ds.addPrimitive(newRelation);
-            }
-            for (Relation r : relations) {
-                Relation newRelation = (Relation) primMap.get(r);
-                List<RelationMember> newMembers = new ArrayList<>();
-                for (RelationMember rm: r.getMembers()) {
-                    newMembers.add(new RelationMember(rm.getRole(), primMap.get(rm.getMember())));
-                }
-                newRelation.setMembers(newMembers);
-            }
-            for (DataSource source : dataSources) {
-                ds.dataSources.add(new DataSource(source.bounds, source.origin));
-            }
-            ds.version = version;
-            return ds;
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException(e);
-        } finally {
-            getReadLock().unlock();
-        }
+        return new DataSet(this);
     }
 
     @Override

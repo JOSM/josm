@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -68,7 +69,7 @@ public final class DuplicateAction extends AbstractAction implements IEnabledSta
                 newName = tr("Copy {1} of {0}", oldLayer.getName(), i);
                 i++;
             }
-            Main.main.addLayer(new OsmDataLayer(oldLayer.data.clone(), newName, null));
+            Main.main.addLayer(new OsmDataLayer(new DataSet(oldLayer.data), newName, null));
         }
     }
 
