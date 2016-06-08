@@ -345,11 +345,14 @@ public class PlatformHookWindows extends PlatformHookUnixoid {
 
     @Override
     public Collection<FontEntry> getAdditionalFonts() {
-        Collection<FontEntry> def = new ArrayList<>();
+        Collection<FontEntry> def = new ArrayList<>(33);
         def.add(new FontEntry("devanagari", "", "")); // just include in fallback list font already defined in template
 
         // Windows scripts: https://msdn.microsoft.com/en-us/goglobal/bb688099.aspx
         // IE default fonts: https://msdn.microsoft.com/en-us/library/ie/dn467844(v=vs.85).aspx
+
+        // Windows 10 and later
+        def.add(new FontEntry("historic", "Segoe UI Historic", "SEGUIHIS.TTF"));       // historic charsets
 
         // Windows 8/8.1 and later
         def.add(new FontEntry("javanese", "Javanese Text", "JAVATEXT.TTF"));           // ISO 639: jv
