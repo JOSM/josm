@@ -415,7 +415,7 @@ public final class Shortcut {
         Shortcut potentialShortcut = findShortcut(key, modifier);
         if (potentialShortcut != null) {
             // this always is a logic error in the hook
-            Main.error("CONFLICT WITH SYSTEM KEY "+shortText);
+            Main.error("CONFLICT WITH SYSTEM KEY "+shortText+": "+potentialShortcut);
             return null;
         }
         potentialShortcut = new Shortcut(shortText, longText, key, RESERVED, key, modifier, true, false);

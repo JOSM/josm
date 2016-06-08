@@ -45,17 +45,24 @@ public class RemoteControlTest {
     public void setUp() {
         JOSMFixture.createUnitTestFixture().init();
         RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.put(true);
+        deleteKeystore();
+
+        RemoteControl.start();
+        disableCertificateValidation();
+        httpBase = "http://127.0.0.1:"+Main.pref.getInteger("remote.control.port", 8111);
+        httpsBase = "https://127.0.0.1:"+Main.pref.getInteger("remote.control.https.port", 8112);
+    }
+
+    /**
+     * Deletes JOSM keystore, if it exists.
+     */
+    public static void deleteKeystore() {
         try {
             Files.deleteIfExists(Paths.get(
                     RemoteControl.getRemoteControlDir()).resolve(RemoteControlHttpsServer.KEYSTORE_FILENAME));
         } catch (IOException e) {
             Main.error(e);
         }
-
-        RemoteControl.start();
-        disableCertificateValidation();
-        httpBase = "http://127.0.0.1:"+Main.pref.getInteger("remote.control.port", 8111);
-        httpsBase = "https://127.0.0.1:"+Main.pref.getInteger("remote.control.https.port", 8112);
     }
 
     /**
