@@ -500,7 +500,6 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             // Unregisters selectionManager if ctrl has been pressed after mouse click on Mac OS X in order to move the map
             if (ctrl && Main.isPlatformOsx()) {
                 selectionManager.unregister(mv);
-                mv.requestClearRect();
                 // Make sure correct cursor is displayed
                 mv.setNewCursor(Cursor.MOVE_CURSOR, this);
             }

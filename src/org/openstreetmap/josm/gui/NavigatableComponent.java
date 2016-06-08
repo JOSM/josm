@@ -2,9 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import java.awt.Cursor;
-import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -43,7 +41,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -141,10 +138,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Center n/e coordinate of the desired screen center.
      */
     protected EastNorth center = calculateDefaultCenter();
-
-    private final transient Object paintRequestLock = new Object();
-    private Rectangle paintRect;
-    private Polygon paintPoly;
 
     protected transient ViewportData initialViewport;
 
@@ -298,28 +291,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public static String getDistText(final double dist, final NumberFormat format, final double threshold) {
         return SystemOfMeasurement.getSystemOfMeasurement().getDistText(dist, format, threshold);
-    }
-
-    /**
-     * Returns the text describing the given area in the current system of measurement.
-     * @param area The distance in square metres.
-     * @return the text describing the given area in the current system of measurement.
-     * @since 5560
-     */
-    public static String getAreaText(double area) {
-        return SystemOfMeasurement.getSystemOfMeasurement().getAreaText(area);
-    }
-
-    /**
-     * Returns the text describing the given area in the current system of measurement.
-     * @param area The area in square metres
-     * @param format A {@link NumberFormat} to format the area value
-     * @param threshold Values lower than this {@code threshold} are displayed as {@code "< [threshold]"}
-     * @return the text describing the given area in the current system of measurement.
-     * @since 7135
-     */
-    public static String getAreaText(final double area, final NumberFormat format, final double threshold) {
-        return SystemOfMeasurement.getSystemOfMeasurement().getAreaText(area, format, threshold);
     }
 
     /**
@@ -606,10 +577,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     public void zoomTo(LatLon newCenter) {
         zoomTo(Projections.project(newCenter));
-    }
-
-    public void smoothScrollTo(LatLon newCenter) {
-        smoothScrollTo(Projections.project(newCenter));
     }
 
     /**
@@ -1401,35 +1368,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return osm;
     }
 
-    public static double perDist(Point2D pt, Point2D a, Point2D b) {
-        if (pt != null && a != null && b != null) {
-            double pd =
-                    (a.getX()-pt.getX())*(b.getX()-a.getX()) -
-                    (a.getY()-pt.getY())*(b.getY()-a.getY());
-            return Math.abs(pd) / a.distance(b);
-        }
-        return 0d;
-    }
-
-    /**
-     *
-     * @param pt point to project onto (ab)
-     * @param a root of vector
-     * @param b vector
-     * @return point of intersection of line given by (ab)
-     *      with its orthogonal line running through pt
-     */
-    public static Point2D project(Point2D pt, Point2D a, Point2D b) {
-        if (pt != null && a != null && b != null) {
-            double r = (
-                    (pt.getX()-a.getX())*(b.getX()-a.getX()) +
-                    (pt.getY()-a.getY())*(b.getY()-a.getY()))
-                    / a.distanceSq(b);
-            return project(r, a, b);
-        }
-        return null;
-    }
-
     /**
      * if r = 0 returns a, if r=1 returns b,
      * if r = 0.5 returns center between a and b, etc..
@@ -1569,79 +1507,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public CursorManager getCursorManager() {
         return cursorManager;
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        synchronized (paintRequestLock) {
-            if (paintRect != null) {
-                Graphics g2 = g.create();
-                g2.setColor(Utils.complement(PaintColors.getBackgroundColor()));
-                g2.drawRect(paintRect.x, paintRect.y, paintRect.width, paintRect.height);
-                g2.dispose();
-            }
-            if (paintPoly != null) {
-                Graphics g2 = g.create();
-                g2.setColor(Utils.complement(PaintColors.getBackgroundColor()));
-                g2.drawPolyline(paintPoly.xpoints, paintPoly.ypoints, paintPoly.npoints);
-                g2.dispose();
-            }
-        }
-        super.paint(g);
-    }
-
-    /**
-     * Requests to paint the given {@code Rectangle}.
-     * @param r The Rectangle to draw
-     * @see #requestClearRect
-     * @since 5500
-     */
-    public void requestPaintRect(Rectangle r) {
-        if (r != null) {
-            synchronized (paintRequestLock) {
-                paintRect = r;
-            }
-            repaint();
-        }
-    }
-
-    /**
-     * Requests to paint the given {@code Polygon} as a polyline (unclosed polygon).
-     * @param p The Polygon to draw
-     * @see #requestClearPoly
-     * @since 5500
-     */
-    public void requestPaintPoly(Polygon p) {
-        if (p != null) {
-            synchronized (paintRequestLock) {
-                paintPoly = p;
-            }
-            repaint();
-        }
-    }
-
-    /**
-     * Requests to clear the rectangled previously drawn.
-     * @see #requestPaintRect
-     * @since 5500
-     */
-    public void requestClearRect() {
-        synchronized (paintRequestLock) {
-            paintRect = null;
-        }
-        repaint();
-    }
-
-    /**
-     * Requests to clear the polyline previously drawn.
-     * @see #requestPaintPoly
-     * @since 5500
-     */
-    public void requestClearPoly() {
-        synchronized (paintRequestLock) {
-            paintPoly = null;
-        }
-        repaint();
     }
 
     /**

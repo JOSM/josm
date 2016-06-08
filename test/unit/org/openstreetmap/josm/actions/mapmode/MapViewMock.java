@@ -48,9 +48,6 @@ class MapViewMock extends MapView {
     }
 
     @Override
-    public void requestClearRect() {}
-
-    @Override
     public Point2D getPoint2D(EastNorth p) {
         return p != null ? new Point2D.Double(p.getX(), p.getY()) : null;
     }
