@@ -40,9 +40,9 @@ import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -73,7 +73,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  *
  * @see HistoryBrowser
  */
-public class HistoryBrowserModel extends ChangeNotifier implements LayerChangeListener, DataSetListener {
+public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerChangeListener, DataSetListener {
     /** the history of an OsmPrimitive */
     private History history;
     private HistoryOsmPrimitive reference;
@@ -110,7 +110,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements LayerChangeLi
                 editLayer.data.addDataSetListener(this);
             }
         }
-        MapView.addLayerChangeListener(this);
+        Main.getLayerManager().addActiveLayerChangeListener(this);
     }
 
     /**
@@ -669,7 +669,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements LayerChangeLi
         if (editLayer != null) {
             editLayer.data.removeDataSetListener(this);
         }
-        MapView.removeLayerChangeListener(this);
+        Main.getLayerManager().removeActiveLayerChangeListener(this);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -746,14 +746,16 @@ public class HistoryBrowserModel extends ChangeNotifier implements LayerChangeLi
     }
 
     /* ---------------------------------------------------------------------- */
-    /* LayerChangeListener                                                    */
+    /* ActiveLayerChangeListener                                              */
     /* ---------------------------------------------------------------------- */
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+        Layer oldLayer = e.getPreviousActiveLayer();
         if (oldLayer instanceof OsmDataLayer) {
             OsmDataLayer l = (OsmDataLayer) oldLayer;
             l.data.removeDataSetListener(this);
         }
+        Layer newLayer = e.getSource().getActiveLayer();
         if (!(newLayer instanceof OsmDataLayer)) {
             latest = null;
             fireModelChange();
@@ -770,16 +772,6 @@ public class HistoryBrowserModel extends ChangeNotifier implements LayerChangeLi
         }
         setLatest(newLatest);
         fireModelChange();
-    }
-
-    @Override
-    public void layerAdded(Layer newLayer) {
-        // Do nothing
-    }
-
-    @Override
-    public void layerRemoved(Layer oldLayer) {
-        // Do nothing
     }
 
     /**
@@ -824,4 +816,5 @@ public class HistoryBrowserModel extends ChangeNotifier implements LayerChangeLi
             return clone;
         }
     }
+
 }

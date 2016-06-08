@@ -107,7 +107,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
             try {
                 FileExporter exporter = exporterClass.getConstructor().newInstance();
                 exporters.add(exporter);
-                MapView.addLayerChangeListener(exporter);
+                Main.getLayerManager().addAndFireActiveLayerChangeListener(exporter);
             } catch (ReflectiveOperationException e) {
                 if (Main.isDebugEnabled()) {
                     Main.debug(e.getMessage());

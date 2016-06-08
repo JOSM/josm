@@ -27,10 +27,11 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
@@ -50,7 +51,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         this.selectedPolyData = new ArrayList<>();
         Main.addProjectionChangeListener(this);
         DataSet.addSelectionListener(this);
-        MapView.addLayerChangeListener(this);
+        Main.getLayerManager().addLayerChangeListener(this);
     }
 
     /**
@@ -285,19 +286,19 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+    public void layerAdded(LayerAddEvent e) {
         // Do nothing
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
         // Do nothing
     }
 
     @Override
-    public void layerRemoved(Layer oldLayer) {
-        if (oldLayer instanceof OsmDataLayer) {
-            clear(((OsmDataLayer) oldLayer).data);
+    public void layerRemoving(LayerRemoveEvent e) {
+        if (e.getRemovedLayer() instanceof OsmDataLayer) {
+            clear(((OsmDataLayer) e.getRemovedLayer()).data);
         }
     }
 

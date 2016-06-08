@@ -185,11 +185,11 @@ public class LayerListDialog extends ToggleDialog {
         //
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        model = new LayerListModel(selectionModel);
+        model = new LayerListModel(layerManager, selectionModel);
 
         // create the list control
         //
-        layerList = new LayerList(model, layerManager);
+        layerList = new LayerList(model);
         layerList.setSelectionModel(selectionModel);
         layerList.addMouseListener(new PopupMenuHandler());
         layerList.setBackground(UIManager.getColor("Button.background"));
@@ -329,7 +329,7 @@ public class LayerListDialog extends ToggleDialog {
 
     @Override
     public void showNotify() {
-        MapView.addLayerChangeListener(activateLayerAction);
+        layerManager.addActiveLayerChangeListener(activateLayerAction);
         layerManager.addLayerChangeListener(model);
         layerManager.addAndFireActiveLayerChangeListener(model);
         model.populate();
@@ -339,7 +339,7 @@ public class LayerListDialog extends ToggleDialog {
     public void hideNotify() {
         layerManager.removeLayerChangeListener(model);
         layerManager.removeActiveLayerChangeListener(model);
-        MapView.removeLayerChangeListener(activateLayerAction);
+        layerManager.removeActiveLayerChangeListener(activateLayerAction);
     }
 
     /**
@@ -648,13 +648,15 @@ public class LayerListDialog extends ToggleDialog {
         private final DefaultListSelectionModel selectionModel;
         private final CopyOnWriteArrayList<LayerListModelListener> listeners;
         private LayerList layerList;
+        private final MainLayerManager layerManager;
 
         /**
          * constructor
-         *
+         * @param layerManager The layer manager to use for the list.
          * @param selectionModel the list selection model
          */
-        LayerListModel(DefaultListSelectionModel selectionModel) {
+        LayerListModel(MainLayerManager layerManager, DefaultListSelectionModel selectionModel) {
+            this.layerManager = layerManager;
             this.selectionModel = selectionModel;
             listeners = new CopyOnWriteArrayList<>();
         }
@@ -663,13 +665,12 @@ public class LayerListDialog extends ToggleDialog {
             this.layerList = layerList;
         }
 
-        private MainLayerManager getLayerManager() {
-            // layerList should never be null. But if it is, we should not crash.
-            if (layerList == null) {
-                return new MainLayerManager();
-            } else {
-                return layerList.getLayerManager();
-            }
+        /**
+         * The layer manager this model is for.
+         * @return The layer manager.
+         */
+        public MainLayerManager getLayerManager() {
+            return layerManager;
         }
 
         /**
@@ -1124,11 +1125,9 @@ public class LayerListDialog extends ToggleDialog {
      * This component displays a list of layers and provides the methods needed by {@link LayerListModel}.
      */
     static class LayerList extends JTable {
-        private final transient MainLayerManager layerManager;
 
-        LayerList(LayerListModel dataModel, MainLayerManager layerManager) {
+        LayerList(LayerListModel dataModel) {
             super(dataModel);
-            this.layerManager = layerManager;
             dataModel.setLayerList(this);
         }
 
@@ -1140,15 +1139,6 @@ public class LayerListDialog extends ToggleDialog {
             Point pt = viewport.getViewPosition();
             rect.setLocation(rect.x - pt.x, rect.y - pt.y);
             viewport.scrollRectToVisible(rect);
-        }
-
-        /**
-         * Gets you the layer manager used for this list.
-         * @return The layer manager.
-         * @since 10288
-         */
-        public MainLayerManager getLayerManager() {
-            return layerManager;
         }
     }
 

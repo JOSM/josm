@@ -7,10 +7,11 @@ import java.io.File;
 import java.io.IOException;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 
-public abstract class FileExporter implements LayerChangeListener {
+public abstract class FileExporter implements ActiveLayerChangeListener {
 
     public final ExtensionFileFilter filter;
 
@@ -53,18 +54,8 @@ public abstract class FileExporter implements LayerChangeListener {
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
         // To be overriden by subclasses if their enabled state depends of the active layer nature
-    }
-
-    @Override
-    public void layerAdded(Layer newLayer) {
-        // To be overriden by subclasses if needed
-    }
-
-    @Override
-    public void layerRemoved(Layer oldLayer) {
-        // To be overriden by subclasses if needed
     }
 
     /**

@@ -32,9 +32,11 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.Shape;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -110,7 +112,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
         /* I18N: mnemonic: I */
         super(trc("menu", "Imagery"));
         setupMenuScroller();
-        MapView.addLayerChangeListener(this);
+        Main.getLayerManager().addLayerChangeListener(this);
         // build dynamically
         addMenuListener(new MenuListener() {
             @Override
@@ -209,11 +211,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
     }
 
     private JMenuItem getNewOffsetMenu() {
-        if (!Main.isDisplayingMapView()) {
-            offsetAction.setEnabled(false);
-            return singleOffset;
-        }
-        Collection<ImageryLayer> layers = Main.map.mapView.getLayersOfType(ImageryLayer.class);
+        Collection<ImageryLayer> layers = Main.getLayerManager().getLayersOfType(ImageryLayer.class);
         if (layers.isEmpty()) {
             offsetAction.setEnabled(false);
             return singleOffset;
@@ -238,22 +236,22 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        // Do nothing
-    }
-
-    @Override
-    public void layerAdded(Layer newLayer) {
-        if (newLayer instanceof ImageryLayer) {
+    public void layerAdded(LayerAddEvent e) {
+        if (e.getAddedLayer() instanceof ImageryLayer) {
             refreshOffsetMenu();
         }
     }
 
     @Override
-    public void layerRemoved(Layer oldLayer) {
-        if (oldLayer instanceof ImageryLayer) {
+    public void layerRemoving(LayerRemoveEvent e) {
+        if (e.getRemovedLayer() instanceof ImageryLayer) {
             refreshOffsetMenu();
         }
+    }
+
+    @Override
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
+        refreshOffsetMenu();
     }
 
     /**

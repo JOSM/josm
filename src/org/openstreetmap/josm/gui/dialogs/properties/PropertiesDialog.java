@@ -617,9 +617,6 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     public void destroy() {
         super.destroy();
         Main.pref.removePreferenceChangeListener(this);
-        for (JosmAction action : josmActions) {
-            action.destroy();
-        }
         Container parent = pluginHook.getParent();
         if (parent != null) {
             parent.remove(pluginHook);

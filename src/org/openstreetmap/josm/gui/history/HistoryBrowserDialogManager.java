@@ -21,8 +21,10 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -32,7 +34,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  * Manager allowing to show/hide history dialogs.
  * @since 2019
  */
-public final class HistoryBrowserDialogManager implements MapView.LayerChangeListener {
+public final class HistoryBrowserDialogManager implements LayerChangeListener {
 
     private static final String WINDOW_GEOMETRY_PREF = HistoryBrowserDialogManager.class.getName() + ".geometry";
 
@@ -53,7 +55,7 @@ public final class HistoryBrowserDialogManager implements MapView.LayerChangeLis
 
     protected HistoryBrowserDialogManager() {
         dialogs = new HashMap<>();
-        MapView.addLayerChangeListener(this);
+        Main.getLayerManager().addLayerChangeListener(this);
     }
 
     /**
@@ -152,21 +154,21 @@ public final class HistoryBrowserDialogManager implements MapView.LayerChangeLis
     /* LayerChangeListener                                                           */
     /* ----------------------------------------------------------------------------- */
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+    public void layerAdded(LayerAddEvent e) {
         // Do nothing
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {
-        // Do nothing
-    }
-
-    @Override
-    public void layerRemoved(Layer oldLayer) {
+    public void layerRemoving(LayerRemoveEvent e) {
         // remove all history browsers if the number of layers drops to 0
-        if (Main.isDisplayingMapView() && Main.map.mapView.getNumLayers() == 0) {
+        if (e.getSource().getLayers().isEmpty()) {
             hideAll();
         }
+    }
+
+    @Override
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
+        // Do nothing
     }
 
     /**

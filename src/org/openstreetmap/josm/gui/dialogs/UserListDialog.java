@@ -34,9 +34,10 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -49,7 +50,7 @@ import org.openstreetmap.josm.tools.Utils;
  * selection area, along with the number of objects.
  *
  */
-public class UserListDialog extends ToggleDialog implements SelectionChangedListener, MapView.LayerChangeListener {
+public class UserListDialog extends ToggleDialog implements SelectionChangedListener, ActiveLayerChangeListener {
 
     /**
      * The display list.
@@ -71,12 +72,12 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     @Override
     public void showNotify() {
         DataSet.addSelectionListener(this);
-        MapView.addLayerChangeListener(this);
+        Main.getLayerManager().addActiveLayerChangeListener(this);
     }
 
     @Override
     public void hideNotify() {
-        MapView.removeLayerChangeListener(this);
+        Main.getLayerManager().removeActiveLayerChangeListener(this);
         DataSet.removeSelectionListener(this);
     }
 
@@ -112,22 +113,13 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        if (newLayer instanceof OsmDataLayer) {
-            refresh(((OsmDataLayer) newLayer).data.getAllSelected());
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+        Layer activeLayer = e.getSource().getActiveLayer();
+        if (activeLayer instanceof OsmDataLayer) {
+            refresh(((OsmDataLayer) activeLayer).data.getAllSelected());
         } else {
             refresh(null);
         }
-    }
-
-    @Override
-    public void layerAdded(Layer newLayer) {
-        // do nothing
-    }
-
-    @Override
-    public void layerRemoved(Layer oldLayer) {
-        // do nothing
     }
 
     /**

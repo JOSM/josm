@@ -38,12 +38,13 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.osm.NoteData;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.NoteSortDialog;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -98,7 +99,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         sortAction = new SortAction();
         uploadAction = new UploadNotesAction();
         buildDialog();
-        MapView.addLayerChangeListener(this);
+        Main.getLayerManager().addLayerChangeListener(this);
     }
 
     private void buildDialog() {
@@ -169,28 +170,28 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        // Do nothing
-    }
-
-    @Override
-    public void layerAdded(Layer newLayer) {
-        if (newLayer instanceof NoteLayer) {
-            noteData = ((NoteLayer) newLayer).getNoteData();
+    public void layerAdded(LayerAddEvent e) {
+        if (e.getAddedLayer() instanceof NoteLayer) {
+            noteData = ((NoteLayer) e.getAddedLayer()).getNoteData();
             model.setData(noteData.getNotes());
             setNotes(noteData.getSortedNotes());
         }
     }
 
     @Override
-    public void layerRemoved(Layer oldLayer) {
-        if (oldLayer instanceof NoteLayer) {
+    public void layerRemoving(LayerRemoveEvent e) {
+        if (e.getRemovedLayer() instanceof NoteLayer) {
             noteData = null;
             model.clearData();
             if (Main.map.mapMode instanceof AddNoteAction) {
                 Main.map.selectMapMode(Main.map.mapModeSelect);
             }
         }
+    }
+
+    @Override
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
+        // ignored
     }
 
     /**

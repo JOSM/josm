@@ -9,12 +9,15 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-public class UndoRedoHandler implements MapView.LayerChangeListener {
+public class UndoRedoHandler implements LayerChangeListener {
 
     /**
      * All commands that were made on the dataset. Don't write from outside!
@@ -31,7 +34,7 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
      * Constructs a new {@code UndoRedoHandler}.
      */
     public UndoRedoHandler() {
-        MapView.addLayerChangeListener(this);
+        Main.getLayerManager().addLayerChangeListener(this);
     }
 
     /**
@@ -169,17 +172,17 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     }
 
     @Override
-    public void layerRemoved(Layer oldLayer) {
-        clean(oldLayer);
+    public void layerRemoving(LayerRemoveEvent e) {
+        clean(e.getRemovedLayer());
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {
+    public void layerAdded(LayerAddEvent e) {
         // Do nothing
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
         // Do nothing
     }
 
