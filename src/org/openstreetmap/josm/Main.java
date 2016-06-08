@@ -8,8 +8,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -46,7 +44,6 @@ import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -120,7 +117,6 @@ import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Abstract class holding various static global variables and methods used in large parts of JOSM application.
@@ -562,10 +558,18 @@ public abstract class Main {
     }
 
     /**
-     * Constructs new {@code Main} object. A lot of global variables are initialized here.
+     * Constructs new {@code Main} object.
+     * @see #initialize()
      */
     public Main() {
         main = this;
+    }
+
+    /**
+     * Initializes the main object. A lot of global variables are initialized here.
+     * @since 10340
+     */
+    public void initialize() {
         isOpenjdk = System.getProperty("java.vm.name").toUpperCase(Locale.ENGLISH).indexOf("OPENJDK") != -1;
         fileWatcher.start();
 
@@ -580,9 +584,7 @@ public abstract class Main {
 
             @Override
             public void initialize() {
-                contentPanePrivate.add(panel, BorderLayout.CENTER);
-                panel.add(gettingStarted, BorderLayout.CENTER);
-                menu = new MainMenu();
+                initializeMainWindow();
             }
         }.call();
 
@@ -712,6 +714,14 @@ public abstract class Main {
                 contentPanePrivate.updateUI();
             }
         }.call();
+    }
+
+    /**
+     * Called once at startup to initialize the main window content.
+     * Should set {@link #menu}
+     */
+    protected void initializeMainWindow() {
+        // can be implementd by subclasses
     }
 
     private abstract static class InitializationTask implements Callable<Void> {
@@ -936,9 +946,6 @@ public abstract class Main {
      */
     public static final JPanel panel = new JPanel(new BorderLayout());
 
-    protected static volatile WindowGeometry geometry;
-    protected static int windowState = JFrame.NORMAL;
-
     private final CommandQueueListener redoUndoListener = new CommandQueueListener() {
         @Override
         public void commandChanged(final int queueSize, final int redoSize) {
@@ -1015,9 +1022,6 @@ public abstract class Main {
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.DECIMAL_DEGREES);
         }
 
-        geometry = WindowGeometry.mainWindow("gui.geometry",
-            args.containsKey(Option.GEOMETRY) ? args.get(Option.GEOMETRY).iterator().next() : null,
-            !args.containsKey(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
     }
 
     protected static void postConstructorProcessCmdLine(Map<Option, Collection<String>> args) {
@@ -1106,30 +1110,7 @@ public abstract class Main {
      */
     public static boolean exitJosm(boolean exit, int exitCode) {
         if (Main.saveUnsavedModifications()) {
-            worker.shutdown();
-            ImageProvider.shutdown(false);
-            JCSCacheManager.shutdown();
-            if (geometry != null) {
-                geometry.remember("gui.geometry");
-            }
-            if (map != null) {
-                map.rememberToggleDialogWidth();
-            }
-            pref.put("gui.maximized", (windowState & JFrame.MAXIMIZED_BOTH) != 0);
-            // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
-            if (Main.isDisplayingMapView()) {
-                Collection<Layer> layers = new ArrayList<>(getLayerManager().getLayers());
-                for (Layer l: layers) {
-                    Main.main.removeLayer(l);
-                }
-            }
-            try {
-                pref.saveDefaults();
-            } catch (IOException ex) {
-                Main.warn(tr("Failed to save default preferences."));
-            }
-            worker.shutdownNow();
-            ImageProvider.shutdown(true);
+            Main.main.shutdown();
 
             if (exit) {
                 System.exit(exitCode);
@@ -1137,6 +1118,29 @@ public abstract class Main {
             return true;
         }
         return false;
+    }
+
+    protected void shutdown() {
+        worker.shutdown();
+        ImageProvider.shutdown(false);
+        JCSCacheManager.shutdown();
+        if (map != null) {
+            map.rememberToggleDialogWidth();
+        }
+        // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
+        if (Main.isDisplayingMapView()) {
+            Collection<Layer> layers = new ArrayList<>(getLayerManager().getLayers());
+            for (Layer l: layers) {
+                Main.main.removeLayer(l);
+            }
+        }
+        try {
+            pref.saveDefaults();
+        } catch (IOException ex) {
+            Main.warn(tr("Failed to save default preferences."));
+        }
+        worker.shutdownNow();
+        ImageProvider.shutdown(true);
     }
 
     /**
@@ -1286,49 +1290,6 @@ public abstract class Main {
             warn("I don't know your operating system '"+os+"', so I'm guessing its some kind of *nix.");
             platform = new PlatformHookUnixoid();
         }
-    }
-
-    private static class WindowPositionSizeListener extends WindowAdapter implements ComponentListener {
-        @Override
-        public void windowStateChanged(WindowEvent e) {
-            Main.windowState = e.getNewState();
-        }
-
-        @Override
-        public void componentHidden(ComponentEvent e) {
-            // Do nothing
-        }
-
-        @Override
-        public void componentMoved(ComponentEvent e) {
-            handleComponentEvent(e);
-        }
-
-        @Override
-        public void componentResized(ComponentEvent e) {
-            handleComponentEvent(e);
-        }
-
-        @Override
-        public void componentShown(ComponentEvent e) {
-            // Do nothing
-        }
-
-        private static void handleComponentEvent(ComponentEvent e) {
-            Component c = e.getComponent();
-            if (c instanceof JFrame && c.isVisible()) {
-                if (Main.windowState == JFrame.NORMAL) {
-                    Main.geometry = new WindowGeometry((JFrame) c);
-                } else {
-                    Main.geometry.fixScreen((JFrame) c);
-                }
-            }
-        }
-    }
-
-    protected static void addListener() {
-        parent.addComponentListener(new WindowPositionSizeListener());
-        ((JFrame) parent).addWindowStateListener(new WindowPositionSizeListener());
     }
 
     /**

@@ -5,10 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,7 +35,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
@@ -69,10 +63,10 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.FontsManager;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.I18n;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.WindowGeometry;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 import gnu.getopt.Getopt;
@@ -85,38 +79,41 @@ import gnu.getopt.LongOpt;
  */
 public class MainApplication extends Main {
 
+    private MainFrame mainFrame;
+
     /**
-     * Constructs a new {@code MainApplication}.
+     * Constructs a new {@code MainApplication} without a window.
      */
     public MainApplication() {
-       // Allow subclassing (see JOSM.java)
+        // Allow subclassing (see JOSM.java)
+        this(null);
     }
 
     /**
      * Constructs a main frame, ready sized and operating. Does not display the frame.
      * @param mainFrame The main JFrame of the application
+     * @since 10340
      */
-    public MainApplication(JFrame mainFrame) {
-        addListener();
-        mainFrame.setContentPane(contentPanePrivate);
-        mainFrame.setJMenuBar(menu);
-        geometry.applySafe(mainFrame);
-        List<Image> l = new LinkedList<>();
-        l.add(ImageProvider.get("logo_16x16x32").getImage());
-        l.add(ImageProvider.get("logo_16x16x8").getImage());
-        l.add(ImageProvider.get("logo_32x32x32").getImage());
-        l.add(ImageProvider.get("logo_32x32x8").getImage());
-        l.add(ImageProvider.get("logo_48x48x32").getImage());
-        l.add(ImageProvider.get("logo_48x48x8").getImage());
-        l.add(ImageProvider.get("logo").getImage());
-        mainFrame.setIconImages(l);
-        mainFrame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(final WindowEvent arg0) {
-                Main.exitJosm(true, 0);
-            }
-        });
-        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    public MainApplication(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+    }
+
+    @Override
+    protected void initializeMainWindow() {
+        if (mainFrame != null) {
+            mainFrame.initialize();
+
+            menu = mainFrame.getMenu();
+        } else {
+            // required for running some tests.
+            menu = new MainMenu();
+        }
+    }
+
+    @Override
+    protected void shutdown() {
+        mainFrame.storeState();
+        super.shutdown();
     }
 
     /**
@@ -396,7 +393,10 @@ public class MainApplication extends Main {
 
         I18n.setupLanguageFonts();
 
-        final JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
+        WindowGeometry geometry = WindowGeometry.mainWindow("gui.geometry",
+                args.containsKey(Option.GEOMETRY) ? args.get(Option.GEOMETRY).iterator().next() : null,
+                !args.containsKey(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
+        final MainFrame mainFrame = new MainFrame(contentPanePrivate, geometry);
         Main.parent = mainFrame;
 
         if (args.containsKey(Option.LOAD_PREFERENCES)) {
@@ -463,6 +463,7 @@ public class MainApplication extends Main {
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));
         final Main main = new MainApplication(mainFrame);
+        main.initialize();
 
         if (!skipLoadingPlugins) {
             loadLatePlugins(splash, monitor, pluginsToLoad);
@@ -482,12 +483,7 @@ public class MainApplication extends Main {
 
         boolean maximized = Main.pref.getBoolean("gui.maximized", false);
         if ((!args.containsKey(Option.NO_MAXIMIZE) && maximized) || args.containsKey(Option.MAXIMIZE)) {
-            if (Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH)) {
-                Main.windowState = JFrame.MAXIMIZED_BOTH;
-                mainFrame.setExtendedState(Main.windowState);
-            } else {
-                Main.debug("Main window: maximizing not supported");
-            }
+            mainFrame.setMaximized(true);
         }
         if (main.menu.fullscreenToggleAction != null) {
             main.menu.fullscreenToggleAction.initial();

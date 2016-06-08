@@ -34,7 +34,6 @@ import javax.swing.AbstractButton;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
@@ -90,7 +89,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  * @author imi
  */
 public class MapView extends NavigatableComponent
-implements PropertyChangeListener, PreferenceChangedListener, OsmDataLayer.LayerStateChangeListener,
+implements PropertyChangeListener, PreferenceChangedListener,
 LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     /**
      * Interface to notify listeners of a layer change.
@@ -586,11 +585,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             playHeadMarker = PlayHeadMarker.create();
         }
 
-        boolean isOsmDataLayer = layer instanceof OsmDataLayer;
-        if (isOsmDataLayer) {
-            ((OsmDataLayer) layer).addLayerStateChangeListener(this);
-        }
-
         layer.addPropertyChangeListener(this);
         Main.addProjectionChangeListener(layer);
         invalidatedListener.addTo(layer);
@@ -673,9 +667,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     @Override
     public void layerRemoving(LayerRemoveEvent e) {
         Layer layer = e.getRemovedLayer();
-        if (layer instanceof OsmDataLayer) {
-            ((OsmDataLayer) layer).removeLayerPropertyChangeListener(this);
-        }
 
         Main.removeProjectionChangeListener(layer);
         layer.removePropertyChangeListener(this);
@@ -1080,7 +1071,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             });
         }
         AudioPlayer.reset();
-        refreshTitle();
         repaint();
     }
 
@@ -1163,26 +1153,18 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 changedLayer = l;
                 repaint();
             }
-        } else if (evt.getPropertyName().equals(OsmDataLayer.REQUIRES_SAVE_TO_DISK_PROP)
-                || evt.getPropertyName().equals(OsmDataLayer.REQUIRES_UPLOAD_TO_SERVER_PROP)) {
-            OsmDataLayer layer = (OsmDataLayer) evt.getSource();
-            if (layer == getEditLayer()) {
-                refreshTitle();
-            }
         }
     }
 
     /**
      * Sets the title of the JOSM main window, adding a star if there are dirty layers.
      * @see Main#parent
+     * @deprecated Replaced by {@link MainFrame#refreshTitle()}. The {@link MainFrame} should handle this by itself.
      */
+    @Deprecated
     protected void refreshTitle() {
         if (Main.parent != null) {
-            OsmDataLayer editLayer = layerManager.getEditLayer();
-            boolean dirty = editLayer != null &&
-                    (editLayer.requiresSaveToFile() || (editLayer.requiresUploadToServer() && !editLayer.isUploadDiscouraged()));
-            ((JFrame) Main.parent).setTitle((dirty ? "* " : "") + tr("Java OpenStreetMap Editor"));
-            ((JFrame) Main.parent).getRootPane().putClientProperty("Window.documentModified", dirty);
+            ((MainFrame) Main.parent).refreshTitle();
         }
     }
 
@@ -1212,13 +1194,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         nonChangedLayers.clear();
         synchronized (temporaryLayers) {
             temporaryLayers.clear();
-        }
-    }
-
-    @Override
-    public void uploadDiscouragedChanged(OsmDataLayer layer, boolean newValue) {
-        if (layer == layerManager.getEditLayer()) {
-            refreshTitle();
         }
     }
 
