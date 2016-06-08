@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControlHttpsServer;
+import org.openstreetmap.josm.io.remotecontrol.RemoteControlTest;
 
 /**
  * Unit tests of {@link PlatformHookWindows} class.
@@ -87,6 +88,7 @@ public class PlatformHookWindowsTest {
      */
     @Test
     public void testSetupHttpsCertificate() throws Exception {
+        RemoteControlTest.deleteKeystore();
         KeyStore ks = RemoteControlHttpsServer.loadJosmKeystore();
         TrustedCertificateEntry trustedCert = new KeyStore.TrustedCertificateEntry(ks.getCertificate(ks.aliases().nextElement()));
         if (Main.isPlatformWindows()) {

@@ -62,7 +62,7 @@ public class PlatformHookOsxTest {
      */
     @Test
     public void testOpenUrl() throws IOException {
-        if (Main.isPlatformOsx()) {
+        if (!Main.isPlatformWindows()) {
             hook.openUrl(Main.getJOSMWebsite());
         } else {
             try {
