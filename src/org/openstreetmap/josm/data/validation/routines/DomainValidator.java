@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016060300, Last Updated Fri Jun  3 07:07:01 2016 UTC
+        // Taken from Version 2016060800, Last Updated Wed Jun  8 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -340,6 +340,7 @@ public final class DomainValidator extends AbstractValidator {
         "attorney", // attorney United TLD Holdco, Ltd
         "auction", // auction United TLD HoldCo, Ltd.
         "audi", // audi AUDI Aktiengesellschaft
+        "audible", // audible Amazon Registry Service, Inc.
         "audio", // audio Uniregistry, Corp.
         "author", // author Amazon Registry Services, Inc.
         "auto", // auto Uniregistry, Corp.
@@ -448,6 +449,7 @@ public final class DomainValidator extends AbstractValidator {
         "chase", // chase JPMorgan Chase &amp; Co.
         "chat", // chat Sand Fields, LLC
         "cheap", // cheap Sand Cover, LLC
+        "chintai", // chintai CHINTAI Corporation
         "chloe", // chloe Richemont DNS Inc.
         "christmas", // christmas Uniregistry, Corp.
         "chrome", // chrome Charleston Road Registry Inc.
@@ -512,6 +514,7 @@ public final class DomainValidator extends AbstractValidator {
         "day", // day Charleston Road Registry Inc.
         "dclk", // dclk Charleston Road Registry Inc.
         "dds", // dds Minds + Machines Group Limited
+        "deal", // deal Amazon Registry Service, Inc.
         "dealer", // dealer Dealer Dot Com, Inc.
         "deals", // deals Sand Sunset, LLC
         "degree", // degree United TLD Holdco, Ltd
@@ -555,6 +558,7 @@ public final class DomainValidator extends AbstractValidator {
         "engineer", // engineer United TLD Holdco Ltd.
         "engineering", // engineering Romeo Canyon
         "enterprises", // enterprises Snow Oaks, LLC
+        "epost", // epost Deutsche Post AG
         "epson", // epson Seiko Epson Corporation
         "equipment", // equipment Corn Station, LLC
         "erni", // erni ERNI Group Holding AG
@@ -585,6 +589,7 @@ public final class DomainValidator extends AbstractValidator {
         "final", // final Núcleo de Informação e Coordenação do Ponto BR - NIC.br
         "finance", // finance Cotton Cypress, LLC
         "financial", // financial Just Cover, LLC
+        "fire", // fire Amazon Registry Service, Inc.
         "firestone", // firestone Bridgestone Corporation
         "firmdale", // firmdale Firmdale Holdings Limited
         "fish", // fish Fox Woods, LLC
@@ -699,6 +704,7 @@ public final class DomainValidator extends AbstractValidator {
         "ifm", // ifm ifm electronic gmbh
         "iinet", // iinet Connect West Pty. Ltd.
         "imamat", // imamat Fondation Aga Khan (Aga Khan Foundation)
+        "imdb", // imdb Amazon Registry Service, Inc.
         "immo", // immo Auburn Bloom, LLC
         "immobilien", // immobilien United TLD Holdco Ltd.
         "industries", // industries Outer House, LLC
@@ -746,6 +752,7 @@ public final class DomainValidator extends AbstractValidator {
         "kia", // kia KIA MOTORS CORPORATION
         "kim", // kim Afilias Limited
         "kinder", // kinder Ferrero Trading Lux S.A.
+        "kindle", // kindle Amazon Registry Service, Inc.
         "kitchen", // kitchen Just Goodbye, LLC
         "kiwi", // kiwi DOT KIWI LIMITED
         "koeln", // koeln NetCologne Gesellschaft für Telekommunikation mbH
@@ -882,6 +889,7 @@ public final class DomainValidator extends AbstractValidator {
         "nokia", // nokia Nokia Corporation
         "northwesternmutual", // northwesternmutual Northwestern Mutual Registry, LLC
         "norton", // norton Symantec Corporation
+        "now", // now Amazon Registry Service, Inc.
         "nowruz", // nowruz Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
         "nowtv", // nowtv Starbucks (HK) Limited
         "nra", // nra NRA Holdings Company, INC.
@@ -947,6 +955,7 @@ public final class DomainValidator extends AbstractValidator {
         "post", // post Universal Postal Union
         "praxi", // praxi Praxi S.p.A.
         "press", // press DotPress Inc.
+        "prime", // prime Amazon Registry Service, Inc.
         "pro", // pro Registry Services Corporation dba RegistryPro
         "prod", // prod Charleston Road Registry Inc.
         "productions", // productions Magic Birch, LLC
@@ -1013,6 +1022,7 @@ public final class DomainValidator extends AbstractValidator {
         "sapo", // sapo PT Comunicacoes S.A.
         "sarl", // sarl Delta Orchard, LLC
         "sas", // sas Research IP LLC
+        "save", // save Amazon Registry Service, Inc.
         "saxo", // saxo Saxo Bank A/S
         "sbi", // sbi STATE BANK OF INDIA
         "sbs", // sbs SPECIAL BROADCASTING SERVICE CORPORATION
@@ -1048,6 +1058,7 @@ public final class DomainValidator extends AbstractValidator {
         "shouji", // shouji QIHOO 360 TECHNOLOGY CO. LTD.
         "show", // show Snow Beach, LLC
         "shriram", // shriram Shriram Capital Ltd.
+        "silk", // silk Amazon Registry Service, Inc.
         "sina", // sina Sina Corporation
         "singles", // singles Fern Madison, LLC
         "site", // site DotSite Inc.
@@ -1109,6 +1120,7 @@ public final class DomainValidator extends AbstractValidator {
         "tax", // tax Storm Orchard, LLC
         "taxi", // taxi Pine Falls, LLC
         "tci", // tci Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
+        "tdk", // tdk TDK Corporation
         "team", // team Atomic Lake, LLC
         "tech", // tech Dot Tech LLC
         "technology", // technology Auburn Falls, LLC

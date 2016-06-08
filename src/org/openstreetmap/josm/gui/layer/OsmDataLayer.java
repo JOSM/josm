@@ -268,12 +268,24 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     /**
-     * Removes a layer property change listener
+     * Removes a layer state change listener
      *
      * @param listener the listener. Ignored if null or already registered.
      * @since 5519
+     * @deprecated Method name contains a typo, use {@link #removeLayerStateChangeListener(LayerStateChangeListener)}.
      */
+    @Deprecated
     public void removeLayerPropertyChangeListener(LayerStateChangeListener listener) {
+        removeLayerStateChangeListener(listener);
+    }
+
+    /**
+     * Removes a layer state change listener
+     *
+     * @param listener the listener. Ignored if null or already registered.
+     * @since 10340
+     */
+    public void removeLayerStateChangeListener(LayerStateChangeListener listener) {
         layerStateChangeListeners.remove(listener);
     }
 
