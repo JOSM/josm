@@ -67,7 +67,7 @@ import java.util.regex.Pattern;
  *   prints out "url is valid"
  *  </pre>
  *
- * @version $Revision: 1715435 $
+ * @version $Revision: 1741724 $
  * @see
  * <a href="http://www.ietf.org/rfc/rfc2396.txt">
  *  Uniform Resource Identifiers (URI): Generic Syntax

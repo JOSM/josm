@@ -57,7 +57,7 @@ import java.util.Locale;
  * {@link java.net.InetAddress} for that functionality.)
  * </p>
  *
- * @version $Revision: 1725571 $
+ * @version $Revision: 1740822 $
  * @since Validator 1.4
  */
 public final class DomainValidator extends AbstractValidator {

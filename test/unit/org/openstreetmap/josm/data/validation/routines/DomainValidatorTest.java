@@ -35,7 +35,7 @@ import org.openstreetmap.josm.data.validation.routines.DomainValidator.ArrayType
 /**
  * Tests for the DomainValidator.
  *
- * @version $Revision: 1723861 $
+ * @version $Revision: 1741724 $
  */
 public class DomainValidatorTest {
 

@@ -63,7 +63,7 @@ import java.util.regex.Pattern;
  * to the {@link Pattern} API are safe to use in a multi-threaded environment.
  * </p>
  *
- * @version $Revision: 1713331 $
+ * @version $Revision: 1741724 $
  * @since Validator 1.4
  */
 public class RegexValidator extends AbstractValidator {
