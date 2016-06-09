@@ -2,11 +2,14 @@
 package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AlignInLineAction.InvalidSelection;
+import org.openstreetmap.josm.actions.AlignInLineAction.Line;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -187,5 +190,39 @@ public final class AlignInLineActionTest {
         EastNorth coordinate = node.getEastNorth();
         assertEquals("Wrong x coordinate.", x, coordinate.getX(), LatLon.MAX_SERVER_PRECISION);
         assertEquals("Wrong y coordinate.", y, coordinate.getY(), LatLon.MAX_SERVER_PRECISION);
+    }
+
+    /**
+     * Test that a {@link Line} can be constructed with nodes of different coordinates.
+     * @throws InvalidSelection never
+     */
+    @Test
+    public void testLineDifferentCoordinates() throws InvalidSelection {
+        assertNotNull(new Line(new Node(new EastNorth(0, 1)),
+                               new Node(new EastNorth(0, 2))));
+        assertNotNull(new Line(new Node(new EastNorth(0, 1)),
+                               new Node(new EastNorth(1, 1))));
+        assertNotNull(new Line(new Node(new EastNorth(0, 1)),
+                               new Node(new EastNorth(0+1e-150, 1+1e-150))));
+    }
+
+    /**
+     * Test that a {@link Line} cannot be constructed with nodes of same coordinates.
+     * @throws InvalidSelection always
+     */
+    @Test(expected = InvalidSelection.class)
+    public void testLineSameCoordinates1() throws InvalidSelection {
+        new Line(new Node(new EastNorth(0, 1)),
+                 new Node(new EastNorth(0, 1)));
+    }
+
+    /**
+     * Test that a {@link Line} cannot be constructed with nodes of same coordinates.
+     * @throws InvalidSelection always
+     */
+    @Test(expected = InvalidSelection.class)
+    public void testLineSameCoordinates2() throws InvalidSelection {
+        new Line(new Node(new EastNorth(0, 1)),
+                 new Node(new EastNorth(0+1e-175, 1+1e-175)));
     }
 }

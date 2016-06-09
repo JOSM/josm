@@ -55,9 +55,9 @@ public final class AlignInLineAction extends JosmAction {
     }
 
     /**
-     * InvalidSelection exception has to be raised when action can't be perform
+     * InvalidSelection exception has to be raised when action can't be performed
      */
-    private static class InvalidSelection extends Exception {
+    static class InvalidSelection extends Exception {
 
         /**
          * Create an InvalidSelection exception with default message
@@ -68,7 +68,7 @@ public final class AlignInLineAction extends JosmAction {
 
         /**
          * Create an InvalidSelection exception with specific message
-         * @param msg Message that will be display to the user
+         * @param msg Message that will be displayed to the user
          */
         InvalidSelection(String msg) {
             super(msg);
@@ -342,7 +342,7 @@ public final class AlignInLineAction extends JosmAction {
     /**
      * Class that represent a line
      */
-    private static class Line {
+    static class Line {
 
         /**
          * Line equation ax + by + c = 0
