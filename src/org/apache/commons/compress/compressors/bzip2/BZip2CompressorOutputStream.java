@@ -479,6 +479,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
     public void finish() throws IOException {
         if (!closed) {
+            closed = true;
             try {
                 if (this.runLength > 0) {
                     writeRun();
@@ -487,7 +488,6 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
                 endBlock();
                 endCompression();
             } finally {
-                closed = true;
                 this.out = null;
                 this.data = null;
                 this.blockSorter = null;
