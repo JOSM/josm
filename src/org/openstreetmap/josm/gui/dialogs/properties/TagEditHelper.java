@@ -1041,10 +1041,14 @@ public class TagEditHelper {
             }
         }
 
+        /**
+         * Destroy the recentTagsActions.
+         */
         public void destroyActions() {
             for (JosmAction action : recentTagsActions) {
                 action.destroy();
             }
+            recentTagsActions.clear();
         }
 
         /**
