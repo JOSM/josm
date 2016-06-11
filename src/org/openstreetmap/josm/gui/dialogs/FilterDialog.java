@@ -140,7 +140,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             {
                 putValue(NAME, tr("Add"));
                 putValue(SHORT_DESCRIPTION,  tr("Add filter."));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+                new ImageProvider("dialogs", "add").getResource().getImageIcon(this, true);
             }
 
             @Override
@@ -155,7 +155,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             {
                 putValue(NAME, tr("Edit"));
                 putValue(SHORT_DESCRIPTION, tr("Edit filter."));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+                new ImageProvider("dialogs", "edit").getResource().getImageIcon(this, true);
             }
 
             @Override
@@ -173,7 +173,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             {
                 putValue(NAME, tr("Delete"));
                 putValue(SHORT_DESCRIPTION, tr("Delete filter."));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+                new ImageProvider("dialogs", "delete").getResource().getImageIcon(this, true);
             }
 
             @Override
@@ -188,7 +188,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             {
                 putValue(NAME, tr("Up"));
                 putValue(SHORT_DESCRIPTION, tr("Move filter up."));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "up"));
+                new ImageProvider("dialogs", "up").getResource().getImageIcon(this, true);
             }
 
             @Override
@@ -204,7 +204,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             {
                 putValue(NAME, tr("Down"));
                 putValue(SHORT_DESCRIPTION, tr("Move filter down."));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "down"));
+                new ImageProvider("dialogs", "down").getResource().getImageIcon(this, true);
             }
 
             @Override

@@ -46,7 +46,7 @@ public class ContextSensitiveHelpAction extends AbstractAction {
     public ContextSensitiveHelpAction(String helpTopic) {
         putValue(SHORT_DESCRIPTION, tr("Show help information"));
         putValue(NAME, tr("Help"));
-        putValue(SMALL_ICON, ImageProvider.get("help"));
+        new ImageProvider("help").getResource().getImageIcon(this);
         this.helpTopic = helpTopic;
         setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
     }

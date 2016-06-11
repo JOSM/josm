@@ -19,6 +19,6 @@ public abstract class AbstractSelectAction extends AbstractAction {
     public AbstractSelectAction() {
         putValue(NAME, tr("Select"));
         putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
+        new ImageProvider("dialogs", "select").getResource().getImageIcon(this, true);
     }
 }

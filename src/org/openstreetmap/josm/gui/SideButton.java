@@ -17,25 +17,34 @@ import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicArrowButton;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageResource;
 
 /**
  * Button that is usually used in toggle dialogs.
  * @since 744
  */
 public class SideButton extends JButton implements Destroyable {
-    private static final int iconHeight = ImageProvider.ImageSizes.SIDEBUTTON.getImageSize();
 
     private transient PropertyChangeListener propertyChangeListener;
 
     /**
      * Constructs a new {@code SideButton}.
      * @param action action used to specify the new button
+     * @since 744
      */
     public SideButton(Action action) {
         super(action);
-        fixIcon(action);
+        ImageResource icon = (ImageResource) action.getValue("ImageResource");
+        if (icon != null) {
+            setIcon(icon.getImageIconBounded(
+                ImageProvider.ImageSizes.SIDEBUTTON.getImageDimension()));
+        } else { /* TODO: remove when calling code is fixed */
+            Main.warn("Old style SideButton usage for action " + action);
+            fixIcon(action);
+        }
         doStyle();
     }
 
@@ -43,6 +52,7 @@ public class SideButton extends JButton implements Destroyable {
      * Constructs a new {@code SideButton}.
      * @param action action used to specify the new button
      * @param usename use action name
+     * @since 2710
      */
     public SideButton(Action action, boolean usename) {
         super(action);
@@ -57,13 +67,16 @@ public class SideButton extends JButton implements Destroyable {
      * Constructs a new {@code SideButton}.
      * @param action action used to specify the new button
      * @param imagename image name in "dialogs" directory
+     * @since 2747
      */
     public SideButton(Action action, String imagename) {
         super(action);
-        setIcon(getScaledImage(ImageProvider.get("dialogs", imagename).getImage()));
+        ImageProvider prov = new ImageProvider("dialogs", imagename);
+        setIcon(prov.setSize(ImageProvider.ImageSizes.SIDEBUTTON).get());
         doStyle();
     }
 
+    @Deprecated
     private void fixIcon(Action action) {
         // need to listen for changes, so that putValue() that are called after the
         // SideButton is constructed get the proper icon size
@@ -78,28 +91,31 @@ public class SideButton extends JButton implements Destroyable {
             };
             action.addPropertyChangeListener(propertyChangeListener);
         }
+        int iconHeight = ImageProvider.ImageSizes.SIDEBUTTON.getImageSize();
         Icon i = getIcon();
         if (i instanceof ImageIcon && i.getIconHeight() != iconHeight) {
-            setIcon(getScaledImage(((ImageIcon) i).getImage()));
+            Image im = ((ImageIcon) i).getImage();
+            int newWidth = im.getWidth(null) *  iconHeight / im.getHeight(null);
+            ImageIcon icon = new ImageIcon(im.getScaledInstance(newWidth, iconHeight, Image.SCALE_SMOOTH));
+            setIcon(icon);
         }
     }
 
     /**
-     * Scales the given image proportionally so that the height is "iconHeight"
-     * @param im original image
-     * @return scaled image
+     * Do the style settings for the side button layout
      */
-    private static ImageIcon getScaledImage(Image im) {
-        int newWidth = im.getWidth(null) *  iconHeight / im.getHeight(null);
-        return new ImageIcon(im.getScaledInstance(newWidth, iconHeight, Image.SCALE_SMOOTH));
-    }
-
     private void doStyle() {
         setLayout(new BorderLayout());
         setIconTextGap(2);
         setMargin(new Insets(0, 0, 0, 0));
     }
 
+    /**
+     * Create the arrow for opening a drop-down menu
+     * @param listener listener to use for button actions (e.g. pressing)
+     * @return the created button
+     * @since 9668
+     */
     public BasicArrowButton createArrow(ActionListener listener) {
         setMargin(new Insets(0, 0, 0, 0));
         BasicArrowButton arrowButton = new BasicArrowButton(SwingConstants.SOUTH, null, null, Color.BLACK, null);

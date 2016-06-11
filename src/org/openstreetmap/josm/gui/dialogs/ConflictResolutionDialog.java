@@ -157,7 +157,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         CancelAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Cancel conflict resolution and close the dialog"));
             putValue(Action.NAME, tr("Cancel"));
-            putValue(Action.SMALL_ICON, ImageProvider.get("", "cancel"));
+            new ImageProvider("cancel").getResource().getImageIcon(this);
             setEnabled(true);
         }
 
@@ -174,7 +174,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         HelpAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Show help information"));
             putValue(Action.NAME, tr("Help"));
-            putValue(Action.SMALL_ICON, ImageProvider.get("help"));
+            new ImageProvider("help").getResource().getImageIcon(this);
             setEnabled(true);
         }
 
@@ -192,7 +192,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         ApplyResolutionAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Apply resolved conflicts and close the dialog"));
             putValue(Action.NAME, tr("Apply Resolution"));
-            putValue(Action.SMALL_ICON, ImageProvider.get("dialogs", "conflict"));
+            new ImageProvider("dialogs", "conflict").getResource().getImageIcon(this);
             updateEnabledState();
         }
 
