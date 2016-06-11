@@ -4436,22 +4436,6 @@ node|z-16[prop(maxspeedclass, default)][setting("hide_icons")]::core_maxnodefg {
 /* place tags */
 /**************/
 
-/* lot's of "openGeoDB:..." tags can be found in germany */
-node["openGeoDB:type"=Stadt],
-node["openGeoDB:type"=Kreis],
-node["openGeoDB:type"=Gemeinde],
-node["openGeoDB:type"=Ort],
-node["openGeoDB:type"=District],
-node["openGeoDB:location"=locality] {
-    icon-image: "place/settlement/openGeoDB.png";
-    set icon_z0;
-    set text_z0;
-    font-size: 10;
-    font-weight: bold;
-    text-color:black;
-    text-halo-color: white;
-    text-halo-radius: 1;
-}
 area[setting("place_fill_colour")][place=continent],
 area[setting("place_fill_colour")][place=country],
 area[setting("place_fill_colour")][place=state],
@@ -4469,6 +4453,7 @@ area[setting("place_fill_colour")][place=locality],
 area[setting("place_fill_colour")][place=island],
 area[setting("place_fill_colour")][place=islet] {
     fill-color: place#8de3cb;
+    set place;
 }
 node[place=continent],
 node[place=country],
@@ -4487,11 +4472,11 @@ node[place=island],
 node[place=islet] {
     set icon_z0;
     set text_z0;
-    font-size: 10;
     font-weight: bold;
     text-color:black;
     text-halo-color: white;
     text-halo-radius: 1;
+    set place;
 }
 
 node[place=continent],
@@ -4537,7 +4522,6 @@ node[place=farm] {
 node|z15-[place=locality],
 node|z-14[place=locality][!setting("hide_icons")] {
     icon-image: "place/locality.png";
-    font-size: 10;
     font-weight: bold;
     text-color:black;
     text-halo-color: white;
@@ -4595,7 +4579,7 @@ Summary of different zoom levels:
                 street name along highway=* ways
   |z18-         text for normal POI icons is shown
   
- * text size and node size is adapted according to zoom level (see style source below)
+ * text size and node size is adapted according to zoom level (see style source below), place labels (except locality) don't get smaller
  * maxspeed icons should not be distinguishable from POIs with "icon-image" property
 
 */
@@ -4658,6 +4642,9 @@ node|z16-17[setting("hide_icons")][place=locality] {
 node|z-18,area|z-18 { font-size: 8; }
 node|z19,area|z19   { font-size: 9; }
 node|z20-,area|z20- { font-size: 11; }
+
+node.place, way.place, area.place { font-size: 11; }
+
 
 /*******************/
 /* way text labels */
