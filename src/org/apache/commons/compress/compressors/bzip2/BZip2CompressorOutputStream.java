@@ -321,8 +321,8 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     private Data data;
     private BlockSort blockSorter;
 
+    private final Object outLock = new Object();
     private OutputStream out;
-    private volatile boolean closed;
 
     /**
      * Chooses a blocksize based on the given length of the data to compress.
@@ -393,7 +393,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
     @Override
     public void write(final int b) throws IOException {
-        if (!closed) {
+        if (this.out != null) {
             write0(b);
         } else {
             throw new IOException("closed");
@@ -478,26 +478,27 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
 
     public void finish() throws IOException {
-        if (!closed) {
-            closed = true;
-            try {
-                if (this.runLength > 0) {
-                    writeRun();
+        synchronized(outLock) {
+            if (out != null) {
+                try {
+                    if (this.runLength > 0) {
+                        writeRun();
+                    }
+                    this.currentChar = -1;
+                    endBlock();
+                    endCompression();
+                } finally {
+                    this.out = null;
                 }
-                this.currentChar = -1;
-                endBlock();
-                endCompression();
-            } finally {
-                this.out = null;
-                this.data = null;
-                this.blockSorter = null;
             }
         }
+        this.blockSorter = null;
+        this.data = null;
     }
 
     @Override
     public void close() throws IOException {
-        if (!closed) {
+        if (out != null) {
             final OutputStream outShadow = this.out;
             finish();
             outShadow.close();
@@ -627,7 +628,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
                                                 + len + ") > buf.length("
                                                 + buf.length + ").");
         }
-        if (closed) {
+        if (this.out == null) {
             throw new IOException("stream closed");
         }
 
