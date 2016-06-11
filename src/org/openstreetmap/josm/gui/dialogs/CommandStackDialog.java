@@ -375,7 +375,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         public SelectAction() {
             putValue(NAME, tr("Select"));
             putValue(SHORT_DESCRIPTION, tr("Selects the objects that take part in this command (unless currently deleted)"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
+            new ImageProvider("dialogs", "select").getResource().getImageIcon(this, true);
         }
 
         @Override
@@ -410,7 +410,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             putValue(NAME, tr("Select and zoom"));
             putValue(SHORT_DESCRIPTION,
                     tr("Selects the objects that take part in this command (unless currently deleted), then and zooms to it"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
+            new ImageProvider("dialogs/autoscale", "selection").getResource().getImageIcon(this, true);
         }
 
         @Override
@@ -446,12 +446,12 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
                 tree = undoTree;
                 putValue(NAME, tr("Undo"));
                 putValue(SHORT_DESCRIPTION, tr("Undo the selected and all later commands"));
-                putValue(SMALL_ICON, ImageProvider.get("undo"));
+                new ImageProvider("undo").getResource().getImageIcon(this, true);
             } else {
                 tree = redoTree;
                 putValue(NAME, tr("Redo"));
                 putValue(SHORT_DESCRIPTION, tr("Redo the selected and all earlier commands"));
-                putValue(SMALL_ICON, ImageProvider.get("redo"));
+                new ImageProvider("redo").getResource().getImageIcon(this, true);
             }
         }
 

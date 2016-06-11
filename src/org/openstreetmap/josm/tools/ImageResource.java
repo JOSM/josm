@@ -91,6 +91,20 @@ public class ImageResource {
         a.putValue(Action.SMALL_ICON, icon);
         icon = getImageIconBounded(ImageProvider.ImageSizes.LARGEICON.getImageDimension());
         a.putValue(Action.LARGE_ICON_KEY, icon);
+        a.putValue("ImageResource", this);
+    }
+
+    /**
+     * Set both icons of an Action
+     * @param a The action for the icons
+     * @param addresource Adds an resource named "ImageResource" if <code>true</code>
+     * @since 10356
+     */
+    public void getImageIcon(AbstractAction a, boolean addresource) {
+        getImageIcon(a);
+        if (addresource) {
+            a.putValue("ImageResource", this);
+        }
     }
 
     /**
