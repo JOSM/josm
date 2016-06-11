@@ -155,7 +155,7 @@ way[power=cable                ][!voltage],
 }
 
 /* {0.key} without {1.key} or {2.key} */
-*[oneway                       ][!highway][!railway] {
+way[oneway][!highway][!railway] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.key}");
 }
 
@@ -216,7 +216,7 @@ way[power=cable                ][!voltage],
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
 }
 
-/*see #11127*/
+/* #11127 */
 way[waterway][bridge=yes] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.tag}");
   suggestAlternative: "bridge=aqueduct";
@@ -236,7 +236,7 @@ way[waterway][bridge=yes] {
   throwWarning: tr("incomplete object: only {0} and {1}", "{0.key}", "{1.key}");
 }
 
-/* see #9811, #11491, #12865 */
+/* #9811, #11491, #12865 */
 *[place][place!=farm][/^addr:/],
 *[boundary][/^addr:/],
 *[highway][/^addr:/][highway!=services][highway!=rest_area][!"addr:postcode"] {
@@ -261,7 +261,7 @@ way[highway][highway!=services][highway!=rest_area][!postal_code]["addr:postcode
   fixChangeKey: "addr:postcode=>postal_code";
 }
 
-/* see #9195 */
+/* #9195 */
 *[highway=footway][cycleway=lane] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   suggestAlternative: "highway=path + foot=designated + bicycle=designated + segregated=yes";
@@ -291,14 +291,14 @@ way[highway][natural],
   assertNoMatch: "node highway=street_lamp natural=birds_nest note=josm#10193";
 }
 
+/* #6932 */
 *[natural=water][leisure=swimming_pool],
 *[natural=water][amenity=swimming_pool] {
-  /* see #6932 */
   throwWarning: tr("natural water used for swimming pool");
   fixRemove: "natural";
 }
 
-/* see #9593, #11183, #12418, #12761 */
+/* #9593, #11183, #12418, #12761 */
 *[sport][!building][!club][tourism != hotel][highway != raceway][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool|recreation_ground|ice_rink)$/][natural !~ /^(beach|bare_rock|cliff|peak|water)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/][!"piste:type"][shop!=sports] {
     throwWarning: tr("sport without physical feature");
     assertMatch: "node sport=tennis";
@@ -309,12 +309,12 @@ way[highway][natural],
     assertNoMatch: "node sport=10pin amenity=restaurant";
 }
 
-/* see #10140 */
+/* #10140 */
 *[building:levels][!building][!building:part] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.key}");
 }
 
-/* see #10471 */
+/* #10471 */
 way[waterway] > node[ford?] { set ford_on_waterway; }
 way[highway] > node[ford?] { set ford_on_highway; }
 node[ford?]:in-downloaded-area!.ford_on_waterway, node[ford?]:in-downloaded-area!.ford_on_highway {
@@ -326,14 +326,14 @@ node[ford?]:in-downloaded-area!.ford_on_waterway, node[ford?]:in-downloaded-area
   throwWarning: tr("alternative name without {0}", "{1.key}");
 }
 
-/* see #10837 */
+/* #10837 */
 way[destination][!oneway?][junction!=roundabout][highway] {
   throwWarning: tr("incomplete usage of {0} on a way without {1}", "{0.key}", "{1.key}");
   suggestAlternative: "destination:forward";
   suggestAlternative: "destination:backward";
 }
 
-/* see #11389 */
+/* #11389 */
 way["maxspeed:forward"=*"maxspeed:backward"][!maxspeed] {
   throwWarning: tr("Same value of {0} and {1}", "{0.key}", "{1.key}");
   suggestAlternative: "maxspeed";
@@ -355,8 +355,13 @@ way["maxspeed:backward"][maxspeed][!"maxspeed:forward"] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
 }
 
-/* see #11837 */
+/* #11837 */
 way[layer][layer<0][bridge][bridge!=no][location!=underground][indoor!=yes][!tunnel],
 way[layer][layer>0][tunnel][tunnel!=no][location!=overground][indoor!=yes][!bridge] {
   throwWarning: tr("Suspicious tag combination: {0} and {1}", "{2.tag}", "{0.tag}");
+}
+
+/* #12942 */
+relation[oneway][type!=route] {
+  throwWarning: tr("{0} on a relation without {1}", "{0.key}", "{1.tag}");
 }
