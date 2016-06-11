@@ -170,8 +170,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
             installAdapters();
         }
     }
-
-
+    
     /**
      * Installs the listeners to this action.
      * <p>
@@ -197,7 +196,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     /**
      * Overwrite this if {@link #updateEnabledState()} should be called when the active / availabe layers change. Default is true.
      * @return <code>true</code> if a {@link LayerChangeListener} and a {@link ActiveLayerChangeListener} should be registered.
-     * @since 10352
+     * @since 10353
      */
     protected boolean listenToLayerChange() {
         return true;
@@ -206,7 +205,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     /**
      * Overwrite this if {@link #updateEnabledState()} should be called when the selection changed. Default is true.
      * @return <code>true</code> if a {@link SelectionChangedListener} should be registered.
-     * @since 10352
+     * @since 10353
      */
     protected boolean listenToSelectionChange() {
         return true;
@@ -264,7 +263,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * The layer manager must be available when {@link #installAdapters()} is called and must not change.
      *
      * @return The layer manager.
-     * @since 10352
+     * @since 10353
      */
     public MainLayerManager getLayerManager() {
         return Main.getLayerManager();
