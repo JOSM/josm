@@ -20,12 +20,12 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
@@ -66,9 +66,9 @@ public class PreferenceDialog extends JDialog {
 
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btns.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        btns.add(new SideButton(new OKAction()));
-        btns.add(new SideButton(new CancelAction()));
-        btns.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Action/Preferences"))));
+        btns.add(new JButton(new OKAction()));
+        btns.add(new JButton(new CancelAction()));
+        btns.add(new JButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Action/Preferences"))));
         pnl.add(expert, GBC.std().insets(5, 0, 0, 0));
         pnl.add(btns, GBC.std().fill(GBC.HORIZONTAL));
         return pnl;
@@ -156,7 +156,7 @@ public class PreferenceDialog extends JDialog {
     class CancelAction extends AbstractAction {
         CancelAction() {
             putValue(NAME, tr("Cancel"));
-            putValue(SMALL_ICON, ImageProvider.get("cancel"));
+            new ImageProvider("cancel").getResource().getImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Close the preferences dialog and discard preference updates"));
         }
 
@@ -175,7 +175,7 @@ public class PreferenceDialog extends JDialog {
     class OKAction extends AbstractAction {
         OKAction() {
             putValue(NAME, tr("OK"));
-            putValue(SMALL_ICON, ImageProvider.get("ok"));
+            new ImageProvider("ok").getResource().getImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Save the preferences and close the dialog"));
         }
 
