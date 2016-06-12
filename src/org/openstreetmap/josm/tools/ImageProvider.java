@@ -753,22 +753,6 @@ public class ImageProvider {
     }
 
     /**
-     * Scale image to virtual dimensions. This util method is used to hide real sizes calculations.
-     * All other classes should use this method to resize images.
-     *
-     * @param im image to be resized
-     * @param virtualWidth target width of image in virtual pixels
-     * @param virtualHeight target height of image in virtual pixels
-     * @return new scaled image in real dimensions
-     */
-    public static ImageIcon getScaledIcon(Image im, int virtualWidth, int virtualHeight) {
-        int realWidth = GuiSizesHelper.getSizeDpiAdjusted(virtualWidth);
-        int realHeight = GuiSizesHelper.getSizeDpiAdjusted(virtualHeight);
-
-        return new ImageIcon(im.getScaledInstance(realWidth, realHeight, Image.SCALE_SMOOTH));
-    }
-
-    /**
      * {@code data:[<mediatype>][;base64],<data>}
      * @see <a href="http://tools.ietf.org/html/rfc2397">RFC2397</a>
      */
