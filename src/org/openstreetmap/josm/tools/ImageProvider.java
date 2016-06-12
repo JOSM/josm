@@ -1474,8 +1474,7 @@ public class ImageProvider {
             realHeight = dim.height;
             scaleX = scaleY = (double) realHeight / sourceHeight;
             realWidth = (int) Math.round(sourceWidth * scaleX);
-        }
-        else {
+        } else {
             scaleX = scaleY = (double) realHeight / sourceHeight;
         }
 

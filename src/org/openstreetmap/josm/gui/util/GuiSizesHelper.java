@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
 import java.awt.Dimension;
@@ -11,6 +12,12 @@ import java.awt.Toolkit;
  * @since 10358
  */
 public class GuiSizesHelper {
+
+    private GuiSizesHelper() {
+        // Hide default constructor for utils classes
+    }
+
+
     /** cache value for screen resolution */
     private static int screenDPI = -1;
 
@@ -53,7 +60,7 @@ public class GuiSizesHelper {
 
     /**
      * Returns a resolution adapted size
-     * @param dim Size value to adapt (base size is a low DPI screen)
+     * @param size Size value to adapt (base size is a low DPI screen)
      * @return adapted size (may be unmodified)
      */
     public static int getSizeDpiAdjusted(int size) {
@@ -64,7 +71,7 @@ public class GuiSizesHelper {
 
     /**
      * Returns a resolution adapted size
-     * @param dim Size value to adapt (base size is a low DPI screen)
+     * @param size Size value to adapt (base size is a low DPI screen)
      * @return adapted size (may be unmodified)
      */
     public static float getSizeDpiAdjusted(float size) {
@@ -75,7 +82,7 @@ public class GuiSizesHelper {
 
     /**
      * Returns a resolution adapted size
-     * @param dim Size value to adapt (base size is a low DPI screen)
+     * @param size Size value to adapt (base size is a low DPI screen)
      * @return adapted size (may be unmodified)
      */
     public static double getSizeDpiAdjusted(double size) {

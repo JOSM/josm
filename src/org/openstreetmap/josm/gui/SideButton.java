@@ -76,6 +76,11 @@ public class SideButton extends JButton implements Destroyable {
         doStyle();
     }
 
+    /**
+     * Fix icon size
+     * @param action the action
+     * @deprecated
+     */
     @Deprecated
     private void fixIcon(Action action) {
         // need to listen for changes, so that putValue() that are called after the
