@@ -783,7 +783,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
      */
     private void clearOtherCurrentPhotos() {
         for (GeoImageLayer layer:
-                 Main.map.mapView.getLayersOfType(GeoImageLayer.class)) {
+                 Main.getLayerManager().getLayersOfType(GeoImageLayer.class)) {
             if (layer != this) {
                 layer.clearCurrentPhoto(false);
             }

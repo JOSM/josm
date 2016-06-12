@@ -37,13 +37,13 @@ public class SelectCommand extends Command {
 
     @Override
     public void undoCommand() {
-        Main.map.mapView.getEditLayer().data.setSelected(oldSelection);
+        Main.getLayerManager().getEditLayer().data.setSelected(oldSelection);
     }
 
     @Override
     public boolean executeCommand() {
-        oldSelection = Main.map.mapView.getEditLayer().data.getSelected();
-        Main.map.mapView.getEditLayer().data.setSelected(newSelection);
+        oldSelection = Main.getLayerManager().getEditLayer().data.getSelected();
+        Main.getLayerManager().getEditLayer().data.setSelected(newSelection);
         return true;
     }
 

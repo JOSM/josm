@@ -416,7 +416,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     @Deprecated
     public static void addEditLayerChangeListener(EditLayerChangeListener listener, boolean initialFire) {
         if (listener != null) {
-            boolean doFire = initialFire && Main.isDisplayingMapView() && Main.map.mapView.getEditLayer() != null;
+            boolean doFire = initialFire && Main.isDisplayingMapView() && Main.getLayerManager().getEditLayer() != null;
             if (doFire) {
                 Main.getLayerManager().addAndFireActiveLayerChangeListener(new EditLayerChangeAdapter(listener));
             } else {

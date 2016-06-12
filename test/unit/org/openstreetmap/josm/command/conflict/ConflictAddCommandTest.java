@@ -50,7 +50,7 @@ public class ConflictAddCommandTest {
      */
     @Test
     public void testExecuteUndoCommand() {
-        OsmDataLayer layer = Main.map.mapView.getEditLayer();
+        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
         Conflict<Node> conflict = new Conflict<>(new Node(), new Node());
         ConflictAddCommand cmd = new ConflictAddCommand(layer, conflict);
         assertTrue(cmd.executeCommand());
@@ -66,7 +66,7 @@ public class ConflictAddCommandTest {
      */
     @Test
     public void testGetDescriptionIcon() {
-        OsmDataLayer layer = Main.map.mapView.getEditLayer();
+        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
         Conflict<Node> conflict = new Conflict<>(new Node(), new Node());
         assertNotNull(new ConflictAddCommand(layer, conflict).getDescriptionIcon());
     }
