@@ -13,6 +13,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import com.kitfox.svg.SVGDiagram;
+import org.openstreetmap.josm.gui.util.GuiSizesHelper;
 
 /**
  * Holds data for one particular image.
@@ -49,7 +50,29 @@ public class ImageResource {
     public ImageResource(Image img) {
         CheckParameterUtil.ensureParameterNotNull(img);
         this.baseImage = img;
+
+        img = scaleBaseImageIfNeeded(img);
+
         imgCache.put(DEFAULT_DIMENSION, img);
+    }
+
+    /** Scale image according to screen DPI if needed.
+     *
+     * @param img an image loaded from file (it's width and height are virtual pixels)
+     * @return original img if virtual size is the same as real size or new image resized to real pixels
+     */
+    private static Image scaleBaseImageIfNeeded(Image img) {
+        int imgWidth = img.getWidth(null);
+        int imgHeight = img.getHeight(null);
+        int realWidth = GuiSizesHelper.getSizeDpiAdjusted(imgWidth);
+        int realHeight = GuiSizesHelper.getSizeDpiAdjusted(imgHeight);
+        if (realWidth != -1 && realHeight != -1 && imgWidth != realWidth && imgHeight != realHeight) {
+            Image realImage = img.getScaledInstance(realWidth, realHeight, Image.SCALE_SMOOTH);
+            BufferedImage bimg = new BufferedImage(realWidth, realHeight, BufferedImage.TYPE_INT_ARGB);
+            bimg.getGraphics().drawImage(realImage, 0, 0, null);
+            img = bimg;
+        }
+        return img;
     }
 
     /**
@@ -87,9 +110,12 @@ public class ImageResource {
      * @since 7693
      */
     public void getImageIcon(AbstractAction a) {
-        ImageIcon icon = getImageIconBounded(ImageProvider.ImageSizes.SMALLICON.getImageDimension());
+        Dimension iconDimension = ImageProvider.ImageSizes.SMALLICON.getImageDimension();
+        ImageIcon icon = getImageIconBounded(iconDimension);
         a.putValue(Action.SMALL_ICON, icon);
-        icon = getImageIconBounded(ImageProvider.ImageSizes.LARGEICON.getImageDimension());
+
+        iconDimension = ImageProvider.ImageSizes.LARGEICON.getImageDimension();
+        icon = getImageIconBounded(iconDimension);
         a.putValue(Action.LARGE_ICON_KEY, icon);
         a.putValue("ImageResource", this);
     }
@@ -122,7 +148,8 @@ public class ImageResource {
             return new ImageIcon(img);
         }
         if (svg != null) {
-            BufferedImage bimg = ImageProvider.createImageFromSvg(svg, dim);
+            Dimension realDim = GuiSizesHelper.getDimensionDpiAdjusted(dim);
+            BufferedImage bimg = ImageProvider.createImageFromSvg(svg, realDim);
             if (bimg == null) {
                 return null;
             }
@@ -136,19 +163,19 @@ public class ImageResource {
         } else {
             if (baseImage == null) throw new AssertionError();
 
-            int width = dim.width;
-            int height = dim.height;
+            int realWidth = GuiSizesHelper.getSizeDpiAdjusted(dim.width);
+            int realHeight = GuiSizesHelper.getSizeDpiAdjusted(dim.height);
             ImageIcon icon = new ImageIcon(baseImage);
-            if (width == -1 && height == -1) {
-                width = icon.getIconWidth();
-                height = icon.getIconHeight();
-            } else if (width == -1) {
-                width = Math.max(1, icon.getIconWidth() * height / icon.getIconHeight());
-            } else if (height == -1) {
-                height = Math.max(1, icon.getIconHeight() * width / icon.getIconWidth());
+            if (realWidth == -1 && realHeight == -1) {
+                realWidth = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconWidth());
+                realHeight = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconHeight());
+            } else if (realWidth == -1) {
+                realWidth = Math.max(1, icon.getIconWidth() * realHeight / icon.getIconHeight());
+            } else if (realHeight == -1) {
+                realHeight = Math.max(1, icon.getIconHeight() * realWidth / icon.getIconWidth());
             }
-            Image i = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Image i = icon.getImage().getScaledInstance(realWidth, realHeight, Image.SCALE_SMOOTH);
+            BufferedImage bimg = new BufferedImage(realWidth, realHeight, BufferedImage.TYPE_INT_ARGB);
             bimg.getGraphics().drawImage(i, 0, 0, null);
             if (overlayInfo != null) {
                 for (ImageOverlay o : overlayInfo) {
@@ -171,22 +198,22 @@ public class ImageResource {
     public ImageIcon getImageIconBounded(Dimension maxSize) {
         if (maxSize.width < -1 || maxSize.width == 0 || maxSize.height < -1 || maxSize.height == 0)
             throw new IllegalArgumentException(maxSize+" is invalid");
-        float realWidth;
-        float realHeight;
+        float sourceWidth;
+        float sourceHeight;
         int maxWidth = maxSize.width;
         int maxHeight = maxSize.height;
         if (svg != null) {
-            realWidth = svg.getWidth();
-            realHeight = svg.getHeight();
+            sourceWidth = svg.getWidth();
+            sourceHeight = svg.getHeight();
         } else {
             if (baseImage == null) throw new AssertionError();
             ImageIcon icon = new ImageIcon(baseImage);
-            realWidth = icon.getIconWidth();
-            realHeight = icon.getIconHeight();
-            if (realWidth <= maxWidth) {
+            sourceWidth = icon.getIconWidth();
+            sourceHeight = icon.getIconHeight();
+            if (sourceWidth <= maxWidth) {
                 maxWidth = -1;
             }
-            if (realHeight <= maxHeight) {
+            if (sourceHeight <= maxHeight) {
                 maxHeight = -1;
             }
         }
@@ -197,7 +224,7 @@ public class ImageResource {
             return getImageIcon(new Dimension(-1, maxHeight));
         else if (maxHeight == -1)
             return getImageIcon(new Dimension(maxWidth, -1));
-        else if (realWidth / maxWidth > realHeight / maxHeight)
+        else if (sourceWidth / maxWidth > sourceHeight / maxHeight)
             return getImageIcon(new Dimension(maxWidth, -1));
         else
             return getImageIcon(new Dimension(-1, maxHeight));

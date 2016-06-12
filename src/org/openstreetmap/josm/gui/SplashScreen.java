@@ -8,7 +8,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,7 +16,6 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -69,7 +67,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
         contentPane.add(innerContentPane);
 
         // Add the logo
-        JLabel logo = new JLabel(new ImageIcon(ImageProvider.get("logo.svg").getImage().getScaledInstance(128, 129, Image.SCALE_SMOOTH)));
+        JLabel logo = new JLabel(new ImageProvider("logo.svg").setSize(ImageProvider.ImageSizes.SPLASH_LOGO).get());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridheight = 2;
         gbc.insets = new Insets(0, 0, 0, 70);

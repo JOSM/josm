@@ -68,6 +68,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.gui.util.GuiSizesHelper;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.w3c.dom.Element;
@@ -144,13 +145,13 @@ public class ImageProvider {
         /** cursor icon size */
         CURSOR(Main.pref.getInteger("iconsize.cursor", 32)),
         /** cursor overlay icon size */
-        CURSOROVERLAY(CURSOR.imageSize),
+        CURSOROVERLAY(CURSOR),
         /** menu icon size */
-        MENU(SMALLICON.imageSize),
+        MENU(SMALLICON),
         /** menu icon size in popup menus
          * @since 8323
          */
-        POPUPMENU(LARGEICON.imageSize),
+        POPUPMENU(LARGEICON),
         /** Layer list icon size
          * @since 8323
          */
@@ -158,30 +159,64 @@ public class ImageProvider {
         /** Toolbar button icon size
          * @since 9253
          */
-        TOOLBAR(LARGEICON.imageSize),
+        TOOLBAR(LARGEICON),
         /** Side button maximum height
          * @since 9253
          */
         SIDEBUTTON(Main.pref.getInteger("iconsize.sidebutton", 20)),
+        /** Settings tab icon size
+         * @since 9253
+         */
+        SETTINGS_TAB(Main.pref.getInteger("iconsize.settingstab", 48)),
         /**
          * The default image size
          * @since 9705
          */
-        DEFAULT(Main.pref.getInteger("iconsize.default", 24));
+        DEFAULT(Main.pref.getInteger("iconsize.default", 24)),
+        /**
+         * Splash dialog logo size
+         * @since 10358
+         */
+        SPLASH_LOGO(128, 129),
+        /**
+         * About dialog logo size
+         * @since 10358
+         */
+        ABOUT_LOGO(256, 258);
 
-        private final int imageSize;
+        private final int virtualWidth;
+        private final int virtualHeight;
 
         ImageSizes(int imageSize) {
-            this.imageSize = imageSize;
+            this.virtualWidth = imageSize;
+            this.virtualHeight = imageSize;
+        }
+
+        ImageSizes(int width, int height) {
+            this.virtualWidth = width;
+            this.virtualHeight = height;
+        }
+
+        ImageSizes(ImageSizes that) {
+            this.virtualWidth = that.virtualWidth;
+            this.virtualHeight = that.virtualHeight;
         }
 
         /**
-         * Returns the image size in pixels
-         * @return the image size in pixels
+         * Returns the image width in virtual pixels
+         * @return the image width in virtual pixels
+         */
+        public int getVirtualWidth() {
+            return virtualWidth;
+        }
+
+        /**
+         * Returns the image height in virtual pixels
+         * @return the image height in virtual pixels
          * @since 9705
          */
-        public int getImageSize() {
-            return imageSize;
+        public int getVirtualHeight() {
+            return virtualHeight;
         }
 
         /**
@@ -190,7 +225,7 @@ public class ImageProvider {
          * @since 9705
          */
         public Dimension getImageDimension() {
-            return new Dimension(imageSize, imageSize);
+            return new Dimension(virtualWidth, virtualHeight);
         }
     }
 
@@ -218,14 +253,14 @@ public class ImageProvider {
     protected File archive;
     /** directory inside the archive */
     protected String inArchiveDir;
-    /** width of the resulting image, -1 when original image data should be used */
-    protected int width = -1;
-    /** height of the resulting image, -1 when original image data should be used */
-    protected int height = -1;
-    /** maximum width of the resulting image, -1 for no restriction */
-    protected int maxWidth = -1;
-    /** maximum height of the resulting image, -1 for no restriction */
-    protected int maxHeight = -1;
+    /** virtual width of the resulting image, -1 when original image data should be used */
+    protected int virtualWidth = -1;
+    /** virtual height of the resulting image, -1 when original image data should be used */
+    protected int virtualHeight = -1;
+    /** virtual maximum width of the resulting image, -1 for no restriction */
+    protected int virtualMaxWidth = -1;
+    /** virtual maximum height of the resulting image, -1 for no restriction */
+    protected int virtualMaxHeight = -1;
     /** In case of errors do not throw exception but return <code>null</code> for missing image */
     protected boolean optional;
     /** <code>true</code> if warnings should be suppressed */
@@ -305,10 +340,10 @@ public class ImageProvider {
         this.name = image.name;
         this.archive = image.archive;
         this.inArchiveDir = image.inArchiveDir;
-        this.width = image.width;
-        this.height = image.height;
-        this.maxWidth = image.maxWidth;
-        this.maxHeight = image.maxHeight;
+        this.virtualWidth = image.virtualWidth;
+        this.virtualHeight = image.virtualHeight;
+        this.virtualMaxWidth = image.virtualMaxWidth;
+        this.virtualMaxHeight = image.virtualMaxHeight;
         this.optional = image.optional;
         this.suppressWarnings = image.suppressWarnings;
         this.additionalClassLoaders = image.additionalClassLoaders;
@@ -388,8 +423,8 @@ public class ImageProvider {
      * @return the current object, for convenience
      */
     public ImageProvider setSize(Dimension size) {
-        this.width = size.width;
-        this.height = size.height;
+        this.virtualWidth = size.width;
+        this.virtualHeight = size.height;
         return this;
     }
 
@@ -406,13 +441,27 @@ public class ImageProvider {
     }
 
     /**
+     * Set the dimensions of the image.
+     *
+     * @param width final width of the image
+     * @param height final height of the image
+     * @return the current object, for convenience
+     * @since 10358
+     */
+    public ImageProvider setSize(int width, int height) {
+        this.virtualWidth = width;
+        this.virtualHeight = height;
+        return this;
+    }
+
+    /**
      * Set image width
      * @param width final width of the image
      * @return the current object, for convenience
      * @see #setSize
      */
     public ImageProvider setWidth(int width) {
-        this.width = width;
+        this.virtualWidth = width;
         return this;
     }
 
@@ -423,7 +472,7 @@ public class ImageProvider {
      * @see #setSize
      */
     public ImageProvider setHeight(int height) {
-        this.height = height;
+        this.virtualHeight = height;
         return this;
     }
 
@@ -438,8 +487,8 @@ public class ImageProvider {
      * @return the current object, for convenience
      */
     public ImageProvider setMaxSize(Dimension maxSize) {
-        this.maxWidth = maxSize.width;
-        this.maxHeight = maxSize.height;
+        this.virtualMaxWidth = maxSize.width;
+        this.virtualMaxHeight = maxSize.height;
         return this;
     }
 
@@ -457,11 +506,11 @@ public class ImageProvider {
      * @see #setMaxSize(Dimension)
      */
     public ImageProvider resetMaxSize(Dimension maxSize) {
-        if (this.maxWidth == -1 || maxSize.width < this.maxWidth) {
-            this.maxWidth = maxSize.width;
+        if (this.virtualMaxWidth == -1 || maxSize.width < this.virtualMaxWidth) {
+            this.virtualMaxWidth = maxSize.width;
         }
-        if (this.maxHeight == -1 || maxSize.height < this.maxHeight) {
-            this.maxHeight = maxSize.height;
+        if (this.virtualMaxHeight == -1 || maxSize.height < this.virtualMaxHeight) {
+            this.virtualMaxHeight = maxSize.height;
         }
         return this;
     }
@@ -497,7 +546,7 @@ public class ImageProvider {
      * @see #setMaxSize
      */
     public ImageProvider setMaxWidth(int maxWidth) {
-        this.maxWidth = maxWidth;
+        this.virtualMaxWidth = maxWidth;
         return this;
     }
 
@@ -508,7 +557,7 @@ public class ImageProvider {
      * @see #setMaxSize
      */
     public ImageProvider setMaxHeight(int maxHeight) {
-        this.maxHeight = maxHeight;
+        this.virtualMaxHeight = maxHeight;
         return this;
     }
 
@@ -556,10 +605,10 @@ public class ImageProvider {
         ImageResource ir = getResource();
         if (ir == null)
             return null;
-        if (maxWidth != -1 || maxHeight != -1)
-            return ir.getImageIconBounded(new Dimension(maxWidth, maxHeight));
+        if (virtualMaxWidth != -1 || virtualMaxHeight != -1)
+            return ir.getImageIconBounded(new Dimension(virtualMaxWidth, virtualMaxHeight));
         else
-            return ir.getImageIcon(new Dimension(width, height));
+            return ir.getImageIcon(new Dimension(virtualWidth, virtualHeight));
     }
 
     /**
@@ -655,6 +704,19 @@ public class ImageProvider {
     }
 
     /**
+     * Load an empty image with a given size.
+     *
+     * @param size Target icon size
+     * @return The requested Image.
+     * @since 10358
+     */
+    public static ImageIcon getEmpty(ImageSizes size) {
+        Dimension iconRealSize = GuiSizesHelper.getDimensionDpiAdjusted(size.getImageDimension());
+        return new ImageIcon(new BufferedImage(iconRealSize.width, iconRealSize.height,
+            BufferedImage.TYPE_INT_ARGB));
+    }
+
+    /**
      * Load an image with a given file name.
      *
      * @param name The icon name (base name with or without '.png' or '.svg' extension)
@@ -688,6 +750,22 @@ public class ImageProvider {
      */
     public static ImageIcon getIfAvailable(String name) {
         return new ImageProvider(name).setOptional(true).get();
+    }
+
+    /**
+     * Scale image to virtual dimensions. This util method is used to hide real sizes calculations.
+     * All other classes should use this method to resize images.
+     *
+     * @param im image to be resized
+     * @param virtualWidth target width of image in virtual pixels
+     * @param virtualHeight target height of image in virtual pixels
+     * @return new scaled image in real dimensions
+     */
+    public static ImageIcon getScaledIcon(Image im, int virtualWidth, int virtualHeight) {
+        int realWidth = GuiSizesHelper.getSizeDpiAdjusted(virtualWidth);
+        int realHeight = GuiSizesHelper.getSizeDpiAdjusted(virtualHeight);
+
+        return new ImageIcon(im.getScaledInstance(realWidth, realHeight, Image.SCALE_SMOOTH));
     }
 
     /**
@@ -1332,31 +1410,31 @@ public class ImageProvider {
                     NodeElement nodeStyle = (NodeElement) style;
                     MapImage icon = nodeStyle.mapImage;
                     if (icon != null) {
-                        int backgroundWidth = iconSize.width;
-                        int backgroundHeight = iconSize.height;
-                        int iconWidth = icon.getWidth();
-                        int iconHeight = icon.getHeight();
-                        BufferedImage image = new BufferedImage(backgroundWidth, backgroundHeight,
+                        int backgroundRealWidth = GuiSizesHelper.getSizeDpiAdjusted(iconSize.width);
+                        int backgroundRealHeight = GuiSizesHelper.getSizeDpiAdjusted(iconSize.height);
+                        int iconRealWidth = icon.getWidth();
+                        int iconRealHeight = icon.getHeight();
+                        BufferedImage image = new BufferedImage(backgroundRealWidth, backgroundRealHeight,
                                 BufferedImage.TYPE_INT_ARGB);
-                        double scaleFactor = Math.min(backgroundWidth / (double) iconWidth, backgroundHeight
-                                / (double) iconHeight);
+                        double scaleFactor = Math.min(backgroundRealWidth / (double) iconRealWidth, backgroundRealHeight
+                                / (double) iconRealHeight);
                         BufferedImage iconImage = icon.getImage(false);
                         Image scaledIcon;
                         final int scaledWidth;
                         final int scaledHeight;
                         if (scaleFactor < 1) {
                             // Scale icon such that it fits on background.
-                            scaledWidth = (int) (iconWidth * scaleFactor);
-                            scaledHeight = (int) (iconHeight * scaleFactor);
+                            scaledWidth = (int) (iconRealWidth * scaleFactor);
+                            scaledHeight = (int) (iconRealHeight * scaleFactor);
                             scaledIcon = iconImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
                         } else {
                             // Use original size, don't upscale.
-                            scaledWidth = iconWidth;
-                            scaledHeight = iconHeight;
+                            scaledWidth = iconRealWidth;
+                            scaledHeight = iconRealHeight;
                             scaledIcon = iconImage;
                         }
-                        image.getGraphics().drawImage(scaledIcon, (backgroundWidth - scaledWidth) / 2,
-                                (backgroundHeight - scaledHeight) / 2, null);
+                        image.getGraphics().drawImage(scaledIcon, (backgroundRealWidth - scaledWidth) / 2,
+                                (backgroundRealHeight - scaledHeight) / 2, null);
 
                         return new ImageIcon(image);
                     }
@@ -1393,35 +1471,37 @@ public class ImageProvider {
      * @return an image from the given SVG data at the desired dimension.
      */
     public static BufferedImage createImageFromSvg(SVGDiagram svg, Dimension dim) {
-        float realWidth = svg.getWidth();
-        float realHeight = svg.getHeight();
-        int width = Math.round(realWidth);
-        int height = Math.round(realHeight);
-        Double scaleX = null, scaleY = null;
+        float sourceWidth = svg.getWidth();
+        float sourceHeight = svg.getHeight();
+        int realWidth = Math.round(GuiSizesHelper.getSizeDpiAdjusted(sourceWidth));
+        int realHeight = Math.round(GuiSizesHelper.getSizeDpiAdjusted(sourceHeight));
+        Double scaleX, scaleY;
         if (dim.width != -1) {
-            width = dim.width;
-            scaleX = (double) width / realWidth;
+            realWidth = dim.width;
+            scaleX = (double) realWidth / sourceWidth;
             if (dim.height == -1) {
                 scaleY = scaleX;
-                height = (int) Math.round(realHeight * scaleY);
+                realHeight = (int) Math.round(sourceHeight * scaleY);
             } else {
-                height = dim.height;
-                scaleY = (double) height / realHeight;
+                realHeight = dim.height;
+                scaleY = (double) realHeight / sourceHeight;
             }
         } else if (dim.height != -1) {
-            height = dim.height;
-            scaleX = scaleY = (double) height / realHeight;
-            width = (int) Math.round(realWidth * scaleX);
+            realHeight = dim.height;
+            scaleX = scaleY = (double) realHeight / sourceHeight;
+            realWidth = (int) Math.round(sourceWidth * scaleX);
         }
-        if (width == 0 || height == 0) {
+        else {
+            scaleX = scaleY = (double) realHeight / sourceHeight;
+        }
+
+        if (realWidth == 0 || realHeight == 0) {
             return null;
         }
-        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage img = new BufferedImage(realWidth, realHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = img.createGraphics();
-        g.setClip(0, 0, width, height);
-        if (scaleX != null && scaleY != null) {
-            g.scale(scaleX, scaleY);
-        }
+        g.setClip(0, 0, realWidth, realHeight);
+        g.scale(scaleX, scaleY);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         try {
             synchronized (getSvgUniverse()) {

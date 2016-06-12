@@ -3,8 +3,6 @@ package org.openstreetmap.josm.plugins;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -76,15 +74,15 @@ public class PluginInformation {
     /** The plugin icon path inside jar. */
     public String iconPath;
     /** The plugin icon. */
-    public ImageIcon icon;
+    private ImageProvider icon;
     /** Plugin can be loaded at any time and not just at start. */
     public boolean canloadatruntime;
     /** The libraries referenced in Class-Path manifest attribute. */
     public List<URL> libraries = new LinkedList<>();
     /** All manifest attributes. */
     public final Map<String, String> attr = new TreeMap<>();
-
-    private static final ImageIcon emptyIcon = new ImageIcon(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB));
+    /** Empty icon for these plugins which have none */
+    private static final ImageIcon emptyIcon = ImageProvider.getEmpty(ImageProvider.ImageSizes.LARGEICON);
 
     /**
      * Creates a plugin information object by reading the plugin information from
@@ -243,9 +241,9 @@ public class PluginInformation {
         if (iconPath != null) {
             if (file != null) {
                 // extract icon from the plugin jar file
-                icon = new ImageProvider(iconPath).setArchive(file).setMaxWidth(24).setMaxHeight(24).setOptional(true).get();
+                icon = new ImageProvider(iconPath).setArchive(file).setMaxSize(ImageProvider.ImageSizes.LARGEICON).setOptional(true);
             } else if (iconPath.startsWith("data:")) {
-                icon = new ImageProvider(iconPath).setMaxWidth(24).setMaxHeight(24).setOptional(true).get();
+                icon = new ImageProvider(iconPath).setMaxSize(ImageProvider.ImageSizes.LARGEICON).setOptional(true);
             }
         }
         canloadatruntime = Boolean.parseBoolean(attr.getValue("Plugin-Canloadatruntime"));
@@ -493,13 +491,14 @@ public class PluginInformation {
     }
 
     /**
-     * Replies the plugin icon, scaled to 24x24 pixels.
-     * @return the plugin icon, scaled to 24x24 pixels.
+     * Replies the plugin icon, scaled to LARGE_ICON size.
+     * @return the plugin icon, scaled to LARGE_ICON size.
      */
     public ImageIcon getScaledIcon() {
-        if (icon == null)
+        ImageIcon img = (icon != null) ? icon.get() : null;
+        if (img == null)
             return emptyIcon;
-        return new ImageIcon(icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+        return img;
     }
 
     @Override

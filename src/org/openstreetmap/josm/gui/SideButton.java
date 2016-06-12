@@ -91,7 +91,7 @@ public class SideButton extends JButton implements Destroyable {
             };
             action.addPropertyChangeListener(propertyChangeListener);
         }
-        int iconHeight = ImageProvider.ImageSizes.SIDEBUTTON.getImageSize();
+        int iconHeight = ImageProvider.ImageSizes.SIDEBUTTON.getImageDimension().height;
         Icon i = getIcon();
         if (i instanceof ImageIcon && i.getIconHeight() != iconHeight) {
             Image im = ((ImageIcon) i).getImage();
