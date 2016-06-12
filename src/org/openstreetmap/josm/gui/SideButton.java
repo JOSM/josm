@@ -41,7 +41,7 @@ public class SideButton extends JButton implements Destroyable {
         if (icon != null) {
             setIcon(icon.getImageIconBounded(
                 ImageProvider.ImageSizes.SIDEBUTTON.getImageDimension()));
-        } else { /* TODO: remove when calling code is fixed */
+        } else { /* TODO: remove when calling code is fixed, replace by exception */
             Main.warn("Old style SideButton usage for action " + action);
             fixIcon(action);
         }
@@ -79,7 +79,8 @@ public class SideButton extends JButton implements Destroyable {
     /**
      * Fix icon size
      * @param action the action
-     * @deprecated
+     * @deprecated This method is old style and will be removed together with the removal
+     * of old constructor code
      */
     @Deprecated
     private void fixIcon(Action action) {
