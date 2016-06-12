@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.gui.util;
 
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 
 /**
@@ -20,7 +21,12 @@ public class GuiSizesHelper {
         if (screenDPI == -1) {
             synchronized (GuiHelper.class) {
                 if (screenDPI == -1) {
-                    screenDPI = Toolkit.getDefaultToolkit().getScreenResolution();
+                    try {
+                        screenDPI = Toolkit.getDefaultToolkit().getScreenResolution();
+                    } catch (HeadlessException e) {
+                        screenDPI = 96;
+                    }
+                        
                 }
             }
         }
@@ -34,7 +40,7 @@ public class GuiSizesHelper {
      */
     public static float getPixelDensity() {
         int pixelPerInch = getScreenDPI();
-        return (float) (pixelPerInch / 96.);
+        return (float) (pixelPerInch / 96.0);
     }
 
     /**
