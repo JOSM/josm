@@ -146,7 +146,7 @@ public final class MapPaintStyles {
      */
     public static ImageIcon getIcon(IconReference ref, int width, int height) {
         final String namespace = ref.source.getPrefName();
-        ImageIcon i = getIconProvider(ref, false).setWidth(width).setHeight(height).get();
+        ImageIcon i = getIconProvider(ref, false).setSize(width, height).get();
         if (i == null) {
             Main.warn("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
             return null;
