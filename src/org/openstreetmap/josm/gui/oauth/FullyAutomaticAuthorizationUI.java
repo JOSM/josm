@@ -18,6 +18,7 @@ import java.util.concurrent.Executor;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,7 +33,6 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.server.UserNameValidator;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -200,7 +200,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         RunAuthorisationAction runAuthorisationAction = new RunAuthorisationAction();
         tfPassword.getDocument().addDocumentListener(runAuthorisationAction);
         tfUserName.getDocument().addDocumentListener(runAuthorisationAction);
-        pnl.add(new SideButton(runAuthorisationAction));
+        pnl.add(new JButton(runAuthorisationAction));
         return pnl;
     }
 
@@ -235,8 +235,8 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         // the actions
         JPanel pnl1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        pnl1.add(new SideButton(new BackAction()));
-        pnl1.add(new SideButton(new TestAccessTokenAction()));
+        pnl1.add(new JButton(new BackAction()));
+        pnl1.add(new JButton(new TestAccessTokenAction()));
         gc.gridy = 2;
         pnl.add(pnl1, gc);
 
@@ -324,7 +324,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     class RunAuthorisationAction extends AbstractAction implements DocumentListener {
         RunAuthorisationAction() {
             putValue(NAME, tr("Authorize now"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
+            new ImageProvider("oauth", "oauth-small").getResource().getImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to redirect you to the authorization form on the JOSM web site"));
             updateEnabledState();
         }
@@ -361,7 +361,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         BackAction() {
             putValue(NAME, tr("Back"));
             putValue(SHORT_DESCRIPTION, tr("Run the automatic authorization steps again"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "previous"));
+            new ImageProvider("dialogs", "previous").getResource().getImageIcon(this);
         }
 
         @Override
@@ -376,7 +376,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     class TestAccessTokenAction extends AbstractAction {
         TestAccessTokenAction() {
             putValue(NAME, tr("Test Access Token"));
-            putValue(SMALL_ICON, ImageProvider.get("logo"));
+            new ImageProvider("logo").getResource().getImageIcon(this);
         }
 
         @Override
