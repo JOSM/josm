@@ -987,7 +987,13 @@
                   sv.href="http://wiki.openstreetmap.org/wiki/Sv:Tag:highway=track"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:highway=track" />
             <space />
-            <combo key="tracktype" text="Tracktype" values="grade1,grade2,grade3,grade4,grade5" />
+            <combo key="tracktype" text="Tracktype" values_searchable="true" values_sort="false">
+                <list_entry value="grade1" short_description="Solid: paved or heavily compacted hardcore surface" />
+                <list_entry value="grade2" short_description="Mostly Solid: gravel/rock with some soft material mixed in" />
+                <list_entry value="grade3" short_description="Even mixture of hard and soft materials" />
+                <list_entry value="grade4" short_description="Mostly Soft: soil/sand/grass with some hard material mixed in" />
+                <list_entry value="grade5" short_description="Soft: soil/sand/grass" />
+            </combo>
             <key key="highway" value="track" />
             <optional>
                 <reference ref="name_layer" />
