@@ -56,7 +56,7 @@ public final class DuplicateAction extends AbstractAction implements IEnabledSta
             return;
 
         List<String> layerNames = new ArrayList<>();
-        for (Layer l: Main.map.mapView.getAllLayers()) {
+        for (Layer l: Main.getLayerManager().getLayers()) {
             layerNames.add(l.getName());
         }
         if (layer instanceof OsmDataLayer) {

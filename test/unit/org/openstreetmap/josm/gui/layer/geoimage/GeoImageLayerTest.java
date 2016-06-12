@@ -48,7 +48,7 @@ public class GeoImageLayerTest {
                         Collections.singleton(new File(TestUtils.getRegressionDataFile(12255, "G0016941.JPG"))),
                         gpxLayer).run();
                 assertEquals(2, Main.map.mapView.getNumLayers());
-                GeoImageLayer layer = Main.map.mapView.getLayersOfType(GeoImageLayer.class).iterator().next();
+                GeoImageLayer layer = Main.getLayerManager().getLayersOfType(GeoImageLayer.class).iterator().next();
                 try {
                     assertEquals(gpxLayer, layer.getGpxLayer());
                     List<ImageEntry> images = layer.getImages();

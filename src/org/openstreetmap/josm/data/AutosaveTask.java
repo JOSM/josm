@@ -126,7 +126,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             timer.schedule(this, 1000L, PROP_INTERVAL.get() * 1000L);
             MapView.addLayerChangeListener(this);
             if (Main.isDisplayingMapView()) {
-                for (OsmDataLayer l: Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
+                for (OsmDataLayer l: Main.getLayerManager().getLayersOfType(OsmDataLayer.class)) {
                     registerNewlayer(l);
                 }
             }

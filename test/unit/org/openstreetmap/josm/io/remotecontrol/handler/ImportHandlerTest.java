@@ -94,7 +94,7 @@ public class ImportHandlerTest {
         try {
             newHandler("https://localhost?url=" + Utils.encodeUrl(url)).handle();
         } finally {
-            for (OsmDataLayer layer : Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
+            for (OsmDataLayer layer : Main.getLayerManager().getLayersOfType(OsmDataLayer.class)) {
                 Main.main.removeLayer(layer);
             }
         }

@@ -43,7 +43,7 @@ public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> 
     @Override
     public Collection<Layer> getDependencies() {
         Layer gpxLayer = layer.fromLayer;
-        if (gpxLayer != null && Main.map.mapView.hasLayer(gpxLayer))
+        if (gpxLayer != null && Main.getLayerManager().containsLayer(gpxLayer))
             return Collections.singleton(gpxLayer);
         return Collections.emptySet();
     }

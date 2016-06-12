@@ -37,7 +37,7 @@ public class NoteImporter extends FileImporter {
         }
         try (InputStream is = Compression.getUncompressedFileInputStream(file)) {
             final NoteLayer layer = loadLayer(is, file, file.getName(), progressMonitor);
-            if (Main.map == null || !Main.map.mapView.hasLayer(layer)) {
+            if (Main.map == null || !Main.getLayerManager().containsLayer(layer)) {
                 GuiHelper.runInEDT(new Runnable() {
                     @Override
                     public void run() {
@@ -68,7 +68,7 @@ public class NoteImporter extends FileImporter {
         final List<Note> fileNotes = new NoteReader(in).parse();
         List<NoteLayer> noteLayers = null;
         if (Main.map != null) {
-            noteLayers = Main.map.mapView.getLayersOfType(NoteLayer.class);
+            noteLayers = Main.getLayerManager().getLayersOfType(NoteLayer.class);
         }
         final NoteLayer layer;
         if (noteLayers != null && !noteLayers.isEmpty()) {

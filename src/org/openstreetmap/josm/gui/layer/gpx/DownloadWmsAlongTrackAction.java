@@ -115,7 +115,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
         if (!Main.isDisplayingMapView()) {
             return null;
         }
-        List<AbstractTileSourceLayer> targetLayers = Main.map.mapView.getLayersOfType(AbstractTileSourceLayer.class);
+        List<AbstractTileSourceLayer> targetLayers = Main.getLayerManager().getLayersOfType(AbstractTileSourceLayer.class);
         if (targetLayers.isEmpty()) {
             if (!GraphicsEnvironment.isHeadless()) {
                 warnNoImageryLayers();

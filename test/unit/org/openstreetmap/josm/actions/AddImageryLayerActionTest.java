@@ -46,15 +46,15 @@ public final class AddImageryLayerActionTest {
      */
     @Test
     public void testActionPerformedEnabled() {
-        assertTrue(Main.map.mapView.getLayersOfType(TMSLayer.class).isEmpty());
+        assertTrue(Main.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
         new AddImageryLayerAction(new ImageryInfo("foo_tms", "http://bar", "tms", null, null)).actionPerformed(null);
-        List<TMSLayer> tmsLayers = Main.map.mapView.getLayersOfType(TMSLayer.class);
+        List<TMSLayer> tmsLayers = Main.getLayerManager().getLayersOfType(TMSLayer.class);
         assertEquals(1, tmsLayers.size());
 
         try {
             new AddImageryLayerAction(new ImageryInfo("wms.openstreetmap.fr", "http://wms.openstreetmap.fr/wms?",
                     "wms_endpoint", null, null)).actionPerformed(null);
-            List<WMSLayer> wmsLayers = Main.map.mapView.getLayersOfType(WMSLayer.class);
+            List<WMSLayer> wmsLayers = Main.getLayerManager().getLayersOfType(WMSLayer.class);
             assertEquals(1, wmsLayers.size());
 
             Main.map.mapView.removeLayer(wmsLayers.get(0));
@@ -68,8 +68,8 @@ public final class AddImageryLayerActionTest {
      */
     @Test
     public void testActionPerformedDisabled() {
-        assertTrue(Main.map.mapView.getLayersOfType(TMSLayer.class).isEmpty());
+        assertTrue(Main.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
         new AddImageryLayerAction(new ImageryInfo()).actionPerformed(null);
-        assertTrue(Main.map.mapView.getLayersOfType(TMSLayer.class).isEmpty());
+        assertTrue(Main.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
     }
 }

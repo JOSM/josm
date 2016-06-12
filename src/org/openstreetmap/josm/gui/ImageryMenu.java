@@ -69,7 +69,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Collection<ImageryLayer> layers = Main.map.mapView.getLayersOfType(ImageryLayer.class);
+            Collection<ImageryLayer> layers = Main.getLayerManager().getLayersOfType(ImageryLayer.class);
             if (layers.isEmpty()) {
                 setEnabled(false);
                 return;

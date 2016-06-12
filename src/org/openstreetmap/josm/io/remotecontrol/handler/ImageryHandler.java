@@ -94,7 +94,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
     protected void handleRequest() throws RequestHandlerErrorException {
         final ImageryInfo imgInfo = buildImageryInfo();
         if (Main.isDisplayingMapView()) {
-            for (ImageryLayer layer : Main.map.mapView.getLayersOfType(ImageryLayer.class)) {
+            for (ImageryLayer layer : Main.getLayerManager().getLayersOfType(ImageryLayer.class)) {
                 if (layer.getInfo().equals(imgInfo)) {
                     Main.info("Imagery layer already exists: "+imgInfo);
                     return;

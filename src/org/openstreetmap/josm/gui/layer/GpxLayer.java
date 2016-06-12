@@ -299,7 +299,7 @@ public class GpxLayer extends Layer {
         if (!visibleSegments.isEmpty()) {
             drawHelper.readPreferences(getName());
             drawHelper.drawAll(g, mv, visibleSegments);
-            if (Main.map.mapView.getActiveLayer() == this) {
+            if (Main.getLayerManager().getActiveLayer() == this) {
                 drawHelper.drawColorBar(g, mv);
             }
         }

@@ -41,6 +41,8 @@ public class PowerLines extends Test {
     protected static final Collection<String> POWER_TOWER_TAGS = Arrays.asList("tower", "pole");
     /** Values for {@code power} key interpreted as power stations */
     protected static final Collection<String> POWER_STATION_TAGS = Arrays.asList("station", "sub_station", "substation", "plant", "generator");
+    /** Values for {@code building} key interpreted as power stations */
+    protected static final Collection<String> BUILDING_STATION_TAGS = Arrays.asList("transformer_tower");
     /** Values for {@code power} key interpreted as allowed power items */
     protected static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator", "switchgear",
             "portal", "terminal", "insulator");
@@ -173,7 +175,7 @@ public class PowerLines extends Test {
      * @return {@code true} if power key is set and equal to station/sub_station/plant
      */
     protected static final boolean isPowerStation(OsmPrimitive p) {
-        return isPowerIn(p, POWER_STATION_TAGS);
+        return isPowerIn(p, POWER_STATION_TAGS) || isBuildingIn(p, BUILDING_STATION_TAGS);
     }
 
     /**
@@ -195,13 +197,24 @@ public class PowerLines extends Test {
     }
 
     /**
-     * Helper function to check if power tags is a certain value.
+     * Helper function to check if power tag is a certain value.
      * @param p The primitive to be tested
      * @param values List of possible values
      * @return {@code true} if power key is set and equal to possible values
      */
     private static boolean isPowerIn(OsmPrimitive p, Collection<String> values) {
         String v = p.get("power");
+        return v != null && values != null && values.contains(v);
+    }
+
+    /**
+     * Helper function to check if building tag is a certain value.
+     * @param p The primitive to be tested
+     * @param values List of possible values
+     * @return {@code true} if power key is set and equal to possible values
+     */
+    private static boolean isBuildingIn(OsmPrimitive p, Collection<String> values) {
+        String v = p.get("building");
         return v != null && values != null && values.contains(v);
     }
 
