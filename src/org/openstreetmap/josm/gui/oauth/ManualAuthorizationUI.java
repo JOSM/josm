@@ -15,6 +15,7 @@ import java.util.concurrent.Executor;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,7 +25,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.data.oauth.OAuthToken;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.widgets.DefaultTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -146,7 +146,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
     protected JPanel buildActionsPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
         TestAccessTokenAction actTestAccessToken = new TestAccessTokenAction();
-        pnl.add(new SideButton(actTestAccessToken));
+        pnl.add(new JButton(actTestAccessToken));
         this.addPropertyChangeListener(actTestAccessToken);
         return pnl;
     }
@@ -222,7 +222,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
     class TestAccessTokenAction extends AbstractAction implements PropertyChangeListener {
         TestAccessTokenAction() {
             putValue(NAME, tr("Test Access Token"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
+            new ImageProvider("oauth", "oauth-small").getResource().getImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to test the Access Token"));
             updateEnabledState();
         }

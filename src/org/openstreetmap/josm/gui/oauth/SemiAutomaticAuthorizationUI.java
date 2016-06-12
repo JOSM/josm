@@ -17,12 +17,12 @@ import java.util.concurrent.Executor;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.oauth.OAuthToken;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -194,7 +194,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             pnl.add(h, gc);
 
             JPanel pnl1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            pnl1.add(new SideButton(new RetrieveRequestTokenAction()));
+            pnl1.add(new JButton(new RetrieveRequestTokenAction()));
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             gc.gridy = 1;
@@ -268,8 +268,8 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         protected JPanel buildActionPanel() {
             JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            pnl.add(new SideButton(new BackAction()));
-            pnl.add(new SideButton(new RetrieveAccessTokenAction()));
+            pnl.add(new JButton(new BackAction()));
+            pnl.add(new JButton(new RetrieveAccessTokenAction()));
             return pnl;
         }
 
@@ -291,7 +291,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             BackAction() {
                 putValue(NAME, tr("Back"));
                 putValue(SHORT_DESCRIPTION, tr("Go back to step 1/3"));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "previous"));
+                new ImageProvider("dialogs", "previous").getResource().getImageIcon(this);
             }
 
             @Override
@@ -348,8 +348,8 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         protected JPanel buildActionPanel() {
             JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            pnl.add(new SideButton(new RestartAction()));
-            pnl.add(new SideButton(new TestAccessTokenAction()));
+            pnl.add(new JButton(new RestartAction()));
+            pnl.add(new JButton(new TestAccessTokenAction()));
             return pnl;
         }
 
@@ -367,7 +367,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             RestartAction() {
                 putValue(NAME, tr("Restart"));
                 putValue(SHORT_DESCRIPTION, tr("Go back to step 1/3"));
-                putValue(SMALL_ICON, ImageProvider.get("dialogs", "previous"));
+                new ImageProvider("dialogs", "previous").getResource().getImageIcon(this);
             }
 
             @Override
@@ -388,7 +388,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         RetrieveRequestTokenAction() {
             putValue(NAME, tr("Retrieve Request Token"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
+            new ImageProvider("oauth", "oauth-small").getResource().getImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to retrieve a Request Token"));
         }
 
@@ -424,7 +424,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         RetrieveAccessTokenAction() {
             putValue(NAME, tr("Retrieve Access Token"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
+            new ImageProvider("oauth", "oauth-small").getResource().getImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to retrieve an Access Token"));
         }
 
@@ -461,7 +461,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         TestAccessTokenAction() {
             putValue(NAME, tr("Test Access Token"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
+            new ImageProvider("oauth", "oauth-small").getResource().getImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to test the Access Token"));
         }
 
