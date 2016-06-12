@@ -270,8 +270,8 @@
         <text key="branch" text="Branch operator" />
     </chunk>
     <chunk id="cable_circuit">
-        <combo key="cables" text="Amount of Cables" values="1,3,6,9,12" lenght="2" />
-        <combo key="circuits" text="Amount of circuits" values="1,2,3" lenght="2" />
+        <combo key="cables" text="Amount of Cables" values="1,2,3,4,6,9,12" />
+        <combo key="circuits" text="Amount of circuits" values="1,2,3,4" />
     </chunk>
     <chunk id="power_loc">
         <combo key="location" text="Location" values="outdoor,indoor,underground,platform,kiosk" values_context="power" />
