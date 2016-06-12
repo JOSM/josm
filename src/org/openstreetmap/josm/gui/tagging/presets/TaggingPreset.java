@@ -42,10 +42,10 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.gui.tagging.presets.items.Label;
@@ -74,7 +74,7 @@ import org.xml.sax.SAXException;
  * It is also able to construct dialogs out of preset definitions.
  * @since 294
  */
-public class TaggingPreset extends AbstractAction implements MapView.LayerChangeListener, Predicate<OsmPrimitive> {
+public class TaggingPreset extends AbstractAction implements ActiveLayerChangeListener, Predicate<OsmPrimitive> {
 
     public static final int DIALOG_ANSWER_APPLY = 1;
     public static final int DIALOG_ANSWER_NEW_RELATION = 2;
@@ -112,7 +112,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * Use this as default item for "do not select anything".
      */
     public TaggingPreset() {
-        MapView.addLayerChangeListener(this);
+        Main.getLayerManager().addActiveLayerChangeListener(this);
         updateEnabledState();
     }
 
@@ -479,6 +479,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return sel;
     }
 
+    /**
+     * Gets a list of tags that are set by this preset.
+     * @return The list of tags.
+     */
     public List<Tag> getChangedTags() {
         List<Tag> result = new ArrayList<>();
         for (TaggingPresetItem i: data) {
@@ -487,6 +491,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return result;
     }
 
+    /**
+     * Create a command to change the given list of tags.
+     * @param sel The primitives to change the tags for
+     * @param changedTags The tags to change
+     * @return A command that changes the tags.
+     */
     public static Command createCommand(Collection<OsmPrimitive> sel, List<Tag> changedTags) {
         List<Command> cmds = new ArrayList<>();
         for (Tag tag: changedTags) {
@@ -513,17 +523,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        updateEnabledState();
-    }
-
-    @Override
-    public void layerAdded(Layer newLayer) {
-        updateEnabledState();
-    }
-
-    @Override
-    public void layerRemoved(Layer oldLayer) {
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
         updateEnabledState();
     }
 
@@ -532,6 +532,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return (types == null ? "" : types.toString()) + ' ' + name;
     }
 
+    /**
+     * Determines whether this preset matches the types.
+     * @param t The types that must match
+     * @return <code>true</code> if all types match.
+     */
     public boolean typeMatches(Collection<TaggingPresetType> t) {
         return t == null || types == null || types.containsAll(t);
     }
@@ -557,12 +562,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * @return {@code true} if this preset matches the parameters.
      */
     public boolean matches(Collection<TaggingPresetType> t, Map<String, String> tags, boolean onlyShowable) {
-        if (onlyShowable && !isShowable())
+        if ((onlyShowable && !isShowable()) || !typeMatches(t)) {
             return false;
-        else if (!typeMatches(t))
-            return false;
-        else
+        } else {
             return TaggingPresetItem.matches(data, tags);
+        }
     }
 
     /**
@@ -589,6 +593,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
     }
 
+    /**
+     * Gets a string describing this preset that can be used for the toolbar
+     * @return A String that can be passed on to the toolbar
+     * @see ToolbarPreferences#addCustomButton(String, int, boolean)
+     */
     public String getToolbarString() {
         ToolbarPreferences.ActionParser actionParser = new ToolbarPreferences.ActionParser(null);
         return actionParser.saveAction(new ToolbarPreferences.ActionDefinition(this));
