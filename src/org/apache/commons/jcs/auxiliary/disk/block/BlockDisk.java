@@ -210,7 +210,7 @@ public class BlockDisk
 
             ByteBuffer dataBuffer = ByteBuffer.wrap(data, offset, length);
 
-            long position = calculateByteOffsetForBlock(blocks[i]);
+            long position = calculateByteOffsetForBlockAsLong(blocks[i]);
             // write the header
             headerBuffer.flip();
             int written = fc.write(headerBuffer, position);
@@ -323,7 +323,7 @@ public class BlockDisk
         boolean corrupted = false;
         long fileLength = fc.size();
 
-        int position = calculateByteOffsetForBlock( block );
+        long position = calculateByteOffsetForBlockAsLong( block );
 //        if ( position > fileLength )
 //        {
 //            corrupted = true;
@@ -374,10 +374,24 @@ public class BlockDisk
     /**
      * Calculates the file offset for a particular block.
      * <p>
-     * @param block
-     * @return the offset for this block
+     * @param block number
+     * @return the byte offset for this block in the file as an int; may overflow
+     * @deprecacted (since 2.0) use {@link #calculateByteOffsetForBlockAsLong(int)} instead
      */
+    @Deprecated
     protected int calculateByteOffsetForBlock( int block )
+    {
+        return block * blockSizeBytes;
+    }
+
+    /**
+     * Calculates the file offset for a particular block.
+     * <p>
+     * @param block number
+     * @return the byte offset for this block in the file as a long
+     * @since 2.0
+     */
+    protected long calculateByteOffsetForBlockAsLong( int block )
     {
         return block * blockSizeBytes;
     }
