@@ -11,7 +11,7 @@ import java.awt.Toolkit;
  * of sizes wont work for all users alike.
  * @since 10358
  */
-final public class GuiSizesHelper {
+public final class GuiSizesHelper {
 
     private GuiSizesHelper() {
         // Hide default constructor for utils classes
