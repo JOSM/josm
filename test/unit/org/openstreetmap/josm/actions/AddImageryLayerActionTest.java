@@ -7,26 +7,23 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 /**
  * Unit tests for class {@link AddImageryLayerAction}.
  */
 public final class AddImageryLayerActionTest {
-
     /**
-     * Setup test.
+     * We need prefs for this. We need platform for actions and the OSM API for checking blacklist.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init(true);
-    }
+    @Rule
+    public JOSMTestRules test = new JOSMTestRules().preferences().platform().fakeAPI();
 
     /**
      * Unit test of {@link AddImageryLayerAction#updateEnabledState}.
@@ -34,7 +31,6 @@ public final class AddImageryLayerActionTest {
     @Test
     public void testEnabledState() {
         assertFalse(new AddImageryLayerAction(new ImageryInfo()).isEnabled());
-        assertFalse(new AddImageryLayerAction(new ImageryInfo("google", "http://maps.google.com/api", "tms", null, null)).isEnabled());
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_tms", "http://bar", "tms", null, null)).isEnabled());
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_bing", "http://bar", "bing", null, null)).isEnabled());
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_scanex", "http://bar", "scanex", null, null)).isEnabled());
