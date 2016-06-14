@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016060800, Last Updated Wed Jun  8 07:07:01 2016 UTC
+        // Taken from Version 2016061301, Last Updated Tue Jun 14 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -314,6 +314,7 @@ public final class DomainValidator extends AbstractValidator {
         "agakhan", // agakhan Fondation Aga Khan (Aga Khan Foundation)
         "agency", // agency Steel Falls, LLC
         "aig", // aig American International Group, Inc.
+        "airbus", // airbus Airbus S.A.S.
         "airforce", // airforce United TLD Holdco Ltd.
         "airtel", // airtel Bharti Airtel Limited
         "akdn", // akdn Fondation Aga Khan (Aga Khan Foundation)
@@ -322,6 +323,7 @@ public final class DomainValidator extends AbstractValidator {
         "allfinanz", // allfinanz Allfinanz Deutsche Vermögensberatung Aktiengesellschaft
         "ally", // ally Ally Financial Inc.
         "alsace", // alsace REGION D ALSACE
+        "alstom", // alstom ALSTOM
         "amica", // amica Amica Mutual Insurance Company
         "amsterdam", // amsterdam Gemeente Amsterdam
         "analytics", // analytics Campus IP LLC
@@ -545,6 +547,8 @@ public final class DomainValidator extends AbstractValidator {
         "drive", // drive Charleston Road Registry Inc.
         "dtv", // dtv Dish DBS Corporation
         "dubai", // dubai Dubai Smart Government Department
+        "dunlop", // dunlop The Goodyear Tire &amp; Rubber Company
+        "dupont", // dupont E. I. du Pont de Nemours and Company
         "durban", // durban ZA Central Registry NPC trading as ZA Central Registry
         "dvag", // dvag Deutsche Vermögensberatung Aktiengesellschaft DVAG
         "earth", // earth Interlink Co., Ltd.
@@ -561,6 +565,7 @@ public final class DomainValidator extends AbstractValidator {
         "epost", // epost Deutsche Post AG
         "epson", // epson Seiko Epson Corporation
         "equipment", // equipment Corn Station, LLC
+        "ericsson", // ericsson Telefonaktiebolaget L M Ericsson
         "erni", // erni ERNI Group Holding AG
         "esq", // esq Charleston Road Registry Inc.
         "estate", // estate Trixy Park, LLC
@@ -649,6 +654,7 @@ public final class DomainValidator extends AbstractValidator {
         "goldpoint", // goldpoint YODOBASHI CAMERA CO.,LTD.
         "golf", // golf Lone Falls, LLC
         "goo", // goo NTT Resonant Inc.
+        "goodyear", // goodyear The Goodyear Tire &amp; Rubber Company
         "goog", // goog Charleston Road Registry Inc.
         "google", // google Charleston Road Registry Inc.
         "gop", // gop Republican State Leadership Committee, Inc.
@@ -757,6 +763,7 @@ public final class DomainValidator extends AbstractValidator {
         "kiwi", // kiwi DOT KIWI LIMITED
         "koeln", // koeln NetCologne Gesellschaft für Telekommunikation mbH
         "komatsu", // komatsu Komatsu Ltd.
+        "kosher", // kosher Kosher Marketing Assets LLC
         "kpmg", // kpmg KPMG International Cooperative (KPMG International Genossenschaft)
         "kpn", // kpn Koninklijke KPN N.V.
         "krd", // krd KRG Department of Information Technology
