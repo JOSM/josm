@@ -74,7 +74,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
-import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -768,9 +767,7 @@ public abstract class Main {
      * @see #addLayer(Layer, ViewportData)
      */
     public final void addLayer(final Layer layer) {
-        BoundingXYVisitor v = new BoundingXYVisitor();
-        layer.visitBoundingBox(v);
-        addLayer(layer, v.getBounds());
+        addLayer(layer, layer.getViewProjectionBounds());
     }
 
     /**

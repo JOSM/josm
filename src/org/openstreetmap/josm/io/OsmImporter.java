@@ -14,7 +14,6 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -96,12 +95,7 @@ public class OsmImporter extends FileImporter {
             @Override
             public void run() {
                 OsmDataLayer layer = data.getLayer();
-                BoundingXYVisitor v = new BoundingXYVisitor();
-                v.visit(layer.data.getDataSourceBoundingBox());
-                if (!v.hasExtend()) {
-                    v.computeBoundingBox(layer.data.getNodes());
-                }
-                Main.main.addLayer(layer, v.getBounds());
+                Main.main.addLayer(layer);
                 data.getPostLayerTask().run();
                 data.getLayer().onPostLoadFromFile();
             }
