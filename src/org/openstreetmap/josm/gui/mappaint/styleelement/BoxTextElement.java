@@ -21,14 +21,30 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class BoxTextElement extends StyleElement {
 
+    /**
+     * MapCSS text-anchor-horizontal
+     */
     public enum HorizontalTextAlignment { LEFT, CENTER, RIGHT }
 
+    /**
+     * MapCSS text-anchor-vertical
+     */
     public enum VerticalTextAlignment { ABOVE, TOP, CENTER, BOTTOM, BELOW }
 
+    /**
+     * Something that provides us with a {@link BoxProviderResult}
+     */
     public interface BoxProvider {
+        /**
+         * Compute and get the {@link BoxProviderResult}. The temporary flag is set if the result of the computation may change in the future.
+         * @return The result of the computation.
+         */
         BoxProviderResult get();
     }
 
+    /**
+     * A box rectangle with a flag if it is temporary.
+     */
     public static class BoxProviderResult {
         private final Rectangle box;
         private final boolean temporary;
@@ -55,6 +71,9 @@ public class BoxTextElement extends StyleElement {
         }
     }
 
+    /**
+     * A {@link BoxProvider} that always returns the same non-temporary rectangle
+     */
     public static class SimpleBoxProvider implements BoxProvider {
         private final Rectangle box;
 
@@ -85,17 +104,60 @@ public class BoxTextElement extends StyleElement {
         }
     }
 
+    /**
+     * A rectangle with size 0x0
+     */
     public static final Rectangle ZERO_BOX = new Rectangle(0, 0, 0, 0);
 
+    /**
+     * The default style a simple node should use for it's text
+     */
+    public static final BoxTextElement SIMPLE_NODE_TEXT_ELEMSTYLE;
+    static {
+        MultiCascade mc = new MultiCascade();
+        Cascade c = mc.getOrCreateCascade("default");
+        c.put(TEXT, Keyword.AUTO);
+        Node n = new Node();
+        n.put("name", "dummy");
+        SIMPLE_NODE_TEXT_ELEMSTYLE = create(new Environment(n, mc, "default", null), NodeElement.SIMPLE_NODE_ELEMSTYLE.getBoxProvider());
+        if (SIMPLE_NODE_TEXT_ELEMSTYLE == null) throw new AssertionError();
+    }
+
+    /**
+     * Caches the default text color from the preferences.
+     *
+     * FIXME: the cache isn't updated if the user changes the preference during a JOSM
+     * session. There should be preference listener updating this cache.
+     */
+    private static volatile Color defaultTextColorCache;
+
+    /**
+     * The text this element should display.
+     */
     public TextLabel text;
     // Either boxProvider or box is not null. If boxProvider is different from
     // null, this means, that the box can still change in future, otherwise
     // it is fixed.
     protected BoxProvider boxProvider;
     protected Rectangle box;
+    /**
+     * The {@link HorizontalTextAlignment} for this text.
+     */
     public HorizontalTextAlignment hAlign;
+    /**
+     * The {@link VerticalTextAlignment} for this text.
+     */
     public VerticalTextAlignment vAlign;
 
+    /**
+     * Create a new {@link BoxTextElement}
+     * @param c The current cascade
+     * @param text The text to display
+     * @param boxProvider The box provider to use
+     * @param box The initial box to use.
+     * @param hAlign The {@link HorizontalTextAlignment}
+     * @param vAlign The {@link VerticalTextAlignment}
+     */
     public BoxTextElement(Cascade c, TextLabel text, BoxProvider boxProvider, Rectangle box,
             HorizontalTextAlignment hAlign, VerticalTextAlignment vAlign) {
         super(c, 5f);
@@ -109,18 +171,37 @@ public class BoxTextElement extends StyleElement {
         this.vAlign = vAlign;
     }
 
+    /**
+     * Create a new {@link BoxTextElement} with a dynamic box
+     * @param env The MapCSS environment
+     * @param boxProvider The box provider that computes the box.
+     * @return A new {@link BoxTextElement} or <code>null</code> if the creation failed.
+     */
     public static BoxTextElement create(Environment env, BoxProvider boxProvider) {
         return create(env, boxProvider, null);
     }
 
+    /**
+     * Create a new {@link BoxTextElement} with a fixed box
+     * @param env The MapCSS environment
+     * @param box The box
+     * @return A new {@link BoxTextElement} or <code>null</code> if the creation failed.
+     */
     public static BoxTextElement create(Environment env, Rectangle box) {
         return create(env, null, box);
     }
 
+    /**
+     * Create a new {@link BoxTextElement} with a boxprovider and a box.
+     * @param env The MapCSS environment
+     * @param boxProvider The box provider.
+     * @param box The box. Only considered if boxProvider is null.
+     * @return A new {@link BoxTextElement} or <code>null</code> if the creation failed.
+     */
     public static BoxTextElement create(Environment env, BoxProvider boxProvider, Rectangle box) {
         initDefaultParameters();
 
-        TextLabel text = TextLabel.create(env, DEFAULT_TEXT_COLOR, false);
+        TextLabel text = TextLabel.create(env, defaultTextColorCache, false);
         if (text == null) return null;
         // Skip any primitives that don't have text to draw. (Styles are recreated for any tag change.)
         // The concrete text to render is not cached in this object, but computed for each
@@ -163,6 +244,10 @@ public class BoxTextElement extends StyleElement {
         return new BoxTextElement(c, text, boxProvider, box, hAlign, vAlign);
     }
 
+    /**
+     * Get the box in which the content should be drawn.
+     * @return The box.
+     */
     public Rectangle getBox() {
         if (boxProvider != null) {
             BoxProviderResult result = boxProvider.get();
@@ -175,28 +260,10 @@ public class BoxTextElement extends StyleElement {
         return box;
     }
 
-    public static final BoxTextElement SIMPLE_NODE_TEXT_ELEMSTYLE;
-    static {
-        MultiCascade mc = new MultiCascade();
-        Cascade c = mc.getOrCreateCascade("default");
-        c.put(TEXT, Keyword.AUTO);
-        Node n = new Node();
-        n.put("name", "dummy");
-        SIMPLE_NODE_TEXT_ELEMSTYLE = create(new Environment(n, mc, "default", null), NodeElement.SIMPLE_NODE_ELEMSTYLE.getBoxProvider());
-        if (SIMPLE_NODE_TEXT_ELEMSTYLE == null) throw new AssertionError();
-    }
-
-    /*
-     * Caches the default text color from the preferences.
-     *
-     * FIXME: the cache isn't updated if the user changes the preference during a JOSM
-     * session. There should be preference listener updating this cache.
-     */
-    private static volatile Color DEFAULT_TEXT_COLOR;
 
     private static void initDefaultParameters() {
-        if (DEFAULT_TEXT_COLOR != null) return;
-        DEFAULT_TEXT_COLOR = PaintColors.TEXT.get();
+        if (defaultTextColorCache != null) return;
+        defaultTextColorCache = PaintColors.TEXT.get();
     }
 
     @Override

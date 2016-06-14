@@ -1182,6 +1182,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
     };
 
+    /**
+     * Destroy this map view panel. Should be called once when it is not needed any more.
+     */
     public void destroy() {
         layerManager.removeLayerChangeListener(this);
         layerManager.removeActiveLayerChangeListener(this);
@@ -1195,6 +1198,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         synchronized (temporaryLayers) {
             temporaryLayers.clear();
         }
+        nonChangedLayersBuffer = null;
     }
 
     /**
