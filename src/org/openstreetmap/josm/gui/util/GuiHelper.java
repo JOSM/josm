@@ -61,6 +61,8 @@ import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
+import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
  * basic gui utils
@@ -134,7 +136,7 @@ public final class GuiHelper {
      * <a href="http://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html">Event Dispatch Thread</a>.
      * <p>
      * Passes on the exception that was thrown to the thread calling this.
-     * The exception is wrapped in a {@link RuntimeException} if it was a normal {@link Throwable}.
+     * The exception is wrapped using a {@link ReportedException}.
      * @param task The runnable to execute
      * @see SwingUtilities#invokeAndWait
      * @since 10271
@@ -145,14 +147,8 @@ public final class GuiHelper {
         } else {
             try {
                 SwingUtilities.invokeAndWait(task);
-            } catch (InterruptedException e) {
-                Main.error(e);
-            } catch (InvocationTargetException e) {
-                if (e.getCause() instanceof RuntimeException) {
-                    throw (RuntimeException) e.getCause();
-                } else {
-                    throw new RuntimeException("Exception while calling " + task, e.getCause());
-                }
+            } catch (InterruptedException | InvocationTargetException e) {
+                throw BugReport.intercept(e).put("task", task);
             }
         }
     }

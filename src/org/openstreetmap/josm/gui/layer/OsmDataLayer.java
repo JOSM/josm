@@ -48,6 +48,7 @@ import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
@@ -1077,5 +1078,15 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         UploadDialog dialog = UploadDialog.getUploadDialog();
         dialog.setUploadedPrimitives(new APIDataSet(data));
         return dialog;
+    }
+
+    @Override
+    public ProjectionBounds getViewProjectionBounds() {
+        BoundingXYVisitor v = new BoundingXYVisitor();
+        v.visit(data.getDataSourceBoundingBox());
+        if (!v.hasExtend()) {
+            v.computeBoundingBox(data.getNodes());
+        }
+        return v.getBounds();
     }
 }

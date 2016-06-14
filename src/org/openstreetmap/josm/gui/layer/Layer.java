@@ -22,6 +22,7 @@ import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.actions.SaveAsAction;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
@@ -591,5 +592,18 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
         } else {
             return LayerPositionStrategy.AFTER_LAST_VALIDATION_LAYER;
         }
+    }
+
+    /**
+     * Gets the {@link ProjectionBounds} for this layer to be visible to the user. This can be the exact bounds, the UI handles padding. Return
+     * <code>null</code> if you cannot provide this information. The default implementation uses the bounds from
+     * {@link #visitBoundingBox(BoundingXYVisitor)}.
+     * @return The bounds for this layer.
+     * @since 10371
+     */
+    public ProjectionBounds getViewProjectionBounds() {
+        BoundingXYVisitor v = new BoundingXYVisitor();
+        visitBoundingBox(v);
+        return v.getBounds();
     }
 }
