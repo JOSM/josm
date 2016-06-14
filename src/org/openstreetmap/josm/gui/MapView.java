@@ -935,6 +935,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * @return <code>true</code> if the view can be drawn, <code>false</code> otherwise.
      */
     public boolean prepareToDraw() {
+        updateLocationState();
         if (initialViewport != null) {
             zoomTo(initialViewport);
             initialViewport = null;
@@ -1182,6 +1183,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
     };
 
+    /**
+     * Destroy this map view panel. Should be called once when it is not needed any more.
+     */
     public void destroy() {
         layerManager.removeLayerChangeListener(this);
         layerManager.removeActiveLayerChangeListener(this);
@@ -1195,6 +1199,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         synchronized (temporaryLayers) {
             temporaryLayers.clear();
         }
+        nonChangedLayersBuffer = null;
     }
 
     /**

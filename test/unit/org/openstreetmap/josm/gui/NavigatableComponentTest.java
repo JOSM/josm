@@ -4,8 +4,11 @@ package org.openstreetmap.josm.gui;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+
+import javax.swing.JFrame;
 
 import org.CustomMatchers;
 import org.junit.Before;
@@ -43,7 +46,12 @@ public class NavigatableComponentTest {
      */
     @Before
     public void setUp() {
-        component = new NavigatableComponent();
+        component = new NavigatableComponent() {
+            @Override
+            public Point getLocationOnScreen() {
+                return new Point(30, 40);
+            }
+        };
         component.setBounds(new Rectangle(WIDTH, HEIGHT));
         // wait for the event to be propagated.
         GuiHelper.runInEDTAndWait(new Runnable() {
@@ -51,6 +59,10 @@ public class NavigatableComponentTest {
             public void run() {
             }
         });
+        component.setVisible(true);
+        JFrame window = new JFrame();
+        window.add(component);
+        component.updateLocationState();
     }
 
     /**
