@@ -119,7 +119,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             {
                 putValue(NAME, tr("Lookup"));
                 putValue(SHORT_DESCRIPTION, tr("Looks up the selected primitives in the error list."));
-                new ImageProvider("dialogs", "search").getResource().getImageIcon(this, true);
+                new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
             }
 
             @Override
@@ -140,7 +140,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             {
                 putValue(NAME, tr("Fix"));
                 putValue(SHORT_DESCRIPTION,  tr("Fix the selected issue."));
-                new ImageProvider("dialogs", "fix").getResource().getImageIcon(this, true);
+                new ImageProvider("dialogs", "fix").getResource().attachImageIcon(this, true);
             }
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -155,7 +155,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 {
                     putValue(NAME, tr("Ignore"));
                     putValue(SHORT_DESCRIPTION,  tr("Ignore the selected issue next time."));
-                    new ImageProvider("dialogs", "fix").getResource().getImageIcon(this, true);
+                    new ImageProvider("dialogs", "fix").getResource().attachImageIcon(this, true);
                 }
                 @Override
                 public void actionPerformed(ActionEvent e) {

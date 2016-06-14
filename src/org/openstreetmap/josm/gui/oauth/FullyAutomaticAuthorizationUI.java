@@ -324,7 +324,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     class RunAuthorisationAction extends AbstractAction implements DocumentListener {
         RunAuthorisationAction() {
             putValue(NAME, tr("Authorize now"));
-            new ImageProvider("oauth", "oauth-small").getResource().getImageIcon(this);
+            new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to redirect you to the authorization form on the JOSM web site"));
             updateEnabledState();
         }
@@ -361,7 +361,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         BackAction() {
             putValue(NAME, tr("Back"));
             putValue(SHORT_DESCRIPTION, tr("Run the automatic authorization steps again"));
-            new ImageProvider("dialogs", "previous").getResource().getImageIcon(this);
+            new ImageProvider("dialogs", "previous").getResource().attachImageIcon(this);
         }
 
         @Override
@@ -376,7 +376,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     class TestAccessTokenAction extends AbstractAction {
         TestAccessTokenAction() {
             putValue(NAME, tr("Test Access Token"));
-            new ImageProvider("logo").getResource().getImageIcon(this);
+            new ImageProvider("logo").getResource().attachImageIcon(this);
         }
 
         @Override

@@ -163,7 +163,7 @@ public class TagTable extends JosmTable  {
     class DeleteAction extends AbstractAction implements ListSelectionListener {
 
         DeleteAction() {
-            new ImageProvider("dialogs", "delete").getResource().getImageIcon(this);
+            new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Delete the selection in the tag table"));
             getSelectionModel().addListSelectionListener(this);
             getColumnModel().getSelectionModel().addListSelectionListener(this);
@@ -252,7 +252,7 @@ public class TagTable extends JosmTable  {
      */
     class AddAction extends AbstractAction implements PropertyChangeListener {
         AddAction() {
-            new ImageProvider("dialogs", "add").getResource().getImageIcon(this);
+            new ImageProvider("dialogs", "add").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Add a new tag"));
             TagTable.this.addPropertyChangeListener(this);
             updateEnabledState();
@@ -286,7 +286,7 @@ public class TagTable extends JosmTable  {
      */
     class PasteAction extends AbstractAction implements PropertyChangeListener {
         PasteAction() {
-            new ImageProvider("pastetags").getResource().getImageIcon(this);
+            new ImageProvider("pastetags").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Paste tags from buffer"));
             TagTable.this.addPropertyChangeListener(this);
             updateEnabledState();

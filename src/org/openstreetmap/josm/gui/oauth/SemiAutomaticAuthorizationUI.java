@@ -291,7 +291,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             BackAction() {
                 putValue(NAME, tr("Back"));
                 putValue(SHORT_DESCRIPTION, tr("Go back to step 1/3"));
-                new ImageProvider("dialogs", "previous").getResource().getImageIcon(this);
+                new ImageProvider("dialogs", "previous").getResource().attachImageIcon(this);
             }
 
             @Override
@@ -367,7 +367,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             RestartAction() {
                 putValue(NAME, tr("Restart"));
                 putValue(SHORT_DESCRIPTION, tr("Go back to step 1/3"));
-                new ImageProvider("dialogs", "previous").getResource().getImageIcon(this);
+                new ImageProvider("dialogs", "previous").getResource().attachImageIcon(this);
             }
 
             @Override
@@ -388,7 +388,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         RetrieveRequestTokenAction() {
             putValue(NAME, tr("Retrieve Request Token"));
-            new ImageProvider("oauth", "oauth-small").getResource().getImageIcon(this);
+            new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to retrieve a Request Token"));
         }
 
@@ -424,7 +424,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         RetrieveAccessTokenAction() {
             putValue(NAME, tr("Retrieve Access Token"));
-            new ImageProvider("oauth", "oauth-small").getResource().getImageIcon(this);
+            new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to retrieve an Access Token"));
         }
 
@@ -461,7 +461,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         TestAccessTokenAction() {
             putValue(NAME, tr("Test Access Token"));
-            new ImageProvider("oauth", "oauth-small").getResource().getImageIcon(this);
+            new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to test the Access Token"));
         }
 

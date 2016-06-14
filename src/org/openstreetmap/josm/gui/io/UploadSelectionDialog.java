@@ -258,7 +258,7 @@ public class UploadSelectionDialog extends JDialog {
         CancelAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Cancel uploading"));
             putValue(Action.NAME, tr("Cancel"));
-            new ImageProvider("cancel").getResource().getImageIcon(this);
+            new ImageProvider("cancel").getResource().attachImageIcon(this);
             getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
             .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
             getRootPane().getActionMap().put("ESCAPE", this);
@@ -276,7 +276,7 @@ public class UploadSelectionDialog extends JDialog {
         ContinueAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Continue uploading"));
             putValue(Action.NAME, tr("Continue"));
-            new ImageProvider("upload").getResource().getImageIcon(this);
+            new ImageProvider("upload").getResource().attachImageIcon(this);
             updateEnabledState();
         }
 

@@ -154,7 +154,7 @@ public class RelationMemberConflictResolver extends JPanel {
     class ApplyRoleAction extends AbstractAction {
         ApplyRoleAction() {
             putValue(NAME, tr("Apply"));
-            new ImageProvider("ok").getResource().getImageIcon(this);
+            new ImageProvider("ok").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Apply this role to all members"));
         }
 

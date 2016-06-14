@@ -433,7 +433,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         ResolveAction() {
             putValue(NAME, tr("Resolve"));
             putValue(SHORT_DESCRIPTION,  tr("Open a merge dialog of all selected items in the list above."));
-            new ImageProvider("dialogs", "conflict").getResource().getImageIcon(this, true);
+            new ImageProvider("dialogs", "conflict").getResource().attachImageIcon(this, true);
             putValue("help", ht("/Dialog/ConflictList#ResolveAction"));
         }
 

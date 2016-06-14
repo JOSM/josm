@@ -222,7 +222,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI {
     class TestAccessTokenAction extends AbstractAction implements PropertyChangeListener {
         TestAccessTokenAction() {
             putValue(NAME, tr("Test Access Token"));
-            new ImageProvider("oauth", "oauth-small").getResource().getImageIcon(this);
+            new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to test the Access Token"));
             updateEnabledState();
         }
