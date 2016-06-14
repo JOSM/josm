@@ -264,7 +264,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         private CancelAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Cancel conflict resolution"));
             putValue(Action.NAME, tr("Cancel"));
-            new ImageProvider("cancel").getResource().getImageIcon(this);
+            new ImageProvider("cancel").getResource().attachImageIcon(this);
             setEnabled(true);
         }
 
@@ -280,7 +280,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         private ApplyAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Apply resolved conflicts"));
             putValue(Action.NAME, tr("Apply"));
-            new ImageProvider("ok").getResource().getImageIcon(this);
+            new ImageProvider("ok").getResource().attachImageIcon(this);
             updateEnabledState();
         }
 

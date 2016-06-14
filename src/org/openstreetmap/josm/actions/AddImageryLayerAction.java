@@ -62,7 +62,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                                 GuiHelper.runInEDT(new Runnable() {
                                     @Override
                                     public void run() {
-                                        result.getImageIcon(AddImageryLayerAction.this);
+                                        result.attachImageIcon(AddImageryLayerAction.this);
                                     }
                                 });
                             }

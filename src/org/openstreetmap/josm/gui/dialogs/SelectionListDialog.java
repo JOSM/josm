@@ -298,7 +298,7 @@ public class SelectionListDialog extends ToggleDialog  {
         SearchAction() {
             putValue(NAME, tr("Search"));
             putValue(SHORT_DESCRIPTION,   tr("Search for objects"));
-            new ImageProvider("dialogs", "search").getResource().getImageIcon(this, true);
+            new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
@@ -360,7 +360,7 @@ public class SelectionListDialog extends ToggleDialog  {
         ShowHistoryAction() {
             putValue(NAME, tr("History"));
             putValue(SHORT_DESCRIPTION, tr("Display the history of the selected objects."));
-            new ImageProvider("dialogs", "history").getResource().getImageIcon(this, true);
+            new ImageProvider("dialogs", "history").getResource().attachImageIcon(this, true);
             updateEnabledState(model.getSize());
         }
 
@@ -400,7 +400,7 @@ public class SelectionListDialog extends ToggleDialog  {
         ZoomToJOSMSelectionAction() {
             putValue(NAME, tr("Zoom to selection"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to selection"));
-            new ImageProvider("dialogs/autoscale", "selection").getResource().getImageIcon(this, true);
+            new ImageProvider("dialogs/autoscale", "selection").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
@@ -441,7 +441,7 @@ public class SelectionListDialog extends ToggleDialog  {
         ZoomToListSelection() {
             putValue(NAME, tr("Zoom to selected element(s)"));
             putValue(SHORT_DESCRIPTION, tr("Zoom to selected element(s)"));
-            new ImageProvider("dialogs/autoscale", "selection").getResource().getImageIcon(this, true);
+            new ImageProvider("dialogs/autoscale", "selection").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 

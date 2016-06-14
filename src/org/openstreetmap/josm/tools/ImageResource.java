@@ -107,9 +107,9 @@ public class ImageResource {
     /**
      * Set both icons of an Action
      * @param a The action for the icons
-     * @since 7693
+     * @since 10368
      */
-    public void getImageIcon(AbstractAction a) {
+    public void attachImageIcon(AbstractAction a) {
         Dimension iconDimension = ImageProvider.ImageSizes.SMALLICON.getImageDimension();
         ImageIcon icon = getImageIconBounded(iconDimension);
         a.putValue(Action.SMALL_ICON, icon);
@@ -124,10 +124,10 @@ public class ImageResource {
      * Set both icons of an Action
      * @param a The action for the icons
      * @param addresource Adds an resource named "ImageResource" if <code>true</code>
-     * @since 10356
+     * @since 10368
      */
-    public void getImageIcon(AbstractAction a, boolean addresource) {
-        getImageIcon(a);
+    public void attachImageIcon(AbstractAction a, boolean addresource) {
+        attachImageIcon(a);
         if (addresource) {
             a.putValue("ImageResource", this);
         }

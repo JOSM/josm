@@ -191,7 +191,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                     GuiHelper.runInEDT(new Runnable() {
                         @Override
                         public void run() {
-                            result.getImageIcon(TaggingPreset.this);
+                            result.attachImageIcon(TaggingPreset.this);
                         }
                     });
                 } else {

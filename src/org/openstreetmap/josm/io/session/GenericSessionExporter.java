@@ -73,7 +73,7 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
          * Constructs a new {@code LayerSaveAction}.
          */
         LayerSaveAction() {
-            putValue(SMALL_ICON, new ImageProvider("save").setWidth(16).get());
+            new ImageProvider("save").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, ((AbstractModifiableLayer) layer).requiresSaveToFile() ?
                     tr("Layer contains unsaved data - save to file.") :
                     tr("Layer does not contain unsaved data."));

@@ -157,7 +157,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         SelectUsersPrimitivesAction() {
             putValue(NAME, tr("Select"));
             putValue(SHORT_DESCRIPTION, tr("Select objects submitted by this user"));
-            new ImageProvider("dialogs", "select").getResource().getImageIcon(this, true);
+            new ImageProvider("dialogs", "select").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
@@ -192,7 +192,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             super(false);
             putValue(NAME, tr("Show info"));
             putValue(SHORT_DESCRIPTION, tr("Launches a browser with information about the user"));
-            new ImageProvider("help/internet").getResource().getImageIcon(this, true);
+            new ImageProvider("help/internet").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
