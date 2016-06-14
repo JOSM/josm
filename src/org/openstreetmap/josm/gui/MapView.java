@@ -935,6 +935,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * @return <code>true</code> if the view can be drawn, <code>false</code> otherwise.
      */
     public boolean prepareToDraw() {
+        updateLocationState();
         if (initialViewport != null) {
             zoomTo(initialViewport);
             initialViewport = null;

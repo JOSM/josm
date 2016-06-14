@@ -260,7 +260,6 @@ public class BoxTextElement extends StyleElement {
         return box;
     }
 
-
     private static void initDefaultParameters() {
         if (defaultTextColorCache != null) return;
         defaultTextColorCache = PaintColors.TEXT.get();

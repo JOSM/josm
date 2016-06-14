@@ -4,6 +4,10 @@ package org.openstreetmap.josm.gui;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.CRC32;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -47,7 +52,6 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
-import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer.Scale;
@@ -134,21 +138,60 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    private double scale = Main.getProjection().getDefaultZoomInPPD();
-    /**
-     * Center n/e coordinate of the desired screen center.
-     */
-    protected EastNorth center = calculateDefaultCenter();
+    // The only events that may move/resize this map view are window movements or changes to the map view size.
+    // We can clean this up more by only recalculating the state on repaint.
+    private final HierarchyListener hierarchyListener = new HierarchyListener() {
+        @Override
+        public void hierarchyChanged(HierarchyEvent e) {
+            long interestingFlags = HierarchyEvent.ANCESTOR_MOVED | HierarchyEvent.SHOWING_CHANGED;
+            if ((e.getChangeFlags() & interestingFlags) != 0) {
+                updateLocationState();
+            }
+        }
+    };
+
+    private final ComponentAdapter componentListener = new ComponentAdapter() {
+        @Override
+        public void componentShown(ComponentEvent e) {
+            updateLocationState();
+        }
+
+        @Override
+        public void componentResized(ComponentEvent e) {
+            updateLocationState();
+        }
+    };
 
     protected transient ViewportData initialViewport;
 
     protected final transient CursorManager cursorManager = new CursorManager(this);
 
     /**
+     * The current state (scale, center, ...) of this map view.
+     */
+    private MapViewState state;
+
+    /**
      * Constructs a new {@code NavigatableComponent}.
      */
     public NavigatableComponent() {
         setLayout(null);
+        state = MapViewState.createDefaultState(getWidth(), getHeight());
+    }
+
+    @Override
+    public void addNotify() {
+        updateLocationState();
+        addHierarchyListener(hierarchyListener);
+        addComponentListener(componentListener);
+        super.addNotify();
+    }
+
+    @Override
+    public void removeNotify() {
+        removeHierarchyListener(hierarchyListener);
+        removeComponentListener(componentListener);
+        super.removeNotify();
     }
 
     /**
@@ -157,7 +200,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public void setNativeScaleLayer(NativeScaleLayer nativeScaleLayer) {
         this.nativeScaleLayer = nativeScaleLayer;
-        zoomTo(center, scaleRound(scale));
+        zoomTo(getCenter(), scaleRound(getScale()));
         repaint();
     }
 
@@ -250,26 +293,32 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Zoom in current view. Use configured zoom step and scaling settings.
      */
     public void zoomIn() {
-        zoomTo(center, scaleZoomIn());
+        zoomTo(getCenter(), scaleZoomIn());
     }
 
     /**
      * Zoom out current view. Use configured zoom step and scaling settings.
      */
     public void zoomOut() {
-        zoomTo(center, scaleZoomOut());
+        zoomTo(getCenter(), scaleZoomOut());
     }
 
     protected DataSet getCurrentDataSet() {
         return Main.main.getCurrentDataSet();
     }
 
-    private static EastNorth calculateDefaultCenter() {
-        Bounds b = DownloadDialog.getSavedDownloadBounds();
-        if (b == null) {
-            b = Main.getProjection().getWorldBoundsLatLon();
+    protected void updateLocationState() {
+        if (SwingUtilities.getWindowAncestor(this) != null && isShowing()) {
+            state = state.usingLocation(this);
         }
-        return Main.getProjection().latlon2eastNorth(b.getCenter());
+    }
+
+    /**
+     * Gets the current view state. This includes the scale, the current view area and the position.
+     * @return The current state.
+     */
+    public MapViewState getState() {
+        return state;
     }
 
     /**
@@ -338,7 +387,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return the current center of the viewport
      */
     public EastNorth getCenter() {
-        return center;
+        return state.getCenter().getEastNorth();
     }
 
     /**
@@ -349,7 +398,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return the current scale
      */
     public double getScale() {
-        return scale;
+        return state.getScale();
     }
 
     /**
@@ -359,13 +408,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return Geographic coordinates from a specific pixel coordination on the screen.
      */
     public EastNorth getEastNorth(int x, int y) {
-        return new EastNorth(
-                center.east() + (x - getWidth()/2.0)*scale,
-                center.north() - (y - getHeight()/2.0)*scale);
+        return state.getForView(x, y).getEastNorth();
     }
 
     public ProjectionBounds getProjectionBounds() {
-        return new MapViewState(this).getViewArea().getProjectionBounds();
+        return getState().getViewArea().getProjectionBounds();
     }
 
     /* FIXME: replace with better method - used by MapSlider */
@@ -377,7 +424,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /* FIXME: replace with better method - used by Main to reset Bounds when projection changes, don't use otherwise */
     public Bounds getRealBounds() {
-        return new MapViewState(this).getViewArea().getCornerBounds();
+        return getState().getViewArea().getCornerBounds();
     }
 
     /**
@@ -396,7 +443,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public ProjectionBounds getProjectionBounds(Rectangle r) {
-        MapViewState state = new MapViewState(this);
+        MapViewState state = getState();
         MapViewPoint p1 = state.getForView(r.getMinX(), r.getMinY());
         MapViewPoint p2 = state.getForView(r.getMaxX(), r.getMaxY());
         return p1.rectTo(p2).getProjectionBounds();
@@ -411,8 +458,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public AffineTransform getAffineTransform() {
-        return new AffineTransform(
-                1.0/scale, 0.0, 0.0, -1.0/scale, getWidth()/2.0 - center.east()/scale, getHeight()/2.0 + center.north()/scale);
+        return getState().getAffineTransform();
     }
 
     /**
@@ -424,9 +470,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public Point2D getPoint2D(EastNorth p) {
         if (null == p)
             return new Point();
-        double x = (p.east()-center.east())/scale + getWidth()/2d;
-        double y = (center.north()-p.north())/scale + getHeight()/2d;
-        return new Point2D.Double(x, y);
+        return getState().getPointFor(p).getInView();
     }
 
     public Point2D getPoint2D(LatLon latlon) {
@@ -512,7 +556,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         LatLon ll2 = getLatLon(width / 2 + 50, height / 2);
         if (ll1.isValid() && ll2.isValid() && b.contains(ll1) && b.contains(ll2)) {
             double dm = ll1.greatCircleDistance(ll2);
-            double den = 100 * scale;
+            double den = 100 * getScale();
             double scaleMin = 0.01 * den / dm / 100;
             if (!Double.isInfinite(scaleMin) && newScale < scaleMin) {
                 newScale = scaleMin;
@@ -520,11 +564,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
 
         // snap scale to imagery if needed
-        scale = scaleRound(scale);
+        newScale = scaleRound(newScale);
 
-        if (!newCenter.equals(center) || !Utils.equalsEpsilon(scale, newScale)) {
+        if (!newCenter.equals(getCenter()) || !Utils.equalsEpsilon(getScale(), newScale)) {
             if (!initial) {
-                pushZoomUndo(center, scale);
+                pushZoomUndo(getCenter(), getScale());
             }
             zoomNoUndoTo(newCenter, newScale, initial);
         }
@@ -538,16 +582,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param initial true if this call initializes the viewport.
      */
     private void zoomNoUndoTo(EastNorth newCenter, double newScale, boolean initial) {
-        if (!newCenter.equals(center)) {
-            EastNorth oldCenter = center;
-            center = newCenter;
+        if (!newCenter.equals(getCenter())) {
+            EastNorth oldCenter = getCenter();
+            state = state.usingCenter(newCenter);
             if (!initial) {
                 firePropertyChange(PROPNAME_CENTER, oldCenter, newCenter);
             }
         }
-        if (!Utils.equalsEpsilon(scale, newScale)) {
-            double oldScale = scale;
-            scale = newScale;
+        if (!Utils.equalsEpsilon(getScale(), newScale)) {
+            double oldScale = getScale();
+            state = state.usingScale(newScale);
+            // temporary. Zoom logic needs to be moved.
+            state = state.movedTo(state.getCenter(), newCenter);
             if (!initial) {
                 firePropertyChange(PROPNAME_SCALE, oldScale, newScale);
             }
@@ -560,7 +606,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public void zoomTo(EastNorth newCenter) {
-        zoomTo(newCenter, scale);
+        zoomTo(newCenter, getScale());
     }
 
     public void zoomTo(LatLon newCenter) {
@@ -575,9 +621,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         // FIXME make these configurable.
         final int fps = 20;     // animation frames per second
         final int speed = 1500; // milliseconds for full-screen-width pan
-        if (!newCenter.equals(center)) {
-            final EastNorth oldCenter = center;
-            final double distance = newCenter.distance(oldCenter) / scale;
+        if (!newCenter.equals(getCenter())) {
+            final EastNorth oldCenter = getCenter();
+            final double distance = newCenter.distance(oldCenter) / getScale();
             final double milliseconds = distance / getWidth() * speed;
             final double frames = milliseconds * fps / 1000;
             final EastNorth finalNewCenter = newCenter;
@@ -600,27 +646,25 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public void zoomManyTimes(double x, double y, int times) {
-        double oldScale = scale;
+        double oldScale = getScale();
         double newScale = scaleZoomManyTimes(times);
         zoomToFactor(x, y, newScale / oldScale);
     }
 
     public void zoomToFactor(double x, double y, double factor) {
-        double newScale = scale*factor;
-        // New center position so that point under the mouse pointer stays the same place as it was before zooming
-        // You will get the formula by simplifying this expression: newCenter = oldCenter + mouseCoordinatesInNewZoom - mouseCoordinatesInOldZoom
-        zoomTo(new EastNorth(
-                center.east() - (x - getWidth()/2.0) * (newScale - scale),
-                center.north() + (y - getHeight()/2.0) * (newScale - scale)),
-                newScale);
+        double newScale = getScale()*factor;
+        EastNorth oldUnderMouse = getState().getForView(x, y).getEastNorth();
+        MapViewState newState = getState().usingScale(newScale);
+        newState = newState.movedTo(newState.getForView(x, y), oldUnderMouse);
+        zoomTo(newState.getCenter().getEastNorth(), newScale);
     }
 
     public void zoomToFactor(EastNorth newCenter, double factor) {
-        zoomTo(newCenter, scale*factor);
+        zoomTo(newCenter, getScale()*factor);
     }
 
     public void zoomToFactor(double factor) {
-        zoomTo(center, scale*factor);
+        zoomTo(getCenter(), getScale()*factor);
     }
 
     public void zoomTo(ProjectionBounds box) {
@@ -713,7 +757,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public void zoomPrevious() {
         if (!zoomUndoBuffer.isEmpty()) {
             ZoomData zoom = zoomUndoBuffer.pop();
-            zoomRedoBuffer.push(new ZoomData(center, scale));
+            zoomRedoBuffer.push(new ZoomData(getCenter(), getScale()));
             zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale(), false);
         }
     }
@@ -721,7 +765,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public void zoomNext() {
         if (!zoomRedoBuffer.isEmpty()) {
             ZoomData zoom = zoomRedoBuffer.pop();
-            zoomUndoBuffer.push(new ZoomData(center, scale));
+            zoomUndoBuffer.push(new ZoomData(getCenter(), getScale()));
             zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale(), false);
         }
     }
@@ -1442,7 +1486,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return The projection to be used in calculating stuff.
      */
     public Projection getProjection() {
-        return Main.getProjection();
+        return state.getProjection();
     }
 
     @Override
@@ -1456,7 +1500,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return A unique ID, as long as viewport dimensions are the same
      */
     public int getViewID() {
-        String x = center.east() + '_' + center.north() + '_' + scale + '_' +
+        String x = getCenter().east() + '_' + getCenter().north() + '_' + getScale() + '_' +
                 getWidth() + '_' + getHeight() + '_' + getProjection().toString();
         CRC32 id = new CRC32();
         id.update(x.getBytes(StandardCharsets.UTF_8));

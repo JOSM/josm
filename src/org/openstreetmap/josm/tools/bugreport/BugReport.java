@@ -30,12 +30,12 @@ package org.openstreetmap.josm.tools.bugreport;
  * @author Michael Zangl
  * @since 10285
  */
-public class BugReport {
+public final class BugReport {
     /**
      * Create a new bug report
      * @param e The {@link ReportedException} to use. No more data should be added after creating the report.
      */
-    public BugReport(ReportedException e) {
+    private BugReport(ReportedException e) {
         // TODO: Use this class to create the bug report.
     }
 
