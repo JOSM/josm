@@ -78,7 +78,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             final ImageryInfo infoToAdd = ImageryType.WMS_ENDPOINT.equals(info.getImageryType())
                     ? getWMSLayerInfo() : info;
             if (infoToAdd != null) {
-                Main.main.addLayer(ImageryLayer.create(infoToAdd));
+                Main.getLayerManager().addLayer(ImageryLayer.create(infoToAdd));
                 AlignImageryPanel.addNagPanelIfNeeded(infoToAdd);
             }
         } catch (IllegalArgumentException ex) {

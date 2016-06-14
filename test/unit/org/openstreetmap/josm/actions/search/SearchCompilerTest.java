@@ -4,10 +4,10 @@ package org.openstreetmap.josm.actions.search;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -30,12 +31,10 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 public class SearchCompilerTest {
 
     /**
-     * Setup test.
+     * We need prefs for this. We access preferences when creating OSM primitives.
      */
-    @Before
-    public void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     private static final class SearchContext {
         final DataSet ds = new DataSet();
@@ -389,7 +388,7 @@ public class SearchCompilerTest {
     public void testFooTypeBar() {
         try {
             SearchCompiler.compile("foo type bar");
-            throw new RuntimeException();
+            fail();
         } catch (ParseError parseError) {
             assertEquals("<html>Expecting <code>:</code> after <i>type</i>", parseError.getMessage());
         }

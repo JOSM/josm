@@ -89,9 +89,13 @@ public class OsmApi extends OsmConnection {
         OsmApi api = instances.get(serverUrl);
         if (api == null) {
             api = new OsmApi(serverUrl);
-            instances.put(serverUrl, api);
+            cacheInstance(api);
         }
         return api;
+    }
+
+    protected static void cacheInstance(OsmApi api) {
+        instances.put(api.getServerUrl(), api);
     }
 
     private static String getServerUrlFromPref() {
