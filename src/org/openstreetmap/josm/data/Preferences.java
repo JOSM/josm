@@ -506,16 +506,16 @@ public class Preferences {
      * Called after every put. In case of a problem, do nothing but output the error in log.
      * @throws IOException if any I/O error occurs
      */
-    public void save() throws IOException {
+    public synchronized void save() throws IOException {
         save(getPreferenceFile(),
                 new FilteredCollection<>(settingsMap.entrySet(), NO_DEFAULT_SETTINGS_ENTRY), false);
     }
 
-    public void saveDefaults() throws IOException {
+    public synchronized void saveDefaults() throws IOException {
         save(getDefaultsCacheFile(), defaultsMap.entrySet(), true);
     }
 
-    public void save(File prefFile, Collection<Entry<String, Setting<?>>> settings, boolean defaults) throws IOException {
+    protected void save(File prefFile, Collection<Entry<String, Setting<?>>> settings, boolean defaults) throws IOException {
 
         if (!defaults) {
             /* currently unused, but may help to fix configuration issues in future */
