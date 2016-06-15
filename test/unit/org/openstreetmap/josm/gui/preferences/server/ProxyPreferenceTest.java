@@ -25,7 +25,7 @@ public class ProxyPreferenceTest {
      * Unit test of {@link ProxyPreference#ProxyPreference}.
      */
     @Test
-    public void testProxyPreference()  {
+    public void testProxyPreference() {
         assertNotNull(new ProxyPreference.Factory().createPreferenceSetting());
     }
 

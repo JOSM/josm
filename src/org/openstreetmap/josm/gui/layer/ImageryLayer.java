@@ -337,7 +337,7 @@ public abstract class ImageryLayer extends Layer {
 
         private static float[] KERNEL_SHARPEN = new float[] {
             -.5f, -1f, -.5f,
-             -1f,  7,  -1f,
+             -1f, 7, -1f,
             -.5f, -1f, -.5f
         };
 
@@ -530,7 +530,7 @@ public abstract class ImageryLayer extends Layer {
         }
 
         private byte mix(int color, double luminosity) {
-            int val = (int) (colorfulness * color +  (1 - colorfulness) * luminosity);
+            int val = (int) (colorfulness * color + (1 - colorfulness) * luminosity);
             if (val < 0) {
                 return 0;
             } else if (val > 0xff) {

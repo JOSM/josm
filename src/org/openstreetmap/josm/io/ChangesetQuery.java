@@ -156,7 +156,7 @@ public class ChangesetQuery {
     public ChangesetQuery inBbox(LatLon min, LatLon max) {
         CheckParameterUtil.ensureParameterNotNull(min, "min");
         CheckParameterUtil.ensureParameterNotNull(max, "max");
-        this.bounds  = new Bounds(min, max);
+        this.bounds = new Bounds(min, max);
         return this;
     }
 
@@ -214,7 +214,7 @@ public class ChangesetQuery {
      * @return the restricted changeset query
      */
     public ChangesetQuery beingOpen(boolean isOpen) {
-        this.open =  isOpen;
+        this.open = isOpen;
         return this;
     }
 
@@ -473,7 +473,7 @@ public class ChangesetQuery {
         }
 
         protected Map<String, String> createMapFromQueryString(String query) {
-            Map<String, String> queryParams  = new HashMap<>();
+            Map<String, String> queryParams = new HashMap<>();
             String[] keyValuePairs = query.split("&");
             for (String keyValuePair: keyValuePairs) {
                 String[] kv = keyValuePair.split("=");

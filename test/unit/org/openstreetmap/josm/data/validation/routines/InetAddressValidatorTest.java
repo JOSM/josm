@@ -46,10 +46,12 @@ public class InetAddressValidatorTest {
      */
     @Test
     public void testInetAddressesFromTheWild() {
-        assertTrue("www.apache.org IP should be valid",       validator.isValid("140.211.11.130"));
-        assertTrue("www.l.google.com IP should be valid",     validator.isValid("72.14.253.103"));
-        assertTrue("fsf.org IP should be valid",              validator.isValid("199.232.41.5"));
-        assertTrue("appscs.ign.com IP should be valid",       validator.isValid("216.35.123.87"));
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
+        assertTrue("www.apache.org IP should be valid",   validator.isValid("140.211.11.130"));
+        assertTrue("www.l.google.com IP should be valid", validator.isValid("72.14.253.103"));
+        assertTrue("fsf.org IP should be valid",          validator.isValid("199.232.41.5"));
+        assertTrue("appscs.ign.com IP should be valid",   validator.isValid("216.35.123.87"));
+        // CHECKSTYLE.ON: SingleSpaceSeparator
     }
 
     /**
@@ -66,20 +68,22 @@ public class InetAddressValidatorTest {
      */
     @Test
     public void testInetAddressesByClass() {
-        assertTrue("class A IP should be valid",              validator.isValid("24.25.231.12"));
-        assertFalse("illegal class A IP should be invalid",   validator.isValid("2.41.32.324"));
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
+        assertTrue("class A IP should be valid",            validator.isValid("24.25.231.12"));
+        assertFalse("illegal class A IP should be invalid", validator.isValid("2.41.32.324"));
 
-        assertTrue("class B IP should be valid",              validator.isValid("135.14.44.12"));
-        assertFalse("illegal class B IP should be invalid",   validator.isValid("154.123.441.123"));
+        assertTrue("class B IP should be valid",            validator.isValid("135.14.44.12"));
+        assertFalse("illegal class B IP should be invalid", validator.isValid("154.123.441.123"));
 
-        assertTrue("class C IP should be valid",              validator.isValid("213.25.224.32"));
-        assertFalse("illegal class C IP should be invalid",   validator.isValid("201.543.23.11"));
+        assertTrue("class C IP should be valid",            validator.isValid("213.25.224.32"));
+        assertFalse("illegal class C IP should be invalid", validator.isValid("201.543.23.11"));
 
-        assertTrue("class D IP should be valid",              validator.isValid("229.35.159.6"));
-        assertFalse("illegal class D IP should be invalid",   validator.isValid("231.54.11.987"));
+        assertTrue("class D IP should be valid",            validator.isValid("229.35.159.6"));
+        assertFalse("illegal class D IP should be invalid", validator.isValid("231.54.11.987"));
 
-        assertTrue("class E IP should be valid",              validator.isValid("248.85.24.92"));
-        assertFalse("illegal class E IP should be invalid",   validator.isValid("250.21.323.48"));
+        assertTrue("class E IP should be valid",            validator.isValid("248.85.24.92"));
+        assertFalse("illegal class E IP should be invalid", validator.isValid("250.21.323.48"));
+        // CHECKSTYLE.ON: SingleSpaceSeparator
     }
 
     /**
@@ -87,8 +91,8 @@ public class InetAddressValidatorTest {
      */
     @Test
     public void testReservedInetAddresses() {
-        assertTrue("localhost IP should be valid",            validator.isValid("127.0.0.1"));
-        assertTrue("broadcast IP should be valid",            validator.isValid("255.255.255.255"));
+        assertTrue("localhost IP should be valid", validator.isValid("127.0.0.1"));
+        assertTrue("broadcast IP should be valid", validator.isValid("255.255.255.255"));
     }
 
     /**
@@ -96,10 +100,12 @@ public class InetAddressValidatorTest {
      */
     @Test
     public void testBrokenInetAddresses() {
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         assertFalse("IP with characters should be invalid",     validator.isValid("124.14.32.abc"));
         assertFalse("IP with leading zeroes should be invalid", validator.isValid("124.14.32.01"));
         assertFalse("IP with three groups should be invalid",   validator.isValid("23.64.12"));
         assertFalse("IP with five groups should be invalid",    validator.isValid("26.34.23.77.234"));
+        // CHECKSTYLE.ON: SingleSpaceSeparator
     }
 
     // CHECKSTYLE.OFF: LineLength

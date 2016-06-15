@@ -114,6 +114,7 @@ public class TagChecker extends TagTest {
     protected JCheckBox prefCheckFixmesBeforeUpload;
     protected JCheckBox prefCheckPaintBeforeUpload;
 
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
     protected static final int EMPTY_VALUES      = 1200;
     protected static final int INVALID_KEY       = 1201;
     protected static final int INVALID_VALUE     = 1202;
@@ -128,6 +129,7 @@ public class TagChecker extends TagTest {
     protected static final int MISSPELLED_VALUE  = 1212;
     protected static final int MISSPELLED_KEY    = 1213;
     protected static final int MULTIPLE_SPACES   = 1214;
+    // CHECKSTYLE.ON: SingleSpaceSeparator
     // 1250 and up is used by tagcheck
 
     protected EditableList sourcesList;
@@ -706,9 +708,11 @@ public class TagChecker extends TagTest {
         private OsmPrimitiveType type;
         private int code;
         protected Severity severity;
-        protected static final int TAG_CHECK_ERROR  = 1250;
-        protected static final int TAG_CHECK_WARN   = 1260;
-        protected static final int TAG_CHECK_INFO   = 1270;
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
+        protected static final int TAG_CHECK_ERROR = 1250;
+        protected static final int TAG_CHECK_WARN  = 1260;
+        protected static final int TAG_CHECK_INFO  = 1270;
+        // CHECKSTYLE.ON: SingleSpaceSeparator
 
         protected static class CheckerElement {
             public Object tag;

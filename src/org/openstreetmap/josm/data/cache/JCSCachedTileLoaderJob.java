@@ -312,7 +312,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
             final HttpClient request = getRequest("GET", true);
 
-            if (isObjectLoadable()  &&
+            if (isObjectLoadable() &&
                     (now - attributes.getLastModification()) <= ABSOLUTE_EXPIRE_TIME_LIMIT) {
                 request.setIfModifiedSince(attributes.getLastModification());
             }
@@ -396,7 +396,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             return doCache;
         } catch (InterruptedException e) {
             attributes.setErrorMessage(e.toString());
-            log.log(Level.WARNING, "JCS - Exception during download {0}",  getUrlNoException());
+            log.log(Level.WARNING, "JCS - Exception during download {0}", getUrlNoException());
             Main.warn(e);
         }
         log.log(Level.WARNING, "JCS - Silent failure during download: {0}", getUrlNoException());

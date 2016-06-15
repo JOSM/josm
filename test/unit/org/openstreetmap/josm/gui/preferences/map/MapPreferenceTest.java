@@ -25,7 +25,7 @@ public class MapPreferenceTest {
      * Unit test of {@link MapPreference#MapPreference}.
      */
     @Test
-    public void testMapPreference()  {
+    public void testMapPreference() {
         assertNotNull(new MapPreference.Factory().createPreferenceSetting());
     }
 

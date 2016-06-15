@@ -335,7 +335,7 @@ public final class AlignInLineAction extends JosmAction {
         if (lines.size() == 1)
             return lines.get(0).projectionCommand(node);
         else if (lines.size() == 2)
-            return lines.get(0).intersectionCommand(node,  lines.get(1));
+            return lines.get(0).intersectionCommand(node, lines.get(1));
         throw new InvalidSelection();
     }
 

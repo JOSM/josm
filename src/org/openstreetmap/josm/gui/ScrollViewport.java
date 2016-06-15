@@ -131,7 +131,7 @@ public class ScrollViewport extends JPanel {
         add(vp, BorderLayout.CENTER);
 
         this.addComponentListener(new ComponentAdapter() {
-            @Override public void  componentResized(ComponentEvent e) {
+            @Override public void componentResized(ComponentEvent e) {
                 showOrHideButtons();
             }
         });

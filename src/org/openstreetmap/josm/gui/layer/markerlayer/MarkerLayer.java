@@ -155,7 +155,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 }
                 if (!mousePressedInButton)
                     return;
-                mousePressed  = true;
+                mousePressed = true;
                 if (isVisible()) {
                     invalidate();
                 }

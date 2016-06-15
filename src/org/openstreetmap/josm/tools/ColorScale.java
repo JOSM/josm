@@ -36,10 +36,12 @@ public final class ColorScale {
 
     public static ColorScale createCyclicScale(int count) {
         ColorScale sc = new ColorScale();
-        //                    red   yellow  green   blue    red
-        int[] h = new int[] {0,    59,     127,    244,    360};
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
+        //                   red  yellow  green   blue    red
+        int[] h = new int[] {0,    59,     127,    244,   360};
         int[] s = new int[] {100,  84,     99,     100};
         int[] b = new int[] {90,   93,     74,     83};
+        // CHECKSTYLE.ON: SingleSpaceSeparator
 
         sc.colors = new Color[count];
         for (int i = 0; i < sc.colors.length; i++) {
@@ -165,7 +167,7 @@ public final class ColorScale {
         }
         for (int i = 0; i <= intervalCount; i++) {
             g.setColor(colors[(int) (1.0*i*n/intervalCount-1e-10)]);
-            final double val =  min+i*(max-min)/intervalCount;
+            final double val = min+i*(max-min)/intervalCount;
             final String txt = String.format("%.3f", val*valueScale);
             if (w < h) {
                 g.drawString(txt, x-fw-3, y+i*h/intervalCount+fh/2);

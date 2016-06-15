@@ -325,7 +325,7 @@ public final class Changeset implements Tagged {
         this.user = other.user;
         this.createdAt = other.createdAt;
         this.closedAt = other.closedAt;
-        this.open  = other.open;
+        this.open = other.open;
         this.min = other.min;
         this.max = other.max;
         this.commentsCount = other.commentsCount;

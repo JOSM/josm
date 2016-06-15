@@ -10,12 +10,14 @@ import org.openstreetmap.josm.Main;
 
 /** The error severity */
 public enum Severity {
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
     /** Error messages */
     ERROR(tr("Errors"), /* ICON(data/) */"error",       Main.pref.getColor(marktr("validation error"), Color.RED)),
     /** Warning messages */
     WARNING(tr("Warnings"), /* ICON(data/) */"warning", Main.pref.getColor(marktr("validation warning"), Color.YELLOW)),
     /** Other messages */
     OTHER(tr("Other"), /* ICON(data/) */"other",        Main.pref.getColor(marktr("validation other"), Color.CYAN));
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /** Description of the severity code */
     private final String message;

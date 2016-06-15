@@ -94,8 +94,10 @@ public class UnclosedWays extends Test {
         public final TestError getTestError(Way w) {
             String value = w.get(key);
             if (isValueErroneous(value)) {
+                // CHECKSTYLE.OFF: SingleSpaceSeparator
                 String  type = engMessage.contains("{0}") ? tr(engMessage, tr(value)) : tr(engMessage);
                 String etype = engMessage.contains("{0}") ? MessageFormat.format(engMessage, value) : engMessage;
+                // CHECKSTYLE.ON: SingleSpaceSeparator
                 return new TestError(UnclosedWays.this, Severity.WARNING, tr("Unclosed way"),
                         type, etype, code, Arrays.asList(w),
                         // The important parts of an unclosed way are the first and
@@ -135,6 +137,7 @@ public class UnclosedWays extends Test {
     }
 
     private final UnclosedWaysCheck[] checks = {
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         new UnclosedWaysCheck(1101, "natural",   marktr("natural type {0}"),
                 new HashSet<>(Arrays.asList("cave", "coastline", "cliff", "tree_row", "ridge", "valley", "arete", "gorge"))),
         new UnclosedWaysCheck(1102, "landuse",   marktr("landuse type {0}")),
@@ -151,6 +154,7 @@ public class UnclosedWays extends Test {
         new UnclosedWaysCheck(1109, "boundary", marktr("boundary type {0}")),
         new UnclosedWaysBooleanCheck(1120, "building", marktr("building")),
         new UnclosedWaysBooleanCheck(1130, "area",     marktr("area")),
+        // CHECKSTYLE.ON: SingleSpaceSeparator
     };
 
     /**

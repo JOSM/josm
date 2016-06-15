@@ -98,7 +98,7 @@ public class UrlValidatorTest {
       assertTrue(urlVal.isValid("http://www.google.com/"));
       int statusPerLine = 60;
       int printed = 0;
-      if (printIndex)  {
+      if (printIndex) {
          statusPerLine = 6;
       }
       do {

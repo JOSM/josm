@@ -35,22 +35,24 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class RelationChecker extends Test {
 
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
     /** Role {0} unknown in templates {1} */
-    public static final int ROLE_UNKNOWN      = 1701;
+    public static final int ROLE_UNKNOWN     = 1701;
     /** Empty role type found when expecting one of {0} */
-    public static final int ROLE_EMPTY        = 1702;
+    public static final int ROLE_EMPTY       = 1702;
     /** Role member does not match expression {0} in template {1} */
-    public static final int WRONG_TYPE        = 1703;
+    public static final int WRONG_TYPE       = 1703;
     /** Number of {0} roles too high ({1}) */
-    public static final int HIGH_COUNT        = 1704;
+    public static final int HIGH_COUNT       = 1704;
     /** Number of {0} roles too low ({1}) */
-    public static final int LOW_COUNT         = 1705;
+    public static final int LOW_COUNT        = 1705;
     /** Role {0} missing */
-    public static final int ROLE_MISSING      = 1706;
+    public static final int ROLE_MISSING     = 1706;
     /** Relation type is unknown */
-    public static final int RELATION_UNKNOWN  = 1707;
+    public static final int RELATION_UNKNOWN = 1707;
     /** Relation is empty */
-    public static final int RELATION_EMPTY    = 1708;
+    public static final int RELATION_EMPTY   = 1708;
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /**
      * Error message used to group errors related to role problems.

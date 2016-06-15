@@ -24,7 +24,7 @@ public class RelationMemberMerger extends ListMerger<RelationMember> {
 
     @Override
     protected JScrollPane buildMyElementsTable() {
-        myEntriesTable  = new RelationMemberTable(
+        myEntriesTable = new RelationMemberTable(
                 "table.mymembers",
                 model,
                 model.getMyTableModel(),
@@ -35,7 +35,7 @@ public class RelationMemberMerger extends ListMerger<RelationMember> {
 
     @Override
     protected JScrollPane buildMergedElementsTable() {
-        mergedEntriesTable  = new RelationMemberTable(
+        mergedEntriesTable = new RelationMemberTable(
                 "table.mergedmembers",
                 model,
                 model.getMergedTableModel(),
@@ -47,7 +47,7 @@ public class RelationMemberMerger extends ListMerger<RelationMember> {
 
     @Override
     protected JScrollPane buildTheirElementsTable() {
-        theirEntriesTable  = new RelationMemberTable(
+        theirEntriesTable = new RelationMemberTable(
                 "table.theirmembers",
                 model,
                 model.getTheirTableModel(),

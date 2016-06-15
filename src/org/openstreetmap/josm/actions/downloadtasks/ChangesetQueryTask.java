@@ -70,7 +70,7 @@ public class ChangesetQueryTask extends AbstractChangesetDownloadTask {
             } catch (OsmTransferCanceledException e) {
                 // thrown if user cancel the authentication dialog
                 setCanceled(true);
-            }  catch (OsmTransferException e) {
+            } catch (OsmTransferException e) {
                 if (isCanceled())
                     return;
                 rememberLastException(e);

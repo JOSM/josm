@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class DateFilterPanel extends JPanel {
     private final DateEditorWithSlider dateFrom = new DateEditorWithSlider(tr("From"));
     private final DateEditorWithSlider dateTo = new DateEditorWithSlider(tr("To"));
-    private final JCheckBox noTimestampCb  = new JCheckBox(tr("No timestamp"));
+    private final JCheckBox noTimestampCb = new JCheckBox(tr("No timestamp"));
     private final transient GpxLayer layer;
 
     private transient ActionListener filterAppliedListener;
@@ -76,7 +76,7 @@ public class DateFilterPanel extends JPanel {
     };
 
     private final Timer t = new Timer(200, new ActionListener() {
-        @Override  public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             applyFilter();
         }
     });

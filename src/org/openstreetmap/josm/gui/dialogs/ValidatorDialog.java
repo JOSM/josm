@@ -139,7 +139,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         fixButton = new SideButton(new AbstractAction() {
             {
                 putValue(NAME, tr("Fix"));
-                putValue(SHORT_DESCRIPTION,  tr("Fix the selected issue."));
+                putValue(SHORT_DESCRIPTION, tr("Fix the selected issue."));
                 new ImageProvider("dialogs", "fix").getResource().attachImageIcon(this, true);
             }
             @Override
@@ -154,7 +154,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             ignoreButton = new SideButton(new AbstractAction() {
                 {
                     putValue(NAME, tr("Ignore"));
-                    putValue(SHORT_DESCRIPTION,  tr("Ignore the selected issue next time."));
+                    putValue(SHORT_DESCRIPTION, tr("Ignore the selected issue next time."));
                     new ImageProvider("dialogs", "fix").getResource().attachImageIcon(this, true);
                 }
                 @Override

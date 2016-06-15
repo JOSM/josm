@@ -145,10 +145,12 @@ public class MainApplication extends Main {
                 "\t--skip-plugins                            "+tr("Skip loading plugins")+"\n\n"+
                 "\t--offline=<osm_api|josm_website|all>      "+tr("Disable access to the given resource(s), separated by comma")+"\n\n"+
                 tr("options provided as Java system properties")+":\n"+
+                // CHECKSTYLE.OFF: SingleSpaceSeparator
                 "\t-Djosm.pref="    +tr("/PATH/TO/JOSM/PREF    ")+tr("Set the preferences directory")+"\n\n"+
                 "\t-Djosm.userdata="+tr("/PATH/TO/JOSM/USERDATA")+tr("Set the user data directory")+"\n\n"+
                 "\t-Djosm.cache="   +tr("/PATH/TO/JOSM/CACHE   ")+tr("Set the cache directory")+"\n\n"+
                 "\t-Djosm.home="    +tr("/PATH/TO/JOSM/HOMEDIR ")+
+                // CHECKSTYLE.ON: SingleSpaceSeparator
                 tr("Relocate all 3 directories to homedir. Cache directory will be in homedir/cache")+"\n\n"+
                 tr("-Djosm.home has lower precedence, i.e. the specific setting overrides the general one")+"\n\n"+
                 tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +

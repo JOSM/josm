@@ -763,7 +763,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private final transient StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
     private final transient StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
 
-    private class StatusBarUpdater implements  DocumentListener, ItemListener, ActionListener {
+    private class StatusBarUpdater implements DocumentListener, ItemListener, ActionListener {
         private final boolean doRepaint;
 
         StatusBarUpdater(boolean doRepaint) {

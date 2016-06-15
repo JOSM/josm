@@ -220,7 +220,7 @@ public final class Shortcut {
      * @param button button
      */
     public void setMnemonic(AbstractButton button) {
-        if (assignedModifier == getGroupModifier(MNEMONIC)  && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
+        if (assignedModifier == getGroupModifier(MNEMONIC) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
             button.setMnemonic(KeyEvent.getKeyText(assignedKey).charAt(0)); //getKeyStroke().getKeyChar() seems not to work here
         }
     }
@@ -230,7 +230,7 @@ public final class Shortcut {
      * @param component component
      */
     public void setFocusAccelerator(JTextComponent component) {
-        if (assignedModifier == getGroupModifier(MNEMONIC)  && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
+        if (assignedModifier == getGroupModifier(MNEMONIC) && getKeyStroke() != null && KeyEvent.getKeyText(assignedKey).length() == 1) {
             component.setFocusAccelerator(KeyEvent.getKeyText(assignedKey).charAt(0));
         }
     }

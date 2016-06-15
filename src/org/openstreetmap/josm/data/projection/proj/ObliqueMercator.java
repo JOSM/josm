@@ -313,11 +313,13 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
 
             lonCenter = Math.toRadians(params.lonc);
             azimuth = Math.toRadians(params.alpha);
+            // CHECKSTYLE.OFF: SingleSpaceSeparator
             if ((azimuth > -1.5*Math.PI && azimuth < -0.5*Math.PI) ||
                 (azimuth >  0.5*Math.PI && azimuth <  1.5*Math.PI)) {
                 throw new ProjectionConfigurationException(
                         tr("Illegal value for parameter ''{0}'': {1}", "alpha", Double.toString(params.alpha)));
             }
+            // CHECKSTYLE.ON: SingleSpaceSeparator
             if (params.gamma != null) {
                 rectifiedGridAngle = Math.toRadians(params.gamma);
             } else {
@@ -340,13 +342,13 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
          */
         singamma0 = Math.sin(gamma0);
         cosgamma0 = Math.cos(gamma0);
-        sinrot    = Math.sin(rectifiedGridAngle);
-        cosrot    = Math.cos(rectifiedGridAngle);
-        arb       = a / b;
-        ab        = a * b;
-        bra       = b / a;
-        vPoleN  = arb * Math.log(Math.tan(0.5 * (Math.PI/2.0 - gamma0)));
-        vPoleS  = arb * Math.log(Math.tan(0.5 * (Math.PI/2.0 + gamma0)));
+        sinrot = Math.sin(rectifiedGridAngle);
+        cosrot = Math.cos(rectifiedGridAngle);
+        arb = a / b;
+        ab = a * b;
+        bra = b / a;
+        vPoleN = arb * Math.log(Math.tan(0.5 * (Math.PI/2.0 - gamma0)));
+        vPoleS = arb * Math.log(Math.tan(0.5 * (Math.PI/2.0 + gamma0)));
         boolean hotine = params.no_off != null && params.no_off;
         if (hotine) {
             uc = 0.0;

@@ -25,7 +25,7 @@ public class AdvancedPreferenceTest {
      * Unit test of {@link AdvancedPreference#AdvancedPreference}.
      */
     @Test
-    public void testAdvancedPreference()  {
+    public void testAdvancedPreference() {
         assertNotNull(new AdvancedPreference.Factory().createPreferenceSetting());
     }
 

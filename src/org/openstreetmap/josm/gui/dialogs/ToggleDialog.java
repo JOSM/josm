@@ -162,14 +162,14 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      */
     protected JCheckBoxMenuItem windowMenuItem;
 
-    private final JRadioButtonMenuItem alwaysShown  = new JRadioButtonMenuItem(new AbstractAction(tr("Always shown")) {
+    private final JRadioButtonMenuItem alwaysShown = new JRadioButtonMenuItem(new AbstractAction(tr("Always shown")) {
         @Override
         public void actionPerformed(ActionEvent e) {
             setIsButtonHiding(ButtonHidingType.ALWAYS_SHOWN);
         }
     });
 
-    private final JRadioButtonMenuItem dynamic      = new JRadioButtonMenuItem(new AbstractAction(tr("Dynamic")) {
+    private final JRadioButtonMenuItem dynamic = new JRadioButtonMenuItem(new AbstractAction(tr("Dynamic")) {
         @Override
         public void actionPerformed(ActionEvent e) {
             setIsButtonHiding(ButtonHidingType.DYNAMIC);

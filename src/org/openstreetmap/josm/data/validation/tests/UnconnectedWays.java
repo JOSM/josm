@@ -345,7 +345,7 @@ public abstract class UnconnectedWays extends Test {
                 y1 = y2;
                 y2 = tmpy;
             }
-            LatLon topLeft  = new LatLon(y2+fudge, x1-fudge);
+            LatLon topLeft = new LatLon(y2+fudge, x1-fudge);
             LatLon botRight = new LatLon(y1-fudge, x2+fudge);
             List<LatLon> ret = new ArrayList<>(2);
             ret.add(topLeft);
@@ -354,9 +354,8 @@ public abstract class UnconnectedWays extends Test {
         }
 
         public Collection<Node> nearbyNodes(double dist) {
-            // If you're looking for nodes that are farther
-            // away that we looked for last time, the cached
-            // result is no good
+            // If you're looking for nodes that are farther away that we looked for last time,
+            // the cached result is no good
             if (dist > nearbyNodeCacheDist) {
                 nearbyNodeCache = null;
             }

@@ -25,7 +25,7 @@ public class ColorPreferenceTest {
      * Unit test of {@link ColorPreference#ColorPreference}.
      */
     @Test
-    public void testColorPreference()  {
+    public void testColorPreference() {
         assertNotNull(new ColorPreference.Factory().createPreferenceSetting());
     }
 

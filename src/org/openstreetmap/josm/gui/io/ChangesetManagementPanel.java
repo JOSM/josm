@@ -183,7 +183,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
      * @param cs the changeset
      */
     public void setSelectedChangesetForNextUpload(Changeset cs) {
-        int idx  = model.getIndexOf(cs);
+        int idx = model.getIndexOf(cs);
         if (idx >= 0) {
             rbExisting.setSelected(true);
             model.setSelectedItem(cs);

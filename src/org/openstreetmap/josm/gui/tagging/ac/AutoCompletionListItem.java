@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class AutoCompletionListItem implements Comparable<AutoCompletionListItem> {
 
     /** the pritority of this item */
-    private  AutoCompletionItemPriority priority;
+    private AutoCompletionItemPriority priority;
     /** the value of this item */
     private String value;
 

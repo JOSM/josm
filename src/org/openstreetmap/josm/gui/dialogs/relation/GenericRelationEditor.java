@@ -105,7 +105,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * This dialog is for editing relations.
  * @since 343
  */
-public class GenericRelationEditor extends RelationEditor  {
+public class GenericRelationEditor extends RelationEditor {
     /** the tag table and its model */
     private final TagEditorPanel tagEditorPanel;
     private final ReferringRelationsBrowser referrerBrowser;

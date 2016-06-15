@@ -65,11 +65,11 @@ public class PrefJPanel extends JPanel {
     // usually matches the keyboard. This even works with my English Windows and my German keyboard.
     private static final String SHIFT = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
             KeyEvent.SHIFT_DOWN_MASK).getModifiers());
-    private static final String CTRL  = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+    private static final String CTRL = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
             KeyEvent.CTRL_DOWN_MASK).getModifiers());
-    private static final String ALT   = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+    private static final String ALT = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
             KeyEvent.ALT_DOWN_MASK).getModifiers());
-    private static final String META  = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
+    private static final String META = KeyEvent.getKeyModifiersText(KeyStroke.getKeyStroke(KeyEvent.VK_A,
             KeyEvent.META_DOWN_MASK).getModifiers());
 
     // A list of keys to present the user. Sadly this really is a list of keys Java knows about,
@@ -245,7 +245,7 @@ public class PrefJPanel extends JPanel {
 
     private JPanel buildFilterPanel() {
         // copied from PluginPreference
-        JPanel pnl  = new JPanel(new GridBagLayout());
+        JPanel pnl = new JPanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         GridBagConstraints gc = new GridBagConstraints();
 

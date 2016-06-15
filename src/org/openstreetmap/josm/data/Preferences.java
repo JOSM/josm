@@ -1278,7 +1278,7 @@ public class Preferences {
                 } catch (NumberFormatException nfe) {
                     continue;
                 }
-            } else  if (f.getType() == String.class) {
+            } else if (f.getType() == String.class) {
                 value = key_value.getValue();
             } else if (f.getType().isAssignableFrom(Map.class)) {
                 value = mapFromJson(key_value.getValue());

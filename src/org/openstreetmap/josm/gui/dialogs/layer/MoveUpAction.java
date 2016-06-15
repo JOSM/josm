@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * The action to move up the currently selected entries in the list.
  */
-public class MoveUpAction extends AbstractAction implements  IEnabledStateUpdating {
+public class MoveUpAction extends AbstractAction implements IEnabledStateUpdating {
     private final LayerListModel model;
 
     /**

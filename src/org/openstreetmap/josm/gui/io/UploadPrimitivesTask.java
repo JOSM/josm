@@ -219,7 +219,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         // we always clean up the data, even in case of errors. It's possible the data was
         // partially uploaded. Better run on EDT.
         //
-        Runnable r  = new Runnable() {
+        Runnable r = new Runnable() {
             @Override
             public void run() {
                 layer.cleanupAfterUpload(processedPrimitives);

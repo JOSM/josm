@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * Class holding OAuth access token key and secret.
  */
 public class OAuthAccessTokenHolder {
-    private  static OAuthAccessTokenHolder instance;
+    private static OAuthAccessTokenHolder instance;
 
     /**
      * Replies the unique instance.

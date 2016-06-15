@@ -178,7 +178,7 @@ public final class ExifReader {
         return null;
     }
 
-    private static double readAxis(GpsDirectory dirGps, int gpsTag, int gpsTagRef, char cRef) throws MetadataException  {
+    private static double readAxis(GpsDirectory dirGps, int gpsTag, int gpsTagRef, char cRef) throws MetadataException {
         double value;
         Rational[] components = dirGps.getRationalArray(gpsTag);
         if (components != null) {
@@ -204,8 +204,7 @@ public final class ExifReader {
     /**
      * Returns a Transform that fixes the image orientation.
      *
-     * Only orientation 1, 3, 6 and 8 are supported. Everything else is treated
-     * as 1.
+     * Only orientation 1, 3, 6 and 8 are supported. Everything else is treated as 1.
      * @param orientation the exif-orientation of the image
      * @param width the original width of the image
      * @param height the original height of the image

@@ -100,7 +100,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                             if (canLoad) {
                                 errorMessage = tr("<html>Tagging preset source {0} can be loaded but it contains errors. " +
                                         "Do you really want to use it?<br><br><table width=600>Error is: {1}</table></html>",
-                                        source,  e.getMessage());
+                                        source, e.getMessage());
                             } else {
                                 errorMessage = tr("<html>Unable to parse tagging preset source: {0}. " +
                                         "Do you really want to use it?<br><br><table width=600>Error is: {1}</table></html>",
@@ -126,7 +126,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                     }
                 sources.removeSources(sourcesToRemove);
                 return true;
-            }  else {
+            } else {
                 return true;
             }
         }

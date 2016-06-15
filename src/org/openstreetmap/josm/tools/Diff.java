@@ -326,7 +326,7 @@ public class Diff {
 
     static class ReverseScript implements ScriptBuilder {
         @Override
-        public  Change build_script(
+        public Change build_script(
                 final boolean[] changed0, int len0,
                 final boolean[] changed1, int len1) {
             Change script = null;
@@ -827,25 +827,22 @@ public class Diff {
         /** Number of elements (lines) in this file. */
         private final int bufferedLines;
 
-        /** Vector, indexed by line number, containing an equivalence code for
-           each line.  It is this vector that is actually compared with that
-           of another file to generate differences. */
-        private final int[]     equivs;
+        /** Vector, indexed by line number, containing an equivalence code for each line.
+         * It is this vector that is actually compared with that of another file to generate differences. */
+        private final int[] equivs;
 
-        /** Vector, like the previous one except that
-           the elements for discarded lines have been squeezed out.  */
-        private final int[]    undiscarded;
+        /** Vector, like the previous one except that the elements for discarded lines have been squeezed out. */
+        private final int[] undiscarded;
 
-        /** Vector mapping virtual line numbers (not counting discarded lines)
-           to real ones (counting those lines).  Both are origin-0.  */
-        private final int[]    realindexes;
+        /** Vector mapping virtual line numbers (not counting discarded lines) to real ones (counting those lines).
+         * Both are origin-0.  */
+        private final int[] realindexes;
 
         /** Total number of nondiscarded lines. */
-        private int         nondiscardedLines;
+        private int nondiscardedLines;
 
-        /** Array, indexed by real origin-1 line number,
-           containing true for a line that is an insertion or a deletion.
-           The results of comparison are stored here.  */
-        private boolean[]       changedFlag;
+        /** Array, indexed by real origin-1 line number, containing true for a line that is an insertion or a deletion.
+           The results of comparison are stored here. */
+        private boolean[] changedFlag;
     }
 }

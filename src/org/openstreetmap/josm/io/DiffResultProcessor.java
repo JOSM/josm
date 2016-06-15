@@ -31,7 +31,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class DiffResultProcessor  {
+public class DiffResultProcessor {
 
     private static class DiffResultEntry {
         private long newId;
@@ -75,7 +75,7 @@ public class DiffResultProcessor  {
      * @throws XmlParsingException if the diffUploadRequest can't be parsed successfully
      *
      */
-    public  void parse(String diffUploadResponse, ProgressMonitor progressMonitor) throws XmlParsingException {
+    public void parse(String diffUploadResponse, ProgressMonitor progressMonitor) throws XmlParsingException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
@@ -167,7 +167,7 @@ public class DiffResultProcessor  {
                 case "node":
                 case "way":
                 case "relation":
-                    PrimitiveId id  = new SimplePrimitiveId(
+                    PrimitiveId id = new SimplePrimitiveId(
                             Long.parseLong(atts.getValue("old_id")),
                             OsmPrimitiveType.fromApiTypeName(qName)
                     );

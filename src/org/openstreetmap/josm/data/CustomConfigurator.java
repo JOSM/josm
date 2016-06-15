@@ -343,7 +343,7 @@ public final class CustomConfigurator {
 
     private static boolean busy;
 
-    public static void pluginOperation(String install, String uninstall, String delete)  {
+    public static void pluginOperation(String install, String uninstall, String delete) {
         final List<String> installList = new ArrayList<>();
         final List<String> removeList = new ArrayList<>();
         final List<String> deleteList = new ArrayList<>();
@@ -600,7 +600,7 @@ public final class CustomConfigurator {
                 log("Preferences append: %d keys: %s\n",
                    tmpPref.getAllSettings().size(), tmpPref.getAllSettings().keySet().toString());
                 PreferencesUtils.appendPreferences(tmpPref, mainPrefs);
-            }  else if ("delete-values".equals(oper)) {
+            } else if ("delete-values".equals(oper)) {
                 PreferencesUtils.deletePreferenceValues(tmpPref, mainPrefs);
             }
         }
@@ -733,7 +733,7 @@ public final class CustomConfigurator {
                     String result = engine.eval(mr.group(1)).toString();
                     mr.appendReplacement(sb, result);
                 } catch (ScriptException ex) {
-                    log("Error: Can not evaluate expression %s : %s",  mr.group(1), ex.getMessage());
+                    log("Error: Can not evaluate expression %s : %s", mr.group(1), ex.getMessage());
                 }
             }
             mr.appendTail(sb);
@@ -915,7 +915,7 @@ public final class CustomConfigurator {
         }
     }
 
-    private static Collection<String> getCollection(Preferences mainpref, String key, boolean warnUnknownDefault)  {
+    private static Collection<String> getCollection(Preferences mainpref, String key, boolean warnUnknownDefault) {
         ListSetting existing = Utils.cast(mainpref.settingsMap.get(key), ListSetting.class);
         ListSetting defaults = Utils.cast(mainpref.defaultsMap.get(key), ListSetting.class);
         if (existing == null && defaults == null) {
@@ -928,7 +928,7 @@ public final class CustomConfigurator {
             return defaults.getValue() == null ? null : new ArrayList<>(defaults.getValue());
     }
 
-    private static Collection<Collection<String>> getArray(Preferences mainpref, String key, boolean warnUnknownDefault)  {
+    private static Collection<Collection<String>> getArray(Preferences mainpref, String key, boolean warnUnknownDefault) {
         ListListSetting existing = Utils.cast(mainpref.settingsMap.get(key), ListListSetting.class);
         ListListSetting defaults = Utils.cast(mainpref.defaultsMap.get(key), ListListSetting.class);
 
@@ -942,7 +942,7 @@ public final class CustomConfigurator {
             return defaults.getValue() == null ? null : new ArrayList<Collection<String>>(defaults.getValue());
     }
 
-    private static List<Map<String, String>> getListOfStructs(Preferences mainpref, String key, boolean warnUnknownDefault)  {
+    private static List<Map<String, String>> getListOfStructs(Preferences mainpref, String key, boolean warnUnknownDefault) {
         MapListSetting existing = Utils.cast(mainpref.settingsMap.get(key), MapListSetting.class);
         MapListSetting defaults = Utils.cast(mainpref.settingsMap.get(key), MapListSetting.class);
 
@@ -1030,7 +1030,7 @@ public final class CustomConfigurator {
         engine.eval(finish);
 
         @SuppressWarnings("unchecked")
-        Map<String, String> stringMap =  (Map<String, String>) engine.get("stringMap");
+        Map<String, String> stringMap = (Map<String, String>) engine.get("stringMap");
         @SuppressWarnings("unchecked")
         Map<String, List<String>> listMap = (SortedMap<String, List<String>>) engine.get("listMap");
         @SuppressWarnings("unchecked")
@@ -1072,7 +1072,7 @@ public final class CustomConfigurator {
      */
     public static void loadPrefsToJS(ScriptEngine engine, Preferences tmpPref, String whereToPutInJS, boolean includeDefaults)
             throws ScriptException {
-        Map<String, String> stringMap =  new TreeMap<>();
+        Map<String, String> stringMap = new TreeMap<>();
         Map<String, List<String>> listMap = new TreeMap<>();
         Map<String, List<List<String>>> listlistMap = new TreeMap<>();
         Map<String, List<Map<String, String>>> listmapMap = new TreeMap<>();

@@ -598,7 +598,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         }
 
         public void setButton(JButton button) {
-            this.button =  button;
+            this.button = button;
             final ImageIcon icon = ImageProvider.get("audio-fwd");
             putValue(SMALL_ICON, icon);
             button.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight() + 64));

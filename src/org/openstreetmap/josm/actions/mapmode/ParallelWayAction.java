@@ -204,6 +204,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
 
     private void updateModeLocalPreferences() {
         // @formatter:off
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         snapThreshold        = Main.pref.getDouble(prefKey("snap-threshold-percent"), 0.70);
         snapDefault          = Main.pref.getBoolean(prefKey("snap-default"),      true);
         copyTagsDefault      = Main.pref.getBoolean(prefKey("copy-tags-default"), true);
@@ -218,6 +219,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         addToSelectionModifierCombo = new ModifiersSpec(getStringPref("add-to-selection-modifier-combo", "aSc"));
         toggleSelectedModifierCombo = new ModifiersSpec(getStringPref("toggle-selection-modifier-combo", "asC"));
         setSelectedModifierCombo    = new ModifiersSpec(getStringPref("set-selection-modifier-combo",    "asc"));
+        // CHECKSTYLE.ON: SingleSpaceSeparator
         // @formatter:on
     }
 

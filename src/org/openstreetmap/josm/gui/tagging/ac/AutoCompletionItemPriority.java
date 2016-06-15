@@ -32,7 +32,7 @@ public class AutoCompletionItemPriority implements Comparable<AutoCompletionItem
     /**
      * Indicates that this is a value from a selected object.
      */
-    public static final AutoCompletionItemPriority  IS_IN_SELECTION  = new AutoCompletionItemPriority(false, false, true);
+    public static final AutoCompletionItemPriority IS_IN_SELECTION = new AutoCompletionItemPriority(false, false, true);
 
     /** Unknown priority. This is the lowest priority. */
     public static final AutoCompletionItemPriority UNKNOWN = new AutoCompletionItemPriority(false, false, false);

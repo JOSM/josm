@@ -22,8 +22,8 @@ import org.openstreetmap.josm.data.projection.Projections;
  */
 public class TemplatedWMSTileSourceTest {
 
-    private ImageryInfo testImageryWMS =  new ImageryInfo("test imagery", "http://localhost", "wms", null, null);
-    private ImageryInfo testImageryTMS =  new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
+    private ImageryInfo testImageryWMS = new ImageryInfo("test imagery", "http://localhost", "wms", null, null);
+    private ImageryInfo testImageryTMS = new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
 
     /**
      * Setup test.
@@ -189,7 +189,7 @@ public class TemplatedWMSTileSourceTest {
 
     private static boolean isWithin(EastNorth point, EastNorth topLeft, EastNorth bottomRight) {
         return Math.min(topLeft.east(), bottomRight.east()) <= point.east() &&
-                point.east() <= Math.max(topLeft.east(), bottomRight.east())  &&
+                point.east() <= Math.max(topLeft.east(), bottomRight.east()) &&
                 Math.min(topLeft.north(), bottomRight.north()) <= point.north() &&
                 point.north() <= Math.max(topLeft.north(), bottomRight.north());
     }

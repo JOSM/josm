@@ -782,7 +782,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
      * Action for freezing the current state of the list merger
      *
      */
-    private final class FreezeAction extends AbstractAction implements ItemListener, FreezeActionProperties  {
+    private final class FreezeAction extends AbstractAction implements ItemListener, FreezeActionProperties {
 
         private FreezeAction() {
             putValue(Action.NAME, tr("Freeze"));

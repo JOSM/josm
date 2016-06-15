@@ -182,8 +182,8 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser {
      * @return lat/lon of the north/west-corner of a tile at a specific zoom level
      */
     protected LatLon getNorthWestLatLonOfTile(Point tile, int zoom) {
-        double lon =  tile.x / Math.pow(2.0, zoom) * 360.0 - 180;
-        double lat =  Math.toDegrees(Math.atan(Math.sinh(Math.PI - (2.0 * Math.PI * tile.y) / Math.pow(2.0, zoom))));
+        double lon = tile.x / Math.pow(2.0, zoom) * 360.0 - 180;
+        double lat = Math.toDegrees(Math.atan(Math.sinh(Math.PI - (2.0 * Math.PI * tile.y) / Math.pow(2.0, zoom))));
         return new LatLon(lat, lon);
     }
 

@@ -234,7 +234,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * @return true, if this collection includes a conflict for <code>their</code>; false, otherwise
      */
     public boolean hasConflictForTheir(OsmPrimitive their) {
-        return getConflictForTheir(their)  != null;
+        return getConflictForTheir(their) != null;
     }
 
     /**

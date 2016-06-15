@@ -65,7 +65,7 @@ public final class MapRendererFactory {
 
         public Descriptor(Class<? extends AbstractMapRenderer> renderer, String displayName, String description) {
             this.renderer = renderer;
-            this.displayName  = displayName;
+            this.displayName = displayName;
             this.description = description;
         }
 

@@ -645,7 +645,7 @@ public class Multipolygon {
         return result;
     }
 
-    private void addInnerToOuters(List<PolyData> innerPolygons, List<PolyData> outerPolygons)  {
+    private void addInnerToOuters(List<PolyData> innerPolygons, List<PolyData> outerPolygons) {
         if (innerPolygons.isEmpty()) {
             combinedPolygons.addAll(outerPolygons);
         } else if (outerPolygons.size() == 1) {

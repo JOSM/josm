@@ -35,6 +35,7 @@ public class FixDataHook implements UploadHook {
      * Constructor for data initialization
      */
     public FixDataHook() {
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         deprecated.add(new FixDataSpace());
         deprecated.add(new FixDataKey("color",            "colour"));
         deprecated.add(new FixDataTag("highway", "ford",  "ford",    "yes"));
@@ -43,6 +44,7 @@ public class FixDataHook implements UploadHook {
         deprecated.add(new FixDataTag("oneway",  "true",  "oneway",  "yes"));
         deprecated.add(new FixDataTag("oneway",  "1",     "oneway",  "yes"));
         deprecated.add(new FixDataTag("highway", "stile", "barrier", "stile"));
+        // CHECKSTYLE.ON: SingleSpaceSeparator
         deprecated.add(new FixData() {
             @Override
             public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {

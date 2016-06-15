@@ -149,7 +149,7 @@ public class AddTagsDialog extends ExtendedDialog {
             Boolean b = Boolean.TRUE;
             ExistingValues old = new ExistingValues(key);
             for (OsmPrimitive osm : sel) {
-                oldValue  = osm.get(key);
+                oldValue = osm.get(key);
                 if (oldValue != null) {
                     old.addValue(oldValue);
                     if (!oldValue.equals(value)) {
@@ -208,7 +208,7 @@ public class AddTagsDialog extends ExtendedDialog {
         propertyTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         propertyTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_MASK), "shiftenter");
         propertyTable.getActionMap().put("shiftenter", new AbstractAction() {
-            @Override  public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 buttonAction(1, e); // add all tags on Shift-Enter
             }
         });
@@ -241,7 +241,7 @@ public class AddTagsDialog extends ExtendedDialog {
     @Override
     protected void buttonAction(int buttonIndex, ActionEvent evt) {
         // if layer all layers were closed, ignore all actions
-        if (Main.main.getCurrentDataSet() != null  && buttonIndex != 2) {
+        if (Main.main.getCurrentDataSet() != null && buttonIndex != 2) {
             TableModel tm = propertyTable.getModel();
             for (int i = 0; i < tm.getRowCount(); i++) {
                 if (buttonIndex == 1 || (Boolean) tm.getValueAt(i, 0)) {

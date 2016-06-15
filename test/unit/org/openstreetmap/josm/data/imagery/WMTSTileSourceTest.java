@@ -24,7 +24,7 @@ import org.openstreetmap.josm.data.projection.Projections;
  */
 public class WMTSTileSourceTest {
 
-    private ImageryInfo testImageryTMS =  new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
+    private ImageryInfo testImageryTMS = new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
     private ImageryInfo testImageryPSEUDO_MERCATOR = getImagery(TestUtils.getTestDataRoot() + "wmts/getcapabilities-pseudo-mercator.xml");
     private ImageryInfo testImageryTOPO_PL = getImagery(TestUtils.getTestDataRoot() + "wmts/getcapabilities-TOPO.xml");
     private ImageryInfo testImageryORTO_PL = getImagery(TestUtils.getTestDataRoot() + "wmts/getcapabilities-ORTO.xml");
@@ -191,7 +191,7 @@ public class WMTSTileSourceTest {
                 "http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/TOPO?SERVICE=WMTS&REQUEST=GetTile&"
                 + "VERSION=1.0.0&LAYER=MAPA TOPOGRAFICZNA&STYLE=default&FORMAT=image/jpeg&tileMatrixSet=EPSG:4326&"
                 + "tileMatrix=EPSG:4326:0&tileRow=1&tileCol=1",
-                testSource.getTileUrl(0,  1,  1));
+                testSource.getTileUrl(0, 1, 1));
     }
 
     @Test
@@ -220,7 +220,7 @@ public class WMTSTileSourceTest {
         testSource.initProjection(Main.getProjection());
         assertEquals(
                 "http://www.ngi.be/cartoweb/1.0.0/topo/default/3857/7/1/1.png",
-                testSource.getTileUrl(0,  1,  1));
+                testSource.getTileUrl(0, 1, 1));
     }
 
     @Test
@@ -231,7 +231,6 @@ public class WMTSTileSourceTest {
         testSource.initProjection(Main.getProjection());
         verifyTile(new LatLon(45.4105023, -75.7153702), testSource, 303751, 375502, 12);
         verifyTile(new LatLon(45.4601306, -75.7617187), testSource, 1186, 1466, 4);
-
     }
 
     @Test

@@ -26,7 +26,7 @@ public class RelationMemberConflictDecision {
             throw new IndexOutOfBoundsException(
                     tr("Position {0} is out of range. Current number of members is {1}.", pos, relation.getMembersCount()));
         this.relation = relation;
-        this.pos  = pos;
+        this.pos = pos;
         this.originalPrimitive = member.getMember();
         this.role = member.hasRole() ? member.getRole() : "";
         this.decision = UNDECIDED;

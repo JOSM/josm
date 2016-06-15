@@ -25,7 +25,7 @@ public class ValidatorTestsPreferenceTest {
      * Unit test of {@link ValidatorTestsPreference#ValidatorTestsPreference}.
      */
     @Test
-    public void testValidatorTestsPreference()  {
+    public void testValidatorTestsPreference() {
         assertNotNull(new ValidatorTestsPreference.Factory().createPreferenceSetting());
     }
 

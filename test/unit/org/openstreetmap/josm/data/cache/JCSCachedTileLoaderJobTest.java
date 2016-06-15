@@ -78,7 +78,7 @@ public class JCSCachedTileLoaderJobTest {
      * @throws IOException in case of I/O error
      */
     @Test
-    public void testStatusCodes() throws IOException, InterruptedException  {
+    public void testStatusCodes() throws IOException, InterruptedException {
         doTestStatusCode(200);
         // can't test for 3xx, as httpstat.us redirects finally to 200 page
         doTestStatusCode(401);

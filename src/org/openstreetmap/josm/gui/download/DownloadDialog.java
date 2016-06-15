@@ -53,7 +53,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * Dialog displayed to download OSM and/or GPS data from OSM server.
  */
-public class DownloadDialog extends JDialog  {
+public class DownloadDialog extends JDialog {
     /** the unique instance of the download dialog */
     private static DownloadDialog instance;
 
@@ -168,10 +168,10 @@ public class DownloadDialog extends JDialog  {
         pnl.add(cbNewLayer, GBC.std().anchor(GBC.WEST).insets(5, 5, 5, 5));
         pnl.add(cbStartup, GBC.std().anchor(GBC.WEST).insets(15, 5, 5, 5));
 
-        pnl.add(sizeCheck,  GBC.eol().anchor(GBC.EAST).insets(5, 5, 5, 2));
+        pnl.add(sizeCheck, GBC.eol().anchor(GBC.EAST).insets(5, 5, 5, 2));
 
         if (!ExpertToggleAction.isExpert()) {
-            JLabel infoLabel  = new JLabel(
+            JLabel infoLabel = new JLabel(
                     tr("Use left click&drag to select area, arrows or right mouse button to scroll map, wheel or +/- to zoom."));
             pnl.add(infoLabel, GBC.eol().anchor(GBC.SOUTH).insets(0, 0, 0, 0));
         }

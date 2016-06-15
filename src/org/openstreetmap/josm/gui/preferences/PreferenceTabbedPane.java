@@ -544,7 +544,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     @SuppressWarnings("unchecked")
-    public <T>  T getSetting(Class<? extends T> clazz) {
+    public <T> T getSetting(Class<? extends T> clazz) {
         for (PreferenceSetting setting:settings) {
             if (clazz.isAssignableFrom(setting.getClass()))
                 return (T) setting;

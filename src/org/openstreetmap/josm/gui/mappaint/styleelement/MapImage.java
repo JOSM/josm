@@ -210,7 +210,7 @@ public class MapImage {
     }
 
     private boolean mustRescale(Image image) {
-        return autoRescale && width  == -1 && image.getWidth(null) > MAX_SIZE
+        return autoRescale && width == -1 && image.getWidth(null) > MAX_SIZE
              && height == -1 && image.getHeight(null) > MAX_SIZE;
     }
 

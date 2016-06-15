@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -52,9 +53,9 @@ public class DataSetMergerTest {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
     }
 
-    private void runConsistencyTests(DataSet ds) throws Exception {
+    private void runConsistencyTests(DataSet ds) {
         StringWriter writer = new StringWriter();
-        DatasetConsistencyTest test =  new DatasetConsistencyTest(ds, writer);
+        DatasetConsistencyTest test = new DatasetConsistencyTest(ds, writer);
         test.checkReferrers();
         test.checkCompleteWaysWithIncompleteNodes();
         test.searchNodes();
@@ -62,12 +63,12 @@ public class DataSetMergerTest {
         test.referredPrimitiveNotInDataset();
         test.checkZeroNodesWays();
         String result = writer.toString();
-        if (result.length() > 0)
-            throw new RuntimeException(result);
+        if (!result.isEmpty())
+            fail(result);
     }
 
     @After
-    public void checkDatasets() throws Exception {
+    public void checkDatasets() {
         runConsistencyTests(my);
         runConsistencyTests(their);
     }

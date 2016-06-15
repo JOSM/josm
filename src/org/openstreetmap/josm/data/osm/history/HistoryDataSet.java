@@ -40,7 +40,7 @@ public class HistoryDataSet implements LayerChangeListener {
             historyDataSet = new HistoryDataSet();
             MapView.addLayerChangeListener(historyDataSet);
         }
-        return  historyDataSet;
+        return historyDataSet;
     }
 
     /** the history data */

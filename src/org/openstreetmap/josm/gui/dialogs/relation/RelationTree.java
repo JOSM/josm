@@ -87,7 +87,7 @@ public class RelationTree extends JTree {
 
         @Override
         public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
-            TreePath path  = event.getPath();
+            TreePath path = event.getPath();
             Relation parent = (Relation) event.getPath().getLastPathComponent();
             if (!parent.isIncomplete() || parent.isNew())
                 // we don't load complete  or new relations

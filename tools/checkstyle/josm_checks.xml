@@ -55,6 +55,7 @@ JOSM Checkstyle rules
     <module name="EmptyForIteratorPad"/>
     <module name="NoWhitespaceAfter"/>
     <module name="NoWhitespaceBefore"/>
+    <module name="SingleSpaceSeparator"/>
     <module name="MethodParamPad"/>
     <module name="ParenPad"/>
     <module name="TypecastParenPad">

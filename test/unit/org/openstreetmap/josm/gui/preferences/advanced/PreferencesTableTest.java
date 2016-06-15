@@ -41,7 +41,7 @@ public class PreferencesTableTest {
      * Unit test of {@link PreferencesTable#PreferencesTable}.
      */
     @Test
-    public void testPreferencesTable()  {
+    public void testPreferencesTable() {
         PreferencesTable t = newTable();
         t.fireDataChanged();
         assertTrue(t.getSelectedItems().isEmpty());
@@ -54,7 +54,7 @@ public class PreferencesTableTest {
      * Unit test of {@link PreferencesTable.AllSettingsTableModel} class.
      */
     @Test
-    public void testAllSettingsTableModel()  {
+    public void testAllSettingsTableModel() {
         AllSettingsTableModel model = (AllSettingsTableModel) newTable().getModel();
         assertEquals(1, model.getRowCount());
         assertFalse(model.isCellEditable(0, 0));

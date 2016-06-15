@@ -690,8 +690,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (selectedWay != null) {
             int posn0 = selectedWay.getNodes().indexOf(currentNode);
             if (posn0 != -1 && // n0 is part of way
-                    (posn0 >= 1                             && targetNode.equals(selectedWay.getNode(posn0-1))) || // previous node
-                    (posn0 < selectedWay.getNodesCount()-1) && targetNode.equals(selectedWay.getNode(posn0+1))) {  // next node
+                  // CHECKSTYLE.OFF: SingleSpaceSeparator
+                  (posn0 >= 1                             && targetNode.equals(selectedWay.getNode(posn0-1))) || // previous node
+                  (posn0 < selectedWay.getNodesCount()-1) && targetNode.equals(selectedWay.getNode(posn0+1))) {  // next node
+                  // CHECKSTYLE.ON: SingleSpaceSeparator
                 getCurrentDataSet().setSelected(targetNode);
                 lastUsedNode = targetNode;
                 return true;
@@ -844,7 +846,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * @param selection
      * uses also lastUsedNode field
      */
-    private void determineCurrentBaseNodeAndPreviousNode(Collection<OsmPrimitive>  selection) {
+    private void determineCurrentBaseNodeAndPreviousNode(Collection<OsmPrimitive> selection) {
         Node selectedNode = null;
         Way selectedWay = null;
         for (OsmPrimitive p : selection) {
@@ -1282,7 +1284,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     if (n == null) {
                         n = (Node) p; // found one node
                         wayIsFinished = false;
-                    }  else {
+                    } else {
                         // if more than 1 node were affected by previous command,
                         // we have no way to continue, so we forget about found node
                         n = null;
@@ -1658,7 +1660,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                         }
                     }
                     if (enOpt != null) {
-                        projectionSource =  enOpt;
+                        projectionSource = enOpt;
                     }
                 }
             }

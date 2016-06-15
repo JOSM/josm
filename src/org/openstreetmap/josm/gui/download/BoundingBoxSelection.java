@@ -306,7 +306,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         }
 
         protected void refreshBounds() {
-            Bounds  b = build();
+            Bounds b = build();
             parent.boundingBoxChanged(b, BoundingBoxSelection.this);
         }
 

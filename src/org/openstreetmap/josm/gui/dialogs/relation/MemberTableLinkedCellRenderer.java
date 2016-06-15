@@ -125,8 +125,8 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
             setDotted(g);
             y1 = 7;
 
-            int[] xValues  = {xoff - xowloop + 1, xoff - xowloop + 1, xoff};
-            int[] yValues  = {ymax, y1+1, 1};
+            int[] xValues = {xoff - xowloop + 1, xoff - xowloop + 1, xoff};
+            int[] yValues = {ymax, y1+1, 1};
             g.drawPolyline(xValues, yValues, 3);
             unsetDotted(g);
             g.drawLine(xoff + xowloop, y1+1, xoff, 1);
@@ -136,8 +136,8 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
             setDotted(g);
             y2 = ymax - 7;
 
-            int[] xValues  = {xoff+1, xoff - xowloop + 1, xoff - xowloop + 1};
-            int[] yValues  = {ymax-1, y2, y1};
+            int[] xValues = {xoff+1, xoff - xowloop + 1, xoff - xowloop + 1};
+            int[] yValues = {ymax-1, y2, y1};
             g.drawPolyline(xValues, yValues, 3);
             unsetDotted(g);
             g.drawLine(xoff + xowloop, y2, xoff, ymax-1);

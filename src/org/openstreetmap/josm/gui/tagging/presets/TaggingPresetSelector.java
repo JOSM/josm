@@ -61,7 +61,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
     private static final int CLASSIFICATION_TAGS_MATCH = 100;
 
     private static final BooleanProperty SEARCH_IN_TAGS = new BooleanProperty("taggingpreset.dialog.search-in-tags", true);
-    private static final BooleanProperty ONLY_APPLICABLE  = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
+    private static final BooleanProperty ONLY_APPLICABLE = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
 
     private final JCheckBox ckOnlyApplicable;
     private final JCheckBox ckSearchInTags;

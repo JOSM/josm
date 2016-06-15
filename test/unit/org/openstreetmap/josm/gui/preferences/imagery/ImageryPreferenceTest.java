@@ -25,7 +25,7 @@ public class ImageryPreferenceTest {
      * Unit test of {@link ImageryPreference#ImageryPreference}.
      */
     @Test
-    public void testImageryPreference()  {
+    public void testImageryPreference() {
         assertNotNull(new ImageryPreference.Factory().createPreferenceSetting());
     }
 

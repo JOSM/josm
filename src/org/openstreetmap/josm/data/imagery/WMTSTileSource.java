@@ -60,7 +60,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 8526
  */
 public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTileSource {
-    private static final String PATTERN_HEADER  = "\\{header\\(([^,]+),([^}]+)\\)\\}";
+    private static final String PATTERN_HEADER = "\\{header\\(([^,]+),([^}]+)\\)\\}";
 
     private static final String URL_GET_ENCODING_PARAMS = "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER={layer}&STYLE={style}&"
             + "FORMAT={format}&tileMatrixSet={TileMatrixSet}&tileMatrix={TileMatrix}&tileRow={TileRow}&tileCol={TileCol}";
@@ -811,7 +811,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     @Override
     public TileXY latLonToTileXY(ICoordinate point, int zoom) {
-        return latLonToTileXY(point.getLat(),  point.getLon(), zoom);
+        return latLonToTileXY(point.getLat(), point.getLon(), zoom);
     }
 
     @Override
@@ -843,7 +843,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         double scale = matrix.scaleDenominator * this.crsScale;
         EastNorth point = Main.getProjection().latlon2eastNorth(new LatLon(lat, lon));
         return new Point(
-                    (int) Math.round((point.east() - matrix.topLeftCorner.east())   / scale),
+                    (int) Math.round((point.east() - matrix.topLeftCorner.east()) / scale),
                     (int) Math.round((matrix.topLeftCorner.north() - point.north()) / scale)
                 );
     }

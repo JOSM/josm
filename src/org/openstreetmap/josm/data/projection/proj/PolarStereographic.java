@@ -134,7 +134,7 @@ public class PolarStereographic extends AbstractProj {
             y = rho * coslon;
         } else {
             final double rho = k0 * tsfn(y, sinlat);
-            x =  rho * sinlon;
+            x = rho * sinlon;
             y = -rho * coslon;
         }
         return new double[] {x, y};

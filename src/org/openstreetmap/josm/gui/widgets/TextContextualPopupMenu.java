@@ -173,7 +173,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
         return component != null;
     }
 
-    protected void addMenuEntry(JTextComponent component,  String label, String actionName, String iconName) {
+    protected void addMenuEntry(JTextComponent component, String label, String actionName, String iconName) {
         Action action = component.getActionMap().get(actionName);
         if (action != null) {
             JMenuItem mi = new JMenuItem(action);

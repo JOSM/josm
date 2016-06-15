@@ -633,7 +633,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
                 }
             }
             super.setIncomplete(incomplete);
-        }  finally {
+        } finally {
             writeUnlock(locked);
         }
     }
@@ -1265,7 +1265,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     boolean hasEqualSemanticAttributes(final OsmPrimitive other, final boolean testInterestingTagsOnly) {
-        if (!isNew() &&  id != other.id)
+        if (!isNew() && id != other.id)
             return false;
         if (isIncomplete() ^ other.isIncomplete()) // exclusive or operator for performance (see #7159)
             return false;
@@ -1290,7 +1290,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     public boolean hasEqualTechnicalAttributes(OsmPrimitive other) {
         if (other == null) return false;
 
-        return  isDeleted() == other.isDeleted()
+        return isDeleted() == other.isDeleted()
                 && isModified() == other.isModified()
                 && timestamp == other.timestamp
                 && version == other.version

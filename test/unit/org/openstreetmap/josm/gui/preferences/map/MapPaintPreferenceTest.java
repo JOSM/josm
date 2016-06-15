@@ -25,7 +25,7 @@ public class MapPaintPreferenceTest {
      * Unit test of {@link MapPaintPreference#MapPaintPreference}.
      */
     @Test
-    public void testMapPaintPreference()  {
+    public void testMapPaintPreference() {
         assertNotNull(new MapPaintPreference.Factory().createPreferenceSetting());
     }
 

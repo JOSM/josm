@@ -140,7 +140,7 @@ public class DatasetConsistencyTest {
             printError("NO DATASET", "%s is referenced by %s but not found in dataset", primitive, parent);
         } else if (dataSet.getPrimitiveById(primitive) == null) {
             printError("REFERENCED BUT NOT IN DATA", "%s is referenced by %s but not found in dataset", primitive, parent);
-        } else  if (dataSet.getPrimitiveById(primitive) != primitive) {
+        } else if (dataSet.getPrimitiveById(primitive) != primitive) {
             printError("DIFFERENT INSTANCE", "%s is different instance that referred by %s", primitive, parent);
         }
 

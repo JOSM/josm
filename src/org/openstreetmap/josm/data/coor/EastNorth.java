@@ -161,8 +161,10 @@ public class EastNorth extends Coordinate {
         double sinPhi = Math.sin(angle);
         double x = east() - pivot.east();
         double y = north() - pivot.north();
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         double nx =  cosPhi * x + sinPhi * y + pivot.east();
         double ny = -sinPhi * x + cosPhi * y + pivot.north();
+        // CHECKSTYLE.ON: SingleSpaceSeparator
         return new EastNorth(nx, ny);
     }
 

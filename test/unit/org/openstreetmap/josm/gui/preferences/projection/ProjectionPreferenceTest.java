@@ -26,7 +26,7 @@ public class ProjectionPreferenceTest {
      * Unit test of {@link ProjectionPreference#ProjectionPreference}.
      */
     @Test
-    public void testProjectionPreference()  {
+    public void testProjectionPreference() {
         assertNotNull(new ProjectionPreference.Factory().createPreferenceSetting());
     }
 

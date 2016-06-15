@@ -59,7 +59,7 @@ public class NodeElement extends StyleElement {
             if (obj == null || getClass() != obj.getClass())
                 return false;
             final Symbol other = (Symbol) obj;
-            return  symbol == other.symbol &&
+            return symbol == other.symbol &&
                     size == other.size &&
                     Objects.equals(stroke, other.stroke) &&
                     Objects.equals(strokeColor, other.strokeColor) &&

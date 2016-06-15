@@ -63,7 +63,7 @@ public class PurgeAction extends JosmAction {
      */
     public PurgeAction() {
         /* translator note: other expressions for "purge" might be "forget", "clean", "obliterate", "prune" */
-        super(tr("Purge..."), "purge",  tr("Forget objects but do not delete them on server when uploading."),
+        super(tr("Purge..."), "purge", tr("Forget objects but do not delete them on server when uploading."),
                 Shortcut.registerShortcut("system:purge", tr("Edit: {0}", tr("Purge")),
                 KeyEvent.VK_P, Shortcut.CTRL_SHIFT),
                 true);
@@ -271,7 +271,7 @@ public class PurgeAction extends JosmAction {
 
             JButton addToSelection = new JButton(new AbstractAction() {
                 {
-                    putValue(SHORT_DESCRIPTION,   tr("Add to selection"));
+                    putValue(SHORT_DESCRIPTION, tr("Add to selection"));
                     putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
                 }
 

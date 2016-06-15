@@ -168,7 +168,7 @@ public class MergeSourceBuildingVisitorTest {
         n20.setCoor(LatLon.ZERO);
         r1.addMember(new RelationMember("node-20", n20));
         Way w30 = new Way(30, 1);
-        Node n21  = new Node(21);
+        Node n21 = new Node(21);
         w30.addNode(n21);
         Node n22 = new Node(22);
         w30.addNode(n22);

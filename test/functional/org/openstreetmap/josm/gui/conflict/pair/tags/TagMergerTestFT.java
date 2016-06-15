@@ -31,7 +31,7 @@ public class TagMergerTestFT extends JFrame {
     }
 
     public static void main(String[] args) {
-        TagMergerTestFT test  = new TagMergerTestFT();
+        TagMergerTestFT test = new TagMergerTestFT();
         test.setSize(600, 600);
         test.setVisible(true);
     }

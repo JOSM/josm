@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * The action for editing a relation.
  * @since 5793
  */
-public class EditRelationAction extends AbstractRelationAction  {
+public class EditRelationAction extends AbstractRelationAction {
 
     /**
      * Constructs a new <code>EditRelationAction</code>.

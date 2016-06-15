@@ -44,10 +44,12 @@ public final class ValUtil {
         Point2D cell;
 
         // First, round coordinates
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         long x0 = Math.round(n1.getEastNorth().east()  * OsmValidator.griddetail);
         long y0 = Math.round(n1.getEastNorth().north() * OsmValidator.griddetail);
         long x1 = Math.round(n2.getEastNorth().east()  * OsmValidator.griddetail);
         long y1 = Math.round(n2.getEastNorth().north() * OsmValidator.griddetail);
+        // CHECKSTYLE.ON: SingleSpaceSeparator
 
         // Start of the way
         cell = new Point2D.Double(x0, y0);
@@ -72,10 +74,12 @@ public final class ValUtil {
         }
 
         // Then floor coordinates, in case the way is in the border of the cell.
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         x0 = (long) Math.floor(n1.getEastNorth().east()  * OsmValidator.griddetail);
         y0 = (long) Math.floor(n1.getEastNorth().north() * OsmValidator.griddetail);
         x1 = (long) Math.floor(n2.getEastNorth().east()  * OsmValidator.griddetail);
         y1 = (long) Math.floor(n2.getEastNorth().north() * OsmValidator.griddetail);
+        // CHECKSTYLE.ON: SingleSpaceSeparator
 
         // Start of the way
         cell = new Point2D.Double(x0, y0);
@@ -146,8 +150,8 @@ public final class ValUtil {
             aux = y0; y0 = y1; y1 = aux;
         }
 
-        double dx  = x1 - x0;
-        double dy  = y1 - y0;
+        double dx = x1 - x0;
+        double dy = y1 - y0;
         long stepY = y0 <= y1 ? 1 : -1;
         long gridX0 = (long) Math.floor(x0);
         long gridX1 = (long) Math.floor(x1);

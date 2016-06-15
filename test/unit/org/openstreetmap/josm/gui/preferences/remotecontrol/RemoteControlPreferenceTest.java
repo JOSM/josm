@@ -25,7 +25,7 @@ public class RemoteControlPreferenceTest {
      * Unit test of {@link RemoteControlPreference#RemoteControlPreference}.
      */
     @Test
-    public void testRemoteControlPreference()  {
+    public void testRemoteControlPreference() {
         assertNotNull(new RemoteControlPreference.Factory().createPreferenceSetting());
     }
 

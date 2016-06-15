@@ -399,7 +399,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                     getAdvancedPropertiesPanel().getAdvancedParameters()
             );
             executor.execute(task);
-            Runnable r  = new Runnable() {
+            Runnable r = new Runnable() {
                 @Override
                 public void run() {
                     if (task.isCanceled()) return;
@@ -436,7 +436,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                     requestToken
             );
             executor.execute(task);
-            Runnable r  = new Runnable() {
+            Runnable r = new Runnable() {
                 @Override
                 public void run() {
                     if (task.isCanceled()) return;

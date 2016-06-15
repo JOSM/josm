@@ -79,7 +79,7 @@ public class Text extends KeyedItem {
             textField.setMaxChars(Integer.valueOf(length));
         }
         if (usage.unused()) {
-            if (auto_increment_selected != 0  && auto_increment != null) {
+            if (auto_increment_selected != 0 && auto_increment != null) {
                 try {
                     textField.setText(Integer.toString(Integer.parseInt(
                             LAST_VALUES.get(key)) + auto_increment_selected));

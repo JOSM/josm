@@ -40,7 +40,7 @@ public class SaveLayerTask extends AbstractIOTask {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
-        this.layerInfo =  layerInfo;
+        this.layerInfo = layerInfo;
         this.parentMonitor = monitor;
     }
 

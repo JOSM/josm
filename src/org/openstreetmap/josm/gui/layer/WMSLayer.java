@@ -35,7 +35,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
  *
  */
 public class WMSLayer extends AbstractCachedTileSourceLayer<TemplatedWMSTileSource> {
-    private static final String PREFERENCE_PREFIX   = "imagery.wms.";
+    private static final String PREFERENCE_PREFIX = "imagery.wms.";
 
     /** default tile size for WMS Layer */
     public static final IntegerProperty PROP_IMAGE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + "imageSize", 512);
@@ -107,7 +107,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<TemplatedWMSTileSour
     public boolean isProjectionSupported(Projection proj) {
         return supportedProjections == null || supportedProjections.isEmpty() || supportedProjections.contains(proj.toCode()) ||
                 (info.isEpsg4326To3857Supported() && supportedProjections.contains("EPSG:4326")
-                        &&  "EPSG:3857".equals(Main.getProjection().toCode()));
+                        && "EPSG:3857".equals(Main.getProjection().toCode()));
     }
 
     @Override
@@ -169,6 +169,6 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<TemplatedWMSTileSour
     }
 
     private boolean isReprojectionPossible() {
-        return supportedProjections.contains("EPSG:4326") &&  "EPSG:3857".equals(Main.getProjection().toCode());
+        return supportedProjections.contains("EPSG:4326") && "EPSG:3857".equals(Main.getProjection().toCode());
     }
 }

@@ -19,7 +19,7 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
             throws CredentialsAgentException {
         if (requestorType == null)
             return null;
-        PasswordAuthentication credentials =  lookup(requestorType, host);
+        PasswordAuthentication credentials = lookup(requestorType, host);
         final String username = (credentials == null || credentials.getUserName() == null) ? "" : credentials.getUserName();
         final String password = (credentials == null || credentials.getPassword() == null) ? "" : String.valueOf(credentials.getPassword());
 

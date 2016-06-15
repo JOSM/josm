@@ -136,7 +136,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         Map<String, String> headers = new HashMap<>();
         headers.put("User-Agent", Version.getInstance().getFullAgentString());
 
-        cachedLoader = AbstractCachedTileSourceLayer.getTileLoaderFactory("TMS", TMSCachedTileLoader.class).makeTileLoader(this,  headers);
+        cachedLoader = AbstractCachedTileSourceLayer.getTileLoaderFactory("TMS", TMSCachedTileLoader.class).makeTileLoader(this, headers);
 
         uncachedLoader = new OsmTileLoader(this);
         uncachedLoader.headers.putAll(headers);
@@ -239,7 +239,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         Point pMin = new Point(Math.min(aEnd.x, aStart.x), Math.min(aEnd.y, aStart.y));
 
         iSelectionRectStart = getPosition(pMin);
-        iSelectionRectEnd =   getPosition(pMax);
+        iSelectionRectEnd = getPosition(pMax);
 
         Bounds b = new Bounds(
                 new LatLon(

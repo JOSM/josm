@@ -29,7 +29,7 @@ public class ListEditorTest {
      * Unit test of {@link ListSettingTableModel} class.
      */
     @Test
-    public void testListSettingTableModel()  {
+    public void testListSettingTableModel() {
         ListSettingTableModel model = new ListSettingTableModel(null);
         assertNotNull(model.getData());
         model = new ListSettingTableModel(Arrays.asList("foo"));

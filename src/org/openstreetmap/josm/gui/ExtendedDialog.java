@@ -406,8 +406,8 @@ public class ExtendedDialog extends JDialog {
         boolean limitedInWidth = d.width > x.width;
         boolean limitedInHeight = d.height > x.height;
 
-        if (x.width  > 0 && d.width  > x.width) {
-            d.width  = x.width;
+        if (x.width > 0 && d.width > x.width) {
+            d.width = x.width;
         }
         if (x.height > 0 && d.height > x.height) {
             d.height = x.height;

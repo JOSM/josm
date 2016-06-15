@@ -79,7 +79,7 @@ public interface NativeScaleLayer {
     /**
      * List of scales, may include intermediate steps between native resolutions
      */
-    class ScaleList  {
+    class ScaleList {
         private final List<Scale> scales = new ArrayList<>();
 
         protected ScaleList() {

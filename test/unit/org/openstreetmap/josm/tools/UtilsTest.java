@@ -23,6 +23,7 @@ public class UtilsTest {
      */
     @Test
     public void testStrip() {
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         final String someWhite =
             "\u00A0"+ // SPACE_SEPARATOR
             "\u2007"+ // LINE_SEPARATOR
@@ -41,6 +42,7 @@ public class UtilsTest {
             "\u200B"+ // ZERO WIDTH SPACE
             "\uFEFF"+ // ZERO WIDTH NO-BREAK SPACE
             "\u3000"; // IDEOGRAPHIC SPACE
+        // CHECKSTYLE.ON: SingleSpaceSeparator
         Assert.assertNull(Utils.strip(null));
         Assert.assertEquals("", Utils.strip(""));
         Assert.assertEquals("", Utils.strip(" "));

@@ -35,7 +35,7 @@ public class ImageryInfoTest {
      */
     @Test
     public void testGetExtendedUrl() {
-        ImageryInfo testImageryTMS =  new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
+        ImageryInfo testImageryTMS = new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
         testImageryTMS.setDefaultMinZoom(16);
         testImageryTMS.setDefaultMaxZoom(23);
         assertEquals("tms[16,23]:http://localhost", testImageryTMS.getExtendedUrl());

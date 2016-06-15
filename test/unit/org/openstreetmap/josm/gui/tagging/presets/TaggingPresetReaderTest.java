@@ -57,7 +57,7 @@ public class TaggingPresetReaderTest {
     public void testNestedChunks() throws SAXException, IOException {
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll(TestUtils.getTestDataRoot() + "preset_chunk.xml", true);
         assertThat(presets, hasSize(1));
-        final TaggingPreset abc =  presets.iterator().next();
+        final TaggingPreset abc = presets.iterator().next();
         final List<String> keys = Utils.transform(abc.data, new Utils.Function<TaggingPresetItem, String>() {
             @Override
             public String apply(TaggingPresetItem x) {

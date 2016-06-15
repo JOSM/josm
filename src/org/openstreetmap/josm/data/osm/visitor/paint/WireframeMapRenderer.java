@@ -426,7 +426,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
             path.lineTo(p2.x, p2.y);
 
             if (showDirection) {
-                final double l =  10. / p1.distance(p2);
+                final double l = 10. / p1.distance(p2);
 
                 final double sx = l * (p1.x - p2.x);
                 final double sy = l * (p1.y - p2.y);

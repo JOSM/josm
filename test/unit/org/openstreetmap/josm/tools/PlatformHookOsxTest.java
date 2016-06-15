@@ -35,7 +35,7 @@ public class PlatformHookOsxTest {
      * Test method for {@code PlatformHookOsx#startupHook}
      */
     @Test
-    public void testStartupHook()  {
+    public void testStartupHook() {
         hook.startupHook();
     }
 

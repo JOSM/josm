@@ -87,7 +87,7 @@ import org.openstreetmap.josm.tools.Utils;
  * A small tool dialog for displaying the current selection.
  * @since 8
  */
-public class SelectionListDialog extends ToggleDialog  {
+public class SelectionListDialog extends ToggleDialog {
     private JList<OsmPrimitive> lstPrimitives;
     private final DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
     private final SelectionListModel model = new SelectionListModel(selectionModel);
@@ -297,7 +297,7 @@ public class SelectionListDialog extends ToggleDialog  {
          */
         SearchAction() {
             putValue(NAME, tr("Search"));
-            putValue(SHORT_DESCRIPTION,   tr("Search for objects"));
+            putValue(SHORT_DESCRIPTION, tr("Search for objects"));
             new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }

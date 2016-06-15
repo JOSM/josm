@@ -110,7 +110,7 @@ public class HistoryRelation extends HistoryOsmPrimitive {
      * @return the idx-th member
      * @throws IndexOutOfBoundsException if idx is out of bounds
      */
-    public RelationMemberData getRelationMember(int idx) throws IndexOutOfBoundsException  {
+    public RelationMemberData getRelationMember(int idx) throws IndexOutOfBoundsException {
         if (idx < 0 || idx >= members.size())
             throw new IndexOutOfBoundsException(
                     MessageFormat.format("Parameter {0} not in range 0..{1}. Got ''{2}''.", "idx", members.size(), idx));

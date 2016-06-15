@@ -146,7 +146,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
                 }
             }
             model.fireContentsChanged();
-            int idx =  filteredData.indexOf(lastCode);
+            int idx = filteredData.indexOf(lastCode);
             if (idx == -1) {
                 selectionList.clearSelection();
                 if (selectionList.getModel().getSize() > 0) {

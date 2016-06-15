@@ -26,7 +26,7 @@ public class AudioPreferenceTest {
      * Unit test of {@link AudioPreference#AudioPreference}.
      */
     @Test
-    public void testAudioPreference()  {
+    public void testAudioPreference() {
         assertNotNull(new AudioPreference.Factory().createPreferenceSetting());
     }
 

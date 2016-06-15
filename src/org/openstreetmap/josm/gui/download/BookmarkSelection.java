@@ -80,7 +80,7 @@ public class BookmarkSelection implements DownloadSelection {
     protected JPanel buildDownloadAreaAddPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
 
-        GridBagConstraints  gc = new GridBagConstraints();
+        GridBagConstraints gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.insets = new Insets(5, 5, 5, 5);
         pnl.add(lblCurrentDownloadArea, gc);

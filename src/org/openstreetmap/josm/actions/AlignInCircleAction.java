@@ -270,7 +270,7 @@ public final class AlignInCircleAction extends JosmAction {
                     PolarCoor pcLast = new PolarCoor(nodes.get(j % nodeCount).getEastNorth(), center, 0);
                     delta = pcLast.angle - pcFirst.angle;
                     if (delta < 0) // Assume each PolarCoor.angle is in range ]-pi; pi]
-                        delta +=  2*Math.PI;
+                        delta += 2*Math.PI;
                     delta /= j - i;
                 }
                 for (int k = i+1; k < j; k++) {

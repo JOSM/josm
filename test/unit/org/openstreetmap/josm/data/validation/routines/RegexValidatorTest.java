@@ -36,17 +36,19 @@ import org.openstreetmap.josm.Main;
  */
 public class RegexValidatorTest {
 
-    private static final String REGEX         = "^([abc]*)(?:\\-)([DEF]*)(?:\\-)([123]*)$";
+    private static final String REGEX = "^([abc]*)(?:\\-)([DEF]*)(?:\\-)([123]*)$";
 
     private static final String COMPONENT_1 = "([abc]{3})";
     private static final String COMPONENT_2 = "([DEF]{3})";
     private static final String COMPONENT_3 = "([123]{3})";
-    private static final String SEPARATOR_1  = "(?:\\-)";
-    private static final String SEPARATOR_2  = "(?:\\s)";
+    private static final String SEPARATOR_1 = "(?:\\-)";
+    private static final String SEPARATOR_2 = "(?:\\s)";
     private static final String REGEX_1 = "^" + COMPONENT_1 + SEPARATOR_1 + COMPONENT_2 + SEPARATOR_1 + COMPONENT_3 + "$";
     private static final String REGEX_2 = "^" + COMPONENT_1 + SEPARATOR_2 + COMPONENT_2 + SEPARATOR_2 + COMPONENT_3 + "$";
     private static final String REGEX_3 = "^" + COMPONENT_1 + COMPONENT_2 + COMPONENT_3 + "$";
     private static final String[] MULTIPLE_REGEX = new String[] {REGEX_1, REGEX_2, REGEX_3};
+
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
 
     /**
      * Test instance methods with single regular expression.
@@ -84,10 +86,10 @@ public class RegexValidatorTest {
     public void testMultipleSensitive() {
 
         // ------------ Set up Sensitive Validators
-        RegexValidator multiple   = new RegexValidator(MULTIPLE_REGEX);
-        RegexValidator single1   = new RegexValidator(REGEX_1);
-        RegexValidator single2   = new RegexValidator(REGEX_2);
-        RegexValidator single3   = new RegexValidator(REGEX_3);
+        RegexValidator multiple = new RegexValidator(MULTIPLE_REGEX);
+        RegexValidator single1  = new RegexValidator(REGEX_1);
+        RegexValidator single2  = new RegexValidator(REGEX_2);
+        RegexValidator single3  = new RegexValidator(REGEX_3);
 
         // ------------ Set up test values
         String value = "aac FDE 321";
@@ -127,9 +129,9 @@ public class RegexValidatorTest {
 
         // ------------ Set up In-sensitive Validators
         RegexValidator multiple = new RegexValidator(MULTIPLE_REGEX, false);
-        RegexValidator single1   = new RegexValidator(REGEX_1, false);
-        RegexValidator single2   = new RegexValidator(REGEX_2, false);
-        RegexValidator single3   = new RegexValidator(REGEX_3, false);
+        RegexValidator single1  = new RegexValidator(REGEX_1, false);
+        RegexValidator single2  = new RegexValidator(REGEX_2, false);
+        RegexValidator single3  = new RegexValidator(REGEX_3, false);
 
         // ------------ Set up test values
         String value = "AAC FDE 321";
@@ -171,6 +173,8 @@ public class RegexValidatorTest {
         assertNull("Instance validate()", validator.validate(null));
         assertNull("Instance match()",    validator.match(null));
     }
+
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /**
      * Test exceptions

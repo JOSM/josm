@@ -59,7 +59,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
     private final JRadioButton colorTypeTime = new JRadioButton(tr("Track date"));
     private final JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized for named layers)"));
-    private final JRadioButton colorTypeGlobal  = new JRadioButton(tr("Use global settings"));
+    private final JRadioButton colorTypeGlobal = new JRadioButton(tr("Use global settings"));
     private final JosmComboBox<String> colorTypeVelocityTune = new JosmComboBox<>(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
     private final JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX"));
     private final JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
@@ -358,11 +358,11 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         } else {
             int colorType = Main.pref.getInteger("draw.rawgps.colors", layerName, 0);
             switch (colorType) {
-            case 0: colorTypeNone.setSelected(true);   break;
-            case 1: colorTypeVelocity.setSelected(true);  break;
-            case 2: colorTypeDilution.setSelected(true);  break;
+            case 0: colorTypeNone.setSelected(true); break;
+            case 1: colorTypeVelocity.setSelected(true); break;
+            case 2: colorTypeDilution.setSelected(true); break;
             case 3: colorTypeDirection.setSelected(true); break;
-            case 4: colorTypeTime.setSelected(true);  break;
+            case 4: colorTypeTime.setSelected(true); break;
             default: Main.warn("Unknown color type: " + colorType);
             }
             int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune", layerName, 45);
@@ -396,7 +396,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             Main.pref.put("draw.rawgps.min-arrow-distance"+layerNameDot, null);
         } else {
             if (layerName == null || !locLayer) {
-                Main.pref.put("draw.rawgps.lines" +  layerNameDot, drawRawGpsLinesAll.isSelected());
+                Main.pref.put("draw.rawgps.lines" + layerNameDot, drawRawGpsLinesAll.isSelected());
                 Main.pref.put("draw.rawgps.max-line-length" + layerNameDot, drawRawGpsMaxLineLength.getText());
             }
             if (layerName == null || locLayer) {

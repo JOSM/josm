@@ -124,7 +124,7 @@ public final class TextTagParser {
             boolean signFound = false;
             while (pos < n) {
                 c = data.charAt(pos);
-                if (c == '\t' || c == '\n'  || c == ' ') {
+                if (c == '\t' || c == '\n' || c == ' ') {
                     pos++;
                 } else if (c == '=') {
                     if (signFound) break; // a  =  =qwerty means "a"="=qwerty"
@@ -176,7 +176,7 @@ public final class TextTagParser {
          Map<String, String> tags = new HashMap<>();
          String k;
          String v;
-         for (String  line: lines) {
+         for (String line: lines) {
             if (line.trim().isEmpty()) continue; // skip empty lines
             Matcher m = p.matcher(line);
             if (m.matches()) {
@@ -194,7 +194,7 @@ public final class TextTagParser {
          }
          if (!tags.isEmpty()) {
             return tags;
-         }  else {
+         } else {
             return null;
          }
     }

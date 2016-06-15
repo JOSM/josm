@@ -105,7 +105,7 @@ public class XmlObjectParser implements Iterable<Object> {
                 report();
             } else if (mapping.containsKey(qname) && characters != null && !current.isEmpty()) {
                 setValue(mapping.get(qname), qname, characters.toString().trim());
-                characters  = new StringBuilder(64);
+                characters = new StringBuilder(64);
             }
         }
 
@@ -116,7 +116,7 @@ public class XmlObjectParser implements Iterable<Object> {
 
         private void report() {
             queue.add(current.pop());
-            characters  = new StringBuilder(64);
+            characters = new StringBuilder(64);
         }
 
         private Object getValueForClass(Class<?> klass, String value) {

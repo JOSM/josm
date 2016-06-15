@@ -137,7 +137,7 @@ public class OsmServerBackreferenceReaderTest {
         logger.info("creating data set on the server ...");
         ds.adjustRelationUploadOrder();
         OsmServerWriter writer = new OsmServerWriter();
-        Changeset cs  = new Changeset();
+        Changeset cs = new Changeset();
         writer.uploadOsm(
                 new UploadStrategySpecification().setStrategy(UploadStrategy.SINGLE_REQUEST_STRATEGY),
                 ds.getPrimitives(), cs, NullProgressMonitor.INSTANCE);

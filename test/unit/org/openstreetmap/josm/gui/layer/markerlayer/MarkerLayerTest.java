@@ -36,7 +36,7 @@ public class MarkerLayerTest {
      * Unit test of {@link MarkerLayer#MarkerLayer}.
      */
     @Test
-    public void testMarkerLayer()  {
+    public void testMarkerLayer() {
         assertEquals(Color.magenta, MarkerLayer.getGenericColor());
         MarkerLayer layer = new MarkerLayer(new GpxData(), "foo", null, null);
 

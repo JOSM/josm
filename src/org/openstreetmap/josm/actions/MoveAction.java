@@ -33,11 +33,11 @@ public class MoveAction extends JosmAction {
     // any better idea?
     private static String calltosupermustbefirststatementinconstructortext(Direction dir) {
         String directiontext;
-        if        (dir == Direction.UP)   {
+        if (dir == Direction.UP) {
             directiontext = tr("up");
-        } else if (dir == Direction.DOWN)  {
+        } else if (dir == Direction.DOWN) {
             directiontext = tr("down");
-        } else if (dir == Direction.LEFT)  {
+        } else if (dir == Direction.LEFT) {
             directiontext = tr("left");
         } else {
             directiontext = tr("right");
@@ -48,15 +48,17 @@ public class MoveAction extends JosmAction {
     // any better idea?
     private static Shortcut calltosupermustbefirststatementinconstructor(Direction dir) {
         Shortcut sc;
-        if        (dir == Direction.UP)   {
-            sc = Shortcut.registerShortcut("core:moveup",    tr("Move objects {0}", tr("up")), KeyEvent.VK_UP,    Shortcut.SHIFT);
-        } else if (dir == Direction.DOWN)  {
-            sc = Shortcut.registerShortcut("core:movedown",  tr("Move objects {0}", tr("down")), KeyEvent.VK_DOWN,  Shortcut.SHIFT);
-        } else if (dir == Direction.LEFT)  {
-            sc = Shortcut.registerShortcut("core:moveleft",  tr("Move objects {0}", tr("left")), KeyEvent.VK_LEFT,  Shortcut.SHIFT);
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
+        if (dir == Direction.UP) {
+            sc = Shortcut.registerShortcut("core:moveup",    tr("Move objects {0}", tr("up")),    KeyEvent.VK_UP,    Shortcut.SHIFT);
+        } else if (dir == Direction.DOWN) {
+            sc = Shortcut.registerShortcut("core:movedown",  tr("Move objects {0}", tr("down")),  KeyEvent.VK_DOWN,  Shortcut.SHIFT);
+        } else if (dir == Direction.LEFT) {
+            sc = Shortcut.registerShortcut("core:moveleft",  tr("Move objects {0}", tr("left")),  KeyEvent.VK_LEFT,  Shortcut.SHIFT);
         } else { //dir == Direction.RIGHT
             sc = Shortcut.registerShortcut("core:moveright", tr("Move objects {0}", tr("right")), KeyEvent.VK_RIGHT, Shortcut.SHIFT);
         }
+        // CHECKSTYLE.ON: SingleSpaceSeparator
         return sc;
     }
 
@@ -70,11 +72,11 @@ public class MoveAction extends JosmAction {
                 calltosupermustbefirststatementinconstructor(dir), false);
         myDirection = dir;
         putValue("help", ht("/Action/Move"));
-        if        (dir == Direction.UP)   {
+        if (dir == Direction.UP) {
             putValue("toolbar", "action/move/up");
-        } else if (dir == Direction.DOWN)  {
+        } else if (dir == Direction.DOWN) {
             putValue("toolbar", "action/move/down");
-        } else if (dir == Direction.LEFT)  {
+        } else if (dir == Direction.LEFT) {
             putValue("toolbar", "action/move/left");
         } else { //dir == Direction.RIGHT
             putValue("toolbar", "action/move/right");
