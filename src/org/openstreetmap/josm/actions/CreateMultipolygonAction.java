@@ -27,6 +27,7 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -259,10 +260,11 @@ public class CreateMultipolygonAction extends JosmAction {
     /** Enable this action only if something is selected */
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(ds.getSelected());
         }
     }
 
@@ -273,12 +275,13 @@ public class CreateMultipolygonAction extends JosmAction {
       */
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else if (update) {
             setEnabled(getSelectedMultipolygonRelation() != null);
         } else {
-            setEnabled(!getCurrentDataSet().getSelectedWays().isEmpty());
+            setEnabled(!getLayerManager().getEditDataSet().getSelectedWays().isEmpty());
         }
     }
 

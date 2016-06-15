@@ -17,6 +17,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -44,7 +45,7 @@ public final class MirrorAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
+        Collection<OsmPrimitive> sel = getLayerManager().getEditDataSet().getSelected();
         Set<Node> nodes = new HashSet<>();
 
         for (OsmPrimitive osm : sel) {
@@ -85,10 +86,11 @@ public final class MirrorAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(ds.getSelected());
         }
     }
 

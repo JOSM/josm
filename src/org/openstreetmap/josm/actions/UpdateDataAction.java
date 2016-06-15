@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTaskList;
 import org.openstreetmap.josm.data.DataSource;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -39,25 +40,23 @@ public class UpdateDataAction extends JosmAction {
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getEditLayer() != null && !Main.isOffline(OnlineResource.OSM_API));
+        setEnabled(getLayerManager().getEditLayer() != null && !Main.isOffline(OnlineResource.OSM_API));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled())
-            return;
-        if (getEditLayer() == null)
+        OsmDataLayer editLayer = getLayerManager().getEditLayer();
+        if (!isEnabled() || editLayer == null)
             return;
 
         List<Area> areas = new ArrayList<>();
-        for (DataSource ds : getEditLayer().data.dataSources) {
+        for (DataSource ds : editLayer.data.dataSources) {
             areas.add(new Area(ds.bounds.asRect()));
         }
 
         // The next two blocks removes every intersection from every DataSource Area
         // This prevents downloading the same data numerous times at intersections
-        // and also skips smaller bounding boxes that are contained within larger ones
-        // entirely.
+        // and also skips smaller bounding boxes that are contained within larger ones entirely.
         for (int i = 0; i < areas.size(); i++) {
             for (int j = i+1; j < areas.size(); j++) {
                 areas.get(i).subtract(areas.get(j));
@@ -79,13 +78,10 @@ public class UpdateDataAction extends JosmAction {
         }
 
         if (areasToDownload.isEmpty()) {
-            // no bounds defined in the dataset? we update all primitives in the data set
-            // using a series of multi fetch requests
-            //
-            UpdateSelectionAction.updatePrimitives(getEditLayer().data.allPrimitives());
+            // no bounds defined in the dataset? we update all primitives in the data set using a series of multi fetch requests
+            UpdateSelectionAction.updatePrimitives(editLayer.data.allPrimitives());
         } else {
             // bounds defined? => use the bbox downloader
-            //
             final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
             final Future<?> future = new DownloadTaskList().download(false /* no new layer */, areasToDownload, true, false, monitor);
             waitFuture(future, monitor);

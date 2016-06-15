@@ -21,6 +21,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -168,8 +169,9 @@ public final class AlignInLineAction extends JosmAction {
         if (!isEnabled())
             return;
 
-        List<Node> selectedNodes = new ArrayList<>(getCurrentDataSet().getSelectedNodes());
-        List<Way> selectedWays = new ArrayList<>(getCurrentDataSet().getSelectedWays());
+        DataSet ds = getLayerManager().getEditDataSet();
+        List<Node> selectedNodes = new ArrayList<>(ds.getSelectedNodes());
+        List<Way> selectedWays = new ArrayList<>(ds.getSelectedWays());
 
         try {
             Command cmd;
@@ -414,7 +416,8 @@ public final class AlignInLineAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
+        DataSet ds = getLayerManager().getEditDataSet();
+        setEnabled(ds != null && !ds.getSelected().isEmpty());
     }
 
     @Override

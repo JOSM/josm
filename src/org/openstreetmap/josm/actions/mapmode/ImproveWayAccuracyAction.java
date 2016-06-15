@@ -134,7 +134,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
         mousePos = null;
         oldModeHelpText = "";
 
-        if (getCurrentDataSet() == null) {
+        if (getLayerManager().getEditDataSet() == null) {
             return;
         }
 
@@ -210,7 +210,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(getEditLayer() != null);
+        setEnabled(getLayerManager().getEditLayer() != null);
     }
 
     // -------------------------------------------------------------------------
@@ -409,7 +409,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
         if (state == State.selecting) {
             if (targetWay != null) {
-                getCurrentDataSet().setSelected(targetWay.getPrimitiveId());
+                getLayerManager().getEditDataSet().setSelected(targetWay.getPrimitiveId());
                 updateStateByCurrentSelection();
             }
         } else if (state == State.improving && mousePos != null) {
@@ -500,7 +500,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                 } else {
                     List<Node> nodeList = new ArrayList<>();
                     nodeList.add(candidateNode);
-                    Command deleteCmd = DeleteCommand.delete(getEditLayer(), nodeList, true);
+                    Command deleteCmd = DeleteCommand.delete(getLayerManager().getEditLayer(), nodeList, true);
                     if (deleteCmd != null) {
                         Main.main.undoRedo.add(deleteCmd);
                     }
@@ -512,8 +512,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                 EastNorth nodeEN = candidateNode.getEastNorth();
                 EastNorth cursorEN = mv.getEastNorth(mousePos.x, mousePos.y);
 
-                Main.main.undoRedo.add(new MoveCommand(candidateNode, cursorEN.east() - nodeEN.east(), cursorEN.north()
-                        - nodeEN.north()));
+                Main.main.undoRedo.add(new MoveCommand(candidateNode, cursorEN.east() - nodeEN.east(), cursorEN.north() - nodeEN.north()));
             }
         }
 
@@ -618,12 +617,13 @@ public class ImproveWayAccuracyAction extends MapMode implements
     public void startImproving(Way targetWay) {
         state = State.improving;
 
-        Collection<OsmPrimitive> currentSelection = getCurrentDataSet().getSelected();
+        DataSet ds = getLayerManager().getEditDataSet();
+        Collection<OsmPrimitive> currentSelection = ds.getSelected();
         if (currentSelection.size() != 1
                 || !currentSelection.iterator().next().equals(targetWay)) {
             selectionChangedBlocked = true;
-            getCurrentDataSet().clearSelection();
-            getCurrentDataSet().setSelected(targetWay.getPrimitiveId());
+            ds.clearSelection();
+            ds.setSelected(targetWay.getPrimitiveId());
             selectionChangedBlocked = false;
         }
 
@@ -644,7 +644,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
     private void updateStateByCurrentSelection() {
         final List<Node> nodeList = new ArrayList<>();
         final List<Way> wayList = new ArrayList<>();
-        final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
+        final Collection<OsmPrimitive> sel = getLayerManager().getEditDataSet().getSelected();
 
         // Collecting nodes and ways from the selection
         for (OsmPrimitive p : sel) {

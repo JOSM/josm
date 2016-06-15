@@ -93,7 +93,7 @@ public class SimplifyWayAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        DataSet ds = getCurrentDataSet();
+        DataSet ds = getLayerManager().getEditDataSet();
         ds.beginUpdate();
         try {
             List<Way> ways = OsmPrimitive.getFilteredList(ds.getSelected(), Way.class);
@@ -275,10 +275,11 @@ public class SimplifyWayAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(ds.getSelected());
         }
     }
 

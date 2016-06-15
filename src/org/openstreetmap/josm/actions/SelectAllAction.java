@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class SelectAllAction extends JosmAction {
@@ -24,7 +25,8 @@ public class SelectAllAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        getCurrentDataSet().setSelected(getCurrentDataSet().allNonDeletedCompletePrimitives());
+        DataSet ds = getLayerManager().getEditDataSet();
+        ds.setSelected(ds.allNonDeletedCompletePrimitives());
     }
 
     /**
@@ -33,6 +35,6 @@ public class SelectAllAction extends JosmAction {
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getEditLayer() != null);
+        setEnabled(getLayerManager().getEditLayer() != null);
     }
 }

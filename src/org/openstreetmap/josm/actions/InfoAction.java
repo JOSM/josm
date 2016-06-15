@@ -34,7 +34,7 @@ public class InfoAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        DataSet set = getCurrentDataSet();
+        DataSet set = getLayerManager().getEditDataSet();
         if (set != null) {
             new InspectPrimitiveDialog(set.getAllSelected(), Main.main.getEditLayer()).showDialog();
         }
@@ -42,10 +42,11 @@ public class InfoAction extends JosmAction {
 
     @Override
     public void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getAllSelected());
+            updateEnabledState(ds.getAllSelected());
         }
     }
 

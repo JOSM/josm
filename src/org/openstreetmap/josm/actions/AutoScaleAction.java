@@ -278,7 +278,7 @@ public class AutoScaleAction extends JosmAction {
     private BoundingXYVisitor modeSelectionOrConflict(BoundingXYVisitor v) {
         Collection<OsmPrimitive> sel = new HashSet<>();
         if ("selection".equals(mode)) {
-            sel = getCurrentDataSet().getSelected();
+            sel = getLayerManager().getEditDataSet().getSelected();
         } else {
             Conflict<? extends OsmPrimitive> c = Main.map.conflictDialog.getSelectedConflict();
             if (c != null) {
@@ -311,7 +311,7 @@ public class AutoScaleAction extends JosmAction {
         if (lastZoomTime > 0 && System.currentTimeMillis() - lastZoomTime > Main.pref.getLong("zoom.bounds.reset.time", 10L*1000L)) {
             lastZoomTime = -1;
         }
-        final DataSet dataset = getCurrentDataSet();
+        final DataSet dataset = getLayerManager().getEditDataSet();
         if (dataset != null) {
             List<DataSource> dataSources = new ArrayList<>(dataset.getDataSources());
             int s = dataSources.size();
@@ -340,9 +340,10 @@ public class AutoScaleAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
+        DataSet ds = getLayerManager().getEditDataSet();
         switch (mode) {
         case "selection":
-            setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
+            setEnabled(ds != null && !ds.getSelected().isEmpty());
             break;
         case "layer":
             setEnabled(getFirstSelectedLayer() != null);
@@ -351,7 +352,7 @@ public class AutoScaleAction extends JosmAction {
             setEnabled(Main.map != null && Main.map.conflictDialog.getSelectedConflict() != null);
             break;
         case "download":
-            setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getDataSources().isEmpty());
+            setEnabled(ds != null && !ds.getDataSources().isEmpty());
             break;
         case "problem":
             setEnabled(Main.map != null && Main.map.validatorDialog.getSelectedError() != null);
@@ -363,7 +364,7 @@ public class AutoScaleAction extends JosmAction {
             setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasZoomRedoEntries());
             break;
         default:
-            setEnabled(!Main.getLayerManager().getLayers().isEmpty());
+            setEnabled(!getLayerManager().getLayers().isEmpty());
         }
     }
 

@@ -32,6 +32,7 @@ import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.PurgeCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -93,7 +94,7 @@ public class PurgeAction extends JosmAction {
         if (!isEnabled())
             return;
 
-        Collection<OsmPrimitive> sel = getCurrentDataSet().getAllSelected();
+        Collection<OsmPrimitive> sel = getLayerManager().getEditDataSet().getAllSelected();
         layer = Main.main.getEditLayer();
 
         toPurge = new HashSet<>(sel);
@@ -220,7 +221,7 @@ public class PurgeAction extends JosmAction {
 
         if (clearUndoRedo) {
             Main.main.undoRedo.clean();
-            getCurrentDataSet().clearSelectionHistory();
+            getLayerManager().getEditDataSet().clearSelectionHistory();
         }
     }
 
@@ -302,10 +303,11 @@ public class PurgeAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            setEnabled(!(getCurrentDataSet().selectionEmpty()));
+            setEnabled(!ds.selectionEmpty());
         }
     }
 

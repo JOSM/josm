@@ -27,6 +27,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.TagCollection;
@@ -204,9 +205,10 @@ public class CombineWayAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        if (getCurrentDataSet() == null)
+        final DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null)
             return;
-        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
+        Collection<OsmPrimitive> selection = ds.getSelected();
         Set<Way> selectedWays = OsmPrimitive.getFilteredSet(selection, Way.class);
         if (selectedWays.size() < 2) {
             new Notification(
@@ -232,7 +234,7 @@ public class CombineWayAction extends JosmAction {
             Runnable guiTask = new Runnable() {
                 @Override
                 public void run() {
-                    getCurrentDataSet().setSelected(selectedWay);
+                    ds.setSelected(selectedWay);
                 }
             };
             GuiHelper.runInEDT(guiTask);
@@ -241,12 +243,12 @@ public class CombineWayAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
             return;
         }
-        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
-        updateEnabledState(selection);
+        updateEnabledState(ds.getSelected());
     }
 
     @Override

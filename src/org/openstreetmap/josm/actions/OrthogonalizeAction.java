@@ -25,6 +25,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -98,7 +99,7 @@ public final class OrthogonalizeAction extends JosmAction {
             if (!isEnabled())
                 return;
             final Collection<Command> commands = new LinkedList<>();
-            final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
+            final Collection<OsmPrimitive> sel = getLayerManager().getEditDataSet().getSelected();
             try {
                 for (OsmPrimitive p : sel) {
                     if (!(p instanceof Node)) throw new InvalidUserInputException("selected object is not a node");
@@ -145,7 +146,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 return;
         }
 
-        final Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
+        final Collection<OsmPrimitive> sel = getLayerManager().getEditDataSet().getSelected();
 
         try {
             final SequenceCommand command = orthogonalize(sel);
@@ -616,7 +617,8 @@ public final class OrthogonalizeAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
+        DataSet ds = getLayerManager().getEditDataSet();
+        setEnabled(ds != null && !ds.getSelected().isEmpty());
     }
 
     @Override

@@ -95,7 +95,7 @@ public class ValidateAction extends JosmAction {
 
     @Override
     public void updateEnabledState() {
-        setEnabled(getEditLayer() != null);
+        setEnabled(getLayerManager().getEditLayer() != null);
     }
 
     @Override

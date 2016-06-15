@@ -426,11 +426,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             } else if (alt) {
                 mode = Mode.create_new;
                 // create a new segment and then select and extrude the new segment
-                getCurrentDataSet().setSelected(selectedSegment.way);
+                getLayerManager().getEditDataSet().setSelected(selectedSegment.way);
                 alwaysCreateNodes = true;
             } else {
                 mode = Mode.extrude;
-                getCurrentDataSet().setSelected(selectedSegment.way);
+                getLayerManager().getEditDataSet().setSelected(selectedSegment.way);
                 alwaysCreateNodes = shift;
             }
         }
@@ -610,7 +610,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         cmds.add(new AddCommand(wnew));
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
         Main.main.undoRedo.add(c);
-        getCurrentDataSet().setSelected(wnew);
+        getLayerManager().getEditDataSet().setSelected(wnew);
     }
 
     /**

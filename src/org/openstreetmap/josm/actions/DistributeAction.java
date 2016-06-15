@@ -19,6 +19,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -57,7 +58,7 @@ public final class DistributeAction extends JosmAction {
             return;
 
         // Collect user selected objects
-        Collection<OsmPrimitive> selected = getCurrentDataSet().getSelected();
+        Collection<OsmPrimitive> selected = getLayerManager().getEditDataSet().getSelected();
         Collection<Way> ways = new LinkedList<>();
         Collection<Node> nodes = new HashSet<>();
         for (OsmPrimitive osm : selected) {
@@ -299,10 +300,11 @@ public final class DistributeAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(ds.getSelected());
         }
     }
 

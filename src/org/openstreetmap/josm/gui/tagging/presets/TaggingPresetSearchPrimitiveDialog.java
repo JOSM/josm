@@ -51,7 +51,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
 
         @Override
         protected void updateEnabledState() {
-            setEnabled(getEditLayer() != null);
+            setEnabled(getLayerManager().getEditLayer() != null);
         }
     }
 

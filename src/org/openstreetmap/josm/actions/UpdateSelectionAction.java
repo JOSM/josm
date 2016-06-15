@@ -113,10 +113,11 @@ public class UpdateSelectionAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getAllSelected());
+            updateEnabledState(ds.getAllSelected());
         }
     }
 
@@ -147,6 +148,6 @@ public class UpdateSelectionAction extends JosmAction {
      * @return the data on which this action operates
      */
     public Collection<OsmPrimitive> getData() {
-        return getCurrentDataSet().getAllSelected();
+        return getLayerManager().getEditDataSet().getAllSelected();
     }
 }

@@ -31,6 +31,7 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -89,7 +90,7 @@ public class UnGlueAction extends JosmAction {
 
     protected void unglue(ActionEvent e) throws UserCancelException {
 
-        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
+        Collection<OsmPrimitive> selection = getLayerManager().getEditDataSet().getSelected();
 
         String errMsg = null;
         int errorTime = Notification.TIME_DEFAULT;
@@ -322,7 +323,7 @@ public class UnGlueAction extends JosmAction {
         }
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Unglued Node"), cmds));
-        getCurrentDataSet().setSelected(n);
+        getLayerManager().getEditDataSet().setSelected(n);
         Main.map.mapView.repaint();
     }
 
@@ -651,15 +652,16 @@ public class UnGlueAction extends JosmAction {
         Main.main.undoRedo.add(new SequenceCommand(
                 trn("Dupe {0} node into {1} nodes", "Dupe {0} nodes into {1} nodes",
                         selectedNodes.size(), selectedNodes.size(), selectedNodes.size()+allNewNodes.size()), cmds));
-        getCurrentDataSet().setSelected(allNewNodes);
+        getLayerManager().getEditDataSet().setSelected(allNewNodes);
     }
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(ds.getSelected());
         }
     }
 

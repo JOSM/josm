@@ -12,6 +12,7 @@ import java.util.Collection;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -43,9 +44,9 @@ public final class CopyAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (isEmptySelection()) return;
-        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
+        Collection<OsmPrimitive> selection = getLayerManager().getEditDataSet().getSelected();
 
-        copy(getEditLayer(), selection);
+        copy(getLayerManager().getEditLayer(), selection);
     }
 
     /**
@@ -73,10 +74,11 @@ public final class CopyAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(ds.getSelected());
         }
     }
 
