@@ -336,7 +336,7 @@ public final class PasteTagsAction extends JosmAction {
             return;
         }
         // buffer listening slows down the program and is not very good for arbitrary text in buffer
-        setEnabled(!ds.getSelected().isEmpty());
+        setEnabled(!ds.selectionEmpty());
     }
 
     @Override

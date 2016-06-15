@@ -63,7 +63,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
-        if (editLayer == null || editLayer.data.getAllSelected().isEmpty())
+        if (editLayer == null || editLayer.data.selectionEmpty())
             return;
         mergeSelected();
     }

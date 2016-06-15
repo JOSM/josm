@@ -343,7 +343,7 @@ public class AutoScaleAction extends JosmAction {
         DataSet ds = getLayerManager().getEditDataSet();
         switch (mode) {
         case "selection":
-            setEnabled(ds != null && !ds.getSelected().isEmpty());
+            setEnabled(ds != null && !ds.selectionEmpty());
             break;
         case "layer":
             setEnabled(getFirstSelectedLayer() != null);

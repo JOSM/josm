@@ -375,7 +375,7 @@ public final class AlignInCircleAction extends JosmAction {
     @Override
     protected void updateEnabledState() {
         DataSet ds = getLayerManager().getEditDataSet();
-        setEnabled(ds != null && !ds.getSelected().isEmpty());
+        setEnabled(ds != null && !ds.selectionEmpty());
     }
 
     @Override

@@ -427,7 +427,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         case SCALE:
             //  if nothing was selected, select primitive under cursor for scaling or rotating
             DataSet ds = getLayerManager().getEditDataSet();
-            if (ds.getSelected().isEmpty()) {
+            if (ds.selectionEmpty()) {
                 ds.setSelected(asColl(nearestPrimitive));
             }
 
@@ -593,7 +593,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             selectionManager.unregister(mv);
 
             // Select Draw Tool if no selection has been made
-            if (getLayerManager().getEditDataSet().getSelected().isEmpty() && !cancelDrawMode) {
+            if (getLayerManager().getEditDataSet().selectionEmpty() && !cancelDrawMode) {
                 Main.map.selectDrawTool(true);
                 updateStatusLine();
                 return;
