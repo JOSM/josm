@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.IllegalComponentStateException;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -56,6 +57,7 @@ public class WindowGeometry {
      * Creates a window geometry from the position and the size of a window.
      *
      * @param window the window
+     * @throws IllegalComponentStateException if the window is not showing on the screen
      */
     public WindowGeometry(Window window) {
         this(window.getLocationOnScreen(), window.getSize());

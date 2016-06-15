@@ -715,7 +715,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         }
 
         protected void rememberGeometry() {
-            if (detachedDialog != null) {
+            if (detachedDialog != null && detachedDialog.isShowing()) {
                 new WindowGeometry(detachedDialog).remember(preferencePrefix+".geometry");
             }
         }
