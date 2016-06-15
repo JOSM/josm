@@ -100,7 +100,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public static final BooleanProperty PROP_ZOOM_INTERMEDIATE_STEPS = new BooleanProperty("zoom.intermediate-steps", true);
 
     public static final String PROPNAME_CENTER = "center";
-    public static final String PROPNAME_SCALE  = "scale";
+    public static final String PROPNAME_SCALE = "scale";
 
     /**
      * The layer which scale is set to.

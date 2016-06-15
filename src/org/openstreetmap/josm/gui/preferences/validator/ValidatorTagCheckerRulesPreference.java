@@ -143,6 +143,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
         public Collection<ExtendedSourceEntry> getDefault() {
             List<ExtendedSourceEntry> def = new ArrayList<>();
 
+            // CHECKSTYLE.OFF: SingleSpaceSeparator
             addDefault(def, "addresses",    tr("Addresses"),           tr("Checks for errors on addresses"));
             addDefault(def, "combinations", tr("Tag combinations"),    tr("Checks for missing tag or suspicious combinations"));
             addDefault(def, "deprecated",   tr("Deprecated features"), tr("Checks for deprecated features"));
@@ -154,6 +155,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
             addDefault(def, "relation",     tr("Relations"),           tr("Checks for errors on relations"));
             addDefault(def, "unnecessary",  tr("Unnecessary tags"),    tr("Checks for unnecessary tags"));
             addDefault(def, "wikipedia",    tr("Wikipedia"),           tr("Checks for wrong wikipedia tags"));
+            // CHECKSTYLE.ON: SingleSpaceSeparator
 
             return def;
         }

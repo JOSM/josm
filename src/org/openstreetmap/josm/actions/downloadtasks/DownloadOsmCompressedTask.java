@@ -18,7 +18,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
  */
 public class DownloadOsmCompressedTask extends DownloadOsmTask {
 
-    private static final String PATTERN_COMPRESS =  "https?://.*/.*\\.osm.(gz|bz2?|zip)";
+    private static final String PATTERN_COMPRESS = "https?://.*/.*\\.osm.(gz|bz2?|zip)";
 
     @Override
     public String[] getPatterns() {

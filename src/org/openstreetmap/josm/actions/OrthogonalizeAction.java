@@ -190,7 +190,7 @@ public final class OrthogonalizeAction extends JosmAction {
             return new SequenceCommand(tr("Orthogonalize"), commands);
         } else if (wayDataList.isEmpty()) {
             throw new InvalidUserInputException("usage");
-        } else  {
+        } else {
             if (nodeList.size() == 2 || nodeList.isEmpty()) {
                 OrthogonalizeAction.rememberMovements.clear();
                 final Collection<Command> commands = new LinkedList<>();
@@ -400,7 +400,7 @@ public final class OrthogonalizeAction extends JosmAction {
         for (Node n: allNodes) {
             EastNorth tmp = new EastNorth(nX.get(n), nY.get(n));
             tmp = EN.rotateCC(pivot, tmp, headingAll);
-            final double dx = tmp.east()  - n.getEastNorth().east();
+            final double dx = tmp.east() - n.getEastNorth().east();
             final double dy = tmp.north() - n.getEastNorth().north();
             if (headingNodes.contains(n)) { // The heading nodes should not have changed
                 final double epsilon = 1E-6;
@@ -466,7 +466,7 @@ public final class OrthogonalizeAction extends JosmAction {
             EastNorth v = new EastNorth(0., 0.);
             for (int i = 0; i < nSeg; ++i) {
                 EastNorth segment = EN.diff(en[i+1], en[i]);
-                if      (segDirections[i] == Direction.RIGHT) {
+                if (segDirections[i] == Direction.RIGHT) {
                     h = EN.sum(h, segment);
                 } else if (segDirections[i] == Direction.UP) {
                     v = EN.sum(v, segment);
@@ -543,8 +543,8 @@ public final class OrthogonalizeAction extends JosmAction {
             double sinPhi = Math.sin(angle);
             double x = en.east() - pivot.east();
             double y = en.north() - pivot.north();
-            double nx =  cosPhi * x - sinPhi * y + pivot.east();
-            double ny =  sinPhi * x + cosPhi * y + pivot.north();
+            double nx = cosPhi * x - sinPhi * y + pivot.east();
+            double ny = sinPhi * x + cosPhi * y + pivot.north();
             return new EastNorth(nx, ny);
         }
 
@@ -557,7 +557,7 @@ public final class OrthogonalizeAction extends JosmAction {
         }
 
         public static double polar(EastNorth en1, EastNorth en2) {
-            return Math.atan2(en2.north() - en1.north(), en2.east() -  en1.east());
+            return Math.atan2(en2.north() - en1.north(), en2.east() - en1.east());
         }
     }
 
@@ -571,14 +571,14 @@ public final class OrthogonalizeAction extends JosmAction {
      */
     private static int angleToDirectionChange(double a, double deltaMax) throws RejectedAngleException {
         a = standard_angle_mPI_to_PI(a);
-        double d0   = Math.abs(a);
-        double d90  = Math.abs(a - Math.PI / 2);
+        double d0 = Math.abs(a);
+        double d90 = Math.abs(a - Math.PI / 2);
         double dm90 = Math.abs(a + Math.PI / 2);
         int dirChange;
         if (d0 < deltaMax) {
-            dirChange =  0;
+            dirChange = 0;
         } else if (d90 < deltaMax) {
-            dirChange =  1;
+            dirChange = 1;
         } else if (dm90 < deltaMax) {
             dirChange = -1;
         } else {

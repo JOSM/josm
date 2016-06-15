@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 public class LongSegment extends Test {
 
     /** Long segment error */
-    protected static final int LONG_SEGMENT    = 3501;
+    protected static final int LONG_SEGMENT = 3501;
     /** Maximum segment length for this test */
     protected int maxlength;
 

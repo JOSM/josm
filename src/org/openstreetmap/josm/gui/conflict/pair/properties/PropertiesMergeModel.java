@@ -136,7 +136,7 @@ public class PropertiesMergeModel extends ChangeNotifier {
             theirCoords = null;
         }
 
-        myDeletedState =  conflict.isMyDeleted() || my.isDeleted();
+        myDeletedState = conflict.isMyDeleted() || my.isDeleted();
         theirDeletedState = their.isDeleted();
 
         myReferrers = my.getDataSet() == null ? Collections.<OsmPrimitive>emptyList() : my.getReferrers();
@@ -210,7 +210,7 @@ public class PropertiesMergeModel extends ChangeNotifier {
      * Replies deleted state of Server dataset
      * @return The state of deleted flag
      */
-    public  Boolean getTheirDeletedState() {
+    public Boolean getTheirDeletedState() {
         return theirDeletedState;
     }
 

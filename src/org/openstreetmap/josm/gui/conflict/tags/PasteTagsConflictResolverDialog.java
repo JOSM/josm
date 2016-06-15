@@ -42,7 +42,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
-public class PasteTagsConflictResolverDialog extends JDialog  implements PropertyChangeListener {
+public class PasteTagsConflictResolverDialog extends JDialog implements PropertyChangeListener {
     static final Map<OsmPrimitiveType, String> PANE_TITLES;
     static {
         PANE_TITLES = new EnumMap<>(OsmPrimitiveType.class);

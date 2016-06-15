@@ -193,7 +193,7 @@ public class NoteReader {
         }
 
         @Override
-        public void endDocument() throws SAXException  {
+        public void endDocument() throws SAXException {
             parsedNotes = notes;
         }
     }

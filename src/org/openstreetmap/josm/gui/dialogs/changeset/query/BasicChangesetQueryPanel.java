@@ -187,7 +187,7 @@ public class BasicChangesetQueryPanel extends JPanel {
 
     public void restoreFromPreferences() {
         BasicQuery q;
-        String value =  Main.pref.get("changeset-query.basic.query", null);
+        String value = Main.pref.get("changeset-query.basic.query", null);
         if (value == null) {
             q = BasicQuery.MOST_RECENT_CHANGESETS;
         } else {

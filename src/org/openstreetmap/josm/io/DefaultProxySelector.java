@@ -96,7 +96,7 @@ public class DefaultProxySelector extends ProxySelector {
             Main.error(tr("The proxy will not be used."));
             return 0;
         }
-        if (port <= 0 || port >  65535) {
+        if (port <= 0 || port > 65535) {
             Main.error(tr("Illegal port number in preference ''{0}''. Got {1}.", property, port));
             Main.error(tr("The proxy will not be used."));
             return 0;

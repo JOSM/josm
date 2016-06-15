@@ -174,7 +174,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
             for (Layer layer: Main.getLayerManager().getLayers()) {
                 memoryBytesRequired += layer.estimateMemoryUsage();
             }
-            if (memoryBytesRequired >  Runtime.getRuntime().maxMemory()) {
+            if (memoryBytesRequired > Runtime.getRuntime().maxMemory()) {
                 throw new IllegalArgumentException(
                         tr("To add another layer you need to allocate at least {0,number,#}MB memory to JOSM using -Xmx{0,number,#}M "
                         + "option (see http://forum.openstreetmap.org/viewtopic.php?id=25677).\n"
@@ -335,7 +335,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      */
     public void setVisible(boolean visible) {
         boolean oldValue = isVisible();
-        this.visible  = visible;
+        this.visible = visible;
         if (visible && opacity == 0) {
             setOpacity(1);
         } else if (oldValue != isVisible()) {

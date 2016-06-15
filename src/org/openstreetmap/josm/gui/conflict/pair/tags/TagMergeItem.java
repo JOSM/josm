@@ -31,7 +31,7 @@ public class TagMergeItem {
      */
     public TagMergeItem(String key, String myTagValue, String theirTagValue) {
         CheckParameterUtil.ensureParameterNotNull(key, "key");
-        this.key  = key;
+        this.key = key;
         this.myTagValue = myTagValue;
         this.theirTagValue = theirTagValue;
         this.mergeDecision = MergeDecisionType.UNDECIDED;

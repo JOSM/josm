@@ -196,7 +196,7 @@ public class ElemStyles implements PreferenceChangedListener {
 
             for (OsmPrimitive referrer : osm.getReferrers()) {
                 Relation r = (Relation) referrer;
-                if (!drawMultipolygon || !r.isMultipolygon()  || !r.isUsable()) {
+                if (!drawMultipolygon || !r.isMultipolygon() || !r.isUsable()) {
                     continue;
                 }
                 Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);

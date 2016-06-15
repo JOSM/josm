@@ -101,9 +101,11 @@ import com.kitfox.svg.SVGUniverse;
  */
 public class ImageProvider {
 
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
     private static final String HTTP_PROTOCOL  = "http://";
     private static final String HTTPS_PROTOCOL = "https://";
     private static final String WIKI_PROTOCOL  = "wiki://";
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /**
      * Position of an overlay icon

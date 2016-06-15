@@ -1003,7 +1003,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         setHelpText(null, t);
     }
 
-    public void setHelpText(Object id, final String text)  {
+    public void setHelpText(Object id, final String text) {
 
         StatusTextHistory entry = new StatusTextHistory(id, text);
 

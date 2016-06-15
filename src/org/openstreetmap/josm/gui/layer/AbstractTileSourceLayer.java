@@ -1528,7 +1528,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
                     continue;
                 }
                 Tile t2 = tempCornerTile(missed);
-                LatLon topLeft2  = new LatLon(tileSource.tileXYToLatLon(missed));
+                LatLon topLeft2 = new LatLon(tileSource.tileXYToLatLon(missed));
                 LatLon botRight2 = new LatLon(tileSource.tileXYToLatLon(t2));
                 TileSet ts2 = new TileSet(topLeft2, botRight2, newzoom);
                 // Instantiating large TileSets is expensive.  If there
@@ -1621,7 +1621,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
             if (!r.contains(clicked)) {
                 continue;
             }
-            clickedTile  = t1;
+            clickedTile = t1;
             break;
         }
         if (clickedTile == null)

@@ -18,7 +18,7 @@ import javax.swing.table.TableCellRenderer;
  *
  *
  */
-public class TagCellRenderer extends JLabel implements TableCellRenderer  {
+public class TagCellRenderer extends JLabel implements TableCellRenderer {
     private final Font fontStandard;
     private final Font fontItalic;
 
@@ -53,7 +53,7 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
             setText("");
         } else if (tag.getValueCount() == 1) {
             setText(tag.getValues().get(0));
-        } else if (tag.getValueCount() >  1) {
+        } else if (tag.getValueCount() > 1) {
             setText(tr("multiple"));
             setFont(fontItalic);
         }

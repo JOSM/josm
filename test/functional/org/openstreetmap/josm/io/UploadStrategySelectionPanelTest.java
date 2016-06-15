@@ -21,7 +21,7 @@ public class UploadStrategySelectionPanelTest extends JFrame {
 
     protected UploadStrategySelectionPanel uploadStrategySelectionPanel;
 
-    protected void build()  {
+    protected void build() {
         getContentPane().setLayout(new BorderLayout());
         uploadStrategySelectionPanel = new UploadStrategySelectionPanel();
         getContentPane().add(uploadStrategySelectionPanel, BorderLayout.CENTER);

@@ -143,7 +143,7 @@ public class ChangesetDataSet {
      * dataset
      */
     public HistoryOsmPrimitive getPrimitive(PrimitiveId id) {
-        if (id == null)  return null;
+        if (id == null) return null;
         return primitives.get(id);
     }
 

@@ -158,7 +158,7 @@ public class ChildRelationBrowser extends JPanel {
      * @return the parent dialog; null, if there is no {@link Dialog} as parent dialog
      */
     protected Dialog getParentDialog() {
-        Component c  = this;
+        Component c = this;
         while (c != null && !(c instanceof Dialog)) {
             c = c.getParent();
         }
@@ -388,7 +388,7 @@ public class ChildRelationBrowser extends JPanel {
                 visitor.merge();
                 if (!visitor.getConflicts().isEmpty()) {
                     getLayer().getConflicts().add(visitor.getConflicts());
-                    conflictsCount +=  visitor.getConflicts().size();
+                    conflictsCount += visitor.getConflicts().size();
                 }
             }
         }
@@ -452,7 +452,7 @@ public class ChildRelationBrowser extends JPanel {
                 visitor.merge();
                 if (!visitor.getConflicts().isEmpty()) {
                     getLayer().getConflicts().add(visitor.getConflicts());
-                    conflictsCount +=  visitor.getConflicts().size();
+                    conflictsCount += visitor.getConflicts().size();
                 }
             }
         }

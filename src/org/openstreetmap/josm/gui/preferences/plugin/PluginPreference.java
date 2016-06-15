@@ -197,7 +197,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
     protected JPanel buildPluginListPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(buildSearchFieldPanel(), BorderLayout.NORTH);
-        model  = new PluginPreferencesModel();
+        model = new PluginPreferencesModel();
         pnlPluginPreferences = new PluginListPanel(model);
         spPluginPreferences = GuiHelper.embedInVerticalScrollPane(pnlPluginPreferences);
         spPluginPreferences.getVerticalScrollBar().addComponentListener(

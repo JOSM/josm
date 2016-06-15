@@ -11,7 +11,7 @@ import javax.swing.table.TableColumnModel;
  * This is the {@link TableColumnModel} used in {@link SelectionTable}.
  * @since 1790
  */
-public class SelectionTableColumnModel  extends DefaultTableColumnModel {
+public class SelectionTableColumnModel extends DefaultTableColumnModel {
 
     /**
      * Constructs a new {@code SelectionTableColumnModel}.

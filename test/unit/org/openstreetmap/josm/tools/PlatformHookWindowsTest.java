@@ -42,7 +42,7 @@ public class PlatformHookWindowsTest {
      * Test method for {@code PlatformHookWindows#startupHook}
      */
     @Test
-    public void testStartupHook()  {
+    public void testStartupHook() {
         hook.startupHook();
     }
 

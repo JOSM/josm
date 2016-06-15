@@ -26,7 +26,7 @@ public interface MultikeyShortcutAction extends Action {
             else if (index == 9)
                 return '0';
             else
-                return (char) ('A' +  index - 10);
+                return (char) ('A' + index - 10);
         }
 
         public String getDescription() {

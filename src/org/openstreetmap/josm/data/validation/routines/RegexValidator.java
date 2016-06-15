@@ -124,7 +124,7 @@ public class RegexValidator extends AbstractValidator {
             if (regexs[i] == null || regexs[i].isEmpty()) {
                 throw new IllegalArgumentException("Regular expression[" + i + "] is missing");
             }
-            patterns[i] =  Pattern.compile(regexs[i], flags);
+            patterns[i] = Pattern.compile(regexs[i], flags);
         }
     }
 

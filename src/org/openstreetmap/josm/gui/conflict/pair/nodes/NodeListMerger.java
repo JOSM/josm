@@ -24,7 +24,7 @@ public class NodeListMerger extends ListMerger<Node> {
 
     @Override
     protected JScrollPane buildMyElementsTable() {
-        myEntriesTable  = new NodeListTable(
+        myEntriesTable = new NodeListTable(
                 "table.mynodes",
                 model,
                 model.getMyTableModel(),
@@ -35,7 +35,7 @@ public class NodeListMerger extends ListMerger<Node> {
 
     @Override
     protected JScrollPane buildMergedElementsTable() {
-        mergedEntriesTable  = new NodeListTable(
+        mergedEntriesTable = new NodeListTable(
                 "table.mergednodes",
                 model,
                 model.getMergedTableModel(),
@@ -46,7 +46,7 @@ public class NodeListMerger extends ListMerger<Node> {
 
     @Override
     protected JScrollPane buildTheirElementsTable() {
-        theirEntriesTable  = new NodeListTable(
+        theirEntriesTable = new NodeListTable(
                 "table.theirnodes",
                 model,
                 model.getTheirTableModel(),

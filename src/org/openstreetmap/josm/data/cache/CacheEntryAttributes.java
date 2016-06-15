@@ -91,7 +91,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     private long getLongAttr(String key) {
         String val = attrs.get(key);
         if (val == null) {
-            attrs.put(key,  "0");
+            attrs.put(key, "0");
             return 0;
         }
         try {

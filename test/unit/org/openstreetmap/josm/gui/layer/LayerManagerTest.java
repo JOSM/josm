@@ -127,7 +127,7 @@ public class LayerManagerTest {
      * Set up test layer manager.
      */
     @Before
-    public void setUp()   {
+    public void setUp() {
         layerManager = new LayerManager();
     }
 

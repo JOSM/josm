@@ -233,7 +233,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      * refreshes the view of this dialog
      */
     public void refreshView() {
-        OsmDataLayer editLayer =  Main.main.getEditLayer();
+        OsmDataLayer editLayer = Main.main.getEditLayer();
         conflicts = editLayer == null ? new ConflictCollection() : editLayer.getConflicts();
         GuiHelper.runInEDT(new Runnable() {
             @Override
@@ -432,7 +432,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
     class ResolveAction extends AbstractAction implements ListSelectionListener {
         ResolveAction() {
             putValue(NAME, tr("Resolve"));
-            putValue(SHORT_DESCRIPTION,  tr("Open a merge dialog of all selected items in the list above."));
+            putValue(SHORT_DESCRIPTION, tr("Open a merge dialog of all selected items in the list above."));
             new ImageProvider("dialogs", "conflict").getResource().attachImageIcon(this, true);
             putValue("help", ht("/Dialog/ConflictList#ResolveAction"));
         }
@@ -479,7 +479,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
             this.name = name;
             this.type = type;
             putValue(NAME, name);
-            putValue(SHORT_DESCRIPTION,  description);
+            putValue(SHORT_DESCRIPTION, description);
         }
 
         @Override

@@ -26,18 +26,20 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  */
 public class UntaggedWay extends Test {
 
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
     /** Empty way error */
-    protected static final int EMPTY_WAY    = 301;
+    protected static final int EMPTY_WAY        = 301;
     /** Untagged way error */
-    protected static final int UNTAGGED_WAY = 302;
+    protected static final int UNTAGGED_WAY     = 302;
     /** Unnamed way error */
-    protected static final int UNNAMED_WAY  = 303;
+    protected static final int UNNAMED_WAY      = 303;
     /** One node way error */
-    protected static final int ONE_NODE_WAY = 304;
+    protected static final int ONE_NODE_WAY     = 304;
     /** Unnamed junction error */
-    protected static final int UNNAMED_JUNCTION  = 305;
+    protected static final int UNNAMED_JUNCTION = 305;
     /** Untagged, but commented way error */
-    protected static final int COMMENTED_WAY = 306;
+    protected static final int COMMENTED_WAY    = 306;
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     private Set<Way> waysUsedInRelations;
 

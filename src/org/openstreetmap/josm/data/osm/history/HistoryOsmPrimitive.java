@@ -88,7 +88,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         this.version = version;
         this.visible = visible;
         this.user = user;
-        this.changesetId  = changesetId;
+        this.changesetId = changesetId;
         this.timestamp = timestamp;
         tags = new HashMap<>();
     }

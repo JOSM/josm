@@ -43,7 +43,7 @@ public class ScaleCommand extends TransformNodesCommand {
         // Note that SelectAction will keep the same ScaleCommand when the user
         // releases the button and presses it again with the same modifiers.
         // The very first point of this operation is stored here.
-        startEN   = currentEN;
+        startEN = currentEN;
 
         handleEvent(currentEN);
     }

@@ -56,7 +56,7 @@ public class Filter extends SearchSetting {
             mode = SearchMode.add;
         } else if ("remove".equals(e.mode)) {
             mode = SearchMode.remove;
-        } else  if ("in_selection".equals(e.mode)) {
+        } else if ("in_selection".equals(e.mode)) {
             mode = SearchMode.in_selection;
         }
         caseSensitive = e.case_sensitive;

@@ -80,8 +80,10 @@ public class RotateCommand extends TransformNodesCommand {
             EastNorth oldEastNorth = oldStates.get(n).getEastNorth();
             double x = oldEastNorth.east() - pivot.east();
             double y = oldEastNorth.north() - pivot.north();
+            // CHECKSTYLE.OFF: SingleSpaceSeparator
             double nx =  cosPhi * x + sinPhi * y + pivot.east();
             double ny = -sinPhi * x + cosPhi * y + pivot.north();
+            // CHECKSTYLE.ON: SingleSpaceSeparator
             n.setEastNorth(new EastNorth(nx, ny));
         }
     }

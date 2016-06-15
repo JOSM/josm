@@ -114,7 +114,7 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
      * @throws IllegalArgumentException if view is null
      * @throws IllegalArgumentException if adjustable is null
      */
-    public void adapt(final JCheckBox view, final Adjustable adjustable)  {
+    public void adapt(final JCheckBox view, final Adjustable adjustable) {
         CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");
         CheckParameterUtil.ensureParameterNotNull(view, "view");
 

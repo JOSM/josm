@@ -121,6 +121,7 @@ public class HistoryWayTest {
         way2.addNode(1);
         way2.addNode(2);
 
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         assertEquals("1 (0 nodes)", way0.getDisplayName(hnf));
         assertEquals("1 (1 node)",  way1.getDisplayName(hnf));
         assertEquals("1 (2 nodes)", way2.getDisplayName(hnf));
@@ -135,5 +136,6 @@ public class HistoryWayTest {
         assertEquals("WayName (0 nodes)", way0.getDisplayName(hnf));
         assertEquals("WayName (1 node)",  way1.getDisplayName(hnf));
         assertEquals("WayName (2 nodes)", way2.getDisplayName(hnf));
+        // CHECKSTYLE.ON: SingleSpaceSeparator
     }
 }

@@ -104,8 +104,8 @@ public class LambertConformalConic extends AbstractProj {
         final double t2 = t(toRadians(lat2));
         final double tf = t(toRadians(lat0));
 
-        n  = (log(m1) - log(m2)) / (log(t1) - log(t2));
-        f  = m1 / (n * pow(t1, n));
+        n = (log(m1) - log(m2)) / (log(t1) - log(t2));
+        f = m1 / (n * pow(t1, n));
         r0 = f * pow(tf, n);
     }
 
@@ -122,7 +122,7 @@ public class LambertConformalConic extends AbstractProj {
         final double t0 = t(lat0rad);
 
         n = sin(lat0rad);
-        f  = m0 / (n * pow(t0, n));
+        f = m0 / (n * pow(t0, n));
         r0 = f * pow(t0, n);
     }
 

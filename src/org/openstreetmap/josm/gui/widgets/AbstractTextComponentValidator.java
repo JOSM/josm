@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public abstract class AbstractTextComponentValidator implements ActionListener, FocusListener, DocumentListener, PropertyChangeListener {
     private static final Border ERROR_BORDER = BorderFactory.createLineBorder(Color.RED, 1);
-    private static final Color ERROR_BACKGROUND =  new Color(255, 224, 224);
+    private static final Color ERROR_BACKGROUND = new Color(255, 224, 224);
 
     private JTextComponent tc;
     /** remembers whether the content of the text component is currently valid or not; null means,

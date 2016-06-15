@@ -59,7 +59,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * This flag is false, if the object is marked
      * as deleted on the server.
      */
-    protected static final int FLAG_VISIBLE  = 1 << 1;
+    protected static final int FLAG_VISIBLE = 1 << 1;
 
     /**
      * An object that was deleted by the user.
@@ -68,7 +68,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * An object usually cannot be deleted if it has non-deleted
      * objects still referring to it.
      */
-    protected static final int FLAG_DELETED  = 1 << 2;
+    protected static final int FLAG_DELETED = 1 << 2;
 
     /**
      * A primitive is incomplete if we know its id and type, but nothing more.

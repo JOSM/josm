@@ -25,7 +25,7 @@ public class LanguagePreferenceTest {
      * Unit test of {@link LanguagePreference#LanguagePreference}.
      */
     @Test
-    public void testLanguagePreference()  {
+    public void testLanguagePreference() {
         assertNotNull(new LanguagePreference.Factory().createPreferenceSetting());
     }
 

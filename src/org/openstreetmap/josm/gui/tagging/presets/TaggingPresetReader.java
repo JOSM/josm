@@ -356,7 +356,7 @@ public final class TaggingPresetReader {
      */
     public static Collection<TaggingPreset> readAll(Collection<String> sources, boolean validate, boolean displayErrMsg) {
         HashSetWithLast<TaggingPreset> allPresets = new HashSetWithLast<>();
-        for (String source : sources)  {
+        for (String source : sources) {
             try {
                 readAll(source, validate, allPresets);
             } catch (IOException e) {

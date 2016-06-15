@@ -48,7 +48,7 @@ import org.openstreetmap.josm.tools.Utils;
  * This is the tabular editor component for OSM tags.
  * @since 1762
  */
-public class TagTable extends JosmTable  {
+public class TagTable extends JosmTable {
     /** the table cell editor used by this table */
     private TagCellEditor editor;
     private final TagEditorModel model;
@@ -69,9 +69,8 @@ public class TagTable extends JosmTable  {
      *   <li>it automatically add a new empty row when the user leaves the
      *   last cell in the table</li>
      * </ul>
-     *
      */
-    class SelectNextColumnCellAction extends AbstractAction  {
+    class SelectNextColumnCellAction extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent e) {
             run();
@@ -115,9 +114,8 @@ public class TagTable extends JosmTable  {
     /**
      * Action to be run when the user navigates to the previous cell in the table,
      * for instance by pressing Shift-TAB
-     *
      */
-    class SelectPreviousColumnCellAction extends AbstractAction  {
+    class SelectPreviousColumnCellAction extends AbstractAction {
 
         @Override
         public void actionPerformed(ActionEvent e) {

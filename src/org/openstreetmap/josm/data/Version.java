@@ -84,7 +84,7 @@ public class Version {
         //
         isLocalBuild = false;
         value = properties.getProperty("Is-Local-Build");
-        if (value != null && "true".equalsIgnoreCase(value.trim()))  {
+        if (value != null && "true".equalsIgnoreCase(value.trim())) {
             isLocalBuild = true;
         }
 
@@ -92,7 +92,7 @@ public class Version {
         //
         buildName = null;
         value = properties.getProperty("Build-Name");
-        if (value != null && !value.trim().isEmpty())  {
+        if (value != null && !value.trim().isEmpty()) {
             buildName = value.trim();
         }
 
@@ -129,7 +129,7 @@ public class Version {
      * @return the JOSM version
      */
     public String getVersionString() {
-        return  version == 0 ? tr("UNKNOWN") : Integer.toString(version);
+        return version == 0 ? tr("UNKNOWN") : Integer.toString(version);
     }
 
     /**

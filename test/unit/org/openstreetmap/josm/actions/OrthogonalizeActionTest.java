@@ -95,7 +95,7 @@ public class OrthogonalizeActionTest {
 
     void verifyRectangleClockwise(final Way way) {
         for (int i = 1; i < way.getNodesCount() - 1; i++) {
-            assertEquals(-Math.PI / 2,  Geometry.getCornerAngle(
+            assertEquals(-Math.PI / 2, Geometry.getCornerAngle(
                     way.getNode(i - 1).getEastNorth(), way.getNode(i).getEastNorth(), way.getNode(i + 1).getEastNorth()), 1e-6);
         }
     }

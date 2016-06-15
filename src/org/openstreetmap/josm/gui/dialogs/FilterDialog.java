@@ -139,7 +139,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         SideButton addButton = new SideButton(new AbstractAction() {
             {
                 putValue(NAME, tr("Add"));
-                putValue(SHORT_DESCRIPTION,  tr("Add filter."));
+                putValue(SHORT_DESCRIPTION, tr("Add filter."));
                 new ImageProvider("dialogs", "add").getResource().attachImageIcon(this, true);
             }
 
@@ -409,7 +409,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         }
     }
 
-    private class EnableFilterAction extends AbstractFilterAction  {
+    private class EnableFilterAction extends AbstractFilterAction {
 
         EnableFilterAction() {
             putValue(SHORT_DESCRIPTION, tr("Enable filter"));

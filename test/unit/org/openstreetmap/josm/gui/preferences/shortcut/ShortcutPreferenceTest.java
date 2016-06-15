@@ -25,7 +25,7 @@ public class ShortcutPreferenceTest {
      * Unit test of {@link ShortcutPreference#ShortcutPreference}.
      */
     @Test
-    public void testShortcutPreference()  {
+    public void testShortcutPreference() {
         assertNotNull(new ShortcutPreference.Factory().createPreferenceSetting());
     }
 

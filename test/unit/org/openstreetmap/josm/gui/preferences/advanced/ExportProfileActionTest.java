@@ -23,7 +23,7 @@ public class ExportProfileActionTest {
      * Unit test of {@link ExportProfileAction#actionPerformed}.
      */
     @Test
-    public void testAction()  {
+    public void testAction() {
         new ExportProfileAction(Main.pref, "foo", "bar").actionPerformed(null);
         new ExportProfileAction(Main.pref, "expert", "expert").actionPerformed(null);
     }

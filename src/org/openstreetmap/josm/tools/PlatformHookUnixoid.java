@@ -231,9 +231,11 @@ public class PlatformHookUnixoid implements PlatformHook {
      */
     public static String getPackageDetails(String ... packageNames) {
         try {
+            // CHECKSTYLE.OFF: SingleSpaceSeparator
             boolean dpkg = Files.exists(Paths.get("/usr/bin/dpkg-query"));
             boolean eque = Files.exists(Paths.get("/usr/bin/equery"));
             boolean rpm  = Files.exists(Paths.get("/bin/rpm"));
+            // CHECKSTYLE.ON: SingleSpaceSeparator
             if (dpkg || rpm || eque) {
                 for (String packageName : packageNames) {
                     String[] args;

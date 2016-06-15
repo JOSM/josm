@@ -41,7 +41,7 @@ public final class JCSCacheManager {
     private static final Logger LOG = FeatureAdapter.getLogger(JCSCacheManager.class.getCanonicalName());
 
     private static volatile CompositeCacheManager cacheManager;
-    private static long maxObjectTTL        = -1;
+    private static long maxObjectTTL = -1;
     private static final String PREFERENCE_PREFIX = "jcs.cache";
     private static BooleanProperty USE_BLOCK_CACHE = new BooleanProperty(PREFERENCE_PREFIX + ".use_block_cache", true);
 
@@ -52,7 +52,7 @@ public final class JCSCacheManager {
     /**
      * default objects to be held in memory by JCS caches (per region)
      */
-    public static final IntegerProperty DEFAULT_MAX_OBJECTS_IN_MEMORY  = new IntegerProperty(PREFERENCE_PREFIX + ".max_objects_in_memory", 1000);
+    public static final IntegerProperty DEFAULT_MAX_OBJECTS_IN_MEMORY = new IntegerProperty(PREFERENCE_PREFIX + ".max_objects_in_memory", 1000);
 
     private JCSCacheManager() {
         // Hide implicit public constructor for utility classes
@@ -113,6 +113,7 @@ public final class JCSCacheManager {
         Properties props = new Properties();
         // these are default common to all cache regions
         // use of auxiliary cache and sizing of the caches is done with giving proper geCache(...) params
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         props.setProperty("jcs.default.cacheattributes",                      CompositeCacheAttributes.class.getCanonicalName());
         props.setProperty("jcs.default.cacheattributes.MaxObjects",           DEFAULT_MAX_OBJECTS_IN_MEMORY.get().toString());
         props.setProperty("jcs.default.cacheattributes.UseMemoryShrinker",    "true");
@@ -122,6 +123,7 @@ public final class JCSCacheManager {
         props.setProperty("jcs.default.elementattributes.MaxLife",            Long.toString(maxObjectTTL));
         props.setProperty("jcs.default.elementattributes.IdleTime",           Long.toString(maxObjectTTL));
         props.setProperty("jcs.default.elementattributes.IsSpool",            "true");
+        // CHECKSTYLE.ON: SingleSpaceSeparator
         CompositeCacheManager cm = CompositeCacheManager.getUnconfiguredInstance();
         cm.configure(props);
         cacheManager = cm;

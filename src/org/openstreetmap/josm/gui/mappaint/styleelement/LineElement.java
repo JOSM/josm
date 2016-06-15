@@ -90,7 +90,7 @@ public class LineElement extends StyleElement {
         Color myDashedColor = dashesBackground;
         BasicStroke myLine = line, myDashLine = dashesLine;
         if (realWidth > 0 && paintSettings.isUseRealWidth() && !showOrientation) {
-            float myWidth = (int) (100 /  (float) (painter.getCircum() / realWidth));
+            float myWidth = (int) (100 / (float) (painter.getCircum() / realWidth));
             if (myWidth < line.getLineWidth()) {
                 myWidth = line.getLineWidth();
             }

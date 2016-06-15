@@ -25,7 +25,7 @@ public class OverpassServerPreferenceTest {
      * Unit test of {@link OverpassServerPreference#OverpassServerPreference}.
      */
     @Test
-    public void testOverpassServerPreference()  {
+    public void testOverpassServerPreference() {
         assertNotNull(new OverpassServerPreference.Factory().createPreferenceSetting());
     }
 

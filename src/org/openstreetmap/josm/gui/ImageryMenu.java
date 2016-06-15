@@ -281,7 +281,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
     }
 
     private void addDynamicSeparator() {
-        JPopupMenu.Separator s =  new JPopupMenu.Separator();
+        JPopupMenu.Separator s = new JPopupMenu.Separator();
         dynamicItems.add(s);
         add(s);
     }

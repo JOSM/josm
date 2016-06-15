@@ -821,7 +821,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
                     initialN2en.getX() - en.getX(),
                     initialN2en.getY() - en.getY()
-                    ), initialN2en,  en, false));
+                    ), initialN2en, en, false));
         }
     }
 
@@ -834,7 +834,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         initialN2en = initialN1en;
         possibleMoveDirections = new ArrayList<>();
         for (OsmPrimitive p: selectedNode.getReferrers()) {
-            if (p instanceof Way  && p.isUsable()) {
+            if (p instanceof Way && p.isUsable()) {
                 for (Node neighbor: ((Way) p).getNeighbours(selectedNode)) {
                     EastNorth en = neighbor.getEastNorth();
                     possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
@@ -904,7 +904,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         dualAlignSegment2 = new ReferenceSegment(new EastNorth(
             initialN2en.getX() - nextNodeEn.getX(),
             initialN2en.getY() - nextNodeEn.getY()
-            ), initialN2en,  nextNodeEn, false);
+            ), initialN2en, nextNodeEn, false);
     }
 
     /**
@@ -984,7 +984,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      */
     private int getNextNodeIndex(int index) {
         int count = selectedSegment.way.getNodesCount();
-        if (index <  count - 1)
+        if (index < count - 1)
             return index + 1;
         else if (selectedSegment.way.isClosed())
             return 1;

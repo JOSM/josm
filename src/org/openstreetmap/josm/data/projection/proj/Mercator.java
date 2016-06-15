@@ -71,7 +71,7 @@ public class Mercator extends AbstractProj implements IScaleFactorProvider {
             double standardParallel = Math.toRadians(params.lat_ts);
             if (spherical) {
                 scaleFactor *= Math.cos(standardParallel);
-            }  else {
+            } else {
                 scaleFactor *= msfn(Math.sin(standardParallel), Math.cos(standardParallel));
             }
         }

@@ -230,10 +230,8 @@ public class PurgeCommand extends Command {
 
         List<Relation> outR = new ArrayList<>(inR.size());
         while (!childlessR.isEmpty()) {
-            // Identify one childless Relation and
-            // let it virtually die. This makes other
-            // relations childless.
-            Iterator<Relation> it  = childlessR.iterator();
+            // Identify one childless Relation and let it virtually die. This makes other relations childless.
+            Iterator<Relation> it = childlessR.iterator();
             Relation next = it.next();
             it.remove();
             outR.add(next);

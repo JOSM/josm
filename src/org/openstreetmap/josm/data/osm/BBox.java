@@ -52,7 +52,7 @@ public class BBox {
         this.ymax = copy.ymax;
     }
 
-    public BBox(double ax, double ay, double bx, double by)  {
+    public BBox(double ax, double ay, double bx, double by) {
 
         if (ax > bx) {
             xmax = ax;
@@ -93,18 +93,18 @@ public class BBox {
         }
     }
 
-    private void sanity()  {
+    private void sanity() {
         if (xmin < -180.0) {
             xmin = -180.0;
         }
-        if (xmax >  180.0) {
-            xmax =  180.0;
+        if (xmax > 180.0) {
+            xmax = 180.0;
         }
-        if (ymin <  -90.0) {
-            ymin =  -90.0;
+        if (ymin < -90.0) {
+            ymin = -90.0;
         }
-        if (ymax >   90.0) {
-            ymax =   90.0;
+        if (ymax > 90.0) {
+            ymax = 90.0;
         }
     }
 

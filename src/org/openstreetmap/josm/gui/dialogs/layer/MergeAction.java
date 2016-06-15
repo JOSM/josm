@@ -86,7 +86,7 @@ public final class MergeAction extends AbstractAction implements IEnabledStateUp
         if (layer == null && layers == null) {
             if (model.getSelectedLayers().isEmpty()) {
                 setEnabled(false);
-            } else  if (model.getSelectedLayers().size() > 1) {
+            } else if (model.getSelectedLayers().size() > 1) {
                 setEnabled(supportLayers(model.getSelectedLayers()));
             } else {
                 Layer selectedLayer = model.getSelectedLayers().get(0);

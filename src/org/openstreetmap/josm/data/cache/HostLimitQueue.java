@@ -99,7 +99,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
         return job;
     }
 
-    private  Semaphore getSemaphore(JCSCachedTileLoaderJob<?, ?> job) {
+    private Semaphore getSemaphore(JCSCachedTileLoaderJob<?, ?> job) {
         String host;
         try {
             host = job.getUrl().getHost();

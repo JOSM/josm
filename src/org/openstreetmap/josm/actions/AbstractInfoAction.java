@@ -61,7 +61,7 @@ public abstract class AbstractInfoAction extends JosmAction {
      * @return {@code true} if the user confirms, {@code false} otherwise
      */
     public static boolean confirmLaunchMultiple(int numBrowsers) {
-        String msg  = /* for correct i18n of plural forms - see #9110 */ trn(
+        String msg = /* for correct i18n of plural forms - see #9110 */ trn(
                 "You are about to launch {0} browser window.<br>"
                         + "This may both clutter your screen with browser windows<br>"
                         + "and take some time to finish.",

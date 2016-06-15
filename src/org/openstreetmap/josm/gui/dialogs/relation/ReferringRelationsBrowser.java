@@ -179,7 +179,7 @@ public class ReferringRelationsBrowser extends JPanel {
     class DblClickMouseAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() == 2)  {
+            if (e.getClickCount() == 2) {
                 editAction.run();
             }
         }

@@ -70,10 +70,12 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class ChangesetCacheManager extends JFrame {
 
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
     /** The changeset download icon **/
     public static final ImageIcon DOWNLOAD_CONTENT_ICON = ImageProvider.get("dialogs/changeset", "downloadchangesetcontent");
     /** The changeset update icon **/
     public static final ImageIcon UPDATE_CONTENT_ICON   = ImageProvider.get("dialogs/changeset", "updatechangesetcontent");
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /** the unique instance of the cache manager  */
     private static volatile ChangesetCacheManager instance;
@@ -163,7 +165,7 @@ public class ChangesetCacheManager extends JFrame {
      */
     protected JPanel buildChangesetDetailPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
-        JTabbedPane tp =  new JTabbedPane();
+        JTabbedPane tp = new JTabbedPane();
         pnlChangesetDetailTabs = tp;
 
         // -- add the details panel

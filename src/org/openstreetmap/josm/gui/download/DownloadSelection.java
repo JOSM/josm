@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.download;
 
 import org.openstreetmap.josm.data.Bounds;
 
-public interface DownloadSelection  {
+public interface DownloadSelection {
 
     /**
      * Add the GUI elements to the dialog.

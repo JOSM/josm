@@ -23,9 +23,11 @@ import org.openstreetmap.josm.io.OnlineResource;
  */
 public class DownloadObjectDialog extends OsmIdSelectionDialog {
 
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
     protected final JCheckBox referrers = new JCheckBox(tr("Download referrers (parent relations)"));
     protected final JCheckBox fullRel   = new JCheckBox(tr("Download relation members"));
     protected final JCheckBox newLayer  = new JCheckBox(tr("Separate Layer"));
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /**
      * Constructs a new DownloadObjectDialog with Main.parent as parent component.

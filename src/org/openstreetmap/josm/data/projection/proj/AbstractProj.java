@@ -91,6 +91,7 @@ public abstract class AbstractProj implements Proj {
         spherical = params.ellps.spherical;
         //  Compute constants for the mlfn
         double t;
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         en0 = C00 - e2  *  (C02 + e2  *
              (C04 + e2  *  (C06 + e2  * C08)));
         en1 =       e2  *  (C22 - e2  *
@@ -99,6 +100,7 @@ public abstract class AbstractProj implements Proj {
              (C44 - e2  *  (C46 + e2  * C48));
         en3 = (t *= e2) *  (C66 - e2  * C68);
         en4 =   t * e2  *  C88;
+        // CHECKSTYLE.ON: SingleSpaceSeparator
     }
 
     @Override
@@ -157,7 +159,7 @@ public abstract class AbstractProj implements Proj {
         final double eccnth = 0.5 * e;
         double phi = (Math.PI/2) - 2.0 * Math.atan(ts);
         for (int i = 0; i < MAXIMUM_ITERATIONS; i++) {
-            final double con  = e * Math.sin(phi);
+            final double con = e * Math.sin(phi);
             final double dphi = (Math.PI/2) - 2.0*Math.atan(ts * Math.pow((1-con)/(1+con), eccnth)) - phi;
             phi += dphi;
             if (Math.abs(dphi) <= ITERATION_TOLERANCE) {

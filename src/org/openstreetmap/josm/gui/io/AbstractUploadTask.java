@@ -114,9 +114,11 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
             String myVersion) {
         String lbl;
         switch(primitiveType) {
-        case NODE: lbl =  tr("Synchronize node {0} only", id); break;
-        case WAY: lbl =  tr("Synchronize way {0} only", id); break;
-        case RELATION: lbl =  tr("Synchronize relation {0} only", id); break;
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
+        case NODE:     lbl = tr("Synchronize node {0} only", id); break;
+        case WAY:      lbl = tr("Synchronize way {0} only", id); break;
+        case RELATION: lbl = tr("Synchronize relation {0} only", id); break;
+        // CHECKSTYLE.ON: SingleSpaceSeparator
         default: throw new AssertionError();
         }
         ButtonSpec[] spec = new ButtonSpec[] {
@@ -139,7 +141,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                         null
                 )
         };
-        String msg =  tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
+        String msg = tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
                 + "of your nodes, ways, or relations.<br>"
                 + "The conflict is caused by the <strong>{0}</strong> with id <strong>{1}</strong>,<br>"
                 + "the server has version {2}, your version is {3}.<br>"
@@ -187,7 +189,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                         null
                 )
         };
-        String msg =  tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
+        String msg = tr("<html>Uploading <strong>failed</strong> because the server has a newer version of one<br>"
                 + "of your nodes, ways, or relations.<br>"
                 + "<br>"
                 + "Click <strong>{0}</strong> to synchronize the entire local dataset with the server.<br>"
@@ -216,7 +218,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      * @param d changeset date
      */
     protected void handleUploadConflictForClosedChangeset(long changesetId, Date d) {
-        String msg =  tr("<html>Uploading <strong>failed</strong> because you have been using<br>"
+        String msg = tr("<html>Uploading <strong>failed</strong> because you have been using<br>"
                 + "changeset {0} which was already closed at {1}.<br>"
                 + "Please upload again with a new or an existing open changeset.</html>",
                 changesetId, DateUtils.formatDateTime(d, DateFormat.SHORT, DateFormat.SHORT)

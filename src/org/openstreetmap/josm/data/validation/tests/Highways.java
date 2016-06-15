@@ -46,6 +46,7 @@ public class Highways extends Test {
      * Classified highways in order of importance
      */
     private static final List<String> CLASSIFIED_HIGHWAYS = Arrays.asList(
+            // CHECKSTYLE.OFF: SingleSpaceSeparator
             "motorway",  "motorway_link",
             "trunk",     "trunk_link",
             "primary",   "primary_link",
@@ -54,6 +55,7 @@ public class Highways extends Test {
             "unclassified",
             "residential",
             "living_street");
+            // CHECKSTYLE.ON: SingleSpaceSeparator
 
     private static final Set<String> KNOWN_SOURCE_MAXSPEED_CONTEXTS = new HashSet<>(Arrays.asList(
             "urban", "rural", "zone", "zone30", "zone:30", "nsl_single", "nsl_dual", "motorway", "trunk", "living_street", "bicycle_road"));

@@ -198,7 +198,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
 
         myEntriesSelectionModel = new EntriesSelectionModel(entries.get(MY_ENTRIES));
         theirEntriesSelectionModel = new EntriesSelectionModel(entries.get(THEIR_ENTRIES));
-        mergedEntriesSelectionModel =  new EntriesSelectionModel(entries.get(MERGED_ENTRIES));
+        mergedEntriesSelectionModel = new EntriesSelectionModel(entries.get(MERGED_ENTRIES));
 
         listeners = new HashSet<>();
         comparePairListModel = new ComparePairListModel();

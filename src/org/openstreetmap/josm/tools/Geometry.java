@@ -788,7 +788,7 @@ public final class Geometry {
         }
 
         BigDecimal d = new BigDecimal(3, MathContext.DECIMAL128); // 1/2 * 6 = 3
-        area  = area.multiply(d, MathContext.DECIMAL128);
+        area = area.multiply(d, MathContext.DECIMAL128);
         if (area.compareTo(BigDecimal.ZERO) != 0) {
             north = north.divide(area, MathContext.DECIMAL128);
             east = east.divide(area, MathContext.DECIMAL128);

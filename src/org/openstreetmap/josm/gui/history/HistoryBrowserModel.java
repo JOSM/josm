@@ -305,7 +305,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
             throw new IllegalStateException(tr("History not initialized yet. Failed to set reference primitive."));
         if (reference.getId() != history.getId())
             throw new IllegalArgumentException(
-                    tr("Failed to set reference. Reference ID {0} does not match history ID {1}.", reference.getId(),  history.getId()));
+                    tr("Failed to set reference. Reference ID {0} does not match history ID {1}.", reference.getId(), history.getId()));
         HistoryOsmPrimitive primitive = history.getByVersion(reference.getVersion());
         if (primitive == null)
             throw new IllegalArgumentException(
@@ -336,7 +336,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
             throw new IllegalStateException(tr("History not initialized yet. Failed to set current primitive."));
         if (current.getId() != history.getId())
             throw new IllegalArgumentException(
-                    tr("Failed to set reference. Reference ID {0} does not match history ID {1}.", current.getId(),  history.getId()));
+                    tr("Failed to set reference. Reference ID {0} does not match history ID {1}.", current.getId(), history.getId()));
         HistoryOsmPrimitive primitive = history.getByVersion(current.getVersion());
         if (primitive == null)
             throw new IllegalArgumentException(
@@ -373,7 +373,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      * @return the respective primitive. Can be null.
      * @throws IllegalArgumentException if type is null
      */
-    public HistoryOsmPrimitive getPointInTime(PointInTimeType type)  {
+    public HistoryOsmPrimitive getPointInTime(PointInTimeType type) {
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         if (type.equals(PointInTimeType.CURRENT_POINT_IN_TIME))
             return current;

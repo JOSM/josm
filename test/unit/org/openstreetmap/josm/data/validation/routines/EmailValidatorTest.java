@@ -57,7 +57,7 @@ public class EmailValidatorTest {
      * Tests the e-mail validation.
      */
     @Test
-    public void testEmail()  {
+    public void testEmail() {
         assertTrue(validator.isValid("jsmith@apache.org"));
         assertFalse(validator.isValid(null));
     }
@@ -66,7 +66,7 @@ public class EmailValidatorTest {
      * Tests the email validation with numeric domains.
      */
     @Test
-    public void testEmailWithNumericAddress()  {
+    public void testEmailWithNumericAddress() {
         assertTrue(validator.isValid("someone@[216.109.118.76]"));
         assertTrue(validator.isValid("someone@yahoo.com"));
     }
@@ -75,7 +75,7 @@ public class EmailValidatorTest {
      * Tests the e-mail validation.
      */
     @Test
-    public void testEmailExtension()  {
+    public void testEmailExtension() {
         assertTrue(validator.isValid("jsmith@apache.org"));
 
         assertTrue(validator.isValid("jsmith@apache.com"));
@@ -98,7 +98,7 @@ public class EmailValidatorTest {
      * the address.
      */
     @Test
-    public void testEmailWithDash()  {
+    public void testEmailWithDash() {
         assertTrue(validator.isValid("andy.noble@data-workshop.com"));
 
         assertFalse(validator.isValid("andy-noble@data-workshop.-com"));
@@ -113,7 +113,7 @@ public class EmailValidatorTest {
      * the address.
      */
     @Test
-    public void testEmailWithDotEnd()  {
+    public void testEmailWithDotEnd() {
         assertFalse(validator.isValid("andy.noble@data-workshop.com."));
     }
 
@@ -122,7 +122,7 @@ public class EmailValidatorTest {
      * the address.
      */
     @Test
-    public void testEmailWithBogusCharacter()  {
+    public void testEmailWithBogusCharacter() {
 
         assertFalse(validator.isValid("andy.noble@\u008fdata-workshop.com"));
 
@@ -183,7 +183,7 @@ public class EmailValidatorTest {
      * Tests the email validation with commas.
      */
     @Test
-    public void testEmailWithCommas()  {
+    public void testEmailWithCommas() {
         assertFalse(validator.isValid("joeblow@apa,che.org"));
 
         assertFalse(validator.isValid("joeblow@apache.o,rg"));
@@ -195,7 +195,7 @@ public class EmailValidatorTest {
      * Tests the email validation with spaces.
      */
     @Test
-    public void testEmailWithSpaces()  {
+    public void testEmailWithSpaces() {
         assertFalse(validator.isValid("joeblow @apache.org")); // TODO - this should be valid?
 
         assertFalse(validator.isValid("joeblow@ apache.org"));
@@ -214,7 +214,7 @@ public class EmailValidatorTest {
      * (i.e. Ascii chars 0 - 31 and 127)
      */
     @Test
-    public void testEmailWithControlChars()  {
+    public void testEmailWithControlChars() {
         for (char c = 0; c < 32; c++) {
             assertFalse("Test control char " + ((int) c), validator.isValid("foo" + c + "bar@domain.com"));
         }
@@ -277,7 +277,7 @@ public class EmailValidatorTest {
      * that is being tested.
      */
     @Test
-    public void testEmailUserName()  {
+    public void testEmailUserName() {
 
         assertTrue(validator.isValid("joe1blow@apache.org"));
 
@@ -491,7 +491,7 @@ public class EmailValidatorTest {
      */
     @Ignore("This test fails so disable it for 1.1.4 release. The real solution is to fix the email parsing")
     @Test
-    public void testEmailFromPerl()  {
+    public void testEmailFromPerl() {
         for (int index = 0; index < testEmailFromPerl.length; index++) {
             String item = testEmailFromPerl[index].item;
             if (testEmailFromPerl[index].valid) {

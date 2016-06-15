@@ -73,7 +73,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
 
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        if (e.getPreviousActiveLayer()  == layer) {
+        if (e.getPreviousActiveLayer() == layer) {
             cache.clear();
         }
         if (e.getSource().getActiveLayer() == layer) {

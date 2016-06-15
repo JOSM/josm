@@ -79,6 +79,7 @@ public class HistoryRelationTest {
         rel2.addMember(new RelationMemberData(null, OsmPrimitiveType.NODE, 1));
         rel2.addMember(new RelationMemberData(null, OsmPrimitiveType.NODE, 2));
 
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
         assertEquals("relation (1, 0 members)", rel0.getDisplayName(hnf));
         assertEquals("relation (1, 1 member)",  rel1.getDisplayName(hnf));
         assertEquals("relation (1, 2 members)", rel2.getDisplayName(hnf));
@@ -93,5 +94,6 @@ public class HistoryRelationTest {
         assertEquals("relation (\"RelName\", 0 members)", rel0.getDisplayName(hnf));
         assertEquals("relation (\"RelName\", 1 member)",  rel1.getDisplayName(hnf));
         assertEquals("relation (\"RelName\", 2 members)", rel2.getDisplayName(hnf));
+        // CHECKSTYLE.ON: SingleSpaceSeparator
     }
 }

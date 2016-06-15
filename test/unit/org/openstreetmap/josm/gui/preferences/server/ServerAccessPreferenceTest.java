@@ -25,7 +25,7 @@ public class ServerAccessPreferenceTest {
      * Unit test of {@link ServerAccessPreference#ServerAccessPreference}.
      */
     @Test
-    public void testServerAccessPreference()  {
+    public void testServerAccessPreference() {
         assertNotNull(new ServerAccessPreference.Factory().createPreferenceSetting());
     }
 

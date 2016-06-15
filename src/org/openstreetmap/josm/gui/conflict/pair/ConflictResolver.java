@@ -47,7 +47,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * </ul>
  *
  */
-public class ConflictResolver extends JPanel implements PropertyChangeListener  {
+public class ConflictResolver extends JPanel implements PropertyChangeListener {
 
     /* -------------------------------------------------------------------------------------- */
     /* Property names                                                                         */
@@ -319,16 +319,16 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
             //
             this.resolvedCompletely =
                 tagMerger.getModel().isResolvedCompletely()
-                &&  propertiesMerger.getModel().isResolvedCompletely()
+                && propertiesMerger.getModel().isResolvedCompletely()
                 && nodeListMerger.getModel().isFrozen();
-        }  else if (my instanceof Relation) {
+        } else if (my instanceof Relation) {
             // resolve the version conflict if this is a relation, all tag
             // conflicts and all conflicts in the member list
             // have been resolved
             //
             this.resolvedCompletely =
                 tagMerger.getModel().isResolvedCompletely()
-                &&  propertiesMerger.getModel().isResolvedCompletely()
+                && propertiesMerger.getModel().isResolvedCompletely()
                 && relationMemberMerger.getModel().isFrozen();
         }
         if (this.resolvedCompletely != oldValueResolvedCompletely) {

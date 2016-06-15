@@ -18,8 +18,10 @@ import org.openstreetmap.josm.tools.Geometry;
  */
 public class WronglyOrderedWays extends Test {
 
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
     protected static final int WRONGLY_ORDERED_COAST = 1001;
     protected static final int WRONGLY_ORDERED_LAND  = 1003;
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /**
      * Constructor

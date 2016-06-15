@@ -40,7 +40,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @return A reader reading the input stream (servers answer) or <code>null</code>.
      * @throws OsmTransferException if data transfer errors occur
      */
-    protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException  {
+    protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor) throws OsmTransferException {
         return getInputStream(urlStr, progressMonitor, null);
     }
 
@@ -54,7 +54,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @return A reader reading the input stream (servers answer) or <code>null</code>.
      * @throws OsmTransferException if data transfer errors occur
      */
-    protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor, String reason) throws OsmTransferException  {
+    protected InputStream getInputStream(String urlStr, ProgressMonitor progressMonitor, String reason) throws OsmTransferException {
         try {
             api.initialize(progressMonitor);
             String url = urlStr.startsWith("http") ? urlStr : (getBaseUrl() + urlStr);

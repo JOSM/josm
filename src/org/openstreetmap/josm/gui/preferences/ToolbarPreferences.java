@@ -397,7 +397,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         }
     }
 
-    private class ToolbarPopupMenu extends JPopupMenu  {
+    private class ToolbarPopupMenu extends JPopupMenu {
         private transient ActionDefinition act;
 
         private void setActionAndAdapt(ActionDefinition action) {
@@ -1136,7 +1136,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         long paramCode = 0;
         if (action.hasParameters()) {
-            paramCode =  action.parameters.hashCode();
+            paramCode = action.parameters.hashCode();
         }
 
         String tt = action.getDisplayTooltip();

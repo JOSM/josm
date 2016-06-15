@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * This is the {@link TableCellRenderer} used in the tables of {@link RelationMemberMerger}.
  *
  */
-public  class RelationMemberTableCellRenderer extends JLabel implements TableCellRenderer {
+public class RelationMemberTableCellRenderer extends JLabel implements TableCellRenderer {
     private final transient Border rowNumberBorder;
 
     /**
@@ -100,7 +100,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
      * render the row id
      * @param row the row index
      */
-    protected  void renderRowId(int row) {
+    protected void renderRowId(int row) {
         setBorder(rowNumberBorder);
         setText(Integer.toString(row+1));
     }

@@ -107,7 +107,7 @@ public class TemplateParser {
             skipWhitespace();
 
             Token token = tokenizer.lookAhead();
-            if (token.getType()  == TokenType.END) {
+            if (token.getType() == TokenType.END) {
                 tokenizer.nextToken();
                 return result;
             } else {

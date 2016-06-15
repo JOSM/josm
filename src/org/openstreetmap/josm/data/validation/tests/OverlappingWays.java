@@ -61,7 +61,7 @@ public class OverlappingWays extends Test {
     }
 
     @Override
-    public void startTest(ProgressMonitor monitor)  {
+    public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         nodePairs = new MultiMap<>(1000);
     }

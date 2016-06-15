@@ -45,7 +45,7 @@ public class UrlBasedQueryPanel extends JPanel {
         GridBagConstraints gc = new GridBagConstraints();
         gc.weightx = 0.0;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.insets  = new Insets(0, 0, 0, 5);
+        gc.insets = new Insets(0, 0, 0, 5);
         pnl.add(new JLabel(tr("URL: ")), gc);
 
         gc.gridx = 1;

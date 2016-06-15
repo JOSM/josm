@@ -97,7 +97,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * @throws IllegalArgumentException if id &lt;= 0
      * @throws IllegalArgumentException if type is null
      */
-    public OsmServerBackreferenceReader(long id, OsmPrimitiveType type, boolean readFull)  {
+    public OsmServerBackreferenceReader(long id, OsmPrimitiveType type, boolean readFull) {
         this(id, type);
         this.readFull = readFull;
     }
@@ -201,7 +201,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
                 }
             }
             if (isReadFull()) {
-                Collection<Relation> relationsToCheck  = new ArrayList<>(ds.getRelations());
+                Collection<Relation> relationsToCheck = new ArrayList<>(ds.getRelations());
                 for (Relation relation: relationsToCheck) {
                     if (!relation.isNew() && relation.hasIncompleteMembers()) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true);

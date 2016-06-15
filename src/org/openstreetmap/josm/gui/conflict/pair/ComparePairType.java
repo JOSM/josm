@@ -21,12 +21,12 @@ public enum ComparePairType {
     /**
      * compare my version of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} with the merged version
      */
-    MY_WITH_MERGED(tr("My with Merged"),  new ListRole[] {MY_ENTRIES, MERGED_ENTRIES}),
+    MY_WITH_MERGED(tr("My with Merged"), new ListRole[] {MY_ENTRIES, MERGED_ENTRIES}),
 
     /**
      * compare their version of an {@link org.openstreetmap.josm.data.osm.OsmPrimitive} with the merged veresion
      */
-    THEIR_WITH_MERGED(tr("Their with Merged"),  new ListRole[] {THEIR_ENTRIES, MERGED_ENTRIES});
+    THEIR_WITH_MERGED(tr("Their with Merged"), new ListRole[] {THEIR_ENTRIES, MERGED_ENTRIES});
 
     /** the localized display name */
     private final String displayName;

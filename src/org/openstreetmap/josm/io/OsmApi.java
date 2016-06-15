@@ -132,7 +132,7 @@ public class OsmApi extends OsmConnection {
      * @param serverUrl the server URL. Must not be null
      * @throws IllegalArgumentException if serverUrl is null
      */
-    protected OsmApi(String serverUrl)  {
+    protected OsmApi(String serverUrl) {
         CheckParameterUtil.ensureParameterNotNull(serverUrl, "serverUrl");
         this.serverUrl = serverUrl;
     }

@@ -193,7 +193,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
     }
 
     protected static String getUserUrl(String username) {
-        return Main.getBaseUserUrl() + '/' +  Utils.encodeUrl(username).replaceAll("\\+", "%20");
+        return Main.getBaseUserUrl() + '/' + Utils.encodeUrl(username).replaceAll("\\+", "%20");
     }
 
     @Override

@@ -31,7 +31,7 @@ public class ConflictAddCommand extends Command {
      */
     public ConflictAddCommand(OsmDataLayer layer, Conflict<? extends OsmPrimitive> conflict) {
         super(layer);
-        this.conflict  = conflict;
+        this.conflict = conflict;
     }
 
     protected void warnBecauseOfDoubleConflict() {

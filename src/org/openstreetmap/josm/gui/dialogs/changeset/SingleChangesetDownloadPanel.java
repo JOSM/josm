@@ -91,7 +91,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
             int id = getChangesetId();
             if (id == 0)
                 return;
-            ChangesetContentDownloadTask task =  new ChangesetContentDownloadTask(
+            ChangesetContentDownloadTask task = new ChangesetContentDownloadTask(
                     SingleChangesetDownloadPanel.this,
                     Collections.singleton(id)
             );

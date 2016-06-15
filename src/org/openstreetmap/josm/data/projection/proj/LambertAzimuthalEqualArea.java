@@ -99,34 +99,29 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
         aPA2 = P20 * es3;
 
         final double sinphi;
-        qp     = qsfn(1);
-        rq     = Math.sqrt(0.5 * qp);
+        qp = qsfn(1);
+        rq = Math.sqrt(0.5 * qp);
         sinphi = Math.sin(latitudeOfOrigin);
         sinb1 = qsfn(sinphi) / qp;
         cosb1 = Math.sqrt(1.0 - sinb1 * sinb1);
         switch (mode) {
             case NORTH_POLE:  // Fall through
-            case SOUTH_POLE: {
-                dd  = 1.0;
+            case SOUTH_POLE:
+                dd = 1.0;
                 xmf = ymf = rq;
                 break;
-            }
-            case EQUATORIAL: {
-                dd  = 1.0 / rq;
+            case EQUATORIAL:
+                dd = 1.0 / rq;
                 xmf = 1.0;
                 ymf = 0.5 * qp;
                 break;
-            }
-            case OBLIQUE: {
-                dd  = Math.cos(latitudeOfOrigin) /
-                        (Math.sqrt(1.0 - e2 * sinphi * sinphi) * rq * cosb1);
+            case OBLIQUE:
+                dd = Math.cos(latitudeOfOrigin) / (Math.sqrt(1.0 - e2 * sinphi * sinphi) * rq * cosb1);
                 xmf = rq * dd;
                 ymf = rq / dd;
                 break;
-            }
-            default: {
+            default:
                 throw new AssertionError(mode);
-            }
         }
     }
 
@@ -138,25 +133,23 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
         double q = qsfn(sinphi);
         final double sinb, cosb, b, c, x, y;
         switch (mode) {
-            case OBLIQUE: {
+            case OBLIQUE:
                 sinb = q / qp;
                 cosb = Math.sqrt(1.0 - sinb * sinb);
-                c    = 1.0 + sinb1 * sinb + cosb1 * cosb * coslam;
-                b    = Math.sqrt(2.0 / c);
-                y    = ymf * b * (cosb1 * sinb - sinb1 * cosb * coslam);
-                x    = xmf * b * cosb * sinlam;
+                c = 1.0 + sinb1 * sinb + cosb1 * cosb * coslam;
+                b = Math.sqrt(2.0 / c);
+                y = ymf * b * (cosb1 * sinb - sinb1 * cosb * coslam);
+                x = xmf * b * cosb * sinlam;
                 break;
-            }
-            case EQUATORIAL: {
+            case EQUATORIAL:
                 sinb = q / qp;
                 cosb = Math.sqrt(1.0 - sinb * sinb);
-                c    = 1.0 + cosb * coslam;
-                b    = Math.sqrt(2.0 / c);
-                y    = ymf * b * sinb;
-                x    = xmf * b * cosb * sinlam;
+                c = 1.0 + cosb * coslam;
+                b = Math.sqrt(2.0 / c);
+                y = ymf * b * sinb;
+                x = xmf * b * cosb * sinlam;
                 break;
-            }
-            case NORTH_POLE: {
+            case NORTH_POLE:
                 c = (Math.PI / 2) + phi;
                 q = qp - q;
                 if (q >= 0.0) {
@@ -167,8 +160,7 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
                     x = y = 0.;
                 }
                 break;
-            }
-            case SOUTH_POLE: {
+            case SOUTH_POLE:
                 c = phi - (Math.PI / 2);
                 q = qp + q;
                 if (q >= 0.0) {
@@ -179,10 +171,8 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
                     x = y = 0.;
                 }
                 break;
-            }
-            default: {
+            default:
                 throw new AssertionError(mode);
-            }
         }
         if (Math.abs(c) < EPSILON_LATITUDE) {
             return new double[] {0, 0}; // this is an error, we should handle it somehow
@@ -210,10 +200,10 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
                     x *= sCe;
                     if (mode == Mode.OBLIQUE) {
                         ab = cCe * sinb1 + y * sCe * cosb1 / rho;
-                        y  = rho * cosb1 * cCe - y * sinb1 * sCe;
+                        y = rho * cosb1 * cCe - y * sinb1 * sCe;
                     } else {
                         ab = y * sCe / rho;
-                        y  = rho * cCe;
+                        y = rho * cCe;
                     }
                     lambda = Math.atan2(x, y);
                     phi = authlat(Math.asin(ab));

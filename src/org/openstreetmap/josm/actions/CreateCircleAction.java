@@ -165,10 +165,10 @@ public final class CreateCircleAction extends JosmAction {
 
         if (nodes.size() == 2) {
             // diameter: two single nodes needed or a way with two nodes
-            Node   n1 = nodes.get(0);
+            Node n1 = nodes.get(0);
             double x1 = n1.getEastNorth().east();
             double y1 = n1.getEastNorth().north();
-            Node   n2 = nodes.get(1);
+            Node n2 = nodes.get(1);
             double x2 = n2.getEastNorth().east();
             double y2 = n2.getEastNorth().north();
 

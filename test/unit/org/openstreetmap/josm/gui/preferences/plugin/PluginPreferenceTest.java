@@ -35,7 +35,7 @@ public class PluginPreferenceTest {
      * Unit test of {@link PluginPreference#PluginPreference}.
      */
     @Test
-    public void testPluginPreference()  {
+    public void testPluginPreference() {
         assertNotNull(new PluginPreference.Factory().createPreferenceSetting());
     }
 
@@ -44,7 +44,7 @@ public class PluginPreferenceTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testBuildDownloadSummary() throws Exception  {
+    public void testBuildDownloadSummary() throws Exception {
         final PluginInformation dummy = new PluginInformation(
                 new File(TestUtils.getTestDataRoot() + "plugin/dummy_plugin.jar"), "dummy_plugin");
         assertEquals("", PluginPreference.buildDownloadSummary(

@@ -161,7 +161,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     public void setVisible(boolean visible) {
         if (visible) {
             new WindowGeometry(
-                    getClass().getName()  + ".geometry",
+                    getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             Main.parent,
                             new Dimension(400, 200)

@@ -361,7 +361,7 @@ public class OsmOAuthAuthorizationClient {
             }
         } catch (IOException e) {
             throw new OsmOAuthAuthorizationException(e);
-        }  finally {
+        } finally {
             synchronized (this) {
                 connection = null;
             }

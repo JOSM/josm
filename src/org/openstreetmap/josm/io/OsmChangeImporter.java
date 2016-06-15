@@ -43,7 +43,7 @@ public class OsmChangeImporter extends FileImporter {
         }
     }
 
-    protected void importData(InputStream in, final File associatedFile, ProgressMonitor  progressMonitor) throws IllegalDataException {
+    protected void importData(InputStream in, final File associatedFile, ProgressMonitor progressMonitor) throws IllegalDataException {
         final DataSet dataSet = OsmChangeReader.parseDataSet(in, progressMonitor);
         final OsmDataLayer layer = new OsmDataLayer(dataSet, associatedFile.getName(), associatedFile);
         addDataLayer(dataSet, layer, associatedFile.getPath());

@@ -315,7 +315,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             data.clear();
             if (primitives != null) {
                 for (Map.Entry<User, Integer> entry: statistics.entrySet()) {
-                    data.add(new UserInfo(entry.getKey(), entry.getValue(), (double) entry.getValue() /  (double) primitives.size()));
+                    data.add(new UserInfo(entry.getKey(), entry.getValue(), (double) entry.getValue() / (double) primitives.size()));
                 }
             }
             Collections.sort(data);

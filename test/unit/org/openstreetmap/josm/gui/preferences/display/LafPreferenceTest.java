@@ -25,7 +25,7 @@ public class LafPreferenceTest {
      * Unit test of {@link LafPreference#LafPreference}.
      */
     @Test
-    public void testLafPreference()  {
+    public void testLafPreference() {
         assertNotNull(new LafPreference.Factory().createPreferenceSetting());
     }
 

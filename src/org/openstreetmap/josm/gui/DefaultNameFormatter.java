@@ -160,7 +160,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                         if (t != null) {
                             /* I18n: house number, street as parameter, number should remain
                         before street for better visibility */
-                            n =  tr("House number {0} at {1}", s, t);
+                            n = tr("House number {0} at {1}", s, t);
                         } else {
                             /* I18n: house number as parameter */
                             n = tr("House number {0}", s);
@@ -252,7 +252,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                         if (t != null) {
                             /* I18n: house number, street as parameter, number should remain
                         before street for better visibility */
-                            n =  tr("House number {0} at {1}", s, t);
+                            n = tr("House number {0} at {1}", s, t);
                         } else {
                             /* I18n: house number as parameter */
                             n = tr("House number {0}", s);
@@ -404,7 +404,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             name = (relation.get("public_transport") != null) ? tr("public transport") : null;
         }
         if (name == null) {
-            String building  = relation.get("building");
+            String building = relation.get("building");
             if (OsmUtils.isTrue(building)) {
                 name = tr("building");
             } else if (building != null) {

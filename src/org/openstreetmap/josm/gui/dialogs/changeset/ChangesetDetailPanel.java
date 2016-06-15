@@ -51,6 +51,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener, ChangesetAware {
 
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
     private final JosmTextField tfID        = new JosmTextField(10);
     private final JosmTextArea  taComment   = new JosmTextArea(5, 40);
     private final JosmTextField tfOpen      = new JosmTextField(10);
@@ -63,6 +64,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     private final RemoveFromCacheAction          actRemoveFromCache          = new RemoveFromCacheAction();
     private final SelectInCurrentLayerAction     actSelectInCurrentLayer     = new SelectInCurrentLayerAction();
     private final ZoomInCurrentLayerAction       actZoomInCurrentLayerAction = new ZoomInCurrentLayerAction();
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     private transient Changeset currentChangeset;
 

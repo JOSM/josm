@@ -315,7 +315,7 @@ public class CustomProjection extends AbstractProjection {
             }
             s = parameters.get(Param.axis.key);
             if (s != null) {
-                this.axis  = s;
+                this.axis = s;
             }
         }
     }
@@ -525,7 +525,7 @@ public class CustomProjection extends AbstractProjection {
         if ("utm".equals(id)) {
             id = "tmerc";
         }
-        Proj proj =  Projections.getBaseProjection(id);
+        Proj proj = Projections.getBaseProjection(id);
         if (proj == null) throw new ProjectionConfigurationException(tr("Unknown projection identifier: ''{0}''", id));
 
         ProjParameters projParams = new ProjParameters();

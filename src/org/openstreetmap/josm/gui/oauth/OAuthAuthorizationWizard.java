@@ -127,19 +127,19 @@ public class OAuthAuthorizationWizard extends JDialog {
         pnl.add(lbl, gc);
 
         // OAuth in a nutshell ...
-        gc.gridy  = 1;
+        gc.gridy = 1;
         gc.insets = new Insets(5, 0, 0, 5);
         HtmlPanel pnlMessage = new HtmlPanel();
         pnlMessage.setText("<html><body>"
                 + tr("With OAuth you grant JOSM the right to upload map data and GPS tracks "
-                        + "on your behalf (<a href=\"{0}\">more info...</a>).",  "http://oauth.net/")
+                        + "on your behalf (<a href=\"{0}\">more info...</a>).", "http://oauth.net/")
                         + "</body></html>"
         );
         pnlMessage.getEditorPane().addHyperlinkListener(new ExternalBrowserLauncher());
         pnl.add(pnlMessage, gc);
 
         // the authorisation procedure
-        gc.gridy  = 2;
+        gc.gridy = 2;
         gc.gridwidth = 1;
         gc.weightx = 0.0;
         lbl = new JLabel(tr("Please select an authorization procedure: "));

@@ -25,7 +25,7 @@ public class TaggingPresetPreferenceTest {
      * Unit test of {@link TaggingPresetPreference#TaggingPresetPreference}.
      */
     @Test
-    public void testTaggingPresetPreference()  {
+    public void testTaggingPresetPreference() {
         assertNotNull(new TaggingPresetPreference.Factory().createPreferenceSetting());
     }
 

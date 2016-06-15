@@ -65,7 +65,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
     protected JPanel buildQueryPanel() {
         ItemListener stateChangeHandler = new RestrictionGroupStateChangeHandler();
-        JPanel pnl  = new VerticallyScrollablePanel(new GridBagLayout());
+        JPanel pnl = new VerticallyScrollablePanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -448,7 +448,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             rbRestrictToMyself.addItemListener(userRestrictionChangeHandler);
 
             gc.gridx = 1;
-            gc.fill =  GridBagConstraints.HORIZONTAL;
+            gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             add(lblRestrictedToMyself, gc);
 
@@ -460,13 +460,13 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             rbRestrictToUid.addItemListener(userRestrictionChangeHandler);
 
             gc.gridx = 1;
-            gc.fill =  GridBagConstraints.HORIZONTAL;
+            gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             add(new JMultilineLabel(tr("Only changesets owned by the user with the following user ID")), gc);
 
             gc.gridx = 1;
             gc.gridy = 2;
-            gc.fill =  GridBagConstraints.HORIZONTAL;
+            gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             add(buildUidInputPanel(), gc);
 
@@ -529,7 +529,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
                     throw new IllegalStateException(
                             tr("Cannot restrict changeset query to the current user because the current user is anonymous"));
             } else if (rbRestrictToUid.isSelected()) {
-                int uid  = valUid.getUid();
+                int uid = valUid.getUid();
                 if (uid > 0) {
                     query.forUser(uid);
                 } else
@@ -984,7 +984,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
         @Override
         public void validate() {
-            String value  = getComponent().getText();
+            String value = getComponent().getText();
             if (value == null || value.trim().isEmpty()) {
                 feedbackInvalid("");
                 return;
@@ -1003,7 +1003,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
 
         public int getUid() {
-            String value  = getComponent().getText();
+            String value = getComponent().getText();
             if (value == null || value.trim().isEmpty()) return 0;
             try {
                 int uid = Integer.parseInt(value.trim());
@@ -1042,7 +1042,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
         public String getStandardTooltipText() {
             Date date = new Date();
-            return  tr(
+            return tr(
                     "Please enter a date in the usual format for your locale.<br>"
                     + "Example: {0}<br>"
                     + "Example: {1}<br>"

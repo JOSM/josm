@@ -138,7 +138,7 @@ public class UnGlueAction extends JosmAction {
             }
             if (tmpNodes.isEmpty()) {
                 if (selection.size() > 1) {
-                    errMsg =  tr("None of these nodes are glued to anything else.");
+                    errMsg = tr("None of these nodes are glued to anything else.");
                 } else {
                     errMsg = tr("None of this way''s nodes are glued to anything else.");
                 }

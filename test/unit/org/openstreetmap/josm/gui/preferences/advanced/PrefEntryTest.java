@@ -29,7 +29,7 @@ public class PrefEntryTest {
      * Unit test of {@link PrefEntry#PrefEntry}.
      */
     @Test
-    public void testPrefEntry()  {
+    public void testPrefEntry() {
         String key = "key";
         StringSetting val = new StringSetting("value");
         StringSetting def = new StringSetting("defaultValue");

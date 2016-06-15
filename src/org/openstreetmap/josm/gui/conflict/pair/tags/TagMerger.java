@@ -385,7 +385,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
      * {@link MergeDecisionType#UNDECIDED}
      *
      */
-    class UndecideAction extends AbstractAction implements ListSelectionListener  {
+    class UndecideAction extends AbstractAction implements ListSelectionListener {
 
         UndecideAction() {
             ImageIcon icon = ImageProvider.get("dialogs/conflict", "tagundecide");

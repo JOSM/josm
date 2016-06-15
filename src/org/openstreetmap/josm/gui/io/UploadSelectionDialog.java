@@ -153,7 +153,7 @@ public class UploadSelectionDialog extends JDialog {
     }
 
     public List<OsmPrimitive> getSelectedPrimitives() {
-        List<OsmPrimitive> ret  = new ArrayList<>();
+        List<OsmPrimitive> ret = new ArrayList<>();
         ret.addAll(lstSelectedPrimitives.getOsmPrimitiveListModel().getPrimitives(lstSelectedPrimitives.getSelectedIndices()));
         ret.addAll(lstDeletedPrimitives.getOsmPrimitiveListModel().getPrimitives(lstDeletedPrimitives.getSelectedIndices()));
         return ret;

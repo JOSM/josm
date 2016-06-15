@@ -89,7 +89,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
      *
      * @return the retrieved Access Token
      */
-    public  OAuthToken getAccessToken() {
+    public OAuthToken getAccessToken() {
         return accessToken;
     }
 

@@ -313,9 +313,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         String msg;
         final String baseUrl = getBaseUrl();
         switch (type) {
+            // CHECKSTYLE.OFF: SingleSpaceSeparator
             case NODE:     msg = tr("Fetching a package of nodes from ''{0}''",     baseUrl); break;
             case WAY:      msg = tr("Fetching a package of ways from ''{0}''",      baseUrl); break;
             case RELATION: msg = tr("Fetching a package of relations from ''{0}''", baseUrl); break;
+            // CHECKSTYLE.ON: SingleSpaceSeparator
             default: throw new AssertionError();
         }
         progressMonitor.setTicksCount(ids.size());
@@ -583,9 +585,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                 try {
                     String msg;
                     switch (type) {
+                        // CHECKSTYLE.OFF: SingleSpaceSeparator
                         case NODE:     msg = tr("Fetching node with id {0} from ''{1}''",     id, baseUrl); break;
                         case WAY:      msg = tr("Fetching way with id {0} from ''{1}''",      id, baseUrl); break;
                         case RELATION: msg = tr("Fetching relation with id {0} from ''{1}''", id, baseUrl); break;
+                        // CHECKSTYLE.ON: SingleSpaceSeparator
                         default: throw new AssertionError();
                     }
                     progressMonitor.setCustomText(msg);

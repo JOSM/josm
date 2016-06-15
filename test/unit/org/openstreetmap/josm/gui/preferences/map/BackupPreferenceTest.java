@@ -25,7 +25,7 @@ public class BackupPreferenceTest {
      * Unit test of {@link BackupPreference#BackupPreference}.
      */
     @Test
-    public void testBackupPreference()  {
+    public void testBackupPreference() {
         assertNotNull(new BackupPreference.Factory().createPreferenceSetting());
     }
 

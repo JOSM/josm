@@ -97,15 +97,15 @@ public class AlbersEqualArea extends AbstractProj {
         if (Math.abs(phi1 + phi2) < EPSILON) {
             throw new ProjectionConfigurationException(tr("standard parallels are opposite"));
         }
-        double  sinphi = Math.sin(phi1);
-        double  cosphi = Math.cos(phi1);
-        double  n      = sinphi;
+        double sinphi = Math.sin(phi1);
+        double cosphi = Math.cos(phi1);
+        double n = sinphi;
         boolean secant = Math.abs(phi1 - phi2) >= EPSILON;
         double m1 = msfn(sinphi, cosphi);
         double q1 = qsfn(sinphi);
         if (secant) { // secant cone
-            sinphi    = Math.sin(phi2);
-            cosphi    = Math.cos(phi2);
+            sinphi = Math.sin(phi2);
+            cosphi = Math.cos(phi2);
             double m2 = msfn(sinphi, cosphi);
             double q2 = qsfn(sinphi);
             n = (m1 * m1 - m2 * m2) / (q2 - q1);
@@ -129,8 +129,10 @@ public class AlbersEqualArea extends AbstractProj {
             }
         }
         rho = Math.sqrt(rho) / n;
-        y   = rho0 - rho * Math.cos(x);
-        x   =        rho * Math.sin(x);
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
+        y = rho0 - rho * Math.cos(x);
+        x =        rho * Math.sin(x);
+        // CHECKSTYLE.ON: SingleSpaceSeparator
         return new double[] {x, y};
     }
 
@@ -141,8 +143,8 @@ public class AlbersEqualArea extends AbstractProj {
         if (rho > EPSILON) {
             if (n < 0.0) {
                 rho = -rho;
-                x   = -x;
-                y   = -y;
+                x = -x;
+                y = -y;
             }
             x = Math.atan2(x, y) / n;
             y = rho * n;
@@ -174,9 +176,9 @@ public class AlbersEqualArea extends AbstractProj {
         for (int i = 0; i < MAXIMUM_ITERATIONS; i++) {
             final double sinpi = Math.sin(phi);
             final double cospi = Math.cos(phi);
-            final double con   = e * sinpi;
-            final double com   = 1.0 - con*con;
-            final double dphi  = 0.5 * com*com / cospi *
+            final double con = e * sinpi;
+            final double com = 1.0 - con*con;
+            final double dphi = 0.5 * com*com / cospi *
                     (qs/toneEs - sinpi / com + 0.5/e * Math.log((1. - con) / (1. + con)));
             phi += dphi;
             if (Math.abs(dphi) <= ITERATION_TOLERANCE) {

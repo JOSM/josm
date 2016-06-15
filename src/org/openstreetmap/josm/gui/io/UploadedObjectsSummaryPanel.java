@@ -133,7 +133,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
      *
      * @return the number of objects to upload
      */
-    public int  getNumObjectsToUpload() {
+    public int getNumObjectsToUpload() {
         return lstAdd.getModel().getSize()
         + lstUpdate.getModel().getSize()
         + lstDelete.getModel().getSize();

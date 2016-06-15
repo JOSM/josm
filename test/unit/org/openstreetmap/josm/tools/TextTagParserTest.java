@@ -29,16 +29,20 @@ public class TextTagParserTest {
     @Test
     public void testUnescape() {
         String s, s1;
-        s = "\"2 3 4\"";       s1 = "2 3 4";
+        s = "\"2 3 4\"";
+        s1 = "2 3 4";
         Assert.assertEquals(s1, TextTagParser.unescape(s));
 
-        s = "\"2 \\\"3\\\" 4\"";       s1 = "2 \"3\" 4";
+        s = "\"2 \\\"3\\\" 4\"";
+        s1 = "2 \"3\" 4";
         Assert.assertEquals(s1, TextTagParser.unescape(s));
 
-        s = "\"2 3 ===4===\"";       s1 = "2 3 ===4===";
+        s = "\"2 3 ===4===\"";
+        s1 = "2 3 ===4===";
         Assert.assertEquals(s1, TextTagParser.unescape(s));
 
-        s = "\"2 3 \\\\\\\\===4===\"";       s1 = "2 3 \\\\===4===";
+        s = "\"2 3 \\\\\\\\===4===\"";
+        s1 = "2 3 \\\\===4===";
         Assert.assertEquals(s1, TextTagParser.unescape(s));
     }
 

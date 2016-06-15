@@ -101,7 +101,7 @@ public class SideButton extends JButton implements Destroyable {
         Icon i = getIcon();
         if (i instanceof ImageIcon && i.getIconHeight() != iconHeight) {
             Image im = ((ImageIcon) i).getImage();
-            int newWidth = im.getWidth(null) *  iconHeight / im.getHeight(null);
+            int newWidth = im.getWidth(null) * iconHeight / im.getHeight(null);
             ImageIcon icon = new ImageIcon(im.getScaledInstance(newWidth, iconHeight, Image.SCALE_SMOOTH));
             setIcon(icon);
         }

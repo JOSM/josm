@@ -43,11 +43,13 @@ public class Addresses extends Test {
     protected static final int MULTIPLE_STREET_RELATIONS = 2604;
     protected static final int HOUSE_NUMBER_TOO_FAR = 2605;
 
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
     protected static final String ADDR_HOUSE_NUMBER  = "addr:housenumber";
     protected static final String ADDR_INTERPOLATION = "addr:interpolation";
     protected static final String ADDR_PLACE         = "addr:place";
     protected static final String ADDR_STREET        = "addr:street";
     protected static final String ASSOCIATED_STREET  = "associatedStreet";
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     protected static class AddressError extends TestError {
 

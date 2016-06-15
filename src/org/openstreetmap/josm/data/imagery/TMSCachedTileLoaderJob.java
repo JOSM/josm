@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.HttpClient;
  * Class bridging TMS requests to JCS cache requests
  * @since 8168
  */
-public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener  {
+public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener {
     private static final Logger LOG = FeatureAdapter.getLogger(TMSCachedTileLoaderJob.class.getCanonicalName());
     private static final LongProperty MAXIMUM_EXPIRES = new LongProperty("imagery.generic.maximum_expires",
             30 /*days*/ * 24 /*hours*/ * 60 /*minutes*/ * 60 /*seconds*/ *1000L /*milliseconds*/);
@@ -123,7 +123,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         if (cacheData != null) {
             byte[] content = cacheData.getContent();
             try {
-                return content != null  || cacheData.getImage() != null || isNoTileAtZoom();
+                return content != null || cacheData.getImage() != null || isNoTileAtZoom();
             } catch (IOException e) {
                 LOG.log(Level.WARNING, "JCS TMS - error loading from cache for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
             }

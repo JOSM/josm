@@ -367,7 +367,7 @@ public final class PluginHandler {
                 )
                 + "</html>";
             togglePreferenceKey = "pluginmanager.version-based-update.policy";
-        }  else {
+        } else {
             long tim = System.currentTimeMillis();
             long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
             Integer maxTime = Main.pref.getInteger("pluginmanager.time-based-update.interval", DEFAULT_TIME_BASED_UPDATE_INTERVAL);
@@ -724,7 +724,7 @@ public final class PluginHandler {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?</html>", plugin.name, plugin.className);
             }
-        }  catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             pluginLoadingExceptions.put(plugin.name, e);
             Main.error(e);
         }

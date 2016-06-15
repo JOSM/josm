@@ -45,17 +45,19 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
     private int[] tileYMax;
     private double[] degreesPerTile;
 
-    private static final Pattern PATTERN_HEADER  = Pattern.compile("\\{header\\(([^,]+),([^}]+)\\)\\}");
-    private static final Pattern PATTERN_PROJ    = Pattern.compile("\\{proj\\}");
-    private static final Pattern PATTERN_WKID    = Pattern.compile("\\{wkid\\}");
-    private static final Pattern PATTERN_BBOX    = Pattern.compile("\\{bbox\\}");
-    private static final Pattern PATTERN_W       = Pattern.compile("\\{w\\}");
-    private static final Pattern PATTERN_S       = Pattern.compile("\\{s\\}");
-    private static final Pattern PATTERN_E       = Pattern.compile("\\{e\\}");
-    private static final Pattern PATTERN_N       = Pattern.compile("\\{n\\}");
-    private static final Pattern PATTERN_WIDTH   = Pattern.compile("\\{width\\}");
-    private static final Pattern PATTERN_HEIGHT  = Pattern.compile("\\{height\\}");
-    private static final Pattern PATTERN_PARAM   = Pattern.compile("\\{([^}]+)\\}");
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
+    private static final Pattern PATTERN_HEADER = Pattern.compile("\\{header\\(([^,]+),([^}]+)\\)\\}");
+    private static final Pattern PATTERN_PROJ   = Pattern.compile("\\{proj\\}");
+    private static final Pattern PATTERN_WKID   = Pattern.compile("\\{wkid\\}");
+    private static final Pattern PATTERN_BBOX   = Pattern.compile("\\{bbox\\}");
+    private static final Pattern PATTERN_W      = Pattern.compile("\\{w\\}");
+    private static final Pattern PATTERN_S      = Pattern.compile("\\{s\\}");
+    private static final Pattern PATTERN_E      = Pattern.compile("\\{e\\}");
+    private static final Pattern PATTERN_N      = Pattern.compile("\\{n\\}");
+    private static final Pattern PATTERN_WIDTH  = Pattern.compile("\\{width\\}");
+    private static final Pattern PATTERN_HEIGHT = Pattern.compile("\\{height\\}");
+    private static final Pattern PATTERN_PARAM  = Pattern.compile("\\{([^}]+)\\}");
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     private static final NumberFormat latLonFormat = new DecimalFormat("###0.0000000", new DecimalFormatSymbols(Locale.US));
 
@@ -268,7 +270,7 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
 
     @Override
     public TileXY latLonToTileXY(ICoordinate point, int zoom) {
-        return latLonToTileXY(point.getLat(),  point.getLon(), zoom);
+        return latLonToTileXY(point.getLat(), point.getLon(), zoom);
     }
 
     @Override
@@ -296,7 +298,7 @@ public class TemplatedWMSTileSource extends TMSTileSource implements TemplatedTi
         double scale = getDegreesPerTile(zoom) / getTileSize();
         EastNorth point = Main.getProjection().latlon2eastNorth(new LatLon(lat, lon));
         return new Point(
-                    (int) Math.round((point.east() - anchorPosition.east())   / scale),
+                    (int) Math.round((point.east() - anchorPosition.east()) / scale),
                     (int) Math.round((anchorPosition.north() - point.north()) / scale)
                 );
     }

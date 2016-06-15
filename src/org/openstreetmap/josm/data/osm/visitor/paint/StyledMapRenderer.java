@@ -294,7 +294,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * method which apparently no longer gives a useful result for Java 7.
      */
     public static boolean isGlyphVectorDoubleTranslationBug(Font font) {
-        Boolean cached  = IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG.get(font);
+        Boolean cached = IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG.get(font);
         if (cached != null)
             return cached;
         String overridePref = Main.pref.get("glyph-bug", "auto");
@@ -574,7 +574,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             // quick check to see if label box is smaller than primitive box
             if (pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) {
 
-                final double w = pb.width  - nb.getWidth();
+                final double w = pb.width - nb.getWidth();
                 final double h = pb.height - nb.getHeight();
 
                 final int x2 = pb.x + (int) (w/2.0);
@@ -589,10 +589,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 boolean labelOK = area.contains(centeredNBounds);
                 if (!labelOK) {
                     // if center position (C) is not inside osm shape, try naively some other positions as follows:
+                    // CHECKSTYLE.OFF: SingleSpaceSeparator
                     final int x1 = pb.x + (int)   (w/4.0);
                     final int x3 = pb.x + (int) (3*w/4.0);
                     final int y1 = pb.y + (int)   (h/4.0);
                     final int y3 = pb.y + (int) (3*h/4.0);
+                    // CHECKSTYLE.ON: SingleSpaceSeparator
                     // +-----------+
                     // |  5  1  6  |
                     // |  4  C  2  |
@@ -1480,7 +1482,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     if (showHeadArrowOnly ? !it.hasNext() : showOrientation) {
                         final double segmentLength = p1.distance(p2);
                         if (segmentLength != 0) {
-                            final double l =  (10. + line.getLineWidth()) / segmentLength;
+                            final double l = (10. + line.getLineWidth()) / segmentLength;
 
                             final double sx = l * (p1.x - p2.x);
                             final double sy = l * (p1.y - p2.y);

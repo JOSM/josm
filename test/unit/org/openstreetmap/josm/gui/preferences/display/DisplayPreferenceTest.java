@@ -25,7 +25,7 @@ public class DisplayPreferenceTest {
      * Unit test of {@link DisplayPreference#DisplayPreference}.
      */
     @Test
-    public void testDisplayPreference()  {
+    public void testDisplayPreference() {
         assertNotNull(new DisplayPreference.Factory().createPreferenceSetting());
     }
 

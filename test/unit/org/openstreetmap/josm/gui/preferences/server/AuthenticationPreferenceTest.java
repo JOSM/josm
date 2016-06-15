@@ -25,7 +25,7 @@ public class AuthenticationPreferenceTest {
      * Unit test of {@link AuthenticationPreference#AuthenticationPreference}.
      */
     @Test
-    public void testAuthenticationPreference()  {
+    public void testAuthenticationPreference() {
         assertNotNull(new AuthenticationPreference.Factory().createPreferenceSetting());
     }
 

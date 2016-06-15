@@ -503,7 +503,7 @@ public class GpxReader implements GpxConstants {
         }
 
         @Override
-        public void endDocument() throws SAXException  {
+        public void endDocument() throws SAXException {
             if (!states.empty())
                 throw new SAXException(tr("Parse error: invalid document structure for GPX document."));
             Extensions metaExt = (Extensions) data.get(META_EXTENSIONS);

@@ -130,7 +130,7 @@ public class Capabilities {
                 imageryBlacklist.add(value);
             }
         } else {
-            if (!capabilities.containsKey(element))  {
+            if (!capabilities.containsKey(element)) {
                 Map<String, String> h = new HashMap<>();
                 capabilities.put(element, h);
             }

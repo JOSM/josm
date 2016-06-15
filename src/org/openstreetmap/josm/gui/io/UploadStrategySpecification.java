@@ -14,7 +14,7 @@ import java.util.Objects;
  * <li>whether to close the changeset used after the upload</li>
  * </ul>
  */
-public class UploadStrategySpecification  {
+public class UploadStrategySpecification {
     /** indicates that the chunk size isn't specified */
     public static final int UNSPECIFIED_CHUNK_SIZE = -1;
 

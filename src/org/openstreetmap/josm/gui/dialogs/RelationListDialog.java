@@ -298,7 +298,7 @@ public class RelationListDialog extends ToggleDialog
         }
     }
 
-    private JosmTextField  setupFilter() {
+    private JosmTextField setupFilter() {
         final JosmTextField f = new DisableShortcutsOnFocusGainedTextField();
         f.setToolTipText(tr("Relation list filter"));
         final CompileSearchTextDecorator decorator = CompileSearchTextDecorator.decorate(f);
@@ -410,7 +410,7 @@ public class RelationListDialog extends ToggleDialog
         }
 
         public void setRelations(Collection<Relation> relations) {
-            List<Relation> sel =  getSelectedRelations();
+            List<Relation> sel = getSelectedRelations();
             this.relations.clear();
             this.filteredRelations = null;
             if (relations == null) {

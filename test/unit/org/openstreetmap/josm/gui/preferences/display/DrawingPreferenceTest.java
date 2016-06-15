@@ -25,7 +25,7 @@ public class DrawingPreferenceTest {
      * Unit test of {@link DrawingPreference#DrawingPreference}.
      */
     @Test
-    public void testDrawingPreference()  {
+    public void testDrawingPreference() {
         assertNotNull(new DrawingPreference.Factory().createPreferenceSetting());
     }
 

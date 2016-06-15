@@ -568,7 +568,7 @@ public class CombineWayAction extends JosmAction {
             if (startNode == null)
                 return null;
             Stack<NodePair> path = new Stack<>();
-            Stack<NodePair> nextPairs  = new Stack<>();
+            Stack<NodePair> nextPairs = new Stack<>();
             nextPairs.addAll(getOutboundPairs(startNode));
             while (!nextPairs.isEmpty()) {
                 NodePair cur = nextPairs.pop();

@@ -84,7 +84,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 1.0;
         gc.insets = new Insets(0, 0, 0, 0);
-        gc.gridwidth  = 4;
+        gc.gridwidth = 4;
         add(buildDefaultServerUrlPanel(), gc);
 
 
@@ -123,7 +123,7 @@ public class OsmApiUrlInputPanel extends JPanel {
      * Initializes the configuration panel with values from the preferences
      */
     public void initFromPreferences() {
-        String url =  OsmApi.getOsmApi().getServerUrl();
+        String url = OsmApi.getOsmApi().getServerUrl();
         tfOsmServerUrl.setPossibleItems(SERVER_URL_HISTORY.get());
         if (OsmApi.DEFAULT_API_URL.equals(url.trim())) {
             cbUseDefaultServerUrl.setSelected(true);

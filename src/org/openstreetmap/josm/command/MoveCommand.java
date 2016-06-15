@@ -106,7 +106,7 @@ public class MoveCommand extends Command {
      */
     public MoveCommand(Collection<OsmPrimitive> objects, EastNorth start, EastNorth end) {
         this(objects, end.getX()-start.getX(), end.getY()-start.getY());
-        startEN =  start;
+        startEN = start;
     }
 
     /**
@@ -117,7 +117,7 @@ public class MoveCommand extends Command {
      */
     public MoveCommand(OsmPrimitive p, EastNorth start, EastNorth end) {
         this(Collections.singleton(p), end.getX()-start.getX(), end.getY()-start.getY());
-        startEN =  start;
+        startEN = start;
     }
 
     /**
