@@ -321,8 +321,8 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     private Data data;
     private BlockSort blockSorter;
 
-    private final Object outLock = new Object();
     private OutputStream out;
+    private volatile boolean closed;
 
     /**
      * Chooses a blocksize based on the given length of the data to compress.
@@ -393,7 +393,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
 
     @Override
     public void write(final int b) throws IOException {
-        if (this.out != null) {
+        if (!closed) {
             write0(b);
         } else {
             throw new IOException("closed");
@@ -468,37 +468,38 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
     }
 
     /**
-     * Overriden to close the stream.
+     * Overriden to warn about an unclosed stream.
      */
     @Override
     protected void finalize() throws Throwable {
-        finish();
+        if (!closed) {
+            System.err.println("Unclosed BZip2CompressorOutputStream detected, will *not* close it");
+        }
         super.finalize();
     }
 
 
     public void finish() throws IOException {
-        synchronized(outLock) {
-            if (out != null) {
-                try {
-                    if (this.runLength > 0) {
-                        writeRun();
-                    }
-                    this.currentChar = -1;
-                    endBlock();
-                    endCompression();
-                } finally {
-                    this.out = null;
+        if (!closed) {
+            closed = true;
+            try {
+                if (this.runLength > 0) {
+                    writeRun();
                 }
+                this.currentChar = -1;
+                endBlock();
+                endCompression();
+            } finally {
+                this.out = null;
+                this.blockSorter = null;
+                this.data = null;
             }
         }
-        this.blockSorter = null;
-        this.data = null;
     }
 
     @Override
     public void close() throws IOException {
-        if (out != null) {
+        if (!closed) {
             final OutputStream outShadow = this.out;
             finish();
             outShadow.close();
@@ -628,7 +629,7 @@ public class BZip2CompressorOutputStream extends CompressorOutputStream
                                                 + len + ") > buf.length("
                                                 + buf.length + ").");
         }
-        if (this.out == null) {
+        if (closed) {
             throw new IOException("stream closed");
         }
 
