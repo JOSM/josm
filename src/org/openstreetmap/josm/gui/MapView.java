@@ -1290,4 +1290,14 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     public final MainLayerManager getLayerManager() {
         return layerManager;
     }
+
+    /**
+     * Schedule a zoom to the given position on the next redraw.
+     * Temporary, may be removed without warning.
+     * @param viewportData
+     * @since xxx
+     */
+    public void scheduleZoomTo(ViewportData viewportData) {
+        initialViewport = viewportData;
+    }
 }

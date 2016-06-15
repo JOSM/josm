@@ -569,10 +569,14 @@ public abstract class Main {
         getLayerManager().addLayerChangeListener(new LayerChangeListener() {
             @Override
             public void layerAdded(LayerAddEvent e) {
+                Layer layer = e.getAddedLayer();
                 if (map == null) {
-                    Layer layer = e.getAddedLayer();
-                    ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
-                    Main.main.createMapFrame(layer, viewProjectionBounds == null ? null : new ViewportData(viewProjectionBounds));
+                    Main.main.createMapFrame(layer, null);
+                    Main.map.setVisible(true);
+                }
+                ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
+                if (viewProjectionBounds != null) {
+                    Main.map.mapView.scheduleZoomTo(new ViewportData(viewProjectionBounds));
                 }
             }
 
@@ -819,10 +823,8 @@ public abstract class Main {
      */
     public final synchronized void addLayer(final Layer layer, ViewportData viewport) {
         getLayerManager().addLayer(layer);
-        if (map != null) {
-            Main.map.setVisible(true);
-        } else if (viewport != null) {
-            Main.map.mapView.zoomTo(viewport);
+        if (viewport != null) {
+            Main.map.mapView.scheduleZoomTo(viewport);
         }
     }
 
