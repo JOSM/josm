@@ -185,7 +185,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // update selection to reflect which way being modified
         DataSet currentDataSet = getLayerManager().getEditDataSet();
-        if (getCurrentBaseNode() != null && currentDataSet != null && !currentDataSet.getSelected().isEmpty()) {
+        if (getCurrentBaseNode() != null && currentDataSet != null && !currentDataSet.selectionEmpty()) {
             Way continueFrom = getWayForNode(getCurrentBaseNode());
             if (alt && continueFrom != null && (!getCurrentBaseNode().isSelected() || continueFrom.isSelected())) {
                 addRemoveSelection(currentDataSet, getCurrentBaseNode(), continueFrom);
@@ -1084,8 +1084,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         // This happens when nothing is selected, but we still want to highlight the "target node"
-        if (mouseOnExistingNode == null && getLayerManager().getEditDataSet().getSelected().isEmpty()
-                && mousePos != null) {
+        if (mouseOnExistingNode == null && getLayerManager().getEditDataSet().selectionEmpty() && mousePos != null) {
             mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
         }
 
@@ -1248,7 +1247,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     public Collection<OsmPrimitive> getInProgressSelection() {
         DataSet ds = getLayerManager().getEditDataSet();
         if (ds == null) return null;
-        if (getCurrentBaseNode() != null && !ds.getSelected().isEmpty()) {
+        if (getCurrentBaseNode() != null && !ds.selectionEmpty()) {
             Way continueFrom = getWayForNode(getCurrentBaseNode());
             if (continueFrom != null)
                 return Collections.<OsmPrimitive>singleton(continueFrom);

@@ -33,7 +33,7 @@ public class RemoveSelectedAction extends AddFromSelectionAction {
     @Override
     protected void updateEnabledState() {
         DataSet ds = layer.data;
-        if (ds == null || ds.getSelected().isEmpty()) {
+        if (ds == null || ds.selectionEmpty()) {
             setEnabled(false);
             return;
         }

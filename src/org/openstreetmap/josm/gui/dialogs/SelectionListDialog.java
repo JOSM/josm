@@ -341,7 +341,7 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         protected void updateEnabledState() {
-            setEnabled(!model.getSelected().isEmpty());
+            setEnabled(!model.isSelectionEmpty());
         }
 
         @Override
@@ -377,7 +377,7 @@ public class SelectionListDialog extends ToggleDialog {
 
         protected void updateEnabledState(int osmSelectionSize) {
             // See #10830 - allow to click on history button is a single object is selected, even if not selected again in the list
-            setEnabled(!model.getSelected().isEmpty() || osmSelectionSize == 1);
+            setEnabled(!model.isSelectionEmpty() || osmSelectionSize == 1);
         }
 
         @Override
@@ -458,7 +458,7 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         protected void updateEnabledState() {
-            setEnabled(!model.getSelected().isEmpty());
+            setEnabled(!model.isSelectionEmpty());
         }
 
         @Override
@@ -560,8 +560,16 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         /**
-         * Replies the collection of OSM primitives currently selected in the view
-         * of this model
+         * Determines if no OSM primitives are currently selected.
+         * @return {@code true} if no OSM primitives are currently selected
+         * @since 10383
+         */
+        public boolean isSelectionEmpty() {
+            return selectionModel.isSelectionEmpty();
+        }
+
+        /**
+         * Replies the collection of OSM primitives currently selected in the view of this model
          *
          * @return choosen elements in the view
          */
