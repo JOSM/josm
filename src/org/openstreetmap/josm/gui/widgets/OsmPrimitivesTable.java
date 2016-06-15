@@ -9,9 +9,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumnModel;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ZoomToAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
@@ -82,14 +82,16 @@ public abstract class OsmPrimitivesTable extends JosmTable {
     protected JPopupMenu buildPopupMenu() {
         JPopupMenu menu = new JPopupMenu();
         zoomToAction = buildZoomToAction();
-        MapView.addLayerChangeListener(zoomToAction);
+        Main.getLayerManager().addLayerChangeListener(zoomToAction);
+        Main.getLayerManager().addActiveLayerChangeListener(zoomToAction);
         getSelectionModel().addListSelectionListener(zoomToAction);
         menu.add(zoomToAction);
         return menu;
     }
 
     public void unlinkAsListener() {
-        MapView.removeLayerChangeListener(zoomToAction);
+        Main.getLayerManager().removeLayerChangeListener(zoomToAction);
+        Main.getLayerManager().removeActiveLayerChangeListener(zoomToAction);
     }
 
     /**

@@ -16,7 +16,6 @@ import java.util.ServiceConfigurationError;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileExporter;
@@ -66,7 +65,6 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
             try {
                 FileImporter importer = importerClass.getConstructor().newInstance();
                 importers.add(importer);
-                MapView.addLayerChangeListener(importer);
             } catch (ReflectiveOperationException e) {
                 if (Main.isDebugEnabled()) {
                     Main.debug(e.getMessage());

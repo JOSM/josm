@@ -43,11 +43,11 @@ public class GeoImageLayerTest {
             GpxLayer gpxLayer = new GpxLayer(reader.getGpxData());
             try {
                 Main.main.addLayer(gpxLayer);
-                assertEquals(1, Main.map.mapView.getNumLayers());
+                assertEquals(1, Main.getLayerManager().getLayers().size());
                 new Loader(
                         Collections.singleton(new File(TestUtils.getRegressionDataFile(12255, "G0016941.JPG"))),
                         gpxLayer).run();
-                assertEquals(2, Main.map.mapView.getNumLayers());
+                assertEquals(2, Main.getLayerManager().getLayers().size());
                 GeoImageLayer layer = Main.getLayerManager().getLayersOfType(GeoImageLayer.class).iterator().next();
                 try {
                     assertEquals(gpxLayer, layer.getGpxLayer());

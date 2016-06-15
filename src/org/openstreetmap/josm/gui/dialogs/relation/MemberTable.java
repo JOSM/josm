@@ -27,11 +27,14 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
@@ -81,7 +84,8 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     protected JPopupMenu buildPopupMenu() {
         JPopupMenu menu = super.buildPopupMenu();
         zoomToGap = new ZoomToGapAction();
-        MapView.addLayerChangeListener(zoomToGap);
+        Main.getLayerManager().addLayerChangeListener(zoomToGap);
+        Main.getLayerManager().addActiveLayerChangeListener(zoomToGap);
         getSelectionModel().addListSelectionListener(zoomToGap);
         menu.add(zoomToGap);
         menu.addSeparator();
@@ -136,7 +140,8 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     @Override
     public void unlinkAsListener() {
         super.unlinkAsListener();
-        MapView.removeLayerChangeListener(zoomToGap);
+        Main.getLayerManager().removeLayerChangeListener(zoomToGap);
+        Main.getLayerManager().removeActiveLayerChangeListener(zoomToGap);
     }
 
     public void stopHighlighting() {
@@ -188,7 +193,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         }
     }
 
-    private class ZoomToGapAction extends AbstractAction implements LayerChangeListener, ListSelectionListener {
+    private class ZoomToGapAction extends AbstractAction implements LayerChangeListener, ActiveLayerChangeListener, ListSelectionListener {
 
         /**
          * Constructs a new {@code ZoomToGapAction}.
@@ -240,18 +245,23 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         }
 
         @Override
-        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
             updateEnabledState();
         }
 
         @Override
-        public void layerAdded(Layer newLayer) {
+        public void layerAdded(LayerAddEvent e) {
             updateEnabledState();
         }
 
         @Override
-        public void layerRemoved(Layer oldLayer) {
+        public void layerRemoving(LayerRemoveEvent e) {
             updateEnabledState();
+        }
+
+        @Override
+        public void layerOrderChanged(LayerOrderChangeEvent e) {
+            // Do nothing
         }
     }
 

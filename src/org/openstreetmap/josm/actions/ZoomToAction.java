@@ -11,16 +11,20 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListTable;
 import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-public class ZoomToAction extends AbstractAction implements LayerChangeListener, ListSelectionListener {
+public class ZoomToAction extends AbstractAction implements LayerChangeListener, ActiveLayerChangeListener, ListSelectionListener {
 
     private final OsmPrimitivesTable table;
 
@@ -97,17 +101,22 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
         updateEnabledState();
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {
+    public void layerAdded(LayerAddEvent e) {
         updateEnabledState();
     }
 
     @Override
-    public void layerRemoved(Layer oldLayer) {
+    public void layerRemoving(LayerRemoveEvent e) {
         updateEnabledState();
+    }
+
+    @Override
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
+        // Do nothing
     }
 }

@@ -12,17 +12,16 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.Notification;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * Abstract file importer.
  * @since 1637
+ * @since 10386 (signature)
  */
-public abstract class FileImporter implements Comparable<FileImporter>, LayerChangeListener {
+public abstract class FileImporter implements Comparable<FileImporter> {
 
     /**
      * The extension file filter used to accept files.
@@ -180,20 +179,5 @@ public abstract class FileImporter implements Comparable<FileImporter>, LayerCha
      */
     public final void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        // To be overriden by subclasses if their enabled state depends of the active layer nature
-    }
-
-    @Override
-    public void layerAdded(Layer newLayer) {
-        // To be overriden by subclasses if needed
-    }
-
-    @Override
-    public void layerRemoved(Layer oldLayer) {
-        // To be overriden by subclasses if needed
     }
 }

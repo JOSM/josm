@@ -17,14 +17,16 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * A data set holding histories of OSM primitives.
  * @since 1670
+ * @since 10386 (new LayerChangeListener interface)
  */
 public class HistoryDataSet implements LayerChangeListener {
     /** the unique instance */
@@ -38,7 +40,7 @@ public class HistoryDataSet implements LayerChangeListener {
     public static synchronized HistoryDataSet getInstance() {
         if (historyDataSet == null) {
             historyDataSet = new HistoryDataSet();
-            MapView.addLayerChangeListener(historyDataSet);
+            Main.getLayerManager().addLayerChangeListener(historyDataSet);
         }
         return historyDataSet;
     }
@@ -200,19 +202,19 @@ public class HistoryDataSet implements LayerChangeListener {
     /* interface LayerChangeListener                                                  */
     /* ------------------------------------------------------------------------------ */
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
         /* irrelevant in this context */
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {
+    public void layerAdded(LayerAddEvent e) {
         /* irrelevant in this context */
     }
 
     @Override
-    public void layerRemoved(Layer oldLayer) {
+    public void layerRemoving(LayerRemoveEvent e) {
         if (!Main.isDisplayingMapView()) return;
-        if (Main.map.mapView.getNumLayers() == 0) {
+        if (Main.getLayerManager().getLayers().isEmpty()) {
             data.clear();
             fireCacheCleared();
         }
