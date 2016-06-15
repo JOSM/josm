@@ -87,6 +87,10 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
@@ -562,6 +566,27 @@ public abstract class Main {
      */
     public Main() {
         main = this;
+        getLayerManager().addLayerChangeListener(new LayerChangeListener() {
+            @Override
+            public void layerAdded(LayerAddEvent e) {
+                if (map == null) {
+                    Layer layer = e.getAddedLayer();
+                    ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
+                    Main.main.createMapFrame(layer, viewProjectionBounds == null ? null : new ViewportData(viewProjectionBounds));
+                }
+            }
+
+            @Override
+            public void layerRemoving(LayerRemoveEvent e) {
+                // empty
+            }
+
+            @Override
+            public void layerOrderChanged(LayerOrderChangeEvent e) {
+                //empty
+            }
+
+        });
     }
 
     /**
@@ -793,13 +818,8 @@ public abstract class Main {
      * isn't changed
      */
     public final synchronized void addLayer(final Layer layer, ViewportData viewport) {
-        boolean noMap = map == null;
-        if (noMap) {
-            createMapFrame(layer, viewport);
-        }
-        layer.hookUpMapView();
         getLayerManager().addLayer(layer);
-        if (noMap) {
+        if (map != null) {
             Main.map.setVisible(true);
         } else if (viewport != null) {
             Main.map.mapView.zoomTo(viewport);
