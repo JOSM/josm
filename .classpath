@@ -17,7 +17,7 @@
 	<classpathentry kind="lib" path="test/lib/fest/jcip-annotations-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/MRJToolkitStubs-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/jfcunit.jar"/>
-	<classpathentry kind="lib" path="test/lib/equalsverifier-2.1.jar"/>
+	<classpathentry kind="lib" path="test/lib/equalsverifier-2.1.1.jar"/>
 	<classpathentry kind="lib" path="test/lib/reflections/reflections-0.9.10.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_80"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
