@@ -650,7 +650,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
                     MapView.addZoomChangeListener(AbstractTileSourceLayer.this);
                 }
             }
-        });
+        }, true);
         // FIXME: why do we need this? Without this, if you add a WMS layer and do not move the mouse, sometimes, tiles do not
         // start loading.
         Main.map.repaint(500);

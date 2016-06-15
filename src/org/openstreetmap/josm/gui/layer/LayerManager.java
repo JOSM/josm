@@ -148,6 +148,7 @@ public class LayerManager {
         checkPosition(position);
         insertLayerAt(layer, position);
         fireLayerAdded(layer);
+        layer.hookUpMapView(); // needs to be after fireLayerAdded
     }
 
     /**
