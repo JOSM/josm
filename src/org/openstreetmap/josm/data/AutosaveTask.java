@@ -33,10 +33,11 @@ import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.Notification;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmExporter;
@@ -58,6 +59,9 @@ import org.openstreetmap.josm.tools.Utils;
  *      open with another versions of JOSM or fix the problem manually.
  *
  *      The deleted layers dir keeps at most PROP_DELETED_LAYERS files.
+ *
+ * @since  3378 (creation)
+ * @since 10386 (new LayerChangeListener interface)
  */
 public class AutosaveTask extends TimerTask implements LayerChangeListener, Listener {
 
@@ -124,7 +128,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
 
             timer = new Timer(true);
             timer.schedule(this, 1000L, PROP_INTERVAL.get() * 1000L);
-            MapView.addLayerChangeListener(this);
+            Main.getLayerManager().addLayerChangeListener(this);
             if (Main.isDisplayingMapView()) {
                 for (OsmDataLayer l: Main.getLayerManager().getLayersOfType(OsmDataLayer.class)) {
                     registerNewlayer(l);
@@ -249,7 +253,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
         // Do nothing
     }
 
@@ -261,17 +265,17 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {
-        if (newLayer instanceof OsmDataLayer) {
-            registerNewlayer((OsmDataLayer) newLayer);
+    public void layerAdded(LayerAddEvent e) {
+        if (e.getAddedLayer() instanceof OsmDataLayer) {
+            registerNewlayer((OsmDataLayer) e.getAddedLayer());
         }
     }
 
     @Override
-    public void layerRemoved(Layer oldLayer) {
-        if (oldLayer instanceof OsmDataLayer) {
+    public void layerRemoving(LayerRemoveEvent e) {
+        if (e.getRemovedLayer() instanceof OsmDataLayer) {
             synchronized (layersLock) {
-                OsmDataLayer osmLayer = (OsmDataLayer) oldLayer;
+                OsmDataLayer osmLayer = (OsmDataLayer) e.getRemovedLayer();
                 osmLayer.data.removeDataSetListener(datasetAdapter);
                 Iterator<AutosaveLayerInfo> it = layersInfo.iterator();
                 while (it.hasNext()) {

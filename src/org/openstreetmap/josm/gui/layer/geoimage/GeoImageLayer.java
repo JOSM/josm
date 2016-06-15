@@ -50,7 +50,6 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -61,6 +60,12 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -888,23 +893,25 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
         MapFrame.addMapModeChangeListener(mapModeListener);
         mapModeListener.mapModeChange(null, Main.map.mapMode);
 
-        MapView.addLayerChangeListener(new LayerChangeListener() {
+        Main.getLayerManager().addActiveLayerChangeListener(new ActiveLayerChangeListener() {
             @Override
-            public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-                if (newLayer == GeoImageLayer.this) {
+            public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+                if (Main.getLayerManager().getActiveLayer() == GeoImageLayer.this) {
                     // only in select mode it is possible to click the images
                     Main.map.selectSelectTool(false);
                 }
             }
+        });
 
+        Main.getLayerManager().addLayerChangeListener(new LayerChangeListener() {
             @Override
-            public void layerAdded(Layer newLayer) {
+            public void layerAdded(LayerAddEvent e) {
                 // Do nothing
             }
 
             @Override
-            public void layerRemoved(Layer oldLayer) {
-                if (oldLayer == GeoImageLayer.this) {
+            public void layerRemoving(LayerRemoveEvent e) {
+                if (e.getRemovedLayer() == GeoImageLayer.this) {
                     stopLoadThumbs();
                     Main.map.mapView.removeMouseListener(mouseAdapter);
                     MapFrame.removeMapModeChangeListener(mapModeListener);
@@ -914,8 +921,13 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
                     }
                     data = null;
                     // stop listening to layer change events
-                    MapView.removeLayerChangeListener(this);
+                    Main.getLayerManager().removeLayerChangeListener(this);
                 }
+            }
+
+            @Override
+            public void layerOrderChanged(LayerOrderChangeEvent e) {
+                // Do nothing
             }
         });
 

@@ -61,13 +61,18 @@ import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
@@ -82,8 +87,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * A dialog showing all known relations, with buttons to add, edit, and
- * delete them.
+ * A dialog showing all known relations, with buttons to add, edit, and delete them.
  *
  * We don't have such dialogs for nodes, segments, and ways, because those
  * objects are visible on the map and can be selected there. Relations are not.
@@ -219,7 +223,8 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void showNotify() {
-        MapView.addLayerChangeListener(newAction);
+        Main.getLayerManager().addLayerChangeListener(newAction);
+        Main.getLayerManager().addActiveLayerChangeListener(newAction);
         MapView.addZoomChangeListener(this);
         newAction.updateEnabledState();
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
@@ -231,7 +236,8 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void hideNotify() {
-        MapView.removeLayerChangeListener(newAction);
+        Main.getLayerManager().removeActiveLayerChangeListener(newAction);
+        Main.getLayerManager().removeLayerChangeListener(newAction);
         MapView.removeZoomChangeListener(this);
         DatasetEventManager.getInstance().removeDatasetListener(this);
         DataSet.removeSelectionListener(addSelectionToRelations);
@@ -344,10 +350,9 @@ public class RelationListDialog extends ToggleDialog
     }
 
     /**
-     * The action for creating a new relation
-     *
+     * The action for creating a new relation.
      */
-    static class NewAction extends AbstractAction implements LayerChangeListener {
+    static class NewAction extends AbstractAction implements LayerChangeListener, ActiveLayerChangeListener {
         NewAction() {
             putValue(SHORT_DESCRIPTION, tr("Create a new relation"));
             putValue(NAME, tr("New"));
@@ -369,18 +374,23 @@ public class RelationListDialog extends ToggleDialog
         }
 
         @Override
-        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
             updateEnabledState();
         }
 
         @Override
-        public void layerAdded(Layer newLayer) {
+        public void layerAdded(LayerAddEvent e) {
             updateEnabledState();
         }
 
         @Override
-        public void layerRemoved(Layer oldLayer) {
+        public void layerRemoving(LayerRemoveEvent e) {
             updateEnabledState();
+        }
+
+        @Override
+        public void layerOrderChanged(LayerOrderChangeEvent e) {
+            // Do nothing
         }
     }
 

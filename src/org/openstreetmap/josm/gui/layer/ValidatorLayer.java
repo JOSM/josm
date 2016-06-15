@@ -21,9 +21,12 @@ import org.openstreetmap.josm.data.validation.PaintVisitor;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.MultiMap;
 
@@ -31,6 +34,9 @@ import org.openstreetmap.josm.tools.MultiMap;
  * A layer showing error messages.
  *
  * @author frsantos
+ *
+ * @since  3669 (creation)
+ * @since 10386 (new LayerChangeListener interface)
  */
 public class ValidatorLayer extends Layer implements LayerChangeListener {
 
@@ -41,7 +47,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
      */
     public ValidatorLayer() {
         super(tr("Validation errors"));
-        MapView.addLayerChangeListener(this);
+        Main.getLayerManager().addLayerChangeListener(this);
     }
 
     /**
@@ -142,12 +148,12 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     }
 
     @Override
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
         // Do nothing
     }
 
     @Override
-    public void layerAdded(Layer newLayer) {
+    public void layerAdded(LayerAddEvent e) {
         // Do nothing
     }
 
@@ -155,11 +161,11 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
      * If layer is the OSM Data layer, remove all errors
      */
     @Override
-    public void layerRemoved(Layer oldLayer) {
-        if (oldLayer instanceof OsmDataLayer && Main.isDisplayingMapView() && !Main.main.hasEditLayer()) {
+    public void layerRemoving(LayerRemoveEvent e) {
+        if (e.getRemovedLayer() instanceof OsmDataLayer && Main.isDisplayingMapView() && !Main.main.hasEditLayer()) {
             Main.main.removeLayer(this);
-        } else if (oldLayer == this) {
-            MapView.removeLayerChangeListener(this);
+        } else if (e.getRemovedLayer() == this) {
+            Main.getLayerManager().removeLayerChangeListener(this);
             OsmValidator.errorLayer = null;
         }
     }
