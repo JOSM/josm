@@ -1107,7 +1107,9 @@ public abstract class Main {
      */
     public static boolean exitJosm(boolean exit, int exitCode) {
         if (Main.saveUnsavedModifications()) {
-            Main.main.shutdown();
+            if (Main.main != null) {
+                Main.main.shutdown();
+            }
 
             if (exit) {
                 System.exit(exitCode);
