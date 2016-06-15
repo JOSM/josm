@@ -57,10 +57,11 @@ public class UploadSelectionAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getAllSelected());
+            updateEnabledState(ds.getAllSelected());
         }
     }
 
@@ -93,15 +94,16 @@ public class UploadSelectionAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        OsmDataLayer editLayer = getLayerManager().getEditLayer();
         if (!isEnabled())
             return;
-        if (getEditLayer().isUploadDiscouraged()) {
-            if (UploadAction.warnUploadDiscouraged(getEditLayer())) {
+        if (editLayer.isUploadDiscouraged()) {
+            if (UploadAction.warnUploadDiscouraged(editLayer)) {
                 return;
             }
         }
-        Collection<OsmPrimitive> modifiedCandidates = getModifiedPrimitives(getEditLayer().data.getAllSelected());
-        Collection<OsmPrimitive> deletedCandidates = getDeletedPrimitives(getEditLayer().data);
+        Collection<OsmPrimitive> modifiedCandidates = getModifiedPrimitives(editLayer.data.getAllSelected());
+        Collection<OsmPrimitive> deletedCandidates = getDeletedPrimitives(editLayer.data);
         if (modifiedCandidates.isEmpty() && deletedCandidates.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -129,7 +131,7 @@ public class UploadSelectionAction extends JosmAction {
             );
             return;
         }
-        uploadPrimitives(getEditLayer(), toUpload);
+        uploadPrimitives(editLayer, toUpload);
     }
 
     /**

@@ -64,7 +64,7 @@ public final class AddNodeAction extends JosmAction {
 
         // add the node
         Main.main.undoRedo.add(new AddCommand(nnew));
-        getCurrentDataSet().setSelected(nnew);
+        getLayerManager().getEditDataSet().setSelected(nnew);
         if (Main.map.mapView.getRealBounds().contains(nnew.getCoor())) {
             Main.map.mapView.repaint();
         } else {
@@ -74,6 +74,6 @@ public final class AddNodeAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(getEditLayer() != null);
+        setEnabled(getLayerManager().getEditLayer() != null);
     }
 }

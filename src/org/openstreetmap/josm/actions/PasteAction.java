@@ -200,7 +200,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null || Main.pasteBuffer == null) {
+        if (getLayerManager().getEditDataSet() == null || Main.pasteBuffer == null) {
             setEnabled(false);
             return;
         }

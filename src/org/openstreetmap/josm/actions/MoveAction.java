@@ -14,6 +14,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
@@ -115,20 +116,21 @@ public class MoveAction extends JosmAction {
             disty = 0;
         }
 
-        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
+        DataSet ds = getLayerManager().getEditDataSet();
+        Collection<OsmPrimitive> selection = ds.getSelected();
         Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 
         Command c = !Main.main.undoRedo.commands.isEmpty()
         ? Main.main.undoRedo.commands.getLast() : null;
 
-        getCurrentDataSet().beginUpdate();
+        ds.beginUpdate();
         if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
             ((MoveCommand) c).moveAgain(distx, disty);
         } else {
             c = new MoveCommand(selection, distx, disty);
             Main.main.undoRedo.add(c);
         }
-        getCurrentDataSet().endUpdate();
+        ds.endUpdate();
 
         for (Node n : affectedNodes) {
             if (n.getCoor().isOutSideWorld()) {
@@ -149,10 +151,11 @@ public class MoveAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(ds.getSelected());
         }
     }
 

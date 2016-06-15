@@ -210,7 +210,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
 
     private void repaintIfRequired(Set<OsmPrimitive> newHighlights, WaySegment newHighlightedWaySegment) {
         boolean needsRepaint = false;
-        DataSet ds = getCurrentDataSet();
+        DataSet ds = getLayerManager().getEditDataSet();
 
         if (newHighlightedWaySegment == null && oldHighlightedWaySegment != null) {
             if (ds != null) {
@@ -293,7 +293,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
             Main.main.undoRedo.add(c);
         }
 
-        getCurrentDataSet().setSelected();
+        getLayerManager().getEditDataSet().setSelected();
         giveUserFeedback(e);
     }
 
@@ -389,19 +389,20 @@ public class DeleteAction extends MapMode implements ModifierListener {
      */
     private Command buildDeleteCommands(MouseEvent e, int modifiers, boolean silent) {
         DeleteParameters parameters = getDeleteParameters(e, modifiers);
+        OsmDataLayer editLayer = getLayerManager().getEditLayer();
         switch (parameters.mode) {
         case node:
-            return DeleteCommand.delete(getEditLayer(), Collections.singleton(parameters.nearestNode), false, silent);
+            return DeleteCommand.delete(editLayer, Collections.singleton(parameters.nearestNode), false, silent);
         case node_with_references:
-            return DeleteCommand.deleteWithReferences(getEditLayer(), Collections.singleton(parameters.nearestNode), silent);
+            return DeleteCommand.deleteWithReferences(editLayer, Collections.singleton(parameters.nearestNode), silent);
         case segment:
-            return DeleteCommand.deleteWaySegment(getEditLayer(), parameters.nearestSegment);
+            return DeleteCommand.deleteWaySegment(editLayer, parameters.nearestSegment);
         case way:
-            return DeleteCommand.delete(getEditLayer(), Collections.singleton(parameters.nearestSegment.way), false, silent);
+            return DeleteCommand.delete(editLayer, Collections.singleton(parameters.nearestSegment.way), false, silent);
         case way_with_nodes:
-            return DeleteCommand.delete(getEditLayer(), Collections.singleton(parameters.nearestSegment.way), true, silent);
+            return DeleteCommand.delete(editLayer, Collections.singleton(parameters.nearestSegment.way), true, silent);
         case way_with_references:
-            return DeleteCommand.deleteWithReferences(getEditLayer(), Collections.singleton(parameters.nearestSegment.way), true);
+            return DeleteCommand.deleteWithReferences(editLayer, Collections.singleton(parameters.nearestSegment.way), true);
         default:
             return null;
         }

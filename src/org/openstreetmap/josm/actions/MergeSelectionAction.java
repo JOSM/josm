@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.List;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.MergeSourceBuildingVisitor;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -40,37 +41,40 @@ public class MergeSelectionAction extends AbstractMergeAction {
      * Merge the currently selected objects into another layer.
      */
     public void mergeSelected() {
-        List<Layer> targetLayers = LayerListDialog.getInstance().getModel().getPossibleMergeTargets(getEditLayer());
+        OsmDataLayer editLayer = getLayerManager().getEditLayer();
+        List<Layer> targetLayers = LayerListDialog.getInstance().getModel().getPossibleMergeTargets(editLayer);
         if (targetLayers.isEmpty()) {
-            warnNoTargetLayersForSourceLayer(getEditLayer());
+            warnNoTargetLayersForSourceLayer(editLayer);
             return;
         }
         Layer targetLayer = askTargetLayer(targetLayers);
         if (targetLayer == null)
             return;
-        if (getEditLayer().isUploadDiscouraged() && targetLayer instanceof OsmDataLayer
+        if (editLayer.isUploadDiscouraged() && targetLayer instanceof OsmDataLayer
                 && !((OsmDataLayer) targetLayer).isUploadDiscouraged()
-                && getEditLayer().data.getAllSelected().size() > 1
+                && editLayer.data.getAllSelected().size() > 1
                 && warnMergingUploadDiscouragedObjects(targetLayer)) {
             return;
         }
-        MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(getEditLayer().data);
+        MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(editLayer.data);
         ((OsmDataLayer) targetLayer).mergeFrom(builder.build());
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (getEditLayer() == null || getEditLayer().data.getAllSelected().isEmpty())
+        OsmDataLayer editLayer = getLayerManager().getEditLayer();
+        if (editLayer == null || editLayer.data.getAllSelected().isEmpty())
             return;
         mergeSelected();
     }
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getAllSelected());
+            updateEnabledState(ds.getAllSelected());
         }
     }
 

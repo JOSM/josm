@@ -10,6 +10,7 @@ import java.util.Collection;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.dialogs.LatLonDialog;
@@ -32,11 +33,12 @@ public final class MoveNodeAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || (getCurrentDataSet().getSelectedNodes().size() != 1))
+        Collection<Node> selNodes = getLayerManager().getEditDataSet().getSelectedNodes();
+        if (!isEnabled() || selNodes.size() != 1)
             return;
 
         LatLonDialog dialog = new LatLonDialog(Main.parent, tr("Move Node..."), ht("/Action/MoveNode"));
-        Node n = (Node) getCurrentDataSet().getSelectedNodes().toArray()[0];
+        Node n = (Node) selNodes.toArray()[0];
         dialog.setCoordinates(n.getCoor());
         dialog.showDialog();
         if (dialog.getValue() != 1)
@@ -53,10 +55,11 @@ public final class MoveNodeAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(ds.getSelected());
         }
     }
 

@@ -20,6 +20,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.corrector.ReverseWayNoTagCorrector;
 import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -73,12 +74,11 @@ public final class ReverseWayAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled())
-            return;
-        if (getCurrentDataSet() == null)
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (!isEnabled() || ds == null)
             return;
 
-        final Collection<Way> sel = getCurrentDataSet().getSelectedWays();
+        final Collection<Way> sel = ds.getSelectedWays();
         if (sel.isEmpty()) {
             new Notification(
                     tr("Please select at least one way."))
@@ -102,7 +102,7 @@ public final class ReverseWayAction extends JosmAction {
         }
         Main.main.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
         if (propertiesUpdated) {
-            getCurrentDataSet().fireSelectionChanged();
+            ds.fireSelectionChanged();
         }
         Main.map.repaint();
     }
@@ -128,10 +128,11 @@ public final class ReverseWayAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        if (getCurrentDataSet() == null) {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(ds.getSelected());
         }
     }
 

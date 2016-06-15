@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -98,8 +99,9 @@ public abstract class AbstractInfoAction extends JosmAction {
 
     protected void launchInfoBrowsersForSelectedPrimitivesAndNote() {
         List<OsmPrimitive> primitivesToShow = new ArrayList<>();
-        if (getCurrentDataSet() != null) {
-            primitivesToShow.addAll(getCurrentDataSet().getAllSelected());
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds != null) {
+            primitivesToShow.addAll(ds.getAllSelected());
         }
 
         Note noteToShow = Main.isDisplayingMapView() ? Main.map.noteDialog.getSelectedNote() : null;
@@ -156,7 +158,8 @@ public abstract class AbstractInfoAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(getCurrentDataSet() != null && !getCurrentDataSet().getSelected().isEmpty());
+        DataSet ds = getLayerManager().getEditDataSet();
+        setEnabled(ds != null && !ds.getSelected().isEmpty());
     }
 
     @Override

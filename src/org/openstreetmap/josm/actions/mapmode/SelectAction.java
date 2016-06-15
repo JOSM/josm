@@ -255,7 +255,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         virtualManager.clear();
         if (mode == Mode.MOVE) {
             if (!dragInProgress() && virtualManager.activateVirtualNodeNearPoint(e.getPoint())) {
-                DataSet ds = getCurrentDataSet();
+                DataSet ds = getLayerManager().getEditDataSet();
                 if (ds != null && drawTargetHighlight) {
                     ds.setHighlightedVirtualNodes(virtualManager.virtualWays);
                 }
@@ -305,7 +305,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             if (dragInProgress()) {
                 // only consider merge if ctrl is pressed and there are nodes in
                 // the selection that could be merged
-                if (!ctrl || getCurrentDataSet().getSelectedNodes().isEmpty()) {
+                if (!ctrl || getLayerManager().getEditDataSet().getSelectedNodes().isEmpty()) {
                     c = "move";
                     break;
                 }
@@ -347,7 +347,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      */
     private boolean removeHighlighting() {
         boolean needsRepaint = false;
-        DataSet ds = getCurrentDataSet();
+        DataSet ds = getLayerManager().getEditDataSet();
         if (ds != null && !ds.getHighlightedVirtualNodes().isEmpty()) {
             needsRepaint = true;
             ds.clearHighlightedVirtualNodes();
@@ -426,8 +426,9 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         case ROTATE:
         case SCALE:
             //  if nothing was selected, select primitive under cursor for scaling or rotating
-            if (getCurrentDataSet().getSelected().isEmpty()) {
-                getCurrentDataSet().setSelected(asColl(nearestPrimitive));
+            DataSet ds = getLayerManager().getEditDataSet();
+            if (ds.getSelected().isEmpty()) {
+                ds.setSelected(asColl(nearestPrimitive));
             }
 
             // Mode.select redraws when selectPrims is called
@@ -518,7 +519,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         if (mode == Mode.MOVE) {
             // If ctrl is pressed we are in merge mode. Look for a nearby node,
             // highlight it and adjust the cursor accordingly.
-            final boolean canMerge = ctrl && !getCurrentDataSet().getSelectedNodes().isEmpty();
+            final boolean canMerge = ctrl && !getLayerManager().getEditDataSet().getSelectedNodes().isEmpty();
             final OsmPrimitive p = canMerge ? findNodeToMergeTo(e.getPoint()) : null;
             boolean needsRepaint = removeHighlighting();
             if (p != null) {
@@ -592,7 +593,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             selectionManager.unregister(mv);
 
             // Select Draw Tool if no selection has been made
-            if (getCurrentDataSet().getSelected().isEmpty() && !cancelDrawMode) {
+            if (getLayerManager().getEditDataSet().getSelected().isEmpty() && !cancelDrawMode) {
                 Main.map.selectDrawTool(true);
                 updateStatusLine();
                 return;
@@ -610,7 +611,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                     selectPrims(cycleManager.cyclePrims(), true, false);
 
                     // If the user double-clicked a node, change to draw mode
-                    Collection<OsmPrimitive> c = getCurrentDataSet().getSelected();
+                    Collection<OsmPrimitive> c = getLayerManager().getEditDataSet().getSelected();
                     if (e.getClickCount() >= 2 && c.size() == 1 && c.iterator().next() instanceof Node) {
                         // We need to do it like this as otherwise drawAction will see a double
                         // click and switch back to SelectMode
@@ -704,10 +705,11 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     private boolean updateCommandWhileDragging(EastNorth currentEN) {
         // Currently we support only transformations which do not affect relations.
         // So don't add them in the first place to make handling easier
-        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelectedNodesAndWays();
+        DataSet ds = getLayerManager().getEditDataSet();
+        Collection<OsmPrimitive> selection = ds.getSelectedNodesAndWays();
         if (selection.isEmpty()) { // if nothing was selected to drag, just select nearest node/way to the cursor
             OsmPrimitive nearestPrimitive = mv.getNearestNodeOrWay(mv.getPoint(startEN), mv.isSelectablePredicate, true);
-            getCurrentDataSet().setSelected(nearestPrimitive);
+            ds.setSelected(nearestPrimitive);
         }
 
         Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
@@ -718,7 +720,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         Command c = getLastCommand();
         if (mode == Mode.MOVE) {
             if (startEN == null) return false; // fix #8128
-            getCurrentDataSet().beginUpdate();
+            ds.beginUpdate();
             if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
                 ((MoveCommand) c).saveCheckpoint();
                 ((MoveCommand) c).applyVectorTo(currentEN);
@@ -731,7 +733,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 if (ll != null && ll.isOutSideWorld()) {
                     // Revert move
                     ((MoveCommand) c).resetToCheckpoint();
-                    getCurrentDataSet().endUpdate();
+                    ds.endUpdate();
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Cannot move objects outside of the world."),
@@ -748,7 +750,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 return false;
             }
 
-            getCurrentDataSet().beginUpdate();
+            ds.beginUpdate();
 
             if (mode == Mode.ROTATE) {
                 if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
@@ -764,12 +766,12 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 }
             }
 
-            Collection<Way> ways = getCurrentDataSet().getSelectedWays();
+            Collection<Way> ways = ds.getSelectedWays();
             if (doesImpactStatusLine(affectedNodes, ways)) {
                 Main.map.statusLine.setDist(ways);
             }
         }
-        getCurrentDataSet().endUpdate();
+        ds.endUpdate();
         return true;
     }
 
@@ -789,7 +791,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      */
     private void useLastMoveCommandIfPossible() {
         Command c = getLastCommand();
-        Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(getCurrentDataSet().getSelected());
+        Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(getLayerManager().getEditDataSet().getSelected());
         if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
             // old command was created with different base point of movement, we need to recalculate it
             ((MoveCommand) c).changeStartPoint(startEN);
@@ -828,7 +830,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             }
         }
         int max = Main.pref.getInteger("warn.move.maxelements", 20), limit = max;
-        for (OsmPrimitive osm : getCurrentDataSet().getSelected()) {
+        for (OsmPrimitive osm : getLayerManager().getEditDataSet().getSelected()) {
             if (osm instanceof Way) {
                 limit -= ((Way) osm).getNodes().size();
             }
@@ -854,7 +856,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             updateKeyModifiers(e);
             if (ctrl) mergePrims(e.getPoint());
         }
-        getCurrentDataSet().fireSelectionChanged();
+        getLayerManager().getEditDataSet().fireSelectionChanged();
     }
 
     static class ConfirmMoveDialog extends ExtendedDialog {
@@ -889,7 +891,8 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * @param p mouse position
      */
     private void mergePrims(Point p) {
-        Collection<Node> selNodes = getCurrentDataSet().getSelectedNodes();
+        DataSet ds = getLayerManager().getEditDataSet();
+        Collection<Node> selNodes = ds.getSelectedNodes();
         if (selNodes.isEmpty())
             return;
 
@@ -899,11 +902,10 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
         if (selNodes.size() == 1) {
             // Move all selected primitive to preserve shape #10748
-            Collection<OsmPrimitive> selection =
-                getCurrentDataSet().getSelectedNodesAndWays();
+            Collection<OsmPrimitive> selection = ds.getSelectedNodesAndWays();
             Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
             Command c = getLastCommand();
-            getCurrentDataSet().beginUpdate();
+            ds.beginUpdate();
             if (c instanceof MoveCommand
                 && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
                 Node selectedNode = selNodes.iterator().next();
@@ -912,7 +914,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                 ((MoveCommand) c).moveAgain(targetEN.getX() - selectedEN.getX(),
                                             targetEN.getY() - selectedEN.getY());
             }
-            getCurrentDataSet().endUpdate();
+            ds.endUpdate();
         }
 
         Collection<Node> nodesToMerge = new LinkedList<>(selNodes);
@@ -940,13 +942,13 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      */
     private Node findNodeToMergeTo(Point p) {
         Collection<Node> target = mv.getNearestNodes(p,
-                getCurrentDataSet().getSelectedNodes(),
+                getLayerManager().getEditDataSet().getSelectedNodes(),
                 mv.isSelectablePredicate);
         return target.isEmpty() ? null : target.iterator().next();
     }
 
     private void selectPrims(Collection<OsmPrimitive> prims, boolean released, boolean area) {
-        DataSet ds = getCurrentDataSet();
+        DataSet ds = getLayerManager().getEditDataSet();
 
         // not allowed together: do not change dataset selection, return early
         // Virtual Ways: if non-empty the cursor is above a virtual node. So don't highlight
@@ -995,8 +997,9 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             if (mode == Mode.SELECT)
                 return tr("Release the mouse button to select the objects in the rectangle.");
             else if (mode == Mode.MOVE && (System.currentTimeMillis() - mouseDownTime >= initialMoveDelay)) {
-                final boolean canMerge = getCurrentDataSet() != null && !getCurrentDataSet().getSelectedNodes().isEmpty();
-                final String mergeHelp = canMerge ? ' ' + tr("Ctrl to merge with nearest node.") : "";
+                final DataSet ds = getLayerManager().getEditDataSet();
+                final boolean canMerge = ds != null && !ds.getSelectedNodes().isEmpty();
+                final String mergeHelp = canMerge ? (' ' + tr("Ctrl to merge with nearest node.")) : "";
                 return tr("Release the mouse button to stop moving.") + mergeHelp;
             } else if (mode == Mode.ROTATE)
                 return tr("Release the mouse button to stop rotating.");
@@ -1109,7 +1112,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             }
             // updateKeyModifiers() already called before!
 
-            DataSet ds = getCurrentDataSet();
+            DataSet ds = getLayerManager().getEditDataSet();
             OsmPrimitive first = cycleList.iterator().next(), foundInDS = null;
             OsmPrimitive nxt = first;
 
@@ -1244,7 +1247,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                     "Add and move a virtual new node to {0} ways", virtualWays.size(),
                     virtualWays.size());
             Main.main.undoRedo.add(new SequenceCommand(text, virtualCmds));
-            getCurrentDataSet().setSelected(Collections.singleton((OsmPrimitive) virtualNode));
+            getLayerManager().getEditDataSet().setSelected(Collections.singleton((OsmPrimitive) virtualNode));
             clear();
         }
 
