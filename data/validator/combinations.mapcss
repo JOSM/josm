@@ -365,3 +365,11 @@ way[layer][layer>0][tunnel][tunnel!=no][location!=overground][indoor!=yes][!brid
 relation[oneway][type!=route] {
   throwWarning: tr("{0} on a relation without {1}", "{0.key}", "{1.tag}");
 }
+
+/* #9182 */
+way[waterway][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered!=yes][pipeline!=yes][location!=underground][eval(waylength()) > 400] {
+  throwWarning: tr("Long waterway with negative {0} but without a {1} tag. Remove {0} or add a {1} tag if applicable. Also check crossing bridges and their {0} tags.", "{1.key}", "{2.key}");
+}
+way[waterway][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered!=yes][pipeline!=yes][location!=underground][eval(waylength()) < 400] {
+  throwOther: tr("Short waterway with negative {0} but without a {1} tag. Remove {0} or add a {1} tag if applicable. Also check crossing bridges and their {0} tags.", "{1.key}", "{2.key}");
+}
