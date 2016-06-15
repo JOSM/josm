@@ -11,6 +11,7 @@ import javax.swing.JToggleButton;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Destroyable;
 
 /**
@@ -40,6 +41,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
      */
     public IconToggleButton(Action action, boolean isExpert) {
         super(action);
+        CheckParameterUtil.ensureParameterNotNull(action, "action");
         this.isExpert = isExpert;
         setText(null);
 
