@@ -272,3 +272,9 @@ way[!power][!building] > node.node_in_power_way {
 way[waterway][waterway!=canal]!:closed >[index=-1] node!:connection:in-downloaded-area { 
   throwWarning: tr("Waterway ends without a connection to another waterway or the direction of the waterway is wrong.");
 }
+
+/* #10717 */
+way[natural=coastline] ∈ area[natural=water],
+way[natural=coastline] ∈ area[waterway=riverbank] {
+  throwError: tr("Coastline inside {1}", "{0.tag}");
+}
