@@ -30,7 +30,7 @@ public class AllFormatsImporter extends FileImporter {
      * @return String comma separated list of supported file extensions
      */
     private static String getAllExtensions() {
-        Iterator<FileImporter> imp = ExtensionFileFilter.importers.iterator();
+        Iterator<FileImporter> imp = ExtensionFileFilter.getImporters().iterator();
         StringBuilder ext = new StringBuilder();
         while (imp.hasNext()) {
             FileImporter fi = imp.next();

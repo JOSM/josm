@@ -84,7 +84,7 @@ public class GpxExportAction extends DiskAccessAction {
         if (file == null)
             return;
 
-        for (FileExporter exporter : ExtensionFileFilter.exporters) {
+        for (FileExporter exporter : ExtensionFileFilter.getExporters()) {
             if (exporter.acceptFile(file, layer)) {
                 try {
                     exporter.exportData(file, layer);

@@ -92,7 +92,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
         try {
             boolean exported = false;
             boolean canceled = false;
-            for (FileExporter exporter : ExtensionFileFilter.exporters) {
+            for (FileExporter exporter : ExtensionFileFilter.getExporters()) {
                 if (exporter.acceptFile(file, layer)) {
                     exporter.exportData(file, layer);
                     exported = true;

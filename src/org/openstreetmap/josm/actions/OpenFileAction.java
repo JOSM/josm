@@ -237,7 +237,7 @@ public class OpenFileAction extends DiskAccessAction {
              */
             FileImporter chosenImporter = null;
             if (fileFilter != null) {
-                for (FileImporter importer : ExtensionFileFilter.importers) {
+                for (FileImporter importer : ExtensionFileFilter.getImporters()) {
                     if (fileFilter.equals(importer.filter)) {
                         chosenImporter = importer;
                     }
@@ -290,7 +290,7 @@ public class OpenFileAction extends DiskAccessAction {
                 List<File> filesWithUnknownImporter = new LinkedList<>();
                 List<File> urlFiles = new LinkedList<>();
                 FILES: for (File f : files) {
-                    for (FileImporter importer : ExtensionFileFilter.importers) {
+                    for (FileImporter importer : ExtensionFileFilter.getImporters()) {
                         if (importer.acceptFile(f)) {
                             importerMap.put(importer, f);
                             continue FILES;
