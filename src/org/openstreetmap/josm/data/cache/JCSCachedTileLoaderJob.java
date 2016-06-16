@@ -71,7 +71,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      */
 
     private static final ThreadPoolExecutor DEFAULT_DOWNLOAD_JOB_DISPATCHER = new ThreadPoolExecutor(
-            2, // we have a small queue, so threads will be quickly started (threads are started only, when queue is full)
+            1, // we have a small queue, so threads will be quickly started (threads are started only, when queue is full)
             THREAD_LIMIT.get(), // do not this number of threads
             30, // keepalive for thread
             TimeUnit.SECONDS,
