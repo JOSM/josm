@@ -818,8 +818,7 @@ public abstract class Main {
      * If no map exists, create one.
      *
      * @param layer the layer
-     * @param viewport the viewport to zoom to; can be null, then the viewport
-     * isn't changed
+     * @param viewport the viewport to zoom to; can be null, then the viewport isn't changed
      */
     public final synchronized void addLayer(final Layer layer, ViewportData viewport) {
         getLayerManager().addLayer(layer);

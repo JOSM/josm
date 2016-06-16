@@ -595,7 +595,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     /**
      * Returns current data set. To be removed: end of 2016.
-     * @deprecated Use {@link Main#getLayerManager()} instead.
+     * @deprecated Use {@link #getLayerManager()}.getEditDataSet() instead.
      */
     @Override
     @Deprecated
@@ -1294,8 +1294,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     /**
      * Schedule a zoom to the given position on the next redraw.
      * Temporary, may be removed without warning.
-     * @param viewportData
-     * @since xxx
+     * @param viewportData the viewport to zoom to
+     * @since 10394
      */
     public void scheduleZoomTo(ViewportData viewportData) {
         initialViewport = viewportData;

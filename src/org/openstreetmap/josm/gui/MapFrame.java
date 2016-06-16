@@ -422,7 +422,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      * @return {@code true} if mode is really selected
      */
     public boolean selectMapMode(MapMode newMapMode) {
-        return selectMapMode(newMapMode, mapView.getActiveLayer());
+        return selectMapMode(newMapMode, mapView.getLayerManager().getActiveLayer());
     }
 
     /**
