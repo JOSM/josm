@@ -12,15 +12,17 @@ import javax.swing.JFrame;
 
 import org.CustomMatchers;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Some tests for the {@link NavigatableComponent} class.
@@ -34,12 +36,11 @@ public class NavigatableComponentTest {
     private NavigatableComponent component;
 
     /**
-     * Setup test.
+     * We need the projection for coordinate conversions.
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences().platform().projection();
 
     /**
      * Create a new, fresh {@link NavigatableComponent}
