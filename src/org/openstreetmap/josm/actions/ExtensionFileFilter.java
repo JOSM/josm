@@ -33,13 +33,13 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * List of supported formats for import.
      * @since 4869
      */
-    public static final ArrayList<FileImporter> importers;
+    private static final ArrayList<FileImporter> importers;
 
     /**
      * List of supported formats for export.
      * @since 4869
      */
-    public static final ArrayList<FileExporter> exporters;
+    private static final ArrayList<FileExporter> exporters;
 
     // add some file types only if the relevant classes are there.
     // this gives us the option to painlessly drop them from the .jar
@@ -137,6 +137,68 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
     }
 
     public enum AddArchiveExtension { NONE, BASE, ALL }
+
+    /**
+     * Adds a new file importer at the end of the global list. This importer will be evaluated after core ones.
+     * @param importer new file importer
+     * @since 10407
+     */
+    public static void addImporter(FileImporter importer) {
+        if (importer != null) {
+            importers.add(importer);
+        }
+    }
+
+    /**
+     * Adds a new file importer at the beginning of the global list. This importer will be evaluated before core ones.
+     * @param importer new file importer
+     * @since 10407
+     */
+    public static void addImporterFirst(FileImporter importer) {
+        if (importer != null) {
+            importers.add(0, importer);
+        }
+    }
+
+    /**
+     * Adds a new file exporter at the end of the global list. This exporter will be evaluated after core ones.
+     * @param exporter new file exporter
+     * @since 10407
+     */
+    public static void addExporter(FileExporter exporter) {
+        if (exporter != null) {
+            exporters.add(exporter);
+        }
+    }
+
+    /**
+     * Adds a new file exporter at the beginning of the global list. This exporter will be evaluated before core ones.
+     * @param exporter new file exporter
+     * @since 10407
+     */
+    public static void addExporterFirst(FileExporter exporter) {
+        if (exporter != null) {
+            exporters.add(0, exporter);
+        }
+    }
+
+    /**
+     * Returns the list of file importers.
+     * @return unmodifiable list of file importers
+     * @since 10407
+     */
+    public static List<FileImporter> getImporters() {
+        return Collections.unmodifiableList(importers);
+    }
+
+    /**
+     * Returns the list of file exporters.
+     * @return unmodifiable list of file exporters
+     * @since 10407
+     */
+    public static List<FileExporter> getExporters() {
+        return Collections.unmodifiableList(exporters);
+    }
 
     /**
      * Updates the {@link AllFormatsImporter} that is contained in the importers list. If
