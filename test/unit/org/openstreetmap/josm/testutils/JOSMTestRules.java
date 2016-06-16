@@ -11,6 +11,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApi;
@@ -34,6 +35,7 @@ public class JOSMTestRules implements TestRule {
     private APIType useAPI = APIType.NONE;
     private String i18n = null;
     private boolean platform;
+    private boolean useProjection;
 
     /**
      * Disable the default timeout for this test. Use with care.
@@ -119,6 +121,15 @@ public class JOSMTestRules implements TestRule {
         return this;
     }
 
+    /**
+     * Set up default projection (Mercator)
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules projection() {
+        useProjection = true;
+        return this;
+    }
+
     @Override
     public Statement apply(final Statement base, Description description) {
         Statement statement = new Statement() {
@@ -173,6 +184,10 @@ public class JOSMTestRules implements TestRule {
             Main.pref.put("osm-server.url", "http://invalid");
         }
 
+        if (useProjection) {
+            Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
+        }
+
         // Set API
         if (useAPI == APIType.DEV) {
             Main.pref.put("osm-server.url", "http://api06.dev.openstreetmap.org/api");
@@ -213,7 +228,6 @@ public class JOSMTestRules implements TestRule {
         }
 
         // TODO: Remove global listeners and other global state.
-
         Main.pref = null;
         Main.platform = null;
         // Parts of JOSM uses weak references - destroy them.
