@@ -3,6 +3,10 @@ package org.openstreetmap.josm.gui;
 
 import static org.junit.Assert.assertEquals;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -99,7 +103,6 @@ public class MapViewStateTest {
         MapViewPoint p = state.getForView(WIDTH / 2, HEIGHT / 2);
         assertHasViewCoords(WIDTH / 2, HEIGHT / 2, p);
 
-
         EastNorth eastnorth = p.getEastNorth();
         LatLon shouldLatLon = Main.getProjection().getWorldBoundsLatLon().getCenter();
         EastNorth shouldEastNorth = Main.getProjection().latlon2eastNorth(shouldLatLon);
@@ -115,5 +118,21 @@ public class MapViewStateTest {
         MapViewPoint p2 = state.getPointFor(new EastNorth(2, 3));
         assertEquals("east", 2, p2.getEastNorth().east(), 0.01);
         assertEquals("north", 3, p2.getEastNorth().north(), 0.01);
+    }
+
+    /**
+     * Test {@link MapViewState#getAffineTransform()}
+     */
+    @Test
+    public void testGetAffineTransform() {
+        for (EastNorth en : Arrays.asList(new EastNorth(100, 100), new EastNorth(0, 0), new EastNorth(300, 200),
+                new EastNorth(-1, -2.5))) {
+            MapViewPoint should = state.getPointFor(en);
+            AffineTransform transform = state.getAffineTransform();
+            Point2D result = transform.transform(new Point2D.Double(en.getX(), en.getY()), null);
+
+            assertEquals("x", should.getInViewX(), result.getX(), 0.01);
+            assertEquals("y", should.getInViewY(), result.getY(), 0.01);
+        }
     }
 }
