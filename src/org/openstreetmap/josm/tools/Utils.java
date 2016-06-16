@@ -63,12 +63,15 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.openstreetmap.josm.Main;
+import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -1407,6 +1410,44 @@ public final class Utils {
             return old;
         }
         return null;
+    }
+
+    /**
+     * Returns a new secure DOM builder, supporting XML namespaces.
+     * @return a new secure DOM builder, supporting XML namespaces
+     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
+     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
+     * @since 10404
+     */
+    public static DocumentBuilder newSafeDOMBuilder() throws ParserConfigurationException {
+        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        builderFactory.setNamespaceAware(true);
+        builderFactory.setValidating(false);
+        return builderFactory.newDocumentBuilder();
+    }
+
+    /**
+     * Parse the content given {@link InputStream} as XML.
+     * This method uses a secure DOM builder, supporting XML namespaces.
+     *
+     * @param is The InputStream containing the content to be parsed.
+     * @return the result DOM document
+     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
+     * @throws IOException if any IO errors occur.
+     * @throws SAXException for SAX errors.
+     * @since 10404
+     */
+    public static Document parseSafeDOM(InputStream is) throws ParserConfigurationException, IOException, SAXException {
+        long start = System.currentTimeMillis();
+        if (Main.isDebugEnabled()) {
+            Main.debug("Starting DOM parsing of " + is);
+        }
+        Document result = newSafeDOMBuilder().parse(is);
+        if (Main.isDebugEnabled()) {
+            Main.debug("DOM parsing done in " + getDurationString(System.currentTimeMillis() - start));
+        }
+        return result;
     }
 
     /**

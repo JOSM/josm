@@ -18,7 +18,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -200,14 +199,11 @@ public class SessionWriter {
      * @throws IOException if any I/O error occurs
      */
     public Document createJosDocument() throws IOException {
-        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-        builderFactory.setValidating(false);
-        builderFactory.setNamespaceAware(true);
         DocumentBuilder builder = null;
         try {
-            builder = builderFactory.newDocumentBuilder();
+            builder = Utils.newSafeDOMBuilder();
         } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
+            throw new IOException(e);
         }
         Document doc = builder.newDocument();
 

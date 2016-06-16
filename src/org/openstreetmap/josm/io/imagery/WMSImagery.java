@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.Main;
@@ -151,10 +150,7 @@ public class WMSImagery {
         Main.debug(incomingData);
 
         try {
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            builderFactory.setValidating(false);
-            builderFactory.setNamespaceAware(true);
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            DocumentBuilder builder = Utils.newSafeDOMBuilder();
             builder.setEntityResolver(new EntityResolver() {
                 @Override
                 public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {

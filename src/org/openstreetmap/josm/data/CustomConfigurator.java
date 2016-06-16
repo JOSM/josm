@@ -34,7 +34,6 @@ import javax.script.ScriptException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.OutputKeys;
@@ -268,12 +267,8 @@ public final class CustomConfigurator {
 
         try {
             String toXML = Main.pref.toXML(true);
-            InputStream is = new ByteArrayInputStream(toXML.getBytes(StandardCharsets.UTF_8));
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            builderFactory.setValidating(false);
-            builderFactory.setNamespaceAware(false);
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            document = builder.parse(is);
+            DocumentBuilder builder = Utils.newSafeDOMBuilder();
+            document = builder.parse(new ByteArrayInputStream(toXML.getBytes(StandardCharsets.UTF_8)));
             exportDocument = builder.newDocument();
             root = document.getDocumentElement();
         } catch (SAXException | IOException | ParserConfigurationException ex) {
@@ -464,11 +459,7 @@ public final class CustomConfigurator {
 
         public void openAndReadXML(InputStream is) {
             try {
-                DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-                builderFactory.setValidating(false);
-                builderFactory.setNamespaceAware(true);
-                DocumentBuilder builder = builderFactory.newDocumentBuilder();
-                Document document = builder.parse(is);
+                Document document = Utils.parseSafeDOM(is);
                 synchronized (CustomConfigurator.class) {
                     processXML(document);
                 }

@@ -17,8 +17,6 @@ import java.nio.charset.StandardCharsets;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -99,9 +97,7 @@ public class BugReportSender extends Thread {
             }
 
             try (InputStream in = connection.getContent()) {
-                DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                Document document = builder.parse(in);
-                return retrieveDebugToken(document);
+                return retrieveDebugToken(Utils.parseSafeDOM(in));
             }
         } catch (IOException | SAXException | ParserConfigurationException | XPathExpressionException t) {
             throw new BugReportSenderException(t);
