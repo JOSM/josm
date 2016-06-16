@@ -101,6 +101,7 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.FileWatcher;
@@ -808,7 +809,7 @@ public abstract class Main {
      * @param bounds the bounds of the layer (target zoom area); can be null, then
      * the viewport isn't changed
      */
-    public final synchronized void addLayer(final Layer layer, ProjectionBounds bounds) {
+    public final void addLayer(Layer layer, ProjectionBounds bounds) {
         addLayer(layer, bounds == null ? null : new ViewportData(bounds));
     }
 
@@ -820,14 +821,20 @@ public abstract class Main {
      * @param layer the layer
      * @param viewport the viewport to zoom to; can be null, then the viewport isn't changed
      */
-    public final synchronized void addLayer(final Layer layer, ViewportData viewport) {
+    public final void addLayer(Layer layer, ViewportData viewport) {
         getLayerManager().addLayer(layer);
         if (viewport != null) {
             Main.map.mapView.scheduleZoomTo(viewport);
         }
     }
 
+    /**
+     * Creates the map frame. Call only in EDT Thread.
+     * @param firstLayer The first layer that was added.
+     * @param viewportData The initial viewport. Can be <code>null</code> to be automatically computed.
+     */
     public synchronized void createMapFrame(Layer firstLayer, ViewportData viewportData) {
+        GuiHelper.assertCallFromEdt();
         MapFrame mapFrame = new MapFrame(contentPanePrivate, viewportData);
         setMapFrame(mapFrame);
         if (firstLayer != null) {
