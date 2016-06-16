@@ -839,12 +839,13 @@ public class ImageProvider {
                         }
                     }
 
-                    ImageResource ir = cache.get(cacheName);
-                    if (ir != null) return ir;
-
                     switch (place) {
                     case typeArchive:
                         if (archive != null) {
+                            cacheName = "zip:"+archive+":"+cacheName;
+                            ImageResource ir = cache.get(cacheName);
+                            if (ir != null) return ir;
+
                             ir = getIfAvailableZip(fullName, archive, inArchiveDir, type);
                             if (ir != null) {
                                 cache.put(cacheName, ir);
@@ -853,6 +854,9 @@ public class ImageProvider {
                         }
                         break;
                     case typeLocal:
+                        ImageResource ir = cache.get(cacheName);
+                        if (ir != null) return ir;
+
                         // getImageUrl() does a ton of "stat()" calls and gets expensive
                         // and redundant when you have a whole ton of objects. So,
                         // index the cache by the name of the icon we're looking for
