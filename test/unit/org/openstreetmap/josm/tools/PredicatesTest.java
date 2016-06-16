@@ -20,7 +20,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  * This test tests the {@link Predicate}s created by the {@link Predicates} class.
  *
  * @author Michael Zangl
- * @since xxx
  */
 public class PredicatesTest {
     /**

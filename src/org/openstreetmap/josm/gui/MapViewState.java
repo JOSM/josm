@@ -168,7 +168,7 @@ public final class MapViewState {
     /**
      * Creates an affine transform that is used to convert the east/north coordinates to view coordinates.
      * @return The affine transform. It should not be changed.
-     * @since xxx
+     * @since 10375
      */
     public AffineTransform getAffineTransform() {
         return new AffineTransform(1.0 / scale, 0.0, 0.0, -1.0 / scale, -topLeft.east() / scale,
@@ -179,7 +179,7 @@ public final class MapViewState {
      * Creates a new state that is the same as the current state except for that it is using a new center.
      * @param newCenter The new center coordinate.
      * @return The new state.
-     * @since xxx
+     * @since 10375
      */
     public MapViewState usingCenter(EastNorth newCenter) {
         return movedTo(getCenter(), newCenter);
@@ -189,7 +189,7 @@ public final class MapViewState {
      * @param mapViewPoint The reference point.
      * @param newEastNorthThere The east/north coordinate that should be there.
      * @return The new state.
-     * @since xxx
+     * @since 10375
      */
     public MapViewState movedTo(MapViewPoint mapViewPoint, EastNorth newEastNorthThere) {
         EastNorth delta = newEastNorthThere.subtract(mapViewPoint.getEastNorth());
@@ -204,7 +204,7 @@ public final class MapViewState {
      * Creates a new state that is the same as the current state except for that it is using a new scale.
      * @param newScale The new scale to use.
      * @return The new state.
-     * @since xxx
+     * @since 10375
      */
     public MapViewState usingScale(double newScale) {
         return new MapViewState(newScale, this);
@@ -216,7 +216,7 @@ public final class MapViewState {
      * The view is moved so that the center is the same as the old center.
      * @param positon The new location to use.
      * @return The new state.
-     * @since xxx
+     * @since 10375
      */
     public MapViewState usingLocation(JComponent positon) {
         EastNorth center = this.getCenter().getEastNorth();
@@ -229,7 +229,7 @@ public final class MapViewState {
      * @param width The view width
      * @param height The view height
      * @return The state
-     * @since xxx
+     * @since 10375
      */
     public static MapViewState createDefaultState(int width, int height) {
         Projection projection = Main.getProjection();
