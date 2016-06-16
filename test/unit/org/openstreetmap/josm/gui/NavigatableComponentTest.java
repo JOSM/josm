@@ -8,7 +8,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.CustomMatchers;
 import org.junit.Before;
@@ -31,6 +31,18 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class NavigatableComponentTest {
 
+    private final class NavigatableComponentMock extends NavigatableComponent {
+        @Override
+        public Point getLocationOnScreen() {
+            return new Point(30, 40);
+        }
+
+        @Override
+        protected boolean isVisibleOnScreen() {
+            return true;
+        }
+    }
+
     private static final int HEIGHT = 200;
     private static final int WIDTH = 300;
     private NavigatableComponent component;
@@ -47,12 +59,7 @@ public class NavigatableComponentTest {
      */
     @Before
     public void setUp() {
-        component = new NavigatableComponent() {
-            @Override
-            public Point getLocationOnScreen() {
-                return new Point(30, 40);
-            }
-        };
+        component = new NavigatableComponentMock();
         component.setBounds(new Rectangle(WIDTH, HEIGHT));
         // wait for the event to be propagated.
         GuiHelper.runInEDTAndWait(new Runnable() {
@@ -61,8 +68,8 @@ public class NavigatableComponentTest {
             }
         });
         component.setVisible(true);
-        JFrame window = new JFrame();
-        window.add(component);
+        JPanel parent = new JPanel();
+        parent.add(component);
         component.updateLocationState();
     }
 

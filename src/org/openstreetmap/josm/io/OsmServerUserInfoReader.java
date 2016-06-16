@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -19,6 +18,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.w3c.dom.Document;
@@ -174,9 +174,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Reading user info ..."));
             try (InputStream in = getInputStream("user/details", monitor.createSubTaskMonitor(1, true), reason)) {
-                return buildFromXML(
-                        DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in)
-                );
+                return buildFromXML(Utils.parseSafeDOM(in));
             }
         } catch (OsmTransferException e) {
             throw e;

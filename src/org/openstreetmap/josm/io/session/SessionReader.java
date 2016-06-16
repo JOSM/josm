@@ -28,8 +28,6 @@ import java.util.zip.ZipFile;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.Main;
@@ -632,12 +630,7 @@ public class SessionReader {
         this.zip = zip;
 
         try {
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            builderFactory.setValidating(false);
-            builderFactory.setNamespaceAware(true);
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            Document document = builder.parse(josIS);
-            parseJos(document, progressMonitor);
+            parseJos(Utils.parseSafeDOM(josIS), progressMonitor);
         } catch (SAXException e) {
             throw new IllegalDataException(e);
         } catch (ParserConfigurationException e) {

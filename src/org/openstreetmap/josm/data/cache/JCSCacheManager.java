@@ -29,6 +29,7 @@ import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * @author Wiktor Niesiobędzki
@@ -226,8 +227,8 @@ public final class JCSCacheManager {
     }
 
     private static void deleteCacheFiles(String basePathPart) {
-        new File(basePathPart + ".key").delete();
-        new File(basePathPart + ".data").delete();
+        Utils.deleteFile(new File(basePathPart + ".key"));
+        Utils.deleteFile(new File(basePathPart + ".data"));
     }
 
     private static CompositeCacheAttributes getCacheAttributes(int maxMemoryElements) {

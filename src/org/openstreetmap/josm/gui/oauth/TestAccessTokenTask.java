@@ -9,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.Main;
@@ -25,6 +24,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -123,7 +123,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             if (connection.getResponse().getResponseCode() != HttpURLConnection.HTTP_OK)
                 throw new OsmApiException(connection.getResponse().getResponseCode(),
                         connection.getResponse().getHeaderField("Error"), null);
-            Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(connection.getResponse().getContent());
+            Document d = Utils.parseSafeDOM(connection.getResponse().getContent());
             return OsmServerUserInfoReader.buildFromXML(d);
         } catch (SAXException | ParserConfigurationException e) {
             throw new XmlParsingException(e);

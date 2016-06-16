@@ -314,9 +314,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     protected void updateLocationState() {
-        if (SwingUtilities.getWindowAncestor(this) != null && isShowing()) {
+        if (isVisibleOnScreen()) {
             state = state.usingLocation(this);
         }
+    }
+
+    protected boolean isVisibleOnScreen() {
+        return SwingUtilities.getWindowAncestor(this) != null && isShowing();
     }
 
     /**
