@@ -386,7 +386,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         isChanged = false;
         highlightUpdateCount = data.getHighlightUpdateCount();
 
-        boolean active = mv.getActiveLayer() == this;
+        boolean active = mv.getLayerManager().getActiveLayer() == this;
         boolean inactive = !active && Main.pref.getBoolean("draw.data.inactive_color", true);
         boolean virtual = !inactive && mv.isVirtualNodesEnabled();
 

@@ -57,7 +57,7 @@ public class GeoImageLayerTest {
                     assertEquals("<html>1 image loaded. 0 were found to be GPS tagged.</html>", layer.getToolTipText());
                 } finally {
                     // Ensure we clean the place before leaving, even if test fails.
-                    Main.map.mapView.removeLayer(layer);
+                    Main.getLayerManager().removeLayer(layer);
                 }
             } finally {
                 // Ensure we clean the place before leaving, even if test fails.

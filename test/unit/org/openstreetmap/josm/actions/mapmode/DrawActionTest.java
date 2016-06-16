@@ -55,7 +55,7 @@ public class DrawActionTest {
 
         Field mapView = MapFrame.class.getDeclaredField("mapView");
         Utils.setObjectsAccessible(mapView);
-        mapView.set(Main.map, new MapViewMock(dataSet, layer));
+        mapView.set(Main.map, new MapViewMock());
 
         Node n1 = new Node(new EastNorth(0, 0));
         Node n2 = new Node(new EastNorth(100, 0));

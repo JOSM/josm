@@ -397,14 +397,14 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
             }
         } else {
             // nodes
-            for (Node n : nc.getCurrentDataSet().getNodes()) {
+            for (Node n : Main.getLayerManager().getEditDataSet().getNodes()) {
                 if (n.isSelectable() && selectionResult.contains(nc.getPoint2D(n))) {
                     selection.add(n);
                 }
             }
 
             // ways
-            for (Way w : nc.getCurrentDataSet().getWays()) {
+            for (Way w : Main.getLayerManager().getEditDataSet().getWays()) {
                 if (!w.isSelectable() || w.getNodesCount() == 0) {
                     continue;
                 }
