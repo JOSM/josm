@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
@@ -114,18 +115,27 @@ public class JOSMFixture {
         }
 
         if (createGui) {
-            if (Main.toolbar == null) {
-                Main.toolbar = new ToolbarPreferences();
-            }
-            if (Main.main == null) {
-                new MainApplication().initialize();
-            }
-            if (Main.map == null) {
-                Main.main.createMapFrame(null, null);
-            } else {
-                for (Layer l: Main.getLayerManager().getLayers()) {
-                    Main.getLayerManager().removeLayer(l);
+            GuiHelper.runInEDTAndWaitWithException(new Runnable() {
+                @Override
+                public void run() {
+                    setupGUI();
                 }
+            });
+        }
+    }
+
+    private void setupGUI() {
+        if (Main.toolbar == null) {
+            Main.toolbar = new ToolbarPreferences();
+        }
+        if (Main.main == null) {
+            new MainApplication().initialize();
+        }
+        if (Main.map == null) {
+            Main.main.createMapFrame(null, null);
+        } else {
+            for (Layer l: Main.getLayerManager().getLayers()) {
+                Main.getLayerManager().removeLayer(l);
             }
         }
     }
