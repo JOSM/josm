@@ -53,9 +53,9 @@ public final class AddImageryLayerActionTest {
             List<WMSLayer> wmsLayers = Main.getLayerManager().getLayersOfType(WMSLayer.class);
             assertEquals(1, wmsLayers.size());
 
-            Main.map.mapView.removeLayer(wmsLayers.get(0));
+            Main.getLayerManager().removeLayer(wmsLayers.get(0));
         } finally {
-            Main.map.mapView.removeLayer(tmsLayers.get(0));
+            Main.getLayerManager().removeLayer(tmsLayers.get(0));
         }
     }
 

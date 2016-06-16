@@ -39,7 +39,7 @@ public class LayerVisibilityActionTest {
             action.updateEnabledState();
             assertFalse(action.isEnabled());
 
-            Main.map.mapView.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             action.updateEnabledState();
             assertTrue(action.isEnabled());
             assertTrue(action.supportLayers(model.getSelectedLayers()));
@@ -86,7 +86,7 @@ public class LayerVisibilityActionTest {
             assertEquals(1.0, layer.getOpacity(), 1e-15);
 
         } finally {
-            Main.map.mapView.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

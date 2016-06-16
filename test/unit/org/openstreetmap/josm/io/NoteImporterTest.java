@@ -23,7 +23,7 @@ public class NoteImporterTest {
     public void testTicket12531() {
         if (Main.map != null) {
             for (Layer l: Main.getLayerManager().getLayers()) {
-                Main.map.mapView.removeLayer(l);
+                Main.getLayerManager().removeLayer(l);
             }
             Main.main.setMapFrame(null);
         }

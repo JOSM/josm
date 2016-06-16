@@ -54,7 +54,7 @@ public class SelectActionTest {
             try {
                 Field mv = SelectAction.class.getDeclaredField("mv");
                 Utils.setObjectsAccessible(mv);
-                mv.set(this, new MapViewMock(dataSet, layer));
+                mv.set(this, new MapViewMock());
             } catch (ReflectiveOperationException e) {
                 e.printStackTrace();
                 fail("Can't setup testing environnement");

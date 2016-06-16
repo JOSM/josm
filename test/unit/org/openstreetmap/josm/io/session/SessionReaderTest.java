@@ -139,7 +139,7 @@ public class SessionReaderTest {
     public void testReadNotes() throws IOException, IllegalDataException {
         if (Main.isDisplayingMapView()) {
             for (NoteLayer nl : Main.getLayerManager().getLayersOfType(NoteLayer.class)) {
-                Main.map.mapView.removeLayer(nl);
+                Main.getLayerManager().removeLayer(nl);
             }
         }
         final List<Layer> layers = testRead("notes.joz");
