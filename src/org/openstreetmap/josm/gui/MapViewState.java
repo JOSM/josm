@@ -171,7 +171,7 @@ public final class MapViewState {
      * @since xxx
      */
     public AffineTransform getAffineTransform() {
-        return new AffineTransform(1.0 / scale, 0.0, 0.0, -1.0 / scale, topLeft.east() / scale,
+        return new AffineTransform(1.0 / scale, 0.0, 0.0, -1.0 / scale, -topLeft.east() / scale,
                 topLeft.north() / scale);
     }
 
