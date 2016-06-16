@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
+import static org.hamcrest.CoreMatchers.any;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -10,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.awt.Graphics2D;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -17,6 +19,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -26,7 +29,9 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.testutils.ExpectedRootException;
 import org.openstreetmap.josm.tools.Predicates;
+import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
  * Test the {@link LayerManager} class.
@@ -118,10 +123,15 @@ public class LayerManagerTest {
             assertSame(layerManager, e.getSource());
             layerOrderChanged = e;
         }
-
     }
 
     protected LayerManager layerManager;
+
+    /**
+     * Rule used to expect exceptions.
+     */
+    @Rule
+    public ExpectedRootException thrown = ExpectedRootException.none();
 
     /**
      * Set up test layer manager.
@@ -181,8 +191,12 @@ public class LayerManagerTest {
     /**
      * {@link LayerManager#addLayer(Layer)}: duplicate layers
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAddLayerFails() {
+        thrown.expect(ReportedException.class);
+        thrown.expectCause(any(InvocationTargetException.class));
+        thrown.expectRootCause(any(IllegalArgumentException.class));
+
         AbstractTestLayer layer1 = new AbstractTestLayer();
         layerManager.addLayer(layer1);
         layerManager.addLayer(layer1);
@@ -191,8 +205,12 @@ public class LayerManagerTest {
     /**
      * {@link LayerManager#addLayer(Layer)}: illegal default layer position
      */
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void testAddLayerIllegalPosition() {
+        thrown.expect(ReportedException.class);
+        thrown.expectCause(any(InvocationTargetException.class));
+        thrown.expectRootCause(any(IndexOutOfBoundsException.class));
+
         AbstractTestLayer layer1 = new AbstractTestLayer() {
             @Override
             public LayerPositionStrategy getDefaultLayerPosition() {
@@ -259,8 +277,12 @@ public class LayerManagerTest {
     /**
      * {@link LayerManager#moveLayer(Layer, int)} fails for wrong index
      */
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void testMoveLayerFailsRange() {
+        thrown.expect(ReportedException.class);
+        thrown.expectCause(any(InvocationTargetException.class));
+        thrown.expectRootCause(any(IndexOutOfBoundsException.class));
+
         AbstractTestLayer layer1 = new AbstractTestLayer();
         AbstractTestLayer layer2 = new AbstractTestLayer();
         layerManager.addLayer(layer1);
@@ -271,8 +293,12 @@ public class LayerManagerTest {
     /**
      * {@link LayerManager#moveLayer(Layer, int)} fails for wrong layer
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testMoveLayerFailsNotInList() {
+        thrown.expect(ReportedException.class);
+        thrown.expectCause(any(InvocationTargetException.class));
+        thrown.expectRootCause(any(IllegalArgumentException.class));
+
         AbstractTestLayer layer1 = new AbstractTestLayer();
         AbstractTestLayer layer2 = new AbstractTestLayer();
         layerManager.addLayer(layer1);
