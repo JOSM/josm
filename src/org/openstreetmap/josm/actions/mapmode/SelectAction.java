@@ -919,7 +919,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
         Collection<Node> nodesToMerge = new LinkedList<>(selNodes);
         nodesToMerge.add(target);
-        mergeNodes(Main.main.getEditLayer(), nodesToMerge, target);
+        mergeNodes(Main.getLayerManager().getEditLayer(), nodesToMerge, target);
     }
 
     /**

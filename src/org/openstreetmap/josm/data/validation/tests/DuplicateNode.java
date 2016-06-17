@@ -408,7 +408,7 @@ public class DuplicateNode extends Test {
             }
 
             if (DeleteCommand.checkAndConfirmOutlyingDelete(nodes, Collections.singleton(target)))
-                return MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodes, target);
+                return MergeNodesAction.mergeNodes(Main.getLayerManager().getEditLayer(), nodes, target);
         }
 
         return null; // undoRedo handling done in mergeNodes

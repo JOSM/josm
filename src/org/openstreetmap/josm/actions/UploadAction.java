@@ -268,6 +268,6 @@ public class UploadAction extends JosmAction {
             return;
         }
         APIDataSet apiData = new APIDataSet(Main.main.getCurrentDataSet());
-        uploadData(Main.main.getEditLayer(), apiData);
+        uploadData(Main.getLayerManager().getEditLayer(), apiData);
     }
 }

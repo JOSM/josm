@@ -59,7 +59,7 @@ public class FollowLineAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent evt) {
-        OsmDataLayer osmLayer = Main.main.getEditLayer();
+        OsmDataLayer osmLayer = Main.getLayerManager().getEditLayer();
         if (osmLayer == null)
             return;
         if (!(Main.map.mapMode instanceof DrawAction)) return; // We are not on draw mode

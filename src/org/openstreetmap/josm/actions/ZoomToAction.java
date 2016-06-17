@@ -81,7 +81,7 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
     }
 
     protected final void updateEnabledState() {
-        if (Main.main == null || Main.main.getEditLayer() != this.table.getLayer()) {
+        if (Main.main == null || Main.getLayerManager().getEditLayer() != this.table.getLayer()) {
             setEnabled(false);
             putValue(SHORT_DESCRIPTION, descriptionInactiveLayer);
             return;

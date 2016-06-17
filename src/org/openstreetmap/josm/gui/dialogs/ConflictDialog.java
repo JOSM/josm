@@ -233,7 +233,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      * refreshes the view of this dialog
      */
     public void refreshView() {
-        OsmDataLayer editLayer = Main.main.getEditLayer();
+        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
         conflicts = editLayer == null ? new ConflictCollection() : editLayer.getConflicts();
         GuiHelper.runInEDT(new Runnable() {
             @Override

@@ -134,10 +134,10 @@ public class RelationTree extends JTree {
                 Main.error(lastException);
                 return;
             }
-            DataSetMerger visitor = new DataSetMerger(Main.main.getEditLayer().data, ds);
+            DataSetMerger visitor = new DataSetMerger(Main.getLayerManager().getEditLayer().data, ds);
             visitor.merge();
             if (!visitor.getConflicts().isEmpty()) {
-                Main.main.getEditLayer().getConflicts().add(visitor.getConflicts());
+                Main.getLayerManager().getEditLayer().getConflicts().add(visitor.getConflicts());
             }
             final RelationTreeModel model = (RelationTreeModel) getModel();
             SwingUtilities.invokeLater(

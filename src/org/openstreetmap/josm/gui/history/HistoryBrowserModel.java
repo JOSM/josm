@@ -105,7 +105,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         referenceRelationMemberTableModel = new DiffTableModel();
 
         if (Main.main != null) {
-            OsmDataLayer editLayer = Main.main.getEditLayer();
+            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
             if (editLayer != null) {
                 editLayer.data.addDataSetListener(this);
             }
@@ -173,7 +173,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         this.history = history;
         if (history.getNumVersions() > 0) {
             HistoryOsmPrimitive newLatest = null;
-            OsmDataLayer editLayer = Main.main.getEditLayer();
+            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
             if (editLayer != null) {
                 OsmPrimitive p = editLayer.data.getPrimitiveById(history.getId(), history.getType());
                 if (canShowAsLatest(p)) {
@@ -531,7 +531,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         public OsmPrimitive getLatest() {
             if (latest == null)
                 return null;
-            OsmDataLayer editLayer = Main.main.getEditLayer();
+            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
             if (editLayer == null)
                 return null;
             return editLayer.data.getPrimitiveById(latest.getId(), latest.getType());
@@ -665,7 +665,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      *
      */
     public void unlinkAsListener() {
-        OsmDataLayer editLayer = Main.main.getEditLayer();
+        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
         if (editLayer != null) {
             editLayer.data.removeDataSetListener(this);
         }

@@ -418,7 +418,7 @@ public class TagEditHelper {
             JPanel p = new JPanel(new GridBagLayout());
             mainPanel.add(p, BorderLayout.CENTER);
 
-            AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
+            AutoCompletionManager autocomplete = Main.getLayerManager().getEditLayer().data.getAutoCompletionManager();
             List<AutoCompletionListItem> keyList = autocomplete.getKeys();
             Collections.sort(keyList, defaultACItemComparator);
 
@@ -675,7 +675,7 @@ public class TagEditHelper {
                 "This will change up to {0} objects.", sel.size(), sel.size())
                 +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GBC.HORIZONTAL));
 
-            AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
+            AutoCompletionManager autocomplete = Main.getLayerManager().getEditLayer().data.getAutoCompletionManager();
             List<AutoCompletionListItem> keyList = autocomplete.getKeys();
 
             AutoCompletionListItem itemToSelect = null;

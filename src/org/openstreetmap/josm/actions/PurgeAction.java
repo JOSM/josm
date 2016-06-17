@@ -95,7 +95,7 @@ public class PurgeAction extends JosmAction {
             return;
 
         Collection<OsmPrimitive> sel = getLayerManager().getEditDataSet().getAllSelected();
-        layer = Main.main.getEditLayer();
+        layer = Main.getLayerManager().getEditLayer();
 
         toPurge = new HashSet<>(sel);
         toPurgeAdditionally = new ArrayList<>();
@@ -217,7 +217,7 @@ public class PurgeAction extends JosmAction {
             Main.pref.put("purge.clear_undo_redo", clearUndoRedo);
         }
 
-        Main.main.undoRedo.add(new PurgeCommand(Main.main.getEditLayer(), toPurgeChecked, makeIncomplete));
+        Main.main.undoRedo.add(new PurgeCommand(Main.getLayerManager().getEditLayer(), toPurgeChecked, makeIncomplete));
 
         if (clearUndoRedo) {
             Main.main.undoRedo.clean();

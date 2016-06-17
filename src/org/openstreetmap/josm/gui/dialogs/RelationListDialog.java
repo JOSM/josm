@@ -361,7 +361,7 @@ public class RelationListDialog extends ToggleDialog
         }
 
         public void run() {
-            RelationEditor.getEditor(Main.main.getEditLayer(), null, null).setVisible(true);
+            RelationEditor.getEditor(Main.getLayerManager().getEditLayer(), null, null).setVisible(true);
         }
 
         @Override
@@ -693,7 +693,7 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void dataChanged(DataChangedEvent event) {
-        initFromLayer(Main.main.getEditLayer());
+        initFromLayer(Main.getLayerManager().getEditLayer());
     }
 
     @Override

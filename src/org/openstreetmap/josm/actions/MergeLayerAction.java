@@ -114,7 +114,7 @@ public class MergeLayerAction extends AbstractMergeAction {
     }
 
     protected Layer getSourceLayer() {
-        return Main.map != null ? Main.main.getActiveLayer() : null;
+        return Main.map != null ? Main.getLayerManager().getActiveLayer() : null;
     }
 
     /**

@@ -213,7 +213,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
         protected OsmDataLayer getEditLayer() {
             if (!Main.isDisplayingMapView()) return null;
-            return Main.main.getEditLayer();
+            return Main.getLayerManager().getEditLayer();
         }
 
         protected int getNumDataLayers() {

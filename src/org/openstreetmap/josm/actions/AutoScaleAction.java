@@ -75,7 +75,7 @@ public class AutoScaleAction extends JosmAction {
     public static void zoomToSelection() {
         if (Main.main == null || !Main.main.hasEditLayer())
             return;
-        Collection<OsmPrimitive> sel = Main.main.getEditLayer().data.getSelected();
+        Collection<OsmPrimitive> sel = Main.getLayerManager().getEditLayer().data.getSelected();
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -219,7 +219,7 @@ public class AutoScaleAction extends JosmAction {
      * @return the first selected layer in the layer list dialog
      */
     protected Layer getFirstSelectedLayer() {
-        if (Main.main.getActiveLayer() == null) {
+        if (Main.getLayerManager().getActiveLayer() == null) {
             return null;
         }
         List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();

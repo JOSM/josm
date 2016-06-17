@@ -58,7 +58,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
         Main.worker.submit(new DownloadRelationMemberTask(
                 relations,
                 incompleteMembers,
-                Main.main.getEditLayer()));
+                Main.getLayerManager().getEditLayer()));
     }
 
     @Override

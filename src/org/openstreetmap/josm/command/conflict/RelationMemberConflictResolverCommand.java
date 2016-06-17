@@ -83,7 +83,7 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
         }
 
         Main.getLayerManager().setActiveLayer(layer);
-        OsmDataLayer editLayer = Main.main.getEditLayer();
+        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
 
         // restore the former state
         //

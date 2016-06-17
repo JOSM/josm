@@ -144,7 +144,7 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         for (PrimitiveData data:bufferCopy) {
             if (data instanceof NodeData) {
                 NodeData nodeData = (NodeData) data;
-                if (Main.main.getEditLayer() == source) {
+                if (Main.getLayerManager().getEditLayer() == source) {
                     nodeData.setEastNorth(nodeData.getEastNorth().add(offsetEast, offsetNorth));
                 }
             } else if (data instanceof WayData) {

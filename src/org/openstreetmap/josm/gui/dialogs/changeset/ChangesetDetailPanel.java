@@ -334,7 +334,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
                     tr("<html>None of the objects in the content of changeset {0} is available in the current<br>"
                             + "edit layer ''{1}''.</html>",
                             currentChangeset.getId(),
-                            Main.main.getEditLayer().getName()
+                            Main.getLayerManager().getEditLayer().getName()
                     ),
                     tr("Nothing to select"),
                     JOptionPane.WARNING_MESSAGE,
@@ -347,7 +347,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             if (!isEnabled())
                 return;
             if (Main.main == null || !Main.main.hasEditLayer()) return;
-            OsmDataLayer layer = Main.main.getEditLayer();
+            OsmDataLayer layer = Main.getLayerManager().getEditLayer();
             Set<OsmPrimitive> target = new HashSet<>();
             for (OsmPrimitive p: layer.data.allPrimitives()) {
                 if (p.isUsable() && p.getChangesetId() == currentChangeset.getId()) {
@@ -395,7 +395,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
                     tr("<html>None of the objects in the content of changeset {0} is available in the current<br>"
                             + "edit layer ''{1}''.</html>",
                             currentChangeset.getId(),
-                            Main.main.getEditLayer().getName()
+                            Main.getLayerManager().getEditLayer().getName()
                     ),
                     tr("Nothing to zoom to"),
                     JOptionPane.WARNING_MESSAGE,
@@ -408,7 +408,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             if (!isEnabled())
                 return;
             if (Main.main == null || !Main.main.hasEditLayer()) return;
-            OsmDataLayer layer = Main.main.getEditLayer();
+            OsmDataLayer layer = Main.getLayerManager().getEditLayer();
             Set<OsmPrimitive> target = new HashSet<>();
             for (OsmPrimitive p: layer.data.allPrimitives()) {
                 if (p.isUsable() && p.getChangesetId() == currentChangeset.getId()) {

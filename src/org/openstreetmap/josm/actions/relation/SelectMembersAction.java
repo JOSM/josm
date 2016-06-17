@@ -42,9 +42,9 @@ public class SelectMembersAction extends AbstractRelationAction {
             members.addAll(r.getMemberPrimitives());
         }
         if (add) {
-            Main.main.getEditLayer().data.addSelected(members);
+            Main.getLayerManager().getEditLayer().data.addSelected(members);
         } else {
-            Main.main.getEditLayer().data.setSelected(members);
+            Main.getLayerManager().getEditLayer().data.setSelected(members);
         }
     }
 }

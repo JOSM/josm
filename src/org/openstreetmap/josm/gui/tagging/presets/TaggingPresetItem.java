@@ -40,7 +40,7 @@ public abstract class TaggingPresetItem {
 
     protected void initAutoCompletionField(AutoCompletingTextField field, List<String> keys) {
         if (Main.main == null) return;
-        OsmDataLayer layer = Main.main.getEditLayer();
+        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
         if (layer == null) {
             return;
         }

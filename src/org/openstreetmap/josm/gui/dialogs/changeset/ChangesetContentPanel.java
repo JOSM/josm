@@ -197,7 +197,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         "<html>None of the selected objects is available in the current<br>"
                         + "edit layer ''{0}''.</html>",
                         primitives.size(),
-                        Main.main.getEditLayer().getName()
+                        Main.getLayerManager().getEditLayer().getName()
                 ),
                 title, JOptionPane.WARNING_MESSAGE, helpTopic
         );
@@ -335,7 +335,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             if (!isEnabled() || Main.main == null || !Main.main.hasEditLayer()) {
                 return null;
             }
-            OsmDataLayer layer = Main.main.getEditLayer();
+            OsmDataLayer layer = Main.getLayerManager().getEditLayer();
             Set<OsmPrimitive> target = new HashSet<>();
             for (HistoryOsmPrimitive p : model.getSelectedPrimitives()) {
                 OsmPrimitive op = layer.data.getPrimitiveById(p.getPrimitiveId());
@@ -385,7 +385,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToSelectInLayer"));
                 return;
             }
-            Main.main.getEditLayer().data.setSelected(target);
+            Main.getLayerManager().getEditLayer().data.setSelected(target);
         }
     }
 
@@ -408,7 +408,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToZoomTo"));
                 return;
             }
-            Main.main.getEditLayer().data.setSelected(target);
+            Main.getLayerManager().getEditLayer().data.setSelected(target);
             AutoScaleAction.zoomToSelection();
         }
     }

@@ -562,7 +562,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         Relation relation = (Relation) membershipData.getValueAt(row, 0);
         Main.map.relationListDialog.selectRelation(relation);
         RelationEditor.getEditor(
-                Main.main.getEditLayer(),
+                Main.getLayerManager().getEditLayer(),
                 relation,
                 ((MemberInfo) membershipData.getValueAt(row, 1)).role
         ).setVisible(true);
