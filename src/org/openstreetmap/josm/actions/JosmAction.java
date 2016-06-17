@@ -170,7 +170,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
             installAdapters();
         }
     }
-    
+
     /**
      * Installs the listeners to this action.
      * <p>
@@ -347,6 +347,20 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @see #listenToSelectionChange()
      */
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+    }
+
+    /**
+     * Updates enabled state according to primitives currently selected in edit data set, if any.
+     * Can be called in {@link #updateEnabledState()} implementations.
+     * @since 10409
+     */
+    protected final void updateEnabledStateOnCurrentSelection() {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) {
+            setEnabled(false);
+        } else {
+            updateEnabledState(ds.getSelected());
+        }
     }
 
     /**

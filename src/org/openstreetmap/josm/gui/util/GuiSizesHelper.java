@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.util;
 
 import java.awt.Dimension;
-import java.awt.HeadlessException;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 
 import org.openstreetmap.josm.Main;
@@ -19,11 +19,11 @@ public final class GuiSizesHelper {
         // Hide default constructor for utils classes
     }
 
-
     /** cache value for screen resolution */
     private static float screenDPI = -1;
 
-    /** Request the screen resolution (cached)
+    /**
+     * Request the screen resolution (cached)
      * @return screen resolution in DPI
      */
     private static float getScreenDPI() {
@@ -34,9 +34,9 @@ public final class GuiSizesHelper {
                     if (scalePref != 0) {
                         screenDPI = 96f * scalePref;
                     } else {
-                        try {
+                        if (!GraphicsEnvironment.isHeadless()) {
                             screenDPI = Toolkit.getDefaultToolkit().getScreenResolution();
-                        } catch (HeadlessException e) {
+                        } else {
                             screenDPI = 96;
                         }
                     }
@@ -52,8 +52,7 @@ public final class GuiSizesHelper {
      * @return float value. 1 - means standard monitor, 2 and high - "retina" display.
      */
     public static float getPixelDensity() {
-        float pixelPerInch = getScreenDPI();
-        return pixelPerInch / 96f;
+        return getScreenDPI() / 96f;
     }
 
     /**
@@ -71,8 +70,7 @@ public final class GuiSizesHelper {
      */
     public static int getSizeDpiAdjusted(int size) {
         if (size <= 0) return size;
-        float pixelPerInch = getScreenDPI();
-        return Math.round(size * pixelPerInch / 96);
+        return Math.round(size * getScreenDPI() / 96);
     }
 
     /**
@@ -82,8 +80,7 @@ public final class GuiSizesHelper {
      */
     public static float getSizeDpiAdjusted(float size) {
         if (size <= 0f) return size;
-        float pixelPerInch = getScreenDPI();
-        return size * pixelPerInch / 96;
+        return size * getScreenDPI() / 96;
     }
 
     /**
@@ -93,8 +90,7 @@ public final class GuiSizesHelper {
      */
     public static double getSizeDpiAdjusted(double size) {
         if (size <= 0d) return size;
-        float pixelPerInch = getScreenDPI();
-        return size * pixelPerInch / 96;
+        return size * getScreenDPI() / 96;
     }
 
     /**
@@ -104,7 +100,8 @@ public final class GuiSizesHelper {
      */
     public static Dimension getDimensionDpiAdjusted(Dimension dim) {
         float pixelPerInch = getScreenDPI();
-        int width = dim.width, height = dim.height;
+        int width = dim.width;
+        int height = dim.height;
         if (dim.width > 0) {
             width = Math.round(dim.width * pixelPerInch / 96);
         }

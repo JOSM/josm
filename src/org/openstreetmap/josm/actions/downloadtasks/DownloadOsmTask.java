@@ -252,7 +252,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
             Main.map.mapView.zoomTo(v);
         }
 
-        protected OsmDataLayer addNewLayerIfRequired(String newLayerName, Bounds bounds) {
+        protected OsmDataLayer addNewLayerIfRequired(String newLayerName) {
             int numDataLayers = getNumDataLayers();
             if (newLayer || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
                 // the user explicitly wants a new layer, we don't have any layer at all
@@ -267,7 +267,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         }
 
         protected void loadData(String newLayerName, Bounds bounds) {
-            OsmDataLayer layer = addNewLayerIfRequired(newLayerName, bounds);
+            OsmDataLayer layer = addNewLayerIfRequired(newLayerName);
             if (layer == null) {
                 layer = getEditLayer();
                 if (layer == null) {

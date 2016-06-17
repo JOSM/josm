@@ -15,7 +15,6 @@ import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.SelectCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -35,6 +34,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class FollowLineAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code FollowLineAction}.
+     */
     public FollowLineAction() {
         super(
                 tr("Follow line"),
@@ -47,12 +49,7 @@ public class FollowLineAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null) {
-            setEnabled(false);
-        } else {
-            updateEnabledState(ds.getSelected());
-        }
+        updateEnabledStateOnCurrentSelection();
     }
 
     @Override

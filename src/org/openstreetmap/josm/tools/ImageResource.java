@@ -12,8 +12,9 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
-import com.kitfox.svg.SVGDiagram;
 import org.openstreetmap.josm.gui.util.GuiSizesHelper;
+
+import com.kitfox.svg.SVGDiagram;
 
 /**
  * Holds data for one particular image.
@@ -49,11 +50,8 @@ public class ImageResource {
      */
     public ImageResource(Image img) {
         CheckParameterUtil.ensureParameterNotNull(img);
-        this.baseImage = img;
-
-        img = scaleBaseImageIfNeeded(img);
-
-        imgCache.put(DEFAULT_DIMENSION, img);
+        baseImage = img;
+        imgCache.put(DEFAULT_DIMENSION, scaleBaseImageIfNeeded(img));
     }
 
     /** Scale image according to screen DPI if needed.
@@ -70,7 +68,7 @@ public class ImageResource {
             Image realImage = img.getScaledInstance(realWidth, realHeight, Image.SCALE_SMOOTH);
             BufferedImage bimg = new BufferedImage(realWidth, realHeight, BufferedImage.TYPE_INT_ARGB);
             bimg.getGraphics().drawImage(realImage, 0, 0, null);
-            img = bimg;
+            return bimg;
         }
         return img;
     }
@@ -94,14 +92,6 @@ public class ImageResource {
         this.svg = res.svg;
         this.baseImage = res.baseImage;
         this.overlayInfo = overlayInfo;
-    }
-
-    /**
-     * Returns the image icon at default dimension.
-     * @return the image icon at default dimension
-     */
-    public ImageIcon getImageIcon() {
-        return getImageIcon(DEFAULT_DIMENSION);
     }
 
     /**
@@ -134,10 +124,17 @@ public class ImageResource {
     }
 
     /**
+     * Returns the image icon at default dimension.
+     * @return the image icon at default dimension
+     */
+    public ImageIcon getImageIcon() {
+        return getImageIcon(DEFAULT_DIMENSION);
+    }
+
+    /**
      * Get an ImageIcon object for the image of this resource
-     * @param   dim The requested dimensions. Use (-1,-1) for the original size
-     *          and (width, -1) to set the width, but otherwise scale the image
-     *          proportionally.
+     * @param  dim The requested dimensions. Use (-1,-1) for the original size and (width, -1)
+     *         to set the width, but otherwise scale the image proportionally.
      * @return ImageIcon object for the image of this resource, scaled according to dim
      */
     public ImageIcon getImageIcon(Dimension dim) {
