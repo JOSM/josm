@@ -289,7 +289,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016061301, Last Updated Tue Jun 14 07:07:01 2016 UTC
+        // Taken from Version 2016061700, Last Updated Fri Jun 17 07:07:02 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -419,6 +419,7 @@ public final class DomainValidator extends AbstractValidator {
         "cafe", // cafe Pioneer Canyon, LLC
         "cal", // cal Charleston Road Registry Inc.
         "call", // call Amazon Registry Services, Inc.
+        "cam", // cam AC Webconnecting Holding B.V.
         "camera", // camera Atomic Maple, LLC
         "camp", // camp Delta Dynamite, LLC
         "cancerresearch", // cancerresearch Australian Cancer Research Foundation
@@ -786,6 +787,7 @@ public final class DomainValidator extends AbstractValidator {
         "lease", // lease Victor Trail, LLC
         "leclerc", // leclerc A.C.D. LEC Association des Centres Distributeurs Edouard Leclerc
         "legal", // legal Blue Falls, LLC
+        "lego", // lego LEGO Juris A/S
         "lexus", // lexus TOYOTA MOTOR CORPORATION
         "lgbt", // lgbt Afilias Limited
         "liaison", // liaison Liaison Technologies, Incorporated
