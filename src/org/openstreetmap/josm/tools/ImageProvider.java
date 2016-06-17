@@ -842,7 +842,7 @@ public class ImageProvider {
                     switch (place) {
                     case typeArchive:
                         if (archive != null) {
-                            cacheName = "zip:"+archive+":"+cacheName;
+                            cacheName = "zip:"+archive.hashCode()+":"+cacheName;
                             ImageResource ir = cache.get(cacheName);
                             if (ir != null) return ir;
 
