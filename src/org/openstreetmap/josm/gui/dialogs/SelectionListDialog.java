@@ -211,7 +211,7 @@ public class SelectionListDialog extends ToggleDialog {
             int idx = lstPrimitives.locationToIndex(e.getPoint());
             if (idx < 0) return;
             if (isDoubleClick(e)) {
-                OsmDataLayer layer = Main.main.getEditLayer();
+                OsmDataLayer layer = Main.getLayerManager().getEditLayer();
                 if (layer == null) return;
                 OsmPrimitive osm = model.getElementAt(idx);
                 Collection<OsmPrimitive> sel = layer.data.getSelected();
@@ -334,7 +334,7 @@ public class SelectionListDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = model.getSelected();
             if (sel.isEmpty()) return;
-            OsmDataLayer editLayer = Main.main.getEditLayer();
+            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
             if (editLayer == null) return;
             editLayer.data.setSelected(sel);
             model.selectionModel.setSelectionInterval(0, sel.size()-1);

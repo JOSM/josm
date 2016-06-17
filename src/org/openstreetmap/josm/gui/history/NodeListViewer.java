@@ -242,7 +242,7 @@ public class NodeListViewer extends JPanel {
                 return;
             OsmPrimitive p = getPrimitiveToZoom();
             if (p != null) {
-                OsmDataLayer editLayer = Main.main.getEditLayer();
+                OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
                 if (editLayer != null) {
                     editLayer.data.setSelected(p.getPrimitiveId());
                     AutoScaleAction.autoScale("selection");
@@ -258,7 +258,7 @@ public class NodeListViewer extends JPanel {
         protected OsmPrimitive getPrimitiveToZoom() {
             if (primitiveId == null)
                 return null;
-            OsmDataLayer editLayer = Main.main.getEditLayer();
+            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
             if (editLayer == null)
                 return null;
             return editLayer.data.getPrimitiveById(primitiveId);

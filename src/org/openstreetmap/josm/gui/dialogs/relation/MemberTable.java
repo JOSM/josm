@@ -234,7 +234,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
 
         private void updateEnabledState() {
             setEnabled(Main.main != null
-                    && Main.main.getEditLayer() == getLayer()
+                    && Main.getLayerManager().getEditLayer() == getLayer()
                     && getSelectedRowCount() == 1
                     && hasGap());
         }

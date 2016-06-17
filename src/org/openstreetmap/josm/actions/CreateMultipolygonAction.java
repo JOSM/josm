@@ -118,12 +118,12 @@ public class CreateMultipolygonAction extends JosmAction {
                             Main.map.relationListDialog.selectRelation(relation);
                             if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
                                 //Open relation edit window, if set up in preferences
-                                RelationEditor editor = RelationEditor.getEditor(Main.main.getEditLayer(), relation, null);
+                                RelationEditor editor = RelationEditor.getEditor(Main.getLayerManager().getEditLayer(), relation, null);
 
                                 editor.setModal(true);
                                 editor.setVisible(true);
                             } else {
-                                Main.main.getEditLayer().setRecentRelation(relation);
+                                Main.getLayerManager().getEditLayer().setRecentRelation(relation);
                             }
                         }
                     });
@@ -164,11 +164,11 @@ public class CreateMultipolygonAction extends JosmAction {
         // download incomplete relation or incomplete members if necessary
         if (multipolygonRelation != null) {
             if (!multipolygonRelation.isNew() && multipolygonRelation.isIncomplete()) {
-                Main.worker.submit(new DownloadRelationTask(Collections.singleton(multipolygonRelation), Main.main.getEditLayer()));
+                Main.worker.submit(new DownloadRelationTask(Collections.singleton(multipolygonRelation), Main.getLayerManager().getEditLayer()));
             } else if (multipolygonRelation.hasIncompleteMembers()) {
                 Main.worker.submit(new DownloadRelationMemberTask(multipolygonRelation,
                         DownloadSelectedIncompleteMembersAction.buildSetOfIncompleteMembers(Collections.singleton(multipolygonRelation)),
-                        Main.main.getEditLayer()));
+                        Main.getLayerManager().getEditLayer()));
             }
         }
         // create/update multipolygon relation

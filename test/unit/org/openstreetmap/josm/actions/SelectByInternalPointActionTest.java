@@ -38,7 +38,7 @@ public final class SelectByInternalPointActionTest {
     @Test
     public void testNoDataSet() {
         while (Main.main.hasEditLayer()) {
-            Main.main.removeLayer(Main.main.getEditLayer());
+            Main.main.removeLayer(Main.getLayerManager().getEditLayer());
         }
         assertNull(JosmAction.getCurrentDataSet());
         assertEquals(0, SelectByInternalPointAction.getSurroundingObjects(null).size());

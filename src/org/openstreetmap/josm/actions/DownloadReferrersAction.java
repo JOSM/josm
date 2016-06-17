@@ -51,7 +51,7 @@ public class DownloadReferrersAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        OsmDataLayer layer = Main.main.getEditLayer();
+        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
         if (layer == null)
             return;
         Collection<OsmPrimitive> primitives = layer.data.getSelected();

@@ -29,7 +29,7 @@ public final class DeleteLayerAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Layer activeLayer = Main.main.getActiveLayer();
+        Layer activeLayer = Main.getLayerManager().getActiveLayer();
         if (activeLayer == null) {
             return;
         }

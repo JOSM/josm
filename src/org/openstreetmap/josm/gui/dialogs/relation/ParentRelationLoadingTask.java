@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * <pre>
  *  final ParentRelationLoadingTask task = new ParentRelationLoadingTask(
  *                   child,   // the child relation
- *                   Main.main.getEditLayer(), // the edit layer
+ *                   Main.getLayerManager().getEditLayer(), // the edit layer
  *                   true,  // load fully
  *                   new PleaseWaitProgressMonitor()  // a progress monitor
  *   );

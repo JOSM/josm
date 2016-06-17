@@ -29,7 +29,7 @@ public class DeleteRelationsAction extends AbstractRelationAction {
     protected void deleteRelation(Collection<Relation> toDelete) {
         if (toDelete == null)
             return;
-        DeleteAction.deleteRelations(Main.main.getEditLayer(), toDelete);
+        DeleteAction.deleteRelations(Main.getLayerManager().getEditLayer(), toDelete);
         // clear selection after deletion
         if (Main.map.relationListDialog != null)
                 Main.map.relationListDialog.selectRelations(null);

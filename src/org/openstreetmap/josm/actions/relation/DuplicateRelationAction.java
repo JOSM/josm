@@ -33,7 +33,7 @@ public class DuplicateRelationAction extends AbstractRelationAction {
         Relation copy = new Relation(original, true);
         copy.setModified(true);
         RelationEditor editor = RelationEditor.getEditor(
-                Main.main.getEditLayer(),
+                Main.getLayerManager().getEditLayer(),
                 copy,
                 null /* no selected members */
                 );

@@ -96,7 +96,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      * Initializes the panel for user input
      */
     public void startUserInput() {
-        pnlTagEditor.initAutoCompletion(Main.main.getEditLayer());
+        pnlTagEditor.initAutoCompletion(Main.getLayerManager().getEditLayer());
     }
 
     /* -------------------------------------------------------------------------- */

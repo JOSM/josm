@@ -332,7 +332,7 @@ public class Test extends AbstractVisitor {
             }
         }
         if (!primitivesToDelete.isEmpty()) {
-            return DeleteCommand.delete(Main.main.getEditLayer(), primitivesToDelete);
+            return DeleteCommand.delete(Main.getLayerManager().getEditLayer(), primitivesToDelete);
         } else {
             return null;
         }

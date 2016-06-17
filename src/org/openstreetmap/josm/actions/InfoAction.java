@@ -36,7 +36,7 @@ public class InfoAction extends JosmAction {
     public void actionPerformed(ActionEvent ae) {
         DataSet set = getLayerManager().getEditDataSet();
         if (set != null) {
-            new InspectPrimitiveDialog(set.getAllSelected(), Main.main.getEditLayer()).showDialog();
+            new InspectPrimitiveDialog(set.getAllSelected(), Main.getLayerManager().getEditLayer()).showDialog();
         }
     }
 

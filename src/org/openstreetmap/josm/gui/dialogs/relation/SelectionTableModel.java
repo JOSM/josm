@@ -61,7 +61,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
 
     @Override
     public int getRowCount() {
-        if (Main.main.getEditLayer() != layer)
+        if (Main.getLayerManager().getEditLayer() != layer)
             return 0;
         return cache.size();
     }
@@ -103,7 +103,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
 
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        if (layer == Main.main.getEditLayer()) {
+        if (layer == Main.getLayerManager().getEditLayer()) {
             cache.clear();
             cache.addAll(newSelection);
         } else {

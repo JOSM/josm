@@ -143,7 +143,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     @Override
     public void showDialog() {
         super.showDialog();
-        Layer layer = Main.main.getActiveLayer();
+        Layer layer = Main.getLayerManager().getActiveLayer();
         if (layer instanceof OsmDataLayer) {
             refresh(((OsmDataLayer) layer).data.getAllSelected());
         }

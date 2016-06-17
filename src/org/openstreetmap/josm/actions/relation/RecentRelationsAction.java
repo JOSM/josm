@@ -139,7 +139,7 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
     public static List<Relation> getRecentRelationsOnActiveLayer() {
         if (!Main.isDisplayingMapView())
             return Collections.emptyList();
-        Layer activeLayer = Main.main.getActiveLayer();
+        Layer activeLayer = Main.getLayerManager().getActiveLayer();
         if (!(activeLayer instanceof OsmDataLayer)) {
             return Collections.emptyList();
         } else {
