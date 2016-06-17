@@ -62,7 +62,7 @@ public final class BugReport {
      *            How many methods to look back in the stack trace. 1 gives the method calling this method, 0 gives you getCallingMethod().
      * @return The method name.
      */
-    static String getCallingMethod(int offset) {
+    public static String getCallingMethod(int offset) {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         String className = BugReport.class.getName();
         for (int i = 0; i < stackTrace.length - offset; i++) {

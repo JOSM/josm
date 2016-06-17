@@ -82,6 +82,7 @@ import org.openstreetmap.josm.gui.MainApplication.Option;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
@@ -525,8 +526,14 @@ public abstract class Main {
 
         Main.map = map;
 
+        // Notify map frame listeners, mostly plugins.
+        if ((map == null) == (old == null)) {
+            Main.warn("Replacing the map frame. This is not expected by some plugins and should not happen.");
+        }
         for (MapFrameListener listener : mapFrameListeners) {
+            MapView.fireDeprecatedListenerOnAdd = true;
             listener.mapFrameInitialized(old, map);
+            MapView.fireDeprecatedListenerOnAdd = false;
         }
         if (map == null && currentProgressMonitor != null) {
             currentProgressMonitor.showForegroundDialog();

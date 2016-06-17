@@ -374,7 +374,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      */
     @Deprecated
     public static void addLayerChangeListener(LayerChangeListener listener) {
-        addLayerChangeListener(listener, false);
+        if (fireDeprecatedListenerOnAdd) {
+            Main.warn("Plugin seems to be adding listener during mapFrameInitialized(): " + BugReport.getCallingMethod(2)
+            + ". Layer listeners should be set on plugin load.");
+        }
+        addLayerChangeListener(listener, fireDeprecatedListenerOnAdd);
     }
 
     /**
@@ -390,10 +394,10 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     @Deprecated
     public static void addLayerChangeListener(LayerChangeListener listener, boolean initialFire) {
         if (listener != null) {
-            initialFire = initialFire && Main.isDisplayingMapView();
+            initialFire = initialFire && (Main.isDisplayingMapView() || fireDeprecatedListenerOnAdd);
 
             LayerChangeAdapter adapter = new LayerChangeAdapter(listener, initialFire);
-            Main.getLayerManager().addLayerChangeListener(adapter, false);
+            Main.getLayerManager().addLayerChangeListener(adapter, initialFire);
             if (initialFire) {
                 Main.getLayerManager().addAndFireActiveLayerChangeListener(adapter);
             } else {
@@ -437,6 +441,16 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     public static void addEditLayerChangeListener(EditLayerChangeListener listener) {
         addEditLayerChangeListener(listener, false);
     }
+
+
+    /**
+     * Temporary. To be removed as soon as the {@link LayerChangeListener}s are removed.
+     * <p>
+     * Some plugins add their listeners in {@link Main#setMapFrame(MapFrame)}. This method is now called just after the first layer was added to
+     * the layer manager. So that listener would not receive the addition of the first layer. As long as this field is set, we fake an add call
+     * to that listener when it is added to immitate the old behaviour. You should not access it from anywhere else.
+     */
+    public static boolean fireDeprecatedListenerOnAdd;
 
     public boolean viewportFollowing;
 
