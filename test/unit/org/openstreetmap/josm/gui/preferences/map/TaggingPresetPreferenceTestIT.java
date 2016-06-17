@@ -69,8 +69,7 @@ public class TaggingPresetPreferenceTestIT {
                 } catch (SAXException | IOException e1) {
                     e.printStackTrace();
                     // ignore frequent network errors with www.freietonne.de causing too much Jenkins failures
-                    // also ignore https://github.com/yopaseopor/traffic_signs_preset_JOSM because of far too frequent missing icons errors
-                    if (!source.url.contains("www.freietonne.de") && !source.url.contains("yopaseopor/traffic_signs")) {
+                    if (!source.url.contains("www.freietonne.de")) {
                         allErrors.add(e1);
                     }
                     System.out.println(" => KO");
@@ -91,7 +90,8 @@ public class TaggingPresetPreferenceTestIT {
         Collection<String> errorsAndWarnings = Main.getLastErrorAndWarnings();
         boolean error = false;
         for (String message : errorsAndWarnings) {
-            if (message.contains(TaggingPreset.PRESET_ICON_ERROR_MSG_PREFIX)) {
+            if (message.contains(TaggingPreset.PRESET_ICON_ERROR_MSG_PREFIX) && !source.url.contains("yopaseopor/traffic_signs")) {
+                // ignore https://github.com/yopaseopor/traffic_signs_preset_JOSM because of far too frequent missing icons errors
                 error = true;
                 allMessages.add(message);
             }
