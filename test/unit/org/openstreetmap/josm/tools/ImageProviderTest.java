@@ -59,4 +59,15 @@ public class ImageProviderTest {
         // https://commons.wikimedia.org/wiki/File:OpenJDK_logo.svg
         assertNotNull(ImageProvider.get("wiki://OpenJDK_logo.svg"));
     }
+
+    /**
+     * Test fetching an image using {@code data:} URL.
+     */
+    @Test
+    public void testDataUrl() {
+        // Red dot image, taken from https://en.wikipedia.org/wiki/Data_URI_scheme#HTML
+        assertNotNull(ImageProvider.get("data:image/png;base64," +
+                "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4"+
+                "//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="));
+    }
 }

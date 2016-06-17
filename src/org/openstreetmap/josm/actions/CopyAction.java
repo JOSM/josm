@@ -12,7 +12,6 @@ import java.util.Collection;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -25,7 +24,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class CopyAction extends JosmAction {
 
-    // regular expression that matches text clipboard contents after copying
+    /** regular expression that matches text clipboard contents after copying */
     public static final String CLIPBOARD_REGEXP = "((node|way|relation)\\s\\d+,)*(node|way|relation)\\s\\d+";
 
     /**
@@ -56,7 +55,7 @@ public final class CopyAction extends JosmAction {
      * @param primitives The OSM primitives to copy
      */
     public static void copy(OsmDataLayer source, Collection<OsmPrimitive> primitives) {
-        /* copy ids to the clipboard */
+        // copy ids to the clipboard
         String ids = getCopyString(primitives);
         Utils.copyToClipboard(ids);
 
@@ -74,12 +73,7 @@ public final class CopyAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null) {
-            setEnabled(false);
-        } else {
-            updateEnabledState(ds.getSelected());
-        }
+        updateEnabledStateOnCurrentSelection();
     }
 
     @Override

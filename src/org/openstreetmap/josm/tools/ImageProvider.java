@@ -706,6 +706,17 @@ public class ImageProvider {
     }
 
     /**
+     * Load an image with a given file name.
+     *
+     * @param name The icon name (base name with or without '.png' or '.svg' extension)
+     * @return the requested image or null if the request failed
+     * @see #get(String, String)
+     */
+    public static ImageIcon get(String name) {
+        return new ImageProvider(name).get();
+    }
+
+    /**
      * Load an empty image with a given size.
      *
      * @param size Target icon size
@@ -716,17 +727,6 @@ public class ImageProvider {
         Dimension iconRealSize = GuiSizesHelper.getDimensionDpiAdjusted(size.getImageDimension());
         return new ImageIcon(new BufferedImage(iconRealSize.width, iconRealSize.height,
             BufferedImage.TYPE_INT_ARGB));
-    }
-
-    /**
-     * Load an image with a given file name.
-     *
-     * @param name The icon name (base name with or without '.png' or '.svg' extension)
-     * @return the requested image or null if the request failed
-     * @see #get(String, String)
-     */
-    public static ImageIcon get(String name) {
-        return new ImageProvider(name).get();
     }
 
     /**

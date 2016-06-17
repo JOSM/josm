@@ -140,7 +140,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     // The only events that may move/resize this map view are window movements or changes to the map view size.
     // We can clean this up more by only recalculating the state on repaint.
-    private final HierarchyListener hierarchyListener = new HierarchyListener() {
+    private final transient HierarchyListener hierarchyListener = new HierarchyListener() {
         @Override
         public void hierarchyChanged(HierarchyEvent e) {
             long interestingFlags = HierarchyEvent.ANCESTOR_MOVED | HierarchyEvent.SHOWING_CHANGED;
@@ -150,7 +150,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     };
 
-    private final ComponentAdapter componentListener = new ComponentAdapter() {
+    private final transient ComponentAdapter componentListener = new ComponentAdapter() {
         @Override
         public void componentShown(ComponentEvent e) {
             updateLocationState();
@@ -169,7 +169,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * The current state (scale, center, ...) of this map view.
      */
-    private MapViewState state;
+    private transient MapViewState state;
 
     /**
      * Constructs a new {@code NavigatableComponent}.
