@@ -166,9 +166,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
                 return css.title;
             }
         } catch (RuntimeException ignore) {
-            if (Main.isTraceEnabled()) {
-                Main.trace(ignore.getMessage());
-            }
+            Main.debug(ignore);
         }
         return null;
     }

@@ -446,6 +446,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         try {
             setExifTime(ExifReader.readTime(file));
         } catch (RuntimeException ex) {
+            Main.warn(ex);
             setExifTime(null);
         }
 
@@ -466,9 +467,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
                 setExifOrientation(orientation);
             }
         } catch (MetadataException ex) {
-            if (Main.isDebugEnabled()) {
-                Main.debug(ex.getMessage());
-            }
+            Main.debug(ex);
         }
 
         if (dirGps == null) {
@@ -490,9 +489,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             // default is K (km/h)
             setSpeed(speed);
         } catch (MetadataException ex) {
-            if (Main.isDebugEnabled()) {
-                Main.debug(ex.getMessage());
-            }
+            Main.debug(ex);
         }
 
         try {
@@ -503,9 +500,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             }
             setElevation(ele);
         } catch (MetadataException ex) {
-            if (Main.isDebugEnabled()) {
-                Main.debug(ex.getMessage());
-            }
+            Main.debug(ex);
         }
 
         try {
@@ -525,9 +520,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
                 setExifImgDir(direction);
             }
         } catch (IndexOutOfBoundsException ex) { // (other exceptions, e.g. #5271)
-            if (Main.isDebugEnabled()) {
-                Main.debug(ex.getMessage());
-            }
+            Main.debug(ex);
         }
 
         // Time and date. We can have these cases:

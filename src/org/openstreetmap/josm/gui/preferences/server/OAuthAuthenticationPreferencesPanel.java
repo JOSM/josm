@@ -323,7 +323,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             try {
                 wizard.showDialog();
             } catch (UserCancelException ignore) {
-                Main.trace(ignore.toString());
+                Main.trace(ignore);
                 return;
             }
             pnlAdvancedProperties.setAdvancedParameters(wizard.getOAuthParameters());

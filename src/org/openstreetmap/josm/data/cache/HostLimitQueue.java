@@ -62,9 +62,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
                     try {
                         url = job.getUrl();
                     } catch (IOException e) {
-                        if (Main.isDebugEnabled()) {
-                            Main.debug(e.getMessage());
-                        }
+                        Main.debug(e);
                     }
                     Main.debug("TMS - Skipping job {0} because host limit reached", url);
                 }

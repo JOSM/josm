@@ -449,6 +449,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
                 } catch (ReflectiveOperationException e) {
                     Main.error(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' threw {2} ({3})", key, text,
                             e.getClass().getName(), e.getMessage()));
+                    Main.debug(e);
                 }
             }
         }

@@ -80,9 +80,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
         try {
             saveSession();
         } catch (UserCancelException ignore) {
-            if (Main.isTraceEnabled()) {
-                Main.trace(ignore.getMessage());
-            }
+            Main.trace(ignore);
         }
     }
 

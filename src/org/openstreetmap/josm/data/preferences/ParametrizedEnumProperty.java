@@ -27,6 +27,7 @@ public abstract class ParametrizedEnumProperty<T extends Enum<T>> {
         try {
             return Enum.valueOf(enumClass, s);
         } catch (IllegalArgumentException e) {
+            Main.trace(e);
             return defaultValue;
         }
     }

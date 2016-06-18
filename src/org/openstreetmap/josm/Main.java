@@ -438,6 +438,24 @@ public abstract class Main {
     }
 
     /**
+     * Prints a debug message for the given Throwable. Useful for exceptions usually ignored
+     * @param t The throwable object causing the error
+     * @since 10419
+     */
+    public static void debug(Throwable t) {
+        debug(getErrorMessage(t));
+    }
+
+    /**
+     * Prints a trace message for the given Throwable. Useful for exceptions usually ignored
+     * @param t The throwable object causing the error
+     * @since 10419
+     */
+    public static void trace(Throwable t) {
+        trace(getErrorMessage(t));
+    }
+
+    /**
      * Prints an error message for the given Throwable.
      * @param t The throwable object causing the error
      * @param stackTrace {@code true}, if the stacktrace should be displayed
@@ -451,6 +469,16 @@ public abstract class Main {
     }
 
     /**
+     * Prints an error message for the given Throwable.
+     * @param t The throwable object causing the error
+     * @param message additional error message
+     * @since 10419
+     */
+    public static void error(Throwable t, String message) {
+        warn(message + ' ' + getErrorMessage(t));
+    }
+
+    /**
      * Prints a warning message for the given Throwable.
      * @param t The throwable object causing the error
      * @param stackTrace {@code true}, if the stacktrace should be displayed
@@ -461,6 +489,16 @@ public abstract class Main {
         if (stackTrace) {
             t.printStackTrace();
         }
+    }
+
+    /**
+     * Prints a warning message for the given Throwable.
+     * @param t The throwable object causing the error
+     * @param message additional error message
+     * @since 10419
+     */
+    public static void warn(Throwable t, String message) {
+        warn(message + ' ' + getErrorMessage(t));
     }
 
     /**
@@ -1171,7 +1209,7 @@ public abstract class Main {
         try {
             pref.saveDefaults();
         } catch (IOException ex) {
-            Main.warn(tr("Failed to save default preferences."));
+            Main.warn(ex, tr("Failed to save default preferences."));
         }
         worker.shutdownNow();
         ImageProvider.shutdown(true);

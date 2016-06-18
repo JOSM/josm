@@ -159,12 +159,7 @@ public abstract class OsmServerReader extends OsmConnection {
 
                 if (response.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     String errorHeader = response.getHeaderField("Error");
-                    String errorBody;
-                    try {
-                        errorBody = response.fetchContent();
-                    } catch (IOException e) {
-                        errorBody = tr("Reading error text failed.");
-                    }
+                    String errorBody = fetchResponseText(response);
                     throw new OsmApiException(response.getResponseCode(), errorHeader, errorBody, url.toString());
                 }
 
@@ -177,6 +172,15 @@ public abstract class OsmServerReader extends OsmConnection {
             }
         } finally {
             progressMonitor.invalidate();
+        }
+    }
+
+    private static String fetchResponseText(final HttpClient.Response response) {
+        try {
+            return response.fetchContent();
+        } catch (IOException e) {
+            Main.error(e);
+            return tr("Reading error text failed.");
         }
     }
 

@@ -58,7 +58,7 @@ public class Version {
         try {
             properties.load(revisionInfo);
         } catch (IOException e) {
-            Main.warn(tr("Error reading revision info from revision file: {0}", e.getMessage()));
+            Main.warn(e, tr("Error reading revision info from revision file: {0}", e.getMessage()));
         }
         String value = properties.getProperty("Revision");
         if (value != null) {

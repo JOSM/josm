@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * <p><b>URL Validation</b> routines.</p>
  * Behavior of validation is modified by passing in options:
@@ -453,10 +455,11 @@ public class UrlValidator extends AbstractValidator {
             URI uri = new URI(null, null, path, null);
             String norm = uri.normalize().getPath();
             if (norm.startsWith("/../") // Trying to go via the parent dir
-             || norm.equals("/..")) {   // Trying to go to the parent dir
+             || "/..".equals(norm)) {   // Trying to go to the parent dir
                 return false;
             }
         } catch (URISyntaxException e) {
+            Main.trace(e);
             return false;
         }
 
