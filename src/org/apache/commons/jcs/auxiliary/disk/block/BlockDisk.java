@@ -393,7 +393,7 @@ public class BlockDisk
      */
     protected long calculateByteOffsetForBlockAsLong( int block )
     {
-        return block * blockSizeBytes;
+        return (long) block * blockSizeBytes;
     }
 
     /**
