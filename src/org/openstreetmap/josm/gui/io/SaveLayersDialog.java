@@ -373,9 +373,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 setUserAction(UserAction.PROCEED);
                 closeDialog();
             } catch (UserCancelException ignore) {
-                if (Main.isTraceEnabled()) {
-                    Main.trace(ignore.getMessage());
-                }
+                Main.trace(ignore);
             }
         }
     }

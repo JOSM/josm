@@ -1031,11 +1031,13 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 timezone = r.a;
                 delta = r.b;
             } catch (IndexOutOfBoundsException ex) {
+                Main.debug(ex);
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("The selected photos do not contain time information."),
                         tr("Photos do not contain time information"), JOptionPane.WARNING_MESSAGE);
                 return;
             } catch (NoGpxTimestamps ex) {
+                Main.debug(ex);
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("The selected GPX track does not contain timestamps. Please select another one."),
                         tr("GPX Track has no time information"), JOptionPane.WARNING_MESSAGE);

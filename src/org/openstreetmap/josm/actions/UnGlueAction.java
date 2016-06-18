@@ -81,7 +81,7 @@ public class UnGlueAction extends JosmAction {
         try {
             unglue(e);
         } catch (UserCancelException ignore) {
-            Main.debug(ignore.getMessage());
+            Main.trace(ignore);
         } finally {
             cleanup();
         }
@@ -299,17 +299,17 @@ public class UnGlueAction extends JosmAction {
      * @param e event that trigerred the action
      */
     private void unglueOneNodeAtMostOneWay(ActionEvent e) {
-        List<Command> cmds = new LinkedList<>();
-
         final PropertiesMembershipDialog dialog;
         try {
             dialog = PropertiesMembershipDialog.showIfNecessary(Collections.singleton(selectedNode), true);
-        } catch (UserCancelException e1) {
+        } catch (UserCancelException ex) {
+            Main.trace(ex);
             return;
         }
 
         final Node n = new Node(selectedNode, true);
 
+        List<Command> cmds = new LinkedList<>();
         cmds.add(new AddCommand(n));
         if (dialog != null) {
             dialog.update(selectedNode, Collections.singletonList(n), cmds);
@@ -512,16 +512,16 @@ public class UnGlueAction extends JosmAction {
      * dupe a single node once, and put the copy on the selected way
      */
     private void unglueWays() {
-        List<Command> cmds = new LinkedList<>();
-        List<Node> newNodes = new LinkedList<>();
-
         final PropertiesMembershipDialog dialog;
         try {
             dialog = PropertiesMembershipDialog.showIfNecessary(Collections.singleton(selectedNode), false);
         } catch (UserCancelException e) {
+            Main.trace(e);
             return;
         }
 
+        List<Command> cmds = new LinkedList<>();
+        List<Node> newNodes = new LinkedList<>();
         if (selectedWay == null) {
             Way wayWithSelectedNode = null;
             LinkedList<Way> parentWays = new LinkedList<>();
@@ -572,7 +572,6 @@ public class UnGlueAction extends JosmAction {
      */
     private boolean unglueSelfCrossingWay() {
         // According to previous check, only one valid way through that node
-        List<Command> cmds = new LinkedList<>();
         Way way = null;
         for (Way w: OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class)) {
             if (w.isUsable() && w.getNodesCount() >= 1) {
@@ -582,6 +581,7 @@ public class UnGlueAction extends JosmAction {
         if (way == null) {
             return false;
         }
+        List<Command> cmds = new LinkedList<>();
         List<Node> oldNodes = way.getNodes();
         List<Node> newNodes = new ArrayList<>(oldNodes.size());
         List<Node> addNodes = new ArrayList<>();
@@ -616,7 +616,7 @@ public class UnGlueAction extends JosmAction {
             execCommands(cmds, addNodes);
             return true;
         } catch (UserCancelException ignore) {
-            Main.debug(ignore.getMessage());
+            Main.trace(ignore);
         }
         return false;
     }
@@ -626,17 +626,18 @@ public class UnGlueAction extends JosmAction {
      *
      */
     private void unglueOneWayAnyNodes() {
-        List<Command> cmds = new LinkedList<>();
-        List<Node> allNewNodes = new LinkedList<>();
         Way tmpWay = selectedWay;
 
         final PropertiesMembershipDialog dialog;
         try {
             dialog = PropertiesMembershipDialog.showIfNecessary(selectedNodes, false);
         } catch (UserCancelException e) {
+            Main.trace(e);
             return;
         }
 
+        List<Command> cmds = new LinkedList<>();
+        List<Node> allNewNodes = new LinkedList<>();
         for (Node n : selectedNodes) {
             List<Node> newNodes = new LinkedList<>();
             tmpWay = modifyWay(n, tmpWay, cmds, newNodes);

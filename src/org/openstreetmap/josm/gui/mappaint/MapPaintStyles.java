@@ -328,6 +328,7 @@ public final class MapPaintStyles {
             String msg = tr("JOSM does no longer support mappaint styles written in the old XML format.\nPlease update ''{0}'' to MapCSS",
                     entry.url);
             Main.error(msg);
+            Main.debug(e);
             HelpAwareOptionPane.showOptionDialog(Main.parent, msg, tr("Warning"), JOptionPane.WARNING_MESSAGE,
                     HelpUtil.ht("/Styles/MapCSSImplementation"));
         }

@@ -127,9 +127,7 @@ public class NodeElement extends StyleElement {
                     try {
                         rotationAngle = RotationAngle.buildStaticRotation(rotationKW.val);
                     } catch (IllegalArgumentException ignore) {
-                        if (Main.isTraceEnabled()) {
-                            Main.trace(ignore.getMessage());
-                        }
+                        Main.trace(ignore);
                     }
                 }
             }

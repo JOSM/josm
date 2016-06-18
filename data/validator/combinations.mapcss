@@ -367,9 +367,9 @@ relation[oneway][type!=route] {
 }
 
 /* #9182 */
-way[waterway][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered!=yes][pipeline!=yes][location!=underground][eval(waylength()) > 400] {
-  throwWarning: tr("Long waterway with negative {0} but without a {1} tag. Remove {0} or add a {1} tag if applicable. Also check crossing bridges and their {0} tags.", "{1.key}", "{2.key}");
+way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered!=yes][pipeline!=yes][location!=underground][eval(waylength()) > 400] {
+  throwWarning: tr("Long waterway with {0} but without a tag which defines it as tunnel or underground. Remove {1} or add a tunnel tag if applicable. Also check crossing bridges and their {1} tags.", "{1.tag}", "{1.key}");
 }
-way[waterway][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered!=yes][pipeline!=yes][location!=underground][eval(waylength()) < 400] {
-  throwOther: tr("Short waterway with negative {0} but without a {1} tag. Remove {0} or add a {1} tag if applicable. Also check crossing bridges and their {0} tags.", "{1.key}", "{2.key}");
+way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered!=yes][pipeline!=yes][location!=underground][eval(waylength()) <= 400] {
+  throwOther: tr("Short waterway with {0} but without a tag which defines it as tunnel or underground. Remove {1} or add a tunnel tag if applicable. Also check crossing bridges and their {1} tags.", "{1.tag}", "{1.key}");
 }

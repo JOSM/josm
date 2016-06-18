@@ -577,9 +577,7 @@ public final class GuiHelper {
         try {
             return JOptionPane.getFrameForComponent(parentComponent);
         } catch (HeadlessException e) {
-            if (Main.isDebugEnabled()) {
-                Main.debug(e.getMessage());
-            }
+            Main.debug(e);
             return null;
         }
     }

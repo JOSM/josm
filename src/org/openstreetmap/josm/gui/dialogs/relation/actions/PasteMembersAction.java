@@ -14,8 +14,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.AddAbortException;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
@@ -70,9 +70,7 @@ public class PasteMembersAction extends AddFromSelectionAction {
             memberTableModel.addMembersAfterIdx(toAdd, index);
 
         } catch (AddAbortException ex) {
-            if (Main.isTraceEnabled()) {
-                Main.trace(ex.getMessage());
-            }
+            Main.trace(ex);
         }
     }
 

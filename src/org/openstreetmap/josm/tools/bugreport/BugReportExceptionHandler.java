@@ -102,7 +102,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                                 String.valueOf(josmVersion), String.valueOf(latestVersion));
                     }
                 } catch (IOException | NumberFormatException ex) {
-                    Main.warn("Unable to detect latest version of JOSM: "+ex.getMessage());
+                    Main.warn(ex, "Unable to detect latest version of JOSM:");
                 }
             }
             // Build panel
@@ -136,7 +136,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                 try {
                     Main.platform.openUrl(Main.getJOSMWebsite());
                 } catch (IOException ex) {
-                    Main.warn("Unable to access JOSM website: "+ex.getMessage());
+                    Main.warn(ex, "Unable to access JOSM website:");
                 }
             } else {
                 // "Report bug"

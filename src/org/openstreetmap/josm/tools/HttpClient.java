@@ -261,6 +261,7 @@ public final class HttpClient {
             try {
                 in = connection.getInputStream();
             } catch (IOException ioe) {
+                Main.debug(ioe);
                 in = connection.getErrorStream();
             }
             if (in != null) {

@@ -24,6 +24,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntryAttributes;
@@ -153,6 +154,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             super.submit(this, force);
         } catch (IOException e) {
             // if we fail to submit the job, mark tile as loaded and set error message
+            Main.warn(e, false);
             tile.finishLoading();
             tile.setError(e.getMessage());
         }

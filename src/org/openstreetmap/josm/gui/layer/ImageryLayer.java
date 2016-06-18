@@ -294,9 +294,7 @@ public abstract class ImageryLayer extends Layer {
                     return op4.filter(image, null);
                 }
             } catch (IllegalArgumentException ignore) {
-                if (Main.isTraceEnabled()) {
-                    Main.trace(ignore.getMessage());
-                }
+                Main.trace(ignore);
             }
             final int type = image.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
             final BufferedImage to = new BufferedImage(image.getWidth(), image.getHeight(), type);

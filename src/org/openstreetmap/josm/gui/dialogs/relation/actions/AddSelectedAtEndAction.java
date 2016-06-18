@@ -7,8 +7,8 @@ import java.awt.event.ActionEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.AddAbortException;
-import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
 import org.openstreetmap.josm.gui.dialogs.relation.SelectionTableModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -41,9 +41,7 @@ public class AddSelectedAtEndAction extends AddFromSelectionAction {
         try {
             memberTableModel.addMembersAtEnd(filterConfirmedPrimitives(selectionTableModel.getSelection()));
         } catch (AddAbortException ex) {
-            if (Main.isTraceEnabled()) {
-                Main.trace(ex.getMessage());
-            }
+            Main.trace(ex);
         }
     }
 }
