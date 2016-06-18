@@ -114,5 +114,6 @@ JOSM Checkstyle rules
   </module>
   <module name="SuppressionFilter">
     <property name="file" value="${basedir}/tools/checkstyle/josm_filters.xml" default="tools/checkstyle/josm_filters.xml"/>
+    <property name="optional" value="true"/>
   </module>
 </module>
