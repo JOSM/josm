@@ -1712,7 +1712,7 @@ node[leisure=common] {
     set icon_z17;
 }
 node[leisure=firepit] { 
-    icon-image: "leisure/firepit.svg"; 
+    icon-image: "leisure/firepit.svg";
     set icon_z17;
 }
 node[leisure=picnic_table] {
@@ -2473,7 +2473,7 @@ node[amenity=toilets] {
     set icon_z17;
 }
 node[amenity=shower] { 
-    icon-image: "service/shower.svg"; 
+    icon-image: "service/shower.svg";
     set icon_z17;
 }
 node[amenity=recycling] {
@@ -4060,7 +4060,7 @@ area[natural=wetland] {
 area[natural=water] {
     fill-color: water#0000ff;
 }
-way[natural=water][intermittent=yes] {
+area[natural=water][intermittent=yes] {
     width: 2;
     dashes: 15, 5;
 }
@@ -4069,7 +4069,7 @@ way[natural=coastline] {
     color: water#0000ff;
     right-casing-color: water#0000ff;
     right-casing-width: 5;
-    right-casing-opacity: 0.30; 
+    right-casing-opacity: 0.30;
 }
 area[natural=mud] {
     fill-color: mud#cba762;
@@ -4175,7 +4175,7 @@ way[waterway=drain] {
     color: water#0000ff;
 }
 way[waterway=river][intermittent=yes],
-way[waterway=riverbank][intermittent=yes],
+area[waterway=riverbank][intermittent=yes],
 way[waterway=canal][intermittent=yes],
 way[waterway=stream][intermittent=yes],
 way[waterway=ditch][intermittent=yes],
