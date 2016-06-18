@@ -46,9 +46,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A JCS {@link MemoryCache} that has {@link SoftReference} too all its values.
+ * A JCS IMemoryCache that has {@link SoftReference} to all its values.
  * This cache does not respect {@link ICompositeCacheAttributes#getMaxObjects()}
- * as overflowing is handled by java gc.
+ * as overflowing is handled by Java GC.
  * <p>
  * The cache also has strong references to a maximum number of objects given by
  * the maxObjects parameter

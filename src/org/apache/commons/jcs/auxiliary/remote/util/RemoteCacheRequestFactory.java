@@ -41,7 +41,7 @@ public class RemoteCacheRequestFactory
      * @param cacheName cache name
      * @param requestType type of request
      * @param requesterId id of requester
-     * @return
+     * @return the request
      */
     private static <K, V> RemoteCacheRequest<K, V> createRequest(String cacheName, RemoteRequestType requestType, long requesterId)
     {
