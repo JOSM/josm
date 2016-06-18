@@ -44,7 +44,7 @@ public final class JCSCacheManager {
     private static volatile CompositeCacheManager cacheManager;
     private static long maxObjectTTL = -1;
     private static final String PREFERENCE_PREFIX = "jcs.cache";
-    private static BooleanProperty USE_BLOCK_CACHE = new BooleanProperty(PREFERENCE_PREFIX + ".use_block_cache", true);
+    public static BooleanProperty USE_BLOCK_CACHE = new BooleanProperty(PREFERENCE_PREFIX + ".use_block_cache", true);
 
     private static final AuxiliaryCacheFactory diskCacheFactory =
             USE_BLOCK_CACHE.get() ? new BlockDiskCacheFactory() : new IndexedDiskCacheFactory();
@@ -202,6 +202,7 @@ public final class JCSCacheManager {
         if (USE_BLOCK_CACHE.get()) {
             BlockDiskCacheAttributes blockAttr = new BlockDiskCacheAttributes();
             blockAttr.setMaxKeySize(maxDiskObjects);
+            blockAttr.setBlockSizeBytes(4096); // use 4k blocks
             ret = blockAttr;
         } else {
             IndexedDiskCacheAttributes indexAttr = new IndexedDiskCacheAttributes();
@@ -215,14 +216,16 @@ public final class JCSCacheManager {
         } else {
             ret.setDiskPath(cachePath);
         }
-        ret.setCacheName(cacheName + (USE_BLOCK_CACHE.get() ? "_BLOCK" : "_INDEX"));
+        ret.setCacheName(cacheName + (USE_BLOCK_CACHE.get() ? "_BLOCK_v2" : "_INDEX_v2"));
 
-        removeStaleFiles(cachePath + File.separator + cacheName, (USE_BLOCK_CACHE.get() ? "_INDEX" : "_BLOCK"));
+        removeStaleFiles(cachePath + File.separator + cacheName, (USE_BLOCK_CACHE.get() ? "_INDEX_v2" : "_BLOCK_v2"));
         return ret;
     }
 
     private static void removeStaleFiles(String basePathPart, String suffix) {
         deleteCacheFiles(basePathPart); // TODO: this can be removed around 2016.09
+        deleteCacheFiles(basePathPart + "_BLOCK"); // TODO: this can be removed around 2016.09
+        deleteCacheFiles(basePathPart + "_INDEX"); // TODO: this can be removed around 2016.09
         deleteCacheFiles(basePathPart + suffix);
     }
 

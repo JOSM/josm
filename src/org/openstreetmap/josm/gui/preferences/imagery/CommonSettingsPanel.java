@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FilenameFilter;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -17,6 +19,7 @@ import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.imagery.CachedTileLoaderFactory;
 import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
@@ -25,6 +28,7 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * {@code JPanel} giving access to common imagery settings.
@@ -128,6 +132,11 @@ public class CommonSettingsPanel extends JPanel {
 
         boolean restartRequired = false;
         if (!AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get().equals(this.maxElementsOnDisk.getValue())) {
+            if (((Integer)this.maxElementsOnDisk.getValue()) < AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get() &&
+                    JCSCacheManager.USE_BLOCK_CACHE.get()) {
+                // reducing size of the cache, this requires deletion of the files
+                removeCacheFiles(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
+            }
             AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.put((Integer) this.maxElementsOnDisk.getValue());
             restartRequired = true;
         }
@@ -135,6 +144,7 @@ public class CommonSettingsPanel extends JPanel {
 
         if (!CachedTileLoaderFactory.PROP_TILECACHE_DIR.get().equals(this.tilecacheDir.getText())) {
             restartRequired = true;
+            removeCacheFiles(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get()); // clear old cache directory
             CachedTileLoaderFactory.PROP_TILECACHE_DIR.put(this.tilecacheDir.getText());
         }
 
@@ -144,5 +154,20 @@ public class CommonSettingsPanel extends JPanel {
             restartRequired = true;
         }
         return restartRequired;
+    }
+
+    private void removeCacheFiles(String path) {
+        File directory = new File(path);
+        File[] cacheFiles = directory.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".data") || name.endsWith(".key");
+            }
+
+        });
+        JCSCacheManager.shutdown(); // shutdown Cache - so files can by safely deleted
+        for (File cacheFile: cacheFiles) {
+            Utils.deleteFile(cacheFile);
+        }
     }
 }
