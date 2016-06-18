@@ -346,7 +346,7 @@ public class RemoteHttpCacheServlet
     }
 
     /**
-     * @param remoteCacheService the remoteCacheService to set
+     * @param rcs the remoteCacheService to set
      */
     protected void setRemoteCacheService(ICacheServiceNonLocal<Serializable, Serializable> rcs)
     {
