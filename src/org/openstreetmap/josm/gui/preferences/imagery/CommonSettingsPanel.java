@@ -132,7 +132,7 @@ public class CommonSettingsPanel extends JPanel {
 
         boolean restartRequired = false;
         if (!AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get().equals(this.maxElementsOnDisk.getValue())) {
-            if (((Integer)this.maxElementsOnDisk.getValue()) < AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get() &&
+            if (((Integer) this.maxElementsOnDisk.getValue()) < AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get() &&
                     JCSCacheManager.USE_BLOCK_CACHE.get()) {
                 // reducing size of the cache, this requires deletion of the files
                 removeCacheFiles(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
