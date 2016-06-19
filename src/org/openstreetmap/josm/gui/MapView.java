@@ -31,8 +31,6 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractButton;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
@@ -41,6 +39,7 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -494,8 +493,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     /**
      * Constructs a new {@code MapView}.
      * @param layerManager The layers to display.
-     * @param contentPane The content pane used to register shortcuts in its
-     * {@link InputMap} and {@link ActionMap}
+     * @param contentPane Ignored. Main content pane is used.
      * @param viewportData the initial viewport of the map. Can be null, then
      * the viewport is derived from the layer data.
      * @since 10279
@@ -597,6 +595,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         Layer layer = e.getAddedLayer();
         if (layer instanceof MarkerLayer && playHeadMarker == null) {
             playHeadMarker = PlayHeadMarker.create();
+        }
+
+        ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
+        if (viewProjectionBounds != null) {
+            scheduleZoomTo(new ViewportData(viewProjectionBounds));
         }
 
         layer.addPropertyChangeListener(this);

@@ -6,10 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 /**
  * Unit tests of {@link NoteImporter} class.
@@ -17,16 +18,17 @@ import org.openstreetmap.josm.gui.layer.Layer;
 public class NoteImporterTest {
 
     /**
+     * Use the test rules to remove any layers and reset state.
+     */
+    @Rule
+    public final JOSMTestRules rules = new JOSMTestRules();
+
+    /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12531">Bug #12531</a>.
      */
     @Test
     public void testTicket12531() {
-        if (Main.map != null) {
-            for (Layer l: Main.getLayerManager().getLayers()) {
-                Main.getLayerManager().removeLayer(l);
-            }
-            Main.main.setMapFrame(null);
-        }
+        Main.getLayerManager().resetState();
         assertNull(Main.map);
         assertTrue(new NoteImporter().importDataHandleExceptions(
                 new File(TestUtils.getRegressionDataFile(12531, "notes.osn")), null));

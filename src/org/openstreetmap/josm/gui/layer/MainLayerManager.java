@@ -312,4 +312,12 @@ public class MainLayerManager extends LayerManager {
         }
         return ret;
     }
+
+    @Override
+    public void resetState() {
+        // active and edit layer are unset automatically
+        super.resetState();
+
+        activeLayerChangeListeners.clear();
+    }
 }

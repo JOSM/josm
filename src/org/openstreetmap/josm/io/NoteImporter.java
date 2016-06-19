@@ -13,7 +13,6 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.xml.sax.SAXException;
 
 /**
@@ -37,13 +36,8 @@ public class NoteImporter extends FileImporter {
         }
         try (InputStream is = Compression.getUncompressedFileInputStream(file)) {
             final NoteLayer layer = loadLayer(is, file, file.getName(), progressMonitor);
-            if (Main.map == null || !Main.getLayerManager().containsLayer(layer)) {
-                GuiHelper.runInEDT(new Runnable() {
-                    @Override
-                    public void run() {
-                        Main.main.addLayer(layer);
-                    }
-                });
+            if (!Main.getLayerManager().containsLayer(layer)) {
+                Main.getLayerManager().addLayer(layer);
             }
         } catch (SAXException e) {
             Main.error("error opening up notes file");

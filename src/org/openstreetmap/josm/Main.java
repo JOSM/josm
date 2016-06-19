@@ -61,7 +61,6 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
-import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
@@ -79,19 +78,15 @@ import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainApplication.Option;
+import org.openstreetmap.josm.gui.MainFrame;
 import org.openstreetmap.josm.gui.MainMenu;
+import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
@@ -194,6 +189,8 @@ public abstract class Main {
      * The MapFrame. Use {@link Main#setMapFrame} to set or clear it.
      * <p>
      * There should be no need to access this to access any map data. Use {@link #layerManager} instead.
+     *
+     * @see MainPanel
      */
     public static MapFrame map;
 
@@ -235,10 +232,10 @@ public abstract class Main {
 
     /**
      * The MOTD Layer.
+     * @deprecated Do not access this. It will be removed soon. You should not need to access the GettingStarted panel.
      */
-    public final GettingStarted gettingStarted = new GettingStarted();
-
-    private static final Collection<MapFrameListener> mapFrameListeners = new ArrayList<>();
+    @Deprecated
+    public final GettingStarted gettingStarted = mainPanel.getGettingStarted();
 
     protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
 
@@ -252,6 +249,12 @@ public abstract class Main {
      * @since 6248
      */
     public static int logLevel = 3;
+
+    /**
+     * The real main panel. This field may be removed any time and made private to {@link MainFrame}
+     * @see #panel
+     */
+    protected static final MainPanel mainPanel = new MainPanel(getLayerManager());
 
     private static void rememberWarnErrorMsg(String msg) {
         // Only remember first line of message
@@ -547,48 +550,28 @@ public abstract class Main {
 
     /**
      * Set or clear (if passed <code>null</code>) the map.
+     * <p>
+     * To be removed any time
      * @param map The map to set {@link Main#map} to. Can be null.
+     * @deprecated This is done automatically by {@link MainPanel}
      */
+    @Deprecated
     public final void setMapFrame(final MapFrame map) {
-        MapFrame old = Main.map;
-        panel.setVisible(false);
-        panel.removeAll();
-        if (map != null) {
-            map.fillPanel(panel);
-        } else {
-            old.destroy();
-            panel.add(gettingStarted, BorderLayout.CENTER);
-        }
-        panel.setVisible(true);
-        redoUndoListener.commandChanged(0, 0);
-
-        Main.map = map;
-
-        // Notify map frame listeners, mostly plugins.
-        if ((map == null) == (old == null)) {
-            Main.warn("Replacing the map frame. This is not expected by some plugins and should not happen.");
-        }
-        for (MapFrameListener listener : mapFrameListeners) {
-            MapView.fireDeprecatedListenerOnAdd = true;
-            listener.mapFrameInitialized(old, map);
-            MapView.fireDeprecatedListenerOnAdd = false;
-        }
-        if (map == null && currentProgressMonitor != null) {
-            currentProgressMonitor.showForegroundDialog();
-        }
+        Main.warn("setMapFrame call was ignored.");
     }
 
     /**
      * Remove the specified layer from the map. If it is the last layer,
      * remove the map as well.
+     * <p>
+     * To be removed end of 2016
      * @param layer The layer to remove
+     * @deprecated You can remove the layer using {@link #getLayerManager()}
      */
+    @Deprecated
     public final synchronized void removeLayer(final Layer layer) {
         if (map != null) {
             getLayerManager().removeLayer(layer);
-            if (isDisplayingMapView() && getLayerManager().getLayers().isEmpty()) {
-                setMapFrame(null);
-            }
         }
     }
 
@@ -612,30 +595,11 @@ public abstract class Main {
      */
     public Main() {
         main = this;
-        getLayerManager().addLayerChangeListener(new LayerChangeListener() {
+        mainPanel.addAndFireMapFrameListener(new MapFrameListener() {
             @Override
-            public void layerAdded(LayerAddEvent e) {
-                Layer layer = e.getAddedLayer();
-                if (map == null) {
-                    Main.main.createMapFrame(layer, null);
-                    Main.map.setVisible(true);
-                }
-                ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
-                if (viewProjectionBounds != null) {
-                    Main.map.mapView.scheduleZoomTo(new ViewportData(viewProjectionBounds));
-                }
+            public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
+                redoUndoListener.commandChanged(0, 0);
             }
-
-            @Override
-            public void layerRemoving(LayerRemoveEvent e) {
-                // empty
-            }
-
-            @Override
-            public void layerOrderChanged(LayerOrderChangeEvent e) {
-                //empty
-            }
-
         });
     }
 
@@ -835,14 +799,18 @@ public abstract class Main {
      * Add a new layer to the map.
      *
      * If no map exists, create one.
+     * <p>
+     * To be removed end of 2016
      *
      * @param layer the layer
      *
      * @see #addLayer(Layer, ProjectionBounds)
      * @see #addLayer(Layer, ViewportData)
+     * @deprecated You can add the layer to the layer manager: {@link #getLayerManager()}
      */
+    @Deprecated
     public final void addLayer(final Layer layer) {
-        addLayer(layer, layer.getViewProjectionBounds());
+        addLayer(layer, (ViewportData) null);
     }
 
     /**
@@ -868,37 +836,35 @@ public abstract class Main {
      */
     public final void addLayer(Layer layer, ViewportData viewport) {
         getLayerManager().addLayer(layer);
-        if (viewport != null) {
+        if (viewport != null && Main.map.mapView != null) {
+            // MapView may be null in headless mode here.
             Main.map.mapView.scheduleZoomTo(viewport);
         }
     }
 
     /**
      * Creates the map frame. Call only in EDT Thread.
+     * <p>
+     * To be removed any time
      * @param firstLayer The first layer that was added.
      * @param viewportData The initial viewport. Can be <code>null</code> to be automatically computed.
+     * @deprecated Not supported. MainPanel does this automatically.
      */
+    @Deprecated
     public synchronized void createMapFrame(Layer firstLayer, ViewportData viewportData) {
         GuiHelper.assertCallFromEdt();
-        MapFrame mapFrame = new MapFrame(contentPanePrivate, viewportData);
-        setMapFrame(mapFrame);
-        if (firstLayer != null) {
-            mapFrame.selectMapMode((MapMode) mapFrame.getDefaultButtonAction(), firstLayer);
-        }
-        mapFrame.initializeDialogsPane();
-        // bootstrapping problem: make sure the layer list dialog is going to
-        // listen to change events of the very first layer
-        //
-        if (firstLayer != null) {
-            firstLayer.addPropertyChangeListener(LayerListDialog.getInstance().getModel());
-        }
+        Main.error("createMapFrame() not supported any more.");
     }
 
     /**
      * Replies <code>true</code> if there is an edit layer
+     * <p>
+     * To be removed end of 2016
      *
      * @return <code>true</code> if there is an edit layer
+     * @deprecated You can get the edit layer using the layer manager and then check if it is not null: {@link #getLayerManager()}
      */
+    @Deprecated
     public boolean hasEditLayer() {
         if (getEditLayer() == null) return false;
         return true;
@@ -906,22 +872,28 @@ public abstract class Main {
 
     /**
      * Replies the current edit layer
+     * <p>
+     * To be removed end of 2016
      *
      * @return the current edit layer. <code>null</code>, if no current edit layer exists
+     * @deprecated You can get the edit layer using the layer manager: {@link #getLayerManager()}
      */
+    @Deprecated
     public OsmDataLayer getEditLayer() {
-        if (!isDisplayingMapView()) return null;
         return getLayerManager().getEditLayer();
     }
 
     /**
      * Replies the current data set.
+     * <p>
+     * To be removed end of 2016
      *
      * @return the current data set. <code>null</code>, if no current data set exists
+     * @deprecated You can get the data set using the layer manager: {@link #getLayerManager()}
      */
+    @Deprecated
     public DataSet getCurrentDataSet() {
-        if (!hasEditLayer()) return null;
-        return getEditLayer().data;
+        return getLayerManager().getEditDataSet();
     }
 
     /**
@@ -945,11 +917,14 @@ public abstract class Main {
 
     /**
      * Returns the currently active  layer
+     * <p>
+     * To be removed end of 2016
      *
      * @return the currently active layer. <code>null</code>, if currently no active layer exists
+     * @deprecated You can get the layer using the layer manager: {@link #getLayerManager()}
      */
+    @Deprecated
     public Layer getActiveLayer() {
-        if (!isDisplayingMapView()) return null;
         return getLayerManager().getActiveLayer();
     }
 
@@ -1014,7 +989,7 @@ public abstract class Main {
     /**
      * Global panel.
      */
-    public static final JPanel panel = new JPanel(new BorderLayout());
+    public static final JPanel panel = mainPanel;
 
     private final CommandQueueListener redoUndoListener = new CommandQueueListener() {
         @Override
@@ -1200,12 +1175,7 @@ public abstract class Main {
             map.rememberToggleDialogWidth();
         }
         // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
-        if (Main.isDisplayingMapView()) {
-            Collection<Layer> layers = new ArrayList<>(getLayerManager().getLayers());
-            for (Layer l: layers) {
-                Main.main.removeLayer(l);
-            }
-        }
+        getLayerManager().resetState();
         try {
             pref.saveDefaults();
         } catch (IOException ex) {
@@ -1691,11 +1661,11 @@ public abstract class Main {
      * @return {@code true} if the listeners collection changed as a result of the call
      */
     public static boolean addMapFrameListener(MapFrameListener listener, boolean fireWhenMapViewPresent) {
-        boolean changed = listener != null && mapFrameListeners.add(listener);
-        if (fireWhenMapViewPresent && changed && map != null) {
-            listener.mapFrameInitialized(null, map);
+        if (fireWhenMapViewPresent) {
+            return mainPanel.addAndFireMapFrameListener(listener);
+        } else {
+            return mainPanel.addMapFrameListener(listener);
         }
-        return changed;
     }
 
     /**
@@ -1705,7 +1675,7 @@ public abstract class Main {
      * @since 5957
      */
     public static boolean addMapFrameListener(MapFrameListener listener) {
-        return addMapFrameListener(listener, false);
+        return mainPanel.addMapFrameListener(listener);
     }
 
     /**
@@ -1715,7 +1685,7 @@ public abstract class Main {
      * @since 5957
      */
     public static boolean removeMapFrameListener(MapFrameListener listener) {
-        return listener != null && mapFrameListeners.remove(listener);
+        return mainPanel.removeMapFrameListener(listener);
     }
 
     /**

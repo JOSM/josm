@@ -12,7 +12,6 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -222,10 +221,7 @@ public class JOSMTestRules implements TestRule {
             }
         });
         // Remove all layers
-        MainLayerManager lm = Main.getLayerManager();
-        while (!lm.getLayers().isEmpty()) {
-            lm.removeLayer(lm.getLayers().get(0));
-        }
+        Main.getLayerManager().resetState();
 
         // TODO: Remove global listeners and other global state.
         Main.pref = null;

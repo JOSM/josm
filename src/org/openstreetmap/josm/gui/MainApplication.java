@@ -316,6 +316,15 @@ public class MainApplication extends Main {
 
         initApplicationPreferences();
 
+        // Can only be called after preferences are initialized.
+        // We can move this to MainPanel constructor as soon as noone depends on Main#panel any more.
+        GuiHelper.runInEDTAndWait(new Runnable() {
+            @Override
+            public void run() {
+                mainPanel.updateContent();
+            }
+        });
+
         Policy.setPolicy(new Policy() {
             // Permissions for plug-ins loaded when josm is started via webstart
             private PermissionCollection pc;
@@ -398,7 +407,7 @@ public class MainApplication extends Main {
         WindowGeometry geometry = WindowGeometry.mainWindow("gui.geometry",
                 args.containsKey(Option.GEOMETRY) ? args.get(Option.GEOMETRY).iterator().next() : null,
                 !args.containsKey(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
-        final MainFrame mainFrame = new MainFrame(contentPanePrivate, geometry);
+        final MainFrame mainFrame = new MainFrame(contentPanePrivate, mainPanel, geometry);
         Main.parent = mainFrame;
 
         if (args.containsKey(Option.LOAD_PREFERENCES)) {

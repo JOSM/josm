@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Bounds.ParseMethod;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -140,14 +141,13 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         private <L extends Layer> L addOrMergeLayer(L layer, L mergeLayer) {
             if (layer == null) return null;
             if (newLayer || mergeLayer == null) {
-                if (Main.main != null) {
-                    Main.main.addLayer(layer);
-                }
+                Main.getLayerManager().addLayer(layer);
                 return layer;
             } else {
                 mergeLayer.mergeFrom(layer);
+                mergeLayer.invalidate();
                 if (Main.map != null) {
-                    Main.map.repaint();
+                    Main.map.mapView.scheduleZoomTo(new ViewportData(layer.getViewProjectionBounds()));
                 }
                 return mergeLayer;
             }

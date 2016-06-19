@@ -10,13 +10,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.josm.Main;
@@ -26,6 +23,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.tools.Destroyable;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -63,7 +61,18 @@ public class MapMover extends MouseAdapter implements Destroyable {
         private final String action;
 
         ZoomerAction(String action) {
+            this(action, "MapMover.Zoomer." + action);
+        }
+
+        /**
+         * Constructs a new {@code ZoomerAction}.
+         * @param action action
+         * @param name name
+         * @since 10432
+         */
+        public ZoomerAction(String action, String name) {
             this.action = action;
+            putValue(NAME, name);
         }
 
         @Override
@@ -106,60 +115,46 @@ public class MapMover extends MouseAdapter implements Destroyable {
      * The map to move around.
      */
     private final NavigatableComponent nc;
-    private final JPanel contentPane;
 
     private boolean movementInPlace;
+
+    private final ArrayList<Pair<ZoomerAction, Shortcut>> registeredShortcuts = new ArrayList<>();
 
     /**
      * Constructs a new {@code MapMover}.
      * @param navComp the navigatable component
-     * @param contentPane the content pane
+     * @param contentPane Ignored. The main action map is used.
      */
     public MapMover(NavigatableComponent navComp, JPanel contentPane) {
         this.nc = navComp;
-        this.contentPane = contentPane;
         nc.addMouseListener(this);
         nc.addMouseMotionListener(this);
         nc.addMouseWheelListener(this);
 
-        if (contentPane != null) {
-            // CHECKSTYLE.OFF: LineLength
-            contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("system:movefocusright", tr("Map: {0}", tr("Move right")), KeyEvent.VK_RIGHT, Shortcut.CTRL).getKeyStroke(),
-                "MapMover.Zoomer.right");
-            contentPane.getActionMap().put("MapMover.Zoomer.right", new ZoomerAction("right"));
+        registerActionShortcut(new ZoomerAction("right"),
+                Shortcut.registerShortcut("system:movefocusright", tr("Map: {0}", tr("Move right")), KeyEvent.VK_RIGHT, Shortcut.CTRL));
 
-            contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("system:movefocusleft", tr("Map: {0}", tr("Move left")), KeyEvent.VK_LEFT, Shortcut.CTRL).getKeyStroke(),
-                "MapMover.Zoomer.left");
-            contentPane.getActionMap().put("MapMover.Zoomer.left", new ZoomerAction("left"));
+        registerActionShortcut(new ZoomerAction("left"),
+                Shortcut.registerShortcut("system:movefocusleft", tr("Map: {0}", tr("Move left")), KeyEvent.VK_LEFT, Shortcut.CTRL));
 
-            contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("system:movefocusup", tr("Map: {0}", tr("Move up")), KeyEvent.VK_UP, Shortcut.CTRL).getKeyStroke(),
-                "MapMover.Zoomer.up");
-            contentPane.getActionMap().put("MapMover.Zoomer.up", new ZoomerAction("up"));
+        registerActionShortcut(new ZoomerAction("up"),
+                Shortcut.registerShortcut("system:movefocusup", tr("Map: {0}", tr("Move up")), KeyEvent.VK_UP, Shortcut.CTRL));
+        registerActionShortcut(new ZoomerAction("down"),
+                Shortcut.registerShortcut("system:movefocusdown", tr("Map: {0}", tr("Move down")), KeyEvent.VK_DOWN, Shortcut.CTRL));
 
-            contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("system:movefocusdown", tr("Map: {0}", tr("Move down")), KeyEvent.VK_DOWN, Shortcut.CTRL).getKeyStroke(),
-                "MapMover.Zoomer.down");
-            contentPane.getActionMap().put("MapMover.Zoomer.down", new ZoomerAction("down"));
-            // CHECKSTYLE.ON: LineLength
+        // see #10592 - Disable these alternate shortcuts on OS X because of conflict with system shortcut
+        if (!Main.isPlatformOsx()) {
+            registerActionShortcut(new ZoomerAction(",", "MapMover.Zoomer.in"),
+                    Shortcut.registerShortcut("view:zoominalternate", tr("Map: {0}", tr("Zoom in")), KeyEvent.VK_COMMA, Shortcut.CTRL));
 
-            // see #10592 - Disable these alternate shortcuts on OS X because of conflict with system shortcut
-            if (!Main.isPlatformOsx()) {
-                contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                    Shortcut.registerShortcut("view:zoominalternate",
-                            tr("Map: {0}", tr("Zoom in")), KeyEvent.VK_COMMA, Shortcut.CTRL).getKeyStroke(),
-                    "MapMover.Zoomer.in");
-                contentPane.getActionMap().put("MapMover.Zoomer.in", new ZoomerAction(","));
-
-                contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                    Shortcut.registerShortcut("view:zoomoutalternate",
-                            tr("Map: {0}", tr("Zoom out")), KeyEvent.VK_PERIOD, Shortcut.CTRL).getKeyStroke(),
-                    "MapMover.Zoomer.out");
-                contentPane.getActionMap().put("MapMover.Zoomer.out", new ZoomerAction("."));
-            }
+            registerActionShortcut(new ZoomerAction(".", "MapMover.Zoomer.out"),
+                    Shortcut.registerShortcut("view:zoomoutalternate", tr("Map: {0}", tr("Zoom out")), KeyEvent.VK_PERIOD, Shortcut.CTRL));
         }
+    }
+
+    private void registerActionShortcut(ZoomerAction action, Shortcut shortcut) {
+        Main.registerActionShortcut(action, shortcut);
+        registeredShortcuts.add(new Pair<>(action, shortcut));
     }
 
     /**
@@ -269,26 +264,8 @@ public class MapMover extends MouseAdapter implements Destroyable {
 
     @Override
     public void destroy() {
-        if (this.contentPane != null) {
-            InputMap inputMap = contentPane.getInputMap();
-            KeyStroke[] inputKeys = inputMap.keys();
-            if (inputKeys != null) {
-                for (KeyStroke key : inputKeys) {
-                    Object binding = inputMap.get(key);
-                    if (binding instanceof String && ((String) binding).startsWith("MapMover.")) {
-                        inputMap.remove(key);
-                    }
-                }
-            }
-            ActionMap actionMap = contentPane.getActionMap();
-            Object[] actionsKeys = actionMap.keys();
-            if (actionsKeys != null) {
-                for (Object key : actionsKeys) {
-                    if (key instanceof String && ((String) key).startsWith("MapMover.")) {
-                        actionMap.remove(key);
-                    }
-                }
-            }
+        for (Pair<ZoomerAction, Shortcut> shortcut : registeredShortcuts) {
+            Main.unregisterActionShortcut(shortcut.a, shortcut.b);
         }
     }
 }
