@@ -20,6 +20,10 @@ else
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-9-oracle/bin/java"
 fi
 
+if [ -f /etc/default/josm ]; then
+    . /etc/default/josm
+fi
+
 JAVA_OPTS="-Djosm.restart=true -Djava.net.useSystemProxies=true $JAVA_OPTS"
 
 if [ -z "${JAVACMD}" ]; then
