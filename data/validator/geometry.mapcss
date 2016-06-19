@@ -80,6 +80,7 @@ node[restriction] {
 
 /* {0} on a way, should be a node */
 way[entrance],
+way[railway=subway_entrance],
 way[man_made=survey_point],
 way[power=transformer],
 way[power=pole],
