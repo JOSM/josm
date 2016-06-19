@@ -1427,8 +1427,8 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             try {
                 tagRowSorter.convertRowIndexToModel(tagTable.getSelectedRow());
             } catch (IndexOutOfBoundsException ignore) {
-                Main.debug(ignore);
-                Main.debug("Clearing tagTable selection");
+                Main.trace(ignore);
+                Main.trace("Clearing tagTable selection");
                 tagTable.clearSelection();
             }
         }

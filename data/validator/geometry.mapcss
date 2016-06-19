@@ -269,7 +269,7 @@ way[!power][!building] > node.node_in_power_way {
 }
 
 /* #12646 */
-way[waterway][waterway!=canal]!:closed >[index=-1] node!:connection:in-downloaded-area { 
+way[waterway][waterway!=canal][waterway!=dam]!:closed >[index=-1] node!:connection:in-downloaded-area { 
   throwWarning: tr("Waterway ends without a connection to another waterway or the direction of the waterway is wrong.");
 }
 
