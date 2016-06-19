@@ -1266,7 +1266,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         }
 
         private boolean insane() {
-            return size() > tileCache.getCacheSize();
+            return tileCache == null || size() > tileCache.getCacheSize();
         }
 
         private double tilesSpanned() {
