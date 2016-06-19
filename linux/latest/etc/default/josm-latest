@@ -1,0 +1,9 @@
+# Options to pass to java when starting JOSM.
+# Uncomment the JAVA_OPTS lines to enable their use by /usr/bin/josm-latest
+
+# Increase usable memory
+#JAVA_OPTS="${JAVA_OPTS} -Xmx1024m"
+
+# Enable OpenGL pipeline (2D graphic accelerators)
+#JAVA_OPTS="${JAVA_OPTS} -Dsun.java2d.opengl=True"
+
