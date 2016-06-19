@@ -97,7 +97,7 @@ public class TaggingPresetPreferenceTestIT {
             }
         }
         System.out.println(error ? " => KO" : " => OK");
-        if (error) {
+        if (error || source.url.contains("yopaseopor/traffic_signs")) {
             Main.clearLastErrorAndWarnings();
         }
     }
