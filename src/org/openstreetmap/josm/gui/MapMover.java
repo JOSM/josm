@@ -64,13 +64,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
             this(action, "MapMover.Zoomer." + action);
         }
 
-        /**
-         * Constructs a new {@code ZoomerAction}.
-         * @param action action
-         * @param name name
-         * @since 10432
-         */
-        public ZoomerAction(String action, String name) {
+        ZoomerAction(String action, String name) {
             this.action = action;
             putValue(NAME, name);
         }

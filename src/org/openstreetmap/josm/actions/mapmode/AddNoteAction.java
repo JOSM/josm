@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.Notification;
-import org.openstreetmap.josm.gui.dialogs.NotesDialog;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
