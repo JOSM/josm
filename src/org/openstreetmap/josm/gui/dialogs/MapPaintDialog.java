@@ -341,7 +341,7 @@ public class MapPaintDialog extends ToggleDialog {
         public OnOffAction() {
             putValue(NAME, tr("On/Off"));
             putValue(SHORT_DESCRIPTION, tr("Turn selected styles on or off"));
-            putValue(SMALL_ICON, ImageProvider.get("apply"));
+            new ImageProvider("apply").getResource().attachImageIcon(this);
             updateEnabledState();
         }
 
@@ -379,7 +379,7 @@ public class MapPaintDialog extends ToggleDialog {
         public MoveUpDownAction(boolean isDown) {
             increment = isDown ? 1 : -1;
             putValue(NAME, isDown ? tr("Down") : tr("Up"));
-            putValue(SMALL_ICON, isDown ? ImageProvider.get("dialogs", "down") : ImageProvider.get("dialogs", "up"));
+            new ImageProvider("dialogs", isDown ? "down" : "up").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, isDown ? tr("Move the selected entry one row down.") : tr("Move the selected entry one row up."));
             updateEnabledState();
         }
@@ -414,7 +414,7 @@ public class MapPaintDialog extends ToggleDialog {
         public ReloadAction() {
             putValue(NAME, tr("Reload from file"));
             putValue(SHORT_DESCRIPTION, tr("reload selected styles from file"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+            new ImageProvider("dialogs", "refresh").getResource().attachImageIcon(this);
             setEnabled(getEnabledState());
         }
 

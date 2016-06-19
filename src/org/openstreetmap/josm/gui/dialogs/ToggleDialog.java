@@ -506,7 +506,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             add(lblMinimized);
 
             // scale down the dialog icon
-            ImageIcon icon = new ImageProvider("dialogs", iconName).setSize(ImageProvider.ImageSizes.SMALLICON).get();
+            ImageIcon icon = ImageProvider.get("dialogs", iconName, ImageProvider.ImageSizes.SMALLICON);
             lblTitle = new JLabel("", icon, JLabel.TRAILING);
             lblTitle.setIconTextGap(8);
 
@@ -544,7 +544,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
             // show the pref button if applicable
             if (preferenceClass != null) {
-                JButton pref = new JButton(new ImageProvider("preference").setSize(ImageProvider.ImageSizes.SMALLICON).get());
+                JButton pref = new JButton(ImageProvider.get("preference", ImageProvider.ImageSizes.SMALLICON));
                 pref.setToolTipText(tr("Open preferences for this panel"));
                 pref.setBorder(BorderFactory.createEmptyBorder());
                 pref.addActionListener(

@@ -271,6 +271,8 @@ public class ImageProvider {
     protected Collection<ClassLoader> additionalClassLoaders;
     /** ordered list of overlay images */
     protected List<ImageOverlay> overlayInfo;
+    /** <code>true</code> if icon must be grayed out */
+    protected boolean isDisabled = false;
 
     private static SVGUniverse svgUniverse;
 
@@ -350,6 +352,7 @@ public class ImageProvider {
         this.suppressWarnings = image.suppressWarnings;
         this.additionalClassLoaders = image.additionalClassLoaders;
         this.overlayInfo = image.overlayInfo;
+        this.isDisabled = image.isDisabled;
     }
 
     /**
@@ -600,13 +603,27 @@ public class ImageProvider {
     }
 
     /**
+     * Set, if image must be filtered to grayscale so it will look like disabled icon.
+     *
+     * @param disabled true, if image must be grayed out for disabled state
+     * @return the current object, for convenience
+     * @since 10428
+     */
+    public ImageProvider setDisabled(boolean disabled) {
+        this.isDisabled = disabled;
+        return this;
+    }
+
+    /**
      * Execute the image request and scale result.
      * @return the requested image or null if the request failed
      */
     public ImageIcon get() {
         ImageResource ir = getResource();
-        if (ir == null)
+
+        if (ir == null) {
             return null;
+        }
         if (virtualMaxWidth != -1 || virtualMaxHeight != -1)
             return ir.getImageIconBounded(new Dimension(virtualMaxWidth, virtualMaxHeight));
         else
@@ -636,6 +653,9 @@ public class ImageProvider {
         }
         if (overlayInfo != null) {
             ir = new ImageResource(ir, overlayInfo);
+        }
+        if (isDisabled) {
+            ir.setDisabled(true);
         }
         return ir;
     }
@@ -717,6 +737,20 @@ public class ImageProvider {
     }
 
     /**
+     * Load an image from directory with a given file name and size.
+     *
+     * @param subdir subdirectory the image lies in
+     * @param name The icon name (base name with or without '.png' or '.svg' extension)
+     * @param size Target icon size
+     * @return The requested Image.
+     * @throws RuntimeException if the image cannot be located
+     * @since 10428
+     */
+    public static ImageIcon get(String subdir, String name, ImageSizes size) {
+        return new ImageProvider(subdir, name).setSize(size).get();
+    }
+
+    /**
      * Load an empty image with a given size.
      *
      * @param size Target icon size
@@ -740,6 +774,19 @@ public class ImageProvider {
      */
     public static ImageIcon getIfAvailable(String subdir, String name) {
         return new ImageProvider(subdir, name).setOptional(true).get();
+    }
+
+    /**
+     * Load an image with a given file name and size.
+     *
+     * @param name The icon name (base name with or without '.png' or '.svg' extension)
+     * @param size Target icon size
+     * @return the requested image or null if the request failed
+     * @see #get(String, String)
+     * @since 10428
+     */
+    public static ImageIcon get(String name, ImageSizes size) {
+        return new ImageProvider(name).setSize(size).get();
     }
 
     /**
@@ -775,13 +822,16 @@ public class ImageProvider {
             if (name == null)
                 return null;
 
+            String prefix = "";
+            if(isDisabled)
+              prefix = "dis:"+prefix;
             if (name.startsWith("data:")) {
                 String url = name;
-                ImageResource ir = cache.get(url);
+                ImageResource ir = cache.get(prefix+url);
                 if (ir != null) return ir;
                 ir = getIfAvailableDataUrl(url);
                 if (ir != null) {
-                    cache.put(url, ir);
+                    cache.put(prefix+url, ir);
                 }
                 return ir;
             }
@@ -790,19 +840,19 @@ public class ImageProvider {
 
             if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(HTTPS_PROTOCOL)) {
                 String url = name;
-                ImageResource ir = cache.get(url);
+                ImageResource ir = cache.get(prefix+url);
                 if (ir != null) return ir;
                 ir = getIfAvailableHttp(url, type);
                 if (ir != null) {
-                    cache.put(url, ir);
+                    cache.put(prefix+url, ir);
                 }
                 return ir;
             } else if (name.startsWith(WIKI_PROTOCOL)) {
-                ImageResource ir = cache.get(name);
+                ImageResource ir = cache.get(prefix+name);
                 if (ir != null) return ir;
                 ir = getIfAvailableWiki(name, type);
                 if (ir != null) {
-                    cache.put(name, ir);
+                    cache.put(prefix+name, ir);
                 }
                 return ir;
             }
@@ -830,7 +880,7 @@ public class ImageProvider {
                     }
 
                     String fullName = subdir + name + ext;
-                    String cacheName = fullName;
+                    String cacheName = prefix + fullName;
                     /* cache separately */
                     if (dirs != null && !dirs.isEmpty()) {
                         cacheName = "id:" + id + ':' + fullName;

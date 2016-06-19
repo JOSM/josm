@@ -25,7 +25,7 @@ public class SelectRelationAction extends AbstractRelationAction {
     public SelectRelationAction(boolean add) {
         putValue(SHORT_DESCRIPTION, add ? tr("Add the selected relations to the current selection") :
             tr("Set the current selection to the list of selected relations"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
+        new ImageProvider("dialogs", "select").getResource().attachImageIcon(this, true);
         putValue(NAME, add ? tr("Select relation (add)") : tr("Select relation"));
         this.add = add;
     }

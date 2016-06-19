@@ -21,7 +21,7 @@ public class DuplicateRelationAction extends AbstractRelationAction {
      */
     public DuplicateRelationAction() {
         putValue(SHORT_DESCRIPTION, tr("Create a copy of this relation and open it in another editor window"));
-        putValue(SMALL_ICON, ImageProvider.get("duplicate"));
+        new ImageProvider("duplicate").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Duplicate"));
     }
 

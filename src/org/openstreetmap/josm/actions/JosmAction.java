@@ -72,7 +72,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
             String toolbarId, boolean installAdapters) {
         super(name);
         if (icon != null)
-            icon.getResource().attachImageIcon(this);
+            icon.getResource().attachImageIcon(this, true);
         setHelpId();
         sc = shortcut;
         if (sc != null) {

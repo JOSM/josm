@@ -55,11 +55,9 @@ public class SideButton extends JButton implements Destroyable {
      * @since 2710
      */
     public SideButton(Action action, boolean usename) {
-        super(action);
+        this(action);
         if (!usename) {
             setText(null);
-            fixIcon(action);
-            doStyle();
         }
     }
 
@@ -71,8 +69,7 @@ public class SideButton extends JButton implements Destroyable {
      */
     public SideButton(Action action, String imagename) {
         super(action);
-        ImageProvider prov = new ImageProvider("dialogs", imagename);
-        setIcon(prov.setSize(ImageProvider.ImageSizes.SIDEBUTTON).get());
+        setIcon(ImageProvider.get("dialogs", imagename, ImageProvider.ImageSizes.SIDEBUTTON));
         doStyle();
     }
 

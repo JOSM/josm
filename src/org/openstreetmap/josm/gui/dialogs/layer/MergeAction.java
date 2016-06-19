@@ -59,7 +59,7 @@ public final class MergeAction extends AbstractAction implements IEnabledStateUp
         this.layers = layers;
         this.model = model;
         putValue(NAME, tr("Merge"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "mergedown"));
+        new ImageProvider("dialogs", "mergedown").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Merge this layer into another layer"));
         putValue("help", HelpUtil.ht("/Dialog/LayerList#MergeLayer"));
         updateEnabledState();

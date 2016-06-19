@@ -10,7 +10,10 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import org.openstreetmap.josm.gui.util.GuiSizesHelper;
 
@@ -42,6 +45,13 @@ public class ImageResource {
      * ordered list of overlay images
      */
     protected List<ImageOverlay> overlayInfo;
+    /**
+     * <code>true</code> if icon must be grayed out
+     */
+    protected boolean isDisabled = false;
+    /**
+     * The base raster image for the final output
+     */
     private Image baseImage;
 
     /**
@@ -50,8 +60,7 @@ public class ImageResource {
      */
     public ImageResource(Image img) {
         CheckParameterUtil.ensureParameterNotNull(img);
-        baseImage = img;
-        imgCache.put(DEFAULT_DIMENSION, scaleBaseImageIfNeeded(img));
+        baseImage = scaleBaseImageIfNeeded(img);
     }
 
     /** Scale image according to screen DPI if needed.
@@ -92,6 +101,18 @@ public class ImageResource {
         this.svg = res.svg;
         this.baseImage = res.baseImage;
         this.overlayInfo = overlayInfo;
+    }
+
+    /**
+     * Set, if image must be filtered to grayscale so it will look like disabled icon.
+     *
+     * @param disabled true, if image must be grayed out for disabled state
+     * @return the current object, for convenience
+     * @since 10428
+     */
+    public ImageResource setDisabled(boolean disabled) {
+        this.isDisabled = disabled;
+        return this;
     }
 
     /**
@@ -144,19 +165,13 @@ public class ImageResource {
         if (img != null) {
             return new ImageIcon(img);
         }
+        BufferedImage bimg;
         if (svg != null) {
             Dimension realDim = GuiSizesHelper.getDimensionDpiAdjusted(dim);
-            BufferedImage bimg = ImageProvider.createImageFromSvg(svg, realDim);
+            bimg = ImageProvider.createImageFromSvg(svg, realDim);
             if (bimg == null) {
                 return null;
             }
-            if (overlayInfo != null) {
-                for (ImageOverlay o : overlayInfo) {
-                    o.process(bimg);
-                }
-            }
-            imgCache.put(dim, bimg);
-            return new ImageIcon(bimg);
         } else {
             if (baseImage == null) throw new AssertionError();
 
@@ -172,16 +187,24 @@ public class ImageResource {
                 realHeight = Math.max(1, icon.getIconHeight() * realWidth / icon.getIconWidth());
             }
             Image i = icon.getImage().getScaledInstance(realWidth, realHeight, Image.SCALE_SMOOTH);
-            BufferedImage bimg = new BufferedImage(realWidth, realHeight, BufferedImage.TYPE_INT_ARGB);
+            bimg = new BufferedImage(realWidth, realHeight, BufferedImage.TYPE_INT_ARGB);
             bimg.getGraphics().drawImage(i, 0, 0, null);
-            if (overlayInfo != null) {
-                for (ImageOverlay o : overlayInfo) {
-                    o.process(bimg);
-                }
-            }
-            imgCache.put(dim, bimg);
-            return new ImageIcon(bimg);
         }
+        if (overlayInfo != null) {
+            for (ImageOverlay o : overlayInfo) {
+                o.process(bimg);
+            }
+        }
+        if (isDisabled) {
+            //Use default Swing functionality to make icon look disabled by applying grayscaling filter.
+            Icon disabledIcon = UIManager.getLookAndFeel().getDisabledIcon(null, new ImageIcon(bimg));
+
+            //Convert Icon to ImageIcon with BufferedImage inside
+            bimg = new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+            disabledIcon.paintIcon(new JPanel(), bimg.getGraphics(), 0, 0);
+        }
+        imgCache.put(dim, bimg);
+        return new ImageIcon(bimg);
     }
 
     /**

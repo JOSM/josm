@@ -102,7 +102,7 @@ public final class AboutAction extends JosmAction {
         // Intermediate panel to allow proper optionPane resizing
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setPreferredSize(new Dimension(890, 300));
-        panel.add(new JLabel("", new ImageProvider("logo.svg").setSize(ImageProvider.ImageSizes.ABOUT_LOGO).get(),
+        panel.add(new JLabel("", ImageProvider.get("logo.svg", ImageProvider.ImageSizes.ABOUT_LOGO),
                 JLabel.CENTER), GBC.std().insets(0, 5, 0, 0));
         panel.add(about, GBC.std().fill());
 

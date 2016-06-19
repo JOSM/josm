@@ -511,7 +511,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                     ImageIcon icon = null;
 
                     if (iconName != null && !iconName.isEmpty()) {
-                        icon = new ImageProvider("preferences", iconName).setSize(ImageProvider.ImageSizes.SETTINGS_TAB).get();
+                        icon = ImageProvider.get("preferences", iconName, ImageProvider.ImageSizes.SETTINGS_TAB);
                     }
                     if (settingsInitialized.contains(tps)) {
                         // If it has been initialized, add corresponding tab(s)

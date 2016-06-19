@@ -23,7 +23,7 @@ public class DeleteRelationsAction extends AbstractRelationAction {
     public DeleteRelationsAction() {
         putValue(SHORT_DESCRIPTION, tr("Delete the selected relation"));
         putValue(NAME, tr("Delete"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+        new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
     }
 
     protected void deleteRelation(Collection<Relation> toDelete) {

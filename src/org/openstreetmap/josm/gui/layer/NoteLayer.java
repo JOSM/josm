@@ -36,10 +36,12 @@ import org.openstreetmap.josm.gui.dialogs.NotesDialog;
 import org.openstreetmap.josm.gui.io.AbstractIOTask;
 import org.openstreetmap.josm.gui.io.UploadNoteLayerTask;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiSizesHelper;
 import org.openstreetmap.josm.io.NoteExporter;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -106,16 +108,19 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds box) {
+        final int iconHeight = GuiSizesHelper.getSizeDpiAdjusted( ImageProvider.ImageSizes.SMALLICON.getVirtualHeight() );
+        final int iconWidth  = GuiSizesHelper.getSizeDpiAdjusted( ImageProvider.ImageSizes.SMALLICON.getVirtualWidth() );
+
         for (Note note : noteData.getNotes()) {
             Point p = mv.getPoint(note.getLatLon());
 
             ImageIcon icon;
             if (note.getId() < 0) {
-                icon = NotesDialog.ICON_NEW_SMALL;
+                icon = ImageProvider.get("dialogs/notes", "note_new", ImageProvider.ImageSizes.SMALLICON);
             } else if (note.getState() == State.CLOSED) {
-                icon = NotesDialog.ICON_CLOSED_SMALL;
+                icon = ImageProvider.get("dialogs/notes", "note_closed", ImageProvider.ImageSizes.SMALLICON);
             } else {
-                icon = NotesDialog.ICON_OPEN_SMALL;
+                icon = ImageProvider.get("dialogs/notes", "note_open", ImageProvider.ImageSizes.SMALLICON);
             }
             int width = icon.getIconWidth();
             int height = icon.getIconHeight();
@@ -150,11 +155,11 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
             Point p = mv.getPoint(noteData.getSelectedNote().getLatLon());
 
             g.setColor(ColorHelper.html2color(Main.pref.get("color.selected")));
-            g.drawRect(p.x - (NotesDialog.ICON_SMALL_SIZE / 2), p.y - NotesDialog.ICON_SMALL_SIZE,
-                    NotesDialog.ICON_SMALL_SIZE - 1, NotesDialog.ICON_SMALL_SIZE - 1);
+            g.drawRect(p.x - (iconWidth / 2), p.y - iconHeight,
+                    iconWidth - 1, iconHeight - 1);
 
-            int tx = p.x + (NotesDialog.ICON_SMALL_SIZE / 2) + 5;
-            int ty = p.y - NotesDialog.ICON_SMALL_SIZE - 1;
+            int tx = p.x + (iconWidth / 2) + 5;
+            int ty = p.y - iconHeight - 1;
             g.translate(tx, ty);
 
             //Carried over from the OSB plugin. Not entirely sure why it is needed
@@ -179,7 +184,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
 
     @Override
     public Icon getIcon() {
-        return NotesDialog.ICON_OPEN_SMALL;
+        return ImageProvider.get("dialogs/notes", "note_open", ImageProvider.ImageSizes.SMALLICON);
     }
 
     @Override
@@ -242,11 +247,12 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
         Point clickPoint = e.getPoint();
         double snapDistance = 10;
         double minDistance = Double.MAX_VALUE;
+        final int iconHeight = GuiSizesHelper.getSizeDpiAdjusted( ImageProvider.ImageSizes.SMALLICON.getVirtualHeight() );
         Note closestNote = null;
         for (Note note : noteData.getNotes()) {
             Point notePoint = Main.map.mapView.getPoint(note.getLatLon());
             //move the note point to the center of the icon where users are most likely to click when selecting
-            notePoint.setLocation(notePoint.getX(), notePoint.getY() - NotesDialog.ICON_SMALL_SIZE / 2);
+            notePoint.setLocation(notePoint.getX(), notePoint.getY() - iconHeight / 2);
             double dist = clickPoint.distanceSq(notePoint);
             if (minDistance > dist && clickPoint.distance(notePoint) < snapDistance) {
                 minDistance = dist;

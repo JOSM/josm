@@ -23,7 +23,7 @@ public class MoveUpAction extends AbstractAction implements IEnabledStateUpdatin
     public MoveUpAction(LayerListModel model) {
         this.model = model;
         putValue(NAME, tr("Move up"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "up"));
+        new ImageProvider("dialogs", "up").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Move the selected layer one row up."));
         updateEnabledState();
     }
