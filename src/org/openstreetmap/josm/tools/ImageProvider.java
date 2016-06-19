@@ -823,8 +823,8 @@ public class ImageProvider {
                 return null;
 
             String prefix = "";
-            if(isDisabled)
-              prefix = "dis:"+prefix;
+            if (isDisabled)
+                prefix = "dis:"+prefix;
             if (name.startsWith("data:")) {
                 String url = name;
                 ImageResource ir = cache.get(prefix+url);

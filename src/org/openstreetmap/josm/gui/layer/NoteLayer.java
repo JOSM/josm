@@ -32,7 +32,6 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.gui.dialogs.NotesDialog;
 import org.openstreetmap.josm.gui.io.AbstractIOTask;
 import org.openstreetmap.josm.gui.io.UploadNoteLayerTask;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -108,8 +107,8 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds box) {
-        final int iconHeight = GuiSizesHelper.getSizeDpiAdjusted( ImageProvider.ImageSizes.SMALLICON.getVirtualHeight() );
-        final int iconWidth  = GuiSizesHelper.getSizeDpiAdjusted( ImageProvider.ImageSizes.SMALLICON.getVirtualWidth() );
+        final int iconHeight = GuiSizesHelper.getSizeDpiAdjusted(ImageProvider.ImageSizes.SMALLICON.getVirtualHeight());
+        final int iconWidth = GuiSizesHelper.getSizeDpiAdjusted(ImageProvider.ImageSizes.SMALLICON.getVirtualWidth());
 
         for (Note note : noteData.getNotes()) {
             Point p = mv.getPoint(note.getLatLon());
@@ -247,7 +246,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
         Point clickPoint = e.getPoint();
         double snapDistance = 10;
         double minDistance = Double.MAX_VALUE;
-        final int iconHeight = GuiSizesHelper.getSizeDpiAdjusted( ImageProvider.ImageSizes.SMALLICON.getVirtualHeight() );
+        final int iconHeight = GuiSizesHelper.getSizeDpiAdjusted(ImageProvider.ImageSizes.SMALLICON.getVirtualHeight());
         Note closestNote = null;
         for (Note note : noteData.getNotes()) {
             Point notePoint = Main.map.mapView.getPoint(note.getLatLon());

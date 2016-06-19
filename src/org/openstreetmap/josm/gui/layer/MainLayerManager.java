@@ -275,7 +275,6 @@ public class MainLayerManager extends LayerManager {
         }
     }
 
-
     /**
      * Creates a list of the visible layers in Z-Order, the layer with the lowest Z-Order
      * first, layer with the highest Z-Order last.
