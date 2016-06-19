@@ -90,14 +90,16 @@ public class TaggingPresetPreferenceTestIT {
         Collection<String> errorsAndWarnings = Main.getLastErrorAndWarnings();
         boolean error = false;
         for (String message : errorsAndWarnings) {
-            if (message.contains(TaggingPreset.PRESET_ICON_ERROR_MSG_PREFIX) && !source.url.contains("yopaseopor/traffic_signs")) {
-                // ignore https://github.com/yopaseopor/traffic_signs_preset_JOSM because of far too frequent missing icons errors
+            if (message.contains(TaggingPreset.PRESET_ICON_ERROR_MSG_PREFIX)) {
                 error = true;
-                allMessages.add(message);
+                // ignore https://github.com/yopaseopor/traffic_signs_preset_JOSM because of far too frequent missing icons errors
+                if (!source.url.contains("yopaseopor/traffic_signs")) {
+                    allMessages.add(message);
+                }
             }
         }
         System.out.println(error ? " => KO" : " => OK");
-        if (error || source.url.contains("yopaseopor/traffic_signs")) {
+        if (error) {
             Main.clearLastErrorAndWarnings();
         }
     }
