@@ -35,7 +35,7 @@ public class SetRoleAction extends AbstractRelationEditorAction implements Docum
         super(memberTable, memberTableModel, null);
         this.tfRole = tfRole;
         putValue(SHORT_DESCRIPTION, tr("Sets a role for the selected members"));
-        putValue(SMALL_ICON, ImageProvider.get("apply"));
+        new ImageProvider("apply").getResource().attachImageIcon(this);
         putValue(NAME, tr("Apply Role"));
         updateEnabledState();
     }

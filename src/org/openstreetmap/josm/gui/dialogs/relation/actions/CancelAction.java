@@ -42,7 +42,7 @@ public class CancelAction extends SavingAction {
             IRelationEditor editor, AutoCompletingTextField tfRole) {
         super(memberTable, memberTableModel, tagModel, layer, editor, tfRole);
         putValue(SHORT_DESCRIPTION, tr("Cancel the updates and close the dialog"));
-        putValue(SMALL_ICON, ImageProvider.get("cancel"));
+        new ImageProvider("cancel").getResource().attachImageIcon(this);
         putValue(NAME, tr("Cancel"));
 
         if (editor instanceof RootPaneContainer) {

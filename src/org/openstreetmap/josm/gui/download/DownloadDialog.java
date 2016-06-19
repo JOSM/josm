@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -37,7 +38,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -83,7 +83,7 @@ public class DownloadDialog extends JDialog {
     protected JCheckBox cbDownloadNotes;
     /** the download action and button */
     private final DownloadAction actDownload = new DownloadAction();
-    protected final SideButton btnDownload = new SideButton(actDownload);
+    protected final JButton btnDownload = new JButton(actDownload);
 
     private void makeCheckBoxRespondToEnter(JCheckBox cb) {
         cb.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "doDownload");
@@ -198,9 +198,9 @@ public class DownloadDialog extends JDialog {
         makeCheckBoxRespondToEnter(cbNewLayer);
 
         // -- cancel button
-        SideButton btnCancel;
+        JButton btnCancel;
         CancelAction actCancel = new CancelAction();
-        btnCancel = new SideButton(actCancel);
+        btnCancel = new JButton(actCancel);
         pnl.add(btnCancel);
         InputMapUtils.enableEnter(btnCancel);
 
@@ -209,7 +209,7 @@ public class DownloadDialog extends JDialog {
         getRootPane().getActionMap().put("cancel", actCancel);
 
         // -- help button
-        SideButton btnHelp = new SideButton(new ContextSensitiveHelpAction(getRootPane().getClientProperty("help").toString()));
+        JButton btnHelp = new JButton(new ContextSensitiveHelpAction(getRootPane().getClientProperty("help").toString()));
         pnl.add(btnHelp);
         InputMapUtils.enableEnter(btnHelp);
 
@@ -483,7 +483,7 @@ public class DownloadDialog extends JDialog {
     class CancelAction extends AbstractAction {
         CancelAction() {
             putValue(NAME, tr("Cancel"));
-            putValue(SMALL_ICON, ImageProvider.get("cancel"));
+            new ImageProvider("cancel").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to close the dialog and to abort downloading"));
         }
 
@@ -501,7 +501,7 @@ public class DownloadDialog extends JDialog {
     class DownloadAction extends AbstractAction {
         DownloadAction() {
             putValue(NAME, tr("Download"));
-            putValue(SMALL_ICON, ImageProvider.get("download"));
+            new ImageProvider("download").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to download the currently selected area"));
             setEnabled(!Main.isOffline(OnlineResource.OSM_API));
         }

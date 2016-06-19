@@ -32,7 +32,7 @@ public class OKAction extends SavingAction {
             IRelationEditor editor, AutoCompletingTextField tfRole) {
         super(memberTable, memberTableModel, tagModel, layer, editor, tfRole);
         putValue(SHORT_DESCRIPTION, tr("Apply the updates and close the dialog"));
-        putValue(SMALL_ICON, ImageProvider.get("ok"));
+        new ImageProvider("ok").getResource().attachImageIcon(this);
         putValue(NAME, tr("OK"));
         setEnabled(true);
     }
