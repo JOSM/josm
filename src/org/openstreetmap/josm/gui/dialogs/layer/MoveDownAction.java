@@ -23,7 +23,7 @@ public class MoveDownAction extends AbstractAction implements IEnabledStateUpdat
     public MoveDownAction(LayerListModel model) {
         this.model = model;
         putValue(NAME, tr("Move down"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "down"));
+        new ImageProvider("dialogs", "down").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Move the selected layer one row down."));
         updateEnabledState();
     }

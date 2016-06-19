@@ -31,7 +31,7 @@ public class EditRelationAction extends AbstractRelationAction {
     public EditRelationAction() {
         putValue(NAME, tr("Edit"));
         putValue(SHORT_DESCRIPTION, tr("Call relation editor for selected relation"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+        new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this, true);
     }
 
     /**

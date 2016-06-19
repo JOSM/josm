@@ -297,7 +297,7 @@ public class ChangesetDialog extends ToggleDialog {
         SelectObjectsAction() {
             putValue(NAME, tr("Select"));
             putValue(SHORT_DESCRIPTION, tr("Select all objects assigned to the currently selected changesets"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
+            new ImageProvider("dialogs", "select").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
@@ -350,7 +350,7 @@ public class ChangesetDialog extends ToggleDialog {
         ReadChangesetsAction() {
             putValue(NAME, tr("Download"));
             putValue(SHORT_DESCRIPTION, tr("Download information about the selected changesets from the OSM server"));
-            putValue(SMALL_ICON, ImageProvider.get("download"));
+            new ImageProvider("download").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
@@ -387,7 +387,7 @@ public class ChangesetDialog extends ToggleDialog {
         CloseOpenChangesetsAction() {
             putValue(NAME, tr("Close open changesets"));
             putValue(SHORT_DESCRIPTION, tr("Closes the selected open changesets"));
-            putValue(SMALL_ICON, ImageProvider.get("closechangeset"));
+            new ImageProvider("closechangeset").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
@@ -422,7 +422,7 @@ public class ChangesetDialog extends ToggleDialog {
         ShowChangesetInfoAction() {
             putValue(NAME, tr("Show info"));
             putValue(SHORT_DESCRIPTION, tr("Open a web page for each selected changeset"));
-            putValue(SMALL_ICON, ImageProvider.get("help/internet"));
+            new ImageProvider("help/internet").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
@@ -462,7 +462,7 @@ public class ChangesetDialog extends ToggleDialog {
         LaunchChangesetManagerAction() {
             putValue(NAME, tr("Details"));
             putValue(SHORT_DESCRIPTION, tr("Opens the Changeset Manager window for the selected changesets"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "changesetmanager"));
+            new ImageProvider("dialogs/changeset", "changesetmanager").getResource().attachImageIcon(this, true);
         }
 
         @Override

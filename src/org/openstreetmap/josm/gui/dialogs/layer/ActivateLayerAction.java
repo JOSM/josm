@@ -50,7 +50,7 @@ implements IEnabledStateUpdating, ActiveLayerChangeListener, MultikeyShortcutAct
     public ActivateLayerAction(LayerListModel model) {
         this.model = model;
         putValue(NAME, tr("Activate"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
+        new ImageProvider("dialogs", "activate").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
         multikeyShortcut = Shortcut.registerShortcut("core_multikey:activateLayer", tr("Multikey: {0}",
                 tr("Activate layer")), KeyEvent.VK_A, Shortcut.SHIFT);

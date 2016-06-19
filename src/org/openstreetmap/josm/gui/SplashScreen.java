@@ -67,7 +67,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
         contentPane.add(innerContentPane);
 
         // Add the logo
-        JLabel logo = new JLabel(new ImageProvider("logo.svg").setSize(ImageProvider.ImageSizes.SPLASH_LOGO).get());
+        JLabel logo = new JLabel(ImageProvider.get("logo.svg", ImageProvider.ImageSizes.SPLASH_LOGO));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridheight = 2;
         gbc.insets = new Insets(0, 0, 0, 70);

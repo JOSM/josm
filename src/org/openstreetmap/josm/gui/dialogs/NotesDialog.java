@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -55,26 +54,6 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @since 7608 (creation)
  */
 public class NotesDialog extends ToggleDialog implements LayerChangeListener {
-
-    /** Small icon size for use in graphics calculations */
-    public static final int ICON_SMALL_SIZE = 16;
-    /** 24x24 icon for unresolved notes */
-    public static final ImageIcon ICON_OPEN = ImageProvider.get("dialogs/notes", "note_open");
-    /** 16x16 icon for unresolved notes */
-    public static final ImageIcon ICON_OPEN_SMALL =
-            new ImageIcon(ICON_OPEN.getImage().getScaledInstance(ICON_SMALL_SIZE, ICON_SMALL_SIZE, Image.SCALE_SMOOTH));
-    /** 24x24 icon for resolved notes */
-    public static final ImageIcon ICON_CLOSED = ImageProvider.get("dialogs/notes", "note_closed");
-    /** 16x16 icon for resolved notes */
-    public static final ImageIcon ICON_CLOSED_SMALL =
-            new ImageIcon(ICON_CLOSED.getImage().getScaledInstance(ICON_SMALL_SIZE, ICON_SMALL_SIZE, Image.SCALE_SMOOTH));
-    /** 24x24 icon for new notes */
-    public static final ImageIcon ICON_NEW = ImageProvider.get("dialogs/notes", "note_new");
-    /** 16x16 icon for new notes */
-    public static final ImageIcon ICON_NEW_SMALL =
-            new ImageIcon(ICON_NEW.getImage().getScaledInstance(ICON_SMALL_SIZE, ICON_SMALL_SIZE, Image.SCALE_SMOOTH));
-    /** Icon for note comments */
-    public static final ImageIcon ICON_COMMENT = ImageProvider.get("dialogs/notes", "note_comment");
 
     private NoteTableModel model;
     private JList<Note> displayList;
@@ -256,11 +235,11 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                 }
                 ImageIcon icon;
                 if (note.getId() < 0) {
-                    icon = ICON_NEW_SMALL;
+                    icon = ImageProvider.get("dialogs/notes", "note_new", ImageProvider.ImageSizes.SMALLICON);
                 } else if (note.getState() == State.CLOSED) {
-                    icon = ICON_CLOSED_SMALL;
+                    icon = ImageProvider.get("dialogs/notes", "note_closed", ImageProvider.ImageSizes.SMALLICON);
                 } else {
-                    icon = ICON_OPEN_SMALL;
+                    icon = ImageProvider.get("dialogs/notes", "note_open", ImageProvider.ImageSizes.SMALLICON);
                 }
                 jlabel.setIcon(icon);
             }
@@ -312,7 +291,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         AddCommentAction() {
             putValue(SHORT_DESCRIPTION, tr("Add comment"));
             putValue(NAME, tr("Comment"));
-            putValue(SMALL_ICON, ICON_COMMENT);
+            new ImageProvider("dialogs/notes", "note_comment").getResource().attachImageIcon(this, true);
         }
 
         @Override
@@ -326,7 +305,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                 return;
             }
             NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Comment on note"), tr("Add comment"));
-            dialog.showNoteDialog(tr("Add comment to note:"), NotesDialog.ICON_COMMENT);
+            dialog.showNoteDialog(tr("Add comment to note:"), ImageProvider.get("dialogs/notes", "note_comment"));
             if (dialog.getValue() != 1) {
                 return;
             }
@@ -344,13 +323,13 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         CloseAction() {
             putValue(SHORT_DESCRIPTION, tr("Close note"));
             putValue(NAME, tr("Close"));
-            putValue(SMALL_ICON, ICON_CLOSED);
+            new ImageProvider("dialogs/notes", "note_closed").getResource().attachImageIcon(this, true);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Close note"), tr("Close note"));
-            dialog.showNoteDialog(tr("Close note with message:"), NotesDialog.ICON_CLOSED);
+            dialog.showNoteDialog(tr("Close note with message:"), ImageProvider.get("dialogs/notes", "note_closed"));
             if (dialog.getValue() != 1) {
                 return;
             }
@@ -369,7 +348,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         NewAction() {
             putValue(SHORT_DESCRIPTION, tr("Create a new note"));
             putValue(NAME, tr("Create"));
-            putValue(SMALL_ICON, ICON_NEW);
+            new ImageProvider("dialogs/notes", "note_new").getResource().attachImageIcon(this, true);
         }
 
         @Override
@@ -389,13 +368,13 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         ReopenAction() {
             putValue(SHORT_DESCRIPTION, tr("Reopen note"));
             putValue(NAME, tr("Reopen"));
-            putValue(SMALL_ICON, ICON_OPEN);
+            new ImageProvider("dialogs/notes", "note_open").getResource().attachImageIcon(this, true);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Reopen note"), tr("Reopen note"));
-            dialog.showNoteDialog(tr("Reopen note with message:"), NotesDialog.ICON_OPEN);
+            dialog.showNoteDialog(tr("Reopen note with message:"), ImageProvider.get("dialogs/notes", "note_open"));
             if (dialog.getValue() != 1) {
                 return;
             }
@@ -415,7 +394,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         SortAction() {
             putValue(SHORT_DESCRIPTION, tr("Sort notes"));
             putValue(NAME, tr("Sort"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));
+            new ImageProvider("dialogs", "sort").getResource().attachImageIcon(this, true);
         }
 
         @Override

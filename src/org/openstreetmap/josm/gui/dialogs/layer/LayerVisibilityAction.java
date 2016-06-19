@@ -62,7 +62,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         content.setLayout(new GridBagLayout());
 
-        putValue(SMALL_ICON, ImageProvider.get("dialogs/layerlist", "visibility"));
+        new ImageProvider("dialogs/layerlist", "visibility").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Change visibility of the selected layer."));
 
         visibilityCheckbox = new JCheckBox(tr("Show layer"));

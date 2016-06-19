@@ -32,7 +32,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
     public RecentlyOpenedFilesMenu() {
         super(tr("Open Recent"));
         setToolTipText(tr("List of recently opened files"));
-        setIcon(new ImageProvider("openrecent").setSize(ImageProvider.ImageSizes.MENU).get());
+        setIcon(ImageProvider.get("openrecent", ImageProvider.ImageSizes.MENU));
         putClientProperty("help", ht("/Action/OpenRecent"));
 
         // build dynamically

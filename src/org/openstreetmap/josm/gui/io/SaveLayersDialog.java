@@ -383,13 +383,10 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         private static final String BASE_ICON = "BASE_ICON";
         private final transient Image save = ImageProvider.get("save").getImage();
         private final transient Image upld = ImageProvider.get("upload").getImage();
-        private final transient Image saveDis = new BufferedImage(ICON_SIZE, ICON_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
-        private final transient Image upldDis = new BufferedImage(ICON_SIZE, ICON_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
+        private final transient Image saveDis = new ImageProvider("save").setDisabled(true).get().getImage();
+        private final transient Image upldDis = new ImageProvider("upload").setDisabled(true).get().getImage();
 
         SaveAndProceedAction() {
-            // get disabled versions of icons
-            new JLabel(ImageProvider.get("save")).getDisabledIcon().paintIcon(new JPanel(), saveDis.getGraphics(), 0, 0);
-            new JLabel(ImageProvider.get("upload")).getDisabledIcon().paintIcon(new JPanel(), upldDis.getGraphics(), 0, 0);
             initForSaveAndExit();
         }
 
