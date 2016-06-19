@@ -16,6 +16,7 @@ import java.awt.event.ItemListener;
 import java.util.Arrays;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -27,7 +28,6 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
@@ -52,7 +52,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     private final JLabel lblApiUrl = new JLabel(tr("OSM Server URL:"));
     private final HistoryComboBox tfOsmServerUrl = new HistoryComboBox();
     private transient ApiUrlValidator valOsmServerUrl;
-    private SideButton btnTest;
+    private JButton btnTest;
     /** indicates whether to use the default OSM URL or not */
     private JCheckBox cbUseDefaultServerUrl;
     private final transient CollectionProperty SERVER_URL_HISTORY = new CollectionProperty("osm-server.url-history", Arrays.asList(
@@ -115,7 +115,7 @@ public class OsmApiUrlInputPanel extends JPanel {
         gc.weightx = 0.0;
         ValidateApiUrlAction actTest = new ValidateApiUrlAction();
         tfOsmServerUrl.getEditorComponent().getDocument().addDocumentListener(actTest);
-        btnTest = new SideButton(actTest);
+        btnTest = new JButton(actTest);
         add(btnTest, gc);
     }
 

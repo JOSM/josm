@@ -18,6 +18,7 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,7 +26,6 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.oauth.AdvancedOAuthPropertiesPanel;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.oauth.TestAccessTokenTask;
@@ -199,7 +199,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             gc.gridy = 1;
             gc.fill = GridBagConstraints.NONE;
             gc.weightx = 0.0;
-            add(new SideButton(new AuthoriseNowAction()), gc);
+            add(new JButton(new AuthoriseNowAction()), gc);
 
             // filler - grab remaining space
             gc.gridy = 2;
@@ -272,8 +272,8 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
             // -- action buttons
             JPanel btns = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            btns.add(new SideButton(new RenewAuthorisationAction()));
-            btns.add(new SideButton(new TestAuthorisationAction()));
+            btns.add(new JButton(new RenewAuthorisationAction()));
+            btns.add(new JButton(new TestAuthorisationAction()));
             gc.gridy = 4;
             gc.gridx = 0;
             gc.gridwidth = 2;
@@ -311,7 +311,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         AuthoriseNowAction() {
             putValue(NAME, tr("Authorize now"));
             putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
+            new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
         }
 
         @Override
@@ -341,7 +341,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         RenewAuthorisationAction() {
             putValue(NAME, tr("New Access Token"));
             putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process and generate a new Access Token"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
+            new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
         }
     }
 
@@ -355,8 +355,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         TestAuthorisationAction() {
             putValue(NAME, tr("Test Access Token"));
             putValue(SHORT_DESCRIPTION, tr("Click test access to the OSM server with the current access token"));
-            putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth-small"));
-
+            new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
         }
 
         @Override

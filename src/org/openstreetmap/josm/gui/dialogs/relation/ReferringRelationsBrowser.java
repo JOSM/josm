@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -23,7 +24,6 @@ import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -67,12 +67,12 @@ public class ReferringRelationsBrowser extends JPanel {
 
         ReloadAction reloadAction = new ReloadAction();
         referrers.getModel().addListDataListener(reloadAction);
-        pnl.add(new SideButton(reloadAction));
+        pnl.add(new JButton(reloadAction));
         pnl.add(cbReadFull);
 
         editAction = new EditAction();
         referrers.getSelectionModel().addListSelectionListener(editAction);
-        pnl.add(new SideButton(editAction));
+        pnl.add(new JButton(editAction));
         add(pnl, BorderLayout.SOUTH);
     }
 
@@ -91,7 +91,7 @@ public class ReferringRelationsBrowser extends JPanel {
     class ReloadAction extends AbstractAction implements ListDataListener {
         ReloadAction() {
             putValue(SHORT_DESCRIPTION, tr("Load parent relations"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+            new ImageProvider("dialogs", "refresh").getResource().attachImageIcon(this);
             putValue(NAME, tr("Reload"));
             refreshEnabled();
         }
@@ -145,7 +145,7 @@ public class ReferringRelationsBrowser extends JPanel {
     class EditAction extends AbstractAction implements ListSelectionListener {
         EditAction() {
             putValue(SHORT_DESCRIPTION, tr("Edit the currently selected relation"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+            new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this);
             putValue(NAME, tr("Edit"));
             refreshEnabled();
         }

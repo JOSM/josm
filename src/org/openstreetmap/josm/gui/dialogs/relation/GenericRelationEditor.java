@@ -61,7 +61,6 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MainMenu;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAfterSelection;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAtEndAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAtStartAction;
@@ -357,9 +356,9 @@ public class GenericRelationEditor extends RelationEditor {
      */
     protected static JPanel buildOkCancelButtonPanel(OKAction okAction, CancelAction cancelAction) {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        pnl.add(new SideButton(okAction));
-        pnl.add(new SideButton(cancelAction));
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/RelationEditor"))));
+        pnl.add(new JButton(okAction));
+        pnl.add(new JButton(cancelAction));
+        pnl.add(new JButton(new ContextSensitiveHelpAction(ht("/Dialog/RelationEditor"))));
         return pnl;
     }
 
@@ -488,7 +487,7 @@ public class GenericRelationEditor extends RelationEditor {
                 }
         );
         tfRole.setEnabled(memberTable.getSelectedRowCount() > 0);
-        SideButton btnApply = new SideButton(setRoleAction);
+        JButton btnApply = new JButton(setRoleAction);
         btnApply.setPreferredSize(new Dimension(20, 20));
         btnApply.setText("");
         p3.add(btnApply);
