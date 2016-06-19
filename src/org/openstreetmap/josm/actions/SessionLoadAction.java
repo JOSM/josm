@@ -124,21 +124,17 @@ public class SessionLoadAction extends DiskAccessAction {
 
         private void addLayers() {
             if (layers != null && !layers.isEmpty()) {
-                Layer firstLayer = layers.get(0);
                 boolean noMap = Main.map == null;
-                if (noMap) {
-                    Main.main.createMapFrame(firstLayer, viewport);
-                }
                 for (Layer l : layers) {
                     if (canceled)
                         return;
-                    Main.main.addLayer(l, (ViewportData) null);
+                    Main.getLayerManager().addLayer(l);
                 }
                 if (active != null) {
                     Main.getLayerManager().setActiveLayer(active);
                 }
                 if (noMap) {
-                    Main.map.setVisible(true);
+                    Main.map.mapView.scheduleZoomTo(viewport);
                 }
             }
         }

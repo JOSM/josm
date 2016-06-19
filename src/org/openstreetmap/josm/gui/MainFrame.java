@@ -39,10 +39,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * @since 10340
  */
 public class MainFrame extends JFrame {
-    protected transient WindowGeometry geometry;
-    protected int windowState = JFrame.NORMAL;
-    private MainMenu menu;
-
     private final transient LayerStateChangeListener updateTitleOnLayerStateChange = new LayerStateChangeListener() {
         @Override
         public void uploadDiscouragedChanged(OsmDataLayer layer, boolean newValue) {
@@ -51,7 +47,6 @@ public class MainFrame extends JFrame {
     };
 
     private final transient PropertyChangeListener updateTitleOnSaveChange = new PropertyChangeListener() {
-
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(OsmDataLayer.REQUIRES_SAVE_TO_DISK_PROP)
@@ -62,19 +57,24 @@ public class MainFrame extends JFrame {
         }
     };
 
+    protected transient WindowGeometry geometry;
+    protected int windowState = JFrame.NORMAL;
+    private MainMenu menu;
+
     /**
      * Create a new main window.
      */
     public MainFrame() {
-        this(new JPanel(), new WindowGeometry(new Rectangle(10, 10, 500, 500)));
+        this(new JPanel(), new MainPanel(Main.getLayerManager()), new WindowGeometry(new Rectangle(10, 10, 500, 500)));
     }
 
     /**
-     * Create a new main window.
+     * Create a new main window. The parameters will be removed in the future.
      * @param contentPanePrivate The content
+     * @param mainPanel The main panel.
      * @param geometry The inital geometry to use.
      */
-    public MainFrame(Container contentPanePrivate, WindowGeometry geometry) {
+    public MainFrame(Container contentPanePrivate, MainPanel mainPanel, WindowGeometry geometry) {
         super();
         this.geometry = geometry;
         setContentPane(contentPanePrivate);
@@ -119,7 +119,6 @@ public class MainFrame extends JFrame {
         refreshTitle();
 
         getContentPane().add(Main.panel, BorderLayout.CENTER);
-        Main.panel.add(Main.main.gettingStarted, BorderLayout.CENTER);
         menu.initialize();
     }
 

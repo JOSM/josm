@@ -187,8 +187,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
 
     /**
      * Constructs a new {@code MapFrame}.
-     * @param contentPane The content pane used to register shortcuts in its
-     * {@link javax.swing.InputMap} and {@link javax.swing.ActionMap}
+     * @param contentPane Ignored. Main content pane is used.
      * @param viewportData the initial viewport of the map. Can be null, then
      * the viewport is derived from the layer data.
      */

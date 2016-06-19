@@ -330,14 +330,14 @@ public class LayerListDialog extends ToggleDialog {
     @Override
     public void showNotify() {
         layerManager.addActiveLayerChangeListener(activateLayerAction);
-        layerManager.addLayerChangeListener(model);
+        layerManager.addLayerChangeListener(model, true);
         layerManager.addAndFireActiveLayerChangeListener(model);
         model.populate();
     }
 
     @Override
     public void hideNotify() {
-        layerManager.removeLayerChangeListener(model);
+        layerManager.removeLayerChangeListener(model, true);
         layerManager.removeActiveLayerChangeListener(model);
         layerManager.removeActiveLayerChangeListener(activateLayerAction);
     }

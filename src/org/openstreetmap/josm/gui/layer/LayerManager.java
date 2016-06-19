@@ -89,10 +89,12 @@ public class LayerManager {
      */
     public static class LayerRemoveEvent extends LayerManagerEvent {
         private final Layer removedLayer;
+        private final boolean lastLayer;
 
         LayerRemoveEvent(LayerManager source, Layer removedLayer) {
             super(source);
             this.removedLayer = removedLayer;
+            this.lastLayer = source.getLayers().size() == 1;
         }
 
         /**
@@ -101,6 +103,15 @@ public class LayerManager {
          */
         public Layer getRemovedLayer() {
             return removedLayer;
+        }
+
+        /**
+         * Check if the layer that was removed is the last layer in the list.
+         * @return <code>true</code> if this was the last layer.
+         * @since 10432
+         */
+        public boolean isLastLayer() {
+            return lastLayer;
         }
     }
 
@@ -345,5 +356,18 @@ public class LayerManager {
         for (LayerChangeListener l : layerChangeListeners) {
             l.layerOrderChanged(e);
         }
+    }
+
+    /**
+     * Reset all layer manager state. This includes removing all layers and then unregistering all listeners
+     * @since 10432
+     */
+    public void resetState() {
+        // some layer remove listeners remove other layers.
+        while (!getLayers().isEmpty()) {
+            removeLayer(getLayers().get(0));
+        }
+
+        layerChangeListeners.clear();
     }
 }
