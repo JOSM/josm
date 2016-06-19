@@ -382,9 +382,10 @@ Build-Date: ${build.tstamp}
     <macrodef name="call-junit">
         <attribute name="testfamily"/>
         <attribute name="testITsuffix" default=""/>
+        <attribute name="coverage" default="true"/>
         <sequential>
             <echo message="Running @{testfamily}@{testITsuffix} tests with JUnit"/>
-            <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec">
+            <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}">
                 <junit printsummary="yes" fork="true" forkmode="once">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
                     <jvmarg line="-addmods java.xml.bind" if:set="isJava9" />
@@ -414,13 +415,13 @@ Build-Date: ${build.tstamp}
         description="Run unit, functional and performance tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
         <call-junit testfamily="unit"/>
         <call-junit testfamily="functional"/>
-        <call-junit testfamily="performance"/>
+        <call-junit testfamily="performance" coverage="false"/>
     </target>
     <target name="test-it" depends="test-compile" unless="test-it.notRequired"
         description="Run integration tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
         <call-junit testfamily="unit" testITsuffix="IT"/>
         <call-junit testfamily="functional" testITsuffix="IT"/>
-        <call-junit testfamily="performance" testITsuffix="IT"/>
+        <call-junit testfamily="performance" testITsuffix="IT" coverage="false"/>
     </target>
     <target name="test-html" depends="test, test-it" description="Generate HTML test reports">
         <!-- May require additional ant dependencies like ant-trax package -->
