@@ -3209,7 +3209,7 @@
             </roles>
         </item> <!-- Stop Area -->
         <separator/>
-        <item name="Stop Position" type="node" icon="presets/barrier.png" preset_name_label="true">
+        <item name="Stop Position" type="node" icon="styles/standard/transport/railway_small.png" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Stop_position" />
             <space />
             <key key="public_transport" value="stop_position" />
@@ -3237,7 +3237,7 @@
             <check key="aerialway" text="Aerialway" />
             <check key="ferry" text="Ferry" />
         </item> <!-- Stop Position -->
-        <item name="Platform" type="node,way,closedway,multipolygon" icon="presets/platform_bus.png" preset_name_label="true">
+        <item name="Platform" type="node,way,closedway,multipolygon" icon="styles/standard/transport/platform.svg" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Platform" />
             <space />
             <key key="public_transport" value="platform" />
@@ -3248,28 +3248,8 @@
             <check key="covered" text="Covered" />
             <reference ref="wheelchair" />
             <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
-            <optional>
-                <text key="ref" text="Reference" />
-                <text key="uic_ref" text="UIC reference" />
-                <text key="uic_name" text="UIC name" />
-                <text key="operator" text="Operator" />
-                <text key="network" text="Network" />
-                <space/>
-                <check key="bus" text="Bus" />
-                <check key="highway" value_on="platform" text="Highway platform (legacy)" />
-                <check key="tram" text="Tram" />
-                <check key="train" text="Train" />
-                <check key="railway" value_on="platform" text="Railway platform (legacy)" />
-                <check key="trolleybus" text="Trolleybus" />
-                <check key="share_taxi" text="Share taxi" />
-                <check key="subway" text="Subway" />
-                <check key="monorail" text="Monorail" />
-                <check key="funicular" text="funicular" />
-                <check key="aerialway" text="aerialway" />
-                <check key="ferry" text="ferry" />
-            </optional>
         </item> <!-- Platform -->
-        <item name="Station" name_context="railway" type="node,closedway,multipolygon" icon="styles/standard/transport/railway_station.png" preset_name_label="true">
+        <item name="Station" name_context="railway" type="node,closedway,multipolygon" icon="styles/standard/transport/station.svg" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:public_transport=station"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:public_transport=station"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:public_transport=station"
@@ -3355,7 +3335,7 @@
                 <text key="uic_ref" text="UIC-Reference" />
             </optional>
         </item> <!-- Station -->
-        <item name="Railway Halt" icon="presets/station.png" type="node" preset_name_label="true">
+        <item name="Railway Halt" icon="styles/standard/transport/railway_small.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=halt"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=halt"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=halt"
@@ -3366,7 +3346,7 @@
                 <text key="name" text="Name" />
             </optional>
         </item> <!-- Railway Halt -->
-        <item name="Tram Stop" icon="presets/tram.png" type="node" preset_name_label="true">
+        <item name="Tram Stop" icon="styles/standard/transport/tram.png" type="node" preset_name_label="true">
            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=tram_stop"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=tram_stop"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=tram_stop"

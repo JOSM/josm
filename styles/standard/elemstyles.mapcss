@@ -3277,78 +3277,14 @@ node[military=range] {
     set icon_z17;
 }
 
-/*************************/
-/* public_transport tags */
-/*************************/
-
-node[public_transport=stop_position] {
-    icon-image: "transport/railway_small.png";
-    set icon_z17;
-}
-node[highway=bus_stop] {
-    icon-image: "transport/bus_small.png";
-    set icon_z17;
-}
-node[public_transport=stop_position][bus=yes] {
-    icon-image: "transport/bus_small.png";
-    set icon_z17;
-}
-node[public_transport=stop_position][aerial=yes] {
-    icon-image: "transport/aerialway.png";
-    set icon_z17;
-}
-node[public_transport=stop_position][ferry=yes] {
-    icon-image: "transport/ferry.png";
-    set icon_z17;
-}
-node[public_transport=stop_position][tram=yes] {
-    icon-image: "transport/tram.png";
-    set icon_z17;
-}
-node[public_transport=stop_position][train=yes] {
-    icon-image: "transport/railway_small.png";
-    set icon_z17;
-}
-area[public_transport=platform]:closed {
-    fill-color: service#809bc0;
-}
-way[public_transport=platform]!:closed {
-    width: 3;
-    color: service#809bc0;
-    dashes: 12,3;
-}
-node[public_transport=platform] {
-    icon-image: "transport/bus_small.png";
-    set icon_z17;
-}
-node[public_transport=platform][bus=yes] {
-    icon-image: "transport/bus_small.png";
-    set icon_z17;
-}
-node[public_transport=platform][aerial=yes] {
-    icon-image: "transport/aerialway/station.png";
-    set icon_z17;
-}
-node[public_transport=platform][ferry=yes] {
-    icon-image: "transport/ferry.png";
-    set icon_z17;
-}
-node[public_transport=platform][tram=yes],
-node[public_transport=platform][train=yes] {
-    icon-image: "transport/railway_station.png";
-    set icon_z17;
-}
-
 /****************/
 /* railway tags */
 /****************/
 
-area[railway=station],
-area[railway=tram_station],
-area[railway=subway_entrance] {
+area[railway=station] {
     fill-color: railwaypoint#f7efb7;
 }
-node[railway=station], node[railway=tram_station] {
+node[railway=station] {
     icon-image: "transport/railway_station.png";
     set icon_z17;
 }
@@ -3678,6 +3614,71 @@ node[aerialway=magic_carpet],
 node[aerialway=rope_tow],
 node[aerialway=goods] {
     icon-image: "misc/deprecated.png";
+    set icon_z17;
+}
+
+/*************************/
+/* public_transport tags */
+/*************************/
+
+node[highway=bus_stop] {
+    icon-image: "transport/bus_small.png";
+    set icon_z17;
+}
+node[public_transport=stop_position] {
+    icon-image: "transport/railway_small.png";
+    set icon_z17;
+}
+node[public_transport=stop_position][train=yes] {
+    icon-image: "transport/train.svg";
+    set icon_z17;
+}
+node[public_transport=stop_position][subway=yes] {
+    icon-image: "transport/railway/subway.svg";
+    set icon_z17;
+}
+node[public_transport=stop_position][monorail=yes] {
+    icon-image: "transport/railway/monorail.svg";
+    set icon_z17;
+}
+node[public_transport=stop_position][tram=yes] {
+    icon-image: "transport/railway/tram.svg";
+    set icon_z17;
+}
+node[public_transport=stop_position][bus=yes] {
+    icon-image: "transport/bus.svg";
+    set icon_z17;
+}
+node[public_transport=stop_position][trolleybus=yes] {
+    icon-image: "transport/trolleybus.svg";
+    set icon_z17;
+}
+node[public_transport=stop_position][aerialway=yes] {
+    icon-image: "transport/aerialway/station.png";
+    set icon_z17;
+}
+node[public_transport=stop_position][ferry=yes] {
+    icon-image: "nautical/ferry.png";
+    icon-width: 16;
+    set icon_z17;
+}
+area[public_transport=platform]:closed {
+    fill-color: service#809bc0;
+}
+way[public_transport=platform]!:closed {
+    width: 3;
+    color: service#809bc0;
+    dashes: 12,3;
+}
+node[public_transport=platform] {
+    icon-image: "transport/platform.svg";
+    set icon_z17;
+}
+area[public_transport=station] {
+    fill-color: railwaypoint#f7efb7;
+}
+node[public_transport=station] {
+    icon-image: "transport/station.svg";
     set icon_z17;
 }
 
