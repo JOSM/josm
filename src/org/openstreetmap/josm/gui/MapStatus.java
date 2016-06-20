@@ -267,12 +267,11 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                 // The popup != null check is required because a left-click produces several events as well,
                 // which would make this variable true. Of course we only want the popup to show
                 // if the middle mouse button has been pressed in the first place
-                boolean mouseNotMoved = oldMousePos != null
-                        && oldMousePos.equals(ms.mousePos);
+                boolean mouseNotMoved = oldMousePos != null && oldMousePos.equals(ms.mousePos);
                 boolean isAtOldPosition = mouseNotMoved && popup != null;
                 boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
                 try {
-                    ds = mv.getCurrentDataSet();
+                    ds = mv.getLayerManager().getEditDataSet();
                     if (ds != null) {
                         // This is not perfect, if current dataset was changed during execution, the lock would be useless
                         if (isAtOldPosition && middleMouseDown) {

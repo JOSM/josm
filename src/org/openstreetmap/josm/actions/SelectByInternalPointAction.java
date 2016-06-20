@@ -37,7 +37,7 @@ public final class SelectByInternalPointAction {
      * @return the surrounding polygons/multipolygons
      */
     public static Collection<OsmPrimitive> getSurroundingObjects(EastNorth internalPoint) {
-        final DataSet ds = JosmAction.getCurrentDataSet();
+        final DataSet ds = Main.getLayerManager().getEditDataSet();
         if (ds == null) {
             return Collections.emptySet();
         }
@@ -86,7 +86,7 @@ public final class SelectByInternalPointAction {
      */
     public static void performSelection(EastNorth internalPoint, boolean doAdd, boolean doRemove) {
         final Collection<OsmPrimitive> surroundingObjects = getSurroundingObjects(internalPoint);
-        final DataSet ds = JosmAction.getCurrentDataSet();
+        final DataSet ds = Main.getLayerManager().getEditDataSet();
         if (surroundingObjects.isEmpty()) {
             return;
         } else if (doRemove) {

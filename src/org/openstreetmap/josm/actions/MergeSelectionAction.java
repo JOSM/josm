@@ -88,14 +88,14 @@ public class MergeSelectionAction extends AbstractMergeAction {
      * @param targetLayer Target layer
      * @return true if the user wants to cancel, false if they want to continue
      */
-    public static final boolean warnMergingUploadDiscouragedObjects(Layer targetLayer) {
+    public final boolean warnMergingUploadDiscouragedObjects(Layer targetLayer) {
         return GuiHelper.warnUser(tr("Merging too many objects with different upload policies"),
                 "<html>" +
                 tr("You are about to merge more than 1 object between layers ''{0}'' and ''{1}''.<br /><br />"+
                         "<b>This is not the recommended way of merging such data</b>.<br />"+
                         "You should instead check and merge each object, <b>one by one</b>.<br /><br />"+
                         "Are you sure you want to continue?",
-                        getEditLayer().getName(), targetLayer.getName(), targetLayer.getName())+
+                        getLayerManager().getEditLayer().getName(), targetLayer.getName(), targetLayer.getName())+
                 "</html>",
                 ImageProvider.get("dialogs", "mergedown"), tr("Ignore this hint and merge anyway"));
     }

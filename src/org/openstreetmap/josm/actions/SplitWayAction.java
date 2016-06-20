@@ -195,8 +195,7 @@ public class SplitWayAction extends JosmAction {
         final Way selectedWay = applicableWays.get(0);
         final List<List<Node>> wayChunks = buildSplitChunks(selectedWay, selectedNodes);
         if (wayChunks != null) {
-            List<Relation> selectedRelations =
-                    OsmPrimitive.getFilteredList(selection, Relation.class);
+            List<Relation> selectedRelations = OsmPrimitive.getFilteredList(selection, Relation.class);
             final List<OsmPrimitive> sel = new ArrayList<>(selectedWays.size() + selectedRelations.size());
             sel.addAll(selectedWays);
             sel.addAll(selectedRelations);
@@ -307,10 +306,10 @@ public class SplitWayAction extends JosmAction {
             super.buttonAction(buttonIndex, evt);
             toggleSaveState(); // necessary since #showDialog() does not handle it due to the non-modal dialog
             if (getValue() == 1) {
-                final Way wayToKeep = list.getSelectedValue();
-                final SplitWayResult result = doSplitWay(getEditLayer(), selectedWay, wayToKeep, newWays, selection);
+                SplitWayResult result = doSplitWay(Main.getLayerManager().getEditLayer(),
+                        selectedWay, list.getSelectedValue(), newWays, selection);
                 Main.main.undoRedo.add(result.getCommand());
-                getCurrentDataSet().setSelected(result.getNewSelection());
+                Main.getLayerManager().getEditDataSet().setSelected(result.getNewSelection());
             }
         }
     }
