@@ -252,7 +252,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         ShowHistoryAction() {
             putValue(NAME, tr("Show history"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "history"));
+            new ImageProvider("dialogs", "history").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Download and show the history of the selected objects"));
             updateEnabledState();
         }
@@ -370,7 +370,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         SelectInCurrentLayerAction() {
             putValue(NAME, tr("Select in layer"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
+            new ImageProvider("dialogs", "select").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Select the corresponding primitives in the current data layer"));
             updateEnabledState();
         }
@@ -393,7 +393,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         ZoomInCurrentLayerAction() {
             putValue(NAME, tr("Zoom to in layer"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
+            new ImageProvider("dialogs/autoscale", "selection").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Zoom to the corresponding objects in the current data layer"));
             updateEnabledState();
         }
@@ -441,7 +441,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             DownloadAction() {
                 putValue(NAME, tr("Download now"));
                 putValue(SHORT_DESCRIPTION, tr("Download the changeset content"));
-                putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
+                new ImageProvider("dialogs/changeset", "downloadchangesetcontent").getResource().attachImageIcon(this);
             }
 
             @Override

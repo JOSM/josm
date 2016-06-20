@@ -272,7 +272,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     class RemoveFromCacheAction extends AbstractAction {
         RemoveFromCacheAction() {
             putValue(NAME, tr("Remove from cache"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+            new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Remove the changeset in the detail view panel from the local cache"));
         }
 
@@ -295,7 +295,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     class UpdateChangesetAction extends AbstractAction {
         UpdateChangesetAction() {
             putValue(NAME, tr("Update changeset"));
-            putValue(SMALL_ICON, ChangesetCacheManager.UPDATE_CONTENT_ICON);
+            new ImageProvider("dialogs/changeset", "updatechangesetcontent").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Update the changeset from the OSM server"));
         }
 
@@ -323,7 +323,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         SelectInCurrentLayerAction() {
             putValue(NAME, tr("Select in layer"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
+            new ImageProvider("dialogs", "select").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Select the primitives in the content of this changeset in the current data layer"));
             updateEnabledState();
         }
@@ -384,7 +384,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         ZoomInCurrentLayerAction() {
             putValue(NAME, tr("Zoom to in layer"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
+            new ImageProvider("dialogs/autoscale", "selection").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Zoom to the objects in the content of this changeset in the current data layer"));
             updateEnabledState();
         }

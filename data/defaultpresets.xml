@@ -1309,7 +1309,13 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:crossing" />
             <space />
             <key key="highway" value="crossing" />
-            <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,island,unmarked,no" />
+            <combo key="crossing" text="Pedestrian crossing type" >
+                <list_entry value="uncontrolled" icon="styles/standard/vehicle/crossing.svg" />
+                <list_entry value="traffic_signals" icon="styles/standard/vehicle/crossing_traffic_signals.svg" />
+                <list_entry value="island" icon="styles/standard/vehicle/crossing_island.svg" />
+                <list_entry value="unmarked" icon="styles/standard/vehicle/crossing_unmarked.svg" />
+                <list_entry value="no" />
+            </combo>
             <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" />
             <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
             <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
@@ -6092,7 +6098,14 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:entrance"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:entrance" />
             <space />
-            <combo key="entrance" text="Entrance" values="yes,main,service,exit,emergency,staircase" values_context="entrance" default="yes" match="key" />
+            <combo key="entrance" text="Entrance" values_context="entrance" default="yes" match="key">
+                <list_entry value="yes" icon="styles/standard/misc/entrance-yes.png" />
+                <list_entry value="main" icon="styles/standard/misc/entrance-main.png" />
+                <list_entry value="service" icon="styles/standard/misc/entrance-service.png" />
+                <list_entry value="exit" icon="styles/standard/misc/entrance-exit.png" />
+                <list_entry value="emergency" icon="styles/standard/misc/entrance-emergency.png" />
+                <list_entry value="staircase" icon="styles/standard/misc/entrance-yes.png" />
+            </combo>
             <combo key="access" text="Access" values="yes,delivery,private,no" />
             <reference ref="wheelchair" />
             <optional>

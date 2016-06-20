@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -48,7 +49,6 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryDialog;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -69,13 +69,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * @since 2689
  */
 public class ChangesetCacheManager extends JFrame {
-
-    // CHECKSTYLE.OFF: SingleSpaceSeparator
-    /** The changeset download icon **/
-    public static final ImageIcon DOWNLOAD_CONTENT_ICON = ImageProvider.get("dialogs/changeset", "downloadchangesetcontent");
-    /** The changeset update icon **/
-    public static final ImageIcon UPDATE_CONTENT_ICON   = ImageProvider.get("dialogs/changeset", "updatechangesetcontent");
-    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /** the unique instance of the cache manager  */
     private static volatile ChangesetCacheManager instance;
@@ -133,10 +126,10 @@ public class ChangesetCacheManager extends JFrame {
     static JPanel buildToolbarPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        SideButton btn = new SideButton(new QueryAction());
+        JButton btn = new JButton(new QueryAction());
         pnl.add(btn);
         pnl.add(new SingleChangesetDownloadPanel());
-        pnl.add(new SideButton(new DownloadMyChangesets()));
+        pnl.add(new JButton(new DownloadMyChangesets()));
 
         return pnl;
     }
@@ -150,10 +143,10 @@ public class ChangesetCacheManager extends JFrame {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         //-- cancel and close action
-        pnl.add(new SideButton(new CancelAction()));
+        pnl.add(new JButton(new CancelAction()));
 
         //-- help action
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/ChangesetManager"))));
+        pnl.add(new JButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/ChangesetManager"))));
 
         return pnl;
     }
@@ -358,7 +351,7 @@ public class ChangesetCacheManager extends JFrame {
     static class CancelAction extends AbstractAction {
         CancelAction() {
             putValue(NAME, tr("Close"));
-            putValue(SMALL_ICON, ImageProvider.get("cancel"));
+            new ImageProvider("cancel").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Close the dialog"));
         }
 
@@ -379,7 +372,7 @@ public class ChangesetCacheManager extends JFrame {
 
         QueryAction() {
             putValue(NAME, tr("Query"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
+            new ImageProvider("dialogs", "search").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Launch the dialog for querying changesets"));
             setEnabled(!Main.isOffline(OnlineResource.OSM_API));
         }
@@ -415,7 +408,7 @@ public class ChangesetCacheManager extends JFrame {
 
         RemoveFromCacheAction(ChangesetCacheManagerModel model) {
             putValue(NAME, tr("Remove from cache"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+            new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Remove the selected changesets from the local cache"));
             this.model = model;
             updateEnabledState();
@@ -445,7 +438,7 @@ public class ChangesetCacheManager extends JFrame {
 
         CloseSelectedChangesetsAction(ChangesetCacheManagerModel model) {
             putValue(NAME, tr("Close"));
-            putValue(SMALL_ICON, ImageProvider.get("closechangeset"));
+            new ImageProvider("closechangeset").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Close the selected changesets"));
             this.model = model;
             updateEnabledState();
@@ -489,7 +482,7 @@ public class ChangesetCacheManager extends JFrame {
 
         DownloadSelectedChangesetsAction(ChangesetCacheManagerModel model) {
             putValue(NAME, tr("Update changeset"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "updatechangeset"));
+            new ImageProvider("dialogs/changeset", "updatechangeset").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Updates the selected changesets with current data from the OSM server"));
             this.model = model;
             updateEnabledState();
@@ -522,7 +515,7 @@ public class ChangesetCacheManager extends JFrame {
 
         DownloadSelectedChangesetContentAction(ChangesetCacheManagerModel model) {
             putValue(NAME, tr("Download changeset content"));
-            putValue(SMALL_ICON, DOWNLOAD_CONTENT_ICON);
+            new ImageProvider("dialogs/changeset", "downloadchangesetcontent").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Download the content of the selected changesets from the server"));
             this.model = model;
             updateEnabledState();
@@ -569,7 +562,7 @@ public class ChangesetCacheManager extends JFrame {
     static class DownloadMyChangesets extends AbstractAction {
         DownloadMyChangesets() {
             putValue(NAME, tr("My changesets"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "downloadchangeset"));
+            new ImageProvider("dialogs/changeset", "downloadchangeset").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Download my changesets from the OSM server (max. 100 changesets)"));
             setEnabled(!Main.isOffline(OnlineResource.OSM_API));
         }
