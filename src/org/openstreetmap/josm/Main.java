@@ -595,7 +595,7 @@ public abstract class Main {
      */
     public Main() {
         main = this;
-        mainPanel.addAndFireMapFrameListener(new MapFrameListener() {
+        mainPanel.addMapFrameListener(new MapFrameListener() {
             @Override
             public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
                 redoUndoListener.commandChanged(0, 0);
