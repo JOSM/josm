@@ -64,6 +64,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationEvent;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationListener;
+import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -596,6 +597,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         if (layer instanceof MarkerLayer && playHeadMarker == null) {
             playHeadMarker = PlayHeadMarker.create();
         }
+        if (layer instanceof NativeScaleLayer) {
+            setNativeScaleLayer((NativeScaleLayer) layer);
+         }
 
         ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
         if (viewProjectionBounds != null) {
