@@ -45,7 +45,7 @@ public final class DeleteLayerAction extends AbstractAction implements IEnabledS
         if (!Main.saveUnsavedModifications(selectedLayers, false))
             return;
         for (Layer l: selectedLayers) {
-            Main.main.removeLayer(l);
+            Main.getLayerManager().removeLayer(l);
         }
     }
 

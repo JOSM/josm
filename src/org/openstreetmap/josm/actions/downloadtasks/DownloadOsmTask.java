@@ -260,7 +260,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 //
                 final OsmDataLayer layer = createNewLayer(newLayerName);
                 if (Main.main != null)
-                    Main.main.addLayer(layer);
+                    Main.getLayerManager().addLayer(layer);
                 return layer;
             }
             return null;

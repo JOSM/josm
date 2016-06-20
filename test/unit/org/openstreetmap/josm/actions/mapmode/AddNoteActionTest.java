@@ -35,14 +35,14 @@ public class AddNoteActionTest {
     public void testMode() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             AddNoteAction mapMode = new AddNoteAction(Main.map, new NoteData(Collections.<Note>emptyList()));
             MapMode oldMapMode = Main.map.mapMode;
             assertTrue(Main.map.selectMapMode(mapMode));
             assertEquals(mapMode, Main.map.mapMode);
             assertTrue(Main.map.selectMapMode(oldMapMode));
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

@@ -111,7 +111,7 @@ public class InspectPrimitiveDialogTest {
         // CHECKSTYLE.ON: LineLength
 
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertEquals("", InspectPrimitiveDialog.buildMapPaintText());
             Node n = new Node(LatLon.ZERO);
             n.setUser(User.getAnonymous());
@@ -125,7 +125,7 @@ public class InspectPrimitiveDialogTest {
             assertEquals(baseText + baseText + "Warning: The 2 selected objects have equal, but not identical style caches.",
                     InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", ""));
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

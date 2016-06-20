@@ -36,7 +36,7 @@ public class CoordinateConflictResolveCommandTest {
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init(true);
         layer = new OsmDataLayer(new DataSet(), null, null);
-        Main.main.addLayer(layer);
+        Main.getLayerManager().addLayer(layer);
     }
 
     /**
@@ -44,7 +44,7 @@ public class CoordinateConflictResolveCommandTest {
      */
     @AfterClass
     public static void tearDownAfterClass() {
-        Main.main.removeLayer(layer);
+        Main.getLayerManager().removeLayer(layer);
     }
 
     private static Conflict<Node> createConflict() {

@@ -163,7 +163,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     @Override
     public void layerRemoving(LayerRemoveEvent e) {
         if (e.getRemovedLayer() instanceof OsmDataLayer && Main.isDisplayingMapView() && !Main.main.hasEditLayer()) {
-            Main.main.removeLayer(this);
+            Main.getLayerManager().removeLayer(this);
         } else if (e.getRemovedLayer() == this) {
             Main.getLayerManager().removeLayerChangeListener(this);
             OsmValidator.errorLayer = null;

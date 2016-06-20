@@ -130,7 +130,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         // Append downloaded data to JOSM
         OsmDataLayer layer = Main.getLayerManager().getEditLayer();
         if (layer == null || this.newLayer)
-            Main.main.addLayer(tmpLayer);
+            Main.getLayerManager().addLayer(tmpLayer);
         else
             layer.mergeFrom(tmpLayer);
 

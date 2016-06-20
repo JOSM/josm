@@ -62,7 +62,7 @@ public class OsmChangeImporter extends FileImporter {
                             tr("Open OsmChange file"),
                             JOptionPane.INFORMATION_MESSAGE);
                 }
-                Main.main.addLayer(layer);
+                Main.getLayerManager().addLayer(layer);
                 layer.onPostLoadFromFile();
             }
         });

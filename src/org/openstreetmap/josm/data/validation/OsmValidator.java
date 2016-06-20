@@ -221,7 +221,7 @@ public class OsmValidator implements LayerChangeListener {
             return;
         if (errorLayer == null) {
             errorLayer = new ValidatorLayer();
-            Main.main.addLayer(errorLayer);
+            Main.getLayerManager().addLayer(errorLayer);
         }
     }
 
@@ -366,7 +366,7 @@ public class OsmValidator implements LayerChangeListener {
         }
         if (e.getSource().getLayersOfType(OsmDataLayer.class).isEmpty()) {
             if (errorLayer != null) {
-                Main.main.removeLayer(errorLayer);
+                Main.getLayerManager().removeLayer(errorLayer);
             }
         }
     }

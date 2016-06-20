@@ -29,6 +29,6 @@ public class NewAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Main.main.addLayer(new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null));
+        Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null));
     }
 }

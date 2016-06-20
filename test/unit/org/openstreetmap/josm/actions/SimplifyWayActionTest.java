@@ -53,11 +53,11 @@ public final class SimplifyWayActionTest {
         DataSet ds = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertTrue(ds.getSelected().isEmpty());
             action.actionPerformed(null);
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -70,11 +70,11 @@ public final class SimplifyWayActionTest {
         createWaySelected(ds, 0.0);
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertEquals(1, ds.getSelected().size());
             action.actionPerformed(null);
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -89,11 +89,11 @@ public final class SimplifyWayActionTest {
         }
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertEquals(11, ds.getSelected().size());
             action.actionPerformed(null);
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

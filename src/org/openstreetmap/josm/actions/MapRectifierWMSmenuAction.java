@@ -233,7 +233,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
      */
     private static void addWMSLayer(String title, String url) {
         WMSLayer layer = new WMSLayer(new ImageryInfo(title, url));
-        Main.main.addLayer(layer);
+        Main.getLayerManager().addLayer(layer);
     }
 
     @Override

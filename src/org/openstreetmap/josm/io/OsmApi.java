@@ -255,7 +255,7 @@ public class OsmApi extends OsmConnection {
                 for (Layer l : Main.getLayerManager().getLayersOfType(ImageryLayer.class)) {
                     if (((ImageryLayer) l).getInfo().isBlacklisted()) {
                         Main.info(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));
-                        Main.main.removeLayer(l);
+                        Main.getLayerManager().removeLayer(l);
                     }
                 }
             }

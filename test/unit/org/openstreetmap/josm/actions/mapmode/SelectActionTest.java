@@ -104,7 +104,7 @@ public class SelectActionTest {
         dataSet.addSelected(w);
 
         Main.pref = new PreferencesMock();
-        Main.main.addLayer(layer);
+        Main.getLayerManager().addLayer(layer);
         try {
             SelectAction action = new SelectActionMock(Main.map, dataSet, layer);
             nodesMerged = false;
@@ -159,7 +159,7 @@ public class SelectActionTest {
                        Double.compare(r2.getEastNorth().east(), 100), 0);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

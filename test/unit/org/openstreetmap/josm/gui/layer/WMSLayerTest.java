@@ -29,12 +29,12 @@ public class WMSLayerTest {
     @Test
     public void testWMSLayer() {
         WMSLayer wms = new WMSLayer(new ImageryInfo("test wms", "http://localhost"));
-        Main.main.addLayer(wms);
+        Main.getLayerManager().addLayer(wms);
         try {
             assertEquals(ImageryType.WMS, wms.getInfo().getImageryType());
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(wms);
+            Main.getLayerManager().removeLayer(wms);
         }
     }
 }

@@ -32,7 +32,7 @@ public class ValidatorLayerTest {
         ValidatorLayer layer = null;
         try {
             layer = new ValidatorLayer();
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertFalse(layer.isMergable(null));
             assertNotNull(layer.getIcon());
             assertEquals("<html>No validation errors</html>", layer.getToolTipText());
@@ -41,7 +41,7 @@ public class ValidatorLayerTest {
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
             if (layer != null) {
-                Main.main.removeLayer(layer);
+                Main.getLayerManager().removeLayer(layer);
             }
         }
     }

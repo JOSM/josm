@@ -93,11 +93,11 @@ public final class CreateCircleActionTest {
         CreateCircleAction action = new CreateCircleAction();
         action.setEnabled(true);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
 
         // Expected result: Dataset contain one closed way, clockwise
@@ -169,11 +169,11 @@ public final class CreateCircleActionTest {
         CreateCircleAction action = new CreateCircleAction();
         action.setEnabled(true);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
 
         // Expected result: Dataset contain one closed way, clockwise

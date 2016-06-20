@@ -282,7 +282,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
                         );
             }
             if (layer != null) {
-                Main.main.addLayer(layer);
+                Main.getLayerManager().addLayer(layer);
 
                 if (!canceled && layer.data != null && !layer.data.isEmpty()) {
                     boolean noGeotagFound = true;

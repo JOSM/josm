@@ -40,13 +40,13 @@ public final class UnGlueActionTest {
         DataSet ds = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertTrue(ds.getSelected().isEmpty());
             assertTrue(ds.allPrimitives().isEmpty());
             action.actionPerformed(null);
             assertTrue(ds.allPrimitives().isEmpty());
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -61,13 +61,13 @@ public final class UnGlueActionTest {
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         ds.setSelected(n);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertEquals(1, ds.getSelected().size());
             assertEquals(1, ds.allPrimitives().size());
             action.actionPerformed(null);
             assertEquals(1, ds.allPrimitives().size());
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -88,13 +88,13 @@ public final class UnGlueActionTest {
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         ds.setSelected(n1);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertEquals(1, ds.getSelected().size());
             assertEquals(3, ds.allPrimitives().size());
             action.actionPerformed(null);
             assertEquals(3, ds.allPrimitives().size());
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -121,13 +121,13 @@ public final class UnGlueActionTest {
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         ds.setSelected(n1);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertEquals(1, ds.getSelected().size());
             assertEquals(5, ds.allPrimitives().size());
             action.actionPerformed(null);
             assertEquals(6, ds.allPrimitives().size());
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

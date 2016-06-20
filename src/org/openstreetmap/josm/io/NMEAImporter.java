@@ -52,11 +52,11 @@ public class NMEAImporter extends FileImporter {
                 GuiHelper.runInEDT(new Runnable() {
                     @Override
                     public void run() {
-                        Main.main.addLayer(gpxLayer);
+                        Main.getLayerManager().addLayer(gpxLayer);
                         if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
                             MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), fileFinal, gpxLayer);
                             if (!ml.data.isEmpty()) {
-                                Main.main.addLayer(ml);
+                                Main.getLayerManager().addLayer(ml);
                             }
                         }
                     }

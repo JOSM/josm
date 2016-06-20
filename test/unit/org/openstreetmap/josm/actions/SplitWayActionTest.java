@@ -78,11 +78,11 @@ public final class SplitWayActionTest {
         dataSet.addSelected(w2);
 
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
 
         // Ensures 3 ways.

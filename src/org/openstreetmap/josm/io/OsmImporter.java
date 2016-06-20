@@ -95,7 +95,7 @@ public class OsmImporter extends FileImporter {
             @Override
             public void run() {
                 OsmDataLayer layer = data.getLayer();
-                Main.main.addLayer(layer);
+                Main.getLayerManager().addLayer(layer);
                 data.getPostLayerTask().run();
                 data.getLayer().onPostLoadFromFile();
             }

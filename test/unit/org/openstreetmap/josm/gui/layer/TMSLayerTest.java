@@ -49,11 +49,11 @@ public class TMSLayerTest {
 
     private static void test(ImageryType expected, TMSLayer layer) {
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertEquals(expected, layer.getInfo().getImageryType());
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 

@@ -67,7 +67,7 @@ public class DrawActionTest {
         w.setNodes(Arrays.asList(new Node[] {n1, n2}));
         dataSet.addPrimitive(w);
 
-        Main.main.addLayer(layer);
+        Main.getLayerManager().addLayer(layer);
         try {
             assertTrue(Main.map.selectDrawTool(false));
 
@@ -98,7 +98,7 @@ public class DrawActionTest {
             assertNotNull(renderer.getListCellRendererComponent(lstPrimitives, n3, 0, false, false));
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

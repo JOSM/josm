@@ -58,10 +58,10 @@ public class AddNodeHandlerTest {
         thrown.expectMessage("NumberFormatException (empty String)");
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             newHandler(null).handle();
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -95,10 +95,10 @@ public class AddNodeHandlerTest {
     public void testNominalRequest() throws Exception {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             newHandler("https://localhost?lat=0&lon=0").handle();
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

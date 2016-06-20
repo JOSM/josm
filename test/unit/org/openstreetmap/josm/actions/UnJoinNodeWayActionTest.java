@@ -73,11 +73,11 @@ public final class UnJoinNodeWayActionTest {
         UnJoinNodeWayActionTestClass action = new UnJoinNodeWayActionTestClass();
         action.setEnabled(true);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
 
         // Ensures node n2 remove from w
