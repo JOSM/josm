@@ -40,7 +40,6 @@ public class MainPanel extends JPanel {
     public MainPanel(MainLayerManager layerManager) {
         super(new BorderLayout());
         this.layerManager = layerManager;
-        reAddListeners();
     }
 
     /**
