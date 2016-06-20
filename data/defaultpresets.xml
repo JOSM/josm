@@ -2317,7 +2317,7 @@
         </item> <!-- Bay -->
     </group> <!-- Water -->
     <group name="Shipping" icon="presets/ferry.png">
-        <item name="Ferry Terminal" icon="presets/ferry.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Ferry Terminal" icon="presets/ferry.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=ferry_terminal"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=ferry_terminal"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=ferry_terminal"
@@ -2330,7 +2330,7 @@
             <text key="name" text="Name" />
             <combo key="cargo" text="Cargo" values="passengers,vehicle,bicycle,hgv,passengers;vehicle" values_context="cargo" />
         </item> <!-- Ferry Terminal -->
-        <item name="Ferry Route" icon="presets/ferry.png" type="way,closedway,relation" preset_name_label="true">
+        <item name="Ferry Route" icon="presets/ferry.svg" type="way,closedway,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:route=ferry"
                   da.href="http://wiki.openstreetmap.org/wiki/Da:Tag:route=ferry"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:route=ferry"
@@ -3341,7 +3341,7 @@
                 <text key="uic_ref" text="UIC-Reference" />
             </optional>
         </item> <!-- Station -->
-        <item name="Railway Halt" icon="styles/standard/transport/railway_small.png" type="node" preset_name_label="true">
+        <item name="Railway Halt" icon="presets/station.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=halt"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=halt"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=halt"
