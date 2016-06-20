@@ -16,7 +16,6 @@ import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -205,8 +204,7 @@ public class AutosaveTaskTest {
     }
 
     /**
-     * Tests that {@link AutosaveTask#run()} handles dupplicate layers
-     * @throws InterruptedException
+     * Tests that {@link AutosaveTask#run()} handles duplicate layers
      */
     @Test
     public void testAutosaveHandlesDupplicateNames() {
@@ -233,13 +231,11 @@ public class AutosaveTaskTest {
     }
 
     /**
-     * Test that
-     * @throws IOException
-     * @throws ExecutionException
-     * @throws InterruptedException
+     * Test that {@link AutosaveTask#recoverUnsavedLayers()} recovers unsaved layers.
+     * @throws Exception in case of error
      */
     @Test
-    public void testRecoverLayers() throws IOException, InterruptedException, ExecutionException {
+    public void testRecoverLayers() throws Exception {
         runAutosaveTaskSeveralTimes(1);
         try (FileWriter file = new FileWriter(new File(task.getAutosaveDir().toFile(), "any_other_file.osm"))) {
             file.append("<?xml version=\"1.0\"?><osm version=\"0.6\"><node id=\"1\" lat=\"1\" lon=\"2\" version=\"1\"/></osm>");
