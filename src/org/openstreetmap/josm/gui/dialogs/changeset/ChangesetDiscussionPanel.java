@@ -24,6 +24,7 @@ import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * The panel which displays the public discussion around a changeset in a scrollable table.
@@ -63,7 +64,7 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
     class UpdateChangesetDiscussionAction extends AbstractAction {
         UpdateChangesetDiscussionAction() {
             putValue(NAME, tr("Update changeset discussion"));
-            putValue(SMALL_ICON, ChangesetCacheManager.UPDATE_CONTENT_ICON);
+            new ImageProvider("dialogs/changeset", "updatechangesetcontent").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Update the changeset discussion from the OSM server"));
         }
 

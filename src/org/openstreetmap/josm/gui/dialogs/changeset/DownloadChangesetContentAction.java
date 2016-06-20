@@ -10,6 +10,7 @@ import javax.swing.AbstractAction;
 
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetContentDownloadTask;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Downloads/Updates the content of the changeset.
@@ -25,7 +26,7 @@ public class DownloadChangesetContentAction extends AbstractAction {
     public DownloadChangesetContentAction(ChangesetAware component) {
         CheckParameterUtil.ensureParameterNotNull(component, "component");
         putValue(NAME, tr("Download content"));
-        putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
+        new ImageProvider("dialogs/changeset", "downloadchangesetcontent").getResource().attachImageIcon(this);
         putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
         this.component = component;
     }
@@ -50,11 +51,11 @@ public class DownloadChangesetContentAction extends AbstractAction {
         }
         if (component.getCurrentChangeset().getContent() == null) {
             putValue(NAME, tr("Download content"));
-            putValue(SMALL_ICON, ChangesetCacheManager.DOWNLOAD_CONTENT_ICON);
+            new ImageProvider("dialogs/changeset", "downloadchangesetcontent").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Download the changeset content from the OSM server"));
         } else {
             putValue(NAME, tr("Update content"));
-            putValue(SMALL_ICON, ChangesetCacheManager.UPDATE_CONTENT_ICON);
+            new ImageProvider("dialogs/changeset", "updatechangesetcontent").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Update the changeset content from the OSM server"));
         }
     }
