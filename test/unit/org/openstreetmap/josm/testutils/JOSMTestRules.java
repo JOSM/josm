@@ -4,6 +4,7 @@ package org.openstreetmap.josm.testutils;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.rules.DisableOnDebug;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
 import org.junit.rules.Timeout;
@@ -27,8 +28,7 @@ import org.openstreetmap.josm.tools.I18n;
  * @author Michael Zangl
  */
 public class JOSMTestRules implements TestRule {
-    //We should make this the default when running from ant: Timeout.seconds(10);
-    private Timeout timeout = null;
+    private Timeout timeout = Timeout.seconds(10);
     private TemporaryFolder josmHome;
     private boolean usePreferences = false;
     private APIType useAPI = APIType.NONE;
@@ -143,7 +143,7 @@ public class JOSMTestRules implements TestRule {
             }
         };
         if (timeout != null) {
-            statement = timeout.apply(statement, description);
+            statement = new DisableOnDebug(timeout).apply(statement, description);
         }
         if (josmHome != null) {
             statement = josmHome.apply(statement, description);
