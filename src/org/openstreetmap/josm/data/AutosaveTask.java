@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
@@ -107,6 +109,9 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         return autosaveDir.toPath();
     }
 
+    /**
+     * Starts the autosave background task.
+     */
     public void schedule() {
         if (PROP_INTERVAL.get() > 0) {
 
@@ -128,12 +133,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
 
             timer = new Timer(true);
             timer.schedule(this, 1000L, PROP_INTERVAL.get() * 1000L);
-            Main.getLayerManager().addLayerChangeListener(this);
-            if (Main.isDisplayingMapView()) {
-                for (OsmDataLayer l: Main.getLayerManager().getLayersOfType(OsmDataLayer.class)) {
-                    registerNewlayer(l);
-                }
-            }
+            Main.getLayerManager().addLayerChangeListener(this, true);
         }
     }
 
@@ -356,15 +356,25 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         return false;
     }
 
-    public void recoverUnsavedLayers() {
+    /**
+     * Recover the unsaved layers and open them asynchronously.
+     * @return A future that can be used to wait for the completion of this task.
+     */
+    public Future<?> recoverUnsavedLayers() {
         List<File> files = getUnsavedLayersFiles();
         final OpenFileTask openFileTsk = new OpenFileTask(files, null, tr("Restoring files"));
-        Main.worker.submit(openFileTsk);
-        Main.worker.submit(new Runnable() {
+        final Future<?> openFilesFuture = Main.worker.submit(openFileTsk);
+        return Main.worker.submit(new Runnable() {
             @Override
             public void run() {
-                for (File f: openFileTsk.getSuccessfullyOpenedFiles()) {
-                    moveToDeletedLayersFolder(f);
+                try {
+                    // Wait for opened tasks to be generated.
+                    openFilesFuture.get();
+                    for (File f: openFileTsk.getSuccessfullyOpenedFiles()) {
+                        moveToDeletedLayersFolder(f);
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    Main.error(e);
                 }
             }
         });
@@ -405,6 +415,9 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
     }
 
+    /**
+     * Mark all unsaved layers as deleted. They are still preserved in the deleted layers folder.
+     */
     public void discardUnsavedLayers() {
         for (File f: getUnsavedLayersFiles()) {
             moveToDeletedLayersFolder(f);
