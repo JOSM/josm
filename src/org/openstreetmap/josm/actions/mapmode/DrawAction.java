@@ -335,7 +335,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private void finishDrawing() {
         // let everybody else know about the current selection
         //
-        Main.main.getCurrentDataSet().fireSelectionChanged();
+        Main.getLayerManager().getEditDataSet().fireSelectionChanged();
         lastUsedNode = null;
         wayIsFinished = true;
         Main.map.selectSelectTool(true);

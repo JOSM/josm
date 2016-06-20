@@ -60,7 +60,7 @@ public class DownloadPrimitiveAction extends JosmAction {
                     GuiHelper.runInEDT(new Runnable() {
                         @Override
                         public void run() {
-                            Main.main.getCurrentDataSet().setSelected(downloaded);
+                            Main.getLayerManager().getEditDataSet().setSelected(downloaded);
                         }
                     });
                 }

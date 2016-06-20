@@ -171,7 +171,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         } else if (layer instanceof GpxLayer) {
             gpxData = ((GpxLayer) layer).data;
         } else {
-            gpxData = OsmDataLayer.toGpxData(Main.main.getCurrentDataSet(), file);
+            gpxData = OsmDataLayer.toGpxData(Main.getLayerManager().getEditDataSet(), file);
         }
 
         // add author and copyright details to the gpx data

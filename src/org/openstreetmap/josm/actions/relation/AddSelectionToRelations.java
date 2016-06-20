@@ -38,7 +38,7 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
     public void actionPerformed(ActionEvent e) {
         Collection<Command> cmds = new LinkedList<>();
         for (Relation orig : relations) {
-            Command c = GenericRelationEditor.addPrimitivesToRelation(orig, Main.main.getCurrentDataSet().getSelected());
+            Command c = GenericRelationEditor.addPrimitivesToRelation(orig, Main.getLayerManager().getEditDataSet().getSelected());
             if (c != null) {
                 cmds.add(c);
             }

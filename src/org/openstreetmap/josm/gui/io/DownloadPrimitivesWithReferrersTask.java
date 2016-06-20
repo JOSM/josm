@@ -156,7 +156,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
 
         // Warm about deleted primitives
         final Set<PrimitiveId> del = new HashSet<>();
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         for (PrimitiveId id : ids) {
             OsmPrimitive osm = ds.getPrimitiveById(id);
             if (osm != null && osm.isDeleted()) {

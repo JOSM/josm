@@ -124,7 +124,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     }
 
     protected static String buildMapPaintText() {
-        final Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getAllSelected();
+        final Collection<OsmPrimitive> sel = Main.getLayerManager().getEditDataSet().getAllSelected();
         ElemStyles elemstyles = MapPaintStyles.getStyles();
         NavigatableComponent nc = Main.map.mapView;
         double scale = nc.getDist100Pixel();

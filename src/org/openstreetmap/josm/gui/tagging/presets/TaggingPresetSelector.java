@@ -240,7 +240,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         boolean onlyApplicable = ckOnlyApplicable != null && ckOnlyApplicable.isSelected();
         boolean inTags = ckSearchInTags != null && ckSearchInTags.isSelected();
 
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         Collection<OsmPrimitive> selected = (ds == null) ? Collections.<OsmPrimitive>emptyList() : ds.getSelected();
         final List<PresetClassification> result = classifications.getMatchingPresets(
                 text, onlyApplicable, inTags, getTypesInSelection(), selected);
@@ -371,8 +371,8 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             synchronized (typesInSelection) {
                 typesInSelectionDirty = false;
                 typesInSelection.clear();
-                if (Main.main == null || Main.main.getCurrentDataSet() == null) return typesInSelection;
-                for (OsmPrimitive primitive : Main.main.getCurrentDataSet().getSelected()) {
+                if (Main.main == null || Main.getLayerManager().getEditDataSet() == null) return typesInSelection;
+                for (OsmPrimitive primitive : Main.getLayerManager().getEditDataSet().getSelected()) {
                     typesInSelection.add(TaggingPresetType.forPrimitive(primitive));
                 }
             }

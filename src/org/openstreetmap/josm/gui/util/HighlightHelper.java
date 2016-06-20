@@ -121,7 +121,7 @@ public class HighlightHelper {
      * Slow method to import all currently highlighted primitives into this instance
      */
     public void findAllHighlighted() {
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         if (ds != null) {
             highlightedPrimitives.addAll(ds.allNonDeletedPrimitives());
         }
@@ -131,7 +131,7 @@ public class HighlightHelper {
      * Slow method to remove highlights from all primitives
      */
     public static void clearAllHighlighted() {
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         if (ds != null) {
             for (OsmPrimitive p: ds.allNonDeletedPrimitives()) {
                 p.setHighlighted(false);

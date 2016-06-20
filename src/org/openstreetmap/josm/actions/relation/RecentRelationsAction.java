@@ -99,7 +99,7 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
     public static boolean isRelationListable(Relation relation) {
         return relation != null &&
             !relation.isDeleted() &&
-            Main.main.getCurrentDataSet().containsRelation(relation);
+            Main.getLayerManager().getEditDataSet().containsRelation(relation);
     }
 
     @Override

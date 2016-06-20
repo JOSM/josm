@@ -76,7 +76,7 @@ public class FilterTableModel extends AbstractTableModel {
     }
 
     public void executeFilters() {
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         boolean changed = false;
         if (ds == null) {
             disabledAndHiddenCount = 0;
@@ -123,7 +123,7 @@ public class FilterTableModel extends AbstractTableModel {
     }
 
     public void executeFilters(Collection<? extends OsmPrimitive> primitives) {
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         if (ds == null)
             return;
 
@@ -176,7 +176,7 @@ public class FilterTableModel extends AbstractTableModel {
     }
 
     public void clearFilterFlags() {
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         if (ds != null) {
             FilterWorker.clearFilterFlags(ds.allPrimitives());
         }

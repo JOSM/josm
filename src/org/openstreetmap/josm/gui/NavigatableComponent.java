@@ -310,7 +310,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     @Deprecated
     protected DataSet getCurrentDataSet() {
-        return Main.main.getCurrentDataSet();
+        return Main.getLayerManager().getEditDataSet();
     }
 
     protected void updateLocationState() {

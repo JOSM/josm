@@ -19,6 +19,8 @@ import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.I18n;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * This class runs a test in an environment that resembles the one used by the JOSM main application.
  * <p>
@@ -215,17 +217,18 @@ public class JOSMTestRules implements TestRule {
     /**
      * Clean up what test not using these test rules may have broken.
      */
+    @SuppressFBWarnings("DM_GC")
     private void cleanUpFromJosmFixture() {
         Main.getLayerManager().resetState();
         Main.pref = null;
         Main.platform = null;
-        Main.pref.put("osm-server.url", "invalid-server");
         System.gc();
     }
 
     /**
      * Clean up after running a test
      */
+    @SuppressFBWarnings("DM_GC")
     protected void after() {
         // Sync AWT Thread
         GuiHelper.runInEDTAndWait(new Runnable() {

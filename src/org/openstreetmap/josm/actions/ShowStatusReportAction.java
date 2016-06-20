@@ -144,7 +144,7 @@ public final class ShowStatusReportAction extends JosmAction {
             text.append("Program arguments: ").append(Arrays.toString(paramCleanup(commandLineArgs).toArray())).append('\n');
         }
         if (Main.main != null) {
-            DataSet dataset = Main.main.getCurrentDataSet();
+            DataSet dataset = Main.getLayerManager().getEditDataSet();
             if (dataset != null) {
                 String result = DatasetConsistencyTest.runTests(dataset);
                 if (result.isEmpty()) {

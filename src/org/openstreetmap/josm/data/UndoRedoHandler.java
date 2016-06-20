@@ -58,7 +58,7 @@ public class UndoRedoHandler implements LayerChangeListener {
         fireCommandsChanged();
 
         // the command may have changed the selection so tell the listeners about the current situation
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         if (ds != null) {
             ds.fireSelectionChanged();
         }
@@ -87,8 +87,8 @@ public class UndoRedoHandler implements LayerChangeListener {
     public synchronized void undo(int num) {
         if (commands.isEmpty())
             return;
-        Collection<? extends OsmPrimitive> oldSelection = Main.main.getCurrentDataSet().getSelected();
-        Main.main.getCurrentDataSet().beginUpdate();
+        Collection<? extends OsmPrimitive> oldSelection = Main.getLayerManager().getEditDataSet().getSelected();
+        Main.getLayerManager().getEditDataSet().beginUpdate();
         try {
             for (int i = 1; i <= num; ++i) {
                 final Command c = commands.removeLast();
@@ -99,12 +99,12 @@ public class UndoRedoHandler implements LayerChangeListener {
                 }
             }
         } finally {
-            Main.main.getCurrentDataSet().endUpdate();
+            Main.getLayerManager().getEditDataSet().endUpdate();
         }
         fireCommandsChanged();
-        Collection<? extends OsmPrimitive> newSelection = Main.main.getCurrentDataSet().getSelected();
+        Collection<? extends OsmPrimitive> newSelection = Main.getLayerManager().getEditDataSet().getSelected();
         if (!oldSelection.equals(newSelection)) {
-            Main.main.getCurrentDataSet().fireSelectionChanged();
+            Main.getLayerManager().getEditDataSet().fireSelectionChanged();
         }
     }
 
@@ -122,7 +122,7 @@ public class UndoRedoHandler implements LayerChangeListener {
     public void redo(int num) {
         if (redoCommands.isEmpty())
             return;
-        Collection<? extends OsmPrimitive> oldSelection = Main.main.getCurrentDataSet().getSelected();
+        Collection<? extends OsmPrimitive> oldSelection = Main.getLayerManager().getEditDataSet().getSelected();
         for (int i = 0; i < num; ++i) {
             final Command c = redoCommands.removeFirst();
             c.executeCommand();
@@ -132,9 +132,9 @@ public class UndoRedoHandler implements LayerChangeListener {
             }
         }
         fireCommandsChanged();
-        Collection<? extends OsmPrimitive> newSelection = Main.main.getCurrentDataSet().getSelected();
+        Collection<? extends OsmPrimitive> newSelection = Main.getLayerManager().getEditDataSet().getSelected();
         if (!oldSelection.equals(newSelection)) {
-            Main.main.getCurrentDataSet().fireSelectionChanged();
+            Main.getLayerManager().getEditDataSet().fireSelectionChanged();
         }
     }
 

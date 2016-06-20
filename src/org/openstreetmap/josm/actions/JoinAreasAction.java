@@ -412,7 +412,7 @@ public class JoinAreasAction extends JosmAction {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        join(Main.main.getCurrentDataSet().getSelectedWays());
+        join(Main.getLayerManager().getEditDataSet().getSelectedWays());
     }
 
     /**
@@ -1424,7 +1424,7 @@ public class JoinAreasAction extends JosmAction {
     private List<RelationRole> removeFromAllRelations(OsmPrimitive osm) {
         List<RelationRole> result = new ArrayList<>();
 
-        for (Relation r : Main.main.getCurrentDataSet().getRelations()) {
+        for (Relation r : Main.getLayerManager().getEditDataSet().getRelations()) {
             if (r.isDeleted()) {
                 continue;
             }

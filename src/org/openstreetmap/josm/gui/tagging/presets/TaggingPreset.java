@@ -354,7 +354,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         if (Main.main == null) {
             return;
         }
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         Collection<OsmPrimitive> participants = Collections.emptyList();
         if (Main.main != null && ds != null) {
             participants = ds.getSelected();
@@ -519,7 +519,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     }
 
     protected final void updateEnabledState() {
-        setEnabled(Main.main != null && Main.main.getCurrentDataSet() != null);
+        setEnabled(Main.main != null && Main.getLayerManager().getEditDataSet() != null);
     }
 
     @Override
