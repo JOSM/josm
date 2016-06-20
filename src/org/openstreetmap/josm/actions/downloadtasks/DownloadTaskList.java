@@ -71,7 +71,7 @@ public class DownloadTaskList {
         this.progressMonitor = progressMonitor;
         if (newLayer) {
             Layer l = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
-            Main.main.addLayer(l);
+            Main.getLayerManager().addLayer(l);
             Main.getLayerManager().setActiveLayer(l);
         }
 

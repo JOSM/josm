@@ -820,11 +820,11 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                 String filename = getAssociatedFile().getName().replaceAll(Pattern.quote(".gpx.osm") + '$', "") + ".gpx";
                 gpxLayer.setAssociatedFile(new File(getAssociatedFile().getParentFile(), filename));
             }
-            Main.main.addLayer(gpxLayer);
+            Main.getLayerManager().addLayer(gpxLayer);
             if (Main.pref.getBoolean("marker.makeautomarkers", true) && !gpxData.waypoints.isEmpty()) {
-                Main.main.addLayer(new MarkerLayer(gpxData, tr("Converted from: {0}", getName()), null, gpxLayer));
+                Main.getLayerManager().addLayer(new MarkerLayer(gpxData, tr("Converted from: {0}", getName()), null, gpxLayer));
             }
-            Main.main.removeLayer(OsmDataLayer.this);
+            Main.getLayerManager().removeLayer(OsmDataLayer.this);
         }
     }
 

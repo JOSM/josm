@@ -31,13 +31,13 @@ public class DownloadAlongTrackActionTest {
     private static PleaseWaitRunnable createTask(String file) throws Exception {
         final OsmDataLayer layer = new OsmDataLayer(new DataSet(), DownloadAlongTrackActionTest.class.getName(), null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             // Perform action
             final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + file);
             return new DownloadAlongTrackAction(gpx).createTask();
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 

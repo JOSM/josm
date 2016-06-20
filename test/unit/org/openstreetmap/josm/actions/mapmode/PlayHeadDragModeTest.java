@@ -32,14 +32,14 @@ public class PlayHeadDragModeTest {
     public void testMode() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             PlayHeadDragMode mapMode = new PlayHeadDragMode(PlayHeadMarker.create());
             MapMode oldMapMode = Main.map.mapMode;
             assertTrue(Main.map.selectMapMode(mapMode));
             assertEquals(mapMode, Main.map.mapMode);
             assertTrue(Main.map.selectMapMode(oldMapMode));
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

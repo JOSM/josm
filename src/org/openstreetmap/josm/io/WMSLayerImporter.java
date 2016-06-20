@@ -87,7 +87,7 @@ public class WMSLayerImporter extends FileImporter {
         GuiHelper.runInEDT(new Runnable() {
             @Override
             public void run() {
-                Main.main.addLayer(layer);
+                Main.getLayerManager().addLayer(layer);
                 if (zoomTo != null) {
                     Main.map.mapView.zoomTo(zoomTo);
                 }

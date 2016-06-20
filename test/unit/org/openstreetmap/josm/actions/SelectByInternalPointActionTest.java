@@ -38,7 +38,7 @@ public final class SelectByInternalPointActionTest {
     @Test
     public void testNoDataSet() {
         while (Main.main.hasEditLayer()) {
-            Main.main.removeLayer(Main.getLayerManager().getEditLayer());
+            Main.getLayerManager().removeLayer(Main.getLayerManager().getEditLayer());
         }
         assertNull(JosmAction.getCurrentDataSet());
         assertEquals(0, SelectByInternalPointAction.getSurroundingObjects(null).size());
@@ -68,7 +68,7 @@ public final class SelectByInternalPointActionTest {
         r.addMember(new RelationMember("outer", w));
         ds.addPrimitive(r);
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
-        Main.main.addLayer(layer);
+        Main.getLayerManager().addLayer(layer);
         return layer;
     }
 
@@ -85,7 +85,7 @@ public final class SelectByInternalPointActionTest {
             assertEquals(0, SelectByInternalPointAction.getSurroundingObjects(new EastNorth(3, 3)).size());
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -100,7 +100,7 @@ public final class SelectByInternalPointActionTest {
             assertNotNull(SelectByInternalPointAction.getSmallestSurroundingObject(new EastNorth(1.5, 1.5)));
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -129,7 +129,7 @@ public final class SelectByInternalPointActionTest {
             assertEquals(4, ds.getSelected().size());
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

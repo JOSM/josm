@@ -36,7 +36,7 @@ public final class DeleteLayerAction extends JosmAction {
         if (!Main.saveUnsavedModifications(Collections.singletonList(activeLayer), false)) {
             return;
         }
-        Main.main.removeLayer(activeLayer);
+        Main.getLayerManager().removeLayer(activeLayer);
     }
 
     @Override

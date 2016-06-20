@@ -58,10 +58,10 @@ public class AddWayHandlerTest {
         thrown.expectMessage("Invalid coordinates: []");
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             newHandler(null).handle();
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -95,10 +95,10 @@ public class AddWayHandlerTest {
     public void testNominalRequest() throws Exception {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             newHandler("https://localhost?way=0,0;1,1").handle();
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

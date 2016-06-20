@@ -105,7 +105,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
             @Override
             public void run() {
                 try {
-                    Main.main.addLayer(ImageryLayer.create(imgInfo));
+                    Main.getLayerManager().addLayer(ImageryLayer.create(imgInfo));
                 } catch (IllegalArgumentException e) {
                     Main.error(e, false);
                 }

@@ -48,7 +48,7 @@ public class SelectionTableTest {
         // Add a new layer as active one
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             // Constructs models and table
             MemberTableModel memberTableModel = new MemberTableModel(r, layer, null);
             memberTableModel.populate(r);
@@ -83,7 +83,7 @@ public class SelectionTableTest {
                 memberTableModel.unregister();
             }
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

@@ -34,7 +34,7 @@ public class ConflictAddCommandTest {
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init(true);
         layer = new OsmDataLayer(new DataSet(), null, null);
-        Main.main.addLayer(layer);
+        Main.getLayerManager().addLayer(layer);
     }
 
     /**
@@ -42,7 +42,7 @@ public class ConflictAddCommandTest {
      */
     @AfterClass
     public static void tearDownAfterClass() {
-        Main.main.removeLayer(layer);
+        Main.getLayerManager().removeLayer(layer);
     }
 
     /**

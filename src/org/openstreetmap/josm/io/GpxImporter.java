@@ -120,10 +120,10 @@ public class GpxImporter extends FileImporter {
             @Override
             public void run() {
                 if (data.markerLayer != null) {
-                    Main.main.addLayer(data.markerLayer);
+                    Main.getLayerManager().addLayer(data.markerLayer);
                 }
                 if (data.gpxLayer != null) {
-                    Main.main.addLayer(data.gpxLayer);
+                    Main.getLayerManager().addLayer(data.gpxLayer);
                 }
                 data.postLayerTask.run();
             }

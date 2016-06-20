@@ -56,7 +56,7 @@ public class MergeLayerAction extends AbstractMergeAction {
                         GuiHelper.runInEDTAndWait(new Runnable() {
                             @Override
                             public void run() {
-                                Main.main.removeLayer(sourceLayer);
+                                Main.getLayerManager().removeLayer(sourceLayer);
                             }
                         });
                         layerMerged = true;

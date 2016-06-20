@@ -69,7 +69,7 @@ public final class DuplicateAction extends AbstractAction implements IEnabledSta
                 newName = tr("Copy {1} of {0}", oldLayer.getName(), i);
                 i++;
             }
-            Main.main.addLayer(new OsmDataLayer(new DataSet(oldLayer.data), newName, null));
+            Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(oldLayer.data), newName, null));
         }
     }
 

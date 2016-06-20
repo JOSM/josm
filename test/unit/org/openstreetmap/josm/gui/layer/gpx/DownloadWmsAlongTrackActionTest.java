@@ -46,7 +46,7 @@ public class DownloadWmsAlongTrackActionTest {
         // Create new TMS layer and clear cache
         TMSLayer layer = new TMSLayer(new ImageryInfo("OSM TMS", "https://a.tile.openstreetmap.org/{zoom}/{x}/{y}.png", "tms", null, null));
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             TMSLayer.getCache().clear();
             assertTrue(TMSLayer.getCache().getMatching(".*").isEmpty());
             // Perform action
@@ -57,7 +57,7 @@ public class DownloadWmsAlongTrackActionTest {
             assertFalse(TMSLayer.getCache().getMatching(".*").isEmpty());
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

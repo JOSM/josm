@@ -195,11 +195,11 @@ public class GpxLayerTest {
     public void testPaint() throws Exception {
         GpxLayer layer = getMinimalGpxLayer();
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertTrue(layer.getMenuEntries().length > 0);
             layer.paint(TestUtils.newGraphics(), Main.map.mapView, layer.data.getMetaBounds());
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

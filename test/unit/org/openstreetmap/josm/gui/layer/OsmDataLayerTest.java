@@ -43,7 +43,7 @@ public class OsmDataLayerTest {
         DataSet ds = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             int n = OsmDataLayer.PROPERTY_RECENT_RELATIONS_NUMBER.get();
             assertTrue(n > 0);
             for (int i = 0; i < 2*n; i++) {
@@ -59,7 +59,7 @@ public class OsmDataLayerTest {
             }
             assertTrue(layer.getRecentRelations().isEmpty());
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -133,11 +133,11 @@ public class OsmDataLayerTest {
         fillDataSet(ds);
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             assertTrue(layer.getMenuEntries().length > 0);
             layer.paint(TestUtils.newGraphics(), Main.map.mapView, new Bounds(LatLon.ZERO));
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 

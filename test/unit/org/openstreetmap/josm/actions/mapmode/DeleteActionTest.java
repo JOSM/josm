@@ -31,14 +31,14 @@ public class DeleteActionTest {
     public void testMode() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             DeleteAction mapMode = new DeleteAction(Main.map);
             MapMode oldMapMode = Main.map.mapMode;
             assertTrue(Main.map.selectMapMode(mapMode));
             assertEquals(mapMode, Main.map.mapMode);
             assertTrue(Main.map.selectMapMode(oldMapMode));
         } finally {
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
     }
 }

@@ -42,7 +42,7 @@ public class GeoImageLayerTest {
             assertTrue(reader.parse(true));
             GpxLayer gpxLayer = new GpxLayer(reader.getGpxData());
             try {
-                Main.main.addLayer(gpxLayer);
+                Main.getLayerManager().addLayer(gpxLayer);
                 assertEquals(1, Main.getLayerManager().getLayers().size());
                 new Loader(
                         Collections.singleton(new File(TestUtils.getRegressionDataFile(12255, "G0016941.JPG"))),
@@ -61,7 +61,7 @@ public class GeoImageLayerTest {
                 }
             } finally {
                 // Ensure we clean the place before leaving, even if test fails.
-                Main.main.removeLayer(gpxLayer);
+                Main.getLayerManager().removeLayer(gpxLayer);
             }
         }
     }

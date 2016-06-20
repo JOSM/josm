@@ -41,13 +41,13 @@ public class JoinAreasActionTest {
         try (InputStream is = TestUtils.getRegressionDataStream(10511, "10511_mini.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             Layer layer = new OsmDataLayer(ds, null, null);
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             // FIXME enable this test after we fix the bug. Test disabled for now
             // try {
             //     new JoinAreasAction().join(ds.getWays());
             // } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
             // }
         }
     }
@@ -63,7 +63,7 @@ public class JoinAreasActionTest {
             DataSet ds = OsmReader.parseDataSet(is, null);
             assertEquals(10, ds.getWays().size());
             Layer layer = new OsmDataLayer(ds, null, null);
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
             try {
                 for (String ref : new String[]{"A", "B", "C", "D", "E"}) {
                     System.out.print("Joining ways " + ref);
@@ -75,7 +75,7 @@ public class JoinAreasActionTest {
                 }
             } finally {
                 // Ensure we clean the place before leaving, even if test fails.
-                Main.main.removeLayer(layer);
+                Main.getLayerManager().removeLayer(layer);
             }
         }
     }

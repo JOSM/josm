@@ -58,7 +58,7 @@ public final class AlignInLineActionTest {
         Node point3 = new Node(new EastNorth(1, 1));
 
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
 
             // Create an open way.
             createWay(dataSet, point1, point2, point3);
@@ -69,7 +69,7 @@ public final class AlignInLineActionTest {
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
 
         // Points 1 and 3 are the extremities and must not have moved. Only point 2 must have moved.
@@ -98,7 +98,7 @@ public final class AlignInLineActionTest {
         Node point4 = new Node(new EastNorth(0, 2));
 
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
 
             // Create a closed way.
             createWay(dataSet, point1, point2, point3, point4, point1);
@@ -108,7 +108,7 @@ public final class AlignInLineActionTest {
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
 
         // Only point 1 must have moved.
@@ -138,7 +138,7 @@ public final class AlignInLineActionTest {
         Node point4 = new Node(new EastNorth(2, 0));
 
         try {
-            Main.main.addLayer(layer);
+            Main.getLayerManager().addLayer(layer);
 
             // Create 2 ways.
             createWay(dataSet, point1, point2);
@@ -151,7 +151,7 @@ public final class AlignInLineActionTest {
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.main.removeLayer(layer);
+            Main.getLayerManager().removeLayer(layer);
         }
 
         assertCoordEq(point1, 0, 2);
