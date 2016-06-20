@@ -90,16 +90,16 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
     private File rafDir;
 
     /** Should we keep adding to the recycle bin. False during optimization. */
-    boolean doRecycle = true;
+    private boolean doRecycle = true;
 
     /** Should we optimize real time */
-    boolean isRealTimeOptimizationEnabled = true;
+    private boolean isRealTimeOptimizationEnabled = true;
 
     /** Should we optimize on shutdown. */
-    boolean isShutdownOptimizationEnabled = true;
+    private boolean isShutdownOptimizationEnabled = true;
 
     /** are we currently optimizing the files */
-    boolean isOptimizing = false;
+    private boolean isOptimizing = false;
 
     /** The number of times the file has been optimized. */
     private int timesOptimized = 0;
