@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -12,7 +14,6 @@ import java.util.Locale;
 
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
@@ -131,12 +132,9 @@ public class JOSMFixture {
         if (Main.main == null) {
             new MainApplication().initialize();
         }
-        if (Main.map == null) {
-            Main.main.createMapFrame(null, null);
-        } else {
-            for (Layer l: Main.getLayerManager().getLayers()) {
-                Main.getLayerManager().removeLayer(l);
-            }
-        }
+        Main.getLayerManager().resetState();
+        assertTrue(Main.getLayerManager().getLayers().isEmpty());
+        assertNull(Main.getLayerManager().getEditLayer());
+        assertNull(Main.getLayerManager().getActiveLayer());
     }
 }

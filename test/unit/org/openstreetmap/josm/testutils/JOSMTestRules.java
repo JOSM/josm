@@ -156,6 +156,8 @@ public class JOSMTestRules implements TestRule {
      * @throws InitializationError If an error occured while creating the required environment.
      */
     protected void before() throws InitializationError {
+        cleanUpFromJosmFixture();
+
         // Tests are running headless by default.
         System.setProperty("java.awt.headless", "true");
 
@@ -208,6 +210,17 @@ public class JOSMTestRules implements TestRule {
         if (platform) {
             Main.determinePlatformHook();
         }
+    }
+
+    /**
+     * Clean up what test not using these test rules may have broken.
+     */
+    private void cleanUpFromJosmFixture() {
+        Main.getLayerManager().resetState();
+        Main.pref = null;
+        Main.platform = null;
+        Main.pref.put("osm-server.url", "invalid-server");
+        System.gc();
     }
 
     /**
