@@ -549,7 +549,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
 
         static SearchTask newSearchTask(SearchSetting setting) {
-            final DataSet ds = Main.main.getCurrentDataSet();
+            final DataSet ds = Main.getLayerManager().getEditDataSet();
             final Collection<OsmPrimitive> selection = new HashSet<>(ds.getAllSelected());
             return new SearchTask(ds, setting, selection, new Predicate<OsmPrimitive>() {
                 @Override
@@ -578,9 +578,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
                 Collection<OsmPrimitive> all;
                 if (setting.allElements) {
-                    all = Main.main.getCurrentDataSet().allPrimitives();
+                    all = Main.getLayerManager().getEditDataSet().allPrimitives();
                 } else {
-                    all = Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives();
+                    all = Main.getLayerManager().getEditDataSet().allNonDeletedCompletePrimitives();
                 }
                 final ProgressMonitor subMonitor = getProgressMonitor().createSubTaskMonitor(all.size(), false);
                 subMonitor.beginTask(trn("Searching in {0} object", "Searching in {0} objects", all.size(), all.size()));

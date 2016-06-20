@@ -71,7 +71,7 @@ public class LoadObjectHandler extends RequestHandler {
                 @Override
                 public void run() {
                     final List<PrimitiveId> downloaded = task.getDownloadedId();
-                    final DataSet ds = Main.main.getCurrentDataSet();
+                    final DataSet ds = Main.getLayerManager().getEditDataSet();
                     if (downloaded != null) {
                         GuiHelper.runInEDT(new Runnable() {
                             @Override

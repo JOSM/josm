@@ -150,7 +150,7 @@ public class ValidateUploadHook implements UploadHook {
             OsmValidator.initializeTests();
             OsmValidator.initializeErrorLayer();
             Main.map.validatorDialog.unfurlDialog();
-            Main.main.getCurrentDataSet().fireSelectionChanged();
+            Main.getLayerManager().getEditDataSet().fireSelectionChanged();
             return false;
         }
         return true;

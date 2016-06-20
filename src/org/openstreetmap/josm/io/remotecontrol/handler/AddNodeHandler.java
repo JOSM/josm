@@ -101,7 +101,7 @@ public class AddNodeHandler extends RequestHandler {
             Main.main.undoRedo.add(new AddCommand(node));
         }
 
-        Main.main.getCurrentDataSet().setSelected(node);
+        Main.getLayerManager().getEditDataSet().setSelected(node);
         if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             AutoScaleAction.autoScale("selection");
         } else {

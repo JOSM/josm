@@ -163,7 +163,7 @@ public abstract class UnconnectedWays extends Test {
         othernodes = new HashSet<>();
         mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0);
-        dsArea = Main.main == null || !Main.main.hasEditLayer() ? null : Main.main.getCurrentDataSet().getDataSourceArea();
+        dsArea = Main.main == null || !Main.main.hasEditLayer() ? null : Main.getLayerManager().getEditDataSet().getDataSourceArea();
     }
 
     protected Map<Node, Way> getWayEndNodesNearOtherHighway() {

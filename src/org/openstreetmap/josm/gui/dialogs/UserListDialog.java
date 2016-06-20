@@ -355,14 +355,14 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             for (int index: rows) {
                 users.add(data.get(index).user);
             }
-            Collection<OsmPrimitive> selected = Main.main.getCurrentDataSet().getAllSelected();
+            Collection<OsmPrimitive> selected = Main.getLayerManager().getEditDataSet().getAllSelected();
             Collection<OsmPrimitive> byUser = new LinkedList<>();
             for (OsmPrimitive p : selected) {
                 if (users.contains(p.getUser())) {
                     byUser.add(p);
                 }
             }
-            Main.main.getCurrentDataSet().setSelected(byUser);
+            Main.getLayerManager().getEditDataSet().setSelected(byUser);
         }
 
         public List<User> getSelectedUsers(int[] rows) {

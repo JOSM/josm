@@ -324,7 +324,7 @@ public class AutoScaleAction extends JosmAction {
                     v.visit(dataSources.get(lastZoomArea).bounds);
                 } else {
                     lastZoomArea = -1;
-                    Area sourceArea = Main.main.getCurrentDataSet().getDataSourceArea();
+                    Area sourceArea = Main.getLayerManager().getEditDataSet().getDataSourceArea();
                     if (sourceArea != null) {
                         v.visit(new Bounds(sourceArea.getBounds2D()));
                     }

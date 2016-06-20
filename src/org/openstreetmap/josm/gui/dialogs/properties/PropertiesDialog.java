@@ -608,7 +608,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     @Override
     public void setVisible(boolean b) {
         super.setVisible(b);
-        if (b && Main.main.getCurrentDataSet() != null) {
+        if (b && Main.getLayerManager().getEditDataSet() != null) {
             updateSelection();
         }
     }
@@ -1412,7 +1412,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
         super.preferenceChanged(e);
-        if ("display.discardable-keys".equals(e.getKey()) && Main.main.getCurrentDataSet() != null) {
+        if ("display.discardable-keys".equals(e.getKey()) && Main.getLayerManager().getEditDataSet() != null) {
             // Re-load data when display preference change
             updateSelection();
         }

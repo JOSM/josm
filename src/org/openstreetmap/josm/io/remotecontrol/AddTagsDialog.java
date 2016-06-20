@@ -241,7 +241,7 @@ public class AddTagsDialog extends ExtendedDialog {
     @Override
     protected void buttonAction(int buttonIndex, ActionEvent evt) {
         // if layer all layers were closed, ignore all actions
-        if (Main.main.getCurrentDataSet() != null && buttonIndex != 2) {
+        if (Main.getLayerManager().getEditDataSet() != null && buttonIndex != 2) {
             TableModel tm = propertyTable.getModel();
             for (int i = 0; i < tm.getRowCount(); i++) {
                 if (buttonIndex == 1 || (Boolean) tm.getValueAt(i, 0)) {
@@ -303,7 +303,7 @@ public class AddTagsDialog extends ExtendedDialog {
      */
     public static void addTags(String[][] keyValue, String sender, Collection<? extends OsmPrimitive> primitives) {
         if (trustedSenders.contains(sender)) {
-            if (Main.main.getCurrentDataSet() != null) {
+            if (Main.getLayerManager().getEditDataSet() != null) {
                 for (String[] row : keyValue) {
                     Main.main.undoRedo.add(new ChangePropertyCommand(primitives, row[0], row[1]));
                 }

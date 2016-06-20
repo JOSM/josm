@@ -118,7 +118,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                     if (!newLayer) {
                         // find out whether some data has already been downloaded
                         Area present = null;
-                        DataSet ds = Main.main.getCurrentDataSet();
+                        DataSet ds = Main.getLayerManager().getEditDataSet();
                         if (ds != null) {
                             present = ds.getDataSourceArea();
                         }
@@ -157,7 +157,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             GuiHelper.executeByMainWorkerInEDT(new Runnable() {
                 @Override
                 public void run() {
-                    DataSet ds = Main.main.getCurrentDataSet();
+                    DataSet ds = Main.getLayerManager().getEditDataSet();
                     if (ds == null) // e.g. download failed
                         return;
                     ds.clearSelection();
@@ -173,7 +173,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                 @Override
                 public void run() {
                     Set<OsmPrimitive> newSel = new HashSet<>();
-                    DataSet ds = Main.main.getCurrentDataSet();
+                    DataSet ds = Main.getLayerManager().getEditDataSet();
                     if (ds == null) // e.g. download failed
                         return;
                     for (SimplePrimitiveId id : toSelect) {
@@ -199,7 +199,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                 Main.worker.submit(new Runnable() {
                     @Override
                     public void run() {
-                        final DataSet ds = Main.main.getCurrentDataSet();
+                        final DataSet ds = Main.getLayerManager().getEditDataSet();
                         final Collection<OsmPrimitive> filteredPrimitives = Utils.filter(ds.allPrimitives(), search);
                         ds.setSelected(filteredPrimitives);
                         forTagAdd.addAll(filteredPrimitives);
@@ -220,12 +220,12 @@ public class LoadAndZoomHandler extends RequestHandler {
             Main.worker.submit(new Runnable() {
                 @Override
                 public void run() {
-                    if (Main.main.getCurrentDataSet() != null) {
+                    if (Main.getLayerManager().getEditDataSet() != null) {
                         if (args.containsKey("changeset_comment")) {
-                            Main.main.getCurrentDataSet().addChangeSetTag("comment", args.get("changeset_comment"));
+                            Main.getLayerManager().getEditDataSet().addChangeSetTag("comment", args.get("changeset_comment"));
                         }
                         if (args.containsKey("changeset_source")) {
-                            Main.main.getCurrentDataSet().addChangeSetTag("source", args.get("changeset_source"));
+                            Main.getLayerManager().getEditDataSet().addChangeSetTag("source", args.get("changeset_source"));
                         }
                     }
                 }

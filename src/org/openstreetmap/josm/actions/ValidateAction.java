@@ -72,9 +72,9 @@ public class ValidateAction extends JosmAction {
 
         Collection<OsmPrimitive> selection;
         if (getSelectedItems) {
-            selection = Main.main.getCurrentDataSet().getAllSelected();
+            selection = Main.getLayerManager().getEditDataSet().getAllSelected();
             if (selection.isEmpty()) {
-                selection = Main.main.getCurrentDataSet().allNonDeletedPrimitives();
+                selection = Main.getLayerManager().getEditDataSet().allNonDeletedPrimitives();
                 lastSelection = null;
             } else {
                 AggregatePrimitivesVisitor v = new AggregatePrimitivesVisitor();
@@ -83,7 +83,7 @@ public class ValidateAction extends JosmAction {
             }
         } else {
             if (lastSelection == null) {
-                selection = Main.main.getCurrentDataSet().allNonDeletedPrimitives();
+                selection = Main.getLayerManager().getEditDataSet().allNonDeletedPrimitives();
             } else {
                 selection = lastSelection;
             }
@@ -146,7 +146,7 @@ public class ValidateAction extends JosmAction {
                 public void run() {
                     Main.map.validatorDialog.tree.setErrors(errors);
                     Main.map.validatorDialog.unfurlDialog();
-                    Main.main.getCurrentDataSet().fireSelectionChanged();
+                    Main.getLayerManager().getEditDataSet().fireSelectionChanged();
                 }
             });
         }

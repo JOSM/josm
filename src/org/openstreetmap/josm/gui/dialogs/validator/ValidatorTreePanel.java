@@ -323,7 +323,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
         if (errors == null)
             return;
         clearErrors();
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         for (TestError error : newerrors) {
             if (!error.isIgnored()) {
                 errors.add(error);
@@ -442,7 +442,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
 
     private void clearErrors() {
         if (errors != null) {
-            DataSet ds = Main.main.getCurrentDataSet();
+            DataSet ds = Main.getLayerManager().getEditDataSet();
             if (ds != null) {
                 for (TestError e : errors) {
                     ds.removeDataSetListener(e);

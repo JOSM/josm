@@ -461,7 +461,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
          * @param mods modifiers (i.e. control keys)
          */
         private void popupCycleSelection(Collection<OsmPrimitive> osms, int mods) {
-            DataSet ds = Main.main.getCurrentDataSet();
+            DataSet ds = Main.getLayerManager().getEditDataSet();
             // Find some items that are required for cycling through
             OsmPrimitive firstItem = null;
             OsmPrimitive firstSelected = null;
@@ -565,7 +565,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
          * @param osm The primitive to derive the colors from
          */
         private void popupSetLabelColors(JLabel lbl, OsmPrimitive osm) {
-            DataSet ds = Main.main.getCurrentDataSet();
+            DataSet ds = Main.getLayerManager().getEditDataSet();
             if (ds.isSelected(osm)) {
                 lbl.setBackground(SystemColor.textHighlight);
                 lbl.setForeground(SystemColor.textHighlightText);
@@ -637,7 +637,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    DataSet ds = Main.main.getCurrentDataSet();
+                    DataSet ds = Main.getLayerManager().getEditDataSet();
                     // Let the user toggle the selection
                     ds.toggleSelected(osm);
                     l.validate();

@@ -124,7 +124,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                final DataSet ds = Main.main.getCurrentDataSet();
+                final DataSet ds = Main.getLayerManager().getEditDataSet();
                 if (ds == null) {
                     return;
                 }
@@ -173,7 +173,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     @Override
     public void showNotify() {
         DataSet.addSelectionListener(this);
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         if (ds != null) {
             updateSelection(ds.getAllSelected());
         }
@@ -341,7 +341,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 }
             }
         }
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         if (ds != null) {
             ds.setSelected(sel);
         }
@@ -478,7 +478,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             fixButton.setEnabled(hasFixes);
 
             if (isDblClick) {
-                Main.main.getCurrentDataSet().setSelected(sel);
+                Main.getLayerManager().getEditDataSet().setSelected(sel);
                 if (Main.pref.getBoolean("validator.autozoom", false)) {
                     AutoScaleAction.zoomTo(sel);
                 }
@@ -616,7 +616,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override
                     public void run() {
-                        Main.main.getCurrentDataSet().beginUpdate();
+                        Main.getLayerManager().getEditDataSet().beginUpdate();
                     }
                 });
                 try {
@@ -632,7 +632,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                     SwingUtilities.invokeAndWait(new Runnable() {
                         @Override
                         public void run() {
-                            Main.main.getCurrentDataSet().endUpdate();
+                            Main.getLayerManager().getEditDataSet().endUpdate();
                         }
                     });
                 }
@@ -643,7 +643,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                         Main.main.undoRedo.afterAdd();
                         Main.map.repaint();
                         tree.resetErrors();
-                        Main.main.getCurrentDataSet().fireSelectionChanged();
+                        Main.getLayerManager().getEditDataSet().fireSelectionChanged();
                     }
                 });
             } catch (InterruptedException | InvocationTargetException e) {

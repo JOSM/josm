@@ -31,7 +31,7 @@ public class SelectNonBranchingWaySequencesAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        DataSet ds = Main.main.getCurrentDataSet();
+        DataSet ds = Main.getLayerManager().getEditDataSet();
         SelectNonBranchingWaySequences ws = new SelectNonBranchingWaySequences(ds.getSelectedWays());
         ws.extend(ds);
     }
@@ -43,6 +43,6 @@ public class SelectNonBranchingWaySequencesAction extends JosmAction {
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.main.getCurrentDataSet() != null);
+        setEnabled(Main.getLayerManager().getEditDataSet() != null);
     }
 }
