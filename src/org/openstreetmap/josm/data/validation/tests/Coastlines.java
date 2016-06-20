@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
@@ -43,8 +43,7 @@ public class Coastlines extends Test {
      * Constructor
      */
     public Coastlines() {
-        super(tr("Coastlines"),
-                tr("This test checks that coastlines are correct."));
+        super(tr("Coastlines"), tr("This test checks that coastlines are correct."));
     }
 
     @Override
@@ -52,7 +51,7 @@ public class Coastlines extends Test {
 
         super.startTest(monitor);
 
-        OsmDataLayer layer = JosmAction.getEditLayer();
+        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
 
         if (layer != null) {
             downloadedArea = layer.data.getDataSourceArea();

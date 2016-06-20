@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -46,11 +47,12 @@ public class CopyCoordinatesAction extends JosmAction {
         updateEnabledState();
     }
 
-    private static Collection<Node> getSelectedNodes() {
-        if (getCurrentDataSet() == null || getCurrentDataSet().getSelected() == null) {
+    private Collection<Node> getSelectedNodes() {
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null || ds.getSelected() == null) {
             return Collections.emptyList();
         } else {
-            return Utils.filteredCollection(getCurrentDataSet().getSelected(), Node.class);
+            return Utils.filteredCollection(ds.getSelected(), Node.class);
         }
     }
 }

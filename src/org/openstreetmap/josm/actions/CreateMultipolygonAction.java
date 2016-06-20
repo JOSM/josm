@@ -175,8 +175,9 @@ public class CreateMultipolygonAction extends JosmAction {
         Main.worker.submit(new CreateUpdateMultipolygonTask(selectedWays, multipolygonRelation));
     }
 
-    private static Relation getSelectedMultipolygonRelation() {
-        return getSelectedMultipolygonRelation(getCurrentDataSet().getSelectedWays(), getCurrentDataSet().getSelectedRelations());
+    private Relation getSelectedMultipolygonRelation() {
+        DataSet ds = getLayerManager().getEditDataSet();
+        return getSelectedMultipolygonRelation(ds.getSelectedWays(), ds.getSelectedRelations());
     }
 
     private static Relation getSelectedMultipolygonRelation(Collection<Way> selectedWays, Collection<Relation> selectedRelations) {

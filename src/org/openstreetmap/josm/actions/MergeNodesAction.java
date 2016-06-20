@@ -271,7 +271,7 @@ public class MergeNodesAction extends JosmAction {
         Command cmd = mergeNodes(layer, nodes, target, targetLocationNode);
         if (cmd != null) {
             Main.main.undoRedo.add(cmd);
-            getCurrentDataSet().setSelected(target);
+            layer.data.setSelected(target);
         }
     }
 

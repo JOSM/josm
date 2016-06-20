@@ -559,11 +559,11 @@ public class UnGlueAction extends JosmAction {
      * @param cmds Commands to execute
      * @param newNodes New created nodes by this set of command
      */
-    private static void execCommands(List<Command> cmds, List<Node> newNodes) {
+    private void execCommands(List<Command> cmds, List<Node> newNodes) {
         Main.main.undoRedo.add(new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
                 trn("Dupe into {0} node", "Dupe into {0} nodes", newNodes.size() + 1L, newNodes.size() + 1L), cmds));
         // select one of the new nodes
-        getCurrentDataSet().setSelected(newNodes.get(0));
+        getLayerManager().getEditDataSet().setSelected(newNodes.get(0));
     }
 
     /**

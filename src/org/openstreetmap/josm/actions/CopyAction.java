@@ -63,7 +63,7 @@ public final class CopyAction extends JosmAction {
         Main.pasteSource = source;
     }
 
-    public static String getCopyString(Collection<? extends OsmPrimitive> primitives) {
+    static String getCopyString(Collection<? extends OsmPrimitive> primitives) {
         StringBuilder idsBuilder = new StringBuilder();
         for (OsmPrimitive p : primitives) {
             idsBuilder.append(OsmPrimitiveType.from(p).getAPIName()).append(' ').append(p.getId()).append(',');
@@ -81,8 +81,8 @@ public final class CopyAction extends JosmAction {
         setEnabled(selection != null && !selection.isEmpty());
     }
 
-    private static boolean isEmptySelection() {
-        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
+    private boolean isEmptySelection() {
+        Collection<OsmPrimitive> sel = getLayerManager().getEditDataSet().getSelected();
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,

@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationDialogManager;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.util.ModifierListener;
@@ -137,16 +138,17 @@ public class DeleteAction extends MapMode implements ModifierListener {
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK | InputEvent.ALT_GRAPH_MASK)) != 0;
 
+        MainLayerManager lm = Main.getLayerManager();
         Command c;
         if (ctrl) {
-            c = DeleteCommand.deleteWithReferences(getEditLayer(), getCurrentDataSet().getSelected());
+            c = DeleteCommand.deleteWithReferences(lm.getEditLayer(), lm.getEditDataSet().getSelected());
         } else {
-            c = DeleteCommand.delete(getEditLayer(), getCurrentDataSet().getSelected(), !alt /* also delete nodes in way */);
+            c = DeleteCommand.delete(lm.getEditLayer(), lm.getEditDataSet().getSelected(), !alt /* also delete nodes in way */);
         }
         // if c is null, an error occurred or the user aborted. Don't do anything in that case.
         if (c != null) {
             Main.main.undoRedo.add(c);
-            getCurrentDataSet().setSelected();
+            lm.getEditDataSet().setSelected();
             Main.map.repaint();
         }
     }
@@ -169,9 +171,9 @@ public class DeleteAction extends MapMode implements ModifierListener {
     /**
      * removes any highlighting that may have been set beforehand.
      */
-    private static void removeHighlighting() {
+    private void removeHighlighting() {
         highlightHelper.clear();
-        DataSet ds = getCurrentDataSet();
+        DataSet ds = getLayerManager().getEditDataSet();
         if (ds != null) {
             ds.clearHighlightedWaySegments();
         }
