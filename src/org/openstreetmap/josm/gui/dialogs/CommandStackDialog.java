@@ -38,6 +38,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -267,7 +268,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
      */
     private void buildTrees() {
         setTitle(tr("Command Stack"));
-        if (!Main.main.hasEditLayer())
+        if (Main.getLayerManager().getEditLayer() == null)
             return;
 
         List<Command> undoCommands = Main.main.undoRedo.commands;
@@ -388,9 +389,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             } else
                 throw new IllegalStateException();
 
-            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
-            if (editLayer == null) return;
-            editLayer.data.setSelected(getAffectedPrimitives(path));
+            DataSet dataSet = Main.getLayerManager().getEditDataSet();
+            if (dataSet == null) return;
+            dataSet.setSelected(getAffectedPrimitives(path));
         }
 
         @Override
@@ -416,7 +417,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         @Override
         public void actionPerformed(ActionEvent e) {
             super.actionPerformed(e);
-            if (!Main.main.hasEditLayer()) return;
             AutoScaleAction.autoScale("selection");
         }
     }

@@ -265,11 +265,7 @@ public class NodeListViewer extends JPanel {
         }
 
         public void updateEnabledState() {
-            if (!Main.main.hasEditLayer()) {
-                setEnabled(false);
-                return;
-            }
-            setEnabled(getPrimitiveToZoom() != null);
+            setEnabled(Main.getLayerManager().getEditLayer() != null && getPrimitiveToZoom() != null);
         }
     }
 

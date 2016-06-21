@@ -44,7 +44,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (Main.main.hasEditLayer()) {
+            if (Main.getLayerManager().getEditLayer() != null) {
                 TaggingPresetSearchPrimitiveDialog.getInstance().showDialog();
             }
         }

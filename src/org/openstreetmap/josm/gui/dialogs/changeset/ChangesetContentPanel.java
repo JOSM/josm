@@ -332,10 +332,13 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
     abstract class SelectionBasedAction extends AbstractAction implements ListSelectionListener, ActiveLayerChangeListener {
 
         protected Set<OsmPrimitive> getTarget() {
-            if (!isEnabled() || Main.main == null || !Main.main.hasEditLayer()) {
+            if (!isEnabled()) {
                 return null;
             }
             OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+            if (layer == null) {
+                return null;
+            }
             Set<OsmPrimitive> target = new HashSet<>();
             for (HistoryOsmPrimitive p : model.getSelectedPrimitives()) {
                 OsmPrimitive op = layer.data.getPrimitiveById(p.getPrimitiveId());
@@ -347,11 +350,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         public final void updateEnabledState() {
-            if (Main.main == null || !Main.main.hasEditLayer()) {
-                setEnabled(false);
-                return;
-            }
-            setEnabled(model.hasSelectedPrimitives());
+            setEnabled(Main.getLayerManager().getEditLayer() != null && model.hasSelectedPrimitives());
         }
 
         @Override

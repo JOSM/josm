@@ -346,8 +346,10 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
                 return;
-            if (Main.main == null || !Main.main.hasEditLayer()) return;
             OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+            if (layer == null) {
+                return;
+            }
             Set<OsmPrimitive> target = new HashSet<>();
             for (OsmPrimitive p: layer.data.allPrimitives()) {
                 if (p.isUsable() && p.getChangesetId() == currentChangeset.getId()) {
@@ -362,11 +364,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         }
 
         public void updateEnabledState() {
-            if (Main.main == null || !Main.main.hasEditLayer()) {
-                setEnabled(false);
-                return;
-            }
-            setEnabled(currentChangeset != null);
+            setEnabled(Main.getLayerManager().getEditLayer() != null && currentChangeset != null);
         }
 
         @Override
@@ -407,8 +405,10 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
                 return;
-            if (Main.main == null || !Main.main.hasEditLayer()) return;
             OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+            if (layer == null) {
+                return;
+            }
             Set<OsmPrimitive> target = new HashSet<>();
             for (OsmPrimitive p: layer.data.allPrimitives()) {
                 if (p.isUsable() && p.getChangesetId() == currentChangeset.getId()) {
@@ -424,11 +424,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         }
 
         public void updateEnabledState() {
-            if (Main.main == null || !Main.main.hasEditLayer()) {
-                setEnabled(false);
-                return;
-            }
-            setEnabled(currentChangeset != null);
+            setEnabled(Main.getLayerManager().getEditLayer() != null && currentChangeset != null);
         }
 
         @Override

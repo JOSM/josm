@@ -113,7 +113,7 @@ public class AddWayHandler extends RequestHandler {
         } else if (allCoordinates.size() == 1) {
             throw new RequestHandlerBadRequestException(tr("One node ways"));
         }
-        if (!Main.main.hasEditLayer()) {
+        if (Main.getLayerManager().getEditLayer() == null) {
              throw new RequestHandlerBadRequestException(tr("There is no layer opened to add way"));
         }
     }
