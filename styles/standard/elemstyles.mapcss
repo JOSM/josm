@@ -451,12 +451,9 @@ node[barrier=spikes] {
     icon-image: "vehicle/spikes.svg";
     set icon_z17;
 }
-node[barrier=fence][!is_prop_set(icon-image)],
 node[barrier=kissing_gate][!is_prop_set(icon-image)],
 node[barrier=bump_gate][!is_prop_set(icon-image)],
-node[barrier=portcullis][!is_prop_set(icon-image)],
 node[barrier=bus_trap][!is_prop_set(icon-image)],
-node[barrier=drawbridge][!is_prop_set(icon-image)],
 node[barrier=jersey_barrier][!is_prop_set(icon-image)],
 node[barrier=hampshire_gate][!is_prop_set(icon-image)] {
     icon-image: "misc/no_icon.png";
