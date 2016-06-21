@@ -3228,13 +3228,15 @@
                 <text key="network" text="Network" />
                 <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             </optional>
-            <check key="bus" text="Bus" />
-            <check key="highway" value_on="bus_stop" value_off="" text="Bus stop (legacy)" />
-            <check key="tram" text="Tram" />
-            <check key="railway" value_on="tram_stop" value_off="" text="Tram stop (legacy)" />
-            <check key="train" text="Train" />
-            <check key="railway" value_on="station" value_off="" text="Railway station (legacy)" />
-            <check key="railway" value_on="halt" value_off="" text="Railway halt (legacy)" />
+            <space />
+            <checkgroup columns="2">
+                <check key="bus" text="Bus" />
+                <check key="highway" value_on="bus_stop" value_off="" text="Bus stop (legacy)" />
+                <check key="tram" text="Tram" />
+                <check key="railway" value_on="tram_stop" value_off="" text="Tram stop (legacy)" />
+                <check key="train" text="Train" />
+                <check key="railway" value_on="halt" value_off="" text="Railway halt (legacy)" />
+            </checkgroup>
             <check key="trolleybus" text="Trolleybus" />
             <check key="share_taxi" text="Share taxi" />
             <check key="subway" text="Subway" />
