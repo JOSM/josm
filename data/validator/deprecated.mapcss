@@ -848,3 +848,9 @@ way[railway=rail][service][service !~ /^(crossover|siding|spur|yard)$/],
 way[waterway=canal][service][service !~ /^(irrigation|transportation|water_power)$/] {
   throwWarning: tr("The key {0} has an uncommon value.", "{1.key}");
 }
+
+/* #13008 */
+*[name:botanical] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "species";
+}

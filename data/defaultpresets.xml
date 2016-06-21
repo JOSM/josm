@@ -8998,13 +8998,10 @@
             <key key="natural" value="tree" />
             <text key="name" text="Name" />
             <text key="height" text="Height (meters)" />
-            <text key="name:botanical" text="Botanical Name" />
-            <optional>
-                <text key="genus" text="Genus" />
-                <text key="species" text="Species" />
-                <text key="taxon" text="Taxon" />
-                <reference ref="leaf" />
-            </optional>
+            <text key="genus" text="Genus" />
+            <text key="species" text="Species" />
+            <text key="taxon" text="Taxon" />
+            <reference ref="leaf" />
         </item> <!-- Tree -->
         <item name="Tree Row" icon="styles/standard/misc/landmark/tree_row.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=tree_row"
