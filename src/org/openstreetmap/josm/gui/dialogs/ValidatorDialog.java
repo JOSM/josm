@@ -607,16 +607,16 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         }
 
         @Override
-        protected void realRun() throws SAXException, IOException,
-        OsmTransferException {
+        protected void realRun() throws SAXException, IOException, OsmTransferException {
             ProgressMonitor monitor = getProgressMonitor();
             try {
                 monitor.setTicksCount(testErrors.size());
+                final DataSet ds = Main.getLayerManager().getEditDataSet();
                 int i = 0;
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override
                     public void run() {
-                        Main.getLayerManager().getEditDataSet().beginUpdate();
+                        ds.beginUpdate();
                     }
                 });
                 try {
@@ -632,7 +632,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                     SwingUtilities.invokeAndWait(new Runnable() {
                         @Override
                         public void run() {
-                            Main.getLayerManager().getEditDataSet().endUpdate();
+                            ds.endUpdate();
                         }
                     });
                 }
@@ -643,7 +643,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                         Main.main.undoRedo.afterAdd();
                         Main.map.repaint();
                         tree.resetErrors();
-                        Main.getLayerManager().getEditDataSet().fireSelectionChanged();
+                        ds.fireSelectionChanged();
                     }
                 });
             } catch (InterruptedException | InvocationTargetException e) {

@@ -147,7 +147,10 @@ public abstract class Command extends PseudoCommand {
     /**
      * Executes the command on the dataset. This implementation will remember all
      * primitives returned by fillModifiedData for restoring them on undo.
+     * <p>
+     * The layer should be invalidated after execution so that it can be re-painted.
      * @return true
+     * @see #invalidateAffectedLayers()
      */
     public boolean executeCommand() {
         CloneVisitor visitor = new CloneVisitor();
@@ -298,5 +301,16 @@ public abstract class Command extends PseudoCommand {
         Command command = (Command) obj;
         return Objects.equals(cloneMap, command.cloneMap) &&
                 Objects.equals(layer, command.layer);
+    }
+
+    /**
+     * Invalidate all layers that were affected by this command.
+     * @see Layer#invalidate()
+     */
+    public void invalidateAffectedLayers() {
+        OsmDataLayer layer = getLayer();
+        if (layer != null) {
+            layer.invalidate();
+        }
     }
 }
