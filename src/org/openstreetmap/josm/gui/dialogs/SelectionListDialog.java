@@ -309,7 +309,7 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         protected void updateEnabledState() {
-            setEnabled(Main.main != null && Main.main.hasEditLayer());
+            setEnabled(Main.getLayerManager().getEditLayer() != null);
         }
 
         @Override

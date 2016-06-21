@@ -338,7 +338,7 @@ public class RelationListDialog extends ToggleDialog
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (!Main.main.hasEditLayer()) return;
+            if (Main.getLayerManager().getEditLayer() == null) return;
             if (isDoubleClick(e)) {
                 if (e.isControlDown()) {
                     editCurrentRelation();
@@ -370,7 +370,7 @@ public class RelationListDialog extends ToggleDialog
         }
 
         protected void updateEnabledState() {
-            setEnabled(Main.main != null && Main.main.hasEditLayer());
+            setEnabled(Main.getLayerManager().getEditLayer() != null);
         }
 
         @Override

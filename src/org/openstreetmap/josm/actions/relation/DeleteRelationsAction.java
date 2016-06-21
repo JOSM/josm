@@ -9,6 +9,7 @@ import java.util.Collection;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -27,9 +28,11 @@ public class DeleteRelationsAction extends AbstractRelationAction {
     }
 
     protected void deleteRelation(Collection<Relation> toDelete) {
-        if (toDelete == null)
+        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+        if (toDelete == null || layer == null)
             return;
-        DeleteAction.deleteRelations(Main.getLayerManager().getEditLayer(), toDelete);
+
+        DeleteAction.deleteRelations(layer, toDelete);
         // clear selection after deletion
         if (Main.map.relationListDialog != null)
                 Main.map.relationListDialog.selectRelations(null);
@@ -37,7 +40,7 @@ public class DeleteRelationsAction extends AbstractRelationAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || !Main.main.hasEditLayer())
+        if (!isEnabled())
             return;
         deleteRelation(relations);
     }

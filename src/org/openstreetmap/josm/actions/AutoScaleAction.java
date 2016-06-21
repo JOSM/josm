@@ -73,9 +73,11 @@ public class AutoScaleAction extends JosmAction {
      *
      */
     public static void zoomToSelection() {
-        if (Main.main == null || !Main.main.hasEditLayer())
+        DataSet dataSet = Main.getLayerManager().getEditDataSet();
+        if (dataSet == null) {
             return;
-        Collection<OsmPrimitive> sel = Main.getLayerManager().getEditLayer().data.getSelected();
+        }
+        Collection<OsmPrimitive> sel = dataSet.getSelected();
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -278,7 +280,10 @@ public class AutoScaleAction extends JosmAction {
     private BoundingXYVisitor modeSelectionOrConflict(BoundingXYVisitor v) {
         Collection<OsmPrimitive> sel = new HashSet<>();
         if ("selection".equals(mode)) {
-            sel = getLayerManager().getEditDataSet().getSelected();
+            DataSet dataSet = getLayerManager().getEditDataSet();
+            if (dataSet != null) {
+                sel = dataSet.getSelected();
+            }
         } else {
             Conflict<? extends OsmPrimitive> c = Main.map.conflictDialog.getSelectedConflict();
             if (c != null) {

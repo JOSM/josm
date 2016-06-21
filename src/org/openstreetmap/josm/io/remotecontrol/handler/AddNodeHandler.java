@@ -119,7 +119,7 @@ public class AddNodeHandler extends RequestHandler {
         } catch (NumberFormatException e) {
             throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+')', e);
         }
-        if (!Main.main.hasEditLayer()) {
+        if (Main.getLayerManager().getEditLayer() == null) {
              throw new RequestHandlerBadRequestException(tr("There is no layer opened to add node"));
         }
     }

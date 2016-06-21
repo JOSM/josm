@@ -41,6 +41,6 @@ public class ViewportFollowToggleAction extends ToggleAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.main.hasEditLayer());
+        setEnabled(Main.getLayerManager().getEditDataSet() != null);
     }
 }
