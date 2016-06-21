@@ -125,6 +125,14 @@ public class SequenceCommand extends Command {
     }
 
     @Override
+    public void invalidateAffectedLayers() {
+        super.invalidateAffectedLayers();
+        for (Command c : sequence) {
+            c.invalidateAffectedLayers();
+        }
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), Arrays.hashCode(sequence), sequenceComplete, name, continueOnError);
     }

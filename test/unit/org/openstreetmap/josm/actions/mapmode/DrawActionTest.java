@@ -52,6 +52,7 @@ public class DrawActionTest {
     public void testTicket12011() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
+        Main.getLayerManager().addLayer(layer);
 
         Field mapView = MapFrame.class.getDeclaredField("mapView");
         Utils.setObjectsAccessible(mapView);
@@ -67,7 +68,6 @@ public class DrawActionTest {
         w.setNodes(Arrays.asList(new Node[] {n1, n2}));
         dataSet.addPrimitive(w);
 
-        Main.getLayerManager().addLayer(layer);
         try {
             assertTrue(Main.map.selectDrawTool(false));
 
