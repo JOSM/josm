@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,10 +14,13 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Unit tests of {@link JoinAreasAction} class.
@@ -64,18 +68,16 @@ public class JoinAreasActionTest {
             assertEquals(10, ds.getWays().size());
             Layer layer = new OsmDataLayer(ds, null, null);
             Main.getLayerManager().addLayer(layer);
-            try {
-                for (String ref : new String[]{"A", "B", "C", "D", "E"}) {
-                    System.out.print("Joining ways " + ref);
-                    SearchAction.search("type:way ref="+ref, SearchAction.SearchMode.replace);
-                    assertEquals(2, ds.getSelectedWays().size());
-                    Main.main.menu.joinAreas.join(ds.getSelectedWays());
-                    assertEquals(1, ds.getSelectedWays().size());
-                    System.out.println(" ==> OK");
-                }
-            } finally {
-                // Ensure we clean the place before leaving, even if test fails.
-                Main.getLayerManager().removeLayer(layer);
+            for (String ref : new String[]{"A", "B", "C", "D", "E"}) {
+                System.out.print("Joining ways " + ref);
+                Collection<OsmPrimitive> found = SearchAction.searchAndReturn("type:way ref="+ref, SearchAction.SearchMode.replace);
+                assertEquals(2, found.size());
+
+                Main.main.menu.joinAreas.join(Utils.filteredCollection(found, Way.class));
+
+                Collection<OsmPrimitive> found2 = SearchAction.searchAndReturn("type:way ref="+ref, SearchAction.SearchMode.replace);
+                assertEquals(1, found2.size());
+                System.out.println(" ==> OK");
             }
         }
     }
