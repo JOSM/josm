@@ -755,7 +755,7 @@ public class GenericRelationEditor extends RelationEditor {
             memberTable.stopHighlighting();
             selectionTableModel.unregister();
             memberTableModel.unregister();
-            memberTable.unlinkAsListener();
+            memberTable.unregisterListeners();
             if (windowMenuItem != null) {
                 Main.main.menu.windowMenu.remove(windowMenuItem);
                 windowMenuItem = null;

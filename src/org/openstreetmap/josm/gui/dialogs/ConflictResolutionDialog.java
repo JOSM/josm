@@ -51,6 +51,12 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
     }
 
     @Override
+    public void addNotify() {
+        super.addNotify();
+        registerListeners();
+    }
+
+    @Override
     public void setVisible(boolean isVisible) {
         String geom = getClass().getName() + ".geometry";
         if (isVisible) {
@@ -61,7 +67,6 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
             if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
                 new WindowGeometry(this).remember(geom);
             }
-            unregisterListeners();
         }
         super.setVisible(isVisible);
     }
@@ -98,6 +103,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
 
     private void registerListeners() {
         resolver.addPropertyChangeListener(applyResolutionAction);
+        resolver.registerListeners();
     }
 
     private void unregisterListeners() {
@@ -125,8 +131,6 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
 
         resolver.addPropertyChangeListener(this);
         HelpUtil.setHelpContext(this.getRootPane(), ht("Dialog/Conflict"));
-
-        registerListeners();
     }
 
     /**
