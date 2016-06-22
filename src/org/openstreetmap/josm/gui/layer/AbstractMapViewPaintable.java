@@ -45,7 +45,7 @@ public abstract class AbstractMapViewPaintable implements MapViewPaintable {
      * This method is called whenever this layer is added to a map view.
      * <p>
      * You need to return a painter here.
-     * The {@link MapViewPaintable.LayerPainter#detachFromMapView(MapViewEvent)} method is called when the layer is removed
+     * The {@link MapViewPaintable.LayerPainter#detachFromMapView} method is called when the layer is removed
      * from that map view. You are free to reuse painters.
      * <p>
      * You should always call the super method. See {@link #createMapViewPainter} if you want to influence painter creation.
