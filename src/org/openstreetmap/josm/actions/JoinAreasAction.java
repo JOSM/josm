@@ -499,7 +499,6 @@ public class JoinAreasAction extends JosmAction {
                 }
                 if (ds != null) {
                     ds.setSelected(allWays);
-                    Main.map.mapView.repaint();
                 }
             } else {
                 new Notification(

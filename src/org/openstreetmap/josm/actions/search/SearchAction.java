@@ -529,7 +529,89 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     }
 
     static void search(SearchSetting s) {
-        SearchTask.newSearchTask(s).run();
+        SearchTask.newSearchTask(s, new SelectSearchReceiver()).run();
+    }
+
+    /**
+     * Performs the search specified by the search string {@code search} and the search mode {@code mode} and returns the result of the search.
+     *
+     * @param search the search string to use
+     * @param mode the search mode to use
+     * @return The result of the search.
+     * @since 10457
+     */
+    public static Collection<OsmPrimitive> searchAndReturn(String search, SearchMode mode) {
+        final SearchSetting searchSetting = new SearchSetting();
+        searchSetting.text = search;
+        searchSetting.mode = mode;
+        CapturingSearchReceiver receiver = new CapturingSearchReceiver();
+        SearchTask.newSearchTask(searchSetting, receiver).run();
+        return receiver.result;
+    }
+
+    /**
+     * Interfaces implementing this may receive the result of the current search.
+     * @author Michael Zangl
+     * @since 10457
+     */
+    interface SearchReceiver {
+        /**
+         * Receive the search result
+         * @param ds The data set searched on.
+         * @param result The result collection, including the initial collection.
+         * @param foundMatches The number of matches added to the result.
+         * @param setting The setting used.
+         */
+        void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches, SearchSetting setting);
+    }
+
+    /**
+     * Select the search result and display a status text for it.
+     */
+    private static class SelectSearchReceiver implements SearchReceiver {
+
+        @Override
+        public void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches, SearchSetting setting) {
+            ds.setSelected(result);
+            if (foundMatches == 0) {
+                final String msg;
+                final String text = Utils.shortenString(setting.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY);
+                if (setting.mode == SearchMode.replace) {
+                    msg = tr("No match found for ''{0}''", text);
+                } else if (setting.mode == SearchMode.add) {
+                    msg = tr("Nothing added to selection by searching for ''{0}''", text);
+                } else if (setting.mode == SearchMode.remove) {
+                    msg = tr("Nothing removed from selection by searching for ''{0}''", text);
+                } else if (setting.mode == SearchMode.in_selection) {
+                    msg = tr("Nothing found in selection by searching for ''{0}''", text);
+                } else {
+                    msg = null;
+                }
+                Main.map.statusLine.setHelpText(msg);
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        msg,
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
+            } else {
+                Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
+            }
+        }
+    }
+
+    /**
+     * This class stores the result of the search in a local variable.
+     * @author Michael Zangl
+     */
+    private static final class CapturingSearchReceiver implements SearchReceiver {
+        private Collection<OsmPrimitive> result;
+
+        @Override
+        public void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches,
+                SearchSetting setting) {
+                    this.result = result;
+        }
     }
 
     static final class SearchTask extends PleaseWaitRunnable {
@@ -539,24 +621,37 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         private final Predicate<OsmPrimitive> predicate;
         private boolean canceled;
         private int foundMatches;
+        private SearchReceiver resultReceiver;
 
-        private SearchTask(DataSet ds, SearchSetting setting, Collection<OsmPrimitive> selection, Predicate<OsmPrimitive> predicate) {
+        private SearchTask(DataSet ds, SearchSetting setting, Collection<OsmPrimitive> selection, Predicate<OsmPrimitive> predicate,
+                SearchReceiver resultReceiver) {
             super(tr("Searching"));
             this.ds = ds;
             this.setting = setting;
             this.selection = selection;
             this.predicate = predicate;
+            this.resultReceiver = resultReceiver;
         }
 
-        static SearchTask newSearchTask(SearchSetting setting) {
+        static SearchTask newSearchTask(SearchSetting setting, SearchReceiver resultReceiver) {
             final DataSet ds = Main.getLayerManager().getEditDataSet();
+            return newSearchTask(setting, ds, resultReceiver);
+        }
+
+        /**
+         * Create a new search task for the given search setting.
+         * @param setting The setting to use
+         * @param ds The data set to search on
+         * @return A new search task.
+         */
+        private static SearchTask newSearchTask(SearchSetting setting, final DataSet ds, SearchReceiver resultReceiver) {
             final Collection<OsmPrimitive> selection = new HashSet<>(ds.getAllSelected());
             return new SearchTask(ds, setting, selection, new Predicate<OsmPrimitive>() {
                 @Override
                 public boolean evaluate(OsmPrimitive o) {
                     return ds.isSelected(o);
                 }
-            });
+            }, resultReceiver);
         }
 
         @Override
@@ -613,7 +708,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                         e.getMessage(),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
-
                 );
             }
         }
@@ -623,31 +717,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             if (canceled) {
                 return;
             }
-            ds.setSelected(selection);
-            if (foundMatches == 0) {
-                final String msg;
-                final String text = Utils.shortenString(setting.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY);
-                if (setting.mode == SearchMode.replace) {
-                    msg = tr("No match found for ''{0}''", text);
-                } else if (setting.mode == SearchMode.add) {
-                    msg = tr("Nothing added to selection by searching for ''{0}''", text);
-                } else if (setting.mode == SearchMode.remove) {
-                    msg = tr("Nothing removed from selection by searching for ''{0}''", text);
-                } else if (setting.mode == SearchMode.in_selection) {
-                    msg = tr("Nothing found in selection by searching for ''{0}''", text);
-                } else {
-                    msg = null;
-                }
-                Main.map.statusLine.setHelpText(msg);
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        msg,
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                );
-            } else {
-                Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
-            }
+            resultReceiver.receiveSearchResult(ds, selection, foundMatches, setting);
         }
     }
 
