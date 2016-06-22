@@ -291,12 +291,13 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016061700, Last Updated Fri Jun 17 07:07:02 2016 UTC
+        // Taken from Version 2016062200, Last Updated Wed Jun 22 07:07:02 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
         "abbott", // abbott Abbott Laboratories, Inc.
         "abbvie", // abbvie AbbVie Inc.
+        "able", // able Able Inc.
         "abogado", // abogado Top Level Domain Holdings Limited
         "abudhabi", // abudhabi Abu Dhabi Systems and Information Centre
         "academy", // academy Half Oaks, LLC
@@ -331,6 +332,7 @@ public final class DomainValidator extends AbstractValidator {
         "analytics", // analytics Campus IP LLC
         "android", // android Charleston Road Registry Inc.
         "anquan", // anquan QIHOO 360 TECHNOLOGY CO. LTD.
+        "anz", // anz Australia and New Zealand Banking Group Limited
         "apartments", // apartments June Maple, LLC
         "app", // app Charleston Road Registry Inc.
         "apple", // apple Apple Inc.
@@ -385,6 +387,7 @@ public final class DomainValidator extends AbstractValidator {
         "biz", // biz Neustar, Inc.
         "black", // black Afilias Limited
         "blackfriday", // blackfriday Uniregistry, Corp.
+        "blanco", // blanco BLANCO GmbH + Co KG
         "blog", // blog Knock Knock WHOIS There, LLC
         "bloomberg", // bloomberg Bloomberg IP Holdings LLC
         "blue", // blue Afilias Limited
@@ -734,6 +737,7 @@ public final class DomainValidator extends AbstractValidator {
         "ist", // ist Istanbul Metropolitan Municipality
         "istanbul", // istanbul Istanbul Metropolitan Municipality / Medya A.S.
         "itau", // itau Itau Unibanco Holding S.A.
+        "itv", // itv ITV Services Limited
         "iwc", // iwc Richemont DNS Inc.
         "jaguar", // jaguar Jaguar Land Rover Ltd
         "java", // java Oracle Corporation
@@ -1066,6 +1070,7 @@ public final class DomainValidator extends AbstractValidator {
         "shiksha", // shiksha Afilias Limited
         "shoes", // shoes Binky Galley, LLC
         "shop", // shop GMO Registry, Inc.
+        "shopping", // shopping Over Keep, LLC
         "shouji", // shouji QIHOO 360 TECHNOLOGY CO. LTD.
         "show", // show Snow Beach, LLC
         "shriram", // shriram Shriram Capital Ltd.
