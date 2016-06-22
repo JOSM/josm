@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import java.awt.Container;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
@@ -134,6 +135,16 @@ public final class MapViewState {
     }
 
     /**
+     * Gets a rectangle of the view as map view area.
+     * @param rectangle The rectangle to get.
+     * @return The view area.
+     * @since 10458
+     */
+    public MapViewRectangle getViewArea(Rectangle rectangle) {
+        return getForView(rectangle.getMinX(), rectangle.getMinY()).rectTo(getForView(rectangle.getMaxX(), rectangle.getMaxY()));
+    }
+
+    /**
      * Gets the center of the view.
      * @return The center position.
      */
@@ -193,7 +204,7 @@ public final class MapViewState {
      */
     public MapViewState movedTo(MapViewPoint mapViewPoint, EastNorth newEastNorthThere) {
         EastNorth delta = newEastNorthThere.subtract(mapViewPoint.getEastNorth());
-        if (delta.distanceSq(0, 0) < .000001) {
+        if (delta.distanceSq(0, 0) < .1e-20) {
             return this;
         } else {
             return new MapViewState(topLeft.add(delta), this);
@@ -396,11 +407,22 @@ public final class MapViewState {
         /**
          * Gets a rough estimate of the bounds by assuming lat/lon are parallel to x/y.
          * @return The bounds computed by converting the corners of this rectangle.
+         * @see #getLatLonBoundsBox()
          */
         public Bounds getCornerBounds() {
             Bounds b = new Bounds(p1.getLatLon());
             b.extend(p2.getLatLon());
             return b;
+        }
+
+        /**
+         * Gets the real bounds that enclose this rectangle. 
+         * This is computed respecting that the borders of this rectangle may not be a straignt line in latlon coordinates.
+         * @return The bounds.
+         * @since 10458
+         */
+        public Bounds getLatLonBoundsBox() {
+            return projection.getLatLonBoundsBox(getProjectionBounds());
         }
     }
 
