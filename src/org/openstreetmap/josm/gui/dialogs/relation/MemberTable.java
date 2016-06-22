@@ -138,8 +138,8 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     }
 
     @Override
-    public void unlinkAsListener() {
-        super.unlinkAsListener();
+    public void unregisterListeners() {
+        super.unregisterListeners();
         Main.getLayerManager().removeLayerChangeListener(zoomToGap);
         Main.getLayerManager().removeActiveLayerChangeListener(zoomToGap);
     }

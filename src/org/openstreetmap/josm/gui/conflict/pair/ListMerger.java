@@ -882,10 +882,25 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         );
     }
 
-    public void unlinkAsListener() {
-        myEntriesTable.unlinkAsListener();
-        mergedEntriesTable.unlinkAsListener();
-        theirEntriesTable.unlinkAsListener();
+    /**
+     * Adds all registered listeners by this merger
+     * @see #unregisterListeners()
+     * @since 10454
+     */
+    public void registerListeners() {
+        myEntriesTable.registerListeners();
+        mergedEntriesTable.registerListeners();
+        theirEntriesTable.registerListeners();
+    }
+
+    /**
+     * Removes all registered listeners by this merger
+     * @since 10454
+     */
+    public void unregisterListeners() {
+        myEntriesTable.unregisterListeners();
+        mergedEntriesTable.unregisterListeners();
+        theirEntriesTable.unregisterListeners();
     }
 
     protected final <P extends OsmPrimitive> OsmDataLayer findLayerFor(P primitive) {
