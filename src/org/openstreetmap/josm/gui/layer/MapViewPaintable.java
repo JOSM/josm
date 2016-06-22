@@ -80,7 +80,7 @@ public interface MapViewPaintable {
         /**
          * Called when the layer is removed from the map view and this painter is not used any more.
          * <p>
-         * This method is called once on the painter returned by {@link Layer#attachToMapView(MapViewEvent)}
+         * This method is called once on the painter returned by {@link Layer#attachToMapView}
          * @param event The event.
          */
         void detachFromMapView(MapViewEvent event);
@@ -89,7 +89,7 @@ public interface MapViewPaintable {
     /**
      * A event that is fired whenever the map view is attached or detached from any layer.
      * @author Michael Zangl
-     * @see Layer#attachToMapView(MapViewEvent)
+     * @see Layer#attachToMapView
      * @since 10458
      */
     class MapViewEvent {
