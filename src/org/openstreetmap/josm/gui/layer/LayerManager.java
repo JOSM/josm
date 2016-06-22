@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * This class handles the layer management.
@@ -81,6 +82,11 @@ public class LayerManager {
         public Layer getAddedLayer() {
             return addedLayer;
         }
+
+        @Override
+        public String toString() {
+            return "LayerAddEvent [addedLayer=" + addedLayer + ']';
+        }
     }
 
     /**
@@ -113,6 +119,11 @@ public class LayerManager {
         public boolean isLastLayer() {
             return lastLayer;
         }
+
+        @Override
+        public String toString() {
+            return "LayerRemoveEvent [removedLayer=" + removedLayer + ", lastLayer=" + lastLayer + ']';
+        }
     }
 
     /**
@@ -126,6 +137,10 @@ public class LayerManager {
             super(source);
         }
 
+        @Override
+        public String toString() {
+            return "LayerOrderChangeEvent []";
+        }
     }
 
     /**
@@ -338,7 +353,11 @@ public class LayerManager {
         GuiHelper.assertCallFromEdt();
         LayerAddEvent e = new LayerAddEvent(this, layer);
         for (LayerChangeListener l : layerChangeListeners) {
-            l.layerAdded(e);
+            try {
+                l.layerAdded(e);
+            } catch (RuntimeException t) {
+                throw BugReport.intercept(t).put("listener", l).put("event", e);
+            }
         }
     }
 
@@ -346,7 +365,11 @@ public class LayerManager {
         GuiHelper.assertCallFromEdt();
         LayerRemoveEvent e = new LayerRemoveEvent(this, layer);
         for (LayerChangeListener l : layerChangeListeners) {
-            l.layerRemoving(e);
+            try {
+                l.layerRemoving(e);
+            } catch (RuntimeException t) {
+                throw BugReport.intercept(t).put("listener", l).put("event", e);
+            }
         }
     }
 
@@ -354,7 +377,11 @@ public class LayerManager {
         GuiHelper.assertCallFromEdt();
         LayerOrderChangeEvent e = new LayerOrderChangeEvent(this);
         for (LayerChangeListener l : layerChangeListeners) {
-            l.layerOrderChanged(e);
+            try {
+                l.layerOrderChanged(e);
+            } catch (RuntimeException t) {
+                throw BugReport.intercept(t).put("listener", l).put("event", e);
+            }
         }
     }
 

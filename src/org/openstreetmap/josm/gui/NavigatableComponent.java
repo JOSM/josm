@@ -51,7 +51,6 @@ import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer.Scale;
@@ -453,10 +452,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public ProjectionBounds getProjectionBounds(Rectangle r) {
-        MapViewState state = getState();
-        MapViewPoint p1 = state.getForView(r.getMinX(), r.getMinY());
-        MapViewPoint p2 = state.getForView(r.getMaxX(), r.getMaxY());
-        return p1.rectTo(p2).getProjectionBounds();
+        return getState().getViewArea(r).getProjectionBounds();
     }
 
     /**
@@ -1510,8 +1506,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return A unique ID, as long as viewport dimensions are the same
      */
     public int getViewID() {
-        String x = getCenter().east() + '_' + getCenter().north() + '_' + getScale() + '_' +
-                getWidth() + '_' + getHeight() + '_' + getProjection().toString();
+        EastNorth center = getCenter();
+        String x = new StringBuilder().append(center.east())
+                          .append('_').append(center.north())
+                          .append('_').append(getScale())
+                          .append('_').append(getWidth())
+                          .append('_').append(getHeight())
+                          .append('_').append(getProjection()).toString();
         CRC32 id = new CRC32();
         id.update(x.getBytes(StandardCharsets.UTF_8));
         return (int) id.getValue();

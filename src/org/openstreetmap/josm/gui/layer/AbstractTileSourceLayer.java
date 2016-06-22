@@ -81,10 +81,6 @@ import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.WMSLayerImporter;
@@ -158,6 +154,18 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
     protected T tileSource;
     protected TileLoader tileLoader;
 
+    private final MouseAdapter adapter = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (!isVisible()) return;
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                clickedTileHolder.setTile(getTileForPixelpos(e.getX(), e.getY()));
+                new TileSourceLayerPopup().show(e.getComponent(), e.getX(), e.getY());
+            } else if (e.getButton() == MouseEvent.BUTTON1) {
+                attribution.handleAttribution(e.getPoint(), true);
+            }
+        }
+    };
     /**
      * Creates Tile Source based Imagery Layer based on Imagery Info
      * @param info imagery info
@@ -606,54 +614,53 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
     public void hookUpMapView() {
         // this needs to be here and not in constructor to allow empty TileSource class construction
         // using SessionWriter
-        this.tileSource = getTileSource(info);
-        if (this.tileSource == null) {
-            throw new IllegalArgumentException(tr("Failed to create tile source"));
-        }
+        initializeIfRequired();
 
         super.hookUpMapView();
-        projectionChanged(null, Main.getProjection()); // check if projection is supported
-        initTileSource(this.tileSource);
+    }
 
-        final MouseAdapter adapter = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (!isVisible()) return;
-                if (e.getButton() == MouseEvent.BUTTON3) {
-                    clickedTileHolder.setTile(getTileForPixelpos(e.getX(), e.getY()));
-                    new TileSourceLayerPopup().show(e.getComponent(), e.getX(), e.getY());
-                } else if (e.getButton() == MouseEvent.BUTTON1) {
-                    attribution.handleAttribution(e.getPoint(), true);
-                }
-            }
-        };
-        Main.getLayerManager().addLayerChangeListener(new LayerChangeListener() {
+    @Override
+    public LayerPainter attachToMapView(MapViewEvent event) {
+        initializeIfRequired();
 
-            @Override
-            public void layerRemoving(LayerRemoveEvent e) {
-                if (e.getRemovedLayer() == AbstractTileSourceLayer.this) {
-                    Main.map.mapView.removeMouseListener(adapter);
-                    e.getSource().removeLayerChangeListener(this);
-                    MapView.removeZoomChangeListener(AbstractTileSourceLayer.this);
-                }
-            }
+        event.getMapView().addMouseListener(adapter);
+        MapView.addZoomChangeListener(AbstractTileSourceLayer.this);
 
-            @Override
-            public void layerOrderChanged(LayerOrderChangeEvent e) {
-                // ignored
-            }
+        if (this instanceof NativeScaleLayer) {
+            event.getMapView().setNativeScaleLayer((NativeScaleLayer) this);
+        }
 
-            @Override
-            public void layerAdded(LayerAddEvent e) {
-                if (e.getAddedLayer() == AbstractTileSourceLayer.this) {
-                    Main.map.mapView.addMouseListener(adapter);
-                    MapView.addZoomChangeListener(AbstractTileSourceLayer.this);
-                }
-            }
-        }, true);
         // FIXME: why do we need this? Without this, if you add a WMS layer and do not move the mouse, sometimes, tiles do not
         // start loading.
+        // FIXME: Check if this is still required.
         Main.map.repaint(500);
+
+        return super.attachToMapView(event);
+    }
+
+    private void initializeIfRequired() {
+        if (tileSource == null) {
+            tileSource = getTileSource(info);
+            if (tileSource == null) {
+                throw new IllegalArgumentException(tr("Failed to create tile source"));
+            }
+            checkLayerMemoryDoesNotExceedMaximum();
+            // check if projection is supported
+            projectionChanged(null, Main.getProjection());
+            initTileSource(this.tileSource);
+        }
+    }
+
+    @Override
+    protected LayerPainter createMapViewPainter(MapViewEvent event) {
+        return new CompatibilityModeLayerPainter() {
+            @Override
+            public void detachFromMapView(MapViewEvent event) {
+                event.getMapView().removeMouseListener(adapter);
+                MapView.removeZoomChangeListener(AbstractTileSourceLayer.this);
+                super.detachFromMapView(event);
+            }
+        };
     }
 
     /**

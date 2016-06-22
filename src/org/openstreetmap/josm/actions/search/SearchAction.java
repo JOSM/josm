@@ -642,6 +642,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
          * Create a new search task for the given search setting.
          * @param setting The setting to use
          * @param ds The data set to search on
+         * @param resultReceiver will receive the search result
          * @return A new search task.
          */
         private static SearchTask newSearchTask(SearchSetting setting, final DataSet ds, SearchReceiver resultReceiver) {

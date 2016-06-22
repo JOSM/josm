@@ -60,6 +60,75 @@ public interface MapViewPaintable {
     }
 
     /**
+     * Gets a new LayerPainter that paints this {@link MapViewPaintable} to the given map view.
+     *
+     * @author Michael Zangl
+     * @since 10458
+     */
+    public interface LayerPainter {
+
+        /**
+         * Paints the given layer.
+         * <p>
+         * This can be called in any thread at any time. You will not receive parallel calls for the same map view but you can receive parallel
+         * calls if you use the same {@link LayerPainter} for different map views.
+         * @param graphics The graphics object of the map view you should use.
+         *                 It provides you with a content pane, the bounds and the view state.
+         */
+        void paint(MapViewGraphics graphics);
+
+        /**
+         * Called when the layer is removed from the map view and this painter is not used any more.
+         * <p>
+         * This method is called once on the painter returned by {@link Layer#attachToMapView(MapViewEvent)}
+         * @param event The event.
+         */
+        void detachFromMapView(MapViewEvent event);
+    }
+
+    /**
+     * A event that is fired whenever the map view is attached or detached from any layer.
+     * @author Michael Zangl
+     * @see Layer#attachToMapView(MapViewEvent)
+     * @since 10458
+     */
+    class MapViewEvent {
+        private final MapView mapView;
+        private final boolean temporaryLayer;
+
+        /**
+         * Create a new {@link MapViewEvent}
+         * @param mapView The map view
+         * @param temporaryLayer <code>true</code> if this layer is in the temporary layer list of the view.
+         */
+        public MapViewEvent(MapView mapView, boolean temporaryLayer) {
+            super();
+            this.mapView = mapView;
+            this.temporaryLayer = temporaryLayer;
+        }
+
+        /**
+         * Gets the map view.
+         * @return The map view.
+         */
+        public MapView getMapView() {
+            return mapView;
+        }
+
+        /**
+         * @return true if this {@link MapViewPaintable} is used as a temporary layer.
+         */
+        public boolean isTemporaryLayer() {
+            return temporaryLayer;
+        }
+
+        @Override
+        public String toString() {
+            return "AttachToMapViewEvent [mapView=" + mapView + ", temporaryLayer=" + temporaryLayer + "]";
+        }
+    }
+
+    /**
      * Paint the dataset using the engine set.
      * @param g Graphics
      * @param mv The object that can translate GeoPoints to screen coordinates.

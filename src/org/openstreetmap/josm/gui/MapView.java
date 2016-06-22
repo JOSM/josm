@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,6 +51,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
+import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
@@ -61,15 +63,15 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.layer.MapViewGraphics;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable.LayerPainter;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable.MapViewEvent;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationEvent;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationListener;
-import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
-import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -492,6 +494,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     private final LayerInvalidatedListener invalidatedListener = new LayerInvalidatedListener();
 
     /**
+     * This is a map of all Layers that have been added to this view.
+     */
+    private final HashMap<Layer, LayerPainter> registeredLayers = new HashMap<>();
+
+    /**
      * Constructs a new {@code MapView}.
      * @param layerManager The layers to display.
      * @param contentPane Ignored. Main content pane is used.
@@ -593,25 +600,24 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     @Override
     public void layerAdded(LayerAddEvent e) {
-        Layer layer = e.getAddedLayer();
-        if (layer instanceof MarkerLayer && playHeadMarker == null) {
-            playHeadMarker = PlayHeadMarker.create();
+        try {
+            Layer layer = e.getAddedLayer();
+            registeredLayers.put(layer, layer.attachToMapView(new MapViewEvent(this, false)));
+
+            ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
+            if (viewProjectionBounds != null) {
+                scheduleZoomTo(new ViewportData(viewProjectionBounds));
+            }
+
+            layer.addPropertyChangeListener(this);
+            Main.addProjectionChangeListener(layer);
+            invalidatedListener.addTo(layer);
+            AudioPlayer.reset();
+
+            repaint();
+        } catch (RuntimeException t) {
+            throw BugReport.intercept(t).put("layer", e.getAddedLayer());
         }
-        if (layer instanceof NativeScaleLayer) {
-            setNativeScaleLayer((NativeScaleLayer) layer);
-         }
-
-        ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
-        if (viewProjectionBounds != null) {
-            scheduleZoomTo(new ViewportData(viewProjectionBounds));
-        }
-
-        layer.addPropertyChangeListener(this);
-        Main.addProjectionChangeListener(layer);
-        invalidatedListener.addTo(layer);
-        AudioPlayer.reset();
-
-        repaint();
     }
 
     /**
@@ -689,6 +695,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     public void layerRemoving(LayerRemoveEvent e) {
         Layer layer = e.getRemovedLayer();
 
+        LayerPainter painter = registeredLayers.remove(layer);
+        if (painter == null) {
+            throw new IllegalArgumentException("The painter for layer " + layer + " was not registered.");
+        }
+        painter.detachFromMapView(new MapViewEvent(this, false));
         Main.removeProjectionChangeListener(layer);
         layer.removePropertyChangeListener(this);
         invalidatedListener.removeFrom(layer);
@@ -769,12 +780,20 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     private void paintLayer(Layer layer, Graphics2D g, Bounds box) {
         try {
+            LayerPainter painter = registeredLayers.get(layer);
+            if (painter == null) {
+                throw new IllegalArgumentException("Cannot paint layer, it is not registered.");
+            }
+            MapViewRectangle clipBounds = getState().getViewArea(g.getClipBounds());
+            MapViewGraphics paintGraphics = new MapViewGraphics(this, g, clipBounds);
+
             if (layer.getOpacity() < 1) {
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) layer.getOpacity()));
             }
-            layer.paint(g, this, box);
+            painter.paint(paintGraphics);
             g.setPaintMode();
         } catch (RuntimeException t) {
+            //TODO: only display.
             throw BugReport.intercept(t).put("layer", layer).put("bounds", box);
         }
     }
@@ -1074,23 +1093,22 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        /* This only makes the buttons look disabled. Disabling the actions as well requires
-         * the user to re-select the tool after i.e. moving a layer. While testing I found
-         * that I switch layers and actions at the same time and it was annoying to mind the
-         * order. This way it works as visual clue for new users */
-        for (final AbstractButton b: Main.map.allMapModeButtons) {
-            MapMode mode = (MapMode) b.getAction();
-            final boolean activeLayerSupported = mode.layerIsSupported(layerManager.getActiveLayer());
-            if (activeLayerSupported) {
-                Main.registerActionShortcut(mode, mode.getShortcut()); //fix #6876
-            } else {
-                Main.unregisterShortcut(mode.getShortcut());
-            }
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override public void run() {
-                    b.setEnabled(activeLayerSupported);
+        if (Main.map != null) {
+            /* This only makes the buttons look disabled. Disabling the actions as well requires
+             * the user to re-select the tool after i.e. moving a layer. While testing I found
+             * that I switch layers and actions at the same time and it was annoying to mind the
+             * order. This way it works as visual clue for new users */
+            // FIXME: This does not belong here.
+            for (final AbstractButton b: Main.map.allMapModeButtons) {
+                MapMode mode = (MapMode) b.getAction();
+                final boolean activeLayerSupported = mode.layerIsSupported(layerManager.getActiveLayer());
+                if (activeLayerSupported) {
+                    Main.registerActionShortcut(mode, mode.getShortcut()); //fix #6876
+                } else {
+                    Main.unregisterShortcut(mode.getShortcut());
                 }
-            });
+                b.setEnabled(activeLayerSupported);
+            }
         }
         AudioPlayer.reset();
         repaint();

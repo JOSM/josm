@@ -138,8 +138,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     }
 
     @Override
-    public void hookUpMapView() {
-        Main.map.mapView.addMouseListener(new MouseAdapter() {
+    public LayerPainter attachToMapView(MapViewEvent event) {
+        event.getMapView().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (e.getButton() != MouseEvent.BUTTON1)
@@ -178,6 +178,12 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 invalidate();
             }
         });
+
+        if (event.getMapView().playHeadMarker == null) {
+            event.getMapView().playHeadMarker = PlayHeadMarker.create();
+        }
+
+        return super.attachToMapView(event);
     }
 
     /**
