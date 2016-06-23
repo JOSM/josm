@@ -361,6 +361,10 @@ public class Tile {
         return error_message;
     }
 
+    public void setError(Exception e) {
+        setError(e.toString());
+    }
+
     public void setError(String message) {
         error = true;
         setImage(ERROR_IMAGE);
