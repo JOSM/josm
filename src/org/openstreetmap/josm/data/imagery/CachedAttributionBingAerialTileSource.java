@@ -76,7 +76,7 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
                         }
                         return ret;
                     } catch (IOException ex) {
-                        Main.warn("Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
+                        Main.warn(ex, "Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
                         Thread.sleep(waitTimeSec * 1000L);
                         waitTimeSec *= 2;
                     }

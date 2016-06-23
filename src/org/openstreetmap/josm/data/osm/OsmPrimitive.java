@@ -874,7 +874,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         try {
             return SearchCompiler.compile(Main.pref.get(prefName, defaultValue));
         } catch (ParseError e) {
-            Main.error("Unable to compile pattern for " + prefName + ", trying default pattern: " + e.getMessage());
+            Main.error(e, "Unable to compile pattern for " + prefName + ", trying default pattern:");
         }
 
         try {

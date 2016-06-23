@@ -186,7 +186,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                     Main.warn(tr("Unable to create file {0}, other filename will be used", result.getAbsolutePath()));
                 }
             } catch (IOException e) {
-                Main.error(tr("IOError while creating file, autosave will be skipped: {0}", e.getMessage()));
+                Main.error(e, tr("IOError while creating file, autosave will be skipped: {0}", e.getMessage()));
                 return null;
             }
             index++;

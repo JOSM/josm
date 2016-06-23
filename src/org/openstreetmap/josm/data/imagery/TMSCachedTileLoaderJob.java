@@ -209,7 +209,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             }
         } catch (IOException e) {
             LOG.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
-            tile.setError(e.toString());
+            tile.setError(e);
             tile.setLoaded(false);
             if (listeners != null) { // listeners might be null, if some other thread notified already about success
                 for (TileLoaderListener l: listeners) {

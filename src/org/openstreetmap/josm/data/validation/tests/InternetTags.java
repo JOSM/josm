@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.net.IDN;
 import java.util.regex.Pattern;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -106,6 +107,7 @@ public class InternetTags extends Test {
                     // Try to apply ToASCII algorithm
                     error = doValidateTag(p, k, protocol+IDN.toASCII(domain)+ending, validator, code);
                 } catch (IllegalArgumentException e) {
+                    Main.trace(e);
                     error.setMessage(error.getMessage() +
                             tr(" URL cannot be converted to ASCII: {0}", e.getMessage()));
                 }

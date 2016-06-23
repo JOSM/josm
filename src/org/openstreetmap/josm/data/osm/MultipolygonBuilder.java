@@ -18,6 +18,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -143,6 +144,7 @@ public class MultipolygonBuilder {
             //analyze witch way is inside witch outside.
             return makeFromPolygons(joinedWays);
         } catch (JoinedPolygonCreationException ex) {
+            Main.debug(ex);
             return ex.getMessage();
         }
     }

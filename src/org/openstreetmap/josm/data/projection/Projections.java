@@ -323,8 +323,7 @@ public final class Projections {
             try {
                 proj = pc.getProjection();
             } catch (RuntimeException e) {
-                String cause = e.getMessage();
-                Main.warn("Unable to get projection "+code+" with "+pc + (cause != null ? ". "+cause : ""));
+                Main.warn(e, "Unable to get projection "+code+" with "+pc+':');
             }
         }
         if (proj == null) {

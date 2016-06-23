@@ -908,7 +908,7 @@ public class Preferences {
                 try {
                     save();
                 } catch (IOException e) {
-                    Main.warn(tr("Failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+                    Main.warn(e, tr("Failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
                 }
             }
         }
@@ -1250,7 +1250,7 @@ public class Preferences {
         try {
             struct = klass.getConstructor().newInstance();
         } catch (ReflectiveOperationException ex) {
-            throw new RuntimeException(ex);
+            throw new IllegalArgumentException(ex);
         }
         for (Entry<String, String> key_value : hash.entrySet()) {
             Object value;
@@ -1258,6 +1258,7 @@ public class Preferences {
             try {
                 f = klass.getDeclaredField(key_value.getKey().replace('-', '_'));
             } catch (NoSuchFieldException ex) {
+                Main.trace(ex);
                 continue;
             }
             if (f.getAnnotation(pref.class) == null) {
