@@ -207,6 +207,7 @@ public final class AlignInLineAction extends JosmAction {
             Main.map.repaint();
 
         } catch (InvalidSelection except) {
+            Main.debug(except);
             new Notification(except.getMessage())
                 .setIcon(JOptionPane.INFORMATION_MESSAGE)
                 .show();

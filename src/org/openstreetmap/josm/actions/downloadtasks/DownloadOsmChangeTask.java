@@ -180,7 +180,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                         try {
                             data.setVisible(hp.isVisible());
                         } catch (IllegalStateException e) {
-                            Main.error("Cannot change visibility for "+p+": "+e.getMessage());
+                            Main.error(e, "Cannot change visibility for "+p+':');
                         }
                         data.setTimestamp(hp.getTimestamp());
                         data.setKeys(hp.getTags());
@@ -192,7 +192,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                             // Forget this primitive
                             it.remove();
                         } catch (AssertionError e) {
-                            Main.error("Cannot load "+p + ": " + e.getMessage());
+                            Main.error(e, "Cannot load "+p+':');
                         }
                     }
                 }

@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.preferences.imagery.WMSLayerTree;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.io.imagery.WMSImagery.LayerDetails;
+import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageResourceCallback;
@@ -150,12 +151,12 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                         tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
             }
             Main.error(ex, false);
-        } catch (WMSImagery.WMSGetCapabilitiesException ex) {
+        } catch (WMSGetCapabilitiesException ex) {
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(Main.parent, tr("Could not parse WMS layer list."),
                         tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
             }
-            Main.error("Could not parse WMS layer list. Incoming data:\n"+ex.getIncomingData());
+            Main.error(ex, "Could not parse WMS layer list. Incoming data:\n"+ex.getIncomingData());
         }
         return null;
     }

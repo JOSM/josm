@@ -1012,25 +1012,25 @@ public abstract class Main {
             UIManager.setLookAndFeel(laf);
         } catch (final NoClassDefFoundError | ClassNotFoundException e) {
             // Try to find look and feel in plugin classloaders
+            Main.trace(e);
             Class<?> klass = null;
             for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
                 try {
                     klass = cl.loadClass(laf);
                     break;
                 } catch (ClassNotFoundException ex) {
-                    if (Main.isTraceEnabled()) {
-                        Main.trace(ex.getMessage());
-                    }
+                    Main.trace(ex);
                 }
             }
             if (klass != null && LookAndFeel.class.isAssignableFrom(klass)) {
                 try {
                     UIManager.setLookAndFeel((LookAndFeel) klass.getConstructor().newInstance());
                 } catch (ReflectiveOperationException ex) {
-                    warn("Cannot set Look and Feel: " + laf + ": "+ex.getMessage());
+                    warn(ex, "Cannot set Look and Feel: " + laf + ": "+ex.getMessage());
                 } catch (UnsupportedLookAndFeelException ex) {
                     info("Look and Feel not supported: " + laf);
                     Main.pref.put("laf", defaultlaf);
+                    trace(ex);
                 }
             } else {
                 info("Look and Feel not found: " + laf);
@@ -1039,6 +1039,7 @@ public abstract class Main {
         } catch (UnsupportedLookAndFeelException e) {
             info("Look and Feel not supported: " + laf);
             Main.pref.put("laf", defaultlaf);
+            trace(e);
         } catch (InstantiationException | IllegalAccessException e) {
             error(e);
         }
@@ -1064,9 +1065,9 @@ public abstract class Main {
         try {
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.valueOf(Main.pref.get("coordinates")));
         } catch (IllegalArgumentException iae) {
+            Main.trace(iae);
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.DECIMAL_DEGREES);
         }
-
     }
 
     protected static void postConstructorProcessCmdLine(Map<Option, Collection<String>> args) {
@@ -1217,6 +1218,7 @@ public abstract class Main {
                 try {
                     f = new File(new URI(s));
                 } catch (URISyntaxException e) {
+                    Main.warn(e);
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Ignoring malformed file URL: \"{0}\"", s),

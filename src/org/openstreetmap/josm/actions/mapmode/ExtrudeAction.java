@@ -1194,6 +1194,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * linelength), start.getY()
                     + (unitvector.getY() * linelength)));
         } catch (NoninvertibleTransformException e) {
+            Main.debug(e);
             return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * 10), start.getY()
                     + (unitvector.getY() * 10)));
         }

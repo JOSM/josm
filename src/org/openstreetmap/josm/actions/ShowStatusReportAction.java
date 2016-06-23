@@ -135,9 +135,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 text.append("VM arguments: ").append(vmArguments.toString().replace("\\\\", "\\")).append('\n');
             }
         } catch (SecurityException e) {
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
         List<String> commandLineArgs = Main.getCommandLineArgs();
         if (!commandLineArgs.isEmpty()) {

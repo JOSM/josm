@@ -66,9 +66,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 FileImporter importer = importerClass.getConstructor().newInstance();
                 importers.add(importer);
             } catch (ReflectiveOperationException e) {
-                if (Main.isDebugEnabled()) {
-                    Main.debug(e.getMessage());
-                }
+                Main.debug(e);
             } catch (ServiceConfigurationError e) {
                 // error seen while initializing WMSLayerImporter in plugin unit tests:
                 // -
@@ -107,9 +105,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 exporters.add(exporter);
                 Main.getLayerManager().addAndFireActiveLayerChangeListener(exporter);
             } catch (ReflectiveOperationException e) {
-                if (Main.isDebugEnabled()) {
-                    Main.debug(e.getMessage());
-                }
+                Main.debug(e);
             } catch (ServiceConfigurationError e) {
                 // see above in importers initialization
                 Main.error(e);

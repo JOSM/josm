@@ -190,7 +190,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                         addWMSLayer(s.name + " (" + text + ')', text);
                         break outer;
                     } catch (IllegalStateException ex) {
-                        Main.error(ex.getMessage());
+                        Main.error(ex, false);
                     }
                 }
 
