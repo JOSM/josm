@@ -135,4 +135,15 @@ public class MapViewStateTest {
             assertEquals("y", should.getInViewY(), result.getY(), 0.01);
         }
     }
+
+    /**
+     * Test {@link MapViewState.MapViewViewPoint#toString()} and {@link MapViewState.MapViewEastNorthPoint#toString()}
+     */
+    @Test
+    public void testToString() {
+        assertEquals("MapViewViewPoint [x=1.0, y=2.0]",
+                state.getForView(1, 2).toString());
+        assertEquals("MapViewEastNorthPoint [eastNorth=EastNorth[e=0.0, n=0.0]]",
+                state.getPointFor(new EastNorth(0, 0)).toString());
+    }
 }

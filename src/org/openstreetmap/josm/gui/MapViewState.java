@@ -343,7 +343,7 @@ public final class MapViewState {
 
         @Override
         public String toString() {
-            return "MapViewViewPoint [x=" + x + ", y=" + y + "]";
+            return "MapViewViewPoint [x=" + x + ", y=" + y + ']';
         }
     }
 
@@ -372,7 +372,7 @@ public final class MapViewState {
 
         @Override
         public String toString() {
-            return "MapViewEastNorthPoint [eastNorth=" + eastNorth + "]";
+            return "MapViewEastNorthPoint [eastNorth=" + eastNorth + ']';
         }
     }
 
@@ -416,7 +416,7 @@ public final class MapViewState {
         }
 
         /**
-         * Gets the real bounds that enclose this rectangle. 
+         * Gets the real bounds that enclose this rectangle.
          * This is computed respecting that the borders of this rectangle may not be a straignt line in latlon coordinates.
          * @return The bounds.
          * @since 10458
