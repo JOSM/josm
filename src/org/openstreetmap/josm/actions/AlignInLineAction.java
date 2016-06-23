@@ -204,7 +204,6 @@ public final class AlignInLineAction extends JosmAction {
 
             // Do it!
             Main.main.undoRedo.add(cmd);
-            Main.map.repaint();
 
         } catch (InvalidSelection except) {
             Main.debug(except);

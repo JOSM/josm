@@ -9,27 +9,28 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer.Loader;
 import org.openstreetmap.josm.io.GpxReader;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link GeoImageLayer} class.
  */
 public class GeoImageLayerTest {
-
     /**
-     * Setup test.
+     * We need prefs for this.
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init(true);
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences();
+
 
     /**
      * Unit test of {@link Loader} class.
@@ -41,28 +42,18 @@ public class GeoImageLayerTest {
             GpxReader reader = new GpxReader(in);
             assertTrue(reader.parse(true));
             GpxLayer gpxLayer = new GpxLayer(reader.getGpxData());
-            try {
-                Main.getLayerManager().addLayer(gpxLayer);
-                assertEquals(1, Main.getLayerManager().getLayers().size());
-                new Loader(
-                        Collections.singleton(new File(TestUtils.getRegressionDataFile(12255, "G0016941.JPG"))),
-                        gpxLayer).run();
-                assertEquals(2, Main.getLayerManager().getLayers().size());
-                GeoImageLayer layer = Main.getLayerManager().getLayersOfType(GeoImageLayer.class).iterator().next();
-                try {
-                    assertEquals(gpxLayer, layer.getGpxLayer());
-                    List<ImageEntry> images = layer.getImages();
-                    assertEquals(1, images.size());
-                    assertEquals("<html>1 image loaded. 0 were found to be GPS tagged.</html>", layer.getInfoComponent());
-                    assertEquals("<html>1 image loaded. 0 were found to be GPS tagged.</html>", layer.getToolTipText());
-                } finally {
-                    // Ensure we clean the place before leaving, even if test fails.
-                    Main.getLayerManager().removeLayer(layer);
-                }
-            } finally {
-                // Ensure we clean the place before leaving, even if test fails.
-                Main.getLayerManager().removeLayer(gpxLayer);
-            }
+            Main.getLayerManager().addLayer(gpxLayer);
+            assertEquals(1, Main.getLayerManager().getLayers().size());
+            new Loader(
+                    Collections.singleton(new File(TestUtils.getRegressionDataFile(12255, "G0016941.JPG"))),
+                    gpxLayer).run();
+            assertEquals(2, Main.getLayerManager().getLayers().size());
+            GeoImageLayer layer = Main.getLayerManager().getLayersOfType(GeoImageLayer.class).iterator().next();
+            assertEquals(gpxLayer, layer.getGpxLayer());
+            List<ImageEntry> images = layer.getImages();
+            assertEquals(1, images.size());
+            assertEquals("<html>1 image loaded. 0 were found to be GPS tagged.</html>", layer.getInfoComponent());
+            assertEquals("<html>1 image loaded. 0 were found to be GPS tagged.</html>", layer.getToolTipText());
         }
     }
 }

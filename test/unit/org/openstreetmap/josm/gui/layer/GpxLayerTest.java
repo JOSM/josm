@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import javax.swing.JScrollPane;
 
@@ -170,6 +171,9 @@ public class GpxLayerTest {
         assertEquals("", GpxLayer.getTimespanForTrack(
                 new ImmutableGpxTrack(new ArrayList<Collection<WayPoint>>(), new HashMap<String, Object>())));
 
+        assertEquals("1/3/16 11:59 AM - 12:00 PM (0:00)", GpxLayer.getTimespanForTrack(getMinimalGpxData().tracks.iterator().next()));
+
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         assertEquals("1/3/16 12:59 PM - 1:00 PM (0:00)", GpxLayer.getTimespanForTrack(getMinimalGpxData().tracks.iterator().next()));
     }
 

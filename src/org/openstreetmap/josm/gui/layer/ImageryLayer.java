@@ -116,9 +116,15 @@ public abstract class ImageryLayer extends Layer {
         return dy;
     }
 
+    /**
+     * Sets the displacement offset of this layer. The layer is automatically invalidated.
+     * @param dx The x offset
+     * @param dy The y offset
+     */
     public void setOffset(double dx, double dy) {
         this.dx = dx;
         this.dy = dy;
+        invalidate();
     }
 
     public void displace(double dx, double dy) {

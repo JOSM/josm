@@ -77,7 +77,7 @@ public class AddPrimitivesCommand extends Command {
             primitivesToSelect = new ArrayList<>(toSelect.size());
 
             for (PrimitiveData pd : data) {
-                OsmPrimitive primitive = getLayer().data.getPrimitiveById(pd);
+                OsmPrimitive primitive = getAffectedDataSet().getPrimitiveById(pd);
                 boolean created = primitive == null;
                 if (created) {
                     primitive = pd.getType().newInstance(pd.getUniqueId(), true);
@@ -86,7 +86,7 @@ public class AddPrimitivesCommand extends Command {
                     primitive.load(pd);
                 }
                 if (created) {
-                    getLayer().data.addPrimitive(primitive);
+                    getAffectedDataSet().addPrimitive(primitive);
                 }
                 newPrimitives.add(primitive);
                 if (toSelect.contains(pd)) {
@@ -114,7 +114,7 @@ public class AddPrimitivesCommand extends Command {
     }
 
     @Override public void undoCommand() {
-        DataSet ds = getLayer().data;
+        DataSet ds = getAffectedDataSet();
 
         if (createdPrimitives == null) {
             createdPrimitives = new ArrayList<>(data.size());
@@ -166,7 +166,7 @@ public class AddPrimitivesCommand extends Command {
 
         Collection<OsmPrimitive> prims = new HashSet<>();
         for (PrimitiveData d : data) {
-            OsmPrimitive osm = getLayer().data.getPrimitiveById(d);
+            OsmPrimitive osm = getAffectedDataSet().getPrimitiveById(d);
             if (osm == null)
                 throw new RuntimeException();
             prims.add(osm);

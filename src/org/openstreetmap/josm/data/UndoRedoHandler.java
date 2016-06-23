@@ -73,13 +73,22 @@ public class UndoRedoHandler implements LayerChangeListener {
      * @param c The command to execute. Must not be {@code null}.
      */
     public synchronized void add(final Command c) {
-        DataSet ds = Main.getLayerManager().getEditDataSet();
-        Collection<? extends OsmPrimitive> oldSelection = ds.getSelected();
+        DataSet ds = c.getAffectedDataSet();
+        if (ds == null) {
+            // old, legacy behaviour
+            ds = Main.getLayerManager().getEditDataSet();
+        }
+        Collection<? extends OsmPrimitive> oldSelection = null;
+        if (ds != null) {
+            oldSelection = ds.getSelected();
+        }
         addNoRedraw(c);
         afterAdd();
 
         // the command may have changed the selection so tell the listeners about the current situation
-        fireIfSelectionChanged(ds, oldSelection);
+        if (ds != null) {
+            fireIfSelectionChanged(ds, oldSelection);
+        }
     }
 
     /**

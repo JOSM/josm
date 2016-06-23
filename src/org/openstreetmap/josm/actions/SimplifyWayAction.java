@@ -123,7 +123,6 @@ public class SimplifyWayAction extends JosmAction {
         } finally {
             ds.endUpdate();
         }
-        Main.map.repaint();
     }
 
     /**

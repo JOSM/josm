@@ -240,7 +240,6 @@ public final class CreateCircleAction extends JosmAction {
         }
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Create Circle"), cmds));
-        Main.map.repaint();
     }
 
     /**

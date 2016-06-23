@@ -36,7 +36,7 @@ class PreferencesTest extends GroovyTestCase {
             "  <tag key='jdk.Arrays.useLegacyMergeSort' value='false'/>%n" +
             "  <tag key='language' value='en'/>%n" +
             "  <tag key='osm-server.url' value='http://api06.dev.openstreetmap.org/api'/>%n" +
-            "  <tag key='osm-server.username' value='josm_test'/>%n" +
-            "</preferences>%n", Version.getInstance().getVersion())
+            "  <tag key='osm-server.username' value='%s'/>%n" +
+            "</preferences>%n", Version.getInstance().getVersion(), Main.pref.get("osm-server.username"))
     }
 }

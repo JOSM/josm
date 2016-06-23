@@ -97,7 +97,6 @@ public final class DistributeAction extends JosmAction {
 
         // Do it!
         Main.main.undoRedo.add(new SequenceCommand(tr("Distribute Nodes"), cmds));
-        Main.map.repaint();
     }
 
     /**

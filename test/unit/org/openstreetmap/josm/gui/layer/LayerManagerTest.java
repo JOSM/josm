@@ -10,6 +10,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -40,8 +42,15 @@ import org.openstreetmap.josm.tools.bugreport.ReportedException;
  */
 public class LayerManagerTest {
 
-    protected static class AbstractTestLayer extends Layer {
-        protected AbstractTestLayer() {
+    /**
+     * This is a layer that can be used in tests. It does not do anything and provides a simple, fake implementation.
+     * @author Michael Zangl
+     */
+    public static class TestLayer extends Layer {
+        /**
+         * Create a new test layer.
+         */
+        public TestLayer() {
             super("Test Layer");
         }
 
@@ -69,7 +78,7 @@ public class LayerManagerTest {
 
         @Override
         public Action[] getMenuEntries() {
-            return null;
+            return new Action[0];
         }
 
         @Override
@@ -79,7 +88,22 @@ public class LayerManagerTest {
 
         @Override
         public Icon getIcon() {
-            return null;
+            return new Icon() {
+                @Override
+                public void paintIcon(Component c, Graphics g, int x, int y) {
+                    // nop
+                }
+
+                @Override
+                public int getIconWidth() {
+                    return 10;
+                }
+
+                @Override
+                public int getIconHeight() {
+                    return 10;
+                }
+            };
         }
 
         @Override
@@ -88,7 +112,7 @@ public class LayerManagerTest {
         }
     }
 
-    protected static class AbstractTestLayer2 extends AbstractTestLayer {}
+    protected static class TestLayer2 extends TestLayer {}
 
     /**
      * Intercepts the events for easier testing.
@@ -146,7 +170,7 @@ public class LayerManagerTest {
      */
     @Test
     public void testAddLayer() {
-        Layer layer1 = new AbstractTestLayer() {
+        Layer layer1 = new TestLayer() {
             @Override
             public LayerPositionStrategy getDefaultLayerPosition() {
                 return LayerPositionStrategy.IN_FRONT;
@@ -157,13 +181,13 @@ public class LayerManagerTest {
                 return true;
             }
         };
-        Layer layer2 = new AbstractTestLayer() {
+        Layer layer2 = new TestLayer() {
             @Override
             public LayerPositionStrategy getDefaultLayerPosition() {
                 return LayerPositionStrategy.IN_FRONT;
             }
         };
-        Layer layer3 = new AbstractTestLayer() {
+        Layer layer3 = new TestLayer() {
             @Override
             public LayerPositionStrategy getDefaultLayerPosition() {
                 return LayerPositionStrategy.BEFORE_FIRST_BACKGROUND_LAYER;
@@ -178,7 +202,7 @@ public class LayerManagerTest {
         assertEquals(layerManager.getLayers(), Arrays.asList(layer2, layer3, layer1));
 
         // event
-        AbstractTestLayer layer4 = new AbstractTestLayer();
+        TestLayer layer4 = new TestLayer();
         CapturingLayerChangeListener l = new CapturingLayerChangeListener();
         layerManager.addLayerChangeListener(l);
         layerManager.addLayer(layer4);
@@ -197,7 +221,7 @@ public class LayerManagerTest {
         thrown.expectCause(any(InvocationTargetException.class));
         thrown.expectRootCause(any(IllegalArgumentException.class));
 
-        AbstractTestLayer layer1 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
         layerManager.addLayer(layer1);
         layerManager.addLayer(layer1);
     }
@@ -211,7 +235,7 @@ public class LayerManagerTest {
         thrown.expectCause(any(InvocationTargetException.class));
         thrown.expectRootCause(any(IndexOutOfBoundsException.class));
 
-        AbstractTestLayer layer1 = new AbstractTestLayer() {
+        TestLayer layer1 = new TestLayer() {
             @Override
             public LayerPositionStrategy getDefaultLayerPosition() {
                 return new LayerPositionStrategy() {
@@ -230,8 +254,8 @@ public class LayerManagerTest {
      */
     @Test
     public void testRemoveLayer() {
-        AbstractTestLayer layer1 = new AbstractTestLayer();
-        AbstractTestLayer layer2 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
+        TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
         layerManager.addLayer(layer2);
         assertEquals(layerManager.getLayers(), Arrays.asList(layer1, layer2));
@@ -251,8 +275,8 @@ public class LayerManagerTest {
      */
     @Test
     public void testMoveLayer() {
-        AbstractTestLayer layer1 = new AbstractTestLayer();
-        AbstractTestLayer layer2 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
+        TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
         layerManager.addLayer(layer2);
         assertEquals(layerManager.getLayers(), Arrays.asList(layer1, layer2));
@@ -283,8 +307,8 @@ public class LayerManagerTest {
         thrown.expectCause(any(InvocationTargetException.class));
         thrown.expectRootCause(any(IndexOutOfBoundsException.class));
 
-        AbstractTestLayer layer1 = new AbstractTestLayer();
-        AbstractTestLayer layer2 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
+        TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
         layerManager.addLayer(layer2);
         layerManager.moveLayer(layer2, 2);
@@ -299,8 +323,8 @@ public class LayerManagerTest {
         thrown.expectCause(any(InvocationTargetException.class));
         thrown.expectRootCause(any(IllegalArgumentException.class));
 
-        AbstractTestLayer layer1 = new AbstractTestLayer();
-        AbstractTestLayer layer2 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
+        TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
         layerManager.moveLayer(layer2, 0);
     }
@@ -311,8 +335,8 @@ public class LayerManagerTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testGetLayers() {
         // list should be immutable
-        AbstractTestLayer layer1 = new AbstractTestLayer();
-        AbstractTestLayer layer2 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
+        TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
         layerManager.addLayer(layer2);
         layerManager.getLayers().remove(0);
@@ -323,13 +347,13 @@ public class LayerManagerTest {
      */
     @Test
     public void testGetLayersOfType() {
-        AbstractTestLayer2 layer1 = new AbstractTestLayer2();
-        AbstractTestLayer2 layer2 = new AbstractTestLayer2();
+        TestLayer2 layer1 = new TestLayer2();
+        TestLayer2 layer2 = new TestLayer2();
         layerManager.addLayer(layer1);
-        layerManager.addLayer(new AbstractTestLayer());
+        layerManager.addLayer(new TestLayer());
         layerManager.addLayer(layer2);
 
-        assertEquals(layerManager.getLayersOfType(AbstractTestLayer2.class), Arrays.asList(layer1, layer2));
+        assertEquals(layerManager.getLayersOfType(TestLayer2.class), Arrays.asList(layer1, layer2));
     }
 
     /**
@@ -337,12 +361,12 @@ public class LayerManagerTest {
      */
     @Test
     public void testContainsLayer() {
-        AbstractTestLayer layer = new AbstractTestLayer();
+        TestLayer layer = new TestLayer();
         layerManager.addLayer(layer);
-        layerManager.addLayer(new AbstractTestLayer());
+        layerManager.addLayer(new TestLayer());
 
         assertTrue(layerManager.containsLayer(layer));
-        assertFalse(layerManager.containsLayer(new AbstractTestLayer()));
+        assertFalse(layerManager.containsLayer(new TestLayer()));
     }
 
     /**
@@ -373,8 +397,8 @@ public class LayerManagerTest {
     @Test
     public void testAddLayerChangeListenerFire() {
         final ArrayList<Layer> fired = new ArrayList<>();
-        AbstractTestLayer layer1 = new AbstractTestLayer();
-        AbstractTestLayer layer2 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
+        TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
         layerManager.addLayer(layer2);
         layerManager.addLayerChangeListener(new LayerChangeListener() {
@@ -404,9 +428,9 @@ public class LayerManagerTest {
     public void testRemoveLayerChangeListener() {
         CapturingLayerChangeListener l = new CapturingLayerChangeListener();
         layerManager.addLayerChangeListener(l);
-        layerManager.addLayer(new AbstractTestLayer());
+        layerManager.addLayer(new TestLayer());
         layerManager.removeLayerChangeListener(l);
-        layerManager.addLayer(new AbstractTestLayer());
+        layerManager.addLayer(new TestLayer());
         // threw exception when fired twice.
         assertNotNull(l.layerAdded);
         assertNull(l.layerRemoved);
@@ -428,8 +452,8 @@ public class LayerManagerTest {
     @Test
     public void testRemoveLayerChangeListenerFire() {
         final ArrayList<Layer> fired = new ArrayList<>();
-        AbstractTestLayer layer1 = new AbstractTestLayer();
-        AbstractTestLayer layer2 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
+        TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
         layerManager.addLayer(layer2);
         LayerChangeListener listener = new LayerChangeListener() {

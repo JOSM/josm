@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
@@ -209,6 +210,15 @@ public abstract class Command extends PseudoCommand {
      */
     protected OsmDataLayer getLayer() {
         return layer;
+    }
+
+    /**
+     * Gets the data set this command affects.
+     * @return The data set. May be <code>null</code> if no layer was set and no edit layer was found.
+     * @since 10467
+     */
+    public DataSet getAffectedDataSet() {
+        return layer == null ? null : layer.data;
     }
 
     /**

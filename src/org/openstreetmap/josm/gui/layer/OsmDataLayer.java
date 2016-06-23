@@ -877,6 +877,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     public void onPostLoadFromFile() {
         setRequiresSaveToFile(false);
         setRequiresUploadToServer(isModified());
+        invalidate();
     }
 
     /**
@@ -885,6 +886,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     public void onPostDownloadFromServer() {
         setRequiresSaveToFile(true);
         setRequiresUploadToServer(isModified());
+        invalidate();
     }
 
     @Override

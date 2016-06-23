@@ -102,10 +102,10 @@ public final class ReverseWayAction extends JosmAction {
             propertiesUpdated |= !revResult.getTagCorrectionCommands().isEmpty();
         }
         Main.main.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
+        // FIXME: This should be handled by undoRedo.
         if (propertiesUpdated) {
             ds.fireSelectionChanged();
         }
-        Main.map.repaint();
     }
 
     /**

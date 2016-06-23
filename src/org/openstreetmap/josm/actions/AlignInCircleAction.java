@@ -283,7 +283,6 @@ public final class AlignInCircleAction extends JosmAction {
         }
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Align Nodes in Circle"), cmds));
-        Main.map.repaint();
     }
 
     /**
