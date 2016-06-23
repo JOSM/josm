@@ -128,7 +128,6 @@ public class ImageResource {
         iconDimension = ImageProvider.ImageSizes.LARGEICON.getImageDimension();
         icon = getImageIconBounded(iconDimension);
         a.putValue(Action.LARGE_ICON_KEY, icon);
-        a.putValue("ImageResource", this);
     }
 
     /**
