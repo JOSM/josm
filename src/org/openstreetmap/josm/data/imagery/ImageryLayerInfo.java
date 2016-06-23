@@ -142,7 +142,7 @@ public class ImageryLayerInfo {
             try {
                 OnlineResource.JOSM_WEBSITE.checkOfflineAccess(source, Main.getJOSMWebsite());
             } catch (OfflineAccessException e) {
-                Main.warn(e.getMessage());
+                Main.warn(e, false);
                 online = false;
             }
             if (clearCache && online) {

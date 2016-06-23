@@ -100,7 +100,7 @@ public final class MapRendererFactory {
             try {
                 return Class.forName(className, true, cl);
             } catch (final NoClassDefFoundError | ClassNotFoundException e) {
-                Main.trace(e.getMessage());
+                Main.trace(e);
             }
         }
         Main.error(tr("Failed to load map renderer class ''{0}''. The class wasn''t found.", className));
@@ -265,14 +265,14 @@ public final class MapRendererFactory {
      * @throws MapRendererFactoryException if creating an instance fails
      * @see AbstractMapRenderer#AbstractMapRenderer(Graphics2D, NavigatableComponent, boolean)
      */
-    public AbstractMapRenderer createActiveRenderer(Graphics2D g, NavigatableComponent viewport, boolean isInactiveMode)
-            throws MapRendererFactoryException {
+    public AbstractMapRenderer createActiveRenderer(Graphics2D g, NavigatableComponent viewport, boolean isInactiveMode) {
         try {
             Constructor<?> c = activeRenderer.getConstructor(new Class<?>[]{Graphics2D.class, NavigatableComponent.class, boolean.class});
             return AbstractMapRenderer.class.cast(c.newInstance(g, viewport, isInactiveMode));
         } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException e) {
             throw new MapRendererFactoryException(e);
         } catch (InvocationTargetException e) {
+            Main.debug(e);
             throw new MapRendererFactoryException(e.getCause());
         }
     }

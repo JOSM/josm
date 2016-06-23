@@ -300,7 +300,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                             final Severity severity = Severity.valueOf(ai.key.substring("throw".length()).toUpperCase(Locale.ENGLISH));
                             check.errors.put(ai, severity);
                         } catch (IllegalArgumentException e) {
-                            Main.warn("Unsupported "+ai.key+" instruction. Allowed instructions are "+POSSIBLE_THROWS);
+                            Main.warn(e, "Unsupported "+ai.key+" instruction. Allowed instructions are "+POSSIBLE_THROWS+'.');
                         }
                     } else if ("fixAdd".equals(ai.key)) {
                         check.fixCommands.add(FixCommand.fixAdd(ai.val));
@@ -435,9 +435,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                     return tag.toString();
                 }
             } catch (IndexOutOfBoundsException ignore) {
-                if (Main.isDebugEnabled()) {
-                    Main.debug(ignore.getMessage());
-                }
+                Main.debug(ignore);
             }
             return null;
         }
@@ -465,7 +463,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                     // Perform replacement with null-safe + regex-safe handling
                     m.appendReplacement(sb, String.valueOf(argument).replace("^(", "").replace(")$", ""));
                 } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
-                    Main.error(tr("Unable to replace argument {0} in {1}: {2}", argument, sb, e.getMessage()));
+                    Main.error(e, tr("Unable to replace argument {0} in {1}: {2}", argument, sb, e.getMessage()));
                 }
             }
             m.appendTail(sb);

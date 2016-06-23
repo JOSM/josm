@@ -244,6 +244,7 @@ public class TagChecker extends TagTest {
                     }
                 }
             } catch (IOException e) {
+                Main.error(e);
                 errorSources.append(source).append('\n');
             }
         }
@@ -293,7 +294,7 @@ public class TagChecker extends TagTest {
                 presetsValueData.putAll(ky.key, values);
                 harmonizedKeys.put(harmonizeKey(ky.key), ky.key);
             } catch (NullPointerException e) {
-                Main.error(p+": Unable to initialize "+ky);
+                Main.error(e, p+": Unable to initialize "+ky+'.');
             }
         }
     }
@@ -782,6 +783,7 @@ public class TagChecker extends TagTest {
                     description = null;
                 }
             } catch (IllegalStateException e) {
+                Main.error(e);
                 description = null;
             }
             String[] n = SPLIT_TRIMMED_PATTERN.split(trimmed, 3);
@@ -824,8 +826,10 @@ public class TagChecker extends TagTest {
                 try {
                     data.add(new CheckerElement(exp));
                 } catch (IllegalStateException e) {
+                    Main.trace(e);
                     return tr("Illegal expression ''{0}''", exp);
                 } catch (PatternSyntaxException e) {
+                    Main.trace(e);
                     return tr("Illegal regular expression ''{0}''", exp);
                 }
             }

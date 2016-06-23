@@ -187,6 +187,14 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
 
     /**
+     * @param error error related to this object
+     * @since 10469
+     */
+    public void setError(Exception error) {
+        setErrorMessage(Main.getErrorMessage(error));
+    }
+
+    /**
      * @param message error message related to this object
      */
     public void setErrorMessage(String message) {

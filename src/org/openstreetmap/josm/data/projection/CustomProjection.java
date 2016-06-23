@@ -204,6 +204,7 @@ public class CustomProjection extends AbstractProjection {
         try {
             update(pref);
         } catch (ProjectionConfigurationException ex) {
+            Main.trace(ex);
             try {
                 update(null);
             } catch (ProjectionConfigurationException ex1) {

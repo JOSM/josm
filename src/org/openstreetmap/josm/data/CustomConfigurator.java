@@ -95,6 +95,17 @@ public final class CustomConfigurator {
     }
 
     /**
+     * Log an exception.
+     * @param e exception to log
+     * @param s message prefix
+     * @since 10469
+     */
+    public static void log(Exception e, String s) {
+        summary.append(s + ' ' + Main.getErrorMessage(e));
+        summary.append('\n');
+    }
+
+    /**
      * Returns the log.
      * @return the log
      */
@@ -272,7 +283,7 @@ public final class CustomConfigurator {
             exportDocument = builder.newDocument();
             root = document.getDocumentElement();
         } catch (SAXException | IOException | ParserConfigurationException ex) {
-            Main.warn("Error getting preferences to save:" +ex.getMessage());
+            Main.warn(ex, "Error getting preferences to save:");
         }
         if (root == null || exportDocument == null)
             return;
@@ -453,7 +464,7 @@ public final class CustomConfigurator {
                     openAndReadXML(is);
                 }
             } catch (ScriptException | IOException | SecurityException ex) {
-                log("Error reading custom preferences: " + ex.getMessage());
+                log(ex, "Error reading custom preferences:");
             }
         }
 
@@ -464,7 +475,7 @@ public final class CustomConfigurator {
                     processXML(document);
                 }
             } catch (SAXException | IOException | ParserConfigurationException ex) {
-                log("Error reading custom preferences: "+ex.getMessage());
+                log(ex, "Error reading custom preferences:");
             }
             log("-- Reading complete --");
         }
@@ -579,7 +590,7 @@ public final class CustomConfigurator {
                     PreferencesUtils.loadPrefsToJS(engine, tmpPref, fragmentVar, false);
                     // we store this fragment as API.fragments['id']
                 } catch (ScriptException ex) {
-                    log("Error: can not load preferences fragment : "+ex.getMessage());
+                    log(ex, "Error: can not load preferences fragment:");
                 }
             }
 
@@ -663,7 +674,7 @@ public final class CustomConfigurator {
             try {
                 engine.eval(name+"='"+value+"';");
             } catch (ScriptException ex) {
-                log("Error: Can not assign variable: %s=%s  : %s\n", name, value, ex.getMessage());
+                log(ex, String.format("Error: Can not assign variable: %s=%s :", name, value));
             }
         }
 
@@ -706,7 +717,7 @@ public final class CustomConfigurator {
                 PreferencesUtils.modifyPreferencesByScript(engine, mainPrefs, js);
             } catch (ScriptException ex) {
                 messageBox("e", ex.getMessage());
-                log("JS error: "+ex.getMessage());
+                log(ex, "JS error:");
             }
             log("Script finished");
         }
@@ -724,7 +735,7 @@ public final class CustomConfigurator {
                     String result = engine.eval(mr.group(1)).toString();
                     mr.appendReplacement(sb, result);
                 } catch (ScriptException ex) {
-                    log("Error: Can not evaluate expression %s : %s", mr.group(1), ex.getMessage());
+                    log(ex, String.format("Error: Can not evaluate expression %s :", mr.group(1)));
                 }
             }
             mr.appendTail(sb);
@@ -745,7 +756,7 @@ public final class CustomConfigurator {
                 CharArrayReader reader = new CharArrayReader(fragmentWithReplacedVars.toCharArray());
                 tmpPref.fromXML(reader);
             } catch (TransformerException | XMLStreamException | IOException ex) {
-                log("Error: can not read XML fragment :" + ex.getMessage());
+                log(ex, "Error: can not read XML fragment:");
             }
 
             return tmpPref;

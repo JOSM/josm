@@ -360,7 +360,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
             if (event.getPrimitives().containsAll(primitives)) {
                 primitives = Collections.emptyList();
             } else {
-                Main.warn("Unable to remove primitives from "+this);
+                Main.warn(e, "Unable to remove primitives from "+this+'.');
             }
         }
     }
