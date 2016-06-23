@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 public class WayPoint extends WithAttributes implements Comparable<WayPoint>, TemplateEngineDataProvider {
 
     /**
-     * The seconds (not milliseconds!) since 1970-01-01.
+     * The seconds (not milliseconds!) since 1970-01-01 00:00 UTC
      */
     public double time;
     public Color customColoring;

@@ -159,7 +159,6 @@ public class JoinNodeWayAction extends JosmAction {
 
         if (cmds.isEmpty()) return;
         Main.main.undoRedo.add(new SequenceCommand(getValue(NAME).toString(), cmds));
-        Main.map.repaint();
     }
 
     private static SortedSet<Integer> pruneSuccs(Collection<Integer> is) {

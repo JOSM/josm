@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -39,6 +40,7 @@ public class NmeaReaderTest {
         assertEquals(30, in.getNumberOfCoordinates());
         assertEquals(0, in.getParserMalformed());
 
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         final List<WayPoint> wayPoints = new ArrayList<>(in.data.tracks.iterator().next().getSegments().iterator().next().getWayPoints());
         assertEquals("2016-01-25T04:05:09.200Z", wayPoints.get(0).get(GpxConstants.PT_TIME));
         assertEquals("2016-01-25T04:05:09.400Z", wayPoints.get(1).get(GpxConstants.PT_TIME));

@@ -184,8 +184,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return false;
 
         // update selection to reflect which way being modified
-        DataSet currentDataSet = getLayerManager().getEditDataSet();
-        if (getCurrentBaseNode() != null && currentDataSet != null && !currentDataSet.selectionEmpty()) {
+        OsmDataLayer editLayer = getLayerManager().getEditLayer();
+        if (getCurrentBaseNode() != null && editLayer != null && !editLayer.data.selectionEmpty()) {
+            DataSet currentDataSet = editLayer.data;
             Way continueFrom = getWayForNode(getCurrentBaseNode());
             if (alt && continueFrom != null && (!getCurrentBaseNode().isSelected() || continueFrom.isSelected())) {
                 addRemoveSelection(currentDataSet, getCurrentBaseNode(), continueFrom);
@@ -196,8 +197,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
         }
 
-        if (needsRepaint) {
-            Main.map.mapView.repaint();
+        if (needsRepaint && editLayer != null) {
+            editLayer.invalidate();
         }
         return needsRepaint;
     }
@@ -916,7 +917,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      */
     @Override
     public void mouseExited(MouseEvent e) {
-        if (!Main.map.mapView.isActiveLayerDrawable())
+        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+        if (editLayer == null)
             return;
         mousePos = e.getPoint();
         snapHelper.noSnapNow();
@@ -924,7 +926,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // force repaint in case snapHelper needs one. If removeHighlighting
         // caused one already, don’t do it again.
         if (!repaintIssued) {
-            Main.map.mapView.repaint();
+            editLayer.invalidate();
         }
     }
 

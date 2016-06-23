@@ -121,8 +121,6 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
                     @Override
                     public void run() {
                         targetLayer.onPostDownloadFromServer();
-                        if (Main.map != null)
-                            Main.map.mapView.repaint();
                     }
                 }
         );

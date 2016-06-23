@@ -112,7 +112,6 @@ public final class OrthogonalizeAction extends JosmAction {
                 }
                 if (!commands.isEmpty()) {
                     Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize / Undo"), commands));
-                    Main.map.repaint();
                 } else {
                     throw new InvalidUserInputException("Commands are empty");
                 }
@@ -152,7 +151,6 @@ public final class OrthogonalizeAction extends JosmAction {
         try {
             final SequenceCommand command = orthogonalize(sel);
             Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), command));
-            Main.map.repaint();
         } catch (InvalidUserInputException ex) {
             Main.debug(ex);
             String msg;

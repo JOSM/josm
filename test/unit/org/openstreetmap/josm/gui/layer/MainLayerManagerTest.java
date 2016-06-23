@@ -67,9 +67,9 @@ public class MainLayerManagerTest extends LayerManagerTest {
 
     @Test
     public void testAddLayerSetsActiveLayer() {
-        AbstractTestLayer layer1 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
         AbstractTestOsmLayer layer2 = new AbstractTestOsmLayer();
-        AbstractTestLayer layer3 = new AbstractTestLayer();
+        TestLayer layer3 = new TestLayer();
         assertNull(layerManagerWithActive.getActiveLayer());
         assertNull(layerManagerWithActive.getEditLayer());
         layerManagerWithActive.addLayer(layer1);
@@ -85,9 +85,9 @@ public class MainLayerManagerTest extends LayerManagerTest {
 
     @Test
     public void testRemoveLayerUnsetsActiveLayer() {
-        AbstractTestLayer layer1 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
         AbstractTestOsmLayer layer2 = new AbstractTestOsmLayer();
-        AbstractTestLayer layer3 = new AbstractTestLayer();
+        TestLayer layer3 = new TestLayer();
         AbstractTestOsmLayer layer4 = new AbstractTestOsmLayer();
         layerManagerWithActive.addLayer(layer1);
         layerManagerWithActive.addLayer(layer2);
@@ -115,7 +115,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
      */
     @Test
     public void testAddActiveLayerChangeListener() {
-        AbstractTestLayer layer1 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
         AbstractTestOsmLayer layer2 = new AbstractTestOsmLayer();
         layerManagerWithActive.addLayer(layer1);
         layerManagerWithActive.addLayer(layer2);
@@ -153,7 +153,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
      */
     @Test
     public void testRemoveActiveLayerChangeListener() {
-        AbstractTestLayer layer1 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
         AbstractTestOsmLayer layer2 = new AbstractTestOsmLayer();
         layerManagerWithActive.addLayer(layer1);
         layerManagerWithActive.addLayer(layer2);
@@ -181,8 +181,8 @@ public class MainLayerManagerTest extends LayerManagerTest {
      */
     @Test
     public void testSetGetActiveLayer() {
-        AbstractTestLayer layer1 = new AbstractTestLayer();
-        AbstractTestLayer layer2 = new AbstractTestLayer();
+        TestLayer layer1 = new TestLayer();
+        TestLayer layer2 = new TestLayer();
         layerManagerWithActive.addLayer(layer1);
         layerManagerWithActive.addLayer(layer2);
 
@@ -199,7 +199,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
     @Test
     public void testGetEditDataSet() {
         assertNull(layerManagerWithActive.getEditDataSet());
-        AbstractTestLayer layer0 = new AbstractTestLayer();
+        TestLayer layer0 = new TestLayer();
         layerManagerWithActive.addLayer(layer0);
         assertNull(layerManagerWithActive.getEditDataSet());
 
@@ -222,10 +222,10 @@ public class MainLayerManagerTest extends LayerManagerTest {
     public void testGetVisibleLayersInZOrder() {
         AbstractTestOsmLayer layer1 = new AbstractTestOsmLayer();
         AbstractTestOsmLayer layer2 = new AbstractTestOsmLayer();
-        AbstractTestLayer layer3 = new AbstractTestLayer();
+        TestLayer layer3 = new TestLayer();
         layer3.setVisible(false);
         AbstractTestOsmLayer layer4 = new AbstractTestOsmLayer();
-        AbstractTestLayer layer5 = new AbstractTestLayer();
+        TestLayer layer5 = new TestLayer();
         AbstractTestOsmLayer layer6 = new AbstractTestOsmLayer();
         AbstractTestOsmLayer layer7 = new AbstractTestOsmLayer();
         layerManagerWithActive.addLayer(layer1);

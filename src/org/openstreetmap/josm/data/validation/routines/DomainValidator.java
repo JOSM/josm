@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016062200, Last Updated Wed Jun 22 07:07:02 2016 UTC
+        // Taken from Version 2016062300, Last Updated Thu Jun 23 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -927,6 +927,7 @@ public final class DomainValidator extends AbstractValidator {
         "orange", // orange Orange Brand Services Limited
         "org", // org Public Interest Registry (PIR)
         "organic", // organic Afilias Limited
+        "orientexpress", // orientexpress Orient Express
         "origins", // origins The Estée Lauder Companies Inc.
         "osaka", // osaka Interlink Co., Ltd.
         "otsuka", // otsuka Otsuka Holdings Co., Ltd.

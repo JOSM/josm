@@ -202,7 +202,7 @@ public class GpxData extends WithAttributes implements Data {
                 } else {
                     if (pnt.compareTo(earliest) < 0) {
                         earliest = pnt;
-                    } else {
+                    } else if (pnt.compareTo(latest) > 0) {
                         latest = pnt;
                     }
                 }

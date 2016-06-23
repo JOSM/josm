@@ -100,6 +100,7 @@ public class MainApplication extends Main {
 
     @Override
     protected void initializeMainWindow() {
+        mainPanel.reAddListeners();
         if (mainFrame != null) {
             mainFrame.initialize();
 
@@ -409,7 +410,6 @@ public class MainApplication extends Main {
                 !args.containsKey(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
         final MainFrame mainFrame = new MainFrame(contentPanePrivate, mainPanel, geometry);
         Main.parent = mainFrame;
-        mainPanel.reAddListeners();
 
         if (args.containsKey(Option.LOAD_PREFERENCES)) {
             CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(Main.pref);

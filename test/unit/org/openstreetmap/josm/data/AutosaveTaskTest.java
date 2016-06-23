@@ -91,7 +91,8 @@ public class AutosaveTaskTest {
         cal.set(Calendar.MILLISECOND, 456);
         Date fixed = cal.getTime();
 
-        for (int i = 0; i <= AutosaveTask.PROP_INDEX_LIMIT.get() + 1; i++) {
+        AutosaveTask.PROP_INDEX_LIMIT.put(5);
+        for (int i = 0; i <= AutosaveTask.PROP_INDEX_LIMIT.get() + 2; i++) {
             // Only retry 2 indexes to avoid 1000*1000 disk operations
             File f = task.getNewLayerFile(info, fixed, Math.max(0, i - 2));
             if (i > AutosaveTask.PROP_INDEX_LIMIT.get()) {

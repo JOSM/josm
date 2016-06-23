@@ -136,7 +136,6 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                 Main.debug(getClass().getName()+" consuming event "+kev);
             }
             kev.consume();
-            Main.map.repaint();
         }
     }
 
@@ -163,7 +162,6 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         if (offsetDialog != null) {
             offsetDialog.updateOffset();
         }
-        Main.map.repaint();
         prevEastNorth = eastNorth;
     }
 

@@ -133,23 +133,26 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * @param e Action event
      */
     public static void doActionPerformed(ActionEvent e) {
-        if (!Main.map.mapView.isActiveLayerDrawable())
+        MainLayerManager lm = Main.getLayerManager();
+        OsmDataLayer editLayer = lm.getEditLayer();
+        if (editLayer == null) {
             return;
+        }
+
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK | InputEvent.ALT_GRAPH_MASK)) != 0;
 
-        MainLayerManager lm = Main.getLayerManager();
         Command c;
         if (ctrl) {
-            c = DeleteCommand.deleteWithReferences(lm.getEditLayer(), lm.getEditDataSet().getSelected());
+            c = DeleteCommand.deleteWithReferences(editLayer, lm.getEditDataSet().getSelected());
         } else {
-            c = DeleteCommand.delete(lm.getEditLayer(), lm.getEditDataSet().getSelected(), !alt /* also delete nodes in way */);
+            c = DeleteCommand.delete(editLayer, lm.getEditDataSet().getSelected(), !alt /* also delete nodes in way */);
         }
         // if c is null, an error occurred or the user aborted. Don't do anything in that case.
         if (c != null) {
             Main.main.undoRedo.add(c);
+            //FIXME: This should not be required, DeleteCommand should update the selection, otherwise undo/redo won't work.
             lm.getEditDataSet().setSelected();
-            Main.map.repaint();
         }
     }
 
@@ -212,24 +215,24 @@ public class DeleteAction extends MapMode implements ModifierListener {
 
     private void repaintIfRequired(Set<OsmPrimitive> newHighlights, WaySegment newHighlightedWaySegment) {
         boolean needsRepaint = false;
-        DataSet ds = getLayerManager().getEditDataSet();
+        OsmDataLayer editLayer = getLayerManager().getEditLayer();
 
         if (newHighlightedWaySegment == null && oldHighlightedWaySegment != null) {
-            if (ds != null) {
-                ds.clearHighlightedWaySegments();
+            if (editLayer != null) {
+                editLayer.data.clearHighlightedWaySegments();
                 needsRepaint = true;
             }
             oldHighlightedWaySegment = null;
         } else if (newHighlightedWaySegment != null && !newHighlightedWaySegment.equals(oldHighlightedWaySegment)) {
-            if (ds != null) {
-                ds.setHighlightedWaySegments(Collections.singleton(newHighlightedWaySegment));
+            if (editLayer != null) {
+                editLayer.data.setHighlightedWaySegments(Collections.singleton(newHighlightedWaySegment));
                 needsRepaint = true;
             }
             oldHighlightedWaySegment = newHighlightedWaySegment;
         }
         needsRepaint |= highlightHelper.highlightOnly(newHighlights);
-        if (needsRepaint) {
-            Main.map.mapView.repaint();
+        if (needsRepaint && editLayer != null) {
+            editLayer.invalidate();
         }
     }
 

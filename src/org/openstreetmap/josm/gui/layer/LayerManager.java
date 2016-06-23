@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -174,7 +175,9 @@ public class LayerManager {
         checkPosition(position);
         insertLayerAt(layer, position);
         fireLayerAdded(layer);
-        layer.hookUpMapView(); // needs to be after fireLayerAdded
+        if (Main.map != null) {
+            layer.hookUpMapView(); // needs to be after fireLayerAdded
+        }
     }
 
     /**

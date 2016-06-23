@@ -58,7 +58,7 @@ public class AddCommand extends Command {
 
     @Override
     public boolean executeCommand() {
-        getLayer().data.addPrimitive(osm);
+        getAffectedDataSet().addPrimitive(osm);
         osm.setModified(true);
         checkNodeStyles(osm);
         return true;
@@ -66,7 +66,7 @@ public class AddCommand extends Command {
 
     @Override
     public void undoCommand() {
-        getLayer().data.removePrimitive(osm);
+        getAffectedDataSet().removePrimitive(osm);
         checkNodeStyles(osm);
     }
 

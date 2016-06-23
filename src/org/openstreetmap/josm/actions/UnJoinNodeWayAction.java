@@ -90,7 +90,6 @@ public class UnJoinNodeWayAction extends JosmAction {
 
         // I'm sure there's a better way to handle this
         Main.main.undoRedo.add(new RemoveNodesCommand(selectedWay, selectedNodes));
-        Main.map.repaint();
     }
 
     /**
