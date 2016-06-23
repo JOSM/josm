@@ -281,6 +281,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if (nativeScaleLayer != null) {
             ScaleList scaleList = nativeScaleLayer.getNativeScales();
             if (scaleList != null) {
+                if (PROP_ZOOM_INTERMEDIATE_STEPS.get()) {
+                    scaleList = scaleList.withIntermediateSteps(PROP_ZOOM_RATIO.get());
+                }
                 Scale snapscale = scaleList.getSnapScale(scale, PROP_ZOOM_RATIO.get(), floor);
                 return snapscale != null ? snapscale.getScale() : scale;
             }
