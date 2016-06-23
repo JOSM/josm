@@ -318,7 +318,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     class OKAction extends AbstractAction {
         OKAction() {
             putValue(NAME, tr("OK"));
-            putValue(SMALL_ICON, ImageProvider.get("ok"));
+            new ImageProvider("ok").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to close the dialog and remove the object from the relations"));
         }
 
@@ -332,7 +332,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     class CancelAction extends AbstractAction {
         CancelAction() {
             putValue(NAME, tr("Cancel"));
-            putValue(SMALL_ICON, ImageProvider.get("cancel"));
+            new ImageProvider("cancel").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Click to close the dialog and to abort deleting the objects"));
         }
 

@@ -341,7 +341,7 @@ public class MapPaintDialog extends ToggleDialog {
         public OnOffAction() {
             putValue(NAME, tr("On/Off"));
             putValue(SHORT_DESCRIPTION, tr("Turn selected styles on or off"));
-            new ImageProvider("apply").getResource().attachImageIcon(this);
+            new ImageProvider("apply").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
@@ -465,7 +465,7 @@ public class MapPaintDialog extends ToggleDialog {
         public SaveAsAction() {
             putValue(NAME, tr("Save as..."));
             putValue(SHORT_DESCRIPTION, tr("Save a copy of this Style to file and add it to the list"));
-            putValue(SMALL_ICON, ImageProvider.get("copy"));
+            new ImageProvider("copy").getResource().attachImageIcon(this);
             setEnabled(tblStyles.getSelectedRows().length == 1);
         }
 
@@ -561,7 +561,7 @@ public class MapPaintDialog extends ToggleDialog {
         public InfoAction() {
             putValue(NAME, tr("Info"));
             putValue(SHORT_DESCRIPTION, tr("view meta information, error log and source definition"));
-            putValue(SMALL_ICON, ImageProvider.get("info"));
+            new ImageProvider("info").getResource().attachImageIcon(this);
             setEnabled(tblStyles.getSelectedRows().length == 1);
         }
 
