@@ -484,8 +484,10 @@ public final class GuiHelper {
         int width = 0;
         for (GraphicsDevice gd: GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
             DisplayMode dm = gd.getDisplayMode();
-            height = Math.max(height, dm.getHeight());
-            width = Math.max(width, dm.getWidth());
+            if (dm != null) {
+                height = Math.max(height, dm.getHeight());
+                width = Math.max(width, dm.getWidth());
+            }
         }
         if (height == 0 || width == 0) {
             return new Dimension(800, 600);
