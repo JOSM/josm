@@ -236,7 +236,7 @@ public class CacheContentsPanel extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         int row = ret.convertRowIndexToModel(ret.getEditingRow());
                         tableModel.setValueAt("0", row, 1);
-                        cache.remove(ret.getValueAt(row, 0) + ":");
+                        cache.remove(ret.getValueAt(row, 0).toString() + ':');
                     }
                 });
         TableColumn tableColumn = ret.getColumnModel().getColumn(2);
