@@ -117,6 +117,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     throw new InvalidUserInputException("Commands are empty");
                 }
             } catch (InvalidUserInputException ex) {
+                Main.debug(ex);
                 new Notification(
                         tr("Orthogonalize Shape / Undo<br>"+
                         "Please select nodes that were moved by the previous Orthogonalize Shape action!"))
@@ -153,6 +154,7 @@ public final class OrthogonalizeAction extends JosmAction {
             Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), command));
             Main.map.repaint();
         } catch (InvalidUserInputException ex) {
+            Main.debug(ex);
             String msg;
             if ("usage".equals(ex.getMessage())) {
                 msg = "<h2>" + tr("Usage") + "</h2>" + USAGE;

@@ -41,6 +41,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                     return false;
             }
         } catch (OsmTransferCanceledException e) {
+            Main.trace(e);
             return false;
         } catch (OsmApiInitializationException e) {
             ExceptionDialogUtil.explainOsmTransferException(e);

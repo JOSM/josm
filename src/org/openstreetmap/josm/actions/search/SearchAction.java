@@ -350,6 +350,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                         SearchCompiler.compile(ss);
                         super.buttonAction(buttonIndex, evt);
                     } catch (ParseError e) {
+                        Main.debug(e);
                         JOptionPane.showMessageDialog(
                                 Main.parent,
                                 tr("Search expression is not valid: \n\n {0}", e.getMessage()),
@@ -703,7 +704,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     subMonitor.worked(1);
                 }
                 subMonitor.finishTask();
-            } catch (SearchCompiler.ParseError e) {
+            } catch (ParseError e) {
+                Main.debug(e);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         e.getMessage(),

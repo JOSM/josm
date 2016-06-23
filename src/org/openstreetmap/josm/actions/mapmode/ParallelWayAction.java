@@ -545,6 +545,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             getLayerManager().getEditDataSet().setSelected(pWays.getWays());
             return true;
         } catch (IllegalArgumentException e) {
+            Main.debug(e);
             new Notification(tr("ParallelWayAction\n" +
                     "The ways selected must form a simple branchless path"))
                     .setIcon(JOptionPane.INFORMATION_MESSAGE)

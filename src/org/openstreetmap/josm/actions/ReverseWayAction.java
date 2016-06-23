@@ -95,6 +95,7 @@ public final class ReverseWayAction extends JosmAction {
             try {
                 revResult = reverseWay(w);
             } catch (UserCancelException ex) {
+                Main.trace(ex);
                 return;
             }
             c.addAll(revResult.getCommands());

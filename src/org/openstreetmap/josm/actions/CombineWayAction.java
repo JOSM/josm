@@ -223,6 +223,7 @@ public class CombineWayAction extends JosmAction {
         try {
             combineResult = combineWaysWorker(selectedWays);
         } catch (UserCancelException ex) {
+            Main.trace(ex);
             return;
         }
 

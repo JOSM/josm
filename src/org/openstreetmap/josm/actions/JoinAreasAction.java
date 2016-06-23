@@ -507,6 +507,7 @@ public class JoinAreasAction extends JosmAction {
                         .show();
             }
         } catch (UserCancelException exception) {
+            Main.trace(exception);
             //revert changes
             //FIXME: this is dirty hack
             makeCommitsOneAction(tr("Reverting changes"));
@@ -680,6 +681,7 @@ public class JoinAreasAction extends JosmAction {
             commitCommands(marktr("Fix tag conflicts"));
             return true;
         } catch (UserCancelException ex) {
+            Main.trace(ex);
             return false;
         }
     }

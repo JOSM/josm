@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
+import org.openstreetmap.josm.io.BoundingBoxDownloader.MoreNotesException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
@@ -146,7 +147,8 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             ProgressMonitor subMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
             try {
                 notesData = reader.parseNotes(DOWNLOAD_LIMIT.get(), DAYS_CLOSED.get(), subMonitor);
-            } catch (BoundingBoxDownloader.MoreNotesException e) {
+            } catch (MoreNotesException e) {
+                Main.debug(e);
                 notesData = e.notes;
                 JOptionPane.showMessageDialog(Main.parent, "<html>"
                                 + trn("{0} note has been downloaded.", "{0} notes have been downloaded.", e.limit, e.limit)
