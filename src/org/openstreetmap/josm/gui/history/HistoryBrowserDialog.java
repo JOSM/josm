@@ -13,6 +13,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -24,7 +25,6 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSetListener;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -100,11 +100,11 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
 
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        SideButton btn = new SideButton(new ReloadAction());
+        JButton btn = new JButton(new ReloadAction());
         btn.setName("btn.reload");
         pnl.add(btn);
 
-        btn = new SideButton(closeAction);
+        btn = new JButton(closeAction);
         final String closeHistoryBrowserDialogKey = "CloseHistoryBrowserDialog";
         KeyStroke escapeKey = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
         getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(escapeKey, closeHistoryBrowserDialogKey);
@@ -112,7 +112,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         btn.setName("btn.close");
         pnl.add(btn);
 
-        btn = new SideButton(new ContextSensitiveHelpAction(ht("/Action/ObjectHistory")));
+        btn = new JButton(new ContextSensitiveHelpAction(ht("/Action/ObjectHistory")));
         btn.setName("btn.help");
         pnl.add(btn);
         add(pnl, BorderLayout.SOUTH);
@@ -158,7 +158,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         CloseAction() {
             putValue(NAME, tr("Close"));
             putValue(SHORT_DESCRIPTION, tr("Close the dialog"));
-            putValue(SMALL_ICON, ImageProvider.get("ok"));
+            new ImageProvider("ok").getResource().attachImageIcon(this);
         }
 
         public void run() {
@@ -177,7 +177,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         ReloadAction() {
             putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr("Reload the history from the server"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+            new ImageProvider("dialogs", "refresh").getResource().attachImageIcon(this);
         }
 
         @Override
