@@ -228,7 +228,7 @@ public class ImageProvider {
          * @since 10484
          */
         public int getAdjustedWidth() {
-            return  GuiSizesHelper.getSizeDpiAdjusted(virtualWidth);
+            return GuiSizesHelper.getSizeDpiAdjusted(virtualWidth);
         }
 
         /**
@@ -237,7 +237,7 @@ public class ImageProvider {
          * @since 10484
          */
         public int getAdjustedHeight() {
-            return  GuiSizesHelper.getSizeDpiAdjusted(virtualHeight);
+            return GuiSizesHelper.getSizeDpiAdjusted(virtualHeight);
         }
 
         /**
