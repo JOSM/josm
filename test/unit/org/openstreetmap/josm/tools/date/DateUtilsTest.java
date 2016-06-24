@@ -9,9 +9,9 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -22,12 +22,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class DateUtilsTest {
 
     /**
-     * Setup test.
+     * Set the timezone and timeout.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().i18n().preferences();
 
     /**
      * Allows to override the timezone used in {@link DateUtils} for unit tests.
@@ -116,8 +115,14 @@ public class DateUtilsTest {
      */
     @Test
     public void testFormatTime() {
-        assertEquals("1:00 AM", DateUtils.formatTime(new Date(123), DateFormat.SHORT));
-        assertEquals("1:00:00 AM CET", DateUtils.formatTime(new Date(123), DateFormat.LONG));
+        assertEquals("12:00 AM", DateUtils.formatTime(new Date(0), DateFormat.SHORT));
+        assertEquals("1:00 AM", DateUtils.formatTime(new Date(60 * 60 * 1000), DateFormat.SHORT));
+        assertEquals("12:00 AM", DateUtils.formatTime(new Date(999), DateFormat.SHORT));
+        // ignore seconds
+        assertEquals("12:00 AM", DateUtils.formatTime(new Date(5999), DateFormat.SHORT));
+
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
+        assertEquals("1:00:00 AM CET", DateUtils.formatTime(new Date(0), DateFormat.LONG));
     }
 
     /**

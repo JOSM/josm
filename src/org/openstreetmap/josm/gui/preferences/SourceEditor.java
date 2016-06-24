@@ -895,7 +895,7 @@ public abstract class SourceEditor extends JPanel {
 
         class LaunchFileChooserAction extends AbstractAction {
             LaunchFileChooserAction() {
-                putValue(SMALL_ICON, ImageProvider.get("open"));
+                new ImageProvider("open").getResource().attachImageIcon(this);
                 putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
             }
 
@@ -946,7 +946,7 @@ public abstract class SourceEditor extends JPanel {
         NewActiveSourceAction() {
             putValue(NAME, tr("New"));
             putValue(SHORT_DESCRIPTION, getStr(I18nString.NEW_SOURCE_ENTRY_TOOLTIP));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+            new ImageProvider("dialogs", "add").getResource().attachImageIcon(this);
         }
 
         @Override
@@ -976,7 +976,7 @@ public abstract class SourceEditor extends JPanel {
         RemoveActiveSourcesAction() {
             putValue(NAME, tr("Remove"));
             putValue(SHORT_DESCRIPTION, getStr(I18nString.REMOVE_SOURCE_TOOLTIP));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+            new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this);
             updateEnabledState();
         }
 
@@ -999,7 +999,7 @@ public abstract class SourceEditor extends JPanel {
         EditActiveSourceAction() {
             putValue(NAME, tr("Edit"));
             putValue(SHORT_DESCRIPTION, getStr(I18nString.EDIT_SOURCE_TOOLTIP));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+            new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this);
             updateEnabledState();
         }
 
@@ -1073,7 +1073,7 @@ public abstract class SourceEditor extends JPanel {
     class ActivateSourcesAction extends AbstractAction implements ListSelectionListener {
         ActivateSourcesAction() {
             putValue(SHORT_DESCRIPTION, getStr(I18nString.ACTIVATE_TOOLTIP));
-            putValue(SMALL_ICON, ImageProvider.get("preferences", "activate-right"));
+            new ImageProvider("preferences", "activate-right").getResource().attachImageIcon(this);
             updateEnabledState();
         }
 
@@ -1127,7 +1127,7 @@ public abstract class SourceEditor extends JPanel {
         ResetAction() {
             putValue(NAME, tr("Reset"));
             putValue(SHORT_DESCRIPTION, tr("Reset to default"));
-            putValue(SMALL_ICON, ImageProvider.get("preferences", "reset"));
+            new ImageProvider("preferences", "reset").getResource().attachImageIcon(this);
         }
 
         @Override
@@ -1143,7 +1143,7 @@ public abstract class SourceEditor extends JPanel {
         ReloadSourcesAction(String url, List<SourceProvider> sourceProviders) {
             putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr(getStr(I18nString.RELOAD_ALL_AVAILABLE), url));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+            new ImageProvider("dialogs", "refresh").getResource().attachImageIcon(this);
             this.url = url;
             this.sourceProviders = sourceProviders;
             setEnabled(!Main.isOffline(OnlineResource.JOSM_WEBSITE));
@@ -1261,7 +1261,7 @@ public abstract class SourceEditor extends JPanel {
         NewIconPathAction() {
             putValue(NAME, tr("New"));
             putValue(SHORT_DESCRIPTION, tr("Add a new icon path"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+            new ImageProvider("dialogs", "add").getResource().attachImageIcon(this);
         }
 
         @Override
@@ -1275,7 +1275,7 @@ public abstract class SourceEditor extends JPanel {
         RemoveIconPathAction() {
             putValue(NAME, tr("Remove"));
             putValue(SHORT_DESCRIPTION, tr("Remove the selected icon paths"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+            new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this);
             updateEnabledState();
         }
 
@@ -1298,7 +1298,7 @@ public abstract class SourceEditor extends JPanel {
         EditIconPathAction() {
             putValue(NAME, tr("Edit"));
             putValue(SHORT_DESCRIPTION, tr("Edit the selected icon path"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+            new ImageProvider("dialogs", "edit").getResource().attachImageIcon(this);
             updateEnabledState();
         }
 
