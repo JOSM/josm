@@ -631,19 +631,25 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             Layer layer = e.getAddedLayer();
             registeredLayers.put(layer, new WarningLayerPainter(layer));
             // Layers may trigger a redraw during this call if they open dialogs.
-            registeredLayers.put(layer, layer.attachToMapView(new MapViewEvent(this, false)));
+            LayerPainter painter = layer.attachToMapView(new MapViewEvent(this, false));
+            if (!registeredLayers.containsKey(layer)) {
+                // The layer may have removed itself during attachToMapView()
+                Main.warn("Layer was removed during attachToMapView()");
+            } else {
+                registeredLayers.put(layer, painter);
 
-            ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
-            if (viewProjectionBounds != null) {
-                scheduleZoomTo(new ViewportData(viewProjectionBounds));
+                ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
+                if (viewProjectionBounds != null) {
+                    scheduleZoomTo(new ViewportData(viewProjectionBounds));
+                }
+
+                layer.addPropertyChangeListener(this);
+                Main.addProjectionChangeListener(layer);
+                invalidatedListener.addTo(layer);
+                AudioPlayer.reset();
+
+                repaint();
             }
-
-            layer.addPropertyChangeListener(this);
-            Main.addProjectionChangeListener(layer);
-            invalidatedListener.addTo(layer);
-            AudioPlayer.reset();
-
-            repaint();
         } catch (RuntimeException t) {
             throw BugReport.intercept(t).put("layer", e.getAddedLayer());
         }
