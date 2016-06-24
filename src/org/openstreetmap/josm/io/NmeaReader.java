@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Reads a NMEA file. Based on information from
@@ -165,6 +166,8 @@ public class NmeaReader {
     }
 
     public NmeaReader(InputStream source) throws IOException {
+        rmcTimeFmt.setTimeZone(DateUtils.UTC);
+        rmcTimeFmtStd.setTimeZone(DateUtils.UTC);
 
         // create the data tree
         data = new GpxData();
