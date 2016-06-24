@@ -19,6 +19,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -164,7 +165,7 @@ public class JOSMTestRules implements TestRule {
         // Tests are running headless by default.
         System.setProperty("java.awt.headless", "true");
         // All tests use the same timezone.
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+        TimeZone.setDefault(DateUtils.UTC);
         // Set log level to info
         Main.logLevel = 3;
 
