@@ -34,7 +34,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  * @author Jan Peter Stotz
  *
  */
-public class Demo extends JFrame implements JMapViewerEventListener  {
+public class Demo extends JFrame implements JMapViewerEventListener {
 
     private static final long serialVersionUID = 1L;
 
