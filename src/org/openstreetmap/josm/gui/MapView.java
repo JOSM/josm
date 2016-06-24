@@ -318,6 +318,33 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     }
 
     /**
+     * A layer painter that issues a warning when being called.
+     * @author Michael Zangl
+     * @since 10474
+     */
+    private static class WarningLayerPainter implements LayerPainter {
+        boolean warningPrinted = false;
+        private Layer layer;
+
+        public WarningLayerPainter(Layer layer) {
+            this.layer = layer;
+        }
+
+        @Override
+        public void paint(MapViewGraphics graphics) {
+            if (!warningPrinted) {
+                Main.debug("A layer triggered a repaint while being added: " + layer);
+                warningPrinted = true;
+            }
+        }
+
+        @Override
+        public void detachFromMapView(MapViewEvent event) {
+            // ignored
+        }
+    }
+
+    /**
      * Removes a layer change listener
      * <p>
      * To be removed: end of 2016.
@@ -602,6 +629,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     public void layerAdded(LayerAddEvent e) {
         try {
             Layer layer = e.getAddedLayer();
+            registeredLayers.put(layer, new WarningLayerPainter(layer));
+            // Layers may trigger a redraw during this call if they open dialogs.
             registeredLayers.put(layer, layer.attachToMapView(new MapViewEvent(this, false)));
 
             ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
