@@ -346,7 +346,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         DownloadAvailablePluginsAction() {
             putValue(NAME, tr("Download list"));
             putValue(SHORT_DESCRIPTION, tr("Download the list of available plugins"));
-            putValue(SMALL_ICON, ImageProvider.get("download"));
+            new ImageProvider("download").getResource().attachImageIcon(this);
         }
 
         @Override
@@ -383,7 +383,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         UpdateSelectedPluginsAction() {
             putValue(NAME, tr("Update plugins"));
             putValue(SHORT_DESCRIPTION, tr("Update the selected plugins"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+            new ImageProvider("dialogs", "refresh").getResource().attachImageIcon(this);
         }
 
         protected void alertNothingToUpdate() {
@@ -485,7 +485,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         ConfigureSitesAction() {
             putValue(NAME, tr("Configure sites..."));
             putValue(SHORT_DESCRIPTION, tr("Configure the list of sites where plugins are downloaded from"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "settings"));
+            new ImageProvider("dialogs", "settings").getResource().attachImageIcon(this);
         }
 
         @Override
