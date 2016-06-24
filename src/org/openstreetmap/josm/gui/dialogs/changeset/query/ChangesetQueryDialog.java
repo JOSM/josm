@@ -14,6 +14,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -22,7 +23,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.ChangesetQuery;
@@ -73,14 +73,9 @@ public class ChangesetQueryDialog extends JDialog {
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        // -- query action
-        pnl.add(new SideButton(new QueryAction()));
-
-        // -- cancel action
-        pnl.add(new SideButton(new CancelAction()));
-
-        // -- help action
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/ChangesetQuery"))));
+        pnl.add(new JButton(new QueryAction()));
+        pnl.add(new JButton(new CancelAction()));
+        pnl.add(new JButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/ChangesetQuery"))));
 
         return pnl;
     }
@@ -157,7 +152,7 @@ public class ChangesetQueryDialog extends JDialog {
     class QueryAction extends AbstractAction {
         QueryAction() {
             putValue(NAME, tr("Query"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
+            new ImageProvider("dialogs", "search").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Query and download changesets"));
         }
 
@@ -205,7 +200,7 @@ public class ChangesetQueryDialog extends JDialog {
 
         CancelAction() {
             putValue(NAME, tr("Cancel"));
-            putValue(SMALL_ICON, ImageProvider.get("cancel"));
+            new ImageProvider("cancel").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Close the dialog and abort querying of changesets"));
         }
 
