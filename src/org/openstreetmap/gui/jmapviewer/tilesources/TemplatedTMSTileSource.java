@@ -28,13 +28,13 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
  *                                  used to specify many tile servers
  * {header:(HEADER_NAME,HEADER_VALUE)} - sets the headers to be sent to tile server
  */
-
 public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTileSource {
 
     private Random rand;
     private String[] randomParts;
     private final Map<String, String> headers = new HashMap<>();
 
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
     private static final String COOKIE_HEADER   = "Cookie";
     private static final String PATTERN_ZOOM    = "\\{(?:(\\d+)-)?z(?:oom)?([+-]\\d+)?\\}";
     private static final String PATTERN_X       = "\\{x\\}";
@@ -43,10 +43,10 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
     private static final String PATTERN_NEG_Y   = "\\{-y\\}";
     private static final String PATTERN_SWITCH  = "\\{switch:([^}]+)\\}";
     private static final String PATTERN_HEADER  = "\\{header\\(([^,]+),([^}]+)\\)\\}";
+    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     private static final String[] ALL_PATTERNS = {
-        PATTERN_HEADER, PATTERN_ZOOM, PATTERN_X, PATTERN_Y, PATTERN_Y_YAHOO, PATTERN_NEG_Y,
-        PATTERN_SWITCH
+        PATTERN_HEADER, PATTERN_ZOOM, PATTERN_X, PATTERN_Y, PATTERN_Y_YAHOO, PATTERN_NEG_Y, PATTERN_SWITCH
     };
 
     /**
