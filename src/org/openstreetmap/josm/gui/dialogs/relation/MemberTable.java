@@ -84,8 +84,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     protected JPopupMenu buildPopupMenu() {
         JPopupMenu menu = super.buildPopupMenu();
         zoomToGap = new ZoomToGapAction();
-        Main.getLayerManager().addLayerChangeListener(zoomToGap);
-        Main.getLayerManager().addActiveLayerChangeListener(zoomToGap);
+        registerListeners();
         getSelectionModel().addListSelectionListener(zoomToGap);
         menu.add(zoomToGap);
         menu.addSeparator();
@@ -135,6 +134,13 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
             HighlightHelper.clearAllHighlighted();
             Main.map.mapView.repaint();
         }
+    }
+
+    @Override
+    public void registerListeners() {
+        Main.getLayerManager().addLayerChangeListener(zoomToGap);
+        Main.getLayerManager().addActiveLayerChangeListener(zoomToGap);
+        super.registerListeners();
     }
 
     @Override
