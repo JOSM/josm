@@ -690,7 +690,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
     }
 
     protected int estimateTileCacheSize() {
-        Dimension screenSize = GuiHelper.getMaxiumScreenSize();
+        Dimension screenSize = GuiHelper.getMaximumScreenSize();
         int height = screenSize.height;
         int width = screenSize.width;
         int tileSize = 256; // default tile size

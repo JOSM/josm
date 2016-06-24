@@ -473,10 +473,9 @@ public final class GuiHelper {
      * This method returns always 800x600 in headless mode (useful for unit tests).
      * @return the size of maximum screen, in pixels, or 800x600
      * @see Toolkit#getScreenSize
-     * @since 9576
+     * @since 10470
      */
-
-    public static Dimension getMaxiumScreenSize() {
+    public static Dimension getMaximumScreenSize() {
         if (GraphicsEnvironment.isHeadless()) {
             return new Dimension(800, 600);
         }
@@ -485,8 +484,10 @@ public final class GuiHelper {
         int width = 0;
         for (GraphicsDevice gd: GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
             DisplayMode dm = gd.getDisplayMode();
-            height = Math.max(height, dm.getHeight());
-            width = Math.max(width, dm.getWidth());
+            if (dm != null) {
+                height = Math.max(height, dm.getHeight());
+                width = Math.max(width, dm.getWidth());
+            }
         }
         if (height == 0 || width == 0) {
             return new Dimension(800, 600);

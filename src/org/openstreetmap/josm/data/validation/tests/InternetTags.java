@@ -3,10 +3,6 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.net.IDN;
-import java.util.regex.Pattern;
-
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -28,8 +24,6 @@ public class InternetTags extends Test {
     public static final int INVALID_URL = 3301;
     /** Error code for an invalid e-mail */
     public static final int INVALID_EMAIL = 3302;
-
-    private static final Pattern ASCII_PATTERN = Pattern.compile("^\\p{ASCII}+$");
 
     /**
      * List of keys subject to URL validation.
@@ -85,35 +79,7 @@ public class InternetTags extends Test {
      * @since 7824
      */
     public TestError validateTag(OsmPrimitive p, String k, AbstractValidator validator, int code) {
-        TestError error = doValidateTag(p, k, null, validator, code);
-        if (error != null) {
-            // Workaround to https://issues.apache.org/jira/browse/VALIDATOR-290
-            // Apache Commons Validator 1.4.1-SNAPSHOT does not support yet IDN URLs
-            // To remove if it gets fixed on Apache side
-            String v = p.get(k);
-            if (!ASCII_PATTERN.matcher(v).matches()) {
-                try {
-                    String protocol = "";
-                    if (v.contains("://")) {
-                        protocol = v.substring(0, v.indexOf("://")+3);
-                    }
-                    String domain = !protocol.isEmpty() ? v.substring(protocol.length(), v.length()) : v;
-                    String ending = "";
-                    if (domain.contains("/")) {
-                        int idx = domain.indexOf('/');
-                        ending = domain.substring(idx, domain.length());
-                        domain = domain.substring(0, idx);
-                    }
-                    // Try to apply ToASCII algorithm
-                    error = doValidateTag(p, k, protocol+IDN.toASCII(domain)+ending, validator, code);
-                } catch (IllegalArgumentException e) {
-                    Main.trace(e);
-                    error.setMessage(error.getMessage() +
-                            tr(" URL cannot be converted to ASCII: {0}", e.getMessage()));
-                }
-            }
-        }
-        return error;
+        return doValidateTag(p, k, null, validator, code);
     }
 
     /**
