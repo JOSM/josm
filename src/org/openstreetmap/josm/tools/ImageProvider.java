@@ -207,6 +207,7 @@ public class ImageProvider {
         /**
          * Returns the image width in virtual pixels
          * @return the image width in virtual pixels
+         * @since 9705
          */
         public int getVirtualWidth() {
             return virtualWidth;
@@ -219,6 +220,24 @@ public class ImageProvider {
          */
         public int getVirtualHeight() {
             return virtualHeight;
+        }
+
+        /**
+         * Returns the image width in pixels to use for display
+         * @return the image width in pixels to use for display
+         * @since 10484
+         */
+        public int getAdjustedWidth() {
+            return  GuiSizesHelper.getSizeDpiAdjusted(virtualWidth);
+        }
+
+        /**
+         * Returns the image height in pixels to use for display
+         * @return the image height in pixels to use for display
+         * @since 10484
+         */
+        public int getAdjustedHeight() {
+            return  GuiSizesHelper.getSizeDpiAdjusted(virtualHeight);
         }
 
         /**
