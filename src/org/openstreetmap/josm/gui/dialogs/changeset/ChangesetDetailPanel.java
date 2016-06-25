@@ -95,9 +95,14 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         addComponentListener(
                 new ComponentAdapter() {
                     @Override
+                    public void componentShown(ComponentEvent e) {
+                        Main.getLayerManager().addAndFireActiveLayerChangeListener(actSelectInCurrentLayer);
+                        Main.getLayerManager().addAndFireActiveLayerChangeListener(actZoomInCurrentLayerAction);
+                    }
+
+                    @Override
                     public void componentHidden(ComponentEvent e) {
-                        // make sure the listener is unregistered when the panel becomes
-                        // invisible
+                        // make sure the listener is unregistered when the panel becomes invisible
                         Main.getLayerManager().removeActiveLayerChangeListener(actSelectInCurrentLayer);
                         Main.getLayerManager().removeActiveLayerChangeListener(actZoomInCurrentLayerAction);
                     }
