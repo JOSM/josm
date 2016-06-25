@@ -168,27 +168,26 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
     private Pack200CompressorInputStream(final InputStream in, final File f,
                                          final Pack200Strategy mode,
                                          final Map<String, String> props)
-        throws IOException {
+            throws IOException {
         originalInput = in;
         streamBridge = mode.newStreamBridge();
-        final JarOutputStream jarOut = new JarOutputStream(streamBridge);
-        final Pack200.Unpacker u = Pack200.newUnpacker();
-        if (props != null) {
-            u.properties().putAll(props);
-        }
-        if (f == null) {
-            u.unpack(new FilterInputStream(in) {
+        try (final JarOutputStream jarOut = new JarOutputStream(streamBridge)) {
+            final Pack200.Unpacker u = Pack200.newUnpacker();
+            if (props != null) {
+                u.properties().putAll(props);
+            }
+            if (f == null) {
+                u.unpack(new FilterInputStream(in) {
                     @Override
-                        public void close() {
+                    public void close() {
                         // unpack would close this stream but we
                         // want to give the user code more control
                     }
-                },
-                jarOut);
-        } else {
-            u.unpack(f, jarOut);
+                }, jarOut);
+            } else {
+                u.unpack(f, jarOut);
+            }
         }
-        jarOut.close();
     }
 
     @Override
