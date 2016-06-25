@@ -33,7 +33,7 @@ public abstract class BZip2Utils {
 
     static {
         final Map<String, String> uncompressSuffix =
-            new LinkedHashMap<String, String>();
+            new LinkedHashMap<>();
         // backwards compatibilty: BZip2Utils never created the short
         // tbz form, so .tar.bz2 has to be added explicitly
         uncompressSuffix.put(".tar.bz2", ".tar");

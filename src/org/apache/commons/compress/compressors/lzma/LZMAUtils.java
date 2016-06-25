@@ -45,7 +45,7 @@ public class LZMAUtils {
     private static volatile CachedAvailability cachedLZMAAvailability;
 
     static {
-        final Map<String, String> uncompressSuffix = new HashMap<String, String>();
+        final Map<String, String> uncompressSuffix = new HashMap<>();
         uncompressSuffix.put(".lzma", "");
         uncompressSuffix.put("-lzma", "");
         fileNameUtil = new FileNameUtil(uncompressSuffix, ".lzma");
