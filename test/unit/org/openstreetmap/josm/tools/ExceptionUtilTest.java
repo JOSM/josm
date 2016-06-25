@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.TimeZone;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.date.DateUtils;
+import org.openstreetmap.josm.tools.date.DateUtilsTest;
 
 /**
  * Unit tests of {@link ExceptionUtil} class.
@@ -123,6 +125,10 @@ public class ExceptionUtilTest {
                 ExceptionUtil.explainConflict(new OsmApiException(code, "header", "")));
         assertEquals("<html>Closing of changeset <strong>1</strong> failed <br>because it has already been closed.",
                 ExceptionUtil.explainConflict(new OsmApiException(code, "The changeset 1 was closed at xxx", "")));
+        assertEquals("<html>Closing of changeset <strong>1</strong> failed<br> because it has already been closed on 2016-01-01 12:34:56.",
+                ExceptionUtil.explainConflict(new OsmApiException(code, "The changeset 1 was closed at 2016-01-01 12:34:56 UTC", "")));
+        DateUtilsTest.setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         assertEquals("<html>Closing of changeset <strong>1</strong> failed<br> because it has already been closed on 2016-01-01 13:34:56.",
                 ExceptionUtil.explainConflict(new OsmApiException(code, "The changeset 1 was closed at 2016-01-01 12:34:56 UTC", "")));
     }
