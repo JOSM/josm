@@ -50,6 +50,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
@@ -176,6 +177,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public NavigatableComponent() {
         setLayout(null);
         state = MapViewState.createDefaultState(getWidth(), getHeight());
+        // uses weak link.
+        Main.addProjectionChangeListener(new ProjectionChangeListener() {
+            @Override
+            public void projectionChanged(Projection oldValue, Projection newValue) {
+                fixProjection();
+            }
+        });
     }
 
     @Override
@@ -323,6 +331,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     protected boolean isVisibleOnScreen() {
         return SwingUtilities.getWindowAncestor(this) != null && isShowing();
+    }
+
+    /**
+     * Changes the projection settings used for this map view.
+     * <p>
+     * Made public temporarely, will be made private later.
+     */
+    public void fixProjection() {
+        state = state.usingProjection(Main.getProjection());
+        repaint();
     }
 
     /**

@@ -1430,7 +1430,10 @@ public abstract class Main {
     private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
         if (newValue == null ^ oldValue == null
                 || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
-
+            if (Main.map != null) {
+                // This needs to be called first
+                Main.map.mapView.fixProjection();
+            }
             synchronized (Main.class) {
                 Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
                 while (it.hasNext()) {

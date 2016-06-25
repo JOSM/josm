@@ -99,6 +99,17 @@ public final class MapViewState {
         topLeftOnScreen = position.getLocationOnScreen();
     }
 
+    private MapViewState(Projection projection, MapViewState mapViewState) {
+        this.projection = projection;
+        this.scale = mapViewState.scale;
+        this.topLeft = mapViewState.topLeft;
+
+        viewWidth = mapViewState.viewWidth;
+        viewHeight = mapViewState.viewHeight;
+        topLeftInWindow = mapViewState.topLeftInWindow;
+        topLeftOnScreen = mapViewState.topLeftOnScreen;
+    }
+
     /**
      * The scale in east/north units per pixel.
      * @return The scale.
@@ -232,6 +243,20 @@ public final class MapViewState {
     public MapViewState usingLocation(JComponent positon) {
         EastNorth center = this.getCenter().getEastNorth();
         return new MapViewState(positon, this).usingCenter(center);
+    }
+
+    /**
+     * Creates a state that uses the projection.
+     * @param projection The projection to use.
+     * @return The new state.
+     * @since 10486
+     */
+    public MapViewState usingProjection(Projection projection) {
+        if (projection.equals(this.projection)) {
+            return this;
+        } else {
+            return new MapViewState(projection, this);
+        }
     }
 
     /**
