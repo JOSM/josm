@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.widgets.MultiSplitLayout.Split;
 import org.openstreetmap.josm.gui.widgets.MultiSplitPane;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Destroyable;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * This is the panel displayed on the right side of JOSM. It displays a list of panels.
@@ -322,7 +323,11 @@ public class DialogsPanel extends JPanel implements Destroyable {
     @Override
     public void destroy() {
         for (ToggleDialog t : allDialogs) {
-            t.destroy();
+            try {
+                t.destroy();
+            } catch (RuntimeException e) {
+                throw BugReport.intercept(e).put("dialog", t).put("dialog-class", t.getClass());
+            }
         }
     }
 

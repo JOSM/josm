@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016062300, Last Updated Thu Jun 23 07:07:01 2016 UTC
+        // Taken from Version 2016062500, Last Updated Sat Jun 25 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -340,6 +340,7 @@ public final class DomainValidator extends AbstractValidator {
         "aramco", // aramco Aramco Services Company
         "archi", // archi STARTING DOT LIMITED
         "army", // army United TLD Holdco Ltd.
+        "art", // art UK Creative Ideas Limited
         "arte", // arte Association Relative à la Télévision Européenne G.E.I.E.
         "asia", // asia DotAsia Organisation Ltd.
         "associates", // associates Baxter Hill, LLC
@@ -495,6 +496,7 @@ public final class DomainValidator extends AbstractValidator {
         "contact", // contact Top Level Spectrum, Inc.
         "contractors", // contractors Magic Woods, LLC
         "cooking", // cooking Top Level Domain Holdings Limited
+        "cookingchannel", // cookingchannel Lifestyle Domain Holdings, Inc.
         "cool", // cool Koko Lake, LLC
         "coop", // coop DotCooperation LLC
         "corsica", // corsica Collectivité Territoriale de Corse
@@ -615,6 +617,7 @@ public final class DomainValidator extends AbstractValidator {
         "flsmidth", // flsmidth FLSmidth A/S
         "fly", // fly Charleston Road Registry Inc.
         "foo", // foo Charleston Road Registry Inc.
+        "foodnetwork", // foodnetwork Lifestyle Domain Holdings, Inc.
         "football", // football Foggy Farms, LLC
         "ford", // ford Ford Motor Company
         "forex", // forex DOTFOREX REGISTRY LTD
@@ -625,6 +628,7 @@ public final class DomainValidator extends AbstractValidator {
         "fresenius", // fresenius Fresenius Immobilien-Verwaltungs-GmbH
         "frl", // frl FRLregistry B.V.
         "frogans", // frogans OP3FT
+        "frontdoor", // frontdoor Lifestyle Domain Holdings, Inc.
         "frontier", // frontier Frontier Communications Corporation
         "ftr", // ftr Frontier Communications Corporation
         "fund", // fund John Castle, LLC
@@ -688,6 +692,7 @@ public final class DomainValidator extends AbstractValidator {
         "helsinki", // helsinki City of Helsinki
         "here", // here Charleston Road Registry Inc.
         "hermes", // hermes Hermes International
+        "hgtv", // hgtv Lifestyle Domain Holdings, Inc.
         "hiphop", // hiphop Uniregistry, Corp.
         "hisamitsu", // hisamitsu Hisamitsu Pharmaceutical Co.,Inc.
         "hitachi", // hitachi Hitachi, Ltd.
@@ -894,6 +899,7 @@ public final class DomainValidator extends AbstractValidator {
         "next", // next Next plc
         "nextdirect", // nextdirect Next plc
         "nexus", // nexus Charleston Road Registry Inc.
+        "nfl", // nfl NFL Reg Ops LLC
         "ngo", // ngo Public Interest Registry
         "nhk", // nhk Japan Broadcasting Corporation (NHK)
         "nico", // nico DWANGO Co., Ltd.
@@ -967,6 +973,7 @@ public final class DomainValidator extends AbstractValidator {
         "plus", // plus Sugar Mill, LLC
         "pohl", // pohl Deutsche Vermögensberatung Aktiengesellschaft DVAG
         "poker", // poker Afilias Domains No. 5 Limited
+        "politie", // politie Politie Nederland
         "porn", // porn ICM Registry PN LLC
         "post", // post Universal Postal Union
         "praxi", // praxi Praxi S.p.A.
@@ -1172,6 +1179,7 @@ public final class DomainValidator extends AbstractValidator {
         "trading", // trading DOTTRADING REGISTRY LTD
         "training", // training Wild Willow, LLC
         "travel", // travel Tralliance Registry Management Company, LLC.
+        "travelchannel", // travelchannel Lifestyle Domain Holdings, Inc.
         "travelers", // travelers Travelers TLD, LLC
         "travelersinsurance", // travelersinsurance Travelers TLD, LLC
         "trust", // trust Artemis Internet Inc
@@ -1239,6 +1247,7 @@ public final class DomainValidator extends AbstractValidator {
         "wine", // wine June Station, LLC
         "wme", // wme William Morris Endeavor Entertainment, LLC
         "wolterskluwer", // wolterskluwer Wolters Kluwer N.V.
+        "woodside", // woodside Woodside Petroleum Limited
         "work", // work Top Level Domain Holdings Limited
         "works", // works Little Dynamite, LLC
         "world", // world Bitter Fields, LLC
