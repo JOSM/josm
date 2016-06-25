@@ -1573,7 +1573,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         } else if (ts.tooLarge()) {
             myDrawString(g, tr("zoom in to load more tiles"), 120, 120);
         } else if (!autoZoom && ts.tooSmall()) {
-            myDrawString(g, tr("increase zoom level to see more detail"), 120, 120);
+            myDrawString(g, tr("increase tiles zoom level (change resolution) to see more detail"), 120, 120);
         }
 
         if (noTilesAtZoom) {
