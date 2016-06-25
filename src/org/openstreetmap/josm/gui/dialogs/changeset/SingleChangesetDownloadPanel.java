@@ -10,6 +10,7 @@ import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
@@ -17,7 +18,6 @@ import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetContentDownloadTask;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.widgets.ChangesetIdTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.OnlineResource;
@@ -54,7 +54,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
         SelectAllOnFocusGainedDecorator.decorate(tfChangesetId);
 
         DownloadAction actDownload = new DownloadAction();
-        SideButton btn = new SideButton(actDownload);
+        JButton btn = new JButton(actDownload);
         tfChangesetId.addActionListener(actDownload);
         tfChangesetId.getDocument().addDocumentListener(actDownload);
         add(btn);
