@@ -308,6 +308,11 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 showNotify();
             }
         }
+
+        @Override
+        public String toString() {
+            return "ToggleDialogAction [" + ToggleDialog.this.toString() + ']';
+        }
     }
 
     /**
