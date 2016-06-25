@@ -130,6 +130,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("missingRoads", tr("replaced by new {0} plugin", "ImproveOsm")),
             new DeprecatedPlugin("trafficFlowDirection", tr("replaced by new {0} plugin", "ImproveOsm")),
             new DeprecatedPlugin("kendzi3d-jogl", tr("replaced by new {0} plugin", "jogl")),
+            new DeprecatedPlugin("josm-geojson", tr("replaced by new {0} plugin", "geojson")),
         });
     }
 
