@@ -35,7 +35,7 @@ public class GzipUtils {
         // compressed extension of .tar as FileNameUtil will use the
         // first one found
         final Map<String, String> uncompressSuffix =
-            new LinkedHashMap<String, String>();
+            new LinkedHashMap<>();
         uncompressSuffix.put(".tgz", ".tar");
         uncompressSuffix.put(".taz", ".tar");
         uncompressSuffix.put(".svgz", ".svg");

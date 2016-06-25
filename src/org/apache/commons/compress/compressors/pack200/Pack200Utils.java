@@ -128,7 +128,7 @@ public class Pack200Utils {
     public static void normalize(final File from, final File to, Map<String, String> props)
         throws IOException {
         if (props == null) {
-            props = new HashMap<String, String>();
+            props = new HashMap<>();
         }
         props.put(Pack200.Packer.SEGMENT_LIMIT, "-1");
         final File f = File.createTempFile("commons-compress", "pack200normalize");

@@ -35,7 +35,7 @@ public class FileNameUtil {
      * versions of those file types. For example: from ".tar" to ".tgz".
      */
     private final Map<String, String> compressSuffix =
-        new HashMap<String, String>();
+        new HashMap<>();
 
     /**
      * Map from common filename suffixes of compressed files to the

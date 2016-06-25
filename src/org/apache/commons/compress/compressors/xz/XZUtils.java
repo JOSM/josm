@@ -48,7 +48,7 @@ public class XZUtils {
     private static volatile CachedAvailability cachedXZAvailability;
 
     static {
-        final Map<String, String> uncompressSuffix = new HashMap<String, String>();
+        final Map<String, String> uncompressSuffix = new HashMap<>();
         uncompressSuffix.put(".txz", ".tar");
         uncompressSuffix.put(".xz", "");
         uncompressSuffix.put("-xz", "");
