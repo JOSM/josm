@@ -732,7 +732,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
         LayerPainter painter = registeredLayers.remove(layer);
         if (painter == null) {
-            throw new IllegalArgumentException("The painter for layer " + layer + " was not registered.");
+            Main.error("The painter for layer " + layer + " was not registered.");
+            return;
         }
         painter.detachFromMapView(new MapViewEvent(this, false));
         Main.removeProjectionChangeListener(layer);
