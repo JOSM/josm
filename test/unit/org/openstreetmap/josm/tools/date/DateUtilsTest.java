@@ -34,6 +34,7 @@ public class DateUtilsTest {
      */
     public static void setTimeZone(TimeZone zone) {
         DateUtils.setTimeZone(zone);
+        TimeZone.setDefault(zone);
     }
 
     /**
@@ -121,7 +122,7 @@ public class DateUtilsTest {
         // ignore seconds
         assertEquals("12:00 AM", DateUtils.formatTime(new Date(5999), DateFormat.SHORT));
 
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
+        setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
         assertEquals("1:00:00 AM CET", DateUtils.formatTime(new Date(0), DateFormat.LONG));
     }
 
@@ -155,6 +156,7 @@ public class DateUtilsTest {
         assertEquals(1459695600000L, DateUtils.tsFromString("2016-04-03T15:00:00.000-00:00"));
 
         // Local time
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         assertEquals(1459688400000L, DateUtils.tsFromString("03-APR-16 15:00:00"));
     }
 
