@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016062500, Last Updated Sat Jun 25 07:07:01 2016 UTC
+        // Taken from Version 2016062501, Last Updated Sun Jun 26 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -594,8 +594,10 @@ public final class DomainValidator extends AbstractValidator {
         "fan", // fan Asiamix Digital Ltd
         "fans", // fans Asiamix Digital Limited
         "farm", // farm Just Maple, LLC
+        "farmers", // farmers Farmers Insurance Exchange
         "fashion", // fashion Top Level Domain Holdings Limited
         "fast", // fast Amazon Registry Services, Inc.
+        "fedex", // fedex Federal Express Corporation
         "feedback", // feedback Top Level Spectrum, Inc.
         "ferrero", // ferrero Ferrero Trading Lux S.A.
         "film", // film Motion Picture Domain Registry Pty Ltd
