@@ -3649,6 +3649,10 @@ node[public_transport=stop_position][trolleybus=yes] {
     icon-image: "transport/trolleybus.svg";
     set icon_z17;
 }
+node[public_transport=stop_position][funicular=yes] {
+    icon-image: "transport/funicular.svg";
+    set icon_z17;
+}
 node[public_transport=stop_position][aerialway=yes] {
     icon-image: "transport/aerialway/station.png";
     set icon_z17;
