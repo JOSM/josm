@@ -264,8 +264,8 @@ public abstract class Main {
         } else {
             ERRORS_AND_WARNINGS.add(msg);
         }
-        // Only keep 5 lines to avoid memory leak and incomplete stacktraces in bug reports
-        while (ERRORS_AND_WARNINGS.size() > 5) {
+        // Only keep 10 lines to avoid memory leak
+        while (ERRORS_AND_WARNINGS.size() > 10) {
             ERRORS_AND_WARNINGS.remove(0);
         }
     }
