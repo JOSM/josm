@@ -5356,7 +5356,14 @@
             <key key="amenity" value="shelter" />
             <text key="name" text="Name" />
             <check key="fireplace" text="Fireplace" />
-            <combo key="shelter_type" text="Type of shelter" values="basic_hut,lean_to,picnic_shelter,public_transport,weather_shelter,wildlife_hide" values_context="shelter" values_searchable="true" />
+            <combo key="shelter_type" text="Type of shelter" values_context="shelter" values_searchable="true">
+                <list_entry value="basic_hut" icon="styles/standard/accommodation/basic_hut_blue.png" />
+                <list_entry value="lean_to" icon="styles/standard/accommodation/shelter_lean_to.svg" />
+                <list_entry value="picnic_shelter" icon="styles/standard/accommodation/shelter_picnic_brown.png" />
+                <list_entry value="public_transport" icon="styles/standard/accommodation/shelter_public_transport_brown.png" />
+                <list_entry value="weather_shelter" icon="styles/standard/accommodation/shelter.png" />
+                <list_entry value="wildlife_hide" icon="styles/standard/accommodation/shelter.png" />
+            </combo>
         </item> <!-- Shelter -->
         <item name="Hunting Stand" icon="presets/hunting_stand.png" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=hunting_stand"
