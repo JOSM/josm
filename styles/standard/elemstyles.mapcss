@@ -3625,6 +3625,10 @@ node[public_transport=stop_position] {
     icon-image: "transport/railway_small.png";
     set icon_z17;
 }
+node[public_transport=stop_position][share_taxi=yes] {
+    icon-image: "transport/share_taxi.svg";
+    set icon_z17;
+}
 node[public_transport=stop_position][bus=yes] {
     icon-image: "transport/bus.svg";
     set icon_z17;
