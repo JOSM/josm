@@ -113,7 +113,7 @@ public class MapScaler extends JComponent implements Helpful, Accessible {
          */
         private final double spacingMeter;
         private final int steps;
-        private final int majorStepEvery;
+        private final int minorStepsPerMajor;
 
         /**
          * Creates a new tick mark helper.
@@ -126,26 +126,44 @@ public class MapScaler extends JComponent implements Helpful, Accessible {
 
             double log10 = Math.log(lineDistance) / Math.log(10);
             double spacingLog10 = Math.pow(10, Math.floor(log10));
+            int minorStepsPerMajor;
+            double distanceBetweenMinor;
             if (log10 - Math.floor(log10) < .75) {
-                spacingMeter = spacingLog10 / 4;
-                majorStepEvery = 4;
+                // Add 2 ticks for every full unit
+                distanceBetweenMinor = spacingLog10 / 2;
+                minorStepsPerMajor = 2;
             } else {
-                spacingMeter = spacingLog10;
-                majorStepEvery = 5;
+                // Add 10 ticks for every full unit
+                distanceBetweenMinor = spacingLog10;
+                minorStepsPerMajor = 5;
             }
-            steps = (int) Math.floor(lineDistance / spacingMeter);
+            // round down to the last major step.
+            int majorSteps = (int) Math.floor(lineDistance / distanceBetweenMinor / minorStepsPerMajor);
+            if (majorSteps >= 4) {
+                // we have many major steps, do not paint the minor now.
+                this.spacingMeter = distanceBetweenMinor * minorStepsPerMajor;
+                this.minorStepsPerMajor = 1;
+            } else {
+                this.minorStepsPerMajor = minorStepsPerMajor;
+                this.spacingMeter = distanceBetweenMinor;
+            }
+            steps = majorSteps * this.minorStepsPerMajor;
         }
 
+        /**
+         * Paint the ticks to the graphics.
+         * @param g The graphics to paint on.
+         */
         public void paintTicks(Graphics g) {
             double spacingPixel = spacingMeter / (dist100Pixel / 100);
             double textBlockedUntil = -1;
             for (int step = 0; step <= steps; step++) {
                 int x = (int) (PADDING_LEFT + spacingPixel * step);
-                boolean isMajor = step % majorStepEvery == 0;
+                boolean isMajor = step % minorStepsPerMajor == 0;
                 int paddingY = isMajor ? 0 : 3;
                 g.drawLine(x, paddingY, x, 10 - paddingY);
 
-                if (isMajor || (step == steps && textBlockedUntil < 0)) {
+                if (step == 0 || step == steps) {
                     String text;
                     if (step == 0) {
                         text = "0";
@@ -154,10 +172,11 @@ public class MapScaler extends JComponent implements Helpful, Accessible {
                     }
                     Rectangle2D bound = g.getFontMetrics().getStringBounds(text, g);
                     int left = (int) (x - bound.getWidth() / 2);
-                    if (textBlockedUntil < left) {
-                        g.drawString(text, left, 23);
-                        textBlockedUntil = left + bound.getWidth() + 2;
+                    if (textBlockedUntil > left) {
+                        left = (int) (textBlockedUntil + 5);
                     }
+                    g.drawString(text, left, 23);
+                    textBlockedUntil = left + bound.getWidth() + 2;
                 }
             }
             g.drawLine(PADDING_LEFT + 0, 5, (int) (PADDING_LEFT + spacingPixel * steps), 5);
