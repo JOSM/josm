@@ -30,7 +30,7 @@ public final class GuiSizesHelper {
         if (screenDPI == -1) {
             synchronized (GuiHelper.class) {
                 if (screenDPI == -1) {
-                    float scalePref = (float) Main.pref.getDouble("gui.scale", 0);
+                    float scalePref = (float) Main.pref.getDouble("gui.scale", 1.0);
                     if (scalePref != 0) {
                         screenDPI = 96f * scalePref;
                     } else {
