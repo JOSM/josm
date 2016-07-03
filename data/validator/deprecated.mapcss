@@ -854,3 +854,17 @@ way[waterway=canal][service][service !~ /^(irrigation|transportation|water_power
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "species";
 }
+
+/* #13101 */
+node[pole=transition] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "location:transition=yes";
+  fixAdd: "location:transition=yes";
+  fixRemove: "pole";
+}
+node[tower=transition] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "location:transition=yes";
+  fixAdd: "location:transition=yes";
+  fixRemove: "tower";
+}
