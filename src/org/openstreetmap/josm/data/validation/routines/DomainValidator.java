@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016070101, Last Updated Sat Jul  2 07:07:01 2016 UTC
+        // Taken from Version 2016070300, Last Updated Sun Jul  3 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -447,6 +447,7 @@ public final class DomainValidator extends AbstractValidator {
         "catering", // catering New Falls. LLC
         "cba", // cba COMMONWEALTH BANK OF AUSTRALIA
         "cbn", // cbn The Christian Broadcasting Network, Inc.
+        "cbre", // cbre CBRE, Inc.
         "ceb", // ceb The Corporate Executive Board Company
         "center", // center Tin Mill, LLC
         "ceo", // ceo CEOTLD Pty Ltd
@@ -1075,6 +1076,7 @@ public final class DomainValidator extends AbstractValidator {
         "sex", // sex ICM Registry SX LLC
         "sexy", // sexy Uniregistry, Corp.
         "sfr", // sfr Societe Francaise du Radiotelephone - SFR
+        "shangrila", // shangrila Shangri‐La International Hotel Management Limited
         "sharp", // sharp Sharp Corporation
         "shaw", // shaw Shaw Cablesystems G.P.
         "shell", // shell Shell Information Technology International Inc
@@ -1273,6 +1275,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--4gbrim", // موقع Suhub Electronic Establishment
         "xn--55qw42g", // 公益 China Organizational Name Administration Center
         "xn--55qx5d", // 公司 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
+        "xn--5su34j936bgsg", // 香格里拉 Shangri‐La International Hotel Management Limited
         "xn--5tzm5g", // 网站 Global Website TLD Asia Limited
         "xn--6frz82g", // 移动 Afilias Limited
         "xn--6qq986b3xl", // 我爱你 Tycoon Treasure Limited
@@ -1364,6 +1367,7 @@ public final class DomainValidator extends AbstractValidator {
         "zara", // zara Industria de Diseño Textil, S.A. (INDITEX, S.A.)
         "zero", // zero Amazon Registry Services, Inc.
         "zip", // zip Charleston Road Registry Inc.
+        "zippo", // zippo Zadco Company
         "zone", // zone Outer Falls, LLC
         "zuerich", // zuerich Kanton Zürich (Canton of Zurich)
     };
