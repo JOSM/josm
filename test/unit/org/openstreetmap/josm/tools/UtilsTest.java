@@ -12,11 +12,16 @@ import java.util.Locale;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 /**
  * Unit tests of {@link Utils} class.
  */
 public class UtilsTest {
+    /**
+     * Use default, basic test rules.
+     */
+    public JOSMTestRules rules = new JOSMTestRules();
 
     /**
      * Test of {@link Utils#strip} method.
