@@ -1283,6 +1283,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--80asehdb", // онлайн CORE Association
         "xn--80aswg", // сайт CORE Association
         "xn--8y0a063a", // 联通 China United Network Communications Corporation Limited
+        "xn--90ae", // бг Imena.BG Plc (NAMES.BG Plc)
         "xn--9dbq2a", // קום VeriSign Sarl
         "xn--9et52u", // 时尚 RISE VICTORY LIMITED
         "xn--9krt00a", // 微博 Sina Corporation
