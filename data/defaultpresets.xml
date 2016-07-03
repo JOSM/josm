@@ -6944,7 +6944,7 @@
                 <combo key="design" text="Tower design" values="one-level,two-level,donau,three-level,barrel,asymmetric,triangle,flag,donau;one-level,four-level,six-level,nine-level,delta,delta_two-level,y-frame,x-frame,h-frame,guyed_h-frame,portal,portal_two-level,portal_three-level,guyed_v-frame,bipole,monopolar" values_context="power" />
                 <check key="triple_tower" text="Triple tower" />
                 <check key="design:incomplete" text="Incomplete tower" />
-                <check key="tower" text="Location transition" value_on="transition" disable_off="true" />
+                <check key="location:transition" text="Location transition" disable_off="true" />
             </optional>
         </item> <!-- Power Tower -->
         <item name="Pole" icon="styles/standard/power/pole.svg" type="node" preset_name_label="true">
@@ -6962,7 +6962,7 @@
             <key key="power" value="pole" />
             <text key="height" text="Height (meters)" />
             <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
-            <check key="pole" text="Location transition" value_on="transition" disable_off="true" />
+            <check key="location:transition" text="Location transition" disable_off="true" />
             <reference ref="ref_operator_branch" />
         </item> <!-- Pole -->
         <item name="Pole with Transformer" icon="styles/standard/power/pole_transformer.svg" type="node" preset_name_label="true">
@@ -6979,7 +6979,7 @@
             <label text="Pole Attributes:" />
             <text key="height" text="Height (meters)" />
             <combo key="material" text="Material" values="metal,plastic,steel,stone,wood,concrete" />
-            <check key="pole" text="Location transition" value_on="transition" disable_off="true" />
+            <check key="location:transition" text="Location transition" disable_off="true" />
             <reference ref="ref_operator_branch" />
             <space />
             <label text="Transformer Attributes:" />
