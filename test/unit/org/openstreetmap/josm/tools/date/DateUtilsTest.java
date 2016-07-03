@@ -33,7 +33,6 @@ public class DateUtilsTest {
      * @param zone the timezone to use
      */
     public static void setTimeZone(TimeZone zone) {
-        DateUtils.setTimeZone(zone);
         TimeZone.setDefault(zone);
     }
 
