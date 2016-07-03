@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Graphics2D;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -164,7 +165,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     public void layerRemoving(LayerRemoveEvent e) {
         // Removed layer is still in that list.
         if (e.getRemovedLayer() instanceof OsmDataLayer && e.getSource().getLayersOfType(OsmDataLayer.class).size() <= 1) {
-            Main.getLayerManager().removeLayer(this);
+            e.scheduleRemoval(Collections.singleton(this));
         } else if (e.getRemovedLayer() == this) {
             Main.getLayerManager().removeLayerChangeListener(this);
             OsmValidator.errorLayer = null;

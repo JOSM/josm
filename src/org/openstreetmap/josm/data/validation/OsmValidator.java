@@ -59,11 +59,6 @@ import org.openstreetmap.josm.data.validation.tests.UntaggedNode;
 import org.openstreetmap.josm.data.validation.tests.UntaggedWay;
 import org.openstreetmap.josm.data.validation.tests.WayConnectedToArea;
 import org.openstreetmap.josm.data.validation.tests.WronglyOrderedWays;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
@@ -74,7 +69,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author Francisco R. Santos &lt;frsantos@gmail.com&gt;
  */
-public class OsmValidator implements LayerChangeListener {
+public class OsmValidator {
 
     public static volatile ValidatorLayer errorLayer;
 
@@ -345,29 +340,4 @@ public class OsmValidator implements LayerChangeListener {
         }
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* interface LayerChangeListener                                              */
-    /* -------------------------------------------------------------------------- */
-    @Override
-    public void layerAdded(LayerAddEvent e) {
-        // do nothing
-    }
-
-    @Override
-    public void layerOrderChanged(LayerOrderChangeEvent e) {
-        // do nothing
-    }
-
-    @Override
-    public void layerRemoving(LayerRemoveEvent e) {
-        if (e.getRemovedLayer() == errorLayer) {
-            errorLayer = null;
-            return;
-        }
-        if (e.getSource().getLayersOfType(OsmDataLayer.class).isEmpty()) {
-            if (errorLayer != null) {
-                Main.getLayerManager().removeLayer(errorLayer);
-            }
-        }
-    }
 }
