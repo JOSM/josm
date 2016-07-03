@@ -657,7 +657,6 @@ public abstract class Main {
             @Override
             public void initialize() {
                 validator = new OsmValidator();
-                getLayerManager().addLayerChangeListener(validator);
             }
         });
 

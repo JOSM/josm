@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.layer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -206,13 +207,13 @@ public class MainLayerManager extends LayerManager {
     }
 
     @Override
-    protected synchronized void realRemoveLayer(Layer layer) {
+    protected Collection<Layer> realRemoveSingleLayer(Layer layer) {
         if (layer == activeLayer || layer == editLayer) {
             Layer nextActive = suggestNextActiveLayer(layer);
             setActiveLayer(nextActive, true);
         }
 
-        super.realRemoveLayer(layer);
+        return super.realRemoveSingleLayer(layer);
     }
 
     /**

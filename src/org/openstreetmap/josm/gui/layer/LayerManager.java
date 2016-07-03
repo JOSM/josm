@@ -2,8 +2,12 @@
 package org.openstreetmap.josm.gui.layer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.Main;
@@ -97,6 +101,7 @@ public class LayerManager {
     public static class LayerRemoveEvent extends LayerManagerEvent {
         private final Layer removedLayer;
         private final boolean lastLayer;
+        private Collection<Layer> scheduleForRemoval = new ArrayList<>();
 
         LayerRemoveEvent(LayerManager source, Layer removedLayer) {
             super(source);
@@ -119,6 +124,20 @@ public class LayerManager {
          */
         public boolean isLastLayer() {
             return lastLayer;
+        }
+
+        /**
+         * Schedule the removal of other layers after this layer has been deleted.
+         * <p>
+         * Dupplicate removal requests are ignored.
+         * @param layers The layers to remove.
+         * @since 10507
+         */
+        public void scheduleRemoval(Collection<? extends Layer> layers) {
+            for (Layer layer : layers) {
+                getSource().checkContainsLayer(layer);
+            }
+            scheduleForRemoval.addAll(layers);
         }
 
         @Override
@@ -197,10 +216,25 @@ public class LayerManager {
     }
 
     protected synchronized void realRemoveLayer(Layer layer) {
-        checkContainsLayer(layer);
+        GuiHelper.assertCallFromEdt();
+        Set<Layer> toRemove = Collections.newSetFromMap(new IdentityHashMap<Layer, Boolean>());
+        toRemove.add(layer);
 
-        fireLayerRemoving(layer);
-        layers.remove(layer);
+        while (!toRemove.isEmpty()) {
+            Iterator<Layer> iterator = toRemove.iterator();
+            Layer layerToRemove = iterator.next();
+            iterator.remove();
+            checkContainsLayer(layerToRemove);
+
+            Collection<Layer> newToRemove = realRemoveSingleLayer(layerToRemove);
+            toRemove.addAll(newToRemove);
+        }
+    }
+
+    protected Collection<Layer> realRemoveSingleLayer(Layer layerToRemove) {
+        Collection<Layer> newToRemove = fireLayerRemoving(layerToRemove);
+        layers.remove(layerToRemove);
+        return newToRemove;
     }
 
     /**
@@ -333,12 +367,12 @@ public class LayerManager {
         removeLayerChangeListener(listener, false);
     }
 
-
     /**
      * Removes a layer change listener
      *
      * @param listener the listener.
-     * @param fireRemove if we should fire a remove event for every layer in this manager.
+     * @param fireRemove if we should fire a remove event for every layer in this manager. The event is fired as if the layer was deleted but
+     * {@link LayerRemoveEvent#scheduleRemoval(Collection)} is ignored.
      */
     public synchronized void removeLayerChangeListener(LayerChangeListener listener, boolean fireRemove) {
         if (!layerChangeListeners.remove(listener)) {
@@ -364,16 +398,22 @@ public class LayerManager {
         }
     }
 
-    private void fireLayerRemoving(Layer layer) {
+    /**
+     * Fire the layer remove event
+     * @param layer The layer to remove
+     * @return A list of layers that should be removed afterwards.
+     */
+    private Collection<Layer> fireLayerRemoving(Layer layer) {
         GuiHelper.assertCallFromEdt();
         LayerRemoveEvent e = new LayerRemoveEvent(this, layer);
         for (LayerChangeListener l : layerChangeListeners) {
             try {
                 l.layerRemoving(e);
             } catch (RuntimeException t) {
-                throw BugReport.intercept(t).put("listener", l).put("event", e);
+                throw BugReport.intercept(t).put("listener", l).put("event", e).put("layer", layer);
             }
         }
+        return e.scheduleForRemoval;
     }
 
     private void fireLayerOrderChanged() {
