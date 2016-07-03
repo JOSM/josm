@@ -6,16 +6,13 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.LayerAvailabilityEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.LayerAvailabilityListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
@@ -44,11 +41,11 @@ public class MainPanel extends JPanel {
 
     /**
      * Update the content of this {@link MainFrame} to either display the map or display the welcome screen.
+     * @param showMap If the map should be displayed.
      */
-    protected void updateContent() {
+    protected void updateContent(boolean showMap) {
         GuiHelper.assertCallFromEdt();
         MapFrame old = map;
-        boolean showMap = !layerManager.getLayers().isEmpty();
         if (old != null && showMap) {
             // no state change
             return;
@@ -154,27 +151,21 @@ public class MainPanel extends JPanel {
      * Re-adds the layer listeners. Never call this in production, only needed for testing.
      */
     public void reAddListeners() {
-        layerManager.addLayerChangeListener(new LayerChangeListener() {
+        layerManager.addLayerAvailabilityListener(new LayerAvailabilityListener() {
             @Override
-            public void layerAdded(LayerAddEvent e) {
-                updateContent();
+            public void beforeFirstLayerAdded(LayerAvailabilityEvent e) {
+                updateContent(true);
             }
 
             @Override
-            public void layerRemoving(final LayerRemoveEvent e) {
-                // Delay main.map removal until after all listeners are finished.
-                // Some components rely on this and e.g. get the MapView that way.
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateContent();
-                    }
-                });
+            public void afterLastLayerRemoved(LayerAvailabilityEvent e) {
+                updateContent(false);
             }
-
+        });
+        GuiHelper.runInEDTAndWait(new Runnable() {
             @Override
-            public void layerOrderChanged(LayerOrderChangeEvent e) {
-                // ignored
+            public void run() {
+                updateContent(!layerManager.getLayers().isEmpty());
             }
         });
     }

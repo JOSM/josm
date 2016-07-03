@@ -396,15 +396,6 @@ public class MainApplication extends Main {
 
         I18n.setupLanguageFonts();
 
-        // Can only be called after preferences are initialized.
-        // We can move this to MainPanel constructor as soon as noone depends on Main#panel any more.
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-                mainPanel.updateContent();
-            }
-        });
-
         WindowGeometry geometry = WindowGeometry.mainWindow("gui.geometry",
                 args.containsKey(Option.GEOMETRY) ? args.get(Option.GEOMETRY).iterator().next() : null,
                 !args.containsKey(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
