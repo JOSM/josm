@@ -42,7 +42,7 @@ for my $arg (@ARGV ? @ARGV : @default)
         $img = $val if((!-f "images/$img") && -f "images/$val");
         ++$icons{$img};
       }
-      if($l =~ /ImageProvider(?:\.get)?\(\"([^\"]*?)\"/)
+      if($l =~ /ImageProvider(?:\.get)?\(\"([^\"]*?)\"(?:, ImageProvider.ImageSizes.[A-Z]+)?\)/)
       {
         my $i = $1;
         $i = "styles/standard/$i" if $i eq "misc/no_icon";
