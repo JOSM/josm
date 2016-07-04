@@ -123,6 +123,11 @@ class SyncEditorImageryIndex {
         skipEntries["-  [CH] Kanton Solothurn 25cm (SOGIS 2011-2014) - http://www.sogis1.so.ch/cgi-bin/sogis/sogis_orthofoto.wms?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Orthofoto_SO&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
         skipEntries["-  [CH] Kanton Solothurn Infrarot 12.5cm (SOGIS 2011) - http://www.sogis1.so.ch/cgi-bin/sogis/sogis_ortho.wms?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=Orthofoto11_CIR&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
         skipEntries["-  [CH] Stadt Bern 10cm/25cm (2008) - http://map.bern.ch/arcgis/services/Orthofoto_2008/MapServer/WMSServer?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=0,1&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  [CZ] Czech CUZK:KM tiles proxy - http://osm-{switch:a,b,c}.zby.cz/tiles_cuzk.php/{zoom}/{x}/{y}.png"] = 1
+        skipEntries["-  [CZ] Czech UHUL:ORTOFOTO - http://geoportal2.uhul.cz/cgi-bin/oprl.asp?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&SRS={proj}&LAYERS=Ortofoto_cb&STYLES=default&FORMAT=image/jpeg&TRANSPARENT=TRUE&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  [CZ] Czech ÚHUL:ORTOFOTO tiles proxy - http://osm-{switch:a,b,c}.zby.cz/tiles_uhul.php/{zoom}/{x}/{y}.jpg"] = 1
+        skipEntries["-  [DE] Hamburg (40 cm) - http://gateway.hamburg.de/OGCFassade/HH_WMS_DOP40.aspx?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=0&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
+        skipEntries["-  [DE] Hamburg (DK5) - http://gateway.hamburg.de/OGCFassade/HH_WMS_Geobasisdaten.aspx?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=1&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
         skipEntries["-  [EE] Estonia Basemap (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=pohi_vr2&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
         skipEntries["-  [EE] Estonia Forestry (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=cir_ngr&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
         skipEntries["-  [EE] Estonia Hillshading (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=reljeef&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
@@ -143,6 +148,8 @@ class SyncEditorImageryIndex {
         skipEntries["  name differs: http://e.tile.openstreetmap.hu/ortofoto2000/{zoom}/{x}/{y}.jpg"] = 3
         skipEntries["  name differs: http://tools.geofabrik.de/osmi/tiles/routing/{zoom}/{x}/{y}.png"] = 3
         skipEntries["  name differs: http://e.tile.openstreetmap.hu/ortofoto2005/{zoom}/{x}/{y}.jpg"] = 3
+        skipEntries["  name differs: http://gis3.stuttgart.de/wss/service/wms_Luftbilder2011_jpg_internet/guest?FORMAT=image/jpeg&VERSION=1.3.0&SERVICE=WMS&REQUEST=GetMap&Layers=0,1,2,3,4,5,6,7,8&STYLES=default,default,default,default,default,default,default,default,default&CRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
+        skipEntries["  name differs: https://secure.erlangen.de/arcgiser/services/Luftbilder2013/MapServer/WmsServer?FORMAT=image/bmp&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Erlangen_ratio5_6.25cm.jp2&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
         skipEntries["  name differs: http://tools.geofabrik.de/osmi/tiles/addresses/{zoom}/{x}/{y}.png"] = 3
         skipEntries["  name differs: http://{switch:a,b,c}.gps-tile.openstreetmap.org/lines/{zoom}/{x}/{y}.png"] = 3
         skipEntries["  maxzoom differs: [DE] Bavaria (2 m) - http://geodaten.bayern.de/ogc/ogc_dop200_oa.cgi?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=adv_dop200c&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
@@ -366,7 +373,7 @@ class SyncEditorImageryIndex {
         return e.getString("url")
     }
     static String getName(Object e) {
-        if (e instanceof ImageryInfo) return e.name
+        if (e instanceof ImageryInfo) return e.getOriginalName()
         return e.getString("name")
     }
     static String getType(Object e) {
