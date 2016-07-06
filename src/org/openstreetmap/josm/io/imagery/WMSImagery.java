@@ -39,11 +39,31 @@ public class WMSImagery {
     public static class WMSGetCapabilitiesException extends Exception {
         private final String incomingData;
 
+        /**
+         * Constructs a new {@code WMSGetCapabilitiesException}
+         * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method)
+         * @param incomingData the answer from WMS server
+         */
         public WMSGetCapabilitiesException(Throwable cause, String incomingData) {
             super(cause);
             this.incomingData = incomingData;
         }
 
+        /**
+         * Constructs a new {@code WMSGetCapabilitiesException}
+         * @param message   the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method
+         * @param incomingData the answer from the server
+         * @since 10520
+         */
+        public WMSGetCapabilitiesException(String message, String incomingData) {
+            super(message);
+            this.incomingData = incomingData;
+        }
+
+        /**
+         * Returns the answer from WMS server.
+         * @return the answer from WMS server
+         */
         public String getIncomingData() {
             return incomingData;
         }
@@ -159,9 +179,15 @@ public class WMSImagery {
                 }
             });
             Document document = builder.parse(new InputSource(new StringReader(incomingData)));
+            Element root = document.getDocumentElement();
+
+            // Check if the request resulted in ServiceException
+            if ("ServiceException".equals(root.getTagName())) {
+                throw new WMSGetCapabilitiesException(root.getTextContent(), incomingData);
+            }
 
             // Some WMS service URLs specify a different base URL for their GetMap service
-            Element child = getChild(document.getDocumentElement(), "Capability");
+            Element child = getChild(root, "Capability");
             child = getChild(child, "Request");
             child = getChild(child, "GetMap");
 
@@ -196,7 +222,7 @@ public class WMSImagery {
                 }
             }
 
-            Element capabilityElem = getChild(document.getDocumentElement(), "Capability");
+            Element capabilityElem = getChild(root, "Capability");
             List<Element> children = getChildren(capabilityElem, "Layer");
             layers = parseLayers(children, new HashSet<String>());
         } catch (MalformedURLException | ParserConfigurationException | SAXException e) {
@@ -326,9 +352,11 @@ public class WMSImagery {
 
     private static List<Element> getChildren(Element parent, String name) {
         List<Element> retVal = new ArrayList<>();
-        for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
-            if (child instanceof Element && name.equals(child.getNodeName())) {
-                retVal.add((Element) child);
+        if (parent != null) {
+            for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
+                if (child instanceof Element && name.equals(child.getNodeName())) {
+                    retVal.add((Element) child);
+                }
             }
         }
         return retVal;

@@ -83,21 +83,25 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                     formats.setModel(new DefaultComboBoxModel<>(wms.getFormats().toArray(new String[0])));
                     formats.setSelectedItem(wms.getPreferredFormats());
                 } catch (MalformedURLException ex) {
+                    Main.error(ex, false);
                     JOptionPane.showMessageDialog(getParent(), tr("Invalid service URL."),
                             tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
                 } catch (IOException ex) {
+                    Main.error(ex, false);
                     JOptionPane.showMessageDialog(getParent(), tr("Could not retrieve WMS layer list."),
                             tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
                 } catch (WMSImagery.WMSGetCapabilitiesException ex) {
                     String incomingData = ex.getIncomingData().trim();
                     String title = tr("WMS Error");
                     String message = tr("Could not parse WMS layer list.");
-                    Main.error("Could not parse WMS layer list. Incoming data:\n"+incomingData);
-                    if (incomingData != null
-                            && (incomingData.startsWith("<html>") || incomingData.startsWith("<HTML>"))
-                            && (incomingData.endsWith("</html>") || incomingData.endsWith("</HTML>"))) {
+                    Main.error(ex, "Could not parse WMS layer list. Incoming data:\n"+incomingData);
+                    if ((incomingData.startsWith("<html>") || incomingData.startsWith("<HTML>"))
+                      && (incomingData.endsWith("</html>") || incomingData.endsWith("</HTML>"))) {
                         GuiHelper.notifyUserHtmlError(AddWMSLayerPanel.this, title, message, incomingData);
                     } else {
+                        if (ex.getMessage() != null) {
+                            message += '\n' + ex.getMessage();
+                        }
                         JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.ERROR_MESSAGE);
                     }
                 }
