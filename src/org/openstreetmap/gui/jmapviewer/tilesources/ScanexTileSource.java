@@ -23,10 +23,6 @@ public class ScanexTileSource extends TMSTileSource {
 
     // Latitude to Y and back calculations.
 
-    /** radius of Earth at equator, m */
-    private static double RADIUS_E = 6378137;
-    /** equator length, m */
-    private static double EQUATOR = 40075016.68557849;
     /** eccentricity of Earth's ellipsoid */
     private static double E = 0.0818191908426;
 
