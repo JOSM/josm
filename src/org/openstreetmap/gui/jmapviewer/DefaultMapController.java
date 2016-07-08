@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.Locale;
 
 /**
  * Default map controller which implements map moving by pressing the right
@@ -184,6 +185,6 @@ MouseWheelListener {
      */
     public static boolean isPlatformOsx() {
         String os = System.getProperty("os.name");
-        return os != null && os.toLowerCase().startsWith("mac os x");
+        return os != null && os.toLowerCase(Locale.ENGLISH).startsWith("mac os x");
     }
 }
