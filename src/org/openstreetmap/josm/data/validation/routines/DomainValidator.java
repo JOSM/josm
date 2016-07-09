@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016070700, Last Updated Thu Jul  7 07:07:01 2016 UTC
+        // Taken from Version 2016070900, Last Updated Sat Jul  9 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -485,6 +485,7 @@ public final class DomainValidator extends AbstractValidator {
         "college", // college XYZ.COM LLC
         "cologne", // cologne NetCologne Gesellschaft für Telekommunikation mbH
         "com", // com VeriSign Global Registry Services
+        "comcast", // comcast Comcast IP Holdings I, LLC
         "commbank", // commbank COMMONWEALTH BANK OF AUSTRALIA
         "community", // community Fox Orchard, LLC
         "company", // company Silver Avenue, LLC
@@ -634,6 +635,7 @@ public final class DomainValidator extends AbstractValidator {
         "frontdoor", // frontdoor Lifestyle Domain Holdings, Inc.
         "frontier", // frontier Frontier Communications Corporation
         "ftr", // ftr Frontier Communications Corporation
+        "fujitsu", // fujitsu Fujitsu Limited
         "fund", // fund John Castle, LLC
         "furniture", // furniture Lone Fields, LLC
         "futbol", // futbol United TLD Holdco, Ltd.
@@ -663,6 +665,7 @@ public final class DomainValidator extends AbstractValidator {
         "gmbh", // gmbh Extra Dynamite, LLC
         "gmo", // gmo GMO Internet, Inc.
         "gmx", // gmx 1&amp;1 Mail &amp; Media GmbH
+        "godaddy", // godaddy Go Daddy East, LLC
         "gold", // gold June Edge, LLC
         "goldpoint", // goldpoint YODOBASHI CAMERA CO.,LTD.
         "golf", // golf Lone Falls, LLC
@@ -863,6 +866,7 @@ public final class DomainValidator extends AbstractValidator {
         "mil", // mil DoD Network Information Center
         "mini", // mini Bayerische Motoren Werke Aktiengesellschaft
         "mit", // mit Massachusetts Institute of Technology
+        "mitsubishi", // mitsubishi Mitsubishi Corporation
         "mlb", // mlb MLB Advanced Media DH, LLC
         "mls", // mls The Canadian Real Estate Association
         "mma", // mma MMA IARD
@@ -1262,6 +1266,7 @@ public final class DomainValidator extends AbstractValidator {
         "wtf", // wtf Hidden Way, LLC
         "xbox", // xbox Microsoft Corporation
         "xerox", // xerox Xerox DNHC LLC
+        "xfinity", // xfinity Comcast IP Holdings I, LLC
         "xihuan", // xihuan QIHOO 360 TECHNOLOGY CO. LTD.
         "xin", // xin Elegant Leader Limited
         "xn--11b4c3d", // कॉम VeriSign Sarl
