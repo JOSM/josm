@@ -703,7 +703,7 @@ node[traffic_sign=city_limit] {
     icon-image: "vehicle/restriction/city_limit.svg";
     set icon_z17;
 }
-node[highway=crossing] {
+node[highway=crossing][crossing!=no] {
     icon-image: "vehicle/crossing.svg";
     set icon_z17;
 }
