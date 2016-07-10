@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016070900, Last Updated Sat Jul  9 07:07:01 2016 UTC
+        // Taken from Version 2016071000, Last Updated Sun Jul 10 07:07:02 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -912,6 +912,7 @@ public final class DomainValidator extends AbstractValidator {
         "ngo", // ngo Public Interest Registry
         "nhk", // nhk Japan Broadcasting Corporation (NHK)
         "nico", // nico DWANGO Co., Ltd.
+        "nike", // nike NIKE, Inc.
         "nikon", // nikon NIKON CORPORATION
         "ninja", // ninja United TLD Holdco Ltd.
         "nissan", // nissan NISSAN MOTOR CO., LTD.
@@ -1076,6 +1077,7 @@ public final class DomainValidator extends AbstractValidator {
         "select", // select iSelect Ltd
         "sener", // sener Sener Ingeniería y Sistemas, S.A.
         "services", // services Fox Castle, LLC
+        "ses", // ses SES
         "seven", // seven Seven West Media Ltd
         "sew", // sew SEW-EURODRIVE GmbH &amp; Co KG
         "sex", // sex ICM Registry SX LLC
