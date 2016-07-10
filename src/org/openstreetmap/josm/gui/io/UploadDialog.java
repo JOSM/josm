@@ -48,7 +48,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -179,20 +178,20 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // -- upload button
-        btnUpload = new SideButton(new UploadAction(this));
+        btnUpload = new JButton(new UploadAction(this));
         pnl.add(btnUpload);
         btnUpload.setFocusable(true);
         InputMapUtils.enableEnter(btnUpload);
 
         // -- cancel button
         CancelAction cancelAction = new CancelAction(this);
-        pnl.add(new SideButton(cancelAction));
+        pnl.add(new JButton(cancelAction));
         getRootPane().registerKeyboardAction(
                 cancelAction,
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW
         );
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/Upload"))));
+        pnl.add(new JButton(new ContextSensitiveHelpAction(ht("/Dialog/Upload"))));
         HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/Upload"));
         return pnl;
     }
