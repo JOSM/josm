@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -41,7 +42,6 @@ import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -116,7 +116,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     /** the private help action */
     private ContextSensitiveHelpAction helpAction;
     /** the apply button */
-    private SideButton btnApply;
+    private JButton btnApply;
 
     /**
      * Replies the target primitive the collection of primitives is merged
@@ -198,17 +198,17 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         ApplyAction applyAction = buildApplyAction();
         pnlTagConflictResolver.getModel().addPropertyChangeListener(applyAction);
         pnlRelationMemberConflictResolver.getModel().addPropertyChangeListener(applyAction);
-        btnApply = new SideButton(applyAction);
+        btnApply = new JButton(applyAction);
         btnApply.setFocusable(true);
         pnl.add(btnApply);
 
         // -- cancel button
         CancelAction cancelAction = new CancelAction();
-        pnl.add(new SideButton(cancelAction));
+        pnl.add(new JButton(cancelAction));
 
         // -- help button
         helpAction = new ContextSensitiveHelpAction();
-        pnl.add(new SideButton(helpAction));
+        pnl.add(new JButton(helpAction));
 
         return pnl;
     }
