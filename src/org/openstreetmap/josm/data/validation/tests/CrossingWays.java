@@ -82,8 +82,8 @@ public abstract class CrossingWays extends Test {
             if (isCoastline(w1) != isCoastline(w2)) {
                 return true;
             }
-            if ((w1.hasTag(WATERWAY, "river") && w2.hasTag(WATERWAY, "riverbank"))
-                    || (w2.hasTag(WATERWAY, "river") && w1.hasTag(WATERWAY, "riverbank"))) {
+            if ((w1.hasTag(WATERWAY, "river", "stream", "canal", "drain", "ditch") && w2.hasTag(WATERWAY, "riverbank"))
+             || (w2.hasTag(WATERWAY, "river", "stream", "canal", "drain", "ditch") && w1.hasTag(WATERWAY, "riverbank"))) {
                 return true;
             }
             if (isProposedOrAbandoned(w2)) {
