@@ -395,6 +395,9 @@ Build-Date: ${build.tstamp}
                     <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
                     <sysproperty key="josm.test.data" value="${test.dir}/data"/>
                     <sysproperty key="java.awt.headless" value="true"/>
+                    <sysproperty key="glass.platform" value="Monocle"/>
+                    <sysproperty key="monocle.platform" value="Headless"/>
+                    <sysproperty key="prism.order" value="sw"/>
                     <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
                     <classpath>
                         <path refid="test.classpath"/>
