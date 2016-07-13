@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016071000, Last Updated Sun Jul 10 07:07:02 2016 UTC
+        // Taken from Version 2016071300, Last Updated Wed Jul 13 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -741,6 +741,7 @@ public final class DomainValidator extends AbstractValidator {
         "insure", // insure Pioneer Willow, LLC
         "int", // int Internet Assigned Numbers Authority
         "international", // international Wild Way, LLC
+        "intuit", // intuit Intuit Administrative Services, Inc.
         "investments", // investments Holly Glen, LLC
         "ipiranga", // ipiranga Ipiranga Produtos de Petroleo S.A.
         "irish", // irish Dot-Irish LLC
@@ -838,6 +839,7 @@ public final class DomainValidator extends AbstractValidator {
         "lupin", // lupin LUPIN LIMITED
         "luxe", // luxe Top Level Domain Holdings Limited
         "luxury", // luxury Luxury Partners LLC
+        "macys", // macys Macys, Inc.
         "madrid", // madrid Comunidad de Madrid
         "maif", // maif Mutuelle Assurance Instituteur France (MAIF)
         "maison", // maison Victor Frostbite, LLC
@@ -865,6 +867,7 @@ public final class DomainValidator extends AbstractValidator {
         "microsoft", // microsoft Microsoft Corporation
         "mil", // mil DoD Network Information Center
         "mini", // mini Bayerische Motoren Werke Aktiengesellschaft
+        "mint", // mint Intuit Administrative Services, Inc.
         "mit", // mit Massachusetts Institute of Technology
         "mitsubishi", // mitsubishi Mitsubishi Corporation
         "mlb", // mlb MLB Advanced Media DH, LLC
