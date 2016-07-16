@@ -72,7 +72,7 @@
         <combo key="service" text="Service type" values="yard,siding,spur,crossover" />
     </chunk>
     <chunk id="railway_electrified">
-        <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" />
+        <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" values_context="electrified" />
         <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
         <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7" length="5" />
     </chunk>
@@ -2534,6 +2534,13 @@
                 <reference ref="railway_service_gauge_electrified" />
             </optional>
         </item> <!-- Tram -->
+        <item name="Funicular" icon="styles/standard/transport/railway/funicular.svg" type="way" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=funicular" />
+            <key key="railway" value="funicular" />
+            <optional>
+                <reference ref="railway_service_gauge_electrified" />
+            </optional>
+        </item> <!-- Funicular -->
         <item name="Bus Guideway" icon="styles/standard/transport/railway/bus_guideway.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=bus_guideway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=bus_guideway"
@@ -8172,7 +8179,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=vending_machine" />
         <space />
         <key key="amenity" value="vending_machine" />
-        <multiselect key="vending" text="Vending products" values="animal_food;bicycle_tube;cigarettes;condoms;drinks;excrement_bags;food;newspapers;parking_tickets;photos;public_transport_plans;public_transport_tickets;SIM_cards;stamps;sweets;tampons;telephone_vouchers;toys;vouchers" values_searchable="true" />
+        <multiselect key="vending" text="Vending products" values="animal_food;bicycle_tube;cigarettes;condoms;drinks;excrement_bags;food;milk;newspapers;parking_tickets;photos;public_transport_plans;public_transport_tickets;SIM_cards;stamps;sweets;tampons;telephone_vouchers;toys;vouchers" values_searchable="true" />
         <text key="operator" text="Operator" />
         <text key="ref" text="Reference number" />
         <preset_link preset_name="Payment Methods" />
