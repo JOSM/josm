@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016071300, Last Updated Wed Jul 13 07:07:01 2016 UTC
+        // Taken from Version 2016071600, Last Updated Sat Jul 16 07:07:02 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -324,6 +324,7 @@ public final class DomainValidator extends AbstractValidator {
         "alibaba", // alibaba Alibaba Group Holding Limited
         "alipay", // alipay Alibaba Group Holding Limited
         "allfinanz", // allfinanz Allfinanz Deutsche Vermögensberatung Aktiengesellschaft
+        "allstate", // allstate Allstate Fire and Casualty Insurance Company
         "ally", // ally Ally Financial Inc.
         "alsace", // alsace REGION D ALSACE
         "alstom", // alstom ALSTOM
@@ -369,10 +370,12 @@ public final class DomainValidator extends AbstractValidator {
         "bauhaus", // bauhaus Werkhaus GmbH
         "bayern", // bayern Bayern Connect GmbH
         "bbc", // bbc British Broadcasting Corporation
+        "bbt", // bbt BB&amp;T Corporation
         "bbva", // bbva BANCO BILBAO VIZCAYA ARGENTARIA, S.A.
         "bcg", // bcg The Boston Consulting Group, Inc.
         "bcn", // bcn Municipi de Barcelona
         "beats", // beats Beats Electronics, LLC
+        "beauty", // beauty L&#39;Oréal
         "beer", // beer Top Level Domain Holdings Limited
         "bentley", // bentley Bentley Motors Limited
         "berlin", // berlin dotBERLIN GmbH &amp; Co. KG
@@ -636,6 +639,7 @@ public final class DomainValidator extends AbstractValidator {
         "frontier", // frontier Frontier Communications Corporation
         "ftr", // ftr Frontier Communications Corporation
         "fujitsu", // fujitsu Fujitsu Limited
+        "fujixerox", // fujixerox Xerox DNHC LLC
         "fund", // fund John Castle, LLC
         "furniture", // furniture Lone Fields, LLC
         "futbol", // futbol United TLD Holdco, Ltd.
@@ -670,6 +674,7 @@ public final class DomainValidator extends AbstractValidator {
         "goldpoint", // goldpoint YODOBASHI CAMERA CO.,LTD.
         "golf", // golf Lone Falls, LLC
         "goo", // goo NTT Resonant Inc.
+        "goodhands", // goodhands Allstate Fire and Casualty Insurance Company
         "goodyear", // goodyear The Goodyear Tire &amp; Rubber Company
         "goog", // goog Charleston Road Registry Inc.
         "google", // google Charleston Road Registry Inc.
@@ -708,7 +713,9 @@ public final class DomainValidator extends AbstractValidator {
         "holdings", // holdings John Madison, LLC
         "holiday", // holiday Goose Woods, LLC
         "homedepot", // homedepot Homer TLC, Inc.
+        "homegoods", // homegoods The TJX Companies, Inc.
         "homes", // homes DERHomes, LLC
+        "homesense", // homesense The TJX Companies, Inc.
         "honda", // honda Honda Motor Co., Ltd.
         "horse", // horse Top Level Domain Holdings Limited
         "host", // host DotHost Inc.
@@ -794,6 +801,7 @@ public final class DomainValidator extends AbstractValidator {
         "lamborghini", // lamborghini Automobili Lamborghini S.p.A.
         "lamer", // lamer The Estée Lauder Companies Inc.
         "lancaster", // lancaster LANCASTER
+        "lancome", // lancome L&#39;Oréal
         "land", // land Pine Moon, LLC
         "landrover", // landrover Jaguar Land Rover Ltd
         "lanxess", // lanxess LANXESS Corporation
@@ -805,6 +813,7 @@ public final class DomainValidator extends AbstractValidator {
         "lds", // lds IRI Domain Management, LLC
         "lease", // lease Victor Trail, LLC
         "leclerc", // leclerc A.C.D. LEC Association des Centres Distributeurs Edouard Leclerc
+        "lefrak", // lefrak LeFrak Organization, Inc.
         "legal", // legal Blue Falls, LLC
         "lego", // lego LEGO Juris A/S
         "lexus", // lexus TOYOTA MOTOR CORPORATION
@@ -836,6 +845,7 @@ public final class DomainValidator extends AbstractValidator {
         "love", // love Merchant Law Group LLP
         "ltd", // ltd Over Corner, LLC
         "ltda", // ltda InterNetX Corp.
+        "lundbeck", // lundbeck H. Lundbeck A/S
         "lupin", // lupin LUPIN LIMITED
         "luxe", // luxe Top Level Domain Holdings Limited
         "luxury", // luxury Luxury Partners LLC
@@ -851,6 +861,7 @@ public final class DomainValidator extends AbstractValidator {
         "marketing", // marketing Fern Pass, LLC
         "markets", // markets DOTMARKETS REGISTRY LTD
         "marriott", // marriott Marriott Worldwide Corporation
+        "marshalls", // marshalls The TJX Companies, Inc.
         "mattel", // mattel Mattel Sites, Inc.
         "mba", // mba Lone Hollow, LLC
         "med", // med Medistry LLC
@@ -898,6 +909,7 @@ public final class DomainValidator extends AbstractValidator {
         "nadex", // nadex Nadex Domains, Inc
         "nagoya", // nagoya GMO Registry, Inc.
         "name", // name VeriSign Information Services, Inc.
+        "nationwide", // nationwide Nationwide Mutual Insurance Company
         "natura", // natura NATURA COSMÉTICOS S.A.
         "navy", // navy United TLD Holdco Ltd.
         "nec", // nec NEC Corporation
@@ -941,6 +953,7 @@ public final class DomainValidator extends AbstractValidator {
         "ong", // ong Public Interest Registry
         "onl", // onl I-REGISTRY Ltd., Niederlassung Deutschland
         "online", // online DotOnline Inc.
+        "onyourside", // onyourside Nationwide Mutual Insurance Company
         "ooo", // ooo INFIBEAM INCORPORATION LIMITED
         "oracle", // oracle Oracle Corporation
         "orange", // orange Orange Brand Services Limited
@@ -954,6 +967,7 @@ public final class DomainValidator extends AbstractValidator {
         "ovh", // ovh OVH SAS
         "page", // page Charleston Road Registry Inc.
         "pamperedchef", // pamperedchef The Pampered Chef, Ltd.
+        "panasonic", // panasonic Panasonic Corporation
         "panerai", // panerai Richemont DNS Inc.
         "paris", // paris City of Paris
         "pars", // pars Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
@@ -963,6 +977,7 @@ public final class DomainValidator extends AbstractValidator {
         "passagens", // passagens Travel Reservations SRL
         "pccw", // pccw PCCW Enterprises Limited
         "pet", // pet Afilias plc
+        "pfizer", // pfizer Pfizer Inc.
         "pharmacy", // pharmacy National Association of Boards of Pharmacy
         "philips", // philips Koninklijke Philips N.V.
         "photo", // photo Uniregistry, Corp.
@@ -1106,6 +1121,7 @@ public final class DomainValidator extends AbstractValidator {
         "skin", // skin L&#39;Oréal
         "sky", // sky Sky International AG
         "skype", // skype Microsoft Corporation
+        "smart", // smart Smart Communications, Inc. (SMART)
         "smile", // smile Amazon Registry Services, Inc.
         "sncf", // sncf SNCF (Société Nationale des Chemins de fer Francais)
         "soccer", // soccer Foggy Shadow, LLC
@@ -1124,6 +1140,7 @@ public final class DomainValidator extends AbstractValidator {
         "spreadbetting", // spreadbetting DOTSPREADBETTING REGISTRY LTD
         "srl", // srl InterNetX Corp.
         "stada", // stada STADA Arzneimittel AG
+        "staples", // staples Staples, Inc.
         "star", // star Star India Private Limited
         "starhub", // starhub StarHub Limited
         "statebank", // statebank STATE BANK OF INDIA
@@ -1179,6 +1196,9 @@ public final class DomainValidator extends AbstractValidator {
         "tips", // tips Corn Willow, LLC
         "tires", // tires Dog Edge, LLC
         "tirol", // tirol punkt Tirol GmbH
+        "tjmaxx", // tjmaxx The TJX Companies, Inc.
+        "tjx", // tjx The TJX Companies, Inc.
+        "tkmaxx", // tkmaxx The TJX Companies, Inc.
         "tmall", // tmall Alibaba Group Holding Limited
         "today", // today Pearl Woods, LLC
         "tokyo", // tokyo GMO Registry, Inc.
@@ -1230,6 +1250,7 @@ public final class DomainValidator extends AbstractValidator {
         "vista", // vista Vistaprint Limited
         "vistaprint", // vistaprint Vistaprint Limited
         "viva", // viva Saudi Telecom Company
+        "vivo", // vivo Telefonica Brasil S.A.
         "vlaanderen", // vlaanderen DNS.be vzw
         "vodka", // vodka Top Level Domain Holdings Limited
         "volkswagen", // volkswagen Volkswagen Group of America Inc.
@@ -1261,6 +1282,7 @@ public final class DomainValidator extends AbstractValidator {
         "win", // win First Registry Limited
         "windows", // windows Microsoft Corporation
         "wine", // wine June Station, LLC
+        "winners", // winners The TJX Companies, Inc.
         "wme", // wme William Morris Endeavor Entertainment, LLC
         "wolterskluwer", // wolterskluwer Wolters Kluwer N.V.
         "woodside", // woodside Woodside Petroleum Limited
