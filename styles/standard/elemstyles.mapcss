@@ -1615,6 +1615,7 @@ node[office=government] {
 /****************/
 
 area[leisure=sports_centre],
+area[leisure=fitness_centre],
 area[leisure=stadium],
 area[leisure=horse_riding],
 area[leisure=water_park] {
@@ -1622,6 +1623,11 @@ area[leisure=water_park] {
 }
 node[leisure=sports_centre] {
     icon-image: "sport/centre.png";
+    set icon_z17;
+}
+node[leisure=fitness_centre] {
+    icon-image: "sport/fitness_centre.png";
+    icon-width: 16;
     set icon_z17;
 }
 node[leisure=stadium] {
@@ -3812,8 +3818,7 @@ node[sport=golf] {
     set icon_z17;
 }
 node[sport=gymnastics] {
-    icon-image: "presets/gymnastics.png";
-    icon-width: 16;
+    icon-image: "presets/gymnastics.svg";
     set icon_z17;
 }
 node[sport=field_hockey] {

@@ -5472,6 +5472,15 @@
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Sports Centre -->
+        <item name="Fitness Centre" icon="presets/fitness_centre.png" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=fitness_centre" />
+            <space />
+            <key key="leisure" value="fitness_centre" />
+            <text key="name" text="Name" />
+            <reference ref="sport" />
+            <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Building" />
+        </item> <!-- Fitness Centre -->
         <item name="Pitch" icon="styles/standard/sport/pitch.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=pitch"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=pitch"
@@ -5734,7 +5743,7 @@
             <text key="name" text="Name" />
             <reference ref="riding_surface" />
         </item> <!-- Horse Racing -->
-        <item name="Gymnastics" icon="presets/gymnastics.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Gymnastics" icon="presets/gymnastics.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=gymnastics" />
             <space />
             <key key="sport" value="gymnastics" />
