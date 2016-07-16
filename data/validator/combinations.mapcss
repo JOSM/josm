@@ -391,3 +391,12 @@ way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered
   fixRemove: "male";
   fixAdd: "unisex=yes";
 }
+
+/* #13138 */
+area:closed[water][natural!=water][water!=intermittent] { /* water=intermittent is deprecated and has an own warning */
+  throwWarning: tr("{0} without {1}", "{1.key}", "{2.tag}");
+  fixAdd: "natural=water";
+}
+way!:closed[water][natural!=water][water!=intermittent] {
+  throwWarning: tr("{0} without {1}", "{1.key}", "{2.tag}");
+}

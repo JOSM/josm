@@ -1,5 +1,6 @@
 *[barrier=wire_fence] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "barrier=fence + fence_type=chain_link";
   fixAdd: "barrier=fence";
   fixAdd: "fence_type=chain_link";
   assertMatch: "way barrier=wire_fence";
@@ -867,4 +868,13 @@ node[tower=transition] {
   suggestAlternative: "location:transition=yes";
   fixAdd: "location:transition=yes";
   fixRemove: "tower";
+}
+
+/* #13138 */
+area[landuse=pond] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "natural=water + water=pond";
+  fixAdd: "natural=water";
+  fixAdd: "water=pond";
+  fixRemove: "landuse";
 }
