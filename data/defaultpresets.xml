@@ -8346,7 +8346,9 @@
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=government" />
         <space />
         <key key="office" value="government" />
-        <reference ref="name_oh_wheelchair" />
+        <text key="name" text="Name" />
+        <combo key="government" text="Type" values="ministry,prosecutor,tax,register_office" />
+        <reference ref="oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item>
     <item name="Insurance" icon="styles/standard/office/insurance.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">

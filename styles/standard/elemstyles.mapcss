@@ -1626,7 +1626,7 @@ node[leisure=sports_centre] {
     set icon_z17;
 }
 node[leisure=fitness_centre] {
-    icon-image: "sport/fitness_centre.png";
+    icon-image: "presets/fitness_centre.png";
     icon-width: 16;
     set icon_z17;
 }
