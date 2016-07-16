@@ -28,6 +28,7 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
     private final JButton renderButton;
     private final JButton editButton;
     private Object editorValue;
+    private String buttonName = null;
 
     /**
      * Creates a column that is rendered as a button with no action bound to the click event
@@ -35,6 +36,12 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
     public ButtonColumn() {
         this(null);
     }
+
+    public ButtonColumn(Action action, String buttonName) {
+        this(action);
+        this.buttonName  = buttonName;
+    }
+
 
     /**
      * Creates a column that is rendered as a button
@@ -63,7 +70,10 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         this.editorValue = value;
-        if (value == null) {
+        if (buttonName != null) {
+            editButton.setText(buttonName);
+            editButton.setIcon(null);
+        } else if (value == null) {
             editButton.setText("");
             editButton.setIcon(null);
         } else if (value instanceof Icon) {
@@ -90,7 +100,10 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
 
         renderButton.setFocusPainted(hasFocus);
 
-        if (value == null) {
+        if (buttonName != null) {
+            renderButton.setText(buttonName);
+            renderButton.setIcon(null);
+        } else if (value == null) {
             renderButton.setText("");
             renderButton.setIcon(null);
         } else if (value instanceof Icon) {
