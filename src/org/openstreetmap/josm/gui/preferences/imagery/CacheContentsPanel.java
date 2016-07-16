@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JLabel;
@@ -38,7 +36,6 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.ButtonColumn;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Panel for cache content management.
@@ -48,16 +45,12 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class CacheContentsPanel extends JPanel {
 
-
-    private final transient ExecutorService executor =
-            Executors.newSingleThreadExecutor(Utils.newThreadFactory(getClass() + "-%d", Thread.NORM_PRIORITY));
-
     /**
      * Creates cache content panel
      */
     public CacheContentsPanel() {
         super(new GridBagLayout());
-        executor.submit(new Runnable() {
+        Main.worker.submit(new Runnable() {
             @Override
             public void run() {
                 addToPanel(TMSLayer.getCache(), "TMS");
@@ -65,7 +58,6 @@ public class CacheContentsPanel extends JPanel {
                 addToPanel(WMTSLayer.getCache(), "WMTS");
             }
         });
-        executor.shutdown();
     }
 
     private void addToPanel(final CacheAccess<String, BufferedImageCacheEntry> cache, final String name) {
