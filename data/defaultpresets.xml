@@ -7873,6 +7873,11 @@
             <space />
             <key key="shop" value="hairdresser" />
             <reference ref="name_oh_wheelchair" />
+            <checkgroup columns="3">
+                <check key="female" text="Female" />
+                <check key="male" text="Male" />
+                <check key="unisex" text="Unisex" />
+            </checkgroup>
             <reference ref="link_contact_address_payment" />
         </item> <!-- Hairdresser/Barber -->
         <item name="Tattoo" icon="styles/standard/shop/tattoo.svg" type="node,closedway,multipolygon" preset_name_label="true">

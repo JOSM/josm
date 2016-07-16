@@ -373,3 +373,21 @@ way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered
 way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered!=yes][pipeline!=yes][location!=underground][eval(waylength()) <= 400] {
   throwOther: tr("Short waterway with {0} but without a tag which defines it as tunnel or underground. Remove {1} or add a tunnel tag if applicable. Also check crossing bridges and their {1} tags.", "{1.tag}", "{1.key}");
 }
+
+/* #13144 */
+*[unisex=yes][female=yes][male!=yes],
+*[unisex=yes][male=yes][female!=yes] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+}
+*[unisex=yes][female=yes][male=yes] {
+  throwWarning: tr("{0} together with {1} and {2}. Remove {1} and {2}", "{0.tag}", "{1.tag}", "{2.tag}");
+  fixRemove: "female";
+  fixRemove: "male";
+}
+*[female=yes][male=yes][!unisex][shop=hairdresser] { /* for toilets male=yes female=yes unisex=no combination is valid */
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  suggestAlternative: "unisex=yes";
+  fixRemove: "female";
+  fixRemove: "male";
+  fixAdd: "unisex=yes";
+}
