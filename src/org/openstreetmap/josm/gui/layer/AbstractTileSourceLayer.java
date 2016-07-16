@@ -903,6 +903,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         if (tile == null) {
             tile = new Tile(tileSource, x, y, zoom);
             tileCache.addTile(tile);
+        }
+
+        if (!tile.isLoaded()) {
             tile.loadPlaceholderFromCache(tileCache);
         }
         return tile;
@@ -938,7 +941,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         MapView mv = Main.map.mapView;
         EastNorth topLeft = mv.getEastNorth(0, 0);
         EastNorth botRight = mv.getEastNorth(mv.getWidth(), mv.getHeight());
-        return new TileSet(topLeft, botRight, currentZoomLevel);
+        return new MapWrappingTileSet(topLeft, botRight, currentZoomLevel);
     }
 
     protected void loadAllTiles(boolean force) {
@@ -1196,9 +1199,33 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         return getShiftedLatLon(en).toCoordinate();
     }
 
+    private LatLon getShiftedLatLon(ICoordinate latLon) {
+        return getShiftedLatLon(Main.getProjection().latlon2eastNorth(new LatLon(latLon)));
+    }
+
+
     private final TileSet nullTileSet = new TileSet((LatLon) null, (LatLon) null, 0);
 
-    private final class TileSet {
+    private final class MapWrappingTileSet extends TileSet {
+            private MapWrappingTileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
+                this(getShiftedLatLon(topLeft), getShiftedLatLon(botRight), zoom);
+            }
+
+            private MapWrappingTileSet(LatLon topLeft, LatLon botRight, int zoom) {
+                super(topLeft, botRight, zoom);
+                double centerLon = getShiftedLatLon(Main.map.mapView.getCenter()).lon();
+
+                if (topLeft.lon() > centerLon) {
+                    x0 = tileSource.getTileXMin(zoom);
+                }
+                if (botRight.lon() < centerLon) {
+                    x1 = tileSource.getTileXMax(zoom);
+                }
+                sanitize();
+            }
+    }
+
+    private class TileSet {
         int x0, x1, y0, y1;
         int zoom;
 
@@ -1230,15 +1257,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
             y0 = t1.getYIndex();
             x1 = t2.getXIndex();
             y1 = t2.getYIndex();
-            double centerLon = getShiftedLatLon(Main.map.mapView.getCenter()).lon();
+            sanitize();
+        }
 
-            if (topLeft.lon() > centerLon) {
-                x0 = tileSource.getTileXMin(zoom);
-            }
-            if (botRight.lon() < centerLon) {
-                x1 = tileSource.getTileXMax(zoom);
-            }
-
+        protected void sanitize() {
             if (x0 > x1) {
                 int tmp = x0;
                 x0 = x1;
@@ -1417,7 +1439,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
             synchronized (tileSets) {
                 TileSet ts = tileSets[zoom-minZoom];
                 if (ts == null) {
-                    ts = new TileSet(topLeft, botRight, zoom);
+                    ts = new MapWrappingTileSet(topLeft, botRight, zoom);
                     tileSets[zoom-minZoom] = ts;
                 }
                 return ts;
@@ -1535,8 +1557,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
                     continue;
                 }
                 Tile t2 = tempCornerTile(missed);
-                LatLon topLeft2 = new LatLon(tileSource.tileXYToLatLon(missed));
-                LatLon botRight2 = new LatLon(tileSource.tileXYToLatLon(t2));
+                LatLon topLeft2 = getShiftedLatLon(tileSource.tileXYToLatLon(missed));
+                LatLon botRight2 = getShiftedLatLon(tileSource.tileXYToLatLon(t2));
                 TileSet ts2 = new TileSet(topLeft2, botRight2, newzoom);
                 // Instantiating large TileSets is expensive.  If there
                 // are no loaded tiles, don't bother even trying.
