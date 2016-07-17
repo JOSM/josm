@@ -390,13 +390,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 return true;
             } else {
                 attributes.setError(e);
-                attributes.setResponseCode(499); // set dummy error code
-                boolean doCache = isResponseLoadable(null, 499, null) || cacheAsEmpty(); //generic 499 error code returned
-                if (doCache) {
-                    cacheData = createCacheEntry(new byte[]{});
-                    cache.put(getCacheKey(), createCacheEntry(new byte[]{}), attributes);
-                }
-                return doCache;
+                attributes.setResponseCode(599); // set dummy error code, greater than 500 so it will be not cached
+                return false;
             }
 
         } catch (InterruptedException e) {
