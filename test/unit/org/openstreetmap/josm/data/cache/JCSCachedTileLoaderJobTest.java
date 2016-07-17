@@ -34,7 +34,7 @@ public class JCSCachedTileLoaderJobTest {
 
         @Override
         public String getCacheKey() {
-            return "cachekey";
+            return "cachekey" + url;
         }
 
         @Override

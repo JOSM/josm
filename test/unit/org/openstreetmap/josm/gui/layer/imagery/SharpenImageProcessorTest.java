@@ -44,7 +44,7 @@ public class SharpenImageProcessorTest {
         assertEquals(1, processor.getSharpenLevel(), 0.001);
 
         processor.setSharpenLevel(-1);
-        assertEquals(-1, processor.getSharpenLevel(), 0.001);
+        assertEquals(0, processor.getSharpenLevel(), 0.001);
 
         processor.setSharpenLevel(5);
         assertEquals(5, processor.getSharpenLevel(), 0.001);
@@ -56,6 +56,6 @@ public class SharpenImageProcessorTest {
     @Test
     public void testToString() {
         SharpenImageProcessor processor = new SharpenImageProcessor();
-        assertEquals("SharpenImageProcessor [gamma=1.0]", processor.toString());
+        assertEquals("SharpenImageProcessor [sharpenLevel=1.0]", processor.toString());
     }
 }
