@@ -24,8 +24,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOpenAerialTileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOsmTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
 /**
@@ -91,8 +89,7 @@ public class Demo extends JFrame implements JMapViewerEventListener {
                 new OsmTileSource.Mapnik(),
                 new OsmTileSource.CycleMap(),
                 new BingAerialTileSource(),
-                new MapQuestOsmTileSource(),
-                new MapQuestOpenAerialTileSource() });
+        });
         tileSourceSelector.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
