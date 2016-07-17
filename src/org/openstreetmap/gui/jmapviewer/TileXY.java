@@ -19,12 +19,12 @@ public class TileXY {
     /**
      * Returns an instance of coordinates.
      *
-     * @param d number of the tile
-     * @param e number of the tile
+     * @param x number of the tile
+     * @param y number of the tile
      */
-    public TileXY(double d, double e) {
-        this.x = d;
-        this.y = e;
+    public TileXY(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
     /**

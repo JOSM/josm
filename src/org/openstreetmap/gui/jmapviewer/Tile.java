@@ -227,6 +227,13 @@ public class Tile {
         return zoom;
     }
 
+    /**
+     * @return tile indexes as TileXY object
+     */
+    public TileXY getTileXY() {
+        return new TileXY(xtile, ytile);
+    }
+
     public BufferedImage getImage() {
         return image;
     }

@@ -131,6 +131,11 @@ public class MemoryTileCache implements TileCache {
         protected CacheEntry(Tile tile) {
             this.tile = tile;
         }
+
+        @Override
+        public String toString() {
+            return tile.toString();
+        }
     }
 
     /**
