@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.cache;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -12,6 +13,7 @@ import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -22,19 +24,18 @@ public class JCSCachedTileLoaderJobTest {
 
     private static class TestCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, CacheEntry> {
         private String url;
+        private String key;
 
-        TestCachedTileLoaderJob(String url) throws IOException {
+        TestCachedTileLoaderJob(String url, String key) throws IOException {
             super(getCache(), 30000, 30000, null);
-            this.url = url;
-        }
 
-        private static ICacheAccess<String, CacheEntry> getCache() throws IOException {
-         return JCSCacheManager.getCache("test");
+            this.url = url;
+            this.key = key;
         }
 
         @Override
         public String getCacheKey() {
-            return "cachekey" + url;
+            return key;
         }
 
         @Override
@@ -55,11 +56,13 @@ public class JCSCachedTileLoaderJobTest {
     private static class Listener implements ICachedLoaderListener {
         private CacheEntryAttributes attributes;
         private boolean ready;
+        private LoadResult result;
 
         @Override
         public synchronized void loadingFinished(CacheEntry data, CacheEntryAttributes attributes, LoadResult result) {
             this.attributes = attributes;
             this.ready = true;
+            this.result = result;
             this.notifyAll();
         }
     }
@@ -99,7 +102,8 @@ public class JCSCachedTileLoaderJobTest {
     @Test
     @SuppressFBWarnings(value = "WA_NOT_IN_LOOP")
     public void testUnknownHost() throws IOException, InterruptedException {
-        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob("http://unkownhost.unkownhost/unkown");
+        String key = "key_unknown_host";
+        TestCachedTileLoaderJob job = new TestCachedTileLoaderJob("http://unkownhost.unkownhost/unkown", key);
         Listener listener = new Listener();
         job.submit(listener, true);
         synchronized (listener) {
@@ -108,6 +112,24 @@ public class JCSCachedTileLoaderJobTest {
             }
         }
         assertEquals("java.net.UnknownHostException: unkownhost.unkownhost", listener.attributes.getErrorMessage());
+        assertEquals(LoadResult.FAILURE, listener.result); // because response will be cached, and that is checked below
+
+        ICacheAccess<String, CacheEntry> cache = getCache();
+        CacheEntry e = new CacheEntry(new byte[]{0,1,2,3});
+        CacheEntryAttributes attributes = new CacheEntryAttributes();
+        attributes.setExpirationTime(2);
+        cache.put(key, e, attributes);
+
+        job = new TestCachedTileLoaderJob("http://unkownhost.unkownhost/unkown", key);
+        listener = new Listener();
+        job.submit(listener, true);
+        synchronized (listener) {
+            if (!listener.ready) {
+                listener.wait();
+            }
+        }
+        assertEquals(LoadResult.SUCCESS, listener.result);
+        assertFalse(job.isCacheElementValid());
     }
 
     @SuppressFBWarnings(value = "WA_NOT_IN_LOOP")
@@ -124,6 +146,10 @@ public class JCSCachedTileLoaderJobTest {
     }
 
     private static TestCachedTileLoaderJob getStatusLoaderJob(int responseCode) throws IOException {
-        return new TestCachedTileLoaderJob("http://httpstat.us/" + responseCode);
+        return new TestCachedTileLoaderJob("http://httpstat.us/" + responseCode, "key_" + responseCode);
+    }
+
+    private static ICacheAccess<String, CacheEntry> getCache() throws IOException {
+        return JCSCacheManager.getCache("test");
     }
 }
