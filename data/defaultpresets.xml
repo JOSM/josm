@@ -5666,7 +5666,7 @@
             <space />
             <key key="sport" value="multi" />
             <text key="name" text="Name" />
-            <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="running" />
+            <combo key="leisure" text="Type" values="pitch,sports_centre,fitness_centre,stadium,track" values_context="running" />
         </item> <!-- Multi -->
         <item name="Nine-pin Bowling" icon="styles/standard/sport/10pin.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=9pin"
@@ -5755,7 +5755,7 @@
             <space />
             <key key="sport" value="gymnastics" />
             <text key="name" text="Name" />
-            <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" />
+            <combo key="leisure" text="Type" values="pitch,sports_centre,fitness_centre,stadium" />
         </item> <!-- Gymnastics -->
         <item name="Ice Skating" icon="presets/skating.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=ice_skating" />
@@ -8174,9 +8174,9 @@
         <separator/>
     <item name="Vending Machine" icon="styles/standard/transport/ticket-machine.png" type="node" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=vending_machine"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=vending_machine"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=vending_machine" />
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=vending_machine"
+              ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=vending_machine"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=vending_machine" />
         <space />
         <key key="amenity" value="vending_machine" />
         <multiselect key="vending" text="Vending products" values="animal_food;bicycle_tube;cigarettes;condoms;drinks;excrement_bags;food;milk;newspapers;parking_tickets;photos;public_transport_plans;public_transport_tickets;SIM_cards;stamps;sweets;tampons;telephone_vouchers;toys;vouchers" values_searchable="true" />
@@ -8186,11 +8186,11 @@
     </item> <!-- Vending Machine -->
     <item name="Payment Methods" icon="styles/standard/money/dollar.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Key:payment"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:payment"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Key:payment"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:payment"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:payment"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:payment" />
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Key:payment"
+              es.href="http://wiki.openstreetmap.org/wiki/ES:Key:payment"
+              fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:payment"
+              ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:payment"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:payment" />
         <space />
         <combo key="payment:cash" text="Cash" values="yes,no" match="keyvalue" />
         <checkgroup columns="4">
@@ -8246,220 +8246,220 @@
   <group name="Offices" icon="styles/standard/office/private_company.svg">
     <item name="Accountant" icon="styles/standard/office/accountant.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=accountant"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=accountant"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=accountant"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=accountant"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=accountant" />
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=accountant"
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=accountant"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=accountant"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=accountant" />
         <space />
         <key key="office" value="accountant" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Accountant -->
     <item name="Administrative" icon="styles/standard/office/administrative.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=administrative"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=administrative"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=administrative"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=administrative" />
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=administrative"
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=administrative"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=administrative" />
         <space />
         <key key="office" value="administrative" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Administrative -->
     <item name="Advertising agency" icon="styles/standard/office/advertising_agency.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=advertising_agency" />
         <space />
         <key key="office" value="advertising_agency" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Advertising agency -->
     <item name="Architect" icon="styles/standard/office/architect.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=architect"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=architect"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=architect"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=architect" />
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=architect"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=architect"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=architect" />
         <space />
         <key key="office" value="architect" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Architect -->
     <item name="Association" icon="styles/standard/office/association.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=association" />
         <space />
         <key key="office" value="association" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Association -->
     <item name="Private company" icon="styles/standard/office/private_company.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=company"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=company"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=company"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=company" />
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=company"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=company"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=company" />
         <space />
         <key key="office" value="company" />
         <reference ref="name_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Private company -->
     <item name="Educational institution" icon="styles/standard/office/educational_institution.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=educational_institution"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=educational_institution"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=educational_institution" />
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=educational_institution"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=educational_institution" />
         <space />
         <key key="office" value="educational_institution" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Educational institution -->
     <item name="Employment agency" icon="styles/standard/office/employment_agency.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=employment_agency"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=employment_agency"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=employment_agency"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=employment_agency"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=employment_agency"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=employment_agency" />
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=employment_agency"
+              fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=employment_agency"
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=employment_agency"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=employment_agency"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=employment_agency" />
         <space />
         <key key="office" value="employment_agency" />
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Employment agency -->
     <item name="Estate agent" icon="styles/standard/office/real_state.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=estate_agent"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=estate_agent"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=estate_agent"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=estate_agent"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=estate_agent"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=estate_agent" />
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=estate_agent"
+              fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=estate_agent"
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=estate_agent"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=estate_agent"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=estate_agent" />
         <space />
         <key key="office" value="estate_agent" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Estate agent -->
     <item name="Foundation" icon="styles/standard/office/foundation.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=foundation" />
         <space />
         <key key="office" value="foundation" />
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Foundation -->
     <item name="Government" icon="styles/standard/office/government.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=government"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=government"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=government"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=government" />
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=government"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=government"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=government" />
         <space />
         <key key="office" value="government" />
         <text key="name" text="Name" />
         <combo key="government" text="Type" values="ministry,prosecutor,tax,register_office" />
         <reference ref="oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Government -->
     <item name="Insurance" icon="styles/standard/office/insurance.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=insurance"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=insurance"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=insurance"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=insurance"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=insurance" />
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=insurance"
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=insurance"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=insurance"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=insurance" />
         <space />
         <key key="office" value="insurance" />
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Insurance -->
     <item name="It specialist" icon="styles/standard/office/it.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=it"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=it"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=it"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=it" />
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=it"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=it"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=it" />
         <space />
         <key key="office" value="it" />
         <reference ref="name_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- It specialist -->
     <item name="Lawyer" icon="styles/standard/office/lawyer.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=lawyer"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=lawyer"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=lawyer"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=lawyer"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=lawyer"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=lawyer" />
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=lawyer"
+              fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=lawyer"
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=lawyer"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=lawyer"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=lawyer" />
         <space />
         <key key="office" value="lawyer" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Lawyer -->
     <item name="Newspaper" icon="styles/standard/office/newspaper.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=newspaper"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=newspaper"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=newspaper"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=newspaper" />
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=newspaper"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=newspaper"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=newspaper" />
         <space />
         <key key="office" value="newspaper" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Newspaper -->
     <item name="Non-governmental organisation (NGO)" icon="styles/standard/office/ong.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=ngo"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=ngo"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=ngo"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=ngo"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=ngo" />
+              fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:office=ngo"
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=ngo"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=ngo"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=ngo" />
         <space />
         <key key="office" value="ngo" />
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Non-governmental organisation (NGO) -->
     <item name="Notary" icon="styles/standard/office/notary.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=notary" />
         <space />
         <key key="office" value="notary" />
         <reference ref="name_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Notary -->
     <item name="Political party" icon="styles/standard/office/political_party.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=political_party"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=political_party"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=political_party" />
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=political_party"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=political_party" />
         <space />
         <key key="office" value="political_party" />
         <reference ref="name_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Political party -->
     <item name="Religion" icon="styles/standard/office/religion.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=religion"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=religion"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:office=religion" />
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=religion"
+              pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:office=religion" />
         <space />
         <key key="office" value="religion" />
         <reference ref="religious" />
         <reference ref="oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Religion -->
     <item name="Research" icon="styles/standard/office/research.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=research"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:office=research"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=research"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=research"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=research" />
+              es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:office=research"
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=research"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=research"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=research" />
         <space />
         <key key="office" value="research" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Research -->
     <item name="Tax advisor" icon="styles/standard/office/tax_advisor.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=tax_advisor"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=tax_advisor" />
+              de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:office=tax_advisor" />
         <space />
         <key key="office" value="tax_advisor" />
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Tax advisor -->
     <item name="Telecommunication" icon="styles/standard/office/telecommunication.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=telecommunication"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=telecommunication"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=telecommunication"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=telecommunication" />
+              pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:office=telecommunication"
+              ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=telecommunication"
+              uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:office=telecommunication" />
         <space />
         <key key="office" value="telecommunication" />
         <reference ref="name_brand_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
-    </item>
+    </item> <!-- Telecommunication -->
   </group> <!-- Offices -->
   <group name="Craft" icon="styles/standard/craft/painter.png">
     <item name="Carpenter" type="node,closedway,multipolygon" preset_name_label="true">
