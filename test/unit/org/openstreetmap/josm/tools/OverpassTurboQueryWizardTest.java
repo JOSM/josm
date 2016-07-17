@@ -3,23 +3,22 @@ package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link OverpassTurboQueryWizard} class.
  */
 public class OverpassTurboQueryWizardTest {
-
     /**
-     * Setup test.
+     * Base test environment is enough
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init(false);
-        OverpassTurboQueryWizard.getInstance();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Test key=value.

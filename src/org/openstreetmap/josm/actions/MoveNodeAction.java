@@ -10,7 +10,6 @@ import java.util.Collection;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.dialogs.LatLonDialog;
