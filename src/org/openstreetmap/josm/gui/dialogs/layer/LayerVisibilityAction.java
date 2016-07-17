@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
+import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -306,7 +307,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
      * This slider allows you to change the gamma value of a layer.
      *
      * @author Michael Zangl
-     * @see ImageryLayer#setGamma(double)
+     * @see ImageryFilterSettings#setGamma(double)
      */
     private class GammaFilterSlider extends FilterSlider<ImageryLayer> {
 
@@ -320,13 +321,13 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         @Override
         protected void updateSliderWhileEnabled(Collection<? extends Layer> usedLayers, boolean allHidden) {
-            double gamma = ((ImageryLayer) usedLayers.iterator().next()).getGamma();
+            double gamma = ((ImageryLayer) usedLayers.iterator().next()).getFilterSettings().getGamma();
             setRealValue(mapGammaToInterval(gamma));
         }
 
         @Override
         protected void applyValueToLayer(ImageryLayer layer) {
-            layer.setGamma(mapIntervalToGamma(getRealValue()));
+            layer.getFilterSettings().setGamma(mapIntervalToGamma(getRealValue()));
         }
 
         @Override
@@ -365,7 +366,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
      * This slider allows you to change the sharpness of a layer.
      *
      * @author Michael Zangl
-     * @see ImageryLayer#setSharpenLevel(double)
+     * @see ImageryFilterSettings#setSharpenLevel(double)
      */
     private class SharpnessSlider extends FilterSlider<ImageryLayer> {
 
@@ -379,12 +380,12 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         @Override
         protected void updateSliderWhileEnabled(Collection<? extends Layer> usedLayers, boolean allHidden) {
-            setRealValue(((ImageryLayer) usedLayers.iterator().next()).getSharpenLevel());
+            setRealValue(((ImageryLayer) usedLayers.iterator().next()).getFilterSettings().getSharpenLevel());
         }
 
         @Override
         protected void applyValueToLayer(ImageryLayer layer) {
-            layer.setSharpenLevel(getRealValue());
+            layer.getFilterSettings().setSharpenLevel(getRealValue());
         }
 
         @Override
@@ -402,7 +403,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
      * This slider allows you to change the colorfulness of a layer.
      *
      * @author Michael Zangl
-     * @see ImageryLayer#setColorfulness(double)
+     * @see ImageryFilterSettings#setColorfulness(double)
      */
     private class ColorfulnessSlider extends FilterSlider<ImageryLayer> {
 
@@ -416,12 +417,12 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         @Override
         protected void updateSliderWhileEnabled(Collection<? extends Layer> usedLayers, boolean allHidden) {
-            setRealValue(((ImageryLayer) usedLayers.iterator().next()).getColorfulness());
+            setRealValue(((ImageryLayer) usedLayers.iterator().next()).getFilterSettings().getColorfulness());
         }
 
         @Override
         protected void applyValueToLayer(ImageryLayer layer) {
-            layer.setColorfulness(getRealValue());
+            layer.getFilterSettings().setColorfulness(getRealValue());
         }
 
         @Override
