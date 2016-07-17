@@ -1,11 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link ImageryLayer} class.
@@ -13,23 +17,20 @@ import org.openstreetmap.josm.JOSMFixture;
 public class ImageryLayerTest {
 
     /**
-     * Setup tests
+     * For creating layers
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init(true);
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
-     * Unit test of {@link ImageryLayer.ColorfulImageProcessor#toString}
-     *          and {@link ImageryLayer.GammaImageProcessor#toString()}.
-     *          and {@link ImageryLayer.SharpenImageProcessor#toString()}.
+     * Unit test of {@link ImageryLayer#getFilterSettings()}
      */
     @Test
-    public void testToString() {
+    public void testHasSettings() {
         ImageryLayer layer = TMSLayerTest.createTmsLayer();
-        assertEquals("ColorfulImageProcessor [colorfulness=1.0]", layer.collorfulnessImageProcessor.toString());
-        assertEquals("GammaImageProcessor [gamma=1.0]", layer.gammaImageProcessor.toString());
-        assertEquals("SharpenImageProcessor [sharpenLevel=1.0]", layer.sharpenImageProcessor.toString());
+        ImageryFilterSettings settings = layer.getFilterSettings();
+        assertNotNull(settings);
+        assertSame(settings, layer.getFilterSettings());
     }
 }

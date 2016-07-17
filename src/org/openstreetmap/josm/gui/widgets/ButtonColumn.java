@@ -39,7 +39,7 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
 
     public ButtonColumn(Action action, String buttonName) {
         this(action);
-        this.buttonName  = buttonName;
+        this.buttonName = buttonName;
     }
 
 

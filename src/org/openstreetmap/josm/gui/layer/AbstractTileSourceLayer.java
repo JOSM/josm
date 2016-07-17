@@ -81,6 +81,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChangeListener;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.WMSLayerImporter;
@@ -98,7 +99,7 @@ import org.openstreetmap.josm.tools.GBC;
  * @since 8526 (copied from TMSLayer)
  */
 public abstract class AbstractTileSourceLayer<T extends AbstractTMSTileSource> extends ImageryLayer
-implements ImageObserver, TileLoaderListener, ZoomChangeListener {
+implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeListener {
     private static final String PREFERENCE_PREFIX = "imagery.generic";
 
     /** maximum zoom level supported */
@@ -174,6 +175,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         super(info);
         setBackgroundLayer(true);
         this.setVisible(true);
+        getFilterSettings().addFilterChangeListener(this);
+    }
+
+    @Override
+    public void filterChanged() {
+        redraw();
     }
 
     protected abstract TileLoaderFactory getTileLoaderFactory();
@@ -260,24 +267,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
     protected void redraw() {
         needRedraw = true;
         if (isVisible()) Main.map.repaint();
-    }
-
-    @Override
-    public void setGamma(double gamma) {
-        super.setGamma(gamma);
-        redraw();
-    }
-
-    @Override
-    public void setSharpenLevel(double sharpenLevel) {
-        super.setSharpenLevel(sharpenLevel);
-        redraw();
-    }
-
-    @Override
-    public void setColorfulness(double colorfulness) {
-        super.setColorfulness(colorfulness);
-        redraw();
     }
 
     /**
@@ -1207,22 +1196,22 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
     private final TileSet nullTileSet = new TileSet();
 
     private final class MapWrappingTileSet extends TileSet {
-            private MapWrappingTileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
-                this(getShiftedLatLon(topLeft), getShiftedLatLon(botRight), zoom);
-            }
+        private MapWrappingTileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
+            this(getShiftedLatLon(topLeft), getShiftedLatLon(botRight), zoom);
+        }
 
-            private MapWrappingTileSet(LatLon topLeft, LatLon botRight, int zoom) {
-                super(topLeft, botRight, zoom);
-                double centerLon = getShiftedLatLon(Main.map.mapView.getCenter()).lon();
+        private MapWrappingTileSet(LatLon topLeft, LatLon botRight, int zoom) {
+            super(topLeft, botRight, zoom);
+            double centerLon = getShiftedLatLon(Main.map.mapView.getCenter()).lon();
 
-                if (topLeft.lon() > centerLon) {
-                    x0 = tileSource.getTileXMin(zoom);
-                }
-                if (botRight.lon() < centerLon) {
-                    x1 = tileSource.getTileXMax(zoom);
-                }
-                sanitize();
+            if (topLeft.lon() > centerLon) {
+                x0 = tileSource.getTileXMin(zoom);
             }
+            if (botRight.lon() < centerLon) {
+                x1 = tileSource.getTileXMax(zoom);
+            }
+            sanitize();
+        }
     }
 
     private class TileSet {
@@ -1235,7 +1224,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
          * @param botRight bottom-right lat/lon
          * @param zoom zoom level
          */
-        private TileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
+        protected TileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
             this(getShiftedLatLon(topLeft), getShiftedLatLon(botRight), zoom);
         }
 
@@ -1245,7 +1234,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
          * @param botRight bottom-right lat/lon
          * @param zoom zoom level
          */
-        private TileSet(LatLon topLeft, LatLon botRight, int zoom) {
+        protected TileSet(LatLon topLeft, LatLon botRight, int zoom) {
             this.zoom = zoom;
             if (zoom == 0)
                 return;
@@ -1259,9 +1248,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
             y1 = (int) Math.ceil(t2.getY());
             sanitize();
 
-        }
-
-        private TileSet(Tile topLeft, Tile botRight, int zoom) {
         }
 
         /**
