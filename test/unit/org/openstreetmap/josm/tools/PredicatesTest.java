@@ -10,11 +10,13 @@ import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * This test tests the {@link Predicate}s created by the {@link Predicates} class.
@@ -23,12 +25,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  */
 public class PredicatesTest {
     /**
-     * Not needed by this test, but JOSM has so many dependencies :-(
+     * Some of this depends on preferences.
      */
-    @BeforeClass
-    public static void setUpClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Test {@link Predicates#alwaysTrue()}

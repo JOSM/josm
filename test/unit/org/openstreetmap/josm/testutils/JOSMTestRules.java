@@ -160,10 +160,11 @@ public class JOSMTestRules implements TestRule {
      * @throws InitializationError If an error occured while creating the required environment.
      */
     protected void before() throws InitializationError {
-        cleanUpFromJosmFixture();
-
         // Tests are running headless by default.
         System.setProperty("java.awt.headless", "true");
+
+        cleanUpFromJosmFixture();
+
         // All tests use the same timezone.
         TimeZone.setDefault(DateUtils.UTC);
         // Set log level to info

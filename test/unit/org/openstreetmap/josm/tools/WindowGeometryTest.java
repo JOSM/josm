@@ -13,12 +13,13 @@ import java.awt.Rectangle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.WindowGeometry.WindowGeometryException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
@@ -26,14 +27,12 @@ import nl.jqno.equalsverifier.Warning;
  * Unit tests of {@link WindowGeometry} class.
  */
 public class WindowGeometryTest {
-
     /**
-     * Setup test.
+     * Some of this depends on preferences.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Test of {@link WindowGeometry#centerInWindow} method.
@@ -52,6 +51,9 @@ public class WindowGeometryTest {
         Dimension dim = new Dimension(200, 100);
         assertEquals(new WindowGeometry(new Point(0, 0), dim), WindowGeometry.centerOnScreen(dim));
         assertEquals(new WindowGeometry(new Point(300, 250), dim), WindowGeometry.centerOnScreen(dim, null));
+
+        Main.pref.put("gui.geometry", "x=0,y=0,width=800,height=600");
+        assertEquals(new WindowGeometry(new Point(300, 250), dim), WindowGeometry.centerOnScreen(dim));
     }
 
     /**
