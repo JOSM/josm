@@ -386,14 +386,19 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             return doCache;
         } catch (IOException e) {
             log.log(Level.FINE, "JCS - IOExecption during communication with server for: {0}", getUrlNoException());
-            attributes.setError(e);
-            attributes.setResponseCode(499); // set dummy error code
-            boolean doCache = isResponseLoadable(null, 499, null) || cacheAsEmpty(); //generic 499 error code returned
-            if (doCache) {
-                cacheData = createCacheEntry(new byte[]{});
-                cache.put(getCacheKey(), createCacheEntry(new byte[]{}), attributes);
+            if (isObjectLoadable()) {
+                return true;
+            } else {
+                attributes.setError(e);
+                attributes.setResponseCode(499); // set dummy error code
+                boolean doCache = isResponseLoadable(null, 499, null) || cacheAsEmpty(); //generic 499 error code returned
+                if (doCache) {
+                    cacheData = createCacheEntry(new byte[]{});
+                    cache.put(getCacheKey(), createCacheEntry(new byte[]{}), attributes);
+                }
+                return doCache;
             }
-            return doCache;
+
         } catch (InterruptedException e) {
             attributes.setError(e);
             log.log(Level.WARNING, "JCS - Exception during download {0}", getUrlNoException());

@@ -702,7 +702,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
         // add 10% for tiles from different zoom levels
         int ret = (int) Math.ceil(
                 Math.pow(2d, ZOOM_OFFSET.get()) * visibileTiles // use offset to decide, how many tiles are visible
-                * 2);
+                * 4);
         Main.info("AbstractTileSourceLayer: estimated visible tiles: {0}, estimated cache size: {1}", visibileTiles, ret);
         return ret;
     }
@@ -1204,7 +1204,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
     }
 
 
-    private final TileSet nullTileSet = new TileSet((LatLon) null, (LatLon) null, 0);
+    private final TileSet nullTileSet = new TileSet();
 
     private final class MapWrappingTileSet extends TileSet {
             private MapWrappingTileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
@@ -1253,11 +1253,22 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
             TileXY t1 = tileSource.latLonToTileXY(topLeft.toCoordinate(), zoom);
             TileXY t2 = tileSource.latLonToTileXY(botRight.toCoordinate(), zoom);
 
-            x0 = t1.getXIndex();
-            y0 = t1.getYIndex();
-            x1 = t2.getXIndex();
-            y1 = t2.getYIndex();
+            x0 = (int) Math.floor(t1.getX());
+            y0 = (int) Math.floor(t1.getY());
+            x1 = (int) Math.ceil(t2.getX());
+            y1 = (int) Math.ceil(t2.getY());
             sanitize();
+
+        }
+
+        private TileSet(Tile topLeft, Tile botRight, int zoom) {
+        }
+
+        /**
+         * null tile set
+         */
+        private TileSet() {
+            return;
         }
 
         protected void sanitize() {
@@ -1388,6 +1399,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
                     tileLoader.createTileLoaderJob(t).submit(force);
                 }
             }
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getName() + ": zoom: " + zoom + " X(" + x0 + ", " + x1 + ") Y(" + y0 + ", " + y1 + ") size: " + size();
         }
     }
 
@@ -1557,9 +1573,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener {
                     continue;
                 }
                 Tile t2 = tempCornerTile(missed);
-                LatLon topLeft2 = getShiftedLatLon(tileSource.tileXYToLatLon(missed));
-                LatLon botRight2 = getShiftedLatLon(tileSource.tileXYToLatLon(t2));
-                TileSet ts2 = new TileSet(topLeft2, botRight2, newzoom);
+                TileSet ts2 = new TileSet(
+                        getShiftedLatLon(tileSource.tileXYToLatLon(missed)),
+                        getShiftedLatLon(tileSource.tileXYToLatLon(t2)),
+                        newzoom);
                 // Instantiating large TileSets is expensive.  If there
                 // are no loaded tiles, don't bother even trying.
                 if (ts2.allLoadedTiles().isEmpty()) {
