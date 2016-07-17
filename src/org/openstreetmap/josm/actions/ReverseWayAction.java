@@ -129,12 +129,7 @@ public final class ReverseWayAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null) {
-            setEnabled(false);
-        } else {
-            updateEnabledState(ds.getSelected());
-        }
+        updateEnabledStateOnCurrentSelection();
     }
 
     @Override

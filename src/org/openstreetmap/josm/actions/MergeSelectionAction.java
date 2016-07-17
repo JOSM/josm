@@ -70,12 +70,7 @@ public class MergeSelectionAction extends AbstractMergeAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null) {
-            setEnabled(false);
-        } else {
-            updateEnabledState(ds.getAllSelected());
-        }
+        updateEnabledStateOnCurrentSelection();
     }
 
     @Override

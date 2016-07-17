@@ -30,8 +30,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOpenAerialTileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.MapQuestOsmTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -59,8 +57,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
             // Urls that already exist in the slippymap chooser and shouldn't be copied from TMS layer list
             existingSlippyMapUrls.add("https://{switch:a,b,c}.tile.openstreetmap.org/{zoom}/{x}/{y}.png");      // Mapnik
             existingSlippyMapUrls.add("http://tile.opencyclemap.org/cycle/{zoom}/{x}/{y}.png"); // Cyclemap
-            existingSlippyMapUrls.add("http://otile{switch:1,2,3,4}.mqcdn.com/tiles/1.0.0/osm/{zoom}/{x}/{y}.png"); // MapQuest-OSM
-            existingSlippyMapUrls.add("http://oatile{switch:1,2,3,4}.mqcdn.com/tiles/1.0.0/sat/{zoom}/{x}/{y}.png"); // MapQuest Open Aerial
         }
 
         @Override
@@ -103,9 +99,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
             public List<TileSource> getTileSources() {
                 return Arrays.<TileSource>asList(
                         new OsmTileSource.Mapnik(),
-                        new OsmTileSource.CycleMap(),
-                        new MapQuestOsmTileSource(),
-                        new MapQuestOpenAerialTileSource());
+                        new OsmTileSource.CycleMap());
             }
         });
         addTileSourceProvider(new TMSTileSourceProvider());

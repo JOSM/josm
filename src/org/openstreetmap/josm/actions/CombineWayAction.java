@@ -244,12 +244,7 @@ public class CombineWayAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null) {
-            setEnabled(false);
-            return;
-        }
-        updateEnabledState(ds.getSelected());
+        updateEnabledStateOnCurrentSelection();
     }
 
     @Override
