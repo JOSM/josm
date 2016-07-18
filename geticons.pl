@@ -158,6 +158,37 @@ for($i = 1; my @ifiles = (glob("images".("/*" x $i).".png"), glob("images".("/*"
   for my $ifile (sort @ifiles)
   {
     $ifile =~ s/^images\///;
+    # svg comes after png due to the glob, so only check for svg's
+    if($ifile =~ /^(.*)\.svg$/)
+    {
+      if($haveicons{"$1.png"})
+      {
+        print STDERR "File $1 exists twice as .svg and .png.\n";
+      }
+      # check for unwanted svg effects
+      if(open FILE, "<","images/$ifile")
+      {
+        undef $/;
+        my $f = <FILE>;
+        close FILE;
+        while($f =~ /style\s*=\s*["']([^"']+)["']/g)
+        {
+          for my $x (split(/\s*;\s*/, $1))
+          {
+            print STDERR "Style starts with minus for $ifile: $x\n" if $x =~ /^-/;
+          }
+        }
+        if($f =~ /viewBox\s*=\s*["']([^"']+)["']/)
+        {
+          my $x = $1;
+          print STDERR "ViewBox has float values for $ifile: $x\n" if $x =~ /\./;
+        }
+      }
+      else
+      {
+        print STDERR "Could not open file $ifile: $1";
+      }
+    }
     $haveicons{$ifile} = 1;
   }
 }
