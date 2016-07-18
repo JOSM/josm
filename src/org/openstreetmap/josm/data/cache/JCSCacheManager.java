@@ -172,6 +172,16 @@ public final class JCSCacheManager {
 
         if (cachePath != null && cacheDirLock != null) {
             IDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath, cacheName);
+            /*
+             * BlockDiskCache never optimizes the file, so when file size is reduced, it will never be truncated to desired size.
+             *
+             * If for some mysterious reason, file size is greater than the value set in preferences, just use the whole file. If the user
+             * wants to reduce the file size, (s)he may just go to preferences and there it should be handled (by removing old file)
+             */
+            if (USE_BLOCK_CACHE.get()) {
+                File diskCacheFile = new File(cachePath + File.separator + diskAttributes.getCacheName() + ".data");
+                maxDiskObjects = (int) Math.max(maxDiskObjects, diskCacheFile.length()/1024);
+            }
             try {
                 if (cc.getAuxCaches().length == 0) {
                     AuxiliaryCache<K, V> diskCache = diskCacheFactory.createCache(diskAttributes, cacheManager, null, new StandardSerializer());
