@@ -115,7 +115,7 @@ public class JCSCachedTileLoaderJobTest {
         assertEquals(LoadResult.FAILURE, listener.result); // because response will be cached, and that is checked below
 
         ICacheAccess<String, CacheEntry> cache = getCache();
-        CacheEntry e = new CacheEntry(new byte[]{0,1,2,3});
+        CacheEntry e = new CacheEntry(new byte[]{0, 1, 2, 3});
         CacheEntryAttributes attributes = new CacheEntryAttributes();
         attributes.setExpirationTime(2);
         cache.put(key, e, attributes);
