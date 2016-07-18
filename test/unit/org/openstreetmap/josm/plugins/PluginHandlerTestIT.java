@@ -88,7 +88,12 @@ public class PluginHandlerTestIT {
     public static void downloadPlugins(Collection<PluginInformation> plugins) {
         // Update the locally installed plugins
         PluginDownloadTask pluginDownloadTask = new PluginDownloadTask(NullProgressMonitor.INSTANCE, plugins, null);
+        // Increase default timeout to avoid random network errors on big jar files
+        int defTimeout = Main.pref.getInteger("socket.timeout.read", 30);
+        Main.pref.putInteger("socket.timeout.read", 2 * defTimeout);
         pluginDownloadTask.run();
+        // Restore default timeout
+        Main.pref.putInteger("socket.timeout.read", defTimeout);
         assertTrue(pluginDownloadTask.getFailedPlugins().toString(), pluginDownloadTask.getFailedPlugins().isEmpty());
         assertEquals(plugins.size(), pluginDownloadTask.getDownloadedPlugins().size());
 
