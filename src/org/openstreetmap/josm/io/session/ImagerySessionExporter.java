@@ -81,10 +81,8 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
         ImageryPreferenceEntry e = new ImageryPreferenceEntry(layer.getInfo());
         Map<String, String> data = new LinkedHashMap<>(Preferences.serializeStruct(e, ImageryPreferenceEntry.class));
         if (layer instanceof AbstractTileSourceLayer) {
-            AbstractTileSourceLayer tsLayer = (AbstractTileSourceLayer) layer;
-            data.put("automatic-downloading", Boolean.toString(tsLayer.autoLoad));
-            data.put("automatically-change-resolution", Boolean.toString(tsLayer.autoZoom));
-            data.put("show-errors", Boolean.toString(tsLayer.showErrors));
+            AbstractTileSourceLayer<?> tsLayer = (AbstractTileSourceLayer<?>) layer;
+            tsLayer.getDisplaySettings().storeTo(data);
         }
         data.put("dx", String.valueOf(layer.getDx()));
         data.put("dy", String.valueOf(layer.getDy()));

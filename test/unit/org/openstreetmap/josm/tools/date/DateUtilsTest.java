@@ -22,11 +22,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class DateUtilsTest {
 
     /**
-     * Set the timezone and no timeout (junit timeout task seems to have problems with it when switching time zones).
+     * Set the timezone and timeout.
+     * <p>
+     * Timeouts need to be disabled because we change the time zone.
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().i18n().preferences().noTimeout();
+    public JOSMTestRules test = new JOSMTestRules().i18n().preferences();
 
     /**
      * Allows to override the timezone used in {@link DateUtils} for unit tests.
