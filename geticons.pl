@@ -36,16 +36,12 @@ for my $arg (@ARGV ? @ARGV : @default)
 
       if(($l =~ /(?:icon-image|repeat-image|fill-image)\s*:\s*(\"?(.*?)\"?)\s*;/) && ($1 ne "none"))
       {
-        my $val = $2;
-        my $img = "styles/standard/$val";
-        $img = "styles/$val" if((!-f "images/$img") && -f "images/styles/$val");
-        $img = $val if((!-f "images/$img") && -f "images/$val");
+        my $img = $2;
         ++$icons{$img};
       }
       if($l =~ /ImageProvider(?:\.get)?\(\"([^\"]*?)\"(?:, ImageProvider.ImageSizes.[A-Z]+)?\)/)
       {
         my $i = $1;
-        $i = "styles/standard/$i" if $i eq "misc/no_icon";
         ++$icons{$i};
       }
       while($l =~ /\/\*\s*ICON\s*\*\/\s*\"(.*?)\"/g)

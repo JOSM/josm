@@ -380,7 +380,7 @@ way[barrier=kerb] {
 }
 way[barrier=retaining_wall],
 way[barrier=kerb] {
-    repeat-image: "misc/cliff-pattern.png";
+    repeat-image: "presets/misc/cliff-pattern.png";
     repeat-image-align: top;
 }
 node[barrier=hedge],
@@ -1391,7 +1391,7 @@ node[man_made=pier] {
 }
 way[embankment?][!highway][!railway][!waterway],
 way[man_made=embankment][!highway][!railway][!waterway] {
-    repeat-image: "misc/embankment-pattern.png";
+    repeat-image: "presets/misc/embankment-pattern.png";
     repeat-image-align: top;
     width: 1;
     color: embankment#c14d00;
@@ -1402,7 +1402,7 @@ way[embankment?][waterway],
 way[man_made=embankment][highway],
 way[man_made=embankment][railway],
 way[man_made=embankment][waterway] {
-    repeat-image: "misc/embankment-pattern-centered.png";
+    repeat-image: "presets/misc/embankment-pattern-centered.png";
 }
 way[man_made=pipeline] {
     width: 2;
@@ -1522,91 +1522,91 @@ area[office=telecommunication] {
     fill-color: office#de5696;
 }
 node[office=accountant] {
-    icon-image: "presets/styles/standard/office/accountant.svg";
+    icon-image: "presets/office/accountant.svg";
     set icon_z17;
 }
 node[office=administrative] {
-    icon-image: "presets/styles/standard/office/administrative.svg";
+    icon-image: "presets/office/administrative.svg";
     set icon_z17;
 }
 node[office=advertising_agency] {
-    icon-image: "presets/styles/standard/office/advertising_agency.svg";
+    icon-image: "presets/office/advertising_agency.svg";
     set icon_z17;
 }
 node[office=architect] {
-    icon-image: "presets/styles/standard/office/architect.svg";
+    icon-image: "presets/office/architect.svg";
     set icon_z17;
 }
 node[office=association] {
-    icon-image: "presets/styles/standard/office/association.svg";
+    icon-image: "presets/office/association.svg";
     set icon_z17;
 }
 node[office=company] {
-    icon-image: "presets/styles/standard/office/private_company.svg";
+    icon-image: "presets/office/private_company.svg";
     set icon_z17;
 }
 node[office=educational_institution] {
-    icon-image: "presets/styles/standard/office/educational_institution.svg";
+    icon-image: "presets/office/educational_institution.svg";
     set icon_z17;
 }
 node[office=employment_agency] {
-    icon-image: "presets/styles/standard/office/employment_agency.svg";
+    icon-image: "presets/office/employment_agency.svg";
     set icon_z17;
 }
 node[office=estate_agent] {
-    icon-image: "presets/styles/standard/office/real_state.svg";
+    icon-image: "presets/office/real_state.svg";
     set icon_z17;
 }
 node[office=foundation] {
-    icon-image: "presets/styles/standard/office/foundation.svg";
+    icon-image: "presets/office/foundation.svg";
     set icon_z17;
 }
 node[office=insurance] {
-    icon-image: "presets/styles/standard/office/insurance.svg";
+    icon-image: "presets/office/insurance.svg";
     set icon_z17;
 }
 node[office=it] {
-    icon-image: "presets/styles/standard/office/it.svg";
+    icon-image: "presets/office/it.svg";
     set icon_z17;
 }
 node[office=lawyer] {
-    icon-image: "presets/styles/standard/office/lawyer.svg";
+    icon-image: "presets/office/lawyer.svg";
     set icon_z17;
 }
 node[office=newspaper] {
-    icon-image: "presets/styles/standard/office/newspaper.svg";
+    icon-image: "presets/office/newspaper.svg";
     set icon_z17;
 }
 node[office=ngo] {
-    icon-image: "presets/styles/standard/office/ong.svg";
+    icon-image: "presets/office/ong.svg";
     set icon_z17;
 }
 node[office=notary] {
-    icon-image: "presets/styles/standard/office/notary.svg";
+    icon-image: "presets/office/notary.svg";
     set icon_z17;
 }
 node[office=political_party] {
-    icon-image: "presets/styles/standard/office/political_party.svg";
+    icon-image: "presets/office/political_party.svg";
     set icon_z17;
 }
 node[office=religion] {
-    icon-image: "presets/styles/standard/office/religion.svg";
+    icon-image: "presets/office/religion.svg";
     set icon_z17;
 }
 node[office=research] {
-    icon-image: "presets/styles/standard/office/research.svg";
+    icon-image: "presets/office/research.svg";
     set icon_z17;
 }
 node[office=tax_advisor] {
-    icon-image: "presets/styles/standard/office/tax_advisor.svg";
+    icon-image: "presets/office/tax_advisor.svg";
     set icon_z17;
 }
 node[office=telecommunication] {
-    icon-image: "presets/styles/standard/office/telecommunication.svg";
+    icon-image: "presets/office/telecommunication.svg";
     set icon_z17;
 }
 node[office=government] {
-    icon-image: "presets/styles/standard/office/government.svg";
+    icon-image: "presets/office/government.svg";
     set icon_z17;
 }
 
@@ -4025,7 +4025,7 @@ area[natural=cliff]:closed {
     fill-color: natural#002f00;
 }
 way[natural=cliff] {
-    repeat-image: "misc/cliff-pattern.png";
+    repeat-image: "presets/misc/cliff-pattern.png";
     repeat-image-align: top;
     width: 1;
     color: #b2b2b2;
