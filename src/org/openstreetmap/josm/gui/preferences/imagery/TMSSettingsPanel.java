@@ -13,6 +13,7 @@ import javax.swing.SpinnerNumberModel;
 
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -81,8 +82,8 @@ public class TMSSettingsPanel extends JPanel {
      * Loads the TMS settings.
      */
     public void loadSettings() {
-        this.autozoomActive.setSelected(TMSLayer.PROP_DEFAULT_AUTOZOOM.get());
-        this.autoloadTiles.setSelected(TMSLayer.PROP_DEFAULT_AUTOLOAD.get());
+        this.autozoomActive.setSelected(TileSourceDisplaySettings.PROP_AUTO_ZOOM.get());
+        this.autoloadTiles.setSelected(TileSourceDisplaySettings.PROP_AUTO_LOAD.get());
         this.addToSlippyMapChosser.setSelected(TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get());
         this.maxZoomLvl.setValue(TMSLayer.getMaxZoomLvl(null));
         this.minZoomLvl.setValue(TMSLayer.getMinZoomLvl(null));
@@ -101,8 +102,8 @@ public class TMSSettingsPanel extends JPanel {
             restartRequired = true;
         }
         TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.put(this.addToSlippyMapChosser.isSelected());
-        TMSLayer.PROP_DEFAULT_AUTOZOOM.put(this.autozoomActive.isSelected());
-        TMSLayer.PROP_DEFAULT_AUTOLOAD.put(this.autoloadTiles.isSelected());
+        TileSourceDisplaySettings.PROP_AUTO_ZOOM.put(this.autozoomActive.isSelected());
+        TileSourceDisplaySettings.PROP_AUTO_LOAD.put(this.autoloadTiles.isSelected());
         TMSLayer.setMaxZoomLvl((Integer) this.maxZoomLvl.getValue());
         TMSLayer.setMinZoomLvl((Integer) this.minZoomLvl.getValue());
 

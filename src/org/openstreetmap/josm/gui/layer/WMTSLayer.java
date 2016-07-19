@@ -12,8 +12,8 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.WMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
-import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 
 /**
  * WMTS layer based on AbstractTileSourceLayer. Overrides few methods to align WMTS to Tile based computations
@@ -26,10 +26,15 @@ import org.openstreetmap.josm.data.projection.Projection;
  *
  */
 public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> implements NativeScaleLayer {
+    private static final String PREFERENCE_PREFIX = "imagery.wmts";
+
     /**
-     * default setting of autozoom per layer
+     * Registers all setting properties
      */
-    public static final BooleanProperty PROP_DEFAULT_AUTOZOOM_WMTS = new BooleanProperty("imagery.wmts.default_autozoom", true);
+    static {
+        new TileSourceDisplaySettings(PREFERENCE_PREFIX);
+    }
+
     private static final String CACHE_REGION_NAME = "WMTS";
 
     /**
@@ -38,7 +43,11 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
      */
     public WMTSLayer(ImageryInfo info) {
         super(info);
-        autoZoom = PROP_DEFAULT_AUTOZOOM_WMTS.get();
+    }
+
+    @Override
+    protected TileSourceDisplaySettings createDisplaySettings() {
+        return new TileSourceDisplaySettings(PREFERENCE_PREFIX);
     }
 
     @Override

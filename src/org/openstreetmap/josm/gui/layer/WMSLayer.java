@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 
 /**
  * This is a layer that grabs the current screen from an WMS server. The data
@@ -35,13 +36,19 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
  *
  */
 public class WMSLayer extends AbstractCachedTileSourceLayer<TemplatedWMSTileSource> {
-    private static final String PREFERENCE_PREFIX = "imagery.wms.";
+    private static final String PREFERENCE_PREFIX = "imagery.wms";
+    /**
+     * Registers all setting properties
+     */
+    static {
+        new TileSourceDisplaySettings(PREFERENCE_PREFIX);
+    }
 
     /** default tile size for WMS Layer */
-    public static final IntegerProperty PROP_IMAGE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + "imageSize", 512);
+    public static final IntegerProperty PROP_IMAGE_SIZE = new IntegerProperty(PREFERENCE_PREFIX + ".imageSize", 512);
 
     /** should WMS layer autozoom in default mode */
-    public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty(PREFERENCE_PREFIX + "default_autozoom", true);
+    public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty(PREFERENCE_PREFIX + ".default_autozoom", true);
 
     private static final String CACHE_REGION_NAME = "WMS";
 
@@ -54,7 +61,11 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<TemplatedWMSTileSour
     public WMSLayer(ImageryInfo info) {
         super(info);
         this.supportedProjections = new TreeSet<>(info.getServerProjections());
-        this.autoZoom = PROP_DEFAULT_AUTOZOOM.get();
+    }
+
+    @Override
+    protected TileSourceDisplaySettings createDisplaySettings() {
+        return new TileSourceDisplaySettings(PREFERENCE_PREFIX);
     }
 
     @Override
