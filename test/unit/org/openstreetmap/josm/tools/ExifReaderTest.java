@@ -34,7 +34,7 @@ public class ExifReaderTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().timeout(60000);
+    public JOSMTestRules test = new JOSMTestRules();
 
     private File orientationSampleFile, directionSampleFile;
 
