@@ -241,8 +241,6 @@ public final class MapPaintStyles {
         if (Main.pref.getBoolean("mappaint.icon.enable-defaults", true)) {
             /* don't prefix icon path, as it should be generic */
             dirs.add("resource://images/");
-            // FIXME: WORKAROUND for path change, remove this line in August 2016
-            dirs.add("resource://images/presets/");
         }
 
         return dirs;
