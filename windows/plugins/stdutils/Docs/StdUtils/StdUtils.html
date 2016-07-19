@@ -672,8 +672,10 @@ SectionEnd</pre>
 <a name="f57ec206"></a><h2>OS Version Functions</h2>
 
 <p><b><tt>${StdUtils.GetRealOSVersion} <i>user_var(out_major)</i> <i>user_var(out_minor)</i> <i>user_var(out_spack)</i></tt></b></p>
-<p>The <tt>${StdUtils.GetRealOSVersion}</tt> function returns the <i>real</i> <a href="#b26a3e82">Windows NT version</a> installed on the computer. Note that starting with Windows 8.1 (Windows NT 6.3), Microsoft has <u>broken</u> the <tt>GetVersion()</tt> and <tt>GetVersionEx()</tt> functions! These function will now return the Windows version that the calling application has been compiled for (as indicated by the program's Manifest), <b>not</b> the actual Windows version we are running on! So these functions are effectively a NOP now &ndash; you don't need to call the Win32 API to determine which Windows version your own program has been compiled for, you already know it. This has the consequence that Windows 8.1 will now identify itself as Windows 8.0! Workarounds exist, such as adding a certain GUID to the program's Manifest, which cannot work with <i>future</i> Windows versions, or trying to read the Windows version from the Registry, which is unreliable. At the same time, the <tt>${StdUtils.GetRealOSVersion}</tt> function reveals the <i>actual</i> Windows version on Windows 8.1 (and later), regardless of the application Manifest. Furthermore, it will continue to work correctly in <i>future</i> Windows versions. Finally, this function still returns the <i>correct</i> Windows version, when the installer runs in "compatibility mode". The function will return the <i>major</i> and <i>minor</i> Windows NT version (e.g. "6.3" on Windows 8.1) plus the Service Pack <i>spack</i>. It returns "error", if something went wrong.</p>
-<p>Note: This function uses an iterative approach: It first calls <tt>GetVersionEx()</tt> to get the "fake" Windows version. Then it tries to <i>increase</i> that value, step by step, using the <tt>VerifyVersionInfo()</tt> function - until the "real" version has been revealed. On Windows 10, the function <i>additionally</i> evaluates the file version of <tt>Kernel32.dll</tt> to uncover the "real" Windows version. This is required, because, starting with Windows 10, Microsoft has <u>broken</u> the <tt>VerifyVersionInfo()</tt> function too. Congratulations to Microsoft for reaching a new level of idiocy!</p>
+<p>The <tt>${StdUtils.GetRealOSVersion}</tt> function returns the <i>real</i> <a href="#b26a3e82">Windows NT version</a> installed on the computer. Note that starting with Windows 8.1 (Windows NT 6.3), Microsoft has <u>broken</u> the <tt>GetVersion()</tt> and <tt>GetVersionEx()</tt> functions! These function will now return the Windows version that the calling application has been compiled for (as indicated by the program's <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd371711%28v=vs.85%29.aspx">Compat Manifest</a>), <b>not</b> the actual Windows version that we are running on! So these functions are effectively a NOP now &ndash; you don't need to call the Win32 API to determine which Windows version your own program has been compiled for, as you already know it. This has the consequence that Windows 8.1 and Windows 10 will now identify themselves as Windows 8.0, unless the calling application has been specifically compiled for Windows 8.1 or 10. Bummer!</p>
+<p>Workarounds to "reveal" the actual Windows version exist. For example, one may try <i>guestimating</i> the real Windows version from certain Registry entries or from the file versions of certain system libraries. But, while these methods may seem to work in most cases, they still are <i>dubious</i>. It is also possible to obtain the real Windows version via WMI (Windows Management Instrumentation), but this is complex and requires a lot of COM hackery. At the same time, the provided <tt>${StdUtils.GetRealOSVersion}</tt> function manages to reveal the <u>actual</u> Windows version strictly by using "official" Win32 API calls. Also, this function works regardless of the application Manifest, i.e. it will continue to work correctly in <i>future</i> Windows versions! Finally, this function still returns the <u>correct</u> Windows version, when the installer runs in "compatibility mode".</p>
+<p>The function will return the <i>major</i> and <i>minor</i> Windows NT version (e.g. "6.3" on Windows 8.1, or "10.0" on Windows 10) plus the corresponding Service Pack version <i>spack</i>. It returns "error", if something went wrong.</p>
+<p>Note: This function uses an iterative approach: It first calls <tt>GetVersionEx()</tt> to get the "fake" Windows version. Then it tries to <i>refine</i> the Windows version, step by step, using the <tt>VerifyVersionInfo()</tt> function - until the "real" version has been revealed. Furthermore, because the <tt>VerifyVersionInfo()</tt> function has been broken too on Windows 10 (facepalm!), we now try to call the "native" functions <tt>RtlGetVersion()</tt> and <tt>RtlVerifyVersion()</tt> directly from NTDLL.DLL, instead of using the "crippled" counterparts from KERNEL32.DLL.</p>
 
 <pre>!include 'StdUtils.nsh'
 
@@ -935,7 +937,7 @@ SectionEnd</pre>
 <p>The <b>StdUtils</b> plug-in for NSIS was created by LoRd_MuldeR &lt;mulder2@gmx.de&gt;. It is distribiuted under the <b><a href="https://www.gnu.org/licenses/lgpl-2.1.html">GNU LGPL v2.1</a></b>.</p>
 
 <pre>StdUtils plug-in for NSIS
-Copyright (C) 2004-2015 LoRd_MuldeR &lt;mulder2@gmx.de&gt;
+Copyright (C) 2004-2016 LoRd_MuldeR &lt;mulder2@gmx.de&gt;
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -1028,6 +1030,11 @@ this software. If not, see &lt;http://creativecommons.org/publicdomain/zero/1.0/
 <a name="53c38996"></a><h1>Version History</h1>
 
 <ul>
+	<li><b>Version 1.10, 2016-05-14</b>
+	<ul>
+		<li>Using a simpler and (hopefully) more reliable approach in <tt>GetRealOSVersion</tt> function
+		<li>Minor fixes and improvements
+	</ul>
 	<li><b>Version 1.09, 2015-11-16</b>
 	<ul>
 		<li>Modified the <tt>InvokeShellVerb</tt> function in order to make Startmenu pinning work on Windows 10.

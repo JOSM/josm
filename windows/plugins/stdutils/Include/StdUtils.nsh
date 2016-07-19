@@ -1,6 +1,6 @@
 #################################################################################
 # StdUtils plug-in for NSIS
-# Copyright (C) 2004-2014 LoRd_MuldeR <MuldeR2@GMX.de>
+# Copyright (C) 2004-2016 LoRd_MuldeR <MuldeR2@GMX.de>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,10 @@
 # http://www.gnu.org/licenses/lgpl-2.1.txt
 #################################################################################
 
+# DEVELOPER NOTES:
+# - Please see "https://github.com/lordmulder/stdutils/" for news and updates!
+# - Please see "Docs\StdUtils\StdUtils.html" for detailed function descriptions!
+# - Please see "Examples\StdUtils\StdUtilsTest.nsi" for usage examples!
 
 #################################################################################
 # FUNCTION DECLARTIONS

@@ -22,7 +22,7 @@ RequestExecutionLevel user
 ShowInstDetails show
 
 # -----------------------------------------
-# GetRealOSVersion
+# GetLibVersion
 # -----------------------------------------
 
 Section
