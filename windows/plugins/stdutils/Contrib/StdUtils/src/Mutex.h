@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // StdUtils plug-in for NSIS
-// Copyright (C) 2004-2015 LoRd_MuldeR <MuldeR2@GMX.de>
+// Copyright (C) 2004-2016 LoRd_MuldeR <MuldeR2@GMX.de>
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,10 @@
 
 #pragma once
 
+#ifndef _INC_WINDOWS
 #define WIN32_LEAN_AND_MEAN 1
 #include <Windows.h>
+#endif
 
 /*RAII mutext locker class*/
 class MutexLocker
@@ -33,11 +35,34 @@ public:
 		m_mutex(mutex)
 	{
 		EnterCriticalSection(m_mutex);
+		m_locked = true;
 	}
 	~MutexLocker(void)
 	{
+		if(m_locked)
+		{
+			LeaveCriticalSection(m_mutex);
+		}
+	}
+	void unlock(void)
+	{
+		if(!m_locked)
+		{
+			RaiseException(ERROR_POSSIBLE_DEADLOCK, EXCEPTION_NONCONTINUABLE, 0, NULL);
+		}
 		LeaveCriticalSection(m_mutex);
+		m_locked = false;
+	}
+	void relock(void)
+	{
+		if(m_locked)
+		{
+			RaiseException(ERROR_POSSIBLE_DEADLOCK, EXCEPTION_NONCONTINUABLE, 0, NULL);
+		}
+		EnterCriticalSection(m_mutex);
+		m_locked = true;
 	}
 private:
 	LPCRITICAL_SECTION const m_mutex;
+	volatile bool m_locked;
 };

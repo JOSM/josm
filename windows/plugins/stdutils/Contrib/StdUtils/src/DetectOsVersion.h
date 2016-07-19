@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // StdUtils plug-in for NSIS
-// Copyright (C) 2004-2015 LoRd_MuldeR <MuldeR2@GMX.de>
+// Copyright (C) 2004-2016 LoRd_MuldeR <MuldeR2@GMX.de>
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,7 @@
 
 bool get_real_os_version(unsigned int *const major, unsigned int *const minor, unsigned int *const spack, bool *const pbOverride);
 bool get_real_os_buildNo(unsigned int *const buildNo, bool *const pbOverride);
-const TCHAR *get_os_friendly_name(const DWORD major, const DWORD minor);
 bool get_os_server_edition(bool &bIsServer);
+const TCHAR *get_os_friendly_name(const DWORD major, const DWORD minor);
 
 /*eof*/
