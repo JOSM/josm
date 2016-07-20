@@ -2356,6 +2356,7 @@ node[amenity=restaurant] {
 }
 node[amenity=food_court] {
     icon-image: "presets/food/food_court.png";
+    icon-width: 16;
     set icon_z17;
 }
 node[amenity=fast_food] {
