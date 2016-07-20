@@ -491,6 +491,20 @@ public final class Utils {
     }
 
     /**
+     * Deletes a file and log a default warning if the file exists but the deletion fails.
+     * @param file file to delete
+     * @return {@code true} if and only if the file does not exist or is successfully deleted; {@code false} otherwise
+     * @since 10569
+     */
+    public static boolean deleteFileIfExists(File file) {
+        if (file.exists()) {
+            return deleteFile(file);
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * Deletes a file and log a default warning if the deletion fails.
      * @param file file to delete
      * @return {@code true} if and only if the file is successfully deleted; {@code false} otherwise
