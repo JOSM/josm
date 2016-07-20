@@ -1051,7 +1051,7 @@ public abstract class Main {
         UIManager.put("OptionPane.cancelIcon", ImageProvider.get("cancel"));
         UIManager.put("OptionPane.noIcon", UIManager.get("OptionPane.cancelIcon"));
         // Ensures caret color is the same than text foreground color, see #12257
-        // See http://docs.oracle.com/javase/7/docs/api/javax/swing/plaf/synth/doc-files/componentProperties.html
+        // See http://docs.oracle.com/javase/8/docs/api/javax/swing/plaf/synth/doc-files/componentProperties.html
         for (String p : Arrays.asList(
                 "EditorPane", "FormattedTextField", "PasswordField", "TextArea", "TextField", "TextPane")) {
             UIManager.put(p+".caretForeground", UIManager.getColor(p+".foreground"));
@@ -1336,31 +1336,21 @@ public abstract class Main {
     }
 
     /**
-     * Determines if JOSM currently runs with Java 8 or later.
-     * @return {@code true} if the current JVM is at least Java 8, {@code false} otherwise
-     * @since 7894
-     */
-    public static boolean isJava8orLater() {
-        String version = System.getProperty("java.version");
-        return version != null && !version.matches("^(1\\.)?[7].*");
-    }
-
-    /**
-     * Checks that JOSM is at least running with Java 7.
+     * Checks that JOSM is at least running with Java 8.
      * @since 7001
      */
     public static void checkJavaVersion() {
         String version = System.getProperty("java.version");
         if (version != null) {
-            if (version.matches("^(1\\.)?[789].*"))
+            if (version.matches("^(1\\.)?[89].*"))
                 return;
-            if (version.matches("^(1\\.)?[56].*")) {
+            if (version.matches("^(1\\.)?[567].*")) {
                 JMultilineLabel ho = new JMultilineLabel("<html>"+
                         tr("<h2>JOSM requires Java version {0}.</h2>"+
                                 "Detected Java version: {1}.<br>"+
                                 "You can <ul><li>update your Java (JRE) or</li>"+
                                 "<li>use an earlier (Java {2} compatible) version of JOSM.</li></ul>"+
-                                "More Info:", "7", version, "6")+"</html>");
+                                "More Info:", "8", version, "7")+"</html>");
                 JTextArea link = new JTextArea(HelpUtil.getWikiBaseHelpUrl()+"/Help/SystemRequirements");
                 link.setEditable(false);
                 link.setBackground(panel.getBackground());

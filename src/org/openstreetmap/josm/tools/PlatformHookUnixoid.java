@@ -112,24 +112,7 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void startupHook() {
-        if (isDebianOrUbuntu()) {
-            // Invite users to install Java 8 if they are still with Java 7 and using a compatible distrib (Debian >= 8 or Ubuntu >= 15.10)
-            String java = System.getProperty("java.version");
-            String os = getOSDescription();
-            if (java != null && java.startsWith("1.7") && os != null && (
-                    os.startsWith("Linux Debian GNU/Linux 8") || os.matches("^Linux Ubuntu 1[567].*"))) {
-                String url;
-                // apturl does not exist on Debian (see #8465)
-                if (os.startsWith("Linux Debian")) {
-                    url = "https://packages.debian.org/jessie-backports/openjdk-8-jre";
-                } else if (getPackageDetails("apturl") != null) {
-                    url = "apt://openjdk-8-jre";
-                } else {
-                    url = "http://packages.ubuntu.com/xenial/openjdk-8-jre";
-                }
-                askUpdateJava(java, url);
-            }
-        }
+        // Do nothing
     }
 
     @Override
@@ -271,8 +254,10 @@ public class PlatformHookUnixoid implements PlatformHook {
      */
     public String getJavaPackageDetails() {
         String home = System.getProperty("java.home");
-        if (home.contains("java-7-openjdk") || home.contains("java-1.7.0-openjdk")) {
-            return getPackageDetails("openjdk-7-jre", "java-1_7_0-openjdk", "java-1.7.0-openjdk");
+        if (home.contains("java-8-openjdk") || home.contains("java-1.8.0-openjdk")) {
+            return getPackageDetails("openjdk-8-jre", "java-1_8_0-openjdk", "java-1.8.0-openjdk");
+        } else if (home.contains("java-9-openjdk") || home.contains("java-1.9.0-openjdk")) {
+            return getPackageDetails("openjdk-9-jre", "java-1_9_0-openjdk", "java-1.9.0-openjdk");
         } else if (home.contains("icedtea")) {
             return getPackageDetails("icedtea-bin");
         } else if (home.contains("oracle")) {
@@ -433,12 +418,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         }
     }
 
-    protected void askUpdateJava(String version) {
-        if (!GraphicsEnvironment.isHeadless()) {
-            askUpdateJava(version, "https://www.java.com/download");
-        }
-    }
-
+    // Method unused, but kept for translation already done. To reuse during Java 9 migration
     protected void askUpdateJava(final String version, final String url) {
         GuiHelper.runInEDTAndWait(new Runnable() {
             @Override
@@ -448,7 +428,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                         tr("Outdated Java version"),
                         new String[]{tr("OK"), tr("Update Java"), tr("Cancel")});
                 // Check if the dialog has not already been permanently hidden by user
-                if (!ed.toggleEnable("askUpdateJava8").toggleCheckState()) {
+                if (!ed.toggleEnable("askUpdateJava9").toggleCheckState()) {
                     ed.setButtonIcons(new String[]{"ok", "java", "cancel"}).setCancelButton(3);
                     ed.setMinimumSize(new Dimension(480, 300));
                     ed.setIcon(JOptionPane.WARNING_MESSAGE);
@@ -456,7 +436,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                             .append("<br><br>");
                     if ("Sun Microsystems Inc.".equals(System.getProperty("java.vendor")) && !isOpenJDK()) {
                         content.append("<b>").append(tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
-                                "Oracle", tr("April 2015"))).append("</b><br><br>");
+                                "Oracle", tr("April 2015"))).append("</b><br><br>"); // TODO: change date once Java 8 EOL is announced
                     }
                     content.append("<b>")
                            .append(tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "8"))

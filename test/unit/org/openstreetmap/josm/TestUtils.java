@@ -141,7 +141,7 @@ public final class TestUtils {
 
     /**
      * Returns the Java version as an int value.
-     * @return the Java version as an int value (7, 8, 9, etc.)
+     * @return the Java version as an int value (8, 9, etc.)
      */
     public static int getJavaVersion() {
         String version = System.getProperty("java.version");
@@ -149,7 +149,6 @@ public final class TestUtils {
             version = version.substring(2);
         }
         // Allow these formats:
-        // 1.7.0_91
         // 1.8.0_72-ea
         // 9-ea
         // 9
