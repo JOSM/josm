@@ -84,8 +84,6 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
             AbstractTileSourceLayer<?> tsLayer = (AbstractTileSourceLayer<?>) layer;
             tsLayer.getDisplaySettings().storeTo(data);
         }
-        data.put("dx", String.valueOf(layer.getDx()));
-        data.put("dy", String.valueOf(layer.getDy()));
         for (Map.Entry<String, String> entry : data.entrySet()) {
             Element attrElem = support.createElement(entry.getKey());
             layerElem.appendChild(attrElem);
