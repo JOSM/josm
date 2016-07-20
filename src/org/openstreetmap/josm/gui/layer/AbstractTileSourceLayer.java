@@ -63,6 +63,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ImageryAdjustAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
@@ -163,6 +164,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     };
 
     private final TileSourceDisplaySettings displaySettings = createDisplaySettings();
+
+    private final ImageryAdjustAction adjustAction = new ImageryAdjustAction(this);
 
     /**
      * Creates Tile Source based Imagery Layer based on Imagery Info
@@ -285,15 +288,43 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (isVisible()) Main.map.repaint();
     }
 
+    @Override
+    public double getDx() {
+        return getDisplaySettings().getDx();
+    }
+
+    @Override
+    public double getDy() {
+        return getDisplaySettings().getDy();
+    }
+
+    @Override
+    public void displace(double dx, double dy) {
+        getDisplaySettings().addDisplacement(new EastNorth(dx, dy));
+    }
+
     /**
      * Marks layer as needing redraw on offset change
      */
     @Override
     public void setOffset(double dx, double dy) {
-        super.setOffset(dx, dy);
-        needRedraw = true;
+        getDisplaySettings().setDisplacement(new EastNorth(dx, dy));
     }
 
+    @Override
+    public Object getInfoComponent() {
+        JPanel panel = (JPanel) super.getInfoComponent();
+        EastNorth offset = getDisplaySettings().getDisplacement();
+        if (offset.distanceSq(0, 0) > 1e-10) {
+            panel.add(new JLabel(tr("Offset: ") + offset.east() + ';' + offset.north()), GBC.eol().insets(0, 5, 10, 0));
+        }
+        return panel;
+    }
+
+    @Override
+    protected Action getAdjustAction() {
+        return adjustAction;
+    }
 
     /**
      * Returns average number of screen pixels per tile pixel for current mapview
@@ -1880,5 +1911,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     @Override
     public File createAndOpenSaveFileChooser() {
         return SaveActionBase.createAndOpenSaveFileChooser(tr("Save WMS file"), WMSLayerImporter.FILE_FILTER);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        adjustAction.destroy();
     }
 }

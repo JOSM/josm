@@ -14,6 +14,7 @@ import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -135,8 +136,8 @@ public class SessionWriterTest {
     }
 
     private ImageryLayer createImageryLayer() {
-        ImageryLayer layer = new TMSLayer(new ImageryInfo("the name", "http://www.url.com/"));
-        layer.setOffset(12, 34);
+        TMSLayer layer = new TMSLayer(new ImageryInfo("the name", "http://www.url.com/"));
+        layer.getDisplaySettings().setDisplacement(new EastNorth(12, 34));
         return layer;
     }
 

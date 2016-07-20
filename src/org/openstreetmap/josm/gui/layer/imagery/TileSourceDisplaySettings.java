@@ -6,8 +6,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * This are the preferences of how to display a {@link TileSource}.
@@ -35,6 +38,8 @@ public class TileSourceDisplaySettings {
      */
     private static final String SHOW_ERRORS = "show-errors";
 
+    private static final String DISPLACEMENT = "displacement";
+
     private static final String PREFERENCE_PREFIX = "imagery.generic";
 
     /**
@@ -47,12 +52,18 @@ public class TileSourceDisplaySettings {
      */
     public static final BooleanProperty PROP_AUTO_ZOOM = new BooleanProperty(PREFERENCE_PREFIX + ".default_autozoom", true);
 
+
     /** if layers changes automatically, when user zooms in */
     private boolean autoZoom;
     /** if layer automatically loads new tiles */
     private boolean autoLoad;
     /** if layer should show errors on tiles */
     private boolean showErrors;
+
+    /**
+     * The displacement
+     */
+    private EastNorth displacement = new EastNorth(0, 0);
 
     private final CopyOnWriteArrayList<DisplaySettingsChangeListener> listeners = new CopyOnWriteArrayList<>();
 
@@ -149,6 +160,54 @@ public class TileSourceDisplaySettings {
     }
 
     /**
+     * Gets the displacement in x (east) direction
+     * @return The displacement.
+     * @since 10571
+     */
+    public double getDx() {
+        return displacement.east();
+    }
+
+    /**
+     * Gets the displacement in y (north) direction
+     * @return The displacement.
+     * @since 10571
+     */
+    public double getDy() {
+        return displacement.north();
+    }
+
+    /**
+     * Gets the displacement of the image
+     * @return The displacement.
+     * @since xxx
+     */
+    public EastNorth getDisplacement() {
+        return displacement;
+    }
+
+    /**
+     * Set the displacement
+     * @param displacement The new displacement
+     * @since xxx
+     */
+    public void setDisplacement(EastNorth displacement) {
+        CheckParameterUtil.ensureValidCoordinates(displacement, "displacement");
+        this.displacement = displacement;
+        fireSettingsChange(DISPLACEMENT);
+    }
+
+    /**
+     * Adds the given value to the displacement.
+     * @param displacement The value to add.
+     * @since xxx
+     */
+    public void addDisplacement(EastNorth displacement) {
+        CheckParameterUtil.ensureValidCoordinates(displacement, "displacement");
+        setDisplacement(this.displacement.add(displacement));
+    }
+
+    /**
      * Notifies all listeners that the paint settings have changed
      * @param changedSetting The setting name
      */
@@ -184,6 +243,8 @@ public class TileSourceDisplaySettings {
         data.put(AUTO_LOAD, Boolean.toString(autoLoad));
         data.put(AUTO_ZOOM, Boolean.toString(autoZoom));
         data.put(SHOW_ERRORS, Boolean.toString(showErrors));
+        data.put("dx", String.valueOf(getDx()));
+        data.put("dy", String.valueOf(getDy()));
     }
 
     /**
@@ -192,19 +253,29 @@ public class TileSourceDisplaySettings {
      * @see #storeTo(Map)
      */
     public void loadFrom(Map<String, String> data) {
-        String doAutoLoad = data.get(AUTO_LOAD);
-        if (doAutoLoad != null) {
-            setAutoLoad(Boolean.parseBoolean(doAutoLoad));
-        }
+        try {
+            String doAutoLoad = data.get(AUTO_LOAD);
+            if (doAutoLoad != null) {
+                setAutoLoad(Boolean.parseBoolean(doAutoLoad));
+            }
 
-        String doAutoZoom = data.get(AUTO_ZOOM);
-        if (doAutoZoom != null) {
-            setAutoZoom(Boolean.parseBoolean(doAutoZoom));
-        }
+            String doAutoZoom = data.get(AUTO_ZOOM);
+            if (doAutoZoom != null) {
+                setAutoZoom(Boolean.parseBoolean(doAutoZoom));
+            }
 
-        String doShowErrors = data.get(SHOW_ERRORS);
-        if (doShowErrors != null) {
-            setShowErrors(Boolean.parseBoolean(doShowErrors));
+            String doShowErrors = data.get(SHOW_ERRORS);
+            if (doShowErrors != null) {
+                setShowErrors(Boolean.parseBoolean(doShowErrors));
+            }
+
+            String dx = data.get("dx");
+            String dy = data.get("dy");
+            if (dx != null && dy != null) {
+                setDisplacement(new EastNorth(Double.parseDouble(dx), Double.parseDouble(dy)));
+            }
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("data", data);
         }
     }
 

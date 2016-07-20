@@ -27,7 +27,8 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
+import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
@@ -41,16 +42,16 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
     private static volatile ImageryOffsetDialog offsetDialog;
     private static Cursor cursor = ImageProvider.getCursor("normal", "move");
 
-    private double oldDx, oldDy;
+    private EastNorth old;
     private EastNorth prevEastNorth;
-    private transient ImageryLayer layer;
+    private transient AbstractTileSourceLayer<?> layer;
     private MapMode oldMapMode;
 
     /**
      * Constructs a new {@code ImageryAdjustAction} for the given layer.
      * @param layer The imagery layer
      */
-    public ImageryAdjustAction(ImageryLayer layer) {
+    public ImageryAdjustAction(AbstractTileSourceLayer<?> layer) {
         super(tr("New offset"), "adjustimg",
                 tr("Adjust the position of this imagery layer"), Main.map,
                 cursor);
@@ -66,8 +67,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         if (!layer.isVisible()) {
             layer.setVisible(true);
         }
-        oldDx = layer.getDx();
-        oldDy = layer.getDy();
+        old = layer.getDisplaySettings().getDisplacement();
         addListeners();
         offsetDialog = new ImageryOffsetDialog();
         offsetDialog.setVisible(true);
@@ -88,7 +88,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         super.exitMode();
         if (offsetDialog != null) {
             if (layer != null) {
-                layer.setOffset(oldDx, oldDy);
+                layer.getDisplaySettings().setDisplacement(old);
             }
             offsetDialog.setVisible(false);
             offsetDialog = null;
@@ -154,11 +154,9 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
     @Override
     public void mouseDragged(MouseEvent e) {
         if (layer == null || prevEastNorth == null) return;
-        EastNorth eastNorth =
-            Main.map.mapView.getEastNorth(e.getX(), e.getY());
-        double dx = layer.getDx()+eastNorth.east()-prevEastNorth.east();
-        double dy = layer.getDy()+eastNorth.north()-prevEastNorth.north();
-        layer.setOffset(dx, dy);
+        EastNorth eastNorth = Main.map.mapView.getEastNorth(e.getX(), e.getY());
+        EastNorth d = layer.getDisplaySettings().getDisplacement().add(eastNorth).subtract(prevEastNorth);
+        layer.getDisplaySettings().setDisplacement(d);
         if (offsetDialog != null) {
             offsetDialog.updateOffset();
         }
@@ -233,7 +231,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                     String northing = ostr.substring(semicolon + 1).trim().replace(',', '.');
                     double dx = Double.parseDouble(easting);
                     double dy = Double.parseDouble(northing);
-                    layer.setOffset(dx, dy);
+                    layer.getDisplaySettings().setDisplacement(new EastNorth(dx, dy));
                 } catch (NumberFormatException nfe) {
                     // we repaint offset numbers in any case
                     if (Main.isTraceEnabled()) {
@@ -258,9 +256,10 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             int precision = Main.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
             // US locale to force decimal separator to be '.'
             try (Formatter us = new Formatter(Locale.US)) {
+                TileSourceDisplaySettings ds = layer.getDisplaySettings();
                 tOffset.setText(us.format(new StringBuilder()
                     .append("%1.").append(precision).append("f; %1.").append(precision).append('f').toString(),
-                    layer.getDx(), layer.getDy()).toString());
+                    ds.getDx(), ds.getDy()).toString());
             }
         }
 
@@ -297,7 +296,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             offsetDialog = null;
             if (layer != null) {
                 if (getValue() != 1) {
-                    layer.setOffset(oldDx, oldDy);
+                    layer.getDisplaySettings().setDisplacement(old);
                 } else if (tBookmarkName.getText() != null && !tBookmarkName.getText().isEmpty()) {
                     OffsetBookmark.bookmarkOffset(tBookmarkName.getText(), layer);
                 }

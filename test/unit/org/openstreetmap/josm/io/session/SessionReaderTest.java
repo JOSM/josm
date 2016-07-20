@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -124,10 +125,10 @@ public class SessionReaderTest {
         final List<Layer> layers = testRead("bing.jos");
         assertEquals(layers.size(), 1);
         assertTrue(layers.get(0) instanceof ImageryLayer);
-        final ImageryLayer image = (ImageryLayer) layers.get(0);
+        final AbstractTileSourceLayer<?> image = (AbstractTileSourceLayer<?>) layers.get(0);
         assertEquals("Bing aerial imagery", image.getName());
-        assertEquals(image.getDx(), 12.34, 1e-9);
-        assertEquals(image.getDy(), -56.78, 1e-9);
+        assertEquals(image.getDisplaySettings().getDx(), 12.34, 1e-9);
+        assertEquals(image.getDisplaySettings().getDy(), -56.78, 1e-9);
     }
 
     /**
