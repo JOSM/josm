@@ -199,7 +199,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     @Override
     public void filterChanged() {
-        redraw();
+        invalidate();
     }
 
     protected abstract TileLoaderFactory getTileLoaderFactory();
@@ -282,6 +282,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      *
      * @see Main#map
      * @see MapFrame#repaint()
+     * @see #invalidate() To trigger a repaint of all places where the layer is displayed.
      */
     protected void redraw() {
         needRedraw = true;
@@ -289,24 +290,47 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     @Override
+    public void invalidate() {
+        needRedraw = true;
+        super.invalidate();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @deprecated Use {@link TileSourceDisplaySettings#getDx()}
+     */
+    @Override
+    @Deprecated
     public double getDx() {
         return getDisplaySettings().getDx();
     }
 
+    /**
+     * {@inheritDoc}
+     * @deprecated Use {@link TileSourceDisplaySettings#getDy()}
+     */
     @Override
+    @Deprecated
     public double getDy() {
         return getDisplaySettings().getDy();
     }
 
+    /**
+     * {@inheritDoc}
+     * @deprecated Use {@link TileSourceDisplaySettings}
+     */
     @Override
+    @Deprecated
     public void displace(double dx, double dy) {
         getDisplaySettings().addDisplacement(new EastNorth(dx, dy));
     }
 
     /**
-     * Marks layer as needing redraw on offset change
+     * {@inheritDoc}
+     * @deprecated Use {@link TileSourceDisplaySettings}
      */
     @Override
+    @Deprecated
     public void setOffset(double dx, double dy) {
         getDisplaySettings().setDisplacement(new EastNorth(dx, dy));
     }
@@ -445,7 +469,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             Tile clickedTile = clickedTileHolder.getTile();
             if (clickedTile != null) {
                 loadTile(clickedTile, true);
-                redraw();
+                invalidate();
             }
         }
     }
@@ -527,7 +551,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         @Override
         public void actionPerformed(ActionEvent ae) {
             loadAllTiles(true);
-            redraw();
         }
     }
 
@@ -539,7 +562,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         @Override
         public void actionPerformed(ActionEvent ae) {
             loadAllErrorTiles(true);
-            redraw();
         }
     }
 
@@ -565,7 +587,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         @Override
         public void actionPerformed(ActionEvent ae) {
             setZoomLevel(getBestZoom());
-            redraw();
         }
     }
 
@@ -578,7 +599,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         @Override
         public void actionPerformed(ActionEvent ae) {
             increaseZoomLevel();
-            redraw();
         }
     }
 
@@ -591,7 +611,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         @Override
         public void actionPerformed(ActionEvent ae) {
             decreaseZoomLevel();
-            redraw();
         }
     }
 
@@ -746,17 +765,17 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         case TileSourceDisplaySettings.AUTO_ZOOM:
             if (getDisplaySettings().isAutoZoom() && getBestZoom() != currentZoomLevel) {
                 setZoomLevel(getBestZoom());
-                redraw();
+                invalidate();
             }
             break;
         case TileSourceDisplaySettings.AUTO_LOAD:
             if (getDisplaySettings().isAutoLoad()) {
-                redraw();
+                invalidate();
             }
             break;
         default:
             // trigger a redraw just to be sure.
-            redraw();
+            invalidate();
         }
     }
 
@@ -842,7 +861,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (tileLoader instanceof TMSCachedTileLoader) {
             ((TMSCachedTileLoader) tileLoader).cancelOutstandingTasks();
         }
-        needRedraw = true;
+        invalidate();
     }
 
     protected int getMaxZoomLvl() {
@@ -1006,11 +1025,13 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             return;
         }
         ts.loadAllTiles(force);
+        invalidate();
     }
 
     protected void loadAllErrorTiles(boolean force) {
         TileSet ts = getVisibleTileSet();
         ts.loadAllErrorTiles(force);
+        invalidate();
     }
 
     @Override
