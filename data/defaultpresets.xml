@@ -3849,7 +3849,7 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Ice cream -->
-        <item name="Pub" icon="presets/pub.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Pub" icon="presets/food/pub.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=pub"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=pub"
                   el.href="http://wiki.openstreetmap.org/wiki/El:Tag:amenity=pub"
@@ -3869,7 +3869,7 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Pub -->
-        <item name="Beer Garden" icon="presets/biergarten.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Beer Garden" icon="presets/food/biergarten.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=biergarten"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=biergarten"
                   el.href="http://wiki.openstreetmap.org/wiki/El:Tag:amenity=biergarten"
@@ -5832,19 +5832,19 @@
             <key key="sport" value="soccer" />
             <reference ref="name_leisure_pitch" />
         </item> <!-- Soccer -->
-        <item name="Australian Football" icon="presets/football.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Australian Football" icon="presets/sport/football.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=australian_football" />
             <space />
             <key key="sport" value="australian_football" />
             <reference ref="name_leisure_pitch" />
         </item> <!-- Australian Football -->
-        <item name="American Football" icon="presets/football.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="American Football" icon="presets/sport/football.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=american_football" />
             <space />
             <key key="sport" value="american_football" />
             <reference ref="name_leisure_pitch" />
         </item> <!-- American Football -->
-        <item name="Canadian Football" icon="presets/football.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Canadian Football" icon="presets/sport/football.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=canadian_football" />
             <space />
             <key key="sport" value="canadian_football" />
@@ -5862,14 +5862,14 @@
                 <check key="gaelic_games:rounders" text="Rounders" />
             </optional>
         </item> <!-- Gaelic Games -->
-        <item name="Rugby League" icon="presets/football.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Rugby League" icon="presets/sport/football.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=rugby_league"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:sport=rugby_league" />
             <space />
             <key key="sport" value="rugby_league" />
             <reference ref="name_leisure_pitch" />
         </item> <!-- Rugby League -->
-        <item name="Rugby Union" icon="presets/football.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Rugby Union" icon="presets/sport/football.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=rugby_union"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:sport=rugby_union" />
             <space />
@@ -8014,7 +8014,7 @@
             <reference ref="link_contact_address_payment" />
         </item> <!-- Garden Centre -->
         <separator/>
-        <item name="Do-It-Yourself Store" icon="presets/diy_store.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Do-It-Yourself Store" icon="presets/shop/diy_store.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=doityourself"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=doityourself"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=doityourself"
