@@ -240,8 +240,8 @@ public final class JCSCacheManager {
     }
 
     private static void deleteCacheFiles(String basePathPart) {
-        Utils.deleteFile(new File(basePathPart + ".key"));
-        Utils.deleteFile(new File(basePathPart + ".data"));
+        Utils.deleteFileIfExists(new File(basePathPart + ".key"));
+        Utils.deleteFileIfExists(new File(basePathPart + ".data"));
     }
 
     private static CompositeCacheAttributes getCacheAttributes(int maxMemoryElements) {
