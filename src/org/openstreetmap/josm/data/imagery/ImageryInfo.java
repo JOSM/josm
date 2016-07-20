@@ -167,7 +167,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     /** display bounds of imagery, displayed in prefs and used for automatic imagery selection */
     private ImageryBounds bounds;
     /** projections supported by WMS servers */
-    private List<String> serverProjections;
+    private List<String> serverProjections = Collections.emptyList();
     /** description of the imagery entry, should contain notes what type of data it is */
     private String description;
     /** language of the description entry */
@@ -270,7 +270,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                     shapes = shapesString.toString();
                 }
             }
-            if (i.serverProjections != null && !i.serverProjections.isEmpty()) {
+            if (!i.serverProjections.isEmpty()) {
                 StringBuilder val = new StringBuilder();
                 for (String p : i.serverProjections) {
                     if (val.length() > 0) {
@@ -536,6 +536,11 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         return url.equals(in.url);
     }
 
+    /**
+     * Sets the pixel per degree value.
+     * @param ppd The ppd value
+     * @see #getPixelPerDegree()
+     */
     public void setPixelPerDegree(double ppd) {
         this.pixelPerDegree = ppd;
     }
@@ -611,26 +616,56 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         return termsOfUseURL;
     }
 
+    /**
+     * Set the attribution text
+     * @param text The text
+     * @see #getAttributionText(int, ICoordinate, ICoordinate)
+     */
     public void setAttributionText(String text) {
         attributionText = text;
     }
 
-    public void setAttributionImageURL(String text) {
-        attributionImageURL = text;
+    /**
+     * Set the attribution image
+     * @param url The url of the image.
+     * @see #getAttributionImageURL()
+     */
+    public void setAttributionImageURL(String url) {
+        attributionImageURL = url;
     }
 
-    public void setAttributionImage(String text) {
-        attributionImage = text;
+    /**
+     * Set the image for the attribution
+     * @param res The image resource
+     * @see #getAttributionImage()
+     */
+    public void setAttributionImage(String res) {
+        attributionImage = res;
     }
 
-    public void setAttributionLinkURL(String text) {
-        attributionLinkURL = text;
+    /**
+     * Sets the URL the attribution should link to.
+     * @param url The url.
+     * @see #getAttributionLinkURL()
+     */
+    public void setAttributionLinkURL(String url) {
+        attributionLinkURL = url;
     }
 
+    /**
+     * Sets the text to display to the user as terms of use.
+     * @param text The text
+     * @see #getTermsOfUseText()
+     */
     public void setTermsOfUseText(String text) {
         termsOfUseText = text;
     }
 
+    /**
+     * Sets a url that links to the terms of use text.
+     * @param text The url.
+     * @see #getTermsOfUseURL()
+     */
     public void setTermsOfUseURL(String text) {
         termsOfUseURL = text;
     }
@@ -663,7 +698,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             }
         }
 
-        if (serverProjections == null || serverProjections.isEmpty()) {
+        if (serverProjections.isEmpty()) {
             serverProjections = new ArrayList<>();
             Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase(Locale.ENGLISH));
             if (m.matches()) {
@@ -700,6 +735,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
     }
 
+    /**
+     * Store the id of this info to the preferences and clear it afterwards.
+     */
     public void clearId() {
         if (this.id != null) {
             Collection<String> newAddedIds = new TreeSet<>(Main.pref.getCollection("imagery.layers.addedIds"));
@@ -734,6 +772,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         return this.cookies;
     }
 
+    /**
+     * Gets the pixel per degree value
+     * @return The ppd value.
+     */
     public double getPixelPerDegree() {
         return this.pixelPerDegree;
     }
@@ -847,12 +889,15 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * of supported projections otherwise.
      */
     public List<String> getServerProjections() {
-        if (serverProjections == null)
-            return Collections.emptyList();
         return Collections.unmodifiableList(serverProjections);
     }
 
+    /**
+     * Sets the list of collections the server supports
+     * @param serverProjections The list of supported projections
+     */
     public void setServerProjections(Collection<String> serverProjections) {
+        CheckParameterUtil.ensureParameterNotNull(serverProjections, "serverProjections");
         this.serverProjections = new ArrayList<>(serverProjections);
     }
 
@@ -865,6 +910,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             ? ('['+(defaultMinZoom != 0 ? (Integer.toString(defaultMinZoom) + ',') : "")+defaultMaxZoom+']') : "") + ':' + url;
     }
 
+    /**
+     * Gets a unique toolbar key to store this layer as toolbar item
+     * @return The kay.
+     */
     public String getToolbarName() {
         String res = name;
         if (pixelPerDegree != 0) {
@@ -873,6 +922,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         return res;
     }
 
+    /**
+     * Gets the name that should be displayed in the menu to add this imagery layer.
+     * @return The text.
+     */
     public String getMenuName() {
         String res = name;
         if (pixelPerDegree != 0) {
@@ -1019,18 +1072,34 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.metadataHeaders = metadataHeaders;
     }
 
+    /**
+     * Gets the flag if epsg 4326 to 3857 is supported
+     * @return The flag.
+     */
     public boolean isEpsg4326To3857Supported() {
         return isEpsg4326To3857Supported;
     }
 
+    /**
+     * Sets the flag that epsg 4326 to 3857 is supported
+     * @param isEpsg4326To3857Supported The flag.
+     */
     public void setEpsg4326To3857Supported(boolean isEpsg4326To3857Supported) {
         this.isEpsg4326To3857Supported = isEpsg4326To3857Supported;
     }
 
+    /**
+     * Gets the flag if the georeference is valid.
+     * @return <code>true</code> if it is valid.
+     */
     public boolean isGeoreferenceValid() {
         return isGeoreferenceValid;
     }
 
+    /**
+     * Sets an indicator that the georeference is valid
+     * @param isGeoreferenceValid <code>true</code> if it is marked as valid.
+     */
     public void setGeoreferenceValid(boolean isGeoreferenceValid) {
         this.isGeoreferenceValid = isGeoreferenceValid;
     }
@@ -1066,9 +1135,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                if (i.defaultMinZoom != 0) {
                    n.defaultMinZoom = i.defaultMinZoom;
                }
-               if (i.serverProjections != null) {
-                   n.serverProjections = i.serverProjections;
-               }
+               n.setServerProjections(i.getServerProjections());
                n.url = i.url;
                n.imageryType = i.imageryType;
                if (i.getTileSize() != 0) {
