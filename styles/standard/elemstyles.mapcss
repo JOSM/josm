@@ -1935,6 +1935,8 @@ node[shop=bicycle] {
 }
 node[shop=doityourself] {
     icon-image: "presets/shop/diy_store.png";
+    icon-width: 16;
+    icon-height: 16;
     set icon_z17;
 }
 node[shop=dry_cleaning],
@@ -2318,10 +2320,14 @@ area[amenity=ice_cream] {
 }
 node[amenity=pub] {
     icon-image: "presets/food/pub.png";
+    icon-width: 15;
+    icon-height: 19;
     set icon_z17;
 }
 node[amenity=biergarten] {
     icon-image: "presets/food/biergarten.png";
+    icon-width: 16;
+    icon-height: 16;
     set icon_z17;
 }
 node[amenity=nightclub] {
@@ -3736,6 +3742,8 @@ node[sport=canadian_football],
 node[sport=rugby_league],
 node[sport=rugby_union] {
     icon-image: "presets/sport/football.png";
+    icon-width: 20;
+    icon-height: 20;
     set icon_z17;
 }
 area[sport=baseball],
@@ -3755,6 +3763,8 @@ node[sport=baseball] {
 }
 node[sport=basketball] {
     icon-image: "presets/sport/basketball.png";
+    icon-width: 16;
+    icon-height: 16;
     set icon_z17;
 }
 node[sport=boules] {
