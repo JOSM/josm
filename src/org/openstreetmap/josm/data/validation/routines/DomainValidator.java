@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016071600, Last Updated Sat Jul 16 07:07:02 2016 UTC
+        // Taken from Version 2016072000, Last Updated Wed Jul 20 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -380,6 +380,7 @@ public final class DomainValidator extends AbstractValidator {
         "bentley", // bentley Bentley Motors Limited
         "berlin", // berlin dotBERLIN GmbH &amp; Co. KG
         "best", // best BestTLD Pty Ltd
+        "bestbuy", // bestbuy BBY Solutions, Inc.
         "bet", // bet Afilias plc
         "bharti", // bharti Bharti Enterprises (Holding) Private Limited
         "bible", // bible American Bible Society
@@ -843,6 +844,8 @@ public final class DomainValidator extends AbstractValidator {
         "lotte", // lotte Lotte Holdings Co., Ltd.
         "lotto", // lotto Afilias Limited
         "love", // love Merchant Law Group LLP
+        "lpl", // lpl LPL Holdings, Inc.
+        "lplfinancial", // lplfinancial LPL Holdings, Inc.
         "ltd", // ltd Over Corner, LLC
         "ltda", // ltda InterNetX Corp.
         "lundbeck", // lundbeck H. Lundbeck A/S

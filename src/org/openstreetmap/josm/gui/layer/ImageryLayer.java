@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -26,7 +27,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.ImageryAdjustAction;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
+import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -60,11 +61,6 @@ public abstract class ImageryLayer extends Layer {
     protected final ImageryInfo info;
 
     protected Icon icon;
-
-    protected double dx;
-    protected double dy;
-
-    private final ImageryAdjustAction adjustAction = new ImageryAdjustAction(this);
 
     private final ImageryFilterSettings filterSettings = new ImageryFilterSettings();
 
@@ -95,29 +91,51 @@ public abstract class ImageryLayer extends Layer {
         return Main.map.mapView.getWidth() / (bounds.maxEast - bounds.minEast);
     }
 
+    /**
+     * Gets the x displacement of this layer.
+     * To be removed end of 2016
+     * @return The x displacement.
+     * @deprecated Use {@link TileSourceDisplaySettings#getDx()}
+     */
+    @Deprecated
     public double getDx() {
-        return dx;
+        // moved to AbstractTileSourceLayer/TileSourceDisplaySettings. Remains until all actions migrate.
+        return 0;
     }
 
+    /**
+     * Gets the y displacement of this layer.
+     * To be removed end of 2016
+     * @return The y displacement.
+     * @deprecated Use {@link TileSourceDisplaySettings#getDy()}
+     */
+    @Deprecated
     public double getDy() {
-        return dy;
+        // moved to AbstractTileSourceLayer/TileSourceDisplaySettings. Remains until all actions migrate.
+        return 0;
     }
 
     /**
      * Sets the displacement offset of this layer. The layer is automatically invalidated.
+     * To be removed end of 2016
      * @param dx The x offset
      * @param dy The y offset
+     * @deprecated Use {@link TileSourceDisplaySettings}
      */
+    @Deprecated
     public void setOffset(double dx, double dy) {
-        this.dx = dx;
-        this.dy = dy;
-        invalidate();
+        // moved to AbstractTileSourceLayer/TileSourceDisplaySettings. Remains until all actions migrate.
     }
 
+    /**
+     * To be removed end of 2016
+     * @param dx deprecated
+     * @param dy deprecated
+     * @deprecated Use {@link TileSourceDisplaySettings}
+     */
+    @Deprecated
     public void displace(double dx, double dy) {
-        this.dx += dx;
-        this.dy += dy;
-        setOffset(this.dx, this.dy);
+        // moved to AbstractTileSourceLayer/TileSourceDisplaySettings. Remains until all actions migrate.
     }
 
     /**
@@ -151,9 +169,6 @@ public abstract class ImageryLayer extends Layer {
             if (url != null) {
                 panel.add(new JLabel(tr("URL: ")), GBC.std().insets(0, 5, 2, 0));
                 panel.add(new UrlLabel(url), GBC.eol().insets(2, 5, 10, 0));
-            }
-            if (dx != 0 || dy != 0) {
-                panel.add(new JLabel(tr("Offset: ") + dx + ';' + dy), GBC.eol().insets(0, 5, 10, 0));
             }
         }
         return panel;
@@ -215,7 +230,7 @@ public abstract class ImageryLayer extends Layer {
     }
 
     public JComponent getOffsetMenuItem(JComponent subMenu) {
-        JMenuItem adjustMenuItem = new JMenuItem(adjustAction);
+        JMenuItem adjustMenuItem = new JMenuItem(getAdjustAction());
         if (OffsetBookmark.allBookmarks.isEmpty()) return adjustMenuItem;
 
         subMenu.add(adjustMenuItem);
@@ -227,7 +242,7 @@ public abstract class ImageryLayer extends Layer {
                 continue;
             }
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(new ApplyOffsetAction(b));
-            if (Utils.equalsEpsilon(b.dx, dx) && Utils.equalsEpsilon(b.dy, dy)) {
+            if (Utils.equalsEpsilon(b.dx, getDx()) && Utils.equalsEpsilon(b.dy, getDy())) {
                 item.setSelected(true);
             }
             subMenu.add(item);
@@ -243,6 +258,8 @@ public abstract class ImageryLayer extends Layer {
         }
         return hasBookmarks ? subMenu : adjustMenuItem;
     }
+
+    protected abstract Action getAdjustAction();
 
     /**
      * Gets the settings for the filter that is applied to this layer.
@@ -312,11 +329,5 @@ public abstract class ImageryLayer extends Layer {
             img = processor.process(img);
         }
         return img;
-    }
-
-    @Override
-    public void destroy() {
-        super.destroy();
-        adjustAction.destroy();
     }
 }
