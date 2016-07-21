@@ -25,6 +25,7 @@
         <property name="proj-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
         <property name="groovy.jar" location="${base.dir}/tools/groovy-all-2.4.7.jar"/>
+        <property name="error_prone_ant.jar" location="${base.dir}/tools/error_prone_ant-2.0.9.jar"/>
         <!-- build parameter: compression level (ant -Dclevel=N)
                  N ranges from 0 (no compression) to 9 (maximum compression)
                  default: 9 -->
@@ -243,8 +244,12 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/logging/impl/ServletContextCleaner.java"/>
         </javac>
         <!-- JMapViewer -->
-        <javac sourcepath="" srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/josm/**,JOSM.java,gnu/**"
+        <javac compiler="com.google.errorprone.ErrorProneAntCompilerAdapter" sourcepath="" srcdir="${src.dir}" 
+            excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/josm/**,JOSM.java,gnu/**"
             destdir="build" target="1.8" source="1.8" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            <compilerclasspath>
+                <pathelement location="${error_prone_ant.jar}"/>
+            </compilerclasspath>
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:dep-ann"/>
@@ -260,8 +265,12 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-XDignore.symbol.file"/>
         </javac>
         <!-- JOSM -->
-        <javac sourcepath="" srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java"
+        <javac compiler="com.google.errorprone.ErrorProneAntCompilerAdapter" sourcepath="" srcdir="${src.dir}" 
+            excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java"
             destdir="build" target="1.8" source="1.8" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            <compilerclasspath>
+                <pathelement location="${error_prone_ant.jar}"/>
+            </compilerclasspath>
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:dep-ann"/>
