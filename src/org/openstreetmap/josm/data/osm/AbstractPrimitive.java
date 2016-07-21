@@ -175,7 +175,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     @Override
     public boolean isNewOrUndeleted() {
-        return (id <= 0) || ((flags & (FLAG_VISIBLE + FLAG_DELETED)) == 0);
+        return isNew() || ((flags & (FLAG_VISIBLE + FLAG_DELETED)) == 0);
     }
 
     @Override
