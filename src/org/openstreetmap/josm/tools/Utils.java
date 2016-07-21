@@ -57,6 +57,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -104,6 +105,8 @@ public final class Utils {
 
     /**
      * Tests whether {@code predicate} applies to at least one element from {@code collection}.
+     * <p>
+     * Note: you can use {@link Stream#anyMatch(java.util.function.Predicate)} instead.
      * @param <T> type of items
      * @param collection the collection
      * @param predicate the predicate
@@ -120,6 +123,8 @@ public final class Utils {
 
     /**
      * Tests whether {@code predicate} applies to all elements from {@code collection}.
+     * <p>
+     * Note: you can use {@link Stream#allMatch(java.util.function.Predicate)} instead.
      * @param <T> type of items
      * @param collection the collection
      * @param predicate the predicate
@@ -174,7 +179,9 @@ public final class Utils {
      * @param collection The collection to filter.
      * @param predicate The predicate to filter for.
      * @return The new {@link FilteredCollection}
+     * @deprecated Use java predicates and {@link SubclassFilteredCollection#filter(Collection, java.util.function.Predicate)} instead.
      */
+    @Deprecated
     @SuppressWarnings("unused")
     public static <T> Collection<T> filter(Collection<? extends T> collection, Predicate<? super T> predicate) {
         // Diamond operator does not work with Java 9 here
@@ -797,7 +804,10 @@ public final class Utils {
      * returns objects of {@code B}.
      * @param <A> class of input objects
      * @param <B> class of transformed objects
+     *
+     * @deprecated Use java.util.function.Function instead.
      */
+    @Deprecated
     public interface Function<A, B> {
 
         /**

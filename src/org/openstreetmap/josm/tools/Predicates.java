@@ -22,12 +22,7 @@ public final class Predicates {
      * @since 10040
      */
     public static <T> Predicate<T> alwaysTrue() {
-        return new Predicate<T>() {
-            @Override
-            public boolean evaluate(T object) {
-                return true;
-            }
-        };
+        return o -> true;
     }
 
     /**
@@ -37,12 +32,7 @@ public final class Predicates {
      * @since 10040
      */
     public static <T> Predicate<T> alwaysFalse() {
-        return new Predicate<T>() {
-            @Override
-            public boolean evaluate(T object) {
-                return false;
-            }
-        };
+        return o -> false;
     }
 
     /**
@@ -50,14 +40,11 @@ public final class Predicates {
      * @param <T> type of items
      * @param predicate the predicate to negate
      * @return the negation of {@code predicate}
+     * @deprecated Use {@link java.util.function.Predicate#negate()}
      */
+    @Deprecated
     public static <T> Predicate<T> not(final Predicate<T> predicate) {
-        return new Predicate<T>() {
-            @Override
-            public boolean evaluate(T obj) {
-                return !predicate.evaluate(obj);
-            }
-        };
+        return obj -> !predicate.evaluate(obj);
     }
 
     /**
@@ -67,12 +54,7 @@ public final class Predicates {
      * @return a {@link Predicate} executing {@link Objects#equals}
      */
     public static <T> Predicate<T> equalTo(final T ref) {
-        return new Predicate<T>() {
-            @Override
-            public boolean evaluate(T obj) {
-                return Objects.equals(obj, ref);
-            }
-        };
+        return obj -> Objects.equals(obj, ref);
     }
 
     /**
@@ -84,12 +66,7 @@ public final class Predicates {
      */
     public static <T> Predicate<T> isOfClass(final Class<? extends T> clazz) {
         CheckParameterUtil.ensureParameterNotNull(clazz, "clazz");
-        return new Predicate<T>() {
-            @Override
-            public boolean evaluate(T obj) {
-                return obj != null && obj.getClass() == clazz;
-            }
-        };
+        return obj -> obj != null && obj.getClass() == clazz;
     }
 
     /**
@@ -102,12 +79,7 @@ public final class Predicates {
      */
     public static <T> Predicate<T> isInstanceOf(final Class<? extends T> clazz) {
         CheckParameterUtil.ensureParameterNotNull(clazz, "clazz");
-        return new Predicate<T>() {
-            @Override
-            public boolean evaluate(T o) {
-                return clazz.isInstance(o);
-            }
-        };
+        return o -> clazz.isInstance(o);
     }
 
     /**
@@ -116,12 +88,7 @@ public final class Predicates {
      * @return a {@link Predicate} executing {@link Pattern#matcher(CharSequence)} and {@link java.util.regex.Matcher#matches}
      */
     public static Predicate<String> stringMatchesPattern(final Pattern pattern) {
-        return new Predicate<String>() {
-            @Override
-            public boolean evaluate(String string) {
-                return pattern.matcher(string).matches();
-            }
-        };
+        return string -> pattern.matcher(string).matches();
     }
 
     /**
@@ -130,12 +97,7 @@ public final class Predicates {
      * @return a {@link Predicate} executing {@link Pattern#matcher(CharSequence)} and {@link java.util.regex.Matcher#find}
      */
     public static Predicate<String> stringContainsPattern(final Pattern pattern) {
-        return new Predicate<String>() {
-            @Override
-            public boolean evaluate(String string) {
-                return pattern.matcher(string).find();
-            }
-        };
+        return string -> pattern.matcher(string).find();
     }
 
     /**
@@ -144,12 +106,7 @@ public final class Predicates {
      * @return a {@link Predicate} executing {@link String#contains(CharSequence)}
      */
     public static Predicate<String> stringContains(final String pattern) {
-        return new Predicate<String>() {
-            @Override
-            public boolean evaluate(String string) {
-                return string.contains(pattern);
-            }
-        };
+        return string -> string.contains(pattern);
     }
 
     /**
@@ -159,12 +116,7 @@ public final class Predicates {
      * @return a {@link Predicate} executing {@link OsmPrimitive#hasTag(String, String...)}
      */
     public static Predicate<OsmPrimitive> hasTag(final String key, final String... values) {
-        return new Predicate<OsmPrimitive>() {
-            @Override
-            public boolean evaluate(OsmPrimitive p) {
-                return p.hasTag(key, values);
-            }
-        };
+        return p -> p.hasTag(key, values);
     }
 
     /**
@@ -173,12 +125,7 @@ public final class Predicates {
      * @return a {@link Predicate} executing {@link OsmPrimitive#hasKey(String)}
      */
     public static Predicate<OsmPrimitive> hasKey(final String key) {
-        return new Predicate<OsmPrimitive>() {
-            @Override
-            public boolean evaluate(OsmPrimitive p) {
-                return p.hasKey(key);
-            }
-        };
+        return p -> p.hasKey(key);
     }
 
     /**
@@ -188,12 +135,7 @@ public final class Predicates {
      * @return a {@link Predicate} executing {@link Collection#contains(Object)}
      */
     public static <T> Predicate<T> inCollection(final Collection<? extends T> target) {
-        return new Predicate<T>() {
-            @Override
-            public boolean evaluate(T object) {
-                return target.contains(object);
-            }
-        };
+        return object -> target.contains(object);
     }
 
     /**
@@ -202,12 +144,7 @@ public final class Predicates {
      * @return a {@link Predicate} testing whether objects are {@code null}
      */
     public static <T> Predicate<T> isNull() {
-        return new Predicate<T>() {
-            @Override
-            public boolean evaluate(T object) {
-                return object == null;
-            }
-        };
+        return object -> object == null;
     }
 
 }

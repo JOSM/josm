@@ -6,8 +6,11 @@ package org.openstreetmap.josm.tools;
  *
  * @param <T> The objects type
  * @since 3177
+ * @deprecated Use {@link java.util.function.Predicate} instead.
  */
-public interface Predicate<T> {
+@Deprecated
+@FunctionalInterface
+public interface Predicate<T> extends java.util.function.Predicate<T> {
 
     /**
      * Determines whether the object passes the test or not
@@ -15,4 +18,9 @@ public interface Predicate<T> {
      * @return {@code true} if the object passes the test, {@code false} otherwise
      */
     boolean evaluate(T object);
+
+    @Override
+    default boolean test(T t) {
+        return evaluate(t);
+    }
 }
