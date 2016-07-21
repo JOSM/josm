@@ -28,10 +28,6 @@ public class JMVCommandEvent extends EventObject {
         setCommand(cmd);
     }
 
-    public JMVCommandEvent(Object source) {
-        super(source);
-    }
-
     /**
      * @return the command
      */
