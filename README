@@ -9,12 +9,12 @@ Installation notes
 To run JOSM, you need:
 
 * The JOSM .jar file, e.g., josm-tested.jar or josm-latest.jar
-* Java Runtime Environment (JRE) 7, or later.
+* Java Runtime Environment (JRE) 8, or later.
 
 
 How to get Java Runtime Environment
 -----------------------------------
-You need JRE Version 7, or later.
+You need JRE Version 8, or later.
 
 Microsoft Windows and Apple Mac OS X users should visit https://www.java.com
 and download the latest Java executable for their system.
@@ -116,7 +116,7 @@ This is an overview of the files and directories in the JOSM code repository:
 - tools/                    libraries and tools that help in the development process
     - animal-sniffer-ant-tasks-1.14.jar
                             used to build and check code signatures to ensure plugins binary compatibility 
-    - appbundler-1.0ea.jar  used to build Mac OS X package for Oracle Java 7
+    - appbundler-1.0ea.jar  used to build Mac OS X package
     - checkstyle/           libs and config files for checkstyle (automatically detects code style
                             problems in source code); can be launched as an ant target in build.xml
     - commons-cli-1.3.1.jar dependency of Groovy Ant task

@@ -1025,7 +1025,7 @@ public class ImageProvider {
                     // See #10479: for PNG files, always enforce transparency to be sure tNRS chunk is used even not in paletted mode
                     // This can be removed if someday Oracle fixes https://bugs.openjdk.java.net/browse/JDK-6788458
                     // CHECKSTYLE.OFF: LineLength
-                    // hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/828c4fedd29f/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
+                    // hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/dc4322602480/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
                     // CHECKSTYLE.ON: LineLength
                     Image img = read(new ByteArrayInputStream(bytes), false, true);
                     return img == null ? null : new ImageResource(img);
@@ -1150,7 +1150,7 @@ public class ImageProvider {
             try {
                 // See #10479: for PNG files, always enforce transparency to be sure tNRS chunk is used even not in paletted mode
                 // This can be removed if someday Oracle fixes https://bugs.openjdk.java.net/browse/JDK-6788458
-                // hg.openjdk.java.net/jdk7u/jdk7u/jdk/file/828c4fedd29f/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
+                // hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/dc4322602480/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
                 img = read(path, false, true);
                 if (Main.isDebugEnabled() && isTransparencyForced(img)) {
                     Main.debug("Transparency has been forced for image "+path.toExternalForm());
@@ -1808,7 +1808,7 @@ public class ImageProvider {
      * @param reader The image reader
      * @return the {@code TransparentColor} defined in image reader metadata, or {@code null}
      * @throws IOException if an error occurs during reading
-     * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html">javax_imageio_1.0 metadata</a>
+     * @see <a href="http://docs.oracle.com/javase/8/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html">javax_imageio_1.0 metadata</a>
      * @since 7499
      */
     public static Color getTransparentColor(ColorModel model, ImageReader reader) throws IOException {

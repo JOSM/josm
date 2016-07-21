@@ -1335,13 +1335,6 @@ public class Preferences {
         if (getBoolean("jdk.tls.disableSNIExtension", false)) {
             Utils.updateSystemProperty("jsse.enableSNIExtension", "false");
         }
-        // Workaround to fix another Java bug - The bug seems to have been fixed in Java 8, to remove during transition
-        // Force Java 7 to use old sorting algorithm of Arrays.sort (fix #8712).
-        // See Oracle bug database: https://bugs.openjdk.java.net/browse/JDK-7075600
-        // and https://bugs.openjdk.java.net/browse/JDK-6923200
-        if (getBoolean("jdk.Arrays.useLegacyMergeSort", !Version.getInstance().isLocalBuild())) {
-            Utils.updateSystemProperty("java.util.Arrays.useLegacyMergeSort", "true");
-        }
     }
 
     /**

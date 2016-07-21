@@ -63,11 +63,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid {
 
     @Override
     public void startupHook() {
-        // Invite users to install Java 8 if they are still with Java 7
-        String version = System.getProperty("java.version");
-        if (version != null && version.startsWith("1.7")) {
-            askUpdateJava(version);
-        }
+        // Do nothing
     }
 
     private static final byte[] INSECURE_PUBLIC_KEY = new byte[] {

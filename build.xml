@@ -211,7 +211,7 @@ Build-Date: ${build.tstamp}
             <arg value="javacc"/>
             <arg value="-DEBUG_PARSER=false"/>
             <arg value="-DEBUG_TOKEN_MANAGER=false"/>
-            <arg value="-JDK_VERSION=1.7"/>
+            <arg value="-JDK_VERSION=1.8"/>
             <arg value="-GRAMMAR_ENCODING=UTF-8"/>
             <arg value="-OUTPUT_DIRECTORY=${mapcss.dir}/parsergen"/>
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
@@ -220,7 +220,7 @@ Build-Date: ${build.tstamp}
     <target name="compile" depends="init,javacc">
         <!-- COTS -->
         <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**" nowarn="on" encoding="iso-8859-1"
-            destdir="build" target="1.7" source="1.7" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
+            destdir="build" target="1.8" source="1.8" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
             <exclude name="org/apache/commons/compress/compressors/lzma/**"/>
@@ -244,7 +244,7 @@ Build-Date: ${build.tstamp}
         </javac>
         <!-- JMapViewer -->
         <javac sourcepath="" srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/josm/**,JOSM.java,gnu/**"
-            destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            destdir="build" target="1.8" source="1.8" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:dep-ann"/>
@@ -261,7 +261,7 @@ Build-Date: ${build.tstamp}
         </javac>
         <!-- JOSM -->
         <javac sourcepath="" srcdir="${src.dir}" excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java"
-            destdir="build" target="1.7" source="1.7" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            destdir="build" target="1.8" source="1.8" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:dep-ann"/>
@@ -299,7 +299,7 @@ Build-Date: ${build.tstamp}
                 private="true"
                 linksource="true"
                 author="false">
-            <link href="http://docs.oracle.com/javase/7/docs/api"/>
+            <link href="http://docs.oracle.com/javase/8/docs/api"/>
             <doctitle><![CDATA[<h2>JOSM - Javadoc</h2>]]></doctitle>
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
         </javadoc>
@@ -352,7 +352,7 @@ Build-Date: ${build.tstamp}
                 <classpath>
                     <cp-elements/>
                 </classpath>
-                <javac target="1.7" source="1.7" debug="on" encoding="UTF-8">
+                <javac target="1.8" source="1.8" debug="on" encoding="UTF-8">
                     <compilerarg value="-Xlint:all"/>
                     <compilerarg value="-Xlint:-serial"/>
                 </javac>
@@ -703,7 +703,7 @@ Build-Date: ${build.tstamp}
         <property name="proj-classpath" location="${build.dir}"/>
         <mkdir dir="${proj-build.dir}"/>
         <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true"
-            destdir="${proj-build.dir}" target="1.7" source="1.7" debug="on"
+            destdir="${proj-build.dir}" target="1.8" source="1.8" debug="on"
             includeantruntime="false" createMissingPackageInfoClass="false"
             encoding="UTF-8" classpath="${proj-classpath}">
         </javac>
