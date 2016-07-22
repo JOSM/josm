@@ -146,6 +146,14 @@ public abstract class Condition {
                 return testString != null && testString.endsWith(prototypeString);
             case CONTAINS:
                 return testString != null && testString.contains(prototypeString);
+            case GREATER_OR_EQUAL:
+            case GREATER:
+            case LESS_OR_EQUAL:
+            case LESS:
+                // See below
+                break;
+            default:
+                throw new AssertionError();
             }
 
             float testFloat;

@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.tagging.presets;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -36,12 +35,7 @@ public final class TaggingPresetSearchDialog extends ExtendedDialog {
         selector = new TaggingPresetSelector(true, true);
         setContent(selector, false);
         DataSet.addSelectionListener(selector);
-        selector.setDblClickListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonAction(0, null);
-            }
-        });
+        selector.setDblClickListener(e -> buttonAction(0, null));
     }
 
     @Override

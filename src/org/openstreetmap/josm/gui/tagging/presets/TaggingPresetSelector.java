@@ -7,8 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,7 +44,6 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.gui.widgets.SearchTextResultListPanel;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -188,12 +185,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             ckOnlyApplicable = new JCheckBox();
             ckOnlyApplicable.setText(tr("Show only applicable to selection"));
             pnChecks.add(ckOnlyApplicable);
-            ckOnlyApplicable.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    filterItems();
-                }
-            });
+            ckOnlyApplicable.addItemListener(e -> filterItems());
         } else {
             ckOnlyApplicable = null;
         }
@@ -202,12 +194,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             ckSearchInTags = new JCheckBox();
             ckSearchInTags.setText(tr("Search in tags"));
             ckSearchInTags.setSelected(SEARCH_IN_TAGS.get());
-            ckSearchInTags.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    filterItems();
-                }
-            });
+            ckSearchInTags.addItemListener(e -> filterItems());
             pnChecks.add(ckSearchInTags);
         } else {
             ckSearchInTags = null;
@@ -246,12 +233,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
                 text, onlyApplicable, inTags, getTypesInSelection(), selected);
 
         final TaggingPreset oldPreset = getSelectedPreset();
-        lsResultModel.setItems(Utils.transform(result, new Utils.Function<PresetClassification, TaggingPreset>() {
-            @Override
-            public TaggingPreset apply(PresetClassification x) {
-                return x.preset;
-            }
-        }));
+        lsResultModel.setItems(Utils.transform(result, x -> x.preset));
         final TaggingPreset newPreset = getSelectedPreset();
         if (!Objects.equals(oldPreset, newPreset)) {
             int[] indices = lsResult.getSelectedIndices();
@@ -298,14 +280,8 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
                     if (!suitable && preset.types.contains(TaggingPresetType.RELATION)
                             && preset.roles != null && !preset.roles.roles.isEmpty()) {
-                        final Predicate<Role> memberExpressionMatchesOnePrimitive = new Predicate<Role>() {
-                            @Override
-                            public boolean evaluate(Role object) {
-                                return object.memberExpression != null
-                                        && Utils.exists(selectedPrimitives, object.memberExpression);
-                            }
-                        };
-                        suitable = Utils.exists(preset.roles.roles, memberExpressionMatchesOnePrimitive);
+                        suitable = preset.roles.roles.stream().anyMatch(
+                                object -> object.memberExpression != null && Utils.exists(selectedPrimitives, object.memberExpression));
                         // keep the preset to allow the creation of new relations
                     }
                     if (!suitable) {

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -364,17 +365,11 @@ public abstract class ComboMultiSelect extends KeyedItem {
      */
     public Collection<String> getDisplayValues() {
         initListEntries();
-        return Utils.transform(lhm.values(), new Utils.Function<PresetListEntry, String>() {
-            @Override
-            public String apply(PresetListEntry x) {
-                return x.getDisplayValue(true);
-            }
-        });
+        return lhm.values().stream().map(x -> x.getDisplayValue(true)).collect(Collectors.toList());
     }
 
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
-
         initListEntries();
 
         // find out if our key is already used in the selection.

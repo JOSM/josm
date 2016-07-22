@@ -5,6 +5,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,8 +17,6 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetLabel;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Predicate;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Adds a link to an other preset.
@@ -31,14 +30,10 @@ public class PresetLink extends TaggingPresetItem {
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
         final String presetName = preset_name;
-        final TaggingPreset t = Utils.filter(TaggingPresets.getTaggingPresets(), new Predicate<TaggingPreset>() {
-            @Override
-            public boolean evaluate(TaggingPreset object) {
-                return presetName.equals(object.name);
-            }
-        }).iterator().next();
-        if (t == null)
+        Optional<TaggingPreset> found = TaggingPresets.getTaggingPresets().stream().filter(preset -> presetName.equals(preset.name)).findFirst();
+        if (!found.isPresent())
             return false;
+        TaggingPreset t = found.get();
         JLabel lbl = new TaggingPresetLabel(t);
         lbl.addMouseListener(new MouseAdapter() {
             @Override

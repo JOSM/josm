@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Collection;
@@ -142,12 +140,7 @@ public class Text extends KeyedItem {
                     // TODO there must be a better way to parse a number like "+3" than this.
                     final int buttonvalue = (NumberFormat.getIntegerInstance().parse(ai.replace("+", ""))).intValue();
                     if (auto_increment_selected == buttonvalue) aibutton.setSelected(true);
-                    aibutton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            auto_increment_selected = buttonvalue;
-                        }
-                    });
+                    aibutton.addActionListener(e -> auto_increment_selected = buttonvalue);
                     pnl.add(aibutton, GBC.std());
                 } catch (ParseException x) {
                     Main.error("Cannot parse auto-increment value of '" + ai + "' into an integer");
@@ -166,12 +159,9 @@ public class Text extends KeyedItem {
             releasebutton.setToolTipText(tr("Cancel auto-increment for this field"));
             releasebutton.setMargin(new Insets(0, 0, 0, 0));
             releasebutton.setFocusable(false);
-            releasebutton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    auto_increment_selected = 0;
-                    clearbutton.setSelected(true);
-                }
+            releasebutton.addActionListener(e -> {
+                auto_increment_selected = 0;
+                clearbutton.setSelected(true);
             });
             saveHorizontalSpace(releasebutton);
             pnl.add(releasebutton, GBC.eol());
