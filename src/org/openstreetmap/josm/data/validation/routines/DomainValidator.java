@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016072000, Last Updated Wed Jul 20 07:07:01 2016 UTC
+        // Taken from Version 2016072200, Last Updated Fri Jul 22 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -553,6 +553,7 @@ public final class DomainValidator extends AbstractValidator {
         "discount", // discount Holly Hill, LLC
         "dnp", // dnp Dai Nippon Printing Co., Ltd.
         "docs", // docs Charleston Road Registry Inc.
+        "doctor", // doctor Brice Trail, LLC
         "dog", // dog Koko Mill, LLC
         "doha", // doha Communications Regulatory Authority (CRA)
         "domains", // domains Sugar Cross, LLC
@@ -561,6 +562,7 @@ public final class DomainValidator extends AbstractValidator {
         "drive", // drive Charleston Road Registry Inc.
         "dtv", // dtv Dish DBS Corporation
         "dubai", // dubai Dubai Smart Government Department
+        "duck", // duck Johnson Shareholdings, Inc.
         "dunlop", // dunlop The Goodyear Tire &amp; Rubber Company
         "dupont", // dupont E. I. du Pont de Nemours and Company
         "durban", // durban ZA Central Registry NPC trading as ZA Central Registry
@@ -732,6 +734,7 @@ public final class DomainValidator extends AbstractValidator {
         "icbc", // icbc Industrial and Commercial Bank of China Limited
         "ice", // ice IntercontinentalExchange, Inc.
         "icu", // icu One.com A/S
+        "ieee", // ieee IEEE Global LLC
         "ifm", // ifm ifm electronic gmbh
         "iinet", // iinet Connect West Pty. Ltd.
         "ikano", // ikano Ikano S.A.
@@ -946,6 +949,7 @@ public final class DomainValidator extends AbstractValidator {
         "ntt", // ntt NIPPON TELEGRAPH AND TELEPHONE CORPORATION
         "nyc", // nyc The City of New York by and through the New York City Department of Information Technology &amp; Telecommunications
         "obi", // obi OBI Group Holding SE &amp; Co. KGaA
+        "off", // off Johnson Shareholdings, Inc.
         "office", // office Microsoft Corporation
         "okinawa", // okinawa BusinessRalliart inc.
         "olayan", // olayan Crescent Holding GmbH
@@ -1026,6 +1030,7 @@ public final class DomainValidator extends AbstractValidator {
         "quebec", // quebec PointQuébec Inc
         "quest", // quest Quest ION Limited
         "racing", // racing Premier Registry Limited
+        "raid", // raid Johnson Shareholdings, Inc.
         "read", // read Amazon Registry Services, Inc.
         "realestate", // realestate dotRealEstate LLC
         "realtor", // realtor Real Estate Domains LLC
@@ -1052,6 +1057,7 @@ public final class DomainValidator extends AbstractValidator {
         "rich", // rich I-REGISTRY Ltd., Niederlassung Deutschland
         "richardli", // richardli Pacific Century Asset Management (HK) Limited
         "ricoh", // ricoh Ricoh Company, Ltd.
+        "rightathome", // rightathome Johnson Shareholdings, Inc.
         "rio", // rio Empresa Municipal de Informática SA - IPLANRIO
         "rip", // rip United TLD Holdco Ltd.
         "rocher", // rocher Ferrero Trading Lux S.A.
@@ -1089,6 +1095,7 @@ public final class DomainValidator extends AbstractValidator {
         "school", // school Little Galley, LLC
         "schule", // schule Outer Moon, LLC
         "schwarz", // schwarz Schwarz Domains und Services GmbH &amp; Co. KG
+        "scjohnson", // scjohnson Johnson Shareholdings, Inc.
         "science", // science dot Science Limited
         "scor", // scor SCOR SE
         "scot", // scot Dot Scot Registry Limited
@@ -1166,6 +1173,7 @@ public final class DomainValidator extends AbstractValidator {
         "surgery", // surgery Tin Avenue, LLC
         "suzuki", // suzuki SUZUKI MOTOR CORPORATION
         "swatch", // swatch The Swatch Group Ltd
+        "swiftcover", // swiftcover Swiftcover Insurance Services Limited
         "swiss", // swiss Swiss Confederation
         "sydney", // sydney State of New South Wales, Department of Premier and Cabinet
         "symantec", // symantec Symantec Corporation
@@ -1193,6 +1201,7 @@ public final class DomainValidator extends AbstractValidator {
         "thd", // thd Homer TLC, Inc.
         "theater", // theater Blue Tigers, LLC
         "theatre", // theatre XYZ.COM LLC
+        "tiaa", // tiaa Teachers Insurance and Annuity Association of America
         "tickets", // tickets Accent Media Limited
         "tienda", // tienda Victor Manor, LLC
         "tiffany", // tiffany Tiffany and Company
