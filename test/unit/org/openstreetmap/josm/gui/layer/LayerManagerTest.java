@@ -238,12 +238,7 @@ public class LayerManagerTest {
         TestLayer layer1 = new TestLayer() {
             @Override
             public LayerPositionStrategy getDefaultLayerPosition() {
-                return new LayerPositionStrategy() {
-                    @Override
-                    public int getPosition(LayerManager manager) {
-                        return 42;
-                    }
-                };
+                return manager -> 42;
             }
         };
         layerManager.addLayer(layer1);
