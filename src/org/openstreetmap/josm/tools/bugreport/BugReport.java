@@ -1,6 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.bugreport;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.openstreetmap.josm.actions.ShowStatusReportAction;
+
 /**
  * This class contains utility methods to create and handle a bug report.
  * <p>
@@ -19,7 +25,7 @@ package org.openstreetmap.josm.tools.bugreport;
  * String tag = "...";
  * try {
  *   ... your code ...
- * } catch (Throwable t) {
+ * } catch (RuntimeException t) {
  *   throw BugReport.intercept(t).put("id", id).put("tag", tag);
  * }
  * </pre>
@@ -31,12 +37,119 @@ package org.openstreetmap.josm.tools.bugreport;
  * @since 10285
  */
 public final class BugReport {
+    private boolean includeStatusReport = true;
+    private boolean includeData = true;
+    private boolean includeAllStackTraces;
+    private ReportedException exception;
+    private final CopyOnWriteArrayList<BugReportListener> listeners = new CopyOnWriteArrayList<>();
+
     /**
      * Create a new bug report
      * @param e The {@link ReportedException} to use. No more data should be added after creating the report.
      */
-    private BugReport(ReportedException e) {
-        // TODO: Use this class to create the bug report.
+    BugReport(ReportedException e) {
+        this.exception = e;
+        includeAllStackTraces = e.mayHaveConcurrentSource();
+    }
+
+    /**
+     * Get if this report should include a system status report
+     * @return <code>true</code> to include it.
+     * @since 10585
+     */
+    public boolean getIncludeStatusReport() {
+        return includeStatusReport;
+    }
+
+    /**
+     * Set if this report should include a system status report
+     * @param includeStatusReport if the status report should be included
+     * @since 10585
+     */
+    public void setIncludeStatusReport(boolean includeStatusReport) {
+        this.includeStatusReport = includeStatusReport;
+        fireChange();
+    }
+
+    /**
+     * Get if this report should include the data that was traced.
+     * @return <code>true</code> to include it.
+     * @since 10585
+     */
+    public boolean getIncludeData() {
+        return includeData;
+    }
+
+    /**
+     * Set if this report should include the data that was traced.
+     * @param includeData if data should be included
+     * @since 10585
+     */
+    public void setIncludeData(boolean includeData) {
+        this.includeData = includeData;
+        fireChange();
+    }
+
+    /**
+     * Get if this report should include the stack traces for all other threads.
+     * @return <code>true</code> to include it.
+     * @since 10585
+     */
+    public boolean getIncludeAllStackTraces() {
+        return includeAllStackTraces;
+    }
+
+    /**
+     * Sets if this report should include the stack traces for all other threads.
+     * @param includeAllStackTraces if all stack traces should be included
+     * @since 10585
+     */
+    public void setIncludeAllStackTraces(boolean includeAllStackTraces) {
+        this.includeAllStackTraces = includeAllStackTraces;
+        fireChange();
+    }
+
+    /**
+     * Gets the full string that should be send as error report.
+     * @return The string.
+     * @since 10585
+     */
+    public String getReportText() {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter out = new PrintWriter(stringWriter);
+        if (getIncludeStatusReport()) {
+            out.println(ShowStatusReportAction.getReportHeader());
+        }
+        if (getIncludeData()) {
+            exception.printReportDataTo(out);
+        }
+        exception.printReportStackTo(out);
+        if (getIncludeAllStackTraces()) {
+            exception.printReportThreadsTo(out);
+        }
+        return stringWriter.toString().replaceAll("\r", "");
+    }
+
+    /**
+     * Add a new change listener.
+     * @param listener The listener
+     * @since 10585
+     */
+    public void addChangeListener(BugReportListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Remove a change listener.
+     * @param listener The listener
+     * @since 10585
+     */
+    public void removeChangeListener(BugReportListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void fireChange() {
+        listeners.stream().forEach(l -> l.bugReportChanged(this));
     }
 
     /**
@@ -73,5 +186,19 @@ public final class BugReport {
             }
         }
         return "?";
+    }
+
+    /**
+     * A listener that listens to changes to this report.
+     * @author Michael Zangl
+     * @since 10585
+     */
+    @FunctionalInterface
+    public interface BugReportListener {
+        /**
+         * Called whenever this bug report was changed, e.g. the data to be included in it.
+         * @param report The report that was changed.
+         */
+        void bugReportChanged(BugReport report);
     }
 }
