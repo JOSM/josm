@@ -622,7 +622,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         private final Predicate<OsmPrimitive> predicate;
         private boolean canceled;
         private int foundMatches;
-        private SearchReceiver resultReceiver;
+        private final SearchReceiver resultReceiver;
 
         private SearchTask(DataSet ds, SearchSetting setting, Collection<OsmPrimitive> selection, Predicate<OsmPrimitive> predicate,
                 SearchReceiver resultReceiver) {

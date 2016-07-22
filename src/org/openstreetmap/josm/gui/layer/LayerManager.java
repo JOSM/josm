@@ -101,7 +101,7 @@ public class LayerManager {
     public static class LayerRemoveEvent extends LayerManagerEvent {
         private final Layer removedLayer;
         private final boolean lastLayer;
-        private Collection<Layer> scheduleForRemoval = new ArrayList<>();
+        private final Collection<Layer> scheduleForRemoval = new ArrayList<>();
 
         LayerRemoveEvent(LayerManager source, Layer removedLayer) {
             super(source);
