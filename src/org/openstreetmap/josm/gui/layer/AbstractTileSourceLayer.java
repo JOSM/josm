@@ -1949,7 +1949,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 MemoryManager manager = MemoryManager.getInstance();
                 if (manager.isAvailable(getEstimatedCacheSize())) {
                     try {
-                        memory = manager.allocateMemory("tile source layer", getEstimatedCacheSize(), () -> new Object());
+                        memory = manager.allocateMemory("tile source layer", getEstimatedCacheSize(), Object::new);
                     } catch (NotEnoughMemoryException e) {
                         Main.warn("Could not allocate tile source memory", e);
                     }

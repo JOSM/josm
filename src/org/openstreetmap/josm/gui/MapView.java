@@ -931,7 +931,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         try {
             drawWorldBorders(tempG);
         } catch (RuntimeException e) {
-            throw BugReport.intercept(e).put("bounds", () -> getProjection().getWorldBoundsLatLon());
+            throw BugReport.intercept(e).put("bounds", getProjection()::getWorldBoundsLatLon);
         }
 
         if (Main.isDisplayingMapView() && Main.map.filterDialog != null) {

@@ -100,7 +100,7 @@ public final class MapViewState {
         try {
             topLeftOnScreen = position.getLocationOnScreen();
         } catch (RuntimeException e) {
-            throw BugReport.intercept(e).put("position", position).put("parent", () -> position.getParent());
+            throw BugReport.intercept(e).put("position", position).put("parent", position::getParent);
         }
     }
 
