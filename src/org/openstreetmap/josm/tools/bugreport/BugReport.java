@@ -54,11 +54,11 @@ public final class BugReport {
     }
 
     /**
-     * Get if this report should include a system status report
+     * Determines if this report should include a system status report
      * @return <code>true</code> to include it.
-     * @since 10585
+     * @since 10597
      */
-    public boolean getIncludeStatusReport() {
+    public boolean isIncludeStatusReport() {
         return includeStatusReport;
     }
 
@@ -73,11 +73,11 @@ public final class BugReport {
     }
 
     /**
-     * Get if this report should include the data that was traced.
+     * Determines if this report should include the data that was traced.
      * @return <code>true</code> to include it.
-     * @since 10585
+     * @since 10597
      */
-    public boolean getIncludeData() {
+    public boolean isIncludeData() {
         return includeData;
     }
 
@@ -92,11 +92,11 @@ public final class BugReport {
     }
 
     /**
-     * Get if this report should include the stack traces for all other threads.
+     * Determines if this report should include the stack traces for all other threads.
      * @return <code>true</code> to include it.
-     * @since 10585
+     * @since 10597
      */
-    public boolean getIncludeAllStackTraces() {
+    public boolean isIncludeAllStackTraces() {
         return includeAllStackTraces;
     }
 
@@ -118,14 +118,14 @@ public final class BugReport {
     public String getReportText() {
         StringWriter stringWriter = new StringWriter();
         PrintWriter out = new PrintWriter(stringWriter);
-        if (getIncludeStatusReport()) {
+        if (isIncludeStatusReport()) {
             out.println(ShowStatusReportAction.getReportHeader());
         }
-        if (getIncludeData()) {
+        if (isIncludeData()) {
             exception.printReportDataTo(out);
         }
         exception.printReportStackTo(out);
-        if (getIncludeAllStackTraces()) {
+        if (isIncludeAllStackTraces()) {
             exception.printReportThreadsTo(out);
         }
         return stringWriter.toString().replaceAll("\r", "");

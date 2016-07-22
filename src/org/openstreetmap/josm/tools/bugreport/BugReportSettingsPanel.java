@@ -21,17 +21,17 @@ public class BugReportSettingsPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         JCheckBox statusReport = new JCheckBox(tr("Include the system status report."));
-        statusReport.setSelected(report.getIncludeStatusReport());
+        statusReport.setSelected(report.isIncludeStatusReport());
         statusReport.addChangeListener(e -> report.setIncludeStatusReport(statusReport.isSelected()));
         add(statusReport);
 
         JCheckBox data = new JCheckBox(tr("Include information about the data that was worked on."));
-        data.setSelected(report.getIncludeData());
+        data.setSelected(report.isIncludeData());
         data.addChangeListener(e -> report.setIncludeData(data.isSelected()));
         add(data);
 
         JCheckBox allStackTraces = new JCheckBox(tr("Include all stack traces."));
-        allStackTraces.setSelected(report.getIncludeAllStackTraces());
+        allStackTraces.setSelected(report.isIncludeAllStackTraces());
         allStackTraces.addChangeListener(e -> report.setIncludeAllStackTraces(allStackTraces.isSelected()));
         add(allStackTraces);
     }
