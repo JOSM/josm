@@ -79,7 +79,7 @@ public final class Predicates {
      */
     public static <T> Predicate<T> isInstanceOf(final Class<? extends T> clazz) {
         CheckParameterUtil.ensureParameterNotNull(clazz, "clazz");
-        return o -> clazz.isInstance(o);
+        return clazz::isInstance;
     }
 
     /**
@@ -135,7 +135,7 @@ public final class Predicates {
      * @return a {@link Predicate} executing {@link Collection#contains(Object)}
      */
     public static <T> Predicate<T> inCollection(final Collection<? extends T> target) {
-        return object -> target.contains(object);
+        return target::contains;
     }
 
     /**
