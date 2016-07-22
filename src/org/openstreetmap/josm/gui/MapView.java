@@ -324,7 +324,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      */
     private static class WarningLayerPainter implements LayerPainter {
         boolean warningPrinted = false;
-        private Layer layer;
+        private final Layer layer;
 
         WarningLayerPainter(Layer layer) {
             this.layer = layer;

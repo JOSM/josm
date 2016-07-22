@@ -27,7 +27,7 @@ public class MemoryManager {
 
     private static final MemoryManager INSTANCE = new MemoryManager();
 
-    private ArrayList<MemoryHandle<?>> activeHandles = new ArrayList<>();
+    private final ArrayList<MemoryHandle<?>> activeHandles = new ArrayList<>();
 
     protected MemoryManager() {
     }

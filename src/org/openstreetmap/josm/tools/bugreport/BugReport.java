@@ -41,7 +41,7 @@ public final class BugReport {
     private boolean includeStatusReport = true;
     private boolean includeData = true;
     private boolean includeAllStackTraces;
-    private ReportedException exception;
+    private final ReportedException exception;
     private final CopyOnWriteArrayList<BugReportListener> listeners = new CopyOnWriteArrayList<>();
 
     /**
