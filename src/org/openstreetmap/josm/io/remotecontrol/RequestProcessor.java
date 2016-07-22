@@ -11,10 +11,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
@@ -44,6 +46,12 @@ import org.openstreetmap.josm.tools.Utils;
  * Processes HTTP "remote control" requests.
  */
 public class RequestProcessor extends Thread {
+
+    private static final Charset RESPONSE_CHARSET = StandardCharsets.UTF_8;
+    private static final String RESPONSE_TEMPLATE = "<!DOCTYPE html><html><head><meta charset=\""
+            + RESPONSE_CHARSET.name()
+            + "\">%s</head><body>%s</body></html>";
+
     /**
      * RemoteControl protocol version. Change minor number for compatible
      * interface extensions. Change major number in case of incompatible
@@ -144,7 +152,7 @@ public class RequestProcessor extends Thread {
         Writer out = null;
         try {
             OutputStream raw = new BufferedOutputStream(request.getOutputStream());
-            out = new OutputStreamWriter(raw, StandardCharsets.UTF_8);
+            out = new OutputStreamWriter(raw, RESPONSE_CHARSET);
             BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(), "ASCII"));
 
             String get = in.readLine();
@@ -268,12 +276,11 @@ public class RequestProcessor extends Thread {
      */
     private static void sendError(Writer out) throws IOException {
         sendHeader(out, "500 Internal Server Error", "text/html", true);
-        out.write("<HTML>\r\n");
-        out.write("<HEAD><TITLE>Internal Error</TITLE>\r\n");
-        out.write("</HEAD>\r\n");
-        out.write("<BODY>");
-        out.write("<H1>HTTP Error 500: Internal Server Error</H1>\r\n");
-        out.write("</BODY></HTML>\r\n");
+        out.write(String.format(
+                RESPONSE_TEMPLATE,
+                "<title>Internal Error</title>",
+                "<h1>HTTP Error 500: Internal Server Error</h1>"
+        ));
         out.flush();
     }
 
@@ -287,12 +294,11 @@ public class RequestProcessor extends Thread {
      */
     private static void sendNotImplemented(Writer out) throws IOException {
         sendHeader(out, "501 Not Implemented", "text/html", true);
-        out.write("<HTML>\r\n");
-        out.write("<HEAD><TITLE>Not Implemented</TITLE>\r\n");
-        out.write("</HEAD>\r\n");
-        out.write("<BODY>");
-        out.write("<H1>HTTP Error 501: Not Implemented</h2>\r\n");
-        out.write("</BODY></HTML>\r\n");
+        out.write(String.format(
+                RESPONSE_TEMPLATE,
+                "<title>Not Implemented</title>",
+                "<h1>HTTP Error 501: Not Implemented</h1>"
+        ));
         out.flush();
     }
 
@@ -308,20 +314,17 @@ public class RequestProcessor extends Thread {
      */
     private static void sendForbidden(Writer out, String help) throws IOException {
         sendHeader(out, "403 Forbidden", "text/html", true);
-        out.write("<HTML>\r\n");
-        out.write("<HEAD><TITLE>Forbidden</TITLE>\r\n");
-        out.write("</HEAD>\r\n");
-        out.write("<BODY>");
-        out.write("<H1>HTTP Error 403: Forbidden</h2>\r\n");
-        if (help != null) {
-            out.write(help);
-        }
-        out.write("</BODY></HTML>\r\n");
+        out.write(String.format(
+                RESPONSE_TEMPLATE,
+                "<title>Forbidden</title>",
+                "<h1>HTTP Error 403: Forbidden</h1>" +
+                (help == null ? "" : "<p>"+Utils.escapeReservedCharactersHTML(help) + "</p>")
+        ));
         out.flush();
     }
 
     /**
-     * Sends a 403 error: forbidden
+     * Sends a 400 error: bad request
      *
      * @param out
      *            The writer where the error is written
@@ -332,15 +335,12 @@ public class RequestProcessor extends Thread {
      */
     private static void sendBadRequest(Writer out, String help) throws IOException {
         sendHeader(out, "400 Bad Request", "text/html", true);
-        out.write("<HTML>\r\n");
-        out.write("<HEAD><TITLE>Bad Request</TITLE>\r\n");
-        out.write("</HEAD>\r\n");
-        out.write("<BODY>");
-        out.write("<H1>HTTP Error 400: Bad Request</h2>\r\n");
-        if (help != null) {
-            out.write(help);
-        }
-        out.write("</BODY></HTML>\r\n");
+        out.write(String.format(
+                RESPONSE_TEMPLATE,
+                "<title>Bad Request</title>",
+                "<h1>HTTP Error 400: Bad Request</h1>" +
+                (help == null ? "" : ("<p>" + Utils.escapeReservedCharactersHTML(help) + "</p>"))
+        ));
         out.flush();
     }
 
@@ -361,10 +361,9 @@ public class RequestProcessor extends Thread {
     private static void sendHeader(Writer out, String status, String contentType,
             boolean endHeaders) throws IOException {
         out.write("HTTP/1.1 " + status + "\r\n");
-        Date now = new Date();
-        out.write("Date: " + now + "\r\n");
+        out.write("Date: " + new Date() + "\r\n");
         out.write("Server: JOSM RemoteControl\r\n");
-        out.write("Content-type: " + contentType + "\r\n");
+        out.write("Content-type: " + contentType + "; charset=" + RESPONSE_CHARSET.name().toLowerCase(Locale.ENGLISH) + "\r\n");
         out.write("Access-Control-Allow-Origin: *\r\n");
         if (endHeaders)
             out.write("\r\n");

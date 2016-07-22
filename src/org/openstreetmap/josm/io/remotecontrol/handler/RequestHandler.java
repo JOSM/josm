@@ -246,8 +246,8 @@ public abstract class RequestHandler {
         }
         if (error) {
             throw new RequestHandlerBadRequestException(
-                    "The following keys are mandatory, but have not been provided: "
-                    + Utils.join(", ", missingKeys));
+                    tr("The following keys are mandatory, but have not been provided: {0}",
+                            Utils.join(", ", missingKeys)));
         }
     }
 
