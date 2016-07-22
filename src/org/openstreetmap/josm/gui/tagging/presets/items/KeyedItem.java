@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -91,23 +92,46 @@ public abstract class KeyedItem extends TaggingPresetItem {
         }
     }
 
+    /**
+     * Usage information on a
+     */
     protected static class Usage {
-        public SortedSet<String> values; // NOSONAR
+        /**
+         * A set of values that were used for this key.
+         */
+        public final SortedSet<String> values = new TreeSet<>();; // NOSONAR
         private boolean hadKeys;
         private boolean hadEmpty;
 
+        /**
+         * Check if there is exactly one value for this key.
+         * @return <code>true</code> if there was exactly one value.
+         */
         public boolean hasUniqueValue() {
             return values.size() == 1 && !hadEmpty;
         }
 
+        /**
+         * Check if this key was not used in any primitive
+         * @return <code>true</code> if it was unused.
+         */
         public boolean unused() {
             return values.isEmpty();
         }
 
+        /**
+         * Get the first value available.
+         * @return The first value
+         * @throws NoSuchElementException if there is no such value.
+         */
         public String getFirst() {
             return values.first();
         }
 
+        /**
+         * Check if we encountered any primitive that had any keys
+         * @return <code>true</code> if any of the primtives had any tags.
+         */
         public boolean hadKeys() {
             return hadKeys;
         }
@@ -115,7 +139,6 @@ public abstract class KeyedItem extends TaggingPresetItem {
 
     protected static Usage determineTextUsage(Collection<OsmPrimitive> sel, String key) {
         Usage returnValue = new Usage();
-        returnValue.values = new TreeSet<>();
         for (OsmPrimitive s : sel) {
             String v = s.get(key);
             if (v != null) {
@@ -131,9 +154,7 @@ public abstract class KeyedItem extends TaggingPresetItem {
     }
 
     protected static Usage determineBooleanUsage(Collection<OsmPrimitive> sel, String key) {
-
         Usage returnValue = new Usage();
-        returnValue.values = new TreeSet<>();
         for (OsmPrimitive s : sel) {
             String booleanValue = OsmUtils.getNamedOsmBoolean(s.get(key));
             if (booleanValue != null) {

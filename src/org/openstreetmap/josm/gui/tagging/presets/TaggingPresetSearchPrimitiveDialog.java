@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.tagging.presets;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +13,6 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A dialog that allows to select a preset and then selects all matching OSM objects.
@@ -70,12 +68,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
         super(Main.parent, tr("Presets"), new String[] {tr("Search"), tr("Cancel")});
         selector = new TaggingPresetSelector(false, false);
         setContent(selector, false);
-        selector.setDblClickListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonAction(0, null);
-            }
-        });
+        selector.setDblClickListener(e -> buttonAction(0, null));
     }
 
     @Override
@@ -92,7 +85,8 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
         if (buttonIndex == 0) {
             TaggingPreset preset = selector.getSelectedPresetAndUpdateClassification();
             if (preset != null) {
-                final Set<OsmPrimitive> matching = new HashSet<>(Utils.filter(Main.getLayerManager().getEditDataSet().allPrimitives(), preset));
+
+                final Set<OsmPrimitive> matching = new HashSet<>(Main.getLayerManager().getEditDataSet().getPrimitives(preset));
                 Main.getLayerManager().getEditDataSet().setSelected(matching);
             }
         }

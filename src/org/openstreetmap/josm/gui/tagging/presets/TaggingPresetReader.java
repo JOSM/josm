@@ -43,7 +43,6 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Text;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.Predicates;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
 
@@ -226,7 +225,7 @@ public final class TaggingPresetReader {
                     tp.group = lastmenu;
                     if (all.contains(tp)) {
                         lastmenuOriginal = tp;
-                        tp = (TaggingPresetMenu) Utils.filter(all, Predicates.<TaggingPreset>equalTo(tp)).iterator().next();
+                        tp = (TaggingPresetMenu) all.stream().filter(Predicates.equalTo(tp)).findFirst().get();
                         lastmenuOriginal.group = null;
                     } else {
                         tp.setDisplayName();

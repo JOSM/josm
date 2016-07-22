@@ -312,7 +312,14 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      */
     private final QuadBuckets<Node> nodes = new QuadBuckets<>();
 
-    private <T extends OsmPrimitive> Collection<T> getPrimitives(Predicate<? super OsmPrimitive> predicate) {
+    /**
+     * Gets a filtered collection of primitives matching the given predicate.
+     * @param <T> The primitive type.
+     * @param predicate The predicate to match
+     * @return The list of primtives.
+     * @since 10590
+     */
+    public <T extends OsmPrimitive> Collection<T> getPrimitives(java.util.function.Predicate<? super OsmPrimitive> predicate) {
         return new SubclassFilteredCollection<>(allPrimitives, predicate);
     }
 

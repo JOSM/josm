@@ -85,10 +85,25 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     /** Prefix of preset icon loading failure error message */
     public static final String PRESET_ICON_ERROR_MSG_PREFIX = "Could not get presets icon ";
 
+    /**
+     * The preset group this preset belongs to.
+     */
     public TaggingPresetMenu group;
+
+    /**
+     * The name of the tagging preset.
+     * @see #getRawName()
+     */
     public String name;
+    /**
+     * The icon name that was used for this preset.
+     */
     public String iconName;
     public String name_context;
+    /**
+     * A cache for the local name. Should never be accessed directly.
+     * @see #getLocaleName()
+     */
     public String locale_name;
     public boolean preset_name_label;
 
@@ -127,6 +142,10 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                     tr("Use preset ''{0}''", getLocaleName()));
     }
 
+    /**
+     * Gets the localized version of the name
+     * @return The name that should be displayed to the user.
+     */
     public String getLocaleName() {
         if (locale_name == null) {
             if (name_context != null) {
@@ -188,12 +207,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             @Override
             public void finished(final ImageResource result) {
                 if (result != null) {
-                    GuiHelper.runInEDT(new Runnable() {
-                        @Override
-                        public void run() {
-                            result.attachImageIcon(TaggingPreset.this);
-                        }
-                    });
+                    GuiHelper.runInEDT(() -> result.attachImageIcon(TaggingPreset.this));
                 } else {
                     Main.warn(TaggingPreset.this + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
                 }
@@ -385,12 +399,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                 r.addMember(rm);
                 members.add(rm);
             }
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    RelationEditor.getEditor(Main.getLayerManager().getEditLayer(), r, members).setVisible(true);
-                }
-            });
+            SwingUtilities.invokeLater(() -> RelationEditor.getEditor(Main.getLayerManager().getEditLayer(), r, members).setVisible(true));
         }
         ds.setSelected(ds.getSelected()); // force update
     }
