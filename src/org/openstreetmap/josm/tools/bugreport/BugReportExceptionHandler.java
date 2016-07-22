@@ -196,18 +196,15 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
     }
 
     static JPanel buildPanel(final Throwable e) {
-        StringWriter stack = new StringWriter();
-        PrintWriter writer = new PrintWriter(stack);
+        DebugTextDisplay textarea;
         if (e instanceof ReportedException) {
             // Temporary!
-            ((ReportedException) e).printReportDataTo(writer);
-            ((ReportedException) e).printReportStackTo(writer);
+            textarea = new DebugTextDisplay(new BugReport((ReportedException) e));
         } else {
-            e.printStackTrace(writer);
+            StringWriter stack = new StringWriter();
+            e.printStackTrace(new PrintWriter(stack));
+            textarea = new DebugTextDisplay(ShowStatusReportAction.getReportHeader() + stack.getBuffer().toString());
         }
-
-        String text = ShowStatusReportAction.getReportHeader() + stack.getBuffer().toString();
-        text = text.replaceAll("\r", "");
 
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JMultilineLabel(
@@ -219,7 +216,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                 tr("You should also update your plugins. If neither of those help please " +
                         "file a bug report in our bugtracker using this link:")),
                         GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-        p.add(new JButton(new ReportBugAction(text)), GBC.eop().insets(8, 0, 0, 0));
+        p.add(new JButton(new ReportBugAction(textarea.getCodeText())), GBC.eop().insets(8, 0, 0, 0));
         p.add(new JMultilineLabel(
                 tr("There the error information provided below should already be " +
                         "filled in for you. Please include information on how to reproduce " +
@@ -229,9 +226,6 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                 tr("Alternatively, if that does not work you can manually fill in the information " +
                         "below at this URL:")), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         p.add(new UrlLabel(Main.getJOSMWebsite()+"/newticket", 2), GBC.eop().insets(8, 0, 0, 0));
-
-        // Wiki formatting for manual copy-paste
-        DebugTextDisplay textarea = new DebugTextDisplay(text);
 
         if (textarea.copyToClippboard()) {
             p.add(new JLabel(tr("(The text has already been copied to your clipboard.)")),
