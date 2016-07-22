@@ -41,7 +41,7 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
         this.description = description;
         this.title = title;
         this.tabpane = tabpane;
-        this.subSettingMap = tabpane != null ? new HashMap<SubPreferenceSetting, Component>() : null;
+        this.subSettingMap = tabpane != null ? new HashMap<>() : null;
     }
 
     @Override
