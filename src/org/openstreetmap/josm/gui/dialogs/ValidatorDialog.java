@@ -472,7 +472,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
             boolean isDblClick = isDoubleClick(e);
 
-            Collection<OsmPrimitive> sel = isDblClick ? new HashSet<OsmPrimitive>(40) : null;
+            Collection<OsmPrimitive> sel = isDblClick ? new HashSet<>(40) : null;
 
             boolean hasFixes = setSelection(sel, isDblClick);
             fixButton.setEnabled(hasFixes);
@@ -575,7 +575,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         FixTask(Collection<TestError> testErrors) {
             super(tr("Fixing errors ..."), false /* don't ignore exceptions */);
-            this.testErrors = testErrors == null ? new ArrayList<TestError>() : testErrors;
+            this.testErrors = testErrors == null ? new ArrayList<>() : testErrors;
         }
 
         @Override

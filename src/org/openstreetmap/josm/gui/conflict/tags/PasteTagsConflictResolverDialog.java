@@ -155,8 +155,8 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
             Map<OsmPrimitiveType, Integer> targetStatistics) {
         mode = Mode.RESOLVING_ONE_TAGCOLLECTION_ONLY;
         tagsForAllPrimitives = tagsForAllPrimitives == null ? new TagCollection() : tagsForAllPrimitives;
-        sourceStatistics = sourceStatistics == null ? new HashMap<OsmPrimitiveType, Integer>() : sourceStatistics;
-        targetStatistics = targetStatistics == null ? new HashMap<OsmPrimitiveType, Integer>() : targetStatistics;
+        sourceStatistics = sourceStatistics == null ? new HashMap<>() : sourceStatistics;
+        targetStatistics = targetStatistics == null ? new HashMap<>() : targetStatistics;
 
         // init the resolver
         //

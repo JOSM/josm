@@ -161,7 +161,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     public void populate(Collection<Relation> relations, Collection<? extends OsmPrimitive> memberPrimitives) {
         decisions.clear();
         relations = relations == null ? Collections.<Relation>emptyList() : relations;
-        memberPrimitives = memberPrimitives == null ? new LinkedList<OsmPrimitive>() : memberPrimitives;
+        memberPrimitives = memberPrimitives == null ? new LinkedList<>() : memberPrimitives;
         for (Relation r : relations) {
             for (OsmPrimitive p: memberPrimitives) {
                 populate(r, p);
@@ -179,7 +179,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * @param references the references. Empty list assumed if null.
      */
     public void populate(Collection<RelationToChildReference> references) {
-        references = references == null ? new LinkedList<RelationToChildReference>() : references;
+        references = references == null ? new LinkedList<>() : references;
         decisions.clear();
         this.relations = new HashSet<>(references.size());
         final Collection<OsmPrimitive> primitives = new HashSet<>();

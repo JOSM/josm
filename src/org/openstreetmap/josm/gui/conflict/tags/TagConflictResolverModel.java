@@ -132,7 +132,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
         CheckParameterUtil.ensureParameterNotNull(tags, "tags");
         this.tags = tags;
         displayedKeys = new ArrayList<>();
-        this.keysWithConflicts = keysWithConflicts == null ? new HashSet<String>() : keysWithConflicts;
+        this.keysWithConflicts = keysWithConflicts == null ? new HashSet<>() : keysWithConflicts;
         decisions = new HashMap<>();
         rebuild();
     }

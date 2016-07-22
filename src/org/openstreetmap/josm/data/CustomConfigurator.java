@@ -939,9 +939,9 @@ public final class CustomConfigurator {
             return null;
         }
         if (existing != null)
-            return new ArrayList<Collection<String>>(existing.getValue());
+            return new ArrayList<>(existing.getValue());
         else
-            return defaults.getValue() == null ? null : new ArrayList<Collection<String>>(defaults.getValue());
+            return defaults.getValue() == null ? null : new ArrayList<>(defaults.getValue());
     }
 
     private static List<Map<String, String>> getListOfStructs(Preferences mainpref, String key, boolean warnUnknownDefault) {
