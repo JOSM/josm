@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * This class represents a state of the {@link MapView}.
@@ -96,7 +97,11 @@ public final class MapViewState {
             topLeftInWindow.y += component.getY();
             component = component.getParent();
         }
-        topLeftOnScreen = position.getLocationOnScreen();
+        try {
+            topLeftOnScreen = position.getLocationOnScreen();
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("position", position).put("parent", () -> position.getParent());
+        }
     }
 
     private MapViewState(Projection projection, MapViewState mapViewState) {

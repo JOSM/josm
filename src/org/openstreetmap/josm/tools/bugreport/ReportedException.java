@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.StreamUtils;
@@ -179,7 +180,7 @@ public class ReportedException extends RuntimeException {
     }
 
     /**
-     * Adds some debug values to this exception.
+     * Adds some debug values to this exception. The value is converted to a string. Errors during conversion are handled.
      *
      * @param key
      *            The key to add this for. Does not need to be unique but it would be nice.
@@ -188,8 +189,23 @@ public class ReportedException extends RuntimeException {
      * @return This exception for easy chaining.
      */
     public ReportedException put(String key, Object value) {
+        return put(key, () -> value);
+    }
+
+    /**
+    * Adds some debug values to this exception. This method automatically catches errors that occur during the production of the value.
+    *
+    * @param key
+    *            The key to add this for. Does not need to be unique but it would be nice.
+    * @param valueSupplier
+    *            A supplier that is called once to get the value.
+    * @return This exception for easy chaining.
+    * @since 10586
+    */
+    public ReportedException put(String key, Supplier<Object> valueSupplier) {
         String string;
         try {
+            Object value = valueSupplier.get();
             if (value == null) {
                 string = "null";
             } else if (value instanceof Collection) {
