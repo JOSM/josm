@@ -96,7 +96,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      */
     public String name;
     /**
-     * The icon name that was used for this preset.
+     * The icon name assigned to this preset.
      */
     public String iconName;
     public String name_context;

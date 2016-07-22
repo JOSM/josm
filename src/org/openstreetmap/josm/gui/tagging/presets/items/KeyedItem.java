@@ -93,7 +93,7 @@ public abstract class KeyedItem extends TaggingPresetItem {
     }
 
     /**
-     * Usage information on a
+     * Usage information on a key
      */
     protected static class Usage {
         /**
