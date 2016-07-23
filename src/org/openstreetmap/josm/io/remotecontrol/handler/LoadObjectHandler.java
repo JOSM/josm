@@ -67,26 +67,18 @@ public class LoadObjectHandler extends RequestHandler {
             final DownloadPrimitivesWithReferrersTask task = new DownloadPrimitivesWithReferrersTask(
                     newLayer, ps, referrers, relationMembers, args.get("layer_name"), null);
             Main.worker.submit(task);
-            Main.worker.submit(new Runnable() {
-                @Override
-                public void run() {
-                    final List<PrimitiveId> downloaded = task.getDownloadedId();
-                    final DataSet ds = Main.getLayerManager().getEditDataSet();
-                    if (downloaded != null) {
-                        GuiHelper.runInEDT(new Runnable() {
-                            @Override
-                            public void run() {
-                                ds.setSelected(downloaded);
-                            }
-                        });
-                        Collection<OsmPrimitive> downlPrim = new HashSet<>();
-                        for (PrimitiveId id : downloaded) {
-                            downlPrim.add(ds.getPrimitiveById(id));
-                        }
-                        AddTagsDialog.addTags(args, sender, downlPrim);
+            Main.worker.submit(() -> {
+                final List<PrimitiveId> downloaded = task.getDownloadedId();
+                final DataSet ds = Main.getLayerManager().getEditDataSet();
+                if (downloaded != null) {
+                    GuiHelper.runInEDT(() -> ds.setSelected(downloaded));
+                    Collection<OsmPrimitive> downlPrim = new HashSet<>();
+                    for (PrimitiveId id : downloaded) {
+                        downlPrim.add(ds.getPrimitiveById(id));
                     }
-                    ps.clear();
+                    AddTagsDialog.addTags(args, sender, downlPrim);
                 }
+                ps.clear();
             });
         }
     }

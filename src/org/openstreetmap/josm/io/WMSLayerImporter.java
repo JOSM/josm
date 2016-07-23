@@ -84,13 +84,10 @@ public class WMSLayerImporter extends FileImporter {
 
 
         // FIXME: remove UI stuff from IO subsystem
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                Main.getLayerManager().addLayer(layer);
-                if (zoomTo != null) {
-                    Main.map.mapView.zoomTo(zoomTo);
-                }
+        GuiHelper.runInEDT(() -> {
+            Main.getLayerManager().addLayer(layer);
+            if (zoomTo != null) {
+                Main.map.mapView.zoomTo(zoomTo);
             }
         });
     }

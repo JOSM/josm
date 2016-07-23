@@ -4,7 +4,6 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -275,33 +274,30 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             final JLabel warning) {
 
         // CHECKSTYLE.ON: ParameterNumber
-        ActionListener authorActionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean b = author.isSelected();
-                authorName.setEnabled(b);
-                email.setEnabled(b);
-                nameLabel.setEnabled(b);
-                emailLabel.setEnabled(b);
-                if (b) {
-                    String sAuthorName = data.getString(META_AUTHOR_NAME);
-                    if (sAuthorName == null) {
-                        sAuthorName = Main.pref.get("lastAuthorName");
-                    }
-                    authorName.setText(sAuthorName);
-                    String sEmail = data.getString(META_AUTHOR_EMAIL);
-                    if (sEmail == null) {
-                        sEmail = Main.pref.get("lastAuthorEmail");
-                    }
-                    email.setText(sEmail);
-                } else {
-                    authorName.setText("");
-                    email.setText("");
+        ActionListener authorActionListener = e -> {
+            boolean b = author.isSelected();
+            authorName.setEnabled(b);
+            email.setEnabled(b);
+            nameLabel.setEnabled(b);
+            emailLabel.setEnabled(b);
+            if (b) {
+                String sAuthorName = data.getString(META_AUTHOR_NAME);
+                if (sAuthorName == null) {
+                    sAuthorName = Main.pref.get("lastAuthorName");
                 }
-                boolean isAuthorSet = !authorName.getText().isEmpty();
-                GpxExporter.enableCopyright(data, copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning,
-                        b && isAuthorSet);
+                authorName.setText(sAuthorName);
+                String sEmail = data.getString(META_AUTHOR_EMAIL);
+                if (sEmail == null) {
+                    sEmail = Main.pref.get("lastAuthorEmail");
+                }
+                email.setText(sEmail);
+            } else {
+                authorName.setText("");
+                email.setText("");
             }
+            boolean isAuthorSet = !authorName.getText().isEmpty();
+            GpxExporter.enableCopyright(data, copyright, predefined, copyrightYear, copyrightLabel, copyrightYearLabel, warning,
+                    b && isAuthorSet);
         };
         author.addActionListener(authorActionListener);
 
@@ -313,35 +309,32 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         };
         authorName.addKeyListener(authorNameListener);
 
-        predefined.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JList<String> l = new JList<>(LICENSES);
-                l.setVisibleRowCount(LICENSES.length);
-                l.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-                int answer = JOptionPane.showConfirmDialog(
-                        Main.parent,
-                        new JScrollPane(l),
-                        tr("Choose a predefined license"),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE
-                );
-                if (answer != JOptionPane.OK_OPTION || l.getSelectedIndex() == -1)
-                    return;
-                StringBuilder license = new StringBuilder();
-                for (int i : l.getSelectedIndices()) {
-                    if (i == 2) {
-                        license = new StringBuilder("public domain");
-                        break;
-                    }
-                    if (license.length() > 0) {
-                        license.append(", ");
-                    }
-                    license.append(URLS[i]);
+        predefined.addActionListener(e -> {
+            JList<String> l = new JList<>(LICENSES);
+            l.setVisibleRowCount(LICENSES.length);
+            l.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+            int answer = JOptionPane.showConfirmDialog(
+                    Main.parent,
+                    new JScrollPane(l),
+                    tr("Choose a predefined license"),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+            );
+            if (answer != JOptionPane.OK_OPTION || l.getSelectedIndex() == -1)
+                return;
+            StringBuilder license = new StringBuilder();
+            for (int i : l.getSelectedIndices()) {
+                if (i == 2) {
+                    license = new StringBuilder("public domain");
+                    break;
                 }
-                copyright.setText(license.toString());
-                copyright.setCaretPosition(0);
+                if (license.length() > 0) {
+                    license.append(", ");
+                }
+                license.append(URLS[i]);
             }
+            copyright.setText(license.toString());
+            copyright.setCaretPosition(0);
         });
 
         authorActionListener.actionPerformed(null);

@@ -41,12 +41,7 @@ public class FileWatcher {
     public FileWatcher() {
         try {
             watcher = FileSystems.getDefault().newWatchService();
-            thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    processEvents();
-                }
-            }, "File Watcher");
+            thread = new Thread((Runnable) this::processEvents, "File Watcher");
         } catch (IOException e) {
             Main.error(e);
         }

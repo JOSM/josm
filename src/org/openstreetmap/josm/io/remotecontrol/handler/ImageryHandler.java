@@ -13,6 +13,7 @@ import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
  * Adds an imagery (WMS/TMS) layer. For instance, {@code /imagery?title=...&type=...&url=...}.
@@ -101,14 +102,11 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
                 }
             }
         }
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Main.getLayerManager().addLayer(ImageryLayer.create(imgInfo));
-                } catch (IllegalArgumentException e) {
-                    Main.error(e, false);
-                }
+        GuiHelper.runInEDT(() -> {
+            try {
+                Main.getLayerManager().addLayer(ImageryLayer.create(imgInfo));
+            } catch (IllegalArgumentException e) {
+                Main.error(e, false);
             }
         });
     }
@@ -133,12 +131,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
     @Override
     public String[] getUsageExamples() {
         final String types = Utils.join("|", Utils.transform(Arrays.asList(ImageryInfo.ImageryType.values()),
-                new Utils.Function<ImageryInfo.ImageryType, String>() {
-            @Override
-            public String apply(ImageryInfo.ImageryType x) {
-                return x.getTypeString();
-            }
-        }));
+                (Function<ImageryType, String>) x -> x.getTypeString()));
         return new String[] {
             "/imagery?title=osm&type=tms&url=https://a.tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png",
             "/imagery?title=landsat&type=wms&url=http://irs.gis-lab.info/?" +

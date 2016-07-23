@@ -16,12 +16,7 @@ class MultiFetchOverpassObjectReader extends MultiFetchServerObjectReader {
 
     @Override
     protected String buildRequestString(final OsmPrimitiveType type, Set<Long> idPackage) {
-        final Utils.Function<Long, Object> toOverpassExpression = new Utils.Function<Long, Object>() {
-            @Override
-            public Object apply(Long x) {
-                return type.getAPIName() + '(' + x + ");>;";
-            }
-        };
+        final Utils.Function<Long, Object> toOverpassExpression = x -> type.getAPIName() + '(' + x + ");>;";
         final String query = '(' + Utils.join("", Utils.transform(idPackage, toOverpassExpression)) + ");out meta;";
         return "interpreter?data=" + Utils.encodeUrl(query);
     }

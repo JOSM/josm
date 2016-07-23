@@ -116,17 +116,14 @@ public class GpxImporter extends FileImporter {
      */
     public static void addLayers(final GpxImporterData data) {
         // FIXME: remove UI stuff from the IO subsystem
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                if (data.markerLayer != null) {
-                    Main.getLayerManager().addLayer(data.markerLayer);
-                }
-                if (data.gpxLayer != null) {
-                    Main.getLayerManager().addLayer(data.gpxLayer);
-                }
-                data.postLayerTask.run();
+        GuiHelper.runInEDT(() -> {
+            if (data.markerLayer != null) {
+                Main.getLayerManager().addLayer(data.markerLayer);
             }
+            if (data.gpxLayer != null) {
+                Main.getLayerManager().addLayer(data.gpxLayer);
+            }
+            data.postLayerTask.run();
         });
     }
 
@@ -152,20 +149,17 @@ public class GpxImporter extends FileImporter {
                 markerLayer = null;
             }
         }
-        Runnable postLayerTask = new Runnable() {
-            @Override
-            public void run() {
-                if (!parsedProperly) {
-                    String msg;
-                    if (data.storageFile == null) {
-                        msg = tr("Error occurred while parsing gpx data for layer ''{0}''. Only a part of the file will be available.",
-                                gpxLayerName);
-                    } else {
-                        msg = tr("Error occurred while parsing gpx file ''{0}''. Only a part of the file will be available.",
-                                data.storageFile.getPath());
-                    }
-                    JOptionPane.showMessageDialog(null, msg);
+        Runnable postLayerTask = () -> {
+            if (!parsedProperly) {
+                String msg;
+                if (data.storageFile == null) {
+                    msg = tr("Error occurred while parsing gpx data for layer ''{0}''. Only a part of the file will be available.",
+                            gpxLayerName);
+                } else {
+                    msg = tr("Error occurred while parsing gpx file ''{0}''. Only a part of the file will be available.",
+                            data.storageFile.getPath());
                 }
+                JOptionPane.showMessageDialog(null, msg);
             }
         };
         return new GpxImporterData(gpxLayer, markerLayer, postLayerTask);

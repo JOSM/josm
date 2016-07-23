@@ -42,11 +42,7 @@ public class OpenFileHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override public void run() {
-                OpenFileAction.openFiles(Arrays.asList(new File(args.get("filename"))));
-            }
-        });
+        GuiHelper.runInEDTAndWait(() -> OpenFileAction.openFiles(Arrays.asList(new File(args.get("filename")))));
     }
 
     @Override

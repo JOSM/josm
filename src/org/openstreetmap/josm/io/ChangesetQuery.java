@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Utils.Function;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 public class ChangesetQuery {
@@ -405,12 +406,7 @@ public class ChangesetQuery {
         protected Collection<Long> parseLongs(String value) {
             return value == null || value.isEmpty()
                     ? Collections.<Long>emptySet() :
-                    new HashSet<>(Utils.transform(Arrays.asList(value.split(",")), new Utils.Function<String, Long>() {
-                        @Override
-                        public Long apply(String x) {
-                            return Long.valueOf(x);
-                        }
-                    }));
+                    new HashSet<>(Utils.transform(Arrays.asList(value.split(",")), (Function<String, Long>) x -> Long.valueOf(x)));
         }
 
         protected ChangesetQuery createFromMap(Map<String, String> queryParams) throws ChangesetQueryUrlException {

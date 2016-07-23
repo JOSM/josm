@@ -154,14 +154,11 @@ public class LoadAndZoomHandler extends RequestHandler {
          * deselect objects if parameter addtags given
          */
         if (args.containsKey("addtags")) {
-            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
-                @Override
-                public void run() {
-                    DataSet ds = Main.getLayerManager().getEditDataSet();
-                    if (ds == null) // e.g. download failed
-                        return;
-                    ds.clearSelection();
-                }
+            GuiHelper.executeByMainWorkerInEDT(() -> {
+                DataSet ds = Main.getLayerManager().getEditDataSet();
+                if (ds == null) // e.g. download failed
+                    return;
+                ds.clearSelection();
             });
         }
 
@@ -169,42 +166,36 @@ public class LoadAndZoomHandler extends RequestHandler {
         final Bounds bbox = new Bounds(minlat, minlon, maxlat, maxlon);
         if (args.containsKey("select") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             // select objects after downloading, zoom to selection.
-            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
-                @Override
-                public void run() {
-                    Set<OsmPrimitive> newSel = new HashSet<>();
-                    DataSet ds = Main.getLayerManager().getEditDataSet();
-                    if (ds == null) // e.g. download failed
-                        return;
-                    for (SimplePrimitiveId id : toSelect) {
-                        final OsmPrimitive p = ds.getPrimitiveById(id);
-                        if (p != null) {
-                            newSel.add(p);
-                            forTagAdd.add(p);
-                        }
+            GuiHelper.executeByMainWorkerInEDT(() -> {
+                Set<OsmPrimitive> newSel = new HashSet<>();
+                DataSet ds = Main.getLayerManager().getEditDataSet();
+                if (ds == null) // e.g. download failed
+                    return;
+                for (SimplePrimitiveId id : toSelect) {
+                    final OsmPrimitive p = ds.getPrimitiveById(id);
+                    if (p != null) {
+                        newSel.add(p);
+                        forTagAdd.add(p);
                     }
-                    toSelect.clear();
-                    ds.setSelected(newSel);
-                    zoom(newSel, bbox);
-                    if (Main.isDisplayingMapView() && Main.map.relationListDialog != null) {
-                        Main.map.relationListDialog.selectRelations(null); // unselect all relations to fix #7342
-                        Main.map.relationListDialog.dataChanged(null);
-                        Main.map.relationListDialog.selectRelations(Utils.filteredCollection(newSel, Relation.class));
-                    }
+                }
+                toSelect.clear();
+                ds.setSelected(newSel);
+                zoom(newSel, bbox);
+                if (Main.isDisplayingMapView() && Main.map.relationListDialog != null) {
+                    Main.map.relationListDialog.selectRelations(null); // unselect all relations to fix #7342
+                    Main.map.relationListDialog.dataChanged(null);
+                    Main.map.relationListDialog.selectRelations(Utils.filteredCollection(newSel, Relation.class));
                 }
             });
         } else if (args.containsKey("search") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             try {
                 final SearchCompiler.Match search = SearchCompiler.compile(args.get("search"));
-                Main.worker.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        final DataSet ds = Main.getLayerManager().getEditDataSet();
-                        final Collection<OsmPrimitive> filteredPrimitives = Utils.filter(ds.allPrimitives(), search);
-                        ds.setSelected(filteredPrimitives);
-                        forTagAdd.addAll(filteredPrimitives);
-                        zoom(filteredPrimitives, bbox);
-                    }
+                Main.worker.submit(() -> {
+                    final DataSet ds = Main.getLayerManager().getEditDataSet();
+                    final Collection<OsmPrimitive> filteredPrimitives = Utils.filter(ds.allPrimitives(), search);
+                    ds.setSelected(filteredPrimitives);
+                    forTagAdd.addAll(filteredPrimitives);
+                    zoom(filteredPrimitives, bbox);
                 });
             } catch (SearchCompiler.ParseError ex) {
                 Main.error(ex);
@@ -217,16 +208,13 @@ public class LoadAndZoomHandler extends RequestHandler {
 
         // add changeset tags after download if necessary
         if (args.containsKey("changeset_comment") || args.containsKey("changeset_source")) {
-            Main.worker.submit(new Runnable() {
-                @Override
-                public void run() {
-                    if (Main.getLayerManager().getEditDataSet() != null) {
-                        if (args.containsKey("changeset_comment")) {
-                            Main.getLayerManager().getEditDataSet().addChangeSetTag("comment", args.get("changeset_comment"));
-                        }
-                        if (args.containsKey("changeset_source")) {
-                            Main.getLayerManager().getEditDataSet().addChangeSetTag("source", args.get("changeset_source"));
-                        }
+            Main.worker.submit(() -> {
+                if (Main.getLayerManager().getEditDataSet() != null) {
+                    if (args.containsKey("changeset_comment")) {
+                        Main.getLayerManager().getEditDataSet().addChangeSetTag("comment", args.get("changeset_comment"));
+                    }
+                    if (args.containsKey("changeset_source")) {
+                        Main.getLayerManager().getEditDataSet().addChangeSetTag("source", args.get("changeset_source"));
                     }
                 }
             });
@@ -244,13 +232,10 @@ public class LoadAndZoomHandler extends RequestHandler {
             AutoScaleAction.autoScale("selection");
         } else if (Main.isDisplayingMapView()) {
             // make sure this isn't called unless there *is* a MapView
-            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
-                @Override
-                public void run() {
-                    BoundingXYVisitor bbox1 = new BoundingXYVisitor();
-                    bbox1.visit(bbox);
-                    Main.map.mapView.zoomTo(bbox1);
-                }
+            GuiHelper.executeByMainWorkerInEDT(() -> {
+                BoundingXYVisitor bbox1 = new BoundingXYVisitor();
+                bbox1.visit(bbox);
+                Main.map.mapView.zoomTo(bbox1);
             });
         }
     }
@@ -296,7 +281,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                 try {
                     toSelect.add(SimplePrimitiveId.fromString(item));
                 } catch (IllegalArgumentException ex) {
-                    Main.warn("RemoteControl: invalid selection '" + item + "' ignored");
+                    Main.warn(ex, "RemoteControl: invalid selection '" + item + "' ignored");
                 }
             }
         }

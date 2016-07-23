@@ -552,19 +552,17 @@ public class SessionReader {
 
         public void show(final String title, final String message, final int icon, final ProgressMonitor progressMonitor) {
             try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override public void run() {
-                        ExtendedDialog dlg = new ExtendedDialog(
-                                Main.parent,
-                                title,
-                                new String[] {tr("Cancel"), tr("Skip layer and continue")}
-                                );
-                        dlg.setButtonIcons(new String[] {"cancel", "dialogs/next"});
-                        dlg.setIcon(icon);
-                        dlg.setContent(message);
-                        dlg.showDialog();
-                        cancel = dlg.getValue() != 2;
-                    }
+                SwingUtilities.invokeAndWait(() -> {
+                    ExtendedDialog dlg = new ExtendedDialog(
+                            Main.parent,
+                            title,
+                            new String[] {tr("Cancel"), tr("Skip layer and continue")}
+                            );
+                    dlg.setButtonIcons(new String[] {"cancel", "dialogs/next"});
+                    dlg.setIcon(icon);
+                    dlg.setContent(message);
+                    dlg.showDialog();
+                    cancel = dlg.getValue() != 2;
                 });
             } catch (InvocationTargetException | InterruptedException ex) {
                 throw new RuntimeException(ex);

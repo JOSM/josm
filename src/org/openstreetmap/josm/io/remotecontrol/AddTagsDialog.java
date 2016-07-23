@@ -267,28 +267,24 @@ public class AddTagsDialog extends ExtendedDialog {
      */
     public static void addTags(final Map<String, String> args, final String sender, final Collection<? extends OsmPrimitive> primitives) {
         if (args.containsKey("addtags")) {
-            GuiHelper.executeByMainWorkerInEDT(new Runnable() {
-
-                @Override
-                public void run() {
-                    Set<String> tagSet = new HashSet<>();
-                    for (String tag : Utils.decodeUrl(args.get("addtags")).split("\\|")) {
-                        if (!tag.trim().isEmpty() && tag.contains("=")) {
-                            tagSet.add(tag.trim());
-                        }
+            GuiHelper.executeByMainWorkerInEDT(() -> {
+                Set<String> tagSet = new HashSet<>();
+                for (String tag1 : Utils.decodeUrl(args.get("addtags")).split("\\|")) {
+                    if (!tag1.trim().isEmpty() && tag1.contains("=")) {
+                        tagSet.add(tag1.trim());
                     }
-                    if (!tagSet.isEmpty()) {
-                        String[][] keyValue = new String[tagSet.size()][2];
-                        int i = 0;
-                        for (String tag : tagSet) {
-                            // support a  =   b===c as "a"="b===c"
-                            String[] pair = tag.split("\\s*=\\s*", 2);
-                            keyValue[i][0] = pair[0];
-                            keyValue[i][1] = pair.length < 2 ? "" : pair[1];
-                            i++;
-                        }
-                        addTags(keyValue, sender, primitives);
+                }
+                if (!tagSet.isEmpty()) {
+                    String[][] keyValue = new String[tagSet.size()][2];
+                    int i = 0;
+                    for (String tag2 : tagSet) {
+                        // support a  =   b===c as "a"="b===c"
+                        String[] pair = tag2.split("\\s*=\\s*", 2);
+                        keyValue[i][0] = pair[0];
+                        keyValue[i][1] = pair.length < 2 ? "" : pair[1];
+                        i++;
                     }
+                    addTags(keyValue, sender, primitives);
                 }
             });
         }

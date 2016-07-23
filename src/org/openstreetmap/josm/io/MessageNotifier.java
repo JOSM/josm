@@ -64,20 +64,17 @@ public final class MessageNotifier {
                         tr("get number of unread messages"));
                 final int unread = userInfo.getUnreadMessages();
                 if (unread > 0 && unread != lastUnreadCount) {
-                    GuiHelper.runInEDT(new Runnable() {
-                        @Override
-                        public void run() {
-                            JPanel panel = new JPanel(new GridBagLayout());
-                            panel.add(new JLabel(trn("You have {0} unread message.", "You have {0} unread messages.", unread, unread)),
-                                    GBC.eol());
-                            panel.add(new UrlLabel(Main.getBaseUserUrl() + '/' + userInfo.getDisplayName() + "/inbox",
-                                    tr("Click here to see your inbox.")), GBC.eol());
-                            panel.setOpaque(false);
-                            new Notification().setContent(panel)
-                                .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                                .setDuration(Notification.TIME_LONG)
-                                .show();
-                        }
+                    GuiHelper.runInEDT(() -> {
+                        JPanel panel = new JPanel(new GridBagLayout());
+                        panel.add(new JLabel(trn("You have {0} unread message.", "You have {0} unread messages.", unread, unread)),
+                                GBC.eol());
+                        panel.add(new UrlLabel(Main.getBaseUserUrl() + '/' + userInfo.getDisplayName() + "/inbox",
+                                tr("Click here to see your inbox.")), GBC.eol());
+                        panel.setOpaque(false);
+                        new Notification().setContent(panel)
+                            .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                            .setDuration(Notification.TIME_LONG)
+                            .show();
                     });
                     lastUnreadCount = unread;
                 }

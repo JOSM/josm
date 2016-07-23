@@ -52,19 +52,16 @@ public class OsmChangeImporter extends FileImporter {
     protected void addDataLayer(final DataSet dataSet, final OsmDataLayer layer, final String filePath) {
         // FIXME: remove UI stuff from IO subsystem
         //
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                if (dataSet.allPrimitives().isEmpty()) {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("No data found in file {0}.", filePath),
-                            tr("Open OsmChange file"),
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
-                Main.getLayerManager().addLayer(layer);
-                layer.onPostLoadFromFile();
+        GuiHelper.runInEDT(() -> {
+            if (dataSet.allPrimitives().isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("No data found in file {0}.", filePath),
+                        tr("Open OsmChange file"),
+                        JOptionPane.INFORMATION_MESSAGE);
             }
+            Main.getLayerManager().addLayer(layer);
+            layer.onPostLoadFromFile();
         });
     }
 }

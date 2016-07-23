@@ -72,11 +72,7 @@ public class AddWayHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override public void run() {
-                way = addWay();
-            }
-        });
+        GuiHelper.runInEDTAndWait(() -> way = addWay());
         // parse parameter addtags=tag1=value1|tag2=value2
         AddTagsDialog.addTags(args, sender, Collections.singleton(way));
     }

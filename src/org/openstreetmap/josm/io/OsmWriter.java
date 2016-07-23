@@ -96,15 +96,13 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     /**
      * Sorts {@code -1} &rarr; {@code -infinity}, then {@code +1} &rarr; {@code +infinity}
      */
-    protected static final Comparator<AbstractPrimitive> byIdComparator = new Comparator<AbstractPrimitive>() {
-        @Override public int compare(AbstractPrimitive o1, AbstractPrimitive o2) {
-            final long i1 = o1.getUniqueId();
-            final long i2 = o2.getUniqueId();
-            if (i1 < 0 && i2 < 0) {
-                return Long.compare(i2, i1);
-            } else {
-                return Long.compare(i1, i2);
-            }
+    protected static final Comparator<AbstractPrimitive> byIdComparator = (o1, o2) -> {
+        final long i1 = o1.getUniqueId();
+        final long i2 = o2.getUniqueId();
+        if (i1 < 0 && i2 < 0) {
+            return Long.compare(i2, i1);
+        } else {
+            return Long.compare(i1, i2);
         }
     };
 
@@ -262,12 +260,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         addTags(cs, "changeset", false); // also writes closing </changeset>
     }
 
-    protected static final Comparator<Entry<String, String>> byKeyComparator = new Comparator<Entry<String, String>>() {
-        @Override
-        public int compare(Entry<String, String> o1, Entry<String, String> o2) {
-            return o1.getKey().compareTo(o2.getKey());
-        }
-    };
+    protected static final Comparator<Entry<String, String>> byKeyComparator = (o1, o2) -> o1.getKey().compareTo(o2.getKey());
 
     protected void addTags(Tagged osm, String tagname, boolean tagOpen) {
         if (osm.hasKeys()) {
