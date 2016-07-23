@@ -87,12 +87,9 @@ public class SelectionEventManager implements SelectionChangedListener {
         }
     }
 
-    private final Runnable edtRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (selection != null) {
-                fireEvents(inEDTListeners, selection);
-            }
+    private final Runnable edtRunnable = () -> {
+        if (selection != null) {
+            fireEvents(inEDTListeners, selection);
         }
     };
 }

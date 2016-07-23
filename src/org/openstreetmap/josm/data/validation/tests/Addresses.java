@@ -28,7 +28,6 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -91,17 +90,12 @@ public class Addresses extends Test {
             Severity level;
             // warning level only if several relations have different names, see #10945
             final String name = list.get(0).get("name");
-            if (name == null || Utils.filter(list, new Predicate<Relation>() {
-                @Override
-                public boolean evaluate(Relation r) {
-                    return name.equals(r.get("name"));
-                }
-            }).size() < list.size()) {
+            if (name == null || Utils.filter(list, r -> name.equals(r.get("name"))).size() < list.size()) {
                 level = Severity.WARNING;
             } else {
                 level = Severity.OTHER;
             }
-            List<OsmPrimitive> errorList = new ArrayList<OsmPrimitive>(list);
+            List<OsmPrimitive> errorList = new ArrayList<>(list);
             errorList.add(0, p);
             errors.add(new AddressError(this, MULTIPLE_STREET_RELATIONS, level, errorList,
                     tr("Multiple associatedStreet relations"), null, null));

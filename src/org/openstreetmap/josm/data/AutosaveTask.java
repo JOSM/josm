@@ -242,14 +242,10 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     }
 
     protected void displayNotification() {
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
+        GuiHelper.runInEDT(
                 new Notification(tr("Your work has been saved automatically."))
                 .setDuration(Notification.TIME_SHORT)
-                .show();
-            }
-        });
+                ::show);
     }
 
     @Override
@@ -345,12 +341,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private static boolean jvmPerfDataFileExists(final String jvmId) {
         File jvmDir = new File(System.getProperty("java.io.tmpdir") + File.separator + "hsperfdata_" + System.getProperty("user.name"));
         if (jvmDir.exists() && jvmDir.canRead()) {
-            File[] files = jvmDir.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File file) {
-                    return file.getName().equals(jvmId) && file.isFile();
-                }
-            });
+            File[] files = jvmDir.listFiles((FileFilter) file -> file.getName().equals(jvmId) && file.isFile());
             return files != null && files.length == 1;
         }
         return false;
@@ -364,18 +355,15 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         List<File> files = getUnsavedLayersFiles();
         final OpenFileTask openFileTsk = new OpenFileTask(files, null, tr("Restoring files"));
         final Future<?> openFilesFuture = Main.worker.submit(openFileTsk);
-        return Main.worker.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    // Wait for opened tasks to be generated.
-                    openFilesFuture.get();
-                    for (File f: openFileTsk.getSuccessfullyOpenedFiles()) {
-                        moveToDeletedLayersFolder(f);
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    Main.error(e);
+        return Main.worker.submit(() -> {
+            try {
+                // Wait for opened tasks to be generated.
+                openFilesFuture.get();
+                for (File f: openFileTsk.getSuccessfullyOpenedFiles()) {
+                    moveToDeletedLayersFolder(f);
                 }
+            } catch (InterruptedException | ExecutionException e) {
+                Main.error(e);
             }
         });
     }

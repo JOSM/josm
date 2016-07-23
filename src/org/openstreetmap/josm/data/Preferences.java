@@ -137,12 +137,8 @@ public class Preferences {
      */
     protected final SortedMap<String, Setting<?>> defaultsMap = new TreeMap<>();
 
-    private final Predicate<Entry<String, Setting<?>>> NO_DEFAULT_SETTINGS_ENTRY = new Predicate<Entry<String, Setting<?>>>() {
-        @Override
-        public boolean evaluate(Entry<String, Setting<?>> e) {
-            return !e.getValue().equals(defaultsMap.get(e.getKey()));
-        }
-    };
+    private final Predicate<Entry<String, Setting<?>>> NO_DEFAULT_SETTINGS_ENTRY =
+            e -> !e.getValue().equals(defaultsMap.get(e.getKey()));
 
     /**
      * Maps color keys to human readable color name

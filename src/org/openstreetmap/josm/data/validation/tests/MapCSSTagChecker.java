@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.FixCommand.evaluateObject;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
@@ -786,13 +787,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 if (Main.isDebugEnabled()) {
                     Main.debug("- Errors: "+pErrors);
                 }
-                final boolean isError = Utils.exists(pErrors, new Predicate<TestError>() {
-                    @Override
-                    public boolean evaluate(TestError e) {
-                        //noinspection EqualsBetweenInconvertibleTypes
-                        return e.getTester().equals(check.rule);
-                    }
-                });
+                final boolean isError = Utils.exists(pErrors, e -> e.getTester().equals(check.rule));
                 if (isError != i.getValue()) {
                     final String error = MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
                             check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys());

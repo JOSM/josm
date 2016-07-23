@@ -23,7 +23,6 @@ import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -174,12 +173,8 @@ public class Highways extends Test {
             referrers.addAll(way.lastNode().getReferrers());
         }
 
-        return Utils.exists(Utils.filteredCollection(referrers, Way.class), new Predicate<Way>() {
-            @Override
-            public boolean evaluate(final Way otherWay) {
-                return !way.equals(otherWay) && otherWay.hasTag("highway", highway, highway.replaceAll("_link$", ""));
-            }
-        });
+        return Utils.exists(Utils.filteredCollection(referrers, Way.class),
+                otherWay -> !way.equals(otherWay) && otherWay.hasTag("highway", highway, highway.replaceAll("_link$", "")));
     }
 
     private void testHighwayLink(final Way way) {
