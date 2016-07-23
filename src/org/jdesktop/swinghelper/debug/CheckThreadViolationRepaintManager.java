@@ -18,10 +18,7 @@ package org.jdesktop.swinghelper.debug;
 
 import java.lang.ref.WeakReference;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 
@@ -51,14 +48,6 @@ public class CheckThreadViolationRepaintManager extends RepaintManager {
 
     public CheckThreadViolationRepaintManager() {
         this(true);
-    }
-
-    public boolean isCompleteCheck() {
-        return completeCheck;
-    }
-
-    public void setCompleteCheck(boolean completeCheck) {
-        this.completeCheck = completeCheck;
     }
 
     @Override
@@ -104,7 +93,7 @@ public class CheckThreadViolationRepaintManager extends RepaintManager {
             //ignore the last processed component
             if (lastComponent != null && c == lastComponent.get())
                 return;
-            lastComponent = new WeakReference<JComponent>(c);
+            lastComponent = new WeakReference<>(c);
             violationFound(c, stackTrace);
         }
     }
@@ -116,61 +105,5 @@ public class CheckThreadViolationRepaintManager extends RepaintManager {
         for (StackTraceElement st : stackTrace) {
             System.out.println("\tat " + st);
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        //set CheckThreadViolationRepaintManager
-        RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
-        //Valid code
-        SwingUtilities.invokeAndWait(new Runnable() {
-            public void run() {
-                test();
-            }
-        });
-        System.out.println("Valid code passed...");
-        repaintTest();
-        System.out.println("Repaint test - correct code");
-        //Invalide code (stack trace expected)
-        test();
-    }
-
-    static void test() {
-        JFrame frame = new JFrame("Am I on EDT?");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new JButton("JButton"));
-        frame.pack();
-        frame.setVisible(true);
-        frame.dispose();
-    }
-
-    //this test must pass
-    static void imageUpdateTest() {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JEditorPane editor = new JEditorPane();
-        frame.setContentPane(editor);
-        editor.setContentType("text/html");
-        //it works with no valid image as well
-        editor.setText("<html><img src=\"file:\\lala.png\"></html>");
-        frame.setSize(300, 200);
-        frame.setVisible(true);
-    }
-
-    private static JButton test;
-    static void repaintTest() {
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                public void run() {
-                    test = new JButton();
-                    test.setSize(100, 100);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // repaint(Rectangle) should be ok
-        test.repaint(test.getBounds());
-        test.repaint(0, 0, 100, 100);
-        test.repaint();
     }
 }
