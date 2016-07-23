@@ -114,14 +114,11 @@ public abstract class FileImporter implements Comparable<FileImporter> {
     }
 
     private static void displayCancel(final Throwable t) {
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-                Notification note = new Notification(t.getMessage());
-                note.setIcon(JOptionPane.INFORMATION_MESSAGE);
-                note.setDuration(Notification.TIME_SHORT);
-                note.show();
-            }
+        GuiHelper.runInEDTAndWait(() -> {
+            Notification note = new Notification(t.getMessage());
+            note.setIcon(JOptionPane.INFORMATION_MESSAGE);
+            note.setDuration(Notification.TIME_SHORT);
+            note.show();
         });
     }
 

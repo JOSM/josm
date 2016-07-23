@@ -32,11 +32,7 @@ public class AddNodeHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() {
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override public void run() {
-                 addNode(args);
-            }
-        });
+        GuiHelper.runInEDTAndWait(() -> addNode(args));
     }
 
     @Override

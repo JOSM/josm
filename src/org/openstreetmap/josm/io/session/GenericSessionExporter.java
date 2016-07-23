@@ -8,9 +8,7 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -152,18 +150,8 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
             cl.show(cards, "include");
         }
 
-        link.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cl.show(cards, "link");
-            }
-        });
-        include.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cl.show(cards, "include");
-            }
-        });
+        link.addActionListener(e -> cl.show(cards, "link"));
+        include.addActionListener(e -> cl.show(cards, "include"));
 
         topRow.add(export, GBC.std());
         topRow.add(lbl, GBC.std());
@@ -174,19 +162,16 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
         p.add(include, GBC.eol());
         p.add(cards, GBC.eol().insets(15, 0, 3, 3));
 
-        export.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    GuiHelper.setEnabledRec(p, false);
-                    export.setEnabled(true);
-                } else {
-                    GuiHelper.setEnabledRec(p, true);
-                    if (save != null && saveAction != null) {
-                        save.setEnabled(saveAction.isEnabled());
-                    }
-                    link.setEnabled(file != null && file.exists());
+        export.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.DESELECTED) {
+                GuiHelper.setEnabledRec(p, false);
+                export.setEnabled(true);
+            } else {
+                GuiHelper.setEnabledRec(p, true);
+                if (save != null && saveAction != null) {
+                    save.setEnabled(saveAction.isEnabled());
                 }
+                link.setEnabled(file != null && file.exists());
             }
         });
         return p;

@@ -91,14 +91,11 @@ public class OsmImporter extends FileImporter {
                 associatedFile == null ? OsmDataLayer.createNewName() : associatedFile.getName(), pm);
 
         // FIXME: remove UI stuff from IO subsystem
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                OsmDataLayer layer = data.getLayer();
-                Main.getLayerManager().addLayer(layer);
-                data.getPostLayerTask().run();
-                data.getLayer().onPostLoadFromFile();
-            }
+        GuiHelper.runInEDT(() -> {
+            OsmDataLayer layer = data.getLayer();
+            Main.getLayerManager().addLayer(layer);
+            data.getPostLayerTask().run();
+            data.getLayer().onPostLoadFromFile();
         });
     }
 
@@ -131,24 +128,21 @@ public class OsmImporter extends FileImporter {
     }
 
     protected Runnable createPostLayerTask(final DataSet dataSet, final File associatedFile, final String layerName, final OsmDataLayer layer) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                if (dataSet.allPrimitives().isEmpty()) {
-                    String msg;
-                    if (associatedFile == null) {
-                        msg = tr("No data found for layer ''{0}''.", layerName);
-                    } else {
-                        msg = tr("No data found in file ''{0}''.", associatedFile.getPath());
-                    }
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            msg,
-                            tr("Open OSM file"),
-                            JOptionPane.INFORMATION_MESSAGE);
+        return () -> {
+            if (dataSet.allPrimitives().isEmpty()) {
+                String msg;
+                if (associatedFile == null) {
+                    msg = tr("No data found for layer ''{0}''.", layerName);
+                } else {
+                    msg = tr("No data found in file ''{0}''.", associatedFile.getPath());
                 }
-                layer.onPostLoadFromFile();
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        msg,
+                        tr("Open OSM file"),
+                        JOptionPane.INFORMATION_MESSAGE);
             }
+            layer.onPostLoadFromFile();
         };
     }
 }

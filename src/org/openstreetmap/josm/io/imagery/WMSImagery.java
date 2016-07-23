@@ -34,7 +34,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -216,12 +215,9 @@ public class WMSImagery {
 
         try {
             DocumentBuilder builder = Utils.newSafeDOMBuilder();
-            builder.setEntityResolver(new EntityResolver() {
-                @Override
-                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-                    Main.info("Ignoring DTD " + publicId + ", " + systemId);
-                    return new InputSource(new StringReader(""));
-                }
+            builder.setEntityResolver((publicId, systemId) -> {
+                Main.info("Ignoring DTD " + publicId + ", " + systemId);
+                return new InputSource(new StringReader(""));
             });
             Document document = builder.parse(new InputSource(new StringReader(incomingData)));
             Element root = document.getDocumentElement();

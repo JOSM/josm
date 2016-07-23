@@ -12,7 +12,6 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
 import javax.swing.SwingUtilities;
@@ -128,18 +127,15 @@ public class OsmConnection {
             if (!Objects.equals(apiUrl.getHost(), connection.getURL().getHost())) {
                 throw new MissingOAuthAccessTokenException();
             }
-            final Runnable authTask = new FutureTask<>(new Callable<OAuthAuthorizationWizard>() {
-                @Override
-                public OAuthAuthorizationWizard call() throws Exception {
-                    // Concerning Utils.newDirectExecutor: Main.worker cannot be used since this connection is already
-                    // executed via Main.worker. The OAuth connections would block otherwise.
-                    final OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
-                            Main.parent, apiUrl.toExternalForm(), Utils.newDirectExecutor());
-                    wizard.showDialog();
-                    OAuthAccessTokenHolder.getInstance().setSaveToPreferences(true);
-                    OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManager.getInstance());
-                    return wizard;
-                }
+            final Runnable authTask = new FutureTask<>(() -> {
+                // Concerning Utils.newDirectExecutor: Main.worker cannot be used since this connection is already
+                // executed via Main.worker. The OAuth connections would block otherwise.
+                final OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
+                        Main.parent, apiUrl.toExternalForm(), Utils.newDirectExecutor());
+                wizard.showDialog();
+                OAuthAccessTokenHolder.getInstance().setSaveToPreferences(true);
+                OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManager.getInstance());
+                return wizard;
             });
             // exception handling differs from implementation at GuiHelper.runInEDTAndWait()
             if (SwingUtilities.isEventDispatchThread()) {

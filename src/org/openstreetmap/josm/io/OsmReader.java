@@ -575,11 +575,7 @@ public class OsmReader extends AbstractReader {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
-        ProgressMonitor.CancelListener cancelListener = new ProgressMonitor.CancelListener() {
-            @Override public void operationCanceled() {
-                cancel = true;
-            }
-        };
+        ProgressMonitor.CancelListener cancelListener = () -> cancel = true;
         progressMonitor.addCancelListener(cancelListener);
         CheckParameterUtil.ensureParameterNotNull(source, "source");
         try {

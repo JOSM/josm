@@ -45,24 +45,21 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
          */
         } else if (noSuccessWithLastResponse || username.isEmpty() || password.isEmpty()) {
             if (!GraphicsEnvironment.isHeadless()) {
-                GuiHelper.runInEDTAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        CredentialDialog dialog;
-                        if (requestorType.equals(RequestorType.PROXY))
-                            dialog = CredentialDialog.getHttpProxyCredentialDialog(
-                                    username, password, host, getSaveUsernameAndPasswordCheckboxText());
-                        else
-                            dialog = CredentialDialog.getOsmApiCredentialDialog(
-                                    username, password, host, getSaveUsernameAndPasswordCheckboxText());
-                        dialog.setVisible(true);
-                        response.setCanceled(dialog.isCanceled());
-                        if (dialog.isCanceled())
-                            return;
-                        response.setUsername(dialog.getUsername());
-                        response.setPassword(dialog.getPassword());
-                        response.setSaveCredentials(dialog.isSaveCredentials());
-                    }
+                GuiHelper.runInEDTAndWait(() -> {
+                    CredentialDialog dialog;
+                    if (requestorType.equals(RequestorType.PROXY))
+                        dialog = CredentialDialog.getHttpProxyCredentialDialog(
+                                username, password, host, getSaveUsernameAndPasswordCheckboxText());
+                    else
+                        dialog = CredentialDialog.getOsmApiCredentialDialog(
+                                username, password, host, getSaveUsernameAndPasswordCheckboxText());
+                    dialog.setVisible(true);
+                    response.setCanceled(dialog.isCanceled());
+                    if (dialog.isCanceled())
+                        return;
+                    response.setUsername(dialog.getUsername());
+                    response.setPassword(dialog.getPassword());
+                    response.setSaveCredentials(dialog.isSaveCredentials());
                 });
             }
             if (response.isCanceled() || response.getUsername() == null || response.getPassword() == null) {

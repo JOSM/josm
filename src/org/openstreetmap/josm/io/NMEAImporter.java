@@ -49,15 +49,12 @@ public class NMEAImporter extends FileImporter {
                 final GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
                 final File fileFinal = file;
 
-                GuiHelper.runInEDT(new Runnable() {
-                    @Override
-                    public void run() {
-                        Main.getLayerManager().addLayer(gpxLayer);
-                        if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
-                            MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), fileFinal, gpxLayer);
-                            if (!ml.data.isEmpty()) {
-                                Main.getLayerManager().addLayer(ml);
-                            }
+                GuiHelper.runInEDT(() -> {
+                    Main.getLayerManager().addLayer(gpxLayer);
+                    if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
+                        MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), fileFinal, gpxLayer);
+                        if (!ml.data.isEmpty()) {
+                            Main.getLayerManager().addLayer(ml);
                         }
                     }
                 });
@@ -77,15 +74,10 @@ public class NMEAImporter extends FileImporter {
         msg.append(tr("Zero coordinates: {0}", r.getParserZeroCoordinates()))
            .append("</html>");
         if (success) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    new Notification(
-                            "<h3>" + tr("NMEA import success:") + "</h3>" + msg.toString())
-                            .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                            .show();
-                }
-            });
+            SwingUtilities.invokeLater(() -> new Notification(
+                    "<h3>" + tr("NMEA import success:") + "</h3>" + msg.toString())
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .show());
         } else {
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
