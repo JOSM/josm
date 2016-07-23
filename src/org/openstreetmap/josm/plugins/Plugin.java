@@ -145,11 +145,7 @@ public abstract class Plugin implements MapFrameListener {
         File pluginDir = Main.pref.getPluginsDirectory();
         File pluginJar = new File(pluginDir, info.name + ".jar");
         final URL pluginJarUrl = Utils.fileToURL(pluginJar);
-        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-              @Override
-              public ClassLoader run() {
-                  return new URLClassLoader(new URL[] {pluginJarUrl}, Main.class.getClassLoader());
-              }
-        });
+        return AccessController.doPrivileged((PrivilegedAction<ClassLoader>)
+                () -> new URLClassLoader(new URL[] {pluginJarUrl}, Main.class.getClassLoader()));
     }
 }

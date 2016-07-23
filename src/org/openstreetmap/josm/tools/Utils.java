@@ -1373,12 +1373,7 @@ public final class Utils {
      * @return an executor
      */
     public static Executor newDirectExecutor() {
-        return new Executor() {
-            @Override
-            public void execute(Runnable command) {
-                command.run();
-            }
-        };
+        return command -> command.run();
     }
 
     /**
@@ -1619,14 +1614,11 @@ public final class Utils {
      */
     public static void setObjectsAccessible(final AccessibleObject ... objects) {
         if (objects != null && objects.length > 0) {
-            AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                @Override
-                public Object run() {
-                    for (AccessibleObject o : objects) {
-                        o.setAccessible(true);
-                    }
-                    return null;
+            AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                for (AccessibleObject o : objects) {
+                    o.setAccessible(true);
                 }
+                return null;
             });
         }
     }

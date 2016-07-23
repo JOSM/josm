@@ -32,7 +32,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -75,7 +74,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -686,8 +684,7 @@ public class ImageProvider {
     /**
      * Load the image in a background thread.
      *
-     * This method returns immediately and runs the image request
-     * asynchronously.
+     * This method returns immediately and runs the image request asynchronously.
      *
      * @param callback a callback. It is called, when the image is ready.
      * This can happen before the call to this method returns or it may be
@@ -696,25 +693,16 @@ public class ImageProvider {
      */
     public void getInBackground(final ImageCallback callback) {
         if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)) {
-            Runnable fetch = new Runnable() {
-                @Override
-                public void run() {
-                    ImageIcon result = get();
-                    callback.finished(result);
-                }
-            };
-            IMAGE_FETCHER.submit(fetch);
+            IMAGE_FETCHER.submit(() -> callback.finished(get()));
         } else {
-            ImageIcon result = get();
-            callback.finished(result);
+            callback.finished(get());
         }
     }
 
     /**
      * Load the image in a background thread.
      *
-     * This method returns immediately and runs the image request
-     * asynchronously.
+     * This method returns immediately and runs the image request asynchronously.
      *
      * @param callback a callback. It is called, when the image is ready.
      * This can happen before the call to this method returns or it may be
@@ -724,13 +712,7 @@ public class ImageProvider {
      */
     public void getInBackground(final ImageResourceCallback callback) {
         if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)) {
-            Runnable fetch = new Runnable() {
-                @Override
-                public void run() {
-                    callback.finished(getResource());
-                }
-            };
-            IMAGE_FETCHER.submit(fetch);
+            IMAGE_FETCHER.submit(() -> callback.finished(getResource()));
         } else {
             callback.finished(getResource());
         }
@@ -1279,12 +1261,7 @@ public class ImageProvider {
                 }
             });
 
-            parser.setEntityResolver(new EntityResolver() {
-                @Override
-                public InputSource resolveEntity(String publicId, String systemId) {
-                    return new InputSource(new ByteArrayInputStream(new byte[0]));
-                }
-            });
+            parser.setEntityResolver((publicId, systemId) -> new InputSource(new ByteArrayInputStream(new byte[0])));
 
             CachedFile cf = new CachedFile(base + fn).setDestDir(
                     new File(Main.pref.getUserDataDirectory(), "images").getPath());
@@ -1507,13 +1484,10 @@ public class ImageProvider {
 
         // Check if the presets have icons for nodes/relations.
         if (!OsmPrimitiveType.WAY.equals(primitive.getType())) {
-            final Collection<TaggingPreset> presets = new TreeSet<>(new Comparator<TaggingPreset>() {
-                @Override
-                public int compare(TaggingPreset o1, TaggingPreset o2) {
-                    final int o1TypesSize = o1.types == null || o1.types.isEmpty() ? Integer.MAX_VALUE : o1.types.size();
-                    final int o2TypesSize = o2.types == null || o2.types.isEmpty() ? Integer.MAX_VALUE : o2.types.size();
-                    return Integer.compare(o1TypesSize, o2TypesSize);
-                }
+            final Collection<TaggingPreset> presets = new TreeSet<>((o1, o2) -> {
+                final int o1TypesSize = o1.types == null || o1.types.isEmpty() ? Integer.MAX_VALUE : o1.types.size();
+                final int o2TypesSize = o2.types == null || o2.types.isEmpty() ? Integer.MAX_VALUE : o2.types.size();
+                return Integer.compare(o1TypesSize, o2TypesSize);
             });
             presets.addAll(TaggingPresets.getMatchingPresets(primitive));
             for (final TaggingPreset preset : presets) {
