@@ -29,6 +29,7 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
+@FunctionalInterface
 public interface Condition {
 
     boolean applies(Environment e);
