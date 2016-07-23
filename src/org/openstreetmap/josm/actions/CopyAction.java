@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -47,17 +48,18 @@ public class CopyAction extends JosmAction {
             return;
         }
 
-        copy(selection);
+        copy(getLayerManager().getEditLayer(), selection);
     }
 
     /**
      * Copies the given primitive ids to the clipboard. The output by this function
      * looks similar to: node 1089302677,node 1089303458,way 93793372
+     * @param source The OSM data layer source
      * @param primitives The OSM primitives to copy
      */
-    public static void copy(Collection<OsmPrimitive> primitives) {
+    public static void copy(OsmDataLayer source, Collection<OsmPrimitive> primitives) {
         // copy ids to the clipboard
-        ClipboardUtils.copy(new PrimitiveTransferable(PrimitiveTransferData.getDataWithReferences(primitives)));
+        ClipboardUtils.copy(new PrimitiveTransferable(PrimitiveTransferData.getDataWithReferences(primitives), source));
     }
 
     @Override

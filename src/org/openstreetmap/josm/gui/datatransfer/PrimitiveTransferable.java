@@ -10,8 +10,10 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
+import org.openstreetmap.josm.gui.datatransfer.data.OsmLayerTransferData;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.datatransfer.data.TagTransferData;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * Transferable objects for {@link PrimitiveTransferData} objects
@@ -26,18 +28,32 @@ public class PrimitiveTransferable implements Transferable {
     private static final List<DataFlavor> PRIMITIVE_FLAVORS = Arrays.asList(PrimitiveTransferData.DATA_FLAVOR,
             TagTransferData.FLAVOR, DataFlavor.stringFlavor);
     private final PrimitiveTransferData primitives;
+    private OsmDataLayer sourceLayer;
 
     /**
      * Constructs a new {@code PrimitiveTransferable}.
      * @param primitives collection of OSM primitives
      */
     public PrimitiveTransferable(PrimitiveTransferData primitives) {
+        this(primitives, null);
+    }
+
+    /**
+     * Constructs a new {@code PrimitiveTransferable}.
+     * @param primitives collection of OSM primitives
+     * @param sourceLayer The layer the primitives are copied from
+     */
+    public PrimitiveTransferable(PrimitiveTransferData primitives, OsmDataLayer sourceLayer) {
         this.primitives = primitives;
+        this.sourceLayer = sourceLayer;
     }
 
     @Override
     public DataFlavor[] getTransferDataFlavors() {
         ArrayList<DataFlavor> flavors = new ArrayList<>(PRIMITIVE_FLAVORS);
+        if (sourceLayer != null) {
+            flavors.addAll(OsmLayerTransferData.FLAVORS);
+        }
         return flavors.toArray(new DataFlavor[flavors.size()]);
     }
 
@@ -60,6 +76,8 @@ public class PrimitiveTransferable implements Transferable {
             return primitives;
         } else if (TagTransferData.FLAVOR.equals(flavor)) {
             return new TagTransferData(primitives.getDirectlyAdded());
+        } else if (sourceLayer != null && OsmLayerTransferData.FLAVORS.contains(flavor)) {
+            return new OsmLayerTransferData(null, sourceLayer);
         } else {
             throw new UnsupportedFlavorException(flavor);
         }

@@ -4,8 +4,6 @@ package org.openstreetmap.josm.gui.dialogs.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 
@@ -20,7 +18,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * The action to merge the currently selected layer into another layer.
+ * The action to dupplicate the given selected layer into another layer.
  */
 public final class DuplicateAction extends AbstractAction implements IEnabledStateUpdating {
     private transient Layer layer;
@@ -52,24 +50,10 @@ public final class DuplicateAction extends AbstractAction implements IEnabledSta
         updateEnabledState();
     }
 
-    private void duplicate(Layer layer) {
-        if (!Main.isDisplayingMapView())
-            return;
-
-        List<String> layerNames = new ArrayList<>();
-        for (Layer l: Main.getLayerManager().getLayers()) {
-            layerNames.add(l.getName());
-        }
+    private static void duplicate(Layer layer) {
         if (layer instanceof OsmDataLayer) {
+            String newName = LayerListTransferHandler.suggestNewLayerName(layer.getName(), Main.getLayerManager().getLayers());
             OsmDataLayer oldLayer = (OsmDataLayer) layer;
-            // Translators: "Copy of {layer name}"
-            String newName = tr("Copy of {0}", oldLayer.getName());
-            int i = 2;
-            while (layerNames.contains(newName)) {
-                // Translators: "Copy {number} of {layer name}"
-                newName = tr("Copy {1} of {0}", oldLayer.getName(), i);
-                i++;
-            }
             Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(oldLayer.data), newName, null));
         }
     }
