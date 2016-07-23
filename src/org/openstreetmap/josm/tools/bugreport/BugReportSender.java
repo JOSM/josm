@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -26,7 +24,6 @@ import javax.xml.xpath.XPathFactory;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
-import org.openstreetmap.josm.tools.Base64;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
@@ -83,8 +80,7 @@ public class BugReportSender extends Thread {
     private String pasteDebugText() throws BugReportSenderException {
         try {
             String text = Utils.strip(statusText);
-            ByteBuffer buffer = Charset.forName("UTF-8").encode(CharBuffer.wrap(text));
-            String pdata = Base64.encode(buffer, false);
+            String pdata = Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
             String postQuery = "pdata=" + URLEncoder.encode(pdata, "UTF-8");
             HttpClient client = HttpClient.create(new URL(getJOSMTicketURL()), "POST")
                     .setHeader("Content-Type", "application/x-www-form-urlencoded")
