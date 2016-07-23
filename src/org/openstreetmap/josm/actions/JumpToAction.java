@@ -18,8 +18,6 @@ import javax.swing.event.DocumentListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LatLonDialog;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -222,11 +220,6 @@ public class JumpToAction extends JosmAction {
     protected void installAdapters() {
         super.installAdapters();
         // make this action listen to mapframe change events
-        Main.addMapFrameListener(new MapFrameListener() {
-            @Override
-            public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
-                updateEnabledState();
-            }
-        });
+        Main.addMapFrameListener((o, n) -> updateEnabledState());
     }
 }

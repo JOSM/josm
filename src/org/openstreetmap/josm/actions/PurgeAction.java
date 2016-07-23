@@ -13,7 +13,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -244,14 +243,11 @@ public class PurgeAction extends JosmAction {
                             "in addition to the selected objects:")+"</html>",
                             ImageProvider.get("warning-small"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
 
-            Collections.sort(toPurgeAdditionally, new Comparator<OsmPrimitive>() {
-                @Override
-                public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-                    int type = o2.getType().compareTo(o1.getType());
-                    if (type != 0)
-                        return type;
-                    return Long.compare(o1.getUniqueId(), o2.getUniqueId());
-                }
+            Collections.sort(toPurgeAdditionally, (o1, o2) -> {
+                int type = o2.getType().compareTo(o1.getType());
+                if (type != 0)
+                    return type;
+                return Long.compare(o1.getUniqueId(), o2.getUniqueId());
             });
             JList<OsmPrimitive> list = new JList<>(toPurgeAdditionally.toArray(new OsmPrimitive[toPurgeAdditionally.size()]));
             /* force selection to be active for all entries */

@@ -60,11 +60,7 @@ public abstract class AbstractChangesetDownloadTask extends AbstractDownloadTask
             //
             // Run on the EDT because UI updates are triggered.
             //
-            Runnable r = new Runnable() {
-                @Override public void run() {
-                    ChangesetCache.getInstance().update(downloadedChangesets);
-                }
-            };
+            Runnable r = () -> ChangesetCache.getInstance().update(downloadedChangesets);
             if (SwingUtilities.isEventDispatchThread()) {
                 r.run();
             } else {

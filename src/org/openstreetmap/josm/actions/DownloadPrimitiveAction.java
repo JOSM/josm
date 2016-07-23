@@ -52,19 +52,11 @@ public class DownloadPrimitiveAction extends JosmAction {
         final DownloadPrimitivesWithReferrersTask task =
                 new DownloadPrimitivesWithReferrersTask(newLayer, ids, downloadReferrers, full, null, null);
         Main.worker.submit(task);
-        Main.worker.submit(new Runnable() {
-            @Override
-            public void run() {
+        Main.worker.submit(() -> {
                 final List<PrimitiveId> downloaded = task.getDownloadedId();
                 if (downloaded != null) {
-                    GuiHelper.runInEDT(new Runnable() {
-                        @Override
-                        public void run() {
-                            Main.getLayerManager().getEditDataSet().setSelected(downloaded);
-                        }
-                    });
+                    GuiHelper.runInEDT(() -> Main.getLayerManager().getEditDataSet().setSelected(downloaded));
                 }
-            }
         });
     }
 }

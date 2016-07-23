@@ -116,23 +116,16 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
 
         DataSetMerger visitor = new DataSetMerger(targetLayer.data, parents);
         visitor.merge();
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        targetLayer.onPostDownloadFromServer();
-                    }
-                }
-        );
+        SwingUtilities.invokeLater(targetLayer::onPostDownloadFromServer);
         if (visitor.getConflicts().isEmpty())
             return;
         targetLayer.getConflicts().add(visitor.getConflicts());
         JOptionPane.showMessageDialog(
                 Main.parent,
                 trn("There was {0} conflict during import.",
-                        "There were {0} conflicts during import.",
-                        visitor.getConflicts().size(),
-                        visitor.getConflicts().size()
+                    "There were {0} conflicts during import.",
+                    visitor.getConflicts().size(),
+                    visitor.getConflicts().size()
                 ),
                 trn("Conflict during download", "Conflicts during download", visitor.getConflicts().size()),
                 JOptionPane.WARNING_MESSAGE

@@ -45,15 +45,12 @@ public class FixDataHook implements UploadHook {
         deprecated.add(new FixDataTag("oneway",  "1",     "oneway",  "yes"));
         deprecated.add(new FixDataTag("highway", "stile", "barrier", "stile"));
         // CHECKSTYLE.ON: SingleSpaceSeparator
-        deprecated.add(new FixData() {
-            @Override
-            public boolean fixKeys(Map<String, String> keys, OsmPrimitive osm) {
-                if (osm instanceof Relation && "multipolygon".equals(keys.get("type")) && "administrative".equals(keys.get("boundary"))) {
-                    keys.put("type", "boundary");
-                    return true;
-                }
-                return false;
+        deprecated.add((keys, osm) -> {
+            if (osm instanceof Relation && "multipolygon".equals(keys.get("type")) && "administrative".equals(keys.get("boundary"))) {
+                keys.put("type", "boundary");
+                return true;
             }
+            return false;
         });
     }
 

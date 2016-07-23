@@ -141,13 +141,10 @@ public class ValidateAction extends JosmAction {
 
             // update GUI on Swing EDT
             //
-            GuiHelper.runInEDT(new Runnable() {
-                @Override
-                public void run() {
-                    Main.map.validatorDialog.tree.setErrors(errors);
-                    Main.map.validatorDialog.unfurlDialog();
-                    Main.getLayerManager().getEditDataSet().fireSelectionChanged();
-                }
+            GuiHelper.runInEDT(() -> {
+                Main.map.validatorDialog.tree.setErrors(errors);
+                Main.map.validatorDialog.unfurlDialog();
+                Main.getLayerManager().getEditDataSet().fireSelectionChanged();
             });
         }
 

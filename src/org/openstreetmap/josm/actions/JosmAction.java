@@ -292,10 +292,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     }
 
     protected static void waitFuture(final Future<?> future, final PleaseWaitProgressMonitor monitor) {
-        Main.worker.submit(
-                new Runnable() {
-                    @Override
-                    public void run() {
+        Main.worker.submit(() -> {
                         try {
                             future.get();
                         } catch (InterruptedException | ExecutionException | CancellationException e) {
@@ -303,9 +300,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
                             return;
                         }
                         monitor.close();
-                    }
-                }
-        );
+                    });
     }
 
     /**

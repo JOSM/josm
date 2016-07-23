@@ -288,13 +288,7 @@ public class UploadSelectionAction extends JosmAction {
                 ExceptionUtil.explainException(lastException);
                 return;
             }
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    processPostParentChecker(layer, toUpload);
-                }
-            };
-            SwingUtilities.invokeLater(r);
+            SwingUtilities.invokeLater(() -> processPostParentChecker(layer, toUpload));
         }
 
         /**

@@ -32,7 +32,6 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -87,12 +86,9 @@ public class DownloadTaskList {
                 addDownloadTask(progressMonitor, new DownloadGpsTask(), td, i, n);
             }
         }
-        progressMonitor.addCancelListener(new CancelListener() {
-            @Override
-            public void operationCanceled() {
-                for (DownloadTask dt : tasks) {
-                    dt.cancel();
-                }
+        progressMonitor.addCancelListener(() -> {
+            for (DownloadTask dt : tasks) {
+                dt.cancel();
             }
         });
         return Main.worker.submit(new PostDownloadProcessor(osmData));
@@ -150,11 +146,7 @@ public class DownloadTaskList {
                 toSelect.add(primitive);
             }
         }
-        EventQueue.invokeLater(new Runnable() {
-            @Override public void run() {
-                UpdateSelectionAction.updatePrimitives(toSelect);
-            }
-        });
+        EventQueue.invokeLater(() -> UpdateSelectionAction.updatePrimitives(toSelect));
     }
 
     /**
@@ -269,17 +261,14 @@ public class DownloadTaskList {
                     }
                 }
 
-                GuiHelper.runInEDT(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (items.size() == 1 && tr("No data found in this area.").equals(items.iterator().next())) {
-                            new Notification(items.iterator().next()).setIcon(JOptionPane.WARNING_MESSAGE).show();
-                        } else {
-                            JOptionPane.showMessageDialog(Main.parent, "<html>"
-                                    + tr("The following errors occurred during mass download: {0}",
-                                            Utils.joinAsHtmlUnorderedList(items)) + "</html>",
-                                    tr("Errors during download"), JOptionPane.ERROR_MESSAGE);
-                        }
+                GuiHelper.runInEDT(() -> {
+                    if (items.size() == 1 && tr("No data found in this area.").equals(items.iterator().next())) {
+                        new Notification(items.iterator().next()).setIcon(JOptionPane.WARNING_MESSAGE).show();
+                    } else {
+                        JOptionPane.showMessageDialog(Main.parent, "<html>"
+                                + tr("The following errors occurred during mass download: {0}",
+                                        Utils.joinAsHtmlUnorderedList(items)) + "</html>",
+                                tr("Errors during download"), JOptionPane.ERROR_MESSAGE);
                     }
                 });
 
@@ -311,11 +300,7 @@ public class DownloadTaskList {
                     }
                 }
                 if (!myPrimitives.isEmpty()) {
-                    GuiHelper.runInEDT(new Runnable() {
-                        @Override public void run() {
-                            handlePotentiallyDeletedPrimitives(myPrimitives);
-                        }
-                    });
+                    GuiHelper.runInEDT(() -> handlePotentiallyDeletedPrimitives(myPrimitives));
                 }
             }
         }

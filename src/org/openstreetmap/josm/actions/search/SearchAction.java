@@ -650,12 +650,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
          */
         private static SearchTask newSearchTask(SearchSetting setting, final DataSet ds, SearchReceiver resultReceiver) {
             final Collection<OsmPrimitive> selection = new HashSet<>(ds.getAllSelected());
-            return new SearchTask(ds, setting, selection, new Predicate<OsmPrimitive>() {
-                @Override
-                public boolean evaluate(OsmPrimitive o) {
-                    return ds.isSelected(o);
-                }
-            }, resultReceiver);
+            return new SearchTask(ds, setting, selection, ds::isSelected, resultReceiver);
         }
 
         @Override

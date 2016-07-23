@@ -42,7 +42,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
@@ -250,21 +249,11 @@ public class UnGlueAction extends JosmAction {
         }
 
         private static boolean isTagged(final Iterable<Node> existingNodes) {
-            return Utils.exists(existingNodes, new Predicate<Node>() {
-                @Override
-                public boolean evaluate(final Node selectedNode) {
-                    return selectedNode.hasKeys();
-                }
-            });
+            return Utils.exists(existingNodes, selectedNode -> selectedNode.hasKeys());
         }
 
         private static boolean isUsedInRelations(final Iterable<Node> existingNodes) {
-            return Utils.exists(existingNodes, new Predicate<Node>() {
-                @Override
-                public boolean evaluate(final Node selectedNode) {
-                    return Utils.exists(selectedNode.getReferrers(), OsmPrimitive.relationPredicate);
-                }
-            });
+            return Utils.exists(existingNodes, selectedNode -> Utils.exists(selectedNode.getReferrers(), OsmPrimitive.relationPredicate));
         }
 
         void update(final Node existingNode, final List<Node> newNodes, final Collection<Command> cmds) {

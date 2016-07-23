@@ -62,11 +62,6 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
 
     @Override
     public void selectionChanged(final Collection<? extends OsmPrimitive> newSelection) {
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                setEnabled(newSelection != null && !newSelection.isEmpty());
-            }
-        });
+        GuiHelper.runInEDT(() -> setEnabled(newSelection != null && !newSelection.isEmpty()));
     }
 }

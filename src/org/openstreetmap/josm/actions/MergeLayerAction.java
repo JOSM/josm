@@ -40,9 +40,7 @@ public class MergeLayerAction extends AbstractMergeAction {
         final Layer targetLayer = askTargetLayer(targetLayers);
         if (targetLayer == null)
             return;
-        Main.worker.submit(new Runnable() {
-            @Override
-            public void run() {
+        Main.worker.submit(() -> {
                 boolean layerMerged = false;
                 for (final Layer sourceLayer: sourceLayers) {
                     if (sourceLayer != null && !sourceLayer.equals(targetLayer)) {
@@ -53,19 +51,13 @@ public class MergeLayerAction extends AbstractMergeAction {
                             }
                         }
                         targetLayer.mergeFrom(sourceLayer);
-                        GuiHelper.runInEDTAndWait(new Runnable() {
-                            @Override
-                            public void run() {
-                                Main.getLayerManager().removeLayer(sourceLayer);
-                            }
-                        });
+                        GuiHelper.runInEDTAndWait(() -> Main.getLayerManager().removeLayer(sourceLayer));
                         layerMerged = true;
                     }
                 }
                 if (layerMerged) {
                     Main.getLayerManager().setActiveLayer(targetLayer);
                 }
-            }
         });
     }
 
@@ -99,9 +91,7 @@ public class MergeLayerAction extends AbstractMergeAction {
 
     @Override
     protected void updateEnabledState() {
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
+        GuiHelper.runInEDT(() -> {
                 final Layer sourceLayer = getSourceLayer();
                 if (sourceLayer == null) {
                     setEnabled(false);
@@ -109,7 +99,6 @@ public class MergeLayerAction extends AbstractMergeAction {
                     final List<Layer> possibleMergeTargets = LayerListDialog.getInstance().getModel().getPossibleMergeTargets(sourceLayer);
                     setEnabled(!possibleMergeTargets.isEmpty());
                 }
-            }
         });
     }
 
