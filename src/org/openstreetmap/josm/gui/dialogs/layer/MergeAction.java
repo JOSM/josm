@@ -11,6 +11,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.dialogs.IEnabledStateUpdating;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.Layer;

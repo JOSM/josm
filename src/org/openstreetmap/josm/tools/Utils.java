@@ -808,6 +808,7 @@ public final class Utils {
      * @deprecated Use java.util.function.Function instead.
      */
     @Deprecated
+    @FunctionalInterface
     public interface Function<A, B> {
 
         /**

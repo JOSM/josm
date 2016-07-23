@@ -4,7 +4,9 @@ package org.openstreetmap.josm.gui.help;
 /**
  * Anything on which we can provide help.
  * @since 2252
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface Helpful {
 
     /**

@@ -51,7 +51,6 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.layer.ActivateLayerAction;
 import org.openstreetmap.josm.gui.dialogs.layer.DeleteLayerAction;
 import org.openstreetmap.josm.gui.dialogs.layer.DuplicateAction;
-import org.openstreetmap.josm.gui.dialogs.layer.IEnabledStateUpdating;
 import org.openstreetmap.josm.gui.dialogs.layer.LayerVisibilityAction;
 import org.openstreetmap.josm.gui.dialogs.layer.MergeAction;
 import org.openstreetmap.josm.gui.dialogs.layer.MoveDownAction;

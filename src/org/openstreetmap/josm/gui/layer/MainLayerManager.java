@@ -23,8 +23,9 @@ public class MainLayerManager extends LayerManager {
     /**
      * This listener listens to changes of the active or the edit layer.
      * @author Michael Zangl
-     *
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface ActiveLayerChangeListener {
         /**
          * Called whenever the active or edit layer changed.

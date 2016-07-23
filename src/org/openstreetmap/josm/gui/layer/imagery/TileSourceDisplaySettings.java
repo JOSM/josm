@@ -316,7 +316,9 @@ public class TileSourceDisplaySettings {
     /**
      * A listener that listens to changes to the {@link TileSourceDisplaySettings} object.
      * @author Michael Zangl
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface DisplaySettingsChangeListener {
         /**
          * Called whenever the display settings have changed.

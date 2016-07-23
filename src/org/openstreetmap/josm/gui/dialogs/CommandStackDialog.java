@@ -189,13 +189,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     }
 
     /**
-     * Interface to provide a callback for enabled state update.
-     */
-    protected interface IEnabledStateUpdating {
-        void updateEnabledState();
-    }
-
-    /**
      * Wires updater for enabled state to the events. Also updates dialog title if needed.
      * @param updater updater
      * @param tree tree on which wire updater

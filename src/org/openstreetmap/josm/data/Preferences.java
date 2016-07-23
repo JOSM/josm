@@ -180,7 +180,9 @@ public class Preferences {
 
     /**
      * Listener to preference change events.
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface PreferenceChangedListener {
         /**
          * Trigerred when a preference entry value changes.

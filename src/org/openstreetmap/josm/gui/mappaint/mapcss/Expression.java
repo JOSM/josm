@@ -8,7 +8,10 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
  *
  * Can be evaluated in a certain {@link Environment}. Usually takes
  * parameters, that are also Expressions and have to be evaluated first.
+ * @since  3848 (creation)
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface Expression {
     /**
      * Evaluate this expression.

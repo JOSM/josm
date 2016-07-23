@@ -20,6 +20,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class History {
 
+    @FunctionalInterface
     private interface FilterPredicate {
         boolean matches(HistoryOsmPrimitive primitive);
     }

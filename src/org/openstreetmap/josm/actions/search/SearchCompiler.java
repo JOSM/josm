@@ -229,7 +229,9 @@ public class SearchCompiler {
 
     /**
      * Classes implementing this interface can provide Match operators.
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     private interface MatchFactory {
         Collection<String> getKeywords();
     }

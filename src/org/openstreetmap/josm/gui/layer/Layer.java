@@ -69,7 +69,9 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
 
     /**
      * Action related to several layers.
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface MultiLayerAction {
 
         /**

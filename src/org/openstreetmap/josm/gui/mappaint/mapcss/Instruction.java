@@ -10,6 +10,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 
+@FunctionalInterface
 public interface Instruction extends StyleKeys {
 
     void execute(Environment env);

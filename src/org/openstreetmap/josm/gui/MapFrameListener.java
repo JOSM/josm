@@ -4,7 +4,9 @@ package org.openstreetmap.josm.gui;
 /**
  * Listener notified of MapFrame changes.
  * @since 5957
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface MapFrameListener {
 
     /**

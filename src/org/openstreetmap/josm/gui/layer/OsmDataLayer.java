@@ -238,13 +238,16 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
+    @FunctionalInterface
     public interface CommandQueueListener {
         void commandChanged(int queueSize, int redoSize);
     }
 
     /**
      * Listener called when a state of this layer has changed.
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface LayerStateChangeListener {
         /**
          * Notifies that the "upload discouraged" (upload=no) state has changed.

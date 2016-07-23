@@ -41,6 +41,7 @@ public class CredentialsManager implements CredentialsAgent {
 
     private static CredentialsAgentFactory agentFactory;
 
+    @FunctionalInterface
     public interface CredentialsAgentFactory {
         CredentialsAgent getCredentialsAgent();
     }

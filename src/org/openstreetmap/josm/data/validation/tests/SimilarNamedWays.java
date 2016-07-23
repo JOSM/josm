@@ -213,6 +213,7 @@ public class SimilarNamedWays extends Test {
         return similar;
     }
 
+    @FunctionalInterface
     public interface NormalizeRule {
 
         /**

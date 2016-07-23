@@ -73,7 +73,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Interface to notify listeners of the change of the zoom area.
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface ZoomChangeListener {
         /**
          * Method called when the zoom area has changed.

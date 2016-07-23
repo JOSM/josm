@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
  */
 public class PrimitiveDeepCopy {
 
+    @FunctionalInterface
     public interface PasteBufferChangedListener {
         void pasteBufferChanged(PrimitiveDeepCopy pasteBuffer);
     }

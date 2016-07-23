@@ -7,7 +7,10 @@ package org.openstreetmap.josm.tools;
  * on those objects.
  *
  * @author immanuel.scholz
+ * @since   208 (creation)
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface Destroyable {
 
     /**

@@ -18,6 +18,7 @@ import org.openstreetmap.josm.Main;
  */
 public class ExpertToggleAction extends ToggleAction {
 
+    @FunctionalInterface
     public interface ExpertModeChangeListener {
         void expertChanged(boolean isExpert);
     }

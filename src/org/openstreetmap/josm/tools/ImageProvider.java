@@ -310,7 +310,9 @@ public class ImageProvider {
 
     /**
      * Callback interface for asynchronous image loading.
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface ImageCallback {
         /**
          * Called when image loading has finished.
@@ -322,7 +324,9 @@ public class ImageProvider {
     /**
      * Callback interface for asynchronous image loading (with delayed scaling possibility).
      * @since 7693
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface ImageResourceCallback {
         /**
          * Called when image loading has finished.

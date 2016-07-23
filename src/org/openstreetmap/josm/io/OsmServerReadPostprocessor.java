@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
+@FunctionalInterface
 public interface OsmServerReadPostprocessor {
 
     void postprocessDataSet(DataSet ds, ProgressMonitor progress);

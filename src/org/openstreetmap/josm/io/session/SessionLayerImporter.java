@@ -12,7 +12,9 @@ import org.w3c.dom.Element;
 /**
  * Session layer importer.
  * @since 4668
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface SessionLayerImporter {
 
     /**

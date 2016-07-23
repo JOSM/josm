@@ -6,7 +6,10 @@ import org.openstreetmap.josm.data.osm.DataSet;
 
 /**
  * <p>An object which can render data provided by a {@link DataSet}.</p>
+ * @since  4087 (creation)
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface Rendering {
     /**
      * <p>Renders the OSM data in {@code data}</p>
