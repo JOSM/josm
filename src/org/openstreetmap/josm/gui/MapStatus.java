@@ -77,7 +77,6 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Predicate;
 
 /**
  * A component that manages some status information display about the map.
@@ -293,12 +292,8 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                     // Popup Information
                     // display them if the middle mouse button is pressed and keep them until the mouse is moved
                     if (middleMouseDown || isAtOldPosition) {
-                        Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos, new Predicate<OsmPrimitive>() {
-                            @Override
-                            public boolean evaluate(OsmPrimitive o) {
-                                return isUsablePredicate.evaluate(o) && isSelectablePredicate.evaluate(o);
-                            }
-                        });
+                        Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos,
+                                o -> isUsablePredicate.evaluate(o) && isSelectablePredicate.evaluate(o));
 
                         final JPanel c = new JPanel(new GridBagLayout());
                         final JLabel lbl = new JLabel(
@@ -504,12 +499,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                 return;
             final Popup staticPopup = popup;
             popup = null;
-            EventQueue.invokeLater(new Runnable() {
-               @Override
-               public void run() {
-                    staticPopup.hide();
-                }
-            });
+            EventQueue.invokeLater(() -> staticPopup.hide());
         }
 
         /**
@@ -523,21 +513,13 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
             if (this.popup != null) {
                 // If an old popup exists, remove it when the new popup has been drawn to keep flickering to a minimum
                 final Popup staticOldPopup = this.popup;
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        staticPopup.show();
-                        staticOldPopup.hide();
-                    }
+                EventQueue.invokeLater(() -> {
+                    staticPopup.show();
+                    staticOldPopup.hide();
                 });
             } else {
                 // There is no old popup
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        staticPopup.show();
-                    }
-                });
+                EventQueue.invokeLater(() -> staticPopup.show());
             }
             this.popupLabels = lbls;
             this.popup = newPopup;
@@ -1009,12 +991,9 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         statusText.remove(entry);
         statusText.add(entry);
 
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                helpText.setText(text);
-                helpText.setToolTipText(text);
-            }
+        GuiHelper.runInEDT(() -> {
+            helpText.setText(text);
+            helpText.setToolTipText(text);
         });
     }
 

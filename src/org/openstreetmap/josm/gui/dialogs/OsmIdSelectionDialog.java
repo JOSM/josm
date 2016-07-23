@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -40,6 +38,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.OsmIdTextField;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitiveTypesComboBox;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
  * Dialog prompt to user to let him choose OSM primitives by specifying their type and IDs.
@@ -104,12 +103,9 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
         HtmlPanel help = new HtmlPanel(help1 + "<br/>" + help2 + "<br/><br/>" + help3);
         help.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
-        cbType.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                tfId.setType(cbType.getType());
-                tfId.performValidation();
-            }
+        cbType.addItemListener(e -> {
+            tfId.setType(cbType.getType());
+            tfId.performValidation();
         });
 
         final GroupLayout.SequentialGroup sequentialGroup = layout.createSequentialGroup()
@@ -207,19 +203,11 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
         if (buf.length() > Main.pref.getInteger("downloadprimitive.max-autopaste-length", 2000)) return;
         final List<SimplePrimitiveId> ids = SimplePrimitiveId.fuzzyParse(buf);
         if (!ids.isEmpty()) {
-            final String parsedText = Utils.join(", ", Utils.transform(ids, new Utils.Function<SimplePrimitiveId, String>() {
-                @Override
-                public String apply(SimplePrimitiveId x) {
-                    return x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId());
-                }
-            }));
+            final String parsedText = Utils.join(", ", Utils.transform(ids,
+                    (Function<SimplePrimitiveId, String>) x -> x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId())));
             tfId.tryToPasteFrom(parsedText);
-            final Set<OsmPrimitiveType> types = EnumSet.copyOf(Utils.transform(ids, new Utils.Function<SimplePrimitiveId, OsmPrimitiveType>() {
-                @Override
-                public OsmPrimitiveType apply(SimplePrimitiveId x) {
-                    return x.getType();
-                }
-            }));
+            final Set<OsmPrimitiveType> types = EnumSet.copyOf(Utils.transform(ids,
+                    (Function<SimplePrimitiveId, OsmPrimitiveType>) x -> x.getType()));
             if (types.size() == 1) {
                 // select corresponding type
                 cbType.setSelectedItem(types.iterator().next());

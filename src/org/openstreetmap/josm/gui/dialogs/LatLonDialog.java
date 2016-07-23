@@ -21,8 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -166,14 +164,11 @@ public class LatLonDialog extends ExtendedDialog {
         tabs = new JTabbedPane();
         tabs.addTab(tr("Lat/Lon"), buildLatLon());
         tabs.addTab(tr("East/North"), buildEastNorth());
-        tabs.getModel().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                switch (tabs.getModel().getSelectedIndex()) {
-                    case 0: parseLatLonUserInput(); break;
-                    case 1: parseEastNorthUserInput(); break;
-                    default: throw new AssertionError();
-                }
+        tabs.getModel().addChangeListener(e -> {
+            switch (tabs.getModel().getSelectedIndex()) {
+                case 0: parseLatLonUserInput(); break;
+                case 1: parseEastNorthUserInput(); break;
+                default: throw new AssertionError();
             }
         });
         setContent(tabs, false);

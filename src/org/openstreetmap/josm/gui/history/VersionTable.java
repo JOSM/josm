@@ -24,8 +24,6 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
@@ -92,15 +90,12 @@ public class VersionTable extends JTable implements ChangeListener {
                 }
             }
         });
-        getModel().addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                adjustColumnWidth(VersionTable.this, 0, 0);
-                adjustColumnWidth(VersionTable.this, 1, -8);
-                adjustColumnWidth(VersionTable.this, 2, -8);
-                adjustColumnWidth(VersionTable.this, 3, 0);
-                adjustColumnWidth(VersionTable.this, 4, 0);
-            }
+        getModel().addTableModelListener(e -> {
+            adjustColumnWidth(VersionTable.this, 0, 0);
+            adjustColumnWidth(VersionTable.this, 1, -8);
+            adjustColumnWidth(VersionTable.this, 2, -8);
+            adjustColumnWidth(VersionTable.this, 3, 0);
+            adjustColumnWidth(VersionTable.this, 4, 0);
         });
     }
 

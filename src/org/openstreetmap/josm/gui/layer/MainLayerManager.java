@@ -227,12 +227,7 @@ public class MainLayerManager extends LayerManager {
     public void setActiveLayer(final Layer layer) {
         // we force this on to the EDT Thread to make events fire from there.
         // The synchronization lock needs to be held by the EDT.
-        GuiHelper.runInEDTAndWaitWithException(new Runnable() {
-            @Override
-            public void run() {
-                realSetActiveLayer(layer);
-            }
-        });
+        GuiHelper.runInEDTAndWaitWithException(() -> realSetActiveLayer(layer));
     }
 
     protected synchronized void realSetActiveLayer(final Layer layer) {

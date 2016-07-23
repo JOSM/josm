@@ -521,37 +521,29 @@ public class ChangesetDialog extends ToggleDialog {
                 future = Main.worker.submit(new PostDownloadHandler(task, task.download()));
             }
 
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    // first, wait for the download task to finish, if a download task was launched
-                    if (future != null) {
-                        try {
-                            future.get();
-                        } catch (InterruptedException e) {
-                            Main.warn("InterruptedException in "+getClass().getSimpleName()+" while downloading changeset header");
-                        } catch (ExecutionException e) {
-                            Main.error(e);
-                            BugReportExceptionHandler.handleException(e.getCause());
-                            return;
-                        }
+            Runnable r = () -> {
+                // first, wait for the download task to finish, if a download task was launched
+                if (future != null) {
+                    try {
+                        future.get();
+                    } catch (InterruptedException e1) {
+                        Main.warn(e1, "InterruptedException in ChangesetDialog while downloading changeset header");
+                    } catch (ExecutionException e2) {
+                        Main.error(e2);
+                        BugReportExceptionHandler.handleException(e2.getCause());
+                        return;
                     }
-                    if (task != null) {
-                        if (task.isCanceled())
-                            // don't launch the changeset manager if the download task was canceled
-                            return;
-                        if (task.isFailed()) {
-                            toDownload.clear();
-                        }
-                    }
-                    // launch the task
-                    GuiHelper.runInEDT(new Runnable() {
-                        @Override
-                        public void run() {
-                            launchChangesetManager(sel);
-                        }
-                    });
                 }
+                if (task != null) {
+                    if (task.isCanceled())
+                        // don't launch the changeset manager if the download task was canceled
+                        return;
+                    if (task.isFailed()) {
+                        toDownload.clear();
+                    }
+                }
+                // launch the task
+                GuiHelper.runInEDT(() -> launchChangesetManager(sel));
             };
             Main.worker.submit(r);
         }

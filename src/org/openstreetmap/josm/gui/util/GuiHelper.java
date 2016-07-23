@@ -21,8 +21,6 @@ import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -90,12 +88,7 @@ public final class GuiHelper {
     }
 
     public static void executeByMainWorkerInEDT(final Runnable task) {
-        Main.worker.submit(new Runnable() {
-            @Override
-            public void run() {
-                runInEDTAndWait(task);
-            }
-        });
+        Main.worker.submit(() -> runInEDTAndWait(task));
     }
 
     /**
@@ -271,17 +264,14 @@ public final class GuiHelper {
      */
     public static Component prepareResizeableOptionPane(final Component pane, final Dimension minDimension) {
         if (pane != null) {
-            pane.addHierarchyListener(new HierarchyListener() {
-                @Override
-                public void hierarchyChanged(HierarchyEvent e) {
-                    Window window = SwingUtilities.getWindowAncestor(pane);
-                    if (window instanceof Dialog) {
-                        Dialog dialog = (Dialog) window;
-                        if (!dialog.isResizable()) {
-                            dialog.setResizable(true);
-                            if (minDimension != null) {
-                                dialog.setMinimumSize(minDimension);
-                            }
+            pane.addHierarchyListener(e -> {
+                Window window = SwingUtilities.getWindowAncestor(pane);
+                if (window instanceof Dialog) {
+                    Dialog dialog = (Dialog) window;
+                    if (!dialog.isResizable()) {
+                        dialog.setResizable(true);
+                        if (minDimension != null) {
+                            dialog.setMinimumSize(minDimension);
                         }
                     }
                 }

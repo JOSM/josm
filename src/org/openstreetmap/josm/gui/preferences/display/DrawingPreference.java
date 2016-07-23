@@ -4,8 +4,6 @@ package org.openstreetmap.josm.gui.preferences.display;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -70,16 +68,13 @@ public class DrawingPreference implements SubPreferenceSetting {
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // directionHint
-        directionHint.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (directionHint.isSelected()) {
-                    headArrow.setSelected(Main.pref.getBoolean("draw.segment.head_only", false));
-                } else {
-                    headArrow.setSelected(false);
-                }
-                headArrow.setEnabled(directionHint.isSelected());
+        directionHint.addActionListener(e -> {
+            if (directionHint.isSelected()) {
+                headArrow.setSelected(Main.pref.getBoolean("draw.segment.head_only", false));
+            } else {
+                headArrow.setSelected(false);
             }
+            headArrow.setEnabled(directionHint.isSelected());
         });
         directionHint.setToolTipText(tr("Draw direction hints for way segments."));
         directionHint.setSelected(Main.pref.getBoolean("draw.segment.direction", false));

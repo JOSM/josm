@@ -5,7 +5,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,15 +66,12 @@ public class TagConflictResolverModel extends DefaultTableModel {
     protected void sort() {
         Collections.sort(
                 displayedKeys,
-                new Comparator<String>() {
-                    @Override
-                    public int compare(String key1, String key2) {
-                        if (decisions.get(key1).isDecided() && !decisions.get(key2).isDecided())
-                            return 1;
-                        else if (!decisions.get(key1).isDecided() && decisions.get(key2).isDecided())
-                            return -1;
-                        return key1.compareTo(key2);
-                    }
+                (key1, key2) -> {
+                    if (decisions.get(key1).isDecided() && !decisions.get(key2).isDecided())
+                        return 1;
+                    else if (!decisions.get(key1).isDecided() && decisions.get(key2).isDecided())
+                        return -1;
+                    return key1.compareTo(key2);
                 }
         );
     }
@@ -114,11 +110,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
         displayedKeys.addAll(keys);
         refreshNumConflicts();
         sort();
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override public void run() {
-                fireTableDataChanged();
-            }
-        });
+        GuiHelper.runInEDTAndWait(this::fireTableDataChanged);
     }
 
     /**
@@ -183,11 +175,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
             default: // Do nothing
             }
         }
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override public void run() {
-                fireTableDataChanged();
-            }
-        });
+        GuiHelper.runInEDTAndWait(this::fireTableDataChanged);
         refreshNumConflicts();
     }
 

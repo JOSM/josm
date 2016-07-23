@@ -7,15 +7,12 @@ import java.awt.Adjustable;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JCheckBox;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -124,36 +121,28 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
 
         // register an item lister with the check box
         //
-        view.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                switch(e.getStateChange()) {
-                case ItemEvent.SELECTED:
-                    if (!isParticipatingInSynchronizedScrolling(adjustable)) {
-                        setParticipatingInSynchronizedScrolling(adjustable, true);
-                    }
-                    break;
-                case ItemEvent.DESELECTED:
-                    if (isParticipatingInSynchronizedScrolling(adjustable)) {
-                        setParticipatingInSynchronizedScrolling(adjustable, false);
-                    }
-                    break;
-                default: // Do nothing
+        view.addItemListener(e -> {
+            switch(e.getStateChange()) {
+            case ItemEvent.SELECTED:
+                if (!isParticipatingInSynchronizedScrolling(adjustable)) {
+                    setParticipatingInSynchronizedScrolling(adjustable, true);
                 }
+                break;
+            case ItemEvent.DESELECTED:
+                if (isParticipatingInSynchronizedScrolling(adjustable)) {
+                    setParticipatingInSynchronizedScrolling(adjustable, false);
+                }
+                break;
+            default: // Do nothing
             }
         });
 
-        observable.addChangeListener(
-                new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        boolean sync = isParticipatingInSynchronizedScrolling(adjustable);
-                        if (view.isSelected() != sync) {
-                            view.setSelected(sync);
-                        }
-                    }
-                }
-        );
+        observable.addChangeListener(e -> {
+            boolean sync = isParticipatingInSynchronizedScrolling(adjustable);
+            if (view.isSelected() != sync) {
+                view.setSelected(sync);
+            }
+        });
         setParticipatingInSynchronizedScrolling(adjustable, true);
         view.setSelected(true);
     }

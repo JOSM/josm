@@ -124,21 +124,11 @@ public class SelectionListDialog extends ToggleDialog {
 
         // the select action
         final SideButton selectButton = new SideButton(actSelect);
-        selectButton.createArrow(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SelectionHistoryPopup.launch(selectButton, model.getSelectionHistory());
-            }
-        });
+        selectButton.createArrow(e -> SelectionHistoryPopup.launch(selectButton, model.getSelectionHistory()));
 
         // the search button
         final SideButton searchButton = new SideButton(actSearch);
-        searchButton.createArrow(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SearchPopupMenu.launch(searchButton);
-            }
-        });
+        searchButton.createArrow(e -> SearchPopupMenu.launch(searchButton));
 
         createLayout(lstPrimitives, true, Arrays.asList(new SideButton[] {
             selectButton, searchButton, new SideButton(actShowHistory)
@@ -163,12 +153,9 @@ public class SelectionListDialog extends ToggleDialog {
         popupMenu = new ListPopupMenu(lstPrimitives);
         popupMenuHandler = setupPopupMenuHandler();
 
-        lstPrimitives.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                actZoomToListSelection.valueChanged(e);
-                popupMenuHandler.setPrimitives(model.getSelected());
-            }
+        lstPrimitives.addListSelectionListener(e -> {
+            actZoomToListSelection.valueChanged(e);
+            popupMenuHandler.setPrimitives(model.getSelected());
         });
 
         lstPrimitives.addMouseListener(new MouseEventHandler());

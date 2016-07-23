@@ -98,24 +98,21 @@ public class MapImage {
                 .setWidth(width)
                 .setHeight(height)
                 .setOptional(true)
-                .getInBackground(new ImageCallback() {
-                    @Override
-                    public void finished(ImageIcon result) {
-                        synchronized (MapImage.this) {
-                            if (result == null) {
-                                source.logWarning(tr("Failed to locate image ''{0}''", name));
-                                ImageIcon noIcon = MapPaintStyles.getNoIcon_Icon(source);
-                                img = noIcon == null ? null : (BufferedImage) noIcon.getImage();
-                            } else {
-                                img = (BufferedImage) rescale(result.getImage());
-                            }
-                            if (temporary) {
-                                disabledImgCache = null;
-                                Main.map.mapView.preferenceChanged(null); // otherwise repaint is ignored, because layer hasn't changed
-                                Main.map.mapView.repaint();
-                            }
-                            temporary = false;
+                .getInBackground((ImageCallback) result -> {
+                    synchronized (MapImage.this) {
+                        if (result == null) {
+                            source.logWarning(tr("Failed to locate image ''{0}''", name));
+                            ImageIcon noIcon = MapPaintStyles.getNoIcon_Icon(source);
+                            img = noIcon == null ? null : (BufferedImage) noIcon.getImage();
+                        } else {
+                            img = (BufferedImage) rescale(result.getImage());
                         }
+                        if (temporary) {
+                            disabledImgCache = null;
+                            Main.map.mapView.preferenceChanged(null); // otherwise repaint is ignored, because layer hasn't changed
+                            Main.map.mapView.repaint();
+                        }
+                        temporary = false;
                     }
                 }
         );

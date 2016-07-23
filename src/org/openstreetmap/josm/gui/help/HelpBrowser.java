@@ -113,15 +113,11 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
      */
     public static void setUrlForHelpTopic(final String helpTopic) {
         final HelpBrowser browser = getInstance();
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                browser.openHelpTopic(helpTopic);
-                browser.setVisible(true);
-                browser.toFront();
-            }
-        };
-        SwingUtilities.invokeLater(r);
+        SwingUtilities.invokeLater(() -> {
+            browser.openHelpTopic(helpTopic);
+            browser.setVisible(true);
+            browser.toFront();
+        });
     }
 
     /**

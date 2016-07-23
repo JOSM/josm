@@ -2,8 +2,6 @@
 package org.openstreetmap.josm.gui.conflict.tags;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.EventObject;
 
 import javax.swing.JTable;
@@ -37,12 +35,7 @@ public class RelationMemberConflictDecisionEditor extends JosmComboBox<RelationM
     /* --------------------------------------------------------------------------------- */
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                stopCellEditing();
-            }
-        });
+        addActionListener(e -> stopCellEditing());
         setSelectedItem(value);
         this.originalValue = (RelationMemberConflictDecisionType) value;
         return this;

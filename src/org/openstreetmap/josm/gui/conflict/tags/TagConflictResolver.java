@@ -12,8 +12,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 
@@ -55,25 +53,15 @@ public class TagConflictResolver extends JPanel {
         gc.weighty = 0.0;
         pnl.add(cbShowTagsWithConflictsOnly, gc);
         pnl.add(cbShowTagsWithMultiValuesOnly, gc);
-        cbShowTagsWithConflictsOnly.addChangeListener(
-                new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        model.setShowTagsWithConflictsOnly(cbShowTagsWithConflictsOnly.isSelected());
-                        cbShowTagsWithMultiValuesOnly.setEnabled(cbShowTagsWithConflictsOnly.isSelected());
-                    }
-                }
-        );
+        cbShowTagsWithConflictsOnly.addChangeListener(e -> {
+                model.setShowTagsWithConflictsOnly(cbShowTagsWithConflictsOnly.isSelected());
+                cbShowTagsWithMultiValuesOnly.setEnabled(cbShowTagsWithConflictsOnly.isSelected());
+        });
         cbShowTagsWithConflictsOnly.setSelected(
                 Main.pref.getBoolean(getClass().getName() + ".showTagsWithConflictsOnly", false)
         );
         cbShowTagsWithMultiValuesOnly.addChangeListener(
-                new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        model.setShowTagsWithMultiValuesOnly(cbShowTagsWithMultiValuesOnly.isSelected());
-                    }
-                }
+                e -> model.setShowTagsWithMultiValuesOnly(cbShowTagsWithMultiValuesOnly.isSelected())
         );
         cbShowTagsWithMultiValuesOnly.setSelected(
                 Main.pref.getBoolean(getClass().getName() + ".showTagsWithMultiValuesOnly", false)

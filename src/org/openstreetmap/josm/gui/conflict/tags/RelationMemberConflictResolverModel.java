@@ -24,7 +24,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -234,12 +233,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                 for (final Collection<RelationMemberConflictDecision> i : decisionsByPrimitive.values()) {
                     iterators.add(i.iterator());
                 }
-                while (Utils.forAll(iterators, new Predicate<Iterator<RelationMemberConflictDecision>>() {
-                    @Override
-                    public boolean evaluate(Iterator<RelationMemberConflictDecision> it) {
-                        return it.hasNext();
-                    }
-                })) {
+                while (Utils.forAll(iterators, it -> it.hasNext())) {
                     final List<RelationMemberConflictDecision> decisions = new ArrayList<>();
                     final Collection<String> roles = new HashSet<>();
                     final Collection<Integer> indices = new TreeSet<>();
@@ -309,11 +303,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      */
     public void refresh() {
         updateNumConflicts();
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override public void run() {
-                fireTableDataChanged();
-            }
-        });
+        GuiHelper.runInEDTAndWait(this::fireTableDataChanged);
     }
 
     /**

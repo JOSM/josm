@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.Action;
@@ -84,12 +83,9 @@ public class SideButton extends JButton implements Destroyable {
         // need to listen for changes, so that putValue() that are called after the
         // SideButton is constructed get the proper icon size
         if (action != null) {
-            propertyChangeListener = new PropertyChangeListener() {
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    if (javax.swing.Action.SMALL_ICON.equals(evt.getPropertyName())) {
-                        fixIcon(null);
-                    }
+            propertyChangeListener = evt -> {
+                if (javax.swing.Action.SMALL_ICON.equals(evt.getPropertyName())) {
+                    fixIcon(null);
                 }
             };
             action.addPropertyChangeListener(propertyChangeListener);

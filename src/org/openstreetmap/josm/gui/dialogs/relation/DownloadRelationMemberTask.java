@@ -132,16 +132,10 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
                 objectReader = null;
             }
 
-            SwingUtilities.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            curLayer.mergeFrom(dataSet);
-                            curLayer.onPostDownloadFromServer();
-                        }
-                    }
-            );
-
+            SwingUtilities.invokeLater(() -> {
+                curLayer.mergeFrom(dataSet);
+                curLayer.onPostDownloadFromServer();
+            });
         } catch (OsmTransferException e) {
             if (canceled) {
                 Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));

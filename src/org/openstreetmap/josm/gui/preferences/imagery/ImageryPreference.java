@@ -13,7 +13,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -40,8 +39,6 @@ import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -311,23 +308,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             defaultModel = new ImageryDefaultLayerTableModel();
             defaultTable = new JTable(defaultModel);
 
-            defaultModel.addTableModelListener(
-                    new TableModelListener() {
-                        @Override
-                        public void tableChanged(TableModelEvent e) {
-                            activeTable.repaint();
-                        }
-                    }
-                    );
-
-            activeModel.addTableModelListener(
-                    new TableModelListener() {
-                        @Override
-                        public void tableChanged(TableModelEvent e) {
-                            defaultTable.repaint();
-                        }
-                    }
-                    );
+            defaultModel.addTableModelListener(e -> activeTable.repaint());
+            activeModel.addTableModelListener(e -> defaultTable.repaint());
 
             TableColumnModel mod = defaultTable.getColumnModel();
             mod.getColumn(2).setPreferredWidth(800);
@@ -838,26 +820,17 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             JButton add = new JButton(tr("Add"));
             buttonPanel.add(add, GBC.std().insets(0, 5, 0, 0));
-            add.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    OffsetBookmark b = new OffsetBookmark(Main.getProjection().toCode(), "", "", 0, 0);
-                    model.addRow(b);
-                }
-            });
+            add.addActionListener(e -> model.addRow(new OffsetBookmark(Main.getProjection().toCode(), "", "", 0, 0)));
 
             JButton delete = new JButton(tr("Delete"));
             buttonPanel.add(delete, GBC.std().insets(0, 5, 0, 0));
-            delete.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (list.getSelectedRow() == -1) {
-                        JOptionPane.showMessageDialog(gui, tr("Please select the row to delete."));
-                    } else {
-                        Integer i;
-                        while ((i = list.getSelectedRow()) != -1) {
-                            model.removeRow(i);
-                        }
+            delete.addActionListener(e -> {
+                if (list.getSelectedRow() == -1) {
+                    JOptionPane.showMessageDialog(gui, tr("Please select the row to delete."));
+                } else {
+                    Integer i;
+                    while ((i = list.getSelectedRow()) != -1) {
+                        model.removeRow(i);
                     }
                 }
             });

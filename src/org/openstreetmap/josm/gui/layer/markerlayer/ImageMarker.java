@@ -6,7 +6,6 @@ import java.awt.Cursor;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.Collections;
 
@@ -54,17 +53,14 @@ public class ImageMarker extends ButtonMarker {
         JPanel p2 = new JPanel();
         p2.add(scale);
         p.add(p2, BorderLayout.SOUTH);
-        scale.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                p.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                if (scale.getModel().isSelected()) {
-                    ((JLabel) vp.getView()).setIcon(loadScaledImage(imageUrl, Math.max(vp.getWidth(), vp.getHeight())));
-                } else {
-                    ((JLabel) vp.getView()).setIcon(new ImageIcon(imageUrl));
-                }
-                p.setCursor(Cursor.getDefaultCursor());
+        scale.addActionListener(ev1 -> {
+            p.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            if (scale.getModel().isSelected()) {
+                ((JLabel) vp.getView()).setIcon(loadScaledImage(imageUrl, Math.max(vp.getWidth(), vp.getHeight())));
+            } else {
+                ((JLabel) vp.getView()).setIcon(new ImageIcon(imageUrl));
             }
+            p.setCursor(Cursor.getDefaultCursor());
         });
         scale.setSelected(true);
         JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE);

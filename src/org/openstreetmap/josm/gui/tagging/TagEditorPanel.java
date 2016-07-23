@@ -14,8 +14,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
@@ -124,12 +122,7 @@ public class TagEditorPanel extends JPanel {
         add(tablePanel, gc);
 
         if (presetHandler != null) {
-            model.addTableModelListener(new TableModelListener() {
-                @Override
-                public void tableChanged(TableModelEvent e) {
-                    updatePresets();
-                }
-            });
+            model.addTableModelListener(e -> updatePresets());
         }
 
         addFocusListener(new FocusAdapter() {

@@ -29,7 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -59,8 +58,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
@@ -459,54 +456,46 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 }
             });
             imgList.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            imgList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
-                @Override
-                public void valueChanged(ListSelectionEvent arg0) {
-                    int index = imgList.getSelectedIndex();
-                    Integer orientation = ExifReader.readOrientation(yLayer.data.get(index).getFile());
-                    imgDisp.setImage(yLayer.data.get(index).getFile(), orientation);
-                    Date date = yLayer.data.get(index).getExifTime();
-                    if (date != null) {
-                        DateFormat df = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
-                        lbExifTime.setText(df.format(date));
-                        tfGpsTime.setText(df.format(date));
-                        tfGpsTime.setCaretPosition(tfGpsTime.getText().length());
-                        tfGpsTime.setEnabled(true);
-                        tfGpsTime.requestFocus();
-                    } else {
-                        lbExifTime.setText(tr("No date"));
-                        tfGpsTime.setText("");
-                        tfGpsTime.setEnabled(false);
-                    }
+            imgList.getSelectionModel().addListSelectionListener(evt -> {
+                int index = imgList.getSelectedIndex();
+                Integer orientation = ExifReader.readOrientation(yLayer.data.get(index).getFile());
+                imgDisp.setImage(yLayer.data.get(index).getFile(), orientation);
+                Date date = yLayer.data.get(index).getExifTime();
+                if (date != null) {
+                    DateFormat df = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
+                    lbExifTime.setText(df.format(date));
+                    tfGpsTime.setText(df.format(date));
+                    tfGpsTime.setCaretPosition(tfGpsTime.getText().length());
+                    tfGpsTime.setEnabled(true);
+                    tfGpsTime.requestFocus();
+                } else {
+                    lbExifTime.setText(tr("No date"));
+                    tfGpsTime.setText("");
+                    tfGpsTime.setEnabled(false);
                 }
             });
             panelLst.add(new JScrollPane(imgList), BorderLayout.CENTER);
 
             JButton openButton = new JButton(tr("Open another photo"));
-            openButton.addActionListener(new ActionListener() {
+            openButton.addActionListener(ae -> {
+                AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null,
+                        JpgImporter.FILE_FILTER_WITH_FOLDERS, JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
+                if (fc == null)
+                    return;
+                File sel = fc.getSelectedFile();
 
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null,
-                            JpgImporter.FILE_FILTER_WITH_FOLDERS, JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
-                    if (fc == null)
-                        return;
-                    File sel = fc.getSelectedFile();
+                Integer orientation = ExifReader.readOrientation(sel);
+                imgDisp.setImage(sel, orientation);
 
-                    Integer orientation = ExifReader.readOrientation(sel);
-                    imgDisp.setImage(sel, orientation);
-
-                    Date date = ExifReader.readTime(sel);
-                    if (date != null) {
-                        lbExifTime.setText(DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM).format(date));
-                        tfGpsTime.setText(DateUtils.getDateFormat(DateFormat.SHORT).format(date)+' ');
-                        tfGpsTime.setEnabled(true);
-                    } else {
-                        lbExifTime.setText(tr("No date"));
-                        tfGpsTime.setText("");
-                        tfGpsTime.setEnabled(false);
-                    }
+                Date date = ExifReader.readTime(sel);
+                if (date != null) {
+                    lbExifTime.setText(DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM).format(date));
+                    tfGpsTime.setText(DateUtils.getDateFormat(DateFormat.SHORT).format(date)+' ');
+                    tfGpsTime.setEnabled(true);
+                } else {
+                    lbExifTime.setText(tr("No date"));
+                    tfGpsTime.setText("");
+                    tfGpsTime.setEnabled(false);
                 }
             });
             panelLst.add(openButton, BorderLayout.PAGE_END);
@@ -1091,12 +1080,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             dateImgLst.add(e);
         }
 
-        Collections.sort(dateImgLst, new Comparator<ImageEntry>() {
-            @Override
-            public int compare(ImageEntry arg0, ImageEntry arg1) {
-                return arg0.getExifTime().compareTo(arg1.getExifTime());
-            }
-        });
+        Collections.sort(dateImgLst, (o1, o2) -> o1.getExifTime().compareTo(o2.getExifTime()));
 
         return dateImgLst;
     }

@@ -5,7 +5,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -149,13 +148,10 @@ public class PluginPreferencesModel extends ChangeNotifier {
     protected void sort() {
         Collections.sort(
                 availablePlugins,
-                new Comparator<PluginInformation>() {
-                    @Override
-                    public int compare(PluginInformation o1, PluginInformation o2) {
-                        String n1 = o1.getName() == null ? "" : o1.getName().toLowerCase(Locale.ENGLISH);
-                        String n2 = o2.getName() == null ? "" : o2.getName().toLowerCase(Locale.ENGLISH);
-                        return n1.compareTo(n2);
-                    }
+                (o1, o2) -> {
+                    String n1 = o1.getName() == null ? "" : o1.getName().toLowerCase(Locale.ENGLISH);
+                    String n2 = o2.getName() == null ? "" : o2.getName().toLowerCase(Locale.ENGLISH);
+                    return n1.compareTo(n2);
                 }
         );
     }

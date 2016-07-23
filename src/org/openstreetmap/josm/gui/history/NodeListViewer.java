@@ -297,20 +297,12 @@ public class NodeListViewer extends JPanel {
             if (HistoryDataSet.getInstance().getHistory(primitiveId) == null) {
                 Main.worker.submit(new HistoryLoadTask().add(primitiveId));
             }
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    final History h = HistoryDataSet.getInstance().getHistory(primitiveId);
-                    if (h == null)
-                        return;
-                    GuiHelper.runInEDT(new Runnable() {
-                        @Override public void run() {
-                            HistoryBrowserDialogManager.getInstance().show(h);
-                        }
-                    });
-                }
-            };
-            Main.worker.submit(r);
+            Main.worker.submit(() -> {
+                final History h = HistoryDataSet.getInstance().getHistory(primitiveId);
+                if (h == null)
+                    return;
+                GuiHelper.runInEDT(() -> HistoryBrowserDialogManager.getInstance().show(h));
+            });
         }
 
         public void updateEnabledState() {

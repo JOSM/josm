@@ -3,12 +3,6 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,84 +68,65 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         add(new JLabel(tr("5. Enter name for this layer")), GBC.eol());
         add(name, GBC.eop().fill());
 
-        getLayers.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    wms.attemptGetCapabilities(rawUrl.getText());
-                    tree.updateTree(wms);
-                    formats.setModel(new DefaultComboBoxModel<>(wms.getFormats().toArray(new String[0])));
-                    formats.setSelectedItem(wms.getPreferredFormats());
-                } catch (MalformedURLException ex) {
-                    Main.error(ex, false);
-                    JOptionPane.showMessageDialog(getParent(), tr("Invalid service URL."),
-                            tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
-                } catch (IOException ex) {
-                    Main.error(ex, false);
-                    JOptionPane.showMessageDialog(getParent(), tr("Could not retrieve WMS layer list."),
-                            tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
-                } catch (WMSImagery.WMSGetCapabilitiesException ex) {
-                    String incomingData = ex.getIncomingData().trim();
-                    String title = tr("WMS Error");
-                    String message = tr("Could not parse WMS layer list.");
-                    Main.error(ex, "Could not parse WMS layer list. Incoming data:\n"+incomingData);
-                    if ((incomingData.startsWith("<html>") || incomingData.startsWith("<HTML>"))
-                      && (incomingData.endsWith("</html>") || incomingData.endsWith("</HTML>"))) {
-                        GuiHelper.notifyUserHtmlError(AddWMSLayerPanel.this, title, message, incomingData);
-                    } else {
-                        if (ex.getMessage() != null) {
-                            message += '\n' + ex.getMessage();
-                        }
-                        JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        });
-
-        endpoint.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                tree.getLayerTree().setEnabled(!endpoint.isSelected());
-                showBounds.setEnabled(!endpoint.isSelected());
-                wmsInstruction.setEnabled(!endpoint.isSelected());
-                formats.setEnabled(!endpoint.isSelected());
-                wmsUrl.setEnabled(!endpoint.isSelected());
-                if (endpoint.isSelected()) {
-                    URL url = wms.getServiceUrl();
-                    if (url != null) {
-                        name.setText(url.getHost());
-                    }
+        getLayers.addActionListener(e -> {
+            try {
+                wms.attemptGetCapabilities(rawUrl.getText());
+                tree.updateTree(wms);
+                formats.setModel(new DefaultComboBoxModel<>(wms.getFormats().toArray(new String[0])));
+                formats.setSelectedItem(wms.getPreferredFormats());
+            } catch (MalformedURLException ex1) {
+                Main.error(ex1, false);
+                JOptionPane.showMessageDialog(getParent(), tr("Invalid service URL."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex2) {
+                Main.error(ex2, false);
+                JOptionPane.showMessageDialog(getParent(), tr("Could not retrieve WMS layer list."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
+            } catch (WMSImagery.WMSGetCapabilitiesException ex3) {
+                String incomingData = ex3.getIncomingData().trim();
+                String title = tr("WMS Error");
+                String message = tr("Could not parse WMS layer list.");
+                Main.error(ex3, "Could not parse WMS layer list. Incoming data:\n"+incomingData);
+                if ((incomingData.startsWith("<html>") || incomingData.startsWith("<HTML>"))
+                  && (incomingData.endsWith("</html>") || incomingData.endsWith("</HTML>"))) {
+                    GuiHelper.notifyUserHtmlError(AddWMSLayerPanel.this, title, message, incomingData);
                 } else {
-                    onLayerSelectionChanged();
+                    if (ex3.getMessage() != null) {
+                        message += '\n' + ex3.getMessage();
+                    }
+                    JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        tree.getLayerTree().addPropertyChangeListener("selectedLayers", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
+        endpoint.addItemListener(e -> {
+            tree.getLayerTree().setEnabled(!endpoint.isSelected());
+            showBounds.setEnabled(!endpoint.isSelected());
+            wmsInstruction.setEnabled(!endpoint.isSelected());
+            formats.setEnabled(!endpoint.isSelected());
+            wmsUrl.setEnabled(!endpoint.isSelected());
+            if (endpoint.isSelected()) {
+                URL url = wms.getServiceUrl();
+                if (url != null) {
+                    name.setText(url.getHost());
+                }
+            } else {
                 onLayerSelectionChanged();
             }
         });
 
-        formats.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onLayerSelectionChanged();
-            }
-        });
+        tree.getLayerTree().addPropertyChangeListener("selectedLayers", evt -> onLayerSelectionChanged());
 
-        showBounds.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (tree.getSelectedLayers().get(0).bounds != null) {
-                    SlippyMapBBoxChooser mapPanel = new SlippyMapBBoxChooser();
-                    mapPanel.setBoundingBox(tree.getSelectedLayers().get(0).bounds);
-                    JOptionPane.showMessageDialog(null, mapPanel, tr("Show Bounds"), JOptionPane.PLAIN_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(null, tr("No bounding box was found for this layer."),
-                            tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
-                }
+        formats.addActionListener(e -> onLayerSelectionChanged());
+
+        showBounds.addActionListener(e -> {
+            if (tree.getSelectedLayers().get(0).bounds != null) {
+                SlippyMapBBoxChooser mapPanel = new SlippyMapBBoxChooser();
+                mapPanel.setBoundingBox(tree.getSelectedLayers().get(0).bounds);
+                JOptionPane.showMessageDialog(null, mapPanel, tr("Show Bounds"), JOptionPane.PLAIN_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, tr("No bounding box was found for this layer."),
+                        tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
             }
         });
 

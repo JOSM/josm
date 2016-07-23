@@ -5,8 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -54,23 +52,18 @@ public class CommonSettingsPanel extends JPanel {
         this.maxElementsOnDisk = new JSpinner(new SpinnerNumberModel(
                 AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get().intValue(), 0, Integer.MAX_VALUE, 1));
 
-
         this.btnFadeColor = new JButton();
-
-        this.btnFadeColor.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JColorChooser chooser = new JColorChooser(btnFadeColor.getBackground());
-                int answer = JOptionPane.showConfirmDialog(
-                        CommonSettingsPanel.this, chooser,
-                        tr("Choose a color for {0}", tr("imagery fade")),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE);
-                if (answer == JOptionPane.OK_OPTION) {
-                    Color colFadeColor = chooser.getColor();
-                    btnFadeColor.setBackground(colFadeColor);
-                    btnFadeColor.setText(ColorHelper.color2html(colFadeColor));
-                }
+        this.btnFadeColor.addActionListener(e -> {
+            JColorChooser chooser = new JColorChooser(btnFadeColor.getBackground());
+            int answer = JOptionPane.showConfirmDialog(
+                    CommonSettingsPanel.this, chooser,
+                    tr("Choose a color for {0}", tr("imagery fade")),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE);
+            if (answer == JOptionPane.OK_OPTION) {
+                Color colFadeColor = chooser.getColor();
+                btnFadeColor.setBackground(colFadeColor);
+                btnFadeColor.setText(ColorHelper.color2html(colFadeColor));
             }
         });
 
@@ -158,13 +151,7 @@ public class CommonSettingsPanel extends JPanel {
 
     private void removeCacheFiles(String path) {
         File directory = new File(path);
-        File[] cacheFiles = directory.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".data") || name.endsWith(".key");
-            }
-
-        });
+        File[] cacheFiles = directory.listFiles((FilenameFilter) (dir, name) -> name.endsWith(".data") || name.endsWith(".key"));
         JCSCacheManager.shutdown(); // shutdown Cache - so files can by safely deleted
         for (File cacheFile: cacheFiles) {
             Utils.deleteFile(cacheFile);

@@ -4,11 +4,8 @@ package org.openstreetmap.josm.gui.preferences.display;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -155,54 +152,42 @@ public class ColorPreference implements SubPreferenceSetting {
         setColorModel(Main.pref.getAllColors());
 
         colorEdit = new JButton(tr("Choose"));
-        colorEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int sel = colors.getSelectedRow();
-                JColorChooser chooser = new JColorChooser((Color) colors.getValueAt(sel, 1));
-                int answer = JOptionPane.showConfirmDialog(
-                        gui, chooser,
-                        tr("Choose a color for {0}", getName((String) colors.getValueAt(sel, 0))),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE);
-                if (answer == JOptionPane.OK_OPTION) {
-                    colors.setValueAt(chooser.getColor(), sel, 1);
-                }
+        colorEdit.addActionListener(e -> {
+            int sel = colors.getSelectedRow();
+            JColorChooser chooser = new JColorChooser((Color) colors.getValueAt(sel, 1));
+            int answer = JOptionPane.showConfirmDialog(
+                    gui, chooser,
+                    tr("Choose a color for {0}", getName((String) colors.getValueAt(sel, 0))),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE);
+            if (answer == JOptionPane.OK_OPTION) {
+                colors.setValueAt(chooser.getColor(), sel, 1);
             }
         });
         defaultSet = new JButton(tr("Set to default"));
-        defaultSet.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int sel = colors.getSelectedRow();
-                String name = (String) colors.getValueAt(sel, 0);
-                Color c = Main.pref.getDefaultColor(name);
-                if (c != null) {
-                    colors.setValueAt(c, sel, 1);
-                }
+        defaultSet.addActionListener(e -> {
+            int sel = colors.getSelectedRow();
+            String name = (String) colors.getValueAt(sel, 0);
+            Color c = Main.pref.getDefaultColor(name);
+            if (c != null) {
+                colors.setValueAt(c, sel, 1);
             }
         });
         JButton defaultAll = new JButton(tr("Set all to default"));
-        defaultAll.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (int i = 0; i < colors.getRowCount(); ++i) {
-                    String name = (String) colors.getValueAt(i, 0);
-                    Color c = Main.pref.getDefaultColor(name);
-                    if (c != null) {
-                        colors.setValueAt(c, i, 1);
-                    }
+        defaultAll.addActionListener(e -> {
+            for (int i = 0; i < colors.getRowCount(); ++i) {
+                String name = (String) colors.getValueAt(i, 0);
+                Color c = Main.pref.getDefaultColor(name);
+                if (c != null) {
+                    colors.setValueAt(c, i, 1);
                 }
             }
         });
         remove = new JButton(tr("Remove"));
-        remove.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int sel = colors.getSelectedRow();
-                del.add((String) colors.getValueAt(sel, 0));
-                tableModel.removeRow(sel);
-            }
+        remove.addActionListener(e -> {
+            int sel = colors.getSelectedRow();
+            del.add((String) colors.getValueAt(sel, 0));
+            tableModel.removeRow(sel);
         });
         remove.setEnabled(false);
         colorEdit.setEnabled(false);
@@ -232,20 +217,17 @@ public class ColorPreference implements SubPreferenceSetting {
         });
         colors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         final TableCellRenderer oldColorsRenderer = colors.getDefaultRenderer(Object.class);
-        colors.setDefaultRenderer(Object.class, new TableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable t, Object o, boolean selected, boolean focus, int row, int column) {
-                if (o == null)
-                    return new JLabel();
-                if (column == 1) {
-                    Color c = (Color) o;
-                    JLabel l = new JLabel(ColorHelper.color2html(c));
-                    GuiHelper.setBackgroundReadable(l, c);
-                    l.setOpaque(true);
-                    return l;
-                }
-                return oldColorsRenderer.getTableCellRendererComponent(t, getName(o.toString()), selected, focus, row, column);
+        colors.setDefaultRenderer(Object.class, (t, o, selected, focus, row, column) -> {
+            if (o == null)
+                return new JLabel();
+            if (column == 1) {
+                Color c = (Color) o;
+                JLabel l = new JLabel(ColorHelper.color2html(c));
+                GuiHelper.setBackgroundReadable(l, c);
+                l.setOpaque(true);
+                return l;
             }
+            return oldColorsRenderer.getTableCellRendererComponent(t, getName(o.toString()), selected, focus, row, column);
         });
         colors.getColumnModel().getColumn(1).setWidth(100);
         colors.setToolTipText(tr("Colors used by different objects in JOSM."));

@@ -95,12 +95,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                     if (EventQueue.isDispatchThread()) {
                         finish();
                     } else {
-                        EventQueue.invokeAndWait(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                            }
-                        });
+                        EventQueue.invokeAndWait(this::finish);
                     }
                 }
             } finally {
@@ -113,26 +108,18 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                 if (EventQueue.isDispatchThread()) {
                     afterFinish();
                 } else {
-                    EventQueue.invokeAndWait(new Runnable() {
-                        @Override
-                        public void run() {
-                            afterFinish();
-                        }
-                    });
+                    EventQueue.invokeAndWait(this::afterFinish);
                 }
             }
         } catch (final RuntimeException |
                 OsmTransferException | IOException | SAXException | InvocationTargetException | InterruptedException e) {
             if (!ignoreException) {
                 // Exception has to thrown in EDT to be shown to user
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (e instanceof RuntimeException) {
-                            BugReportExceptionHandler.handleException(e);
-                        } else {
-                            ExceptionDialogUtil.explainException(e);
-                        }
+                SwingUtilities.invokeLater(() -> {
+                    if (e instanceof RuntimeException) {
+                        BugReportExceptionHandler.handleException(e);
+                    } else {
+                        ExceptionDialogUtil.explainException(e);
                     }
                 });
             }
@@ -149,12 +136,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
     @Override
     public final void run() {
         if (EventQueue.isDispatchThread()) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    doRealRun();
-                }
-            }, getClass().getName()).start();
+            new Thread((Runnable) this::doRealRun, getClass().getName()).start();
         } else {
             doRealRun();
         }

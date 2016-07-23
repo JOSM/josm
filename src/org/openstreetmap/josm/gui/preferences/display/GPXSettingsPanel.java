@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
@@ -17,8 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
@@ -139,17 +136,14 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         ExpertToggleAction.addVisibilitySwitcher(drawRawGpsLinesLocal);
         ExpertToggleAction.addVisibilitySwitcher(drawRawGpsLinesAll);
 
-        drawRawGpsLinesActionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean f = drawRawGpsLinesNone.isSelected() || drawRawGpsLinesGlobal.isSelected();
-                forceRawGpsLines.setEnabled(!f);
-                drawRawGpsMaxLineLength.setEnabled(!(f || drawRawGpsLinesLocal.isSelected()));
-                drawRawGpsMaxLineLengthLocal.setEnabled(!f);
-                drawGpsArrows.setEnabled(!f);
-                drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-                drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-            }
+        drawRawGpsLinesActionListener = e -> {
+            boolean f = drawRawGpsLinesNone.isSelected() || drawRawGpsLinesGlobal.isSelected();
+            forceRawGpsLines.setEnabled(!f);
+            drawRawGpsMaxLineLength.setEnabled(!(f || drawRawGpsLinesLocal.isSelected()));
+            drawRawGpsMaxLineLengthLocal.setEnabled(!f);
+            drawGpsArrows.setEnabled(!f);
+            drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
+            drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
         };
 
         drawRawGpsLinesGlobal.addActionListener(drawRawGpsLinesActionListener);
@@ -180,12 +174,9 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         ExpertToggleAction.addVisibilitySwitcher(forceRawGpsLines);
 
         // drawGpsArrows
-        drawGpsArrows.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-                drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-            }
+        drawGpsArrows.addActionListener(e -> {
+            drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
+            drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
         });
         drawGpsArrows.setToolTipText(tr("Draw direction arrows for lines, connecting GPS points."));
         add(drawGpsArrows, GBC.eop().insets(40, 0, 0, 0));
@@ -230,19 +221,11 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorGroup.add(colorTypeDilution);
         colorGroup.add(colorTypeTime);
 
-        colorTypeVelocity.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected());
-                colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
-            }
+        colorTypeVelocity.addChangeListener(e -> {
+            colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected());
+            colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
         });
-        colorTypeDilution.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
-            }
-        });
+        colorTypeDilution.addChangeListener(e -> colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected()));
 
         colorTypeNone.setToolTipText(tr("All points and track segments will have the same color. Can be customized in Layer Manager."));
         colorTypeVelocity.setToolTipText(tr("Colors points and track segments by velocity."));
@@ -282,12 +265,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             add(label, GBC.std().insets(20, 0, 0, 0));
             label.setLabelFor(waypointLabel);
             add(waypointLabel, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
-            waypointLabel.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    updateWaypointPattern(waypointLabel, waypointLabelPattern);
-                }
-            });
+            waypointLabel.addActionListener(e -> updateWaypointPattern(waypointLabel, waypointLabelPattern));
             updateWaypointLabelCombobox(waypointLabel, waypointLabelPattern, TemplateEntryProperty.forMarker(layerName));
             add(waypointLabelPattern, GBC.eol().fill(GBC.HORIZONTAL).insets(20, 0, 0, 5));
             ExpertToggleAction.addVisibilitySwitcher(label);
@@ -303,12 +281,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             add(label, GBC.std().insets(20, 0, 0, 0));
             label.setLabelFor(audioWaypointLabel);
             add(audioWaypointLabel, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
-            audioWaypointLabel.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    updateWaypointPattern(audioWaypointLabel, audioWaypointLabelPattern);
-                }
-            });
+            audioWaypointLabel.addActionListener(e -> updateWaypointPattern(audioWaypointLabel, audioWaypointLabelPattern));
             updateWaypointLabelCombobox(audioWaypointLabel, audioWaypointLabelPattern, TemplateEntryProperty.forAudioMarker(layerName));
             add(audioWaypointLabelPattern, GBC.eol().fill(GBC.HORIZONTAL).insets(20, 0, 0, 5));
             ExpertToggleAction.addVisibilitySwitcher(label);

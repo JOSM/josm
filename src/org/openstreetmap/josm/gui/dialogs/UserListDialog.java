@@ -128,14 +128,11 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
      */
     public void refresh(Collection<? extends OsmPrimitive> fromPrimitives) {
         model.populate(fromPrimitives);
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                if (model.getRowCount() != 0) {
-                    setTitle(trn("{0} Author", "{0} Authors", model.getRowCount(), model.getRowCount()));
-                } else {
-                    setTitle(tr("Authors"));
-                }
+        GuiHelper.runInEDT(() -> {
+            if (model.getRowCount() != 0) {
+                setTitle(trn("{0} Author", "{0} Authors", model.getRowCount(), model.getRowCount()));
+            } else {
+                setTitle(tr("Authors"));
             }
         });
     }
@@ -319,12 +316,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 }
             }
             Collections.sort(data);
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    fireTableDataChanged();
-                }
-            });
+            GuiHelper.runInEDTAndWait(this::fireTableDataChanged);
         }
 
         @Override

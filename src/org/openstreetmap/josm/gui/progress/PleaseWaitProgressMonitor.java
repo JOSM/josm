@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.progress;
 
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -138,22 +137,14 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         this.windowTitle = windowTitle;
     }
 
-    private final ActionListener cancelListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            cancel();
-        }
-    };
+    private final ActionListener cancelListener = e -> cancel();
 
-    private final ActionListener inBackgroundListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            isInBackground = true;
-            ProgressMonitorDialog dialog = getDialog();
-            if (dialog != null) {
-                reset();
-                dialog.setVisible(true);
-            }
+    private final ActionListener inBackgroundListener = e -> {
+        isInBackground = true;
+        ProgressMonitorDialog dlg = getDialog();
+        if (dlg != null) {
+            reset();
+            dlg.setVisible(true);
         }
     };
 
@@ -173,29 +164,26 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     @Override
     public void doBeginTask() {
-        doInEDT(new Runnable() {
-            @Override
-            public void run() {
-                Main.currentProgressMonitor = PleaseWaitProgressMonitor.this;
-                if (GraphicsEnvironment.isHeadless()) {
-                    return;
-                }
-                if (dialogParent != null && dialog == null) {
-                    dialog = new PleaseWaitDialog(dialogParent);
-                } else
-                    throw new ProgressException("PleaseWaitDialog parent must be set");
-
-                if (windowTitle != null) {
-                    dialog.setTitle(windowTitle);
-                }
-                dialog.setCancelEnabled(cancelable);
-                dialog.setCancelCallback(cancelListener);
-                dialog.setInBackgroundCallback(inBackgroundListener);
-                dialog.setCustomText("");
-                dialog.addWindowListener(windowListener);
-                dialog.progress.setMaximum(PROGRESS_BAR_MAX);
-                dialog.setVisible(true);
+        doInEDT(() -> {
+            Main.currentProgressMonitor = PleaseWaitProgressMonitor.this;
+            if (GraphicsEnvironment.isHeadless()) {
+                return;
             }
+            if (dialogParent != null && dialog == null) {
+                dialog = new PleaseWaitDialog(dialogParent);
+            } else
+                throw new ProgressException("PleaseWaitDialog parent must be set");
+
+            if (windowTitle != null) {
+                dialog.setTitle(windowTitle);
+            }
+            dialog.setCancelEnabled(cancelable);
+            dialog.setCancelCallback(cancelListener);
+            dialog.setInBackgroundCallback(inBackgroundListener);
+            dialog.setCustomText("");
+            dialog.addWindowListener(windowListener);
+            dialog.progress.setMaximum(PROGRESS_BAR_MAX);
+            dialog.setVisible(true);
         });
     }
 
@@ -209,13 +197,10 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         final int newValue = (int) (progressValue * PROGRESS_BAR_MAX);
         if (newValue != currentProgressValue) {
             currentProgressValue = newValue;
-            doInEDT(new Runnable() {
-                @Override
-                public void run() {
-                    ProgressMonitorDialog dialog = getDialog();
-                    if (dialog != null) {
-                        dialog.updateProgress(currentProgressValue);
-                    }
+            doInEDT(() -> {
+                ProgressMonitorDialog dlg = getDialog();
+                if (dlg != null) {
+                    dlg.updateProgress(currentProgressValue);
                 }
             });
         }
@@ -225,13 +210,10 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     protected void doSetCustomText(final String title) {
         checkState(State.IN_TASK, State.IN_SUBTASK);
         this.customText = title;
-        doInEDT(new Runnable() {
-            @Override
-            public void run() {
-                ProgressMonitorDialog dialog = getDialog();
-                if (dialog != null) {
-                    dialog.setCustomText(title);
-                }
+        doInEDT(() -> {
+            ProgressMonitorDialog dlg = getDialog();
+            if (dlg != null) {
+                dlg.setCustomText(title);
             }
         });
     }
@@ -240,13 +222,10 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     protected void doSetTitle(final String title) {
         checkState(State.IN_TASK, State.IN_SUBTASK);
         this.title = title;
-        doInEDT(new Runnable() {
-            @Override
-            public void run() {
-                ProgressMonitorDialog dialog = getDialog();
-                if (dialog != null) {
-                    dialog.setCurrentAction(title);
-                }
+        doInEDT(() -> {
+            ProgressMonitorDialog dlg = getDialog();
+            if (dlg != null) {
+                dlg.setCurrentAction(title);
             }
         });
     }
@@ -254,28 +233,22 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     @Override
     protected void doSetIntermediate(final boolean value) {
         this.indeterminate = value;
-        doInEDT(new Runnable() {
-            @Override
-            public void run() {
-                // Enable only if progress is at the beginning. Doing intermediate progress in the middle
-                // will hide already reached progress
-                ProgressMonitorDialog dialog = getDialog();
-                if (dialog != null) {
-                    dialog.setIndeterminate(value && currentProgressValue == 0);
-                }
+        doInEDT(() -> {
+            // Enable only if progress is at the beginning. Doing intermediate progress in the middle
+            // will hide already reached progress
+            ProgressMonitorDialog dlg = getDialog();
+            if (dlg != null) {
+                dlg.setIndeterminate(value && currentProgressValue == 0);
             }
         });
     }
 
     @Override
     public void appendLogMessage(final String message) {
-        doInEDT(new Runnable() {
-            @Override
-            public void run() {
-                ProgressMonitorDialog dialog = getDialog();
-                if (dialog != null) {
-                    dialog.appendLogMessage(message);
-                }
+        doInEDT(() -> {
+            ProgressMonitorDialog dlg = getDialog();
+            if (dlg != null) {
+                dlg.appendLogMessage(message);
             }
         });
     }
@@ -298,25 +271,21 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             backgroundMonitor.updateProgress(currentProgressValue);
             backgroundMonitor.setIndeterminate(indeterminate && currentProgressValue == 0);
         }
-
     }
 
     public void close() {
-        doInEDT(new Runnable() {
-            @Override
-            public void run() {
-                if (dialog != null) {
-                    dialog.setVisible(false);
-                    dialog.setCancelCallback(null);
-                    dialog.setInBackgroundCallback(null);
-                    dialog.removeWindowListener(windowListener);
-                    dialog.dispose();
-                    dialog = null;
-                    Main.currentProgressMonitor = null;
-                    MapFrame map = Main.map;
-                    if (map != null) {
-                        map.statusLine.progressMonitor.setVisible(false);
-                    }
+        doInEDT(() -> {
+            if (dialog != null) {
+                dialog.setVisible(false);
+                dialog.setCancelCallback(null);
+                dialog.setInBackgroundCallback(null);
+                dialog.removeWindowListener(windowListener);
+                dialog.dispose();
+                dialog = null;
+                Main.currentProgressMonitor = null;
+                MapFrame map = Main.map;
+                if (map != null) {
+                    map.statusLine.progressMonitor.setVisible(false);
                 }
             }
         });
@@ -324,28 +293,21 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     public void showForegroundDialog() {
         isInBackground = false;
-        doInEDT(new Runnable() {
-            @Override
-            public void run() {
-                if (dialog != null) {
-                    dialog.setInBackgroundPossible(PleaseWaitProgressMonitor.this.taskId != null && Main.isDisplayingMapView());
-                    reset();
-                    getDialog();
-                }
+        doInEDT(() -> {
+            if (dialog != null) {
+                dialog.setInBackgroundPossible(PleaseWaitProgressMonitor.this.taskId != null && Main.isDisplayingMapView());
+                reset();
+                getDialog();
             }
         });
-
     }
 
     @Override
     public void setProgressTaskId(ProgressTaskId taskId) {
         this.taskId = taskId;
-        doInEDT(new Runnable() {
-            @Override
-            public void run() {
-                if (dialog != null) {
-                    dialog.setInBackgroundPossible(PleaseWaitProgressMonitor.this.taskId != null && Main.isDisplayingMapView());
-                }
+        doInEDT(() -> {
+            if (dialog != null) {
+                dialog.setInBackgroundPossible(PleaseWaitProgressMonitor.this.taskId != null && Main.isDisplayingMapView());
             }
         });
     }

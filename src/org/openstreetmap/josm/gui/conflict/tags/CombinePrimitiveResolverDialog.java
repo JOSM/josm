@@ -97,11 +97,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     @Deprecated
     public static synchronized CombinePrimitiveResolverDialog getInstance() {
         if (instance == null) {
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override public void run() {
-                    instance = new CombinePrimitiveResolverDialog(Main.parent);
-                }
-            });
+            GuiHelper.runInEDTAndWait(() -> instance = new CombinePrimitiveResolverDialog(Main.parent));
         }
         return instance;
     }
@@ -135,14 +131,12 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      */
     public void setTargetPrimitive(final OsmPrimitive primitive) {
         this.targetPrimitive = primitive;
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override public void run() {
-                updateTitle();
-                if (primitive instanceof Way) {
-                    pnlRelationMemberConflictResolver.initForWayCombining();
-                } else if (primitive instanceof Node) {
-                    pnlRelationMemberConflictResolver.initForNodeMerging();
-                }
+        GuiHelper.runInEDTAndWait(() -> {
+            updateTitle();
+            if (primitive instanceof Way) {
+                pnlRelationMemberConflictResolver.initForWayCombining();
+            } else if (primitive instanceof Node) {
+                pnlRelationMemberConflictResolver.initForNodeMerging();
             }
         });
     }
@@ -575,18 +569,8 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             final Collection<? extends OsmPrimitive> primitives,
             final TagCollection normalizedTags) throws UserCancelException {
         String conflicts = Utils.joinAsHtmlUnorderedList(Utils.transform(normalizedTags.getKeysWithMultipleValues(),
-                new Function<String, String>() {
-            @Override
-            public String apply(String key) {
-                return tr("{0} ({1})", key, Utils.join(tr(", "), Utils.transform(normalizedTags.getValues(key),
-                        new Function<String, String>() {
-                    @Override
-                    public String apply(String x) {
-                        return x == null || x.isEmpty() ? tr("<i>missing</i>") : x;
-                    }
-                })));
-            }
-        }));
+                (Function<String, String>) key -> tr("{0} ({1})", key, Utils.join(tr(", "), Utils.transform(normalizedTags.getValues(key),
+                        (Function<String, String>) x -> x == null || x.isEmpty() ? tr("<i>missing</i>") : x)))));
         String msg = /* for correct i18n of plural forms - see #9110 */ trn("You are about to combine {0} objects, "
                 + "but the following tags are used conflictingly:<br/>{1}"
                 + "If these objects are combined, the resulting object may have unwanted tags.<br/>"

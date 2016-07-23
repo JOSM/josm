@@ -321,21 +321,11 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     public void selectTabByName(String name) {
-        selectTabBy(new TabIdentifier() {
-            @Override
-            public boolean identify(TabPreferenceSetting tps, Object name) {
-                return name != null && tps != null && tps.getIconName() != null && name.equals(tps.getIconName());
-            }
-        }, name);
+        selectTabBy((tps, name1) -> name1 != null && tps != null && tps.getIconName() != null && name1.equals(tps.getIconName()), name);
     }
 
     public void selectTabByPref(Class<? extends TabPreferenceSetting> clazz) {
-        selectTabBy(new TabIdentifier() {
-            @Override
-            public boolean identify(TabPreferenceSetting tps, Object clazz) {
-                return tps.getClass().isAssignableFrom((Class<?>) clazz);
-            }
-        }, clazz);
+        selectTabBy((tps, clazz1) -> tps.getClass().isAssignableFrom((Class<?>) clazz1), clazz);
     }
 
     public boolean selectSubTabByPref(Class<? extends SubPreferenceSetting> clazz) {
@@ -343,12 +333,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
             if (clazz.isInstance(setting)) {
                 final SubPreferenceSetting sub = (SubPreferenceSetting) setting;
                 final TabPreferenceSetting tab = sub.getTabPreferenceSetting(this);
-                selectTabBy(new TabIdentifier() {
-                    @Override
-                    public boolean identify(TabPreferenceSetting tps, Object unused) {
-                        return tps.equals(tab);
-                    }
-                }, null);
+                selectTabBy((tps, unused) -> tps.equals(tab), null);
                 return tab.selectSubTab(sub);
             }
         }
@@ -418,7 +403,6 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
      */
     public void savePreferences() {
         // create a task for downloading plugins if the user has activated, yet not downloaded, new plugins
-        //
         final PluginPreference preference = getPluginPreference();
         final Set<PluginInformation> toDownload = preference.getPluginsScheduledForUpdateOrDownload();
         final PluginDownloadTask task;
@@ -429,26 +413,16 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         }
 
         // this is the task which will run *after* the plugins are downloaded
-        //
         final Runnable continuation = new PluginDownloadAfterTask(preference, task, toDownload);
 
         if (task != null) {
             // if we have to launch a plugin download task we do it asynchronously, followed
             // by the remaining "save preferences" activites run on the Swing EDT.
-            //
             Main.worker.submit(task);
-            Main.worker.submit(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            SwingUtilities.invokeLater(continuation);
-                        }
-                    }
-                    );
+            Main.worker.submit(() -> SwingUtilities.invokeLater(continuation));
         } else {
             // no need for asynchronous activities. Simply run the remaining "save preference"
             // activities on this thread (we are already on the Swing EDT
-            //
             continuation.run();
         }
     }

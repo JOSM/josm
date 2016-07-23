@@ -122,12 +122,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         lstConflicts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
         lstConflicts.addMouseListener(new MouseEventHandler());
-        addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                Main.map.mapView.repaint();
-            }
-        });
+        addListSelectionListener(e -> Main.map.mapView.repaint());
 
         SideButton btnResolve = new SideButton(actResolve);
         addListSelectionListener(actResolve);
@@ -235,12 +230,9 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
     public void refreshView() {
         OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
         conflicts = editLayer == null ? new ConflictCollection() : editLayer.getConflicts();
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                model.fireContentChanged();
-                updateTitle();
-            }
+        GuiHelper.runInEDT(() -> {
+            model.fireContentChanged();
+            updateTitle();
         });
     }
 
@@ -596,22 +588,19 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
                             null /* no specific help */
                     )
             };
-            GuiHelper.runInEDT(new Runnable() {
-                @Override
-                public void run() {
-                    HelpAwareOptionPane.showOptionDialog(
-                            Main.parent,
-                            sb.toString(),
-                            tr("Conflicts detected"),
-                            JOptionPane.WARNING_MESSAGE,
-                            null, /* no icon */
-                            options,
-                            options[0],
-                            ht("/Concepts/Conflict#WarningAboutDetectedConflicts")
-                    );
-                    unfurlDialog();
-                    Main.map.repaint();
-                }
+            GuiHelper.runInEDT(() -> {
+                HelpAwareOptionPane.showOptionDialog(
+                        Main.parent,
+                        sb.toString(),
+                        tr("Conflicts detected"),
+                        JOptionPane.WARNING_MESSAGE,
+                        null, /* no icon */
+                        options,
+                        options[0],
+                        ht("/Concepts/Conflict#WarningAboutDetectedConflicts")
+                );
+                unfurlDialog();
+                Main.map.repaint();
             });
         }
     }

@@ -115,12 +115,9 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
     private Component buildDiscussionPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
         table = new JTable(model, new ChangesetDiscussionTableColumnModel());
-        table.getColumnModel().getColumn(2).addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("width".equals(evt.getPropertyName())) {
-                    updateRowHeights();
-                }
+        table.getColumnModel().getColumn(2).addPropertyChangeListener(evt -> {
+            if ("width".equals(evt.getPropertyName())) {
+                updateRowHeights();
             }
         });
         pnl.add(new JScrollPane(table), BorderLayout.CENTER);

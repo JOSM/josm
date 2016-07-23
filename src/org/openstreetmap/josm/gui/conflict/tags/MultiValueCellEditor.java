@@ -8,7 +8,6 @@ import java.awt.Font;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -119,15 +118,10 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
                     }
                 }
         );
-        editor.addItemListener(
-                new ItemListener() {
-                    @Override
-                    public void itemStateChanged(ItemEvent e) {
-                        if (e.getStateChange() == ItemEvent.SELECTED)
-                            fireEditingStopped();
-                    }
-                }
-        );
+        editor.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED)
+                fireEditingStopped();
+        });
         editor.setRenderer(new EditorCellRenderer());
         listeners = new CopyOnWriteArrayList<>();
     }

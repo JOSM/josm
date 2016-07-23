@@ -464,14 +464,11 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         }
 
         protected void handleException(final OsmOAuthAuthorizationException e) {
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    if (e instanceof OsmLoginFailedException) {
-                        alertLoginFailed((OsmLoginFailedException) e);
-                    } else {
-                        alertAuthorisationFailed(e);
-                    }
+            Runnable r = () -> {
+                if (e instanceof OsmLoginFailedException) {
+                    alertLoginFailed((OsmLoginFailedException) e);
+                } else {
+                    alertAuthorisationFailed(e);
                 }
             };
             Main.error(e);
@@ -504,12 +501,9 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 );
                 getProgressMonitor().worked(1);
                 if (canceled) return;
-                GuiHelper.runInEDT(new Runnable() {
-                    @Override
-                    public void run() {
-                        prepareUIForResultDisplay();
-                        setAccessToken(accessToken);
-                    }
+                GuiHelper.runInEDT(() -> {
+                    prepareUIForResultDisplay();
+                    setAccessToken(accessToken);
                 });
             } catch (final OsmOAuthAuthorizationException e) {
                 handleException(e);

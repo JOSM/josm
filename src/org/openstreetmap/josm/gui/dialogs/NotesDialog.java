@@ -26,8 +26,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadNotesInViewAction;
@@ -86,14 +84,11 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         displayList = new JList<>(model);
         displayList.setCellRenderer(new NoteRenderer());
         displayList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        displayList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (noteData != null) { //happens when layer is deleted while note selected
-                    noteData.setSelectedNote(displayList.getSelectedValue());
-                }
-                updateButtonStates();
+        displayList.addListSelectionListener(e -> {
+            if (noteData != null) { //happens when layer is deleted while note selected
+                noteData.setSelectedNote(displayList.getSelectedValue());
             }
+            updateButtonStates();
         });
         displayList.addMouseListener(new MouseAdapter() {
             //center view on selected note on double click

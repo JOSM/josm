@@ -17,8 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,12 +48,8 @@ import javax.swing.JTree;
 import javax.swing.ListCellRenderer;
 import javax.swing.MenuElement;
 import javax.swing.TransferHandler;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -68,8 +62,6 @@ import org.openstreetmap.josm.actions.AdaptableAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -761,18 +753,15 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 }
             };
             selectedList.setCellRenderer(renderer);
-            selectedList.addListSelectionListener(new ListSelectionListener() {
-                @Override
-                public void valueChanged(ListSelectionEvent e) {
-                    boolean sel = selectedList.getSelectedIndex() != -1;
-                    if (sel) {
-                        actionsTree.clearSelection();
-                        ActionDefinition action = selected.get(selectedList.getSelectedIndex());
-                        actionParametersModel.setCurrentAction(action);
-                        actionParametersPanel.setVisible(actionParametersModel.getRowCount() > 0);
-                    }
-                    updateEnabledState();
+            selectedList.addListSelectionListener(e -> {
+                boolean sel = selectedList.getSelectedIndex() != -1;
+                if (sel) {
+                    actionsTree.clearSelection();
+                    ActionDefinition action = selected.get(selectedList.getSelectedIndex());
+                    actionParametersModel.setCurrentAction(action);
+                    actionParametersPanel.setVisible(actionParametersModel.getRowCount() > 0);
                 }
+                updateEnabledState();
             });
 
             selectedList.setDragEnabled(true);
@@ -803,11 +792,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 }
             });
             actionsTree.setDragEnabled(true);
-            actionsTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-                @Override public void valueChanged(TreeSelectionEvent e) {
-                    updateEnabledState();
-                }
-            });
+            actionsTree.getSelectionModel().addTreeSelectionListener(e -> updateEnabledState());
 
             final JPanel left = new JPanel(new GridBagLayout());
             left.add(new JLabel(tr("Toolbar")), GBC.eol());
@@ -913,12 +898,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     public ToolbarPreferences() {
         control.setFloatable(false);
         control.setComponentPopupMenu(popupMenu);
-        Main.pref.addPreferenceChangeListener(new PreferenceChangedListener() {
-            @Override
-            public void preferenceChanged(PreferenceChangeEvent e) {
-                if ("toolbar.visible".equals(e.getKey())) {
-                    refreshToolbarControl();
-                }
+        Main.pref.addPreferenceChangeListener(e -> {
+            if ("toolbar.visible".equals(e.getKey())) {
+                refreshToolbarControl();
             }
         });
     }
@@ -1077,13 +1059,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     }
                 } else {
                     // hide action text if an icon is set later (necessary for delayed/background image loading)
-                    action.getParametrizedAction().addPropertyChangeListener(new PropertyChangeListener() {
-
-                        @Override
-                        public void propertyChange(PropertyChangeEvent evt) {
-                            if (Action.SMALL_ICON.equals(evt.getPropertyName())) {
-                                b.setHideActionText(evt.getNewValue() != null);
-                            }
+                    action.getParametrizedAction().addPropertyChangeListener(evt -> {
+                        if (Action.SMALL_ICON.equals(evt.getPropertyName())) {
+                            b.setHideActionText(evt.getNewValue() != null);
                         }
                     });
                 }

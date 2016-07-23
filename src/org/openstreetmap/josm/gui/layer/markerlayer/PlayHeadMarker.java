@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -289,12 +287,7 @@ public final class PlayHeadMarker extends Marker {
         jumpToMarker = true;
         if (timer == null) {
             animationInterval = Main.pref.getDouble("marker.audioanimationinterval", 1.0); //milliseconds
-            timer = new Timer((int) (animationInterval * 1000.0), new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    timerAction();
-                }
-            });
+            timer = new Timer((int) (animationInterval * 1000.0), e -> timerAction());
             timer.setInitialDelay(0);
         } else {
             timer.stop();

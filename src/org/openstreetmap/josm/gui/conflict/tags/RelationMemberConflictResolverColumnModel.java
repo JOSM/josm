@@ -28,14 +28,9 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
         }
     };
 
-    private final transient TableCellRenderer tableRenderer = new TableCellRenderer() {
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column) {
-            return setColors(defaultTableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column),
-                    table, isSelected, row);
-        }
-    };
+    private final transient TableCellRenderer tableRenderer = (table, value, isSelected, hasFocus, row, column)
+            -> setColors(defaultTableCellRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column),
+            table, isSelected, row);
 
     private static Component setColors(Component comp, JTable table, boolean isSelected, int row) {
         RelationMemberConflictResolverModel model = (RelationMemberConflictResolverModel) table.getModel();

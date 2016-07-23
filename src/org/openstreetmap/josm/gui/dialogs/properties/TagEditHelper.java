@@ -16,7 +16,6 @@ import java.awt.GridBagLayout;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
@@ -107,12 +106,8 @@ public class TagEditHelper {
     private String changedKey;
     private String objKey;
 
-    private final Comparator<AutoCompletionListItem> defaultACItemComparator = new Comparator<AutoCompletionListItem>() {
-        @Override
-        public int compare(AutoCompletionListItem o1, AutoCompletionListItem o2) {
-            return String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
-        }
-    };
+    private final Comparator<AutoCompletionListItem> defaultACItemComparator =
+            (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
 
     private String lastAddKey;
     private String lastAddValue;
@@ -364,20 +359,7 @@ public class TagEditHelper {
     protected class EditTagDialog extends AbstractTagsDialog implements IEditTagDialog {
         private final String key;
         private final transient Map<String, Integer> m;
-
-        private final transient Comparator<AutoCompletionListItem> usedValuesAwareComparator = new Comparator<AutoCompletionListItem>() {
-                @Override
-                public int compare(AutoCompletionListItem o1, AutoCompletionListItem o2) {
-                    boolean c1 = m.containsKey(o1.getValue());
-                    boolean c2 = m.containsKey(o2.getValue());
-                    if (c1 == c2)
-                        return String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
-                    else if (c1)
-                        return -1;
-                    else
-                        return +1;
-                }
-            };
+        private final transient Comparator<AutoCompletionListItem> usedValuesAwareComparator;
 
         private final transient ListCellRenderer<AutoCompletionListItem> cellRenderer = new ListCellRenderer<AutoCompletionListItem>() {
             private final DefaultListCellRenderer def = new DefaultListCellRenderer();
@@ -407,6 +389,17 @@ public class TagEditHelper {
             configureContextsensitiveHelp("/Dialog/EditValue", true /* show help button */);
             this.key = key;
             this.m = map;
+
+            usedValuesAwareComparator = (o1, o2) -> {
+                boolean c1 = m.containsKey(o1.getValue());
+                boolean c2 = m.containsKey(o2.getValue());
+                if (c1 == c2)
+                    return String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
+                else if (c1)
+                    return -1;
+                else
+                    return +1;
+            };
 
             JPanel mainPanel = new JPanel(new BorderLayout());
 
@@ -449,12 +442,7 @@ public class TagEditHelper {
             p.add(new JLabel(tr("Value")), GBC.std());
             p.add(Box.createHorizontalStrut(10), GBC.std());
             p.add(values, GBC.eol().fill(GBC.HORIZONTAL));
-            values.getEditor().addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    buttonAction(0, null); // emulate OK button click
-                }
-            });
+            values.getEditor().addActionListener(e -> buttonAction(0, null));
             addFocusAdapter(autocomplete, usedValuesAwareComparator);
 
             setContent(mainPanel, false);

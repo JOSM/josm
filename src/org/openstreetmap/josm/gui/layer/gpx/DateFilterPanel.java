@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -13,7 +12,6 @@ import java.util.GregorianCalendar;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
@@ -69,17 +67,11 @@ public class DateFilterPanel extends JPanel {
         noTimestampCb.addChangeListener(changeListener);
     }
 
-    private final transient ChangeListener changeListener = new ChangeListener() {
-        @Override public void stateChanged(ChangeEvent e) {
-            if (isEnabled()) applyFilterWithDelay();
-        }
+    private final transient ChangeListener changeListener = e -> {
+        if (isEnabled()) applyFilterWithDelay();
     };
 
-    private final Timer t = new Timer(200, new ActionListener() {
-        @Override public void actionPerformed(ActionEvent e) {
-            applyFilter();
-        }
-    });
+    private final Timer t = new Timer(200, e -> applyFilter());
 
     /**
      * Do filtering but little bit later (to reduce cpu load)

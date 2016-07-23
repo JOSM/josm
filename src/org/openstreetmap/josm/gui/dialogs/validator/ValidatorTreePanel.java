@@ -146,12 +146,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
         final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
         if (errors == null || errors.isEmpty()) {
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    valTreeModel.setRoot(rootNode);
-                }
-            });
+            GuiHelper.runInEDTAndWait(() -> valTreeModel.setRoot(rootNode));
             return;
         }
         // Sort validation errors - #8517

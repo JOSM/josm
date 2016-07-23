@@ -46,10 +46,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
@@ -231,19 +227,14 @@ public class GenericRelationEditor extends RelationEditor {
         referrerBrowser = new ReferringRelationsBrowser(getLayer(), referrerModel);
         tabbedPane.add(tr("Parent Relations"), referrerBrowser);
         tabbedPane.add(tr("Child Relations"), new ChildRelationBrowser(getLayer(), relation));
-        tabbedPane.addChangeListener(
-                new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
-                        int index = sourceTabbedPane.getSelectedIndex();
-                        String title = sourceTabbedPane.getTitleAt(index);
-                        if (title.equals(tr("Parent Relations"))) {
-                            referrerBrowser.init();
-                        }
-                    }
-                }
-        );
+        tabbedPane.addChangeListener(e -> {
+            JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
+            int index = sourceTabbedPane.getSelectedIndex();
+            String title = sourceTabbedPane.getTitleAt(index);
+            if (title.equals(tr("Parent Relations"))) {
+                referrerBrowser.init();
+            }
+        });
 
         refreshAction = new RefreshAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this);
         applyAction = new ApplyAction(memberTable, memberTableModel, tagEditorPanel.getModel(), getLayer(), this);
@@ -486,12 +477,7 @@ public class GenericRelationEditor extends RelationEditor {
         tfRole.getDocument().addDocumentListener(setRoleAction);
         tfRole.addActionListener(setRoleAction);
         memberTableModel.getSelectionModel().addListSelectionListener(
-                new ListSelectionListener() {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e) {
-                        tfRole.setEnabled(memberTable.getSelectedRowCount() > 0);
-                    }
-                }
+                e -> tfRole.setEnabled(memberTable.getSelectedRowCount() > 0)
         );
         tfRole.setEnabled(memberTable.getSelectedRowCount() > 0);
         JButton btnApply = new JButton(setRoleAction);

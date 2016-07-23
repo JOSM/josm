@@ -218,14 +218,10 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
     protected void cleanupAfterUpload() {
         // we always clean up the data, even in case of errors. It's possible the data was
         // partially uploaded. Better run on EDT.
-        //
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                layer.cleanupAfterUpload(processedPrimitives);
-                layer.onPostUploadToServer();
-                ChangesetCache.getInstance().update(changeset);
-            }
+        Runnable r = () -> {
+            layer.cleanupAfterUpload(processedPrimitives);
+            layer.onPostUploadToServer();
+            ChangesetCache.getInstance().update(changeset);
         };
 
         try {
@@ -319,53 +315,48 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         // - to an error dialog
         // - to the Upload Dialog
         // - to map editing
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                // if the changeset is still open after this upload we want it to
-                // be selected on the next upload
-                //
-                ChangesetCache.getInstance().update(changeset);
-                if (changeset != null && changeset.isOpen()) {
-                    UploadDialog.getUploadDialog().setSelectedChangesetForNextUpload(changeset);
-                }
-                if (uploadCanceled) return;
-                if (lastException == null) {
-                    new Notification(
-                            "<h3>" + tr("Upload successful!") + "</h3>")
-                            .setIcon(ImageProvider.get("misc", "check_large"))
-                            .show();
+        GuiHelper.runInEDT(() -> {
+            // if the changeset is still open after this upload we want it to be selected on the next upload
+            ChangesetCache.getInstance().update(changeset);
+            if (changeset != null && changeset.isOpen()) {
+                UploadDialog.getUploadDialog().setSelectedChangesetForNextUpload(changeset);
+            }
+            if (uploadCanceled) return;
+            if (lastException == null) {
+                new Notification(
+                        "<h3>" + tr("Upload successful!") + "</h3>")
+                        .setIcon(ImageProvider.get("misc", "check_large"))
+                        .show();
+                return;
+            }
+            if (lastException instanceof ChangesetClosedException) {
+                ChangesetClosedException e = (ChangesetClosedException) lastException;
+                if (e.getSource().equals(ChangesetClosedException.Source.UPDATE_CHANGESET)) {
+                    handleFailedUpload(lastException);
                     return;
                 }
-                if (lastException instanceof ChangesetClosedException) {
-                    ChangesetClosedException e = (ChangesetClosedException) lastException;
-                    if (e.getSource().equals(ChangesetClosedException.Source.UPDATE_CHANGESET)) {
-                        handleFailedUpload(lastException);
-                        return;
-                    }
-                    if (strategy.getPolicy() == null)
-                        /* do nothing if unknown policy */
-                        return;
-                    if (e.getSource().equals(ChangesetClosedException.Source.UPLOAD_DATA)) {
-                        switch(strategy.getPolicy()) {
-                        case ABORT:
-                            break; /* do nothing - we return to map editing */
-                        case AUTOMATICALLY_OPEN_NEW_CHANGESETS:
-                            break; /* do nothing - we return to map editing */
-                        case FILL_ONE_CHANGESET_AND_RETURN_TO_UPLOAD_DIALOG:
-                            // return to the upload dialog
-                            //
-                            toUpload.removeProcessed(processedPrimitives);
-                            UploadDialog.getUploadDialog().setUploadedPrimitives(toUpload);
-                            UploadDialog.getUploadDialog().setVisible(true);
-                            break;
-                        }
-                    } else {
-                        handleFailedUpload(lastException);
+                if (strategy.getPolicy() == null)
+                    /* do nothing if unknown policy */
+                    return;
+                if (e.getSource().equals(ChangesetClosedException.Source.UPLOAD_DATA)) {
+                    switch(strategy.getPolicy()) {
+                    case ABORT:
+                        break; /* do nothing - we return to map editing */
+                    case AUTOMATICALLY_OPEN_NEW_CHANGESETS:
+                        break; /* do nothing - we return to map editing */
+                    case FILL_ONE_CHANGESET_AND_RETURN_TO_UPLOAD_DIALOG:
+                        // return to the upload dialog
+                        //
+                        toUpload.removeProcessed(processedPrimitives);
+                        UploadDialog.getUploadDialog().setUploadedPrimitives(toUpload);
+                        UploadDialog.getUploadDialog().setVisible(true);
+                        break;
                     }
                 } else {
                     handleFailedUpload(lastException);
                 }
+            } else {
+                handleFailedUpload(lastException);
             }
         });
     }

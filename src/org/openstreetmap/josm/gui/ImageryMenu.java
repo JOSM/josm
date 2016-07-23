@@ -53,12 +53,8 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
      * ImageryInfo objects are normally sorted by country code first
      * (for the preferences). We don't want this in the imagery menu.
      */
-    public static final Comparator<ImageryInfo> alphabeticImageryComparator = new Comparator<ImageryInfo>() {
-        @Override
-        public int compare(ImageryInfo ii1, ImageryInfo ii2) {
-            return ii1.getName().toLowerCase(Locale.ENGLISH).compareTo(ii2.getName().toLowerCase(Locale.ENGLISH));
-        }
-    };
+    public static final Comparator<ImageryInfo> alphabeticImageryComparator =
+            (ii1, ii2) -> ii1.getName().toLowerCase(Locale.ENGLISH).compareTo(ii2.getName().toLowerCase(Locale.ENGLISH));
 
     private final transient Action offsetAction = new JosmAction(
             tr("Imagery offset"), "mapmode/adjustimg", tr("Adjust imagery offset"), null, false, false) {

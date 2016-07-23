@@ -652,12 +652,7 @@ public class ChangesetCacheManager extends JFrame {
         final int idx = model.getSelectionModel().getMinSelectionIndex();
         if (idx < 0)
             return;
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-                tblChangesets.scrollRectToVisible(tblChangesets.getCellRect(idx, 0, true));
-            }
-        });
+        GuiHelper.runInEDTAndWait(() -> tblChangesets.scrollRectToVisible(tblChangesets.getCellRect(idx, 0, true)));
         repaint();
     }
 
@@ -701,13 +696,10 @@ public class ChangesetCacheManager extends JFrame {
      */
     public void runDownloadTask(final AbstractChangesetDownloadTask task) {
         Main.worker.submit(new PostDownloadHandler(task, task.download()));
-        Main.worker.submit(new Runnable() {
-            @Override
-            public void run() {
-                if (task.isCanceled() || task.isFailed())
-                    return;
-                setSelectedChangesets(task.getDownloadedData());
-            }
+        Main.worker.submit(() -> {
+            if (task.isCanceled() || task.isFailed())
+                return;
+            setSelectedChangesets(task.getDownloadedData());
         });
     }
 }

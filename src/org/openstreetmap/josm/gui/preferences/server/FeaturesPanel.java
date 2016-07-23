@@ -9,8 +9,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -43,12 +41,7 @@ public class FeaturesPanel extends JPanel {
 
         notifier = new JCheckBox(tr("Periodically check for new messages"));
         add(notifier, GBC.eol());
-        notifier.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                updateEnabledState();
-            }
-        });
+        notifier.addChangeListener(e -> updateEnabledState());
 
         intervalLabel = new JLabel(tr("Check interval (minutes):"));
         intervalLabel.setLabelFor(notifierInterval);

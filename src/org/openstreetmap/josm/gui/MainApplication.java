@@ -33,7 +33,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.Callable;
 
 import javax.swing.JOptionPane;
 import javax.swing.RepaintManager;
@@ -425,20 +424,10 @@ public class MainApplication extends Main {
         ProxySelector.setDefault(proxySelector);
         OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManager.getInstance());
 
-        final SplashScreen splash = GuiHelper.runInEDTAndWaitAndReturn(new Callable<SplashScreen>() {
-            @Override
-            public SplashScreen call() {
-                return new SplashScreen();
-            }
-        });
+        final SplashScreen splash = GuiHelper.runInEDTAndWaitAndReturn(SplashScreen::new);
         final SplashScreen.SplashProgressMonitor monitor = splash.getProgressMonitor();
         monitor.beginTask(tr("Initializing"));
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                splash.setVisible(Main.pref.getBoolean("draw.splashscreen", true));
-            }
-        });
+        GuiHelper.runInEDT(() -> splash.setVisible(Main.pref.getBoolean("draw.splashscreen", true)));
         Main.setInitStatusListener(new InitStatusListener() {
 
             @Override
@@ -473,13 +462,10 @@ public class MainApplication extends Main {
         }
 
         // Wait for splash disappearance (fix #9714)
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-                splash.setVisible(false);
-                splash.dispose();
-                mainFrame.setVisible(true);
-            }
+        GuiHelper.runInEDTAndWait(() -> {
+            splash.setVisible(false);
+            splash.dispose();
+            mainFrame.setVisible(true);
         });
 
         Main.MasterWindowListener.setup();
@@ -570,47 +556,44 @@ public class MainApplication extends Main {
      */
     private static void checkIPv6() {
         if ("auto".equals(Main.pref.get("prefer.ipv6", "auto"))) {
-             new Thread(new Runnable() { /* this may take some time (DNS, Connect) */
-                @Override
-                public void run() {
-                    boolean hasv6 = false;
-                    boolean wasv6 = Main.pref.getBoolean("validated.ipv6", false);
-                    try {
-                        /* Use the check result from last run of the software, as after the test, value
-                           changes have no effect anymore */
-                        if (wasv6) {
-                            Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
-                        }
-                        for (InetAddress a : InetAddress.getAllByName("josm.openstreetmap.de")) {
-                            if (a instanceof Inet6Address) {
-                                if (a.isReachable(1000)) {
-                                    /* be sure it REALLY works */
-                                    Socket s = new Socket();
-                                    s.connect(new InetSocketAddress(a, 80), 1000);
-                                    s.close();
-                                    Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
-                                    if (!wasv6) {
-                                        Main.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4 after next restart."));
-                                    } else {
-                                        Main.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4."));
-                                    }
-                                    hasv6 = true;
+            new Thread((Runnable) () -> { /* this may take some time (DNS, Connect) */
+                boolean hasv6 = false;
+                boolean wasv6 = Main.pref.getBoolean("validated.ipv6", false);
+                try {
+                    /* Use the check result from last run of the software, as after the test, value
+                       changes have no effect anymore */
+                    if (wasv6) {
+                        Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
+                    }
+                    for (InetAddress a : InetAddress.getAllByName("josm.openstreetmap.de")) {
+                        if (a instanceof Inet6Address) {
+                            if (a.isReachable(1000)) {
+                                /* be sure it REALLY works */
+                                Socket s = new Socket();
+                                s.connect(new InetSocketAddress(a, 80), 1000);
+                                s.close();
+                                Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
+                                if (!wasv6) {
+                                    Main.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4 after next restart."));
+                                } else {
+                                    Main.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4."));
                                 }
-                                break; /* we're done */
+                                hasv6 = true;
                             }
-                        }
-                    } catch (IOException | SecurityException e) {
-                        if (Main.isDebugEnabled()) {
-                            Main.debug("Exception while checking IPv6 connectivity: "+e);
+                            break; /* we're done */
                         }
                     }
-                    if (wasv6 && !hasv6) {
-                        Main.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
-                        Main.pref.put("validated.ipv6", hasv6); // be sure it is stored before the restart!
-                        new RestartAction().actionPerformed(null);
+                } catch (IOException | SecurityException e) {
+                    if (Main.isDebugEnabled()) {
+                        Main.debug("Exception while checking IPv6 connectivity: "+e);
                     }
-                    Main.pref.put("validated.ipv6", hasv6);
                 }
+                if (wasv6 && !hasv6) {
+                    Main.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
+                    Main.pref.put("validated.ipv6", hasv6); // be sure it is stored before the restart!
+                    new RestartAction().actionPerformed(null);
+                }
+                Main.pref.put("validated.ipv6", hasv6);
             }, "IPv6-checker").start();
         }
     }

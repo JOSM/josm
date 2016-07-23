@@ -48,7 +48,6 @@ import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -196,12 +195,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     protected void wireUpdateEnabledStateUpdater(final IEnabledStateUpdating updater, JTree tree) {
         addShowNotifyListener(updater);
 
-        tree.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
-            public void valueChanged(TreeSelectionEvent e) {
-                updater.updateEnabledState();
-            }
-        });
+        tree.addTreeSelectionListener(e -> updater.updateEnabledState());
 
         tree.getModel().addTreeModelListener(new TreeModelListener() {
             @Override
@@ -341,12 +335,9 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         final OsmDataLayer currentLayer = Main.getLayerManager().getEditLayer();
         return new FilteredCollection<>(
                 c.getParticipatingPrimitives(),
-                new Predicate<OsmPrimitive>() {
-                    @Override
-                    public boolean evaluate(OsmPrimitive o) {
-                        OsmPrimitive p = currentLayer.data.getPrimitiveById(o);
-                        return p != null && p.isUsable();
-                    }
+                o -> {
+                    OsmPrimitive p = currentLayer.data.getPrimitiveById(o);
+                    return p != null && p.isUsable();
                 }
         );
     }

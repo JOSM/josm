@@ -8,8 +8,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,8 +28,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
@@ -82,7 +78,6 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -161,12 +156,7 @@ public class RelationListDialog extends ToggleDialog
 
         filter = setupFilter();
 
-        displaylist.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                updateActionsRelationLists();
-            }
-        });
+        displaylist.addListSelectionListener(e -> updateActionsRelationLists());
 
         // Setup popup menu handler
         setupPopupMenuHandler();
@@ -308,12 +298,7 @@ public class RelationListDialog extends ToggleDialog
         final JosmTextField f = new DisableShortcutsOnFocusGainedTextField();
         f.setToolTipText(tr("Relation list filter"));
         final CompileSearchTextDecorator decorator = CompileSearchTextDecorator.decorate(f);
-        f.addPropertyChangeListener("filter", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                model.setFilter(decorator.getMatch());
-            }
-        });
+        f.addPropertyChangeListener("filter", evt -> model.setFilter(decorator.getMatch()));
         return f;
     }
 
@@ -505,12 +490,7 @@ public class RelationListDialog extends ToggleDialog
 
         private void updateFilteredRelations() {
             if (filter != null) {
-                filteredRelations = new ArrayList<>(Utils.filter(relations, new Predicate<Relation>() {
-                    @Override
-                    public boolean evaluate(Relation r) {
-                        return filter.match(r);
-                    }
-                }));
+                filteredRelations = new ArrayList<>(Utils.filter(relations, filter::match));
             } else if (filteredRelations != null) {
                 filteredRelations = null;
             }

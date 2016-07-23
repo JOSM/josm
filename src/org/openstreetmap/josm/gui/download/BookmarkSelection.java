@@ -109,13 +109,10 @@ public class BookmarkSelection implements DownloadSelection {
         GridBagConstraints gc = new GridBagConstraints();
 
         bookmarks = new BookmarkList();
-        bookmarks.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                Bookmark b = bookmarks.getSelectedValue();
-                if (b != null && gui != null) {
-                    gui.boundingBoxChanged(b.getArea(), BookmarkSelection.this);
-                }
+        bookmarks.getSelectionModel().addListSelectionListener(e -> {
+            Bookmark b = bookmarks.getSelectedValue();
+            if (b != null && gui != null) {
+                gui.boundingBoxChanged(b.getArea(), BookmarkSelection.this);
             }
         });
         bookmarks.addMouseListener(new DoubleClickAdapter());

@@ -8,8 +8,6 @@ import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Set;
@@ -82,16 +80,11 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
         } catch (SecurityException ex) {
             Main.warn(ex);
         }
-        timer = new Timer(0, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                timer.stop();
-                if (set.remove(releaseEvent.getKeyCode()) && enabled) {
-                    if (isFocusInMainWindow()) {
-                        for (KeyPressReleaseListener q: keyListeners) {
-                            q.doKeyReleased(releaseEvent);
-                        }
-                    }
+        timer = new Timer(0, e -> {
+            timer.stop();
+            if (set.remove(releaseEvent.getKeyCode()) && enabled && isFocusInMainWindow()) {
+                for (KeyPressReleaseListener q: keyListeners) {
+                    q.doKeyReleased(releaseEvent);
                 }
             }
         });

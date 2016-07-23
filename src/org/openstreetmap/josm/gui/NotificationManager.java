@@ -217,12 +217,7 @@ class NotificationManager {
                 btnHelp.addActionListener(new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                HelpBrowser.setUrlForHelpTopic(note.getHelpTopic());
-                            }
-                        });
+                        SwingUtilities.invokeLater(() -> HelpBrowser.setUrlForHelpTopic(note.getHelpTopic()));
                     }
                 });
                 btnHelp.setOpaque(false);

@@ -13,7 +13,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,8 +25,6 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
-import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
-import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.LayerStateChangeListener;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -39,21 +36,13 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * @since 10340
  */
 public class MainFrame extends JFrame {
-    private final transient LayerStateChangeListener updateTitleOnLayerStateChange = new LayerStateChangeListener() {
-        @Override
-        public void uploadDiscouragedChanged(OsmDataLayer layer, boolean newValue) {
-            onLayerChange(layer);
-        }
-    };
+    private final transient LayerStateChangeListener updateTitleOnLayerStateChange = (layer, newValue) -> onLayerChange(layer);
 
-    private final transient PropertyChangeListener updateTitleOnSaveChange = new PropertyChangeListener() {
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals(OsmDataLayer.REQUIRES_SAVE_TO_DISK_PROP)
-                    || evt.getPropertyName().equals(OsmDataLayer.REQUIRES_UPLOAD_TO_SERVER_PROP)) {
-                OsmDataLayer layer = (OsmDataLayer) evt.getSource();
-                onLayerChange(layer);
-            }
+    private final transient PropertyChangeListener updateTitleOnSaveChange = evt -> {
+        if (evt.getPropertyName().equals(OsmDataLayer.REQUIRES_SAVE_TO_DISK_PROP)
+                || evt.getPropertyName().equals(OsmDataLayer.REQUIRES_UPLOAD_TO_SERVER_PROP)) {
+            OsmDataLayer layer = (OsmDataLayer) evt.getSource();
+            onLayerChange(layer);
         }
     };
 
@@ -101,19 +90,14 @@ public class MainFrame extends JFrame {
         setIconImages(l);
         addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(final WindowEvent arg0) {
+            public void windowClosing(final WindowEvent evt) {
                 Main.exitJosm(true, 0);
             }
         });
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         // This listener is never removed, since the main frame exists forever.
-        Main.getLayerManager().addActiveLayerChangeListener(new ActiveLayerChangeListener() {
-            @Override
-            public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-                refreshTitle();
-            }
-        });
+        Main.getLayerManager().addActiveLayerChangeListener(e -> refreshTitle());
         Main.getLayerManager().addLayerChangeListener(new ManageLayerListeners(), true);
 
         refreshTitle();

@@ -364,15 +364,12 @@ public final class MapPaintStyles {
 
         @Override
         protected void finish() {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    fireMapPaintSylesUpdated();
-                    styles.clearCached();
-                    if (Main.isDisplayingMapView()) {
-                        Main.map.mapView.preferenceChanged(null);
-                        Main.map.mapView.repaint();
-                    }
+            SwingUtilities.invokeLater(() -> {
+                fireMapPaintSylesUpdated();
+                styles.clearCached();
+                if (Main.isDisplayingMapView()) {
+                    Main.map.mapView.preferenceChanged(null);
+                    Main.map.mapView.repaint();
                 }
             });
         }

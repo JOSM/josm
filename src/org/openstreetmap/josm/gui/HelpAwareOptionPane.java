@@ -151,11 +151,7 @@ public final class HelpAwareOptionPane {
                 }
                 b.setFocusable(true);
                 b.setEnabled(spec.isEnabled());
-                spec.addChangeListener(new ChangeListener() {
-                    @Override public void stateChanged(ChangeEvent e) {
-                        b.setEnabled(spec.isEnabled());
-                    }
-                });
+                spec.addChangeListener(e -> b.setEnabled(spec.isEnabled()));
                 buttons.add(b);
             }
         }
@@ -352,11 +348,6 @@ public final class HelpAwareOptionPane {
      */
     public static void showMessageDialogInEDT(final Component parentComponent, final Object msg, final String title,
             final int messageType, final String helpTopic) {
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                showOptionDialog(parentComponent, msg, title, messageType, null, null, null, helpTopic);
-            }
-        });
+        GuiHelper.runInEDT(() -> showOptionDialog(parentComponent, msg, title, messageType, null, null, null, helpTopic));
     }
 }

@@ -32,7 +32,6 @@ import org.openstreetmap.josm.gui.preferences.SourceType;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -232,13 +231,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
             Collection<ExtendedSourceEntry> defaults = getDefault();
             int insertionIdx = 0;
             for (final SourceEntry def : defaults) {
-                int i = Utils.indexOf(list,
-                        new Predicate<SourceEntry>() {
-                    @Override
-                    public boolean evaluate(SourceEntry se) {
-                        return Objects.equals(def.url, se.url);
-                    }
-                });
+                int i = Utils.indexOf(list, se -> Objects.equals(def.url, se.url));
                 if (i == -1 && !knownDefaults.contains(def.url)) {
                     def.active = false;
                     list.add(insertionIdx, def);
@@ -254,12 +247,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
             Main.pref.putCollection("mappaint.style.known-defaults", knownDefaults);
 
             // XML style is not bundled anymore
-            list.remove(Utils.find(list, new Predicate<SourceEntry>() {
-                            @Override
-                            public boolean evaluate(SourceEntry se) {
-                                return "resource://styles/standard/elemstyles.xml".equals(se.url);
-                            }
-                        }));
+            list.remove(Utils.find(list, se -> "resource://styles/standard/elemstyles.xml".equals(se.url)));
 
             return changed;
         }

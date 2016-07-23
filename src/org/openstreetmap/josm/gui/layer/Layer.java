@@ -515,15 +515,10 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
                     tr("Change the projection again or remove the layer.");
 
             // run later to not block loading the UI.
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    JOptionPane.showMessageDialog(Main.parent,
-                            message,
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE);
-                }
-            });
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Main.parent,
+                    message,
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE));
         }
     }
 
