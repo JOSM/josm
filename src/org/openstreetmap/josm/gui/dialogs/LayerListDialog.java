@@ -24,6 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.DropMode;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -51,6 +52,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.layer.ActivateLayerAction;
 import org.openstreetmap.josm.gui.dialogs.layer.DeleteLayerAction;
 import org.openstreetmap.josm.gui.dialogs.layer.DuplicateAction;
+import org.openstreetmap.josm.gui.dialogs.layer.LayerListTransferHandler;
 import org.openstreetmap.josm.gui.dialogs.layer.LayerVisibilityAction;
 import org.openstreetmap.josm.gui.dialogs.layer.MergeAction;
 import org.openstreetmap.josm.gui.dialogs.layer.MoveDownAction;
@@ -1103,7 +1105,7 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public void layerOrderChanged(LayerOrderChangeEvent e) {
-            // ignored for now, since only we change layer order.
+            fireTableDataChanged();
         }
 
         /* ------------------------------------------------------------------------------ */
@@ -1129,6 +1131,9 @@ public class LayerListDialog extends ToggleDialog {
         LayerList(LayerListModel dataModel) {
             super(dataModel);
             dataModel.setLayerList(this);
+            setDragEnabled(true);
+            setDropMode(DropMode.INSERT_ROWS);
+            setTransferHandler(new LayerListTransferHandler());
         }
 
         public void scrollToVisible(int row, int col) {
@@ -1139,6 +1144,11 @@ public class LayerListDialog extends ToggleDialog {
             Point pt = viewport.getViewPosition();
             rect.setLocation(rect.x - pt.x, rect.y - pt.y);
             viewport.scrollRectToVisible(rect);
+        }
+
+        @Override
+        public LayerListModel getModel() {
+            return (LayerListModel) super.getModel();
         }
     }
 

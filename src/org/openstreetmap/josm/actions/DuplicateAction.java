@@ -17,7 +17,7 @@ import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * An action that dupplicates the given nodes. They are not added to the clipboard.
+ * An action that duplicates the given nodes. They are not added to the clipboard.
  */
 public final class DuplicateAction extends JosmAction {
 
