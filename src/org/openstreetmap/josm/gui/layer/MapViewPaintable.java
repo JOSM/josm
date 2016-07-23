@@ -60,7 +60,7 @@ public interface MapViewPaintable {
         /**
          * Called whenever a {@link PaintableInvalidationEvent} is fired. This might be called from any thread.
          * @param event The event
-         * @ince 10600 (renamed)
+         * @since 10600 (renamed)
          */
         void paintableInvalidated(PaintableInvalidationEvent event);
     }

@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data.osm;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,7 +24,7 @@ import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 public class PrimitiveDeepCopy {
 
     /**
-     * Constructs a new {@code PrimitiveDeepCopy} without data. Use {@link #makeCopy(Collection)} after that.
+     * Constructs a new {@code PrimitiveDeepCopy} without data.
      */
     public PrimitiveDeepCopy() {
         // Do nothing
