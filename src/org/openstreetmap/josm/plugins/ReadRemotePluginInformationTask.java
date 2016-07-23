@@ -199,27 +199,25 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
 
     private static void displayErrorMessage(final ProgressMonitor monitor, final String msg, final String details, final String title,
             final String firstMessage) {
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override public void run() {
-                JPanel panel = new JPanel(new GridBagLayout());
-                panel.add(new JLabel(firstMessage), GBC.eol().insets(0, 0, 0, 10));
-                StringBuilder b = new StringBuilder();
-                for (String part : msg.split("(?<=\\G.{200})")) {
-                    b.append(part).append('\n');
-                }
-                panel.add(new JLabel("<html><body width=\"500\"><b>"+b.toString().trim()+"</b></body></html>"), GBC.eol().insets(0, 0, 0, 10));
-                if (details != null && !details.isEmpty()) {
-                    panel.add(new JLabel(tr("Details:")), GBC.eol().insets(0, 0, 0, 10));
-                    JosmTextArea area = new JosmTextArea(details);
-                    area.setEditable(false);
-                    area.setLineWrap(true);
-                    area.setWrapStyleWord(true);
-                    JScrollPane scrollPane = new JScrollPane(area);
-                    scrollPane.setPreferredSize(new Dimension(500, 300));
-                    panel.add(scrollPane, GBC.eol().fill());
-                }
-                JOptionPane.showMessageDialog(monitor.getWindowParent(), panel, title, JOptionPane.ERROR_MESSAGE);
+        GuiHelper.runInEDTAndWait(() -> {
+            JPanel panel = new JPanel(new GridBagLayout());
+            panel.add(new JLabel(firstMessage), GBC.eol().insets(0, 0, 0, 10));
+            StringBuilder b = new StringBuilder();
+            for (String part : msg.split("(?<=\\G.{200})")) {
+                b.append(part).append('\n');
             }
+            panel.add(new JLabel("<html><body width=\"500\"><b>"+b.toString().trim()+"</b></body></html>"), GBC.eol().insets(0, 0, 0, 10));
+            if (details != null && !details.isEmpty()) {
+                panel.add(new JLabel(tr("Details:")), GBC.eol().insets(0, 0, 0, 10));
+                JosmTextArea area = new JosmTextArea(details);
+                area.setEditable(false);
+                area.setLineWrap(true);
+                area.setWrapStyleWord(true);
+                JScrollPane scrollPane = new JScrollPane(area);
+                scrollPane.setPreferredSize(new Dimension(500, 300));
+                panel.add(scrollPane, GBC.eol().fill());
+            }
+            JOptionPane.showMessageDialog(monitor.getWindowParent(), panel, title, JOptionPane.ERROR_MESSAGE);
         });
     }
 
@@ -295,13 +293,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         List<File> siteCacheFiles = new LinkedList<>();
         for (String location : PluginInformation.getPluginLocations()) {
             File[] f = new File(location).listFiles(
-                    new FilenameFilter() {
-                        @Override
-                        public boolean accept(File dir, String name) {
-                            return name.matches("^([0-9]+-)?site.*\\.txt$") ||
-                            name.matches("^([0-9]+-)?site.*-icons\\.zip$");
-                        }
-                    }
+                    (FilenameFilter) (dir, name) -> name.matches("^([0-9]+-)?site.*\\.txt$") ||
+                                                    name.matches("^([0-9]+-)?site.*-icons\\.zip$")
             );
             if (f != null && f.length > 0) {
                 siteCacheFiles.addAll(Arrays.asList(f));

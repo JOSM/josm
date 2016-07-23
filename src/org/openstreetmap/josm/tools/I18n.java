@@ -15,7 +15,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -381,12 +380,7 @@ public final class I18n {
         v.add(Locale.ENGLISH);
         Locale[] l = new Locale[v.size()];
         l = v.toArray(l);
-        Arrays.sort(l, new Comparator<Locale>() {
-            @Override
-            public int compare(Locale o1, Locale o2) {
-                return o1.toString().compareTo(o2.toString());
-            }
-        });
+        Arrays.sort(l, (o1, o2) -> o1.toString().compareTo(o2.toString()));
         return l;
     }
 
@@ -742,12 +736,7 @@ public final class I18n {
     }
 
     public static TranslationAdapter getTranslationAdapter() {
-        return new TranslationAdapter() {
-            @Override
-            public String tr(String text, Object... objects) {
-                return I18n.tr(text, objects);
-            }
-        };
+        return (text, objects) -> I18n.tr(text, objects);
     }
 
     /**

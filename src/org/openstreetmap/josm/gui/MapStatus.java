@@ -499,7 +499,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                 return;
             final Popup staticPopup = popup;
             popup = null;
-            EventQueue.invokeLater(() -> staticPopup.hide());
+            EventQueue.invokeLater(staticPopup::hide);
         }
 
         /**
@@ -519,7 +519,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                 });
             } else {
                 // There is no old popup
-                EventQueue.invokeLater(() -> staticPopup.show());
+                EventQueue.invokeLater(staticPopup::show);
             }
             this.popupLabels = lbls;
             this.popup = newPopup;

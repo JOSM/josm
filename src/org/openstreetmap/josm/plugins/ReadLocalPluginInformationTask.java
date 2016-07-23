@@ -46,6 +46,10 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         availablePlugins = new HashMap<>();
     }
 
+    /**
+     * Constructs a new {@code ReadLocalPluginInformationTask}.
+     * @param monitor progress monitor
+     */
     public ReadLocalPluginInformationTask(ProgressMonitor monitor) {
         super(tr("Reading local plugin information.."), monitor, false);
         availablePlugins = new HashMap<>();
@@ -76,14 +80,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     }
 
     private static File[] listFiles(File pluginsDirectory, final String regex) {
-        return pluginsDirectory.listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.matches(regex);
-                    }
-                }
-        );
+        return pluginsDirectory.listFiles((FilenameFilter) (dir, name) -> name.matches(regex));
     }
 
     protected void scanSiteCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
@@ -107,12 +104,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
 
     protected void scanPluginFiles(ProgressMonitor monitor, File pluginsDirectory) {
         File[] pluginFiles = pluginsDirectory.listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.endsWith(".jar") || name.endsWith(".jar.new");
-                    }
-                }
+                (FilenameFilter) (dir, name) -> name.endsWith(".jar") || name.endsWith(".jar.new")
         );
         if (pluginFiles == null || pluginFiles.length == 0)
             return;
@@ -130,7 +122,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
                     processJarFile(f, pluginName);
                 }
             } catch (PluginException e) {
-                Main.warn("PluginException: "+e.getMessage());
+                Main.warn(e, "PluginException: ");
                 Main.warn(tr("Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
             }
             monitor.worked(1);

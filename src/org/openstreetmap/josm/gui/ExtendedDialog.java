@@ -575,7 +575,7 @@ public class ExtendedDialog extends JDialog {
 
     private void requestFocusToDefaultButton() {
         if (defaultButton != null) {
-            GuiHelper.runInEDT(() -> defaultButton.requestFocusInWindow());
+            GuiHelper.runInEDT(defaultButton::requestFocusInWindow);
         }
     }
 

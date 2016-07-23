@@ -131,19 +131,16 @@ public class BugReportSender extends Thread {
 
     private void failed(String string) {
         errorMessage = string;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JPanel errorPanel = new JPanel(new GridBagLayout());
-                errorPanel.add(new JMultilineLabel(
-                        tr("Opening the bug report failed. Please report manually using this website:")),
-                        GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-                errorPanel.add(new UrlLabel(Main.getJOSMWebsite() + "/newticket", 2), GBC.eop().insets(8, 0, 0, 0));
-                errorPanel.add(new DebugTextDisplay(statusText));
+        SwingUtilities.invokeLater(() -> {
+            JPanel errorPanel = new JPanel(new GridBagLayout());
+            errorPanel.add(new JMultilineLabel(
+                    tr("Opening the bug report failed. Please report manually using this website:")),
+                    GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            errorPanel.add(new UrlLabel(Main.getJOSMWebsite() + "/newticket", 2), GBC.eop().insets(8, 0, 0, 0));
+            errorPanel.add(new DebugTextDisplay(statusText));
 
-                JOptionPane.showMessageDialog(Main.parent, errorPanel, tr("You have encountered a bug in JOSM"),
-                        JOptionPane.ERROR_MESSAGE);
-            }
+            JOptionPane.showMessageDialog(Main.parent, errorPanel, tr("You have encountered a bug in JOSM"),
+                    JOptionPane.ERROR_MESSAGE);
         });
     }
 

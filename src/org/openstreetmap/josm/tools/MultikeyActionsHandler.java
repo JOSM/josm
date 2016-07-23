@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,12 +61,7 @@ public final class MultikeyActionsHandler {
                 JMenuItem item = new JMenuItem(formatMenuText(action.shortcut.getKeyStroke(),
                         String.valueOf(info.getShortcut()), info.getDescription()));
                 item.setMnemonic(info.getShortcut());
-                item.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        action.action.executeMultikeyAction(info.getIndex(), false);
-                    }
-                });
+                item.addActionListener(e -> action.action.executeMultikeyAction(info.getIndex(), false));
                 layers.add(item);
             }
 
@@ -78,12 +72,7 @@ public final class MultikeyActionsHandler {
                             KeyEvent.getKeyText(action.shortcut.getKeyStroke().getKeyCode()),
                             "Repeat " + lastLayer.getDescription()));
                     repeateItem.setMnemonic(action.shortcut.getKeyStroke().getKeyCode());
-                    repeateItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            action.action.executeMultikeyAction(-1, true);
-                        }
-                    });
+                    repeateItem.addActionListener(e -> action.action.executeMultikeyAction(-1, true));
                     layers.add(repeateItem);
                 }
             }
