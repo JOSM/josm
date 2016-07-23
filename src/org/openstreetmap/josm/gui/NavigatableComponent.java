@@ -50,7 +50,6 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
@@ -83,17 +82,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
         void zoomChanged();
     }
 
-    public transient Predicate<OsmPrimitive> isSelectablePredicate = new Predicate<OsmPrimitive>() {
-        @Override
-        public boolean evaluate(OsmPrimitive prim) {
-            if (!prim.isSelectable()) return false;
-            // if it isn't displayed on screen, you cannot click on it
-            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
-            try {
-                return !MapPaintStyles.getStyles().get(prim, getDist100Pixel(), NavigatableComponent.this).isEmpty();
-            } finally {
-                MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
-            }
+    public transient Predicate<OsmPrimitive> isSelectablePredicate = prim -> {
+        if (!prim.isSelectable()) return false;
+        // if it isn't displayed on screen, you cannot click on it
+        MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
+        try {
+            return !MapPaintStyles.getStyles().get(prim, getDist100Pixel(), NavigatableComponent.this).isEmpty();
+        } finally {
+            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
         }
     };
 
@@ -142,13 +138,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     // The only events that may move/resize this map view are window movements or changes to the map view size.
     // We can clean this up more by only recalculating the state on repaint.
-    private final transient HierarchyListener hierarchyListener = new HierarchyListener() {
-        @Override
-        public void hierarchyChanged(HierarchyEvent e) {
-            long interestingFlags = HierarchyEvent.ANCESTOR_MOVED | HierarchyEvent.SHOWING_CHANGED;
-            if ((e.getChangeFlags() & interestingFlags) != 0) {
-                updateLocationState();
-            }
+    private final transient HierarchyListener hierarchyListener = e -> {
+        long interestingFlags = HierarchyEvent.ANCESTOR_MOVED | HierarchyEvent.SHOWING_CHANGED;
+        if ((e.getChangeFlags() & interestingFlags) != 0) {
+            updateLocationState();
         }
     };
 
@@ -180,12 +173,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         setLayout(null);
         state = MapViewState.createDefaultState(getWidth(), getHeight());
         // uses weak link.
-        Main.addProjectionChangeListener(new ProjectionChangeListener() {
-            @Override
-            public void projectionChanged(Projection oldValue, Projection newValue) {
-                fixProjection();
-            }
-        });
+        Main.addProjectionChangeListener((oldValue, newValue) -> fixProjection());
     }
 
     @Override

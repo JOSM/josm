@@ -177,12 +177,7 @@ public class LayerManager {
     public void addLayer(final Layer layer) {
         // we force this on to the EDT Thread to make events fire from there.
         // The synchronization lock needs to be held by the EDT.
-        GuiHelper.runInEDTAndWaitWithException(new Runnable() {
-            @Override
-            public void run() {
-                realAddLayer(layer);
-            }
-        });
+        GuiHelper.runInEDTAndWaitWithException(() -> realAddLayer(layer));
     }
 
     protected synchronized void realAddLayer(Layer layer) {
@@ -207,12 +202,7 @@ public class LayerManager {
     public void removeLayer(final Layer layer) {
         // we force this on to the EDT Thread to make events fire from there.
         // The synchronization lock needs to be held by the EDT.
-        GuiHelper.runInEDTAndWaitWithException(new Runnable() {
-            @Override
-            public void run() {
-                realRemoveLayer(layer);
-            }
-        });
+        GuiHelper.runInEDTAndWaitWithException(() -> realRemoveLayer(layer));
     }
 
     protected synchronized void realRemoveLayer(Layer layer) {
@@ -246,12 +236,7 @@ public class LayerManager {
     public void moveLayer(final Layer layer, final int position) {
         // we force this on to the EDT Thread to make events fire from there.
         // The synchronization lock needs to be held by the EDT.
-        GuiHelper.runInEDTAndWaitWithException(new Runnable() {
-            @Override
-            public void run() {
-                realMoveLayer(layer, position);
-            }
-        });
+        GuiHelper.runInEDTAndWaitWithException(() -> realMoveLayer(layer, position));
     }
 
     protected synchronized void realMoveLayer(Layer layer, int position) {

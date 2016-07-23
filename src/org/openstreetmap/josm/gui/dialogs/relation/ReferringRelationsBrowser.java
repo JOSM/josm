@@ -109,16 +109,11 @@ public class ReferringRelationsBrowser extends JPanel {
                     full,
                     new PleaseWaitProgressMonitor(tr("Loading parent relations"))
             );
-            task.setContinuation(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            if (task.isCanceled() || task.hasError())
-                                return;
-                            model.populate(task.getParents());
-                        }
-                    }
-            );
+            task.setContinuation(() -> {
+                    if (task.isCanceled() || task.hasError())
+                        return;
+                    model.populate(task.getParents());
+                });
             Main.worker.submit(task);
         }
 

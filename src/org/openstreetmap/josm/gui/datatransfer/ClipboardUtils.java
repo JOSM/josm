@@ -11,7 +11,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.util.concurrent.Callable;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -138,16 +137,13 @@ public final class ClipboardUtils {
      * @return True if the copy was successful
      */
     public static boolean copy(final Transferable transferable) {
-        return GuiHelper.runInEDTAndWaitAndReturn(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                try {
-                    getClipboard().setContents(transferable, new DoNothingClipboardOwner());
-                    return true;
-                } catch (IllegalStateException ex) {
-                    Main.error(ex);
-                    return false;
-                }
+        return GuiHelper.runInEDTAndWaitAndReturn(() -> {
+            try {
+                getClipboard().setContents(transferable, new DoNothingClipboardOwner());
+                return true;
+            } catch (IllegalStateException ex) {
+                Main.error(ex);
+                return false;
             }
         });
     }

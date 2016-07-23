@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.DefaultListCellRenderer;
@@ -30,12 +29,7 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
     private MenuItemSearchDialog(MainMenu menu) {
         super(Main.parent, tr("Search menu items"), new String[]{tr("Select"), tr("Cancel")});
         this.selector = new Selector(menu);
-        this.selector.setDblClickListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                buttonAction(0, null);
-            }
-        });
+        this.selector.setDblClickListener(e -> buttonAction(0, null));
         setContent(selector, false);
         setPreferredSize(new Dimension(600, 300));
     }

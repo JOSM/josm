@@ -7,7 +7,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractAction;
@@ -16,7 +15,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
-import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
@@ -50,22 +48,16 @@ public class TextContextualPopupMenu extends JPopupMenu {
     protected final RedoAction redoAction = new RedoAction();
     protected final UndoManager undo = new UndoManager();
 
-    protected final transient UndoableEditListener undoEditListener = new UndoableEditListener() {
-        @Override
-        public void undoableEditHappened(UndoableEditEvent e) {
-            undo.addEdit(e.getEdit());
-            undoAction.updateUndoState();
-            redoAction.updateRedoState();
-        }
+    protected final transient UndoableEditListener undoEditListener = e -> {
+        undo.addEdit(e.getEdit());
+        undoAction.updateUndoState();
+        redoAction.updateRedoState();
     };
 
-    protected final transient PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            if (EDITABLE.equals(evt.getPropertyName())) {
-                removeAll();
-                addMenuEntries();
-            }
+    protected final transient PropertyChangeListener propertyChangeListener = evt -> {
+        if (EDITABLE.equals(evt.getPropertyName())) {
+            removeAll();
+            addMenuEntries();
         }
     };
 

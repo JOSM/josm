@@ -57,14 +57,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
         if (lastException != null) {
             ExceptionDialogUtil.explainException(lastException);
         }
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        ChangesetCache.getInstance().update(closedChangesets);
-                    }
-                }
-        );
+        SwingUtilities.invokeLater(() -> ChangesetCache.getInstance().update(closedChangesets));
     }
 
     @Override

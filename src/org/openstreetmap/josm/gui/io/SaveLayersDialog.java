@@ -578,30 +578,27 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         @Override
         public void run() {
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    model.setMode(SaveLayersModel.Mode.UPLOADING_AND_SAVING);
-                    List<SaveLayerInfo> toUpload = model.getLayersToUpload();
-                    if (!toUpload.isEmpty()) {
-                        uploadLayers(toUpload);
-                    }
-                    List<SaveLayerInfo> toSave = model.getLayersToSave();
-                    if (!toSave.isEmpty()) {
-                        saveLayers(toSave);
-                    }
-                    model.setMode(SaveLayersModel.Mode.EDITING_DATA);
-                    if (model.hasUnsavedData()) {
-                        warnBecauseOfUnsavedData();
-                        model.setMode(Mode.EDITING_DATA);
-                        if (canceled) {
-                            setUserAction(UserAction.CANCEL);
-                            closeDialog();
-                        }
-                    } else {
-                        setUserAction(UserAction.PROCEED);
+            GuiHelper.runInEDTAndWait(() -> {
+                model.setMode(SaveLayersModel.Mode.UPLOADING_AND_SAVING);
+                List<SaveLayerInfo> toUpload = model.getLayersToUpload();
+                if (!toUpload.isEmpty()) {
+                    uploadLayers(toUpload);
+                }
+                List<SaveLayerInfo> toSave = model.getLayersToSave();
+                if (!toSave.isEmpty()) {
+                    saveLayers(toSave);
+                }
+                model.setMode(SaveLayersModel.Mode.EDITING_DATA);
+                if (model.hasUnsavedData()) {
+                    warnBecauseOfUnsavedData();
+                    model.setMode(Mode.EDITING_DATA);
+                    if (canceled) {
+                        setUserAction(UserAction.CANCEL);
                         closeDialog();
                     }
+                } else {
+                    setUserAction(UserAction.PROCEED);
+                    closeDialog();
                 }
             });
             worker.shutdownNow();

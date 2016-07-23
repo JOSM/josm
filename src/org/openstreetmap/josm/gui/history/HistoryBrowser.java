@@ -10,8 +10,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -79,13 +77,10 @@ public class HistoryBrowser extends JPanel {
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(tpViewers, BorderLayout.CENTER);
 
-        tpViewers.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (tpViewers.getSelectedComponent() == coordinateInfoViewer) {
-                    // while building the component size is not yet known, thus panning does not give reasonable results
-                    coordinateInfoViewer.setDisplayToFitMapMarkers();
-                }
+        tpViewers.addChangeListener(e -> {
+            if (tpViewers.getSelectedComponent() == coordinateInfoViewer) {
+                // while building the component size is not yet known, thus panning does not give reasonable results
+                coordinateInfoViewer.setDisplayToFitMapMarkers();
             }
         });
 

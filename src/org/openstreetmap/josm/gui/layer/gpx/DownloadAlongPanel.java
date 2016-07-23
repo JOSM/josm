@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
@@ -178,11 +177,7 @@ public class DownloadAlongPanel extends JPanel {
                 )
         };
 
-        addChangeListener(new ChangeListener() {
-            @Override public void stateChanged(ChangeEvent e) {
-                options[0].setEnabled(isDownloadOsmData() || isDownloadGpxData());
-            }
-        });
+        addChangeListener(e -> options[0].setEnabled(isDownloadOsmData() || isDownloadGpxData()));
 
         int ret = HelpAwareOptionPane.showOptionDialog(Main.parent, this, title,
                     JOptionPane.QUESTION_MESSAGE, null, options, options[0], helpTopic);

@@ -383,18 +383,13 @@ public class PlaceSelection implements DownloadSelection {
             } catch (SAXParseException e) {
                 if (!canceled) {
                     // Nominatim sometimes returns garbage, see #5934, #10643
-                    Main.warn(tr("Error occured with query ''{0}'': ''{1}''", urlString, e.getMessage()));
-                    GuiHelper.runInEDTAndWait(new Runnable() {
-                        @Override
-                        public void run() {
-                            HelpAwareOptionPane.showOptionDialog(
-                                    Main.parent,
-                                    tr("Name server returned invalid data. Please try again."),
-                                    tr("Bad response"),
-                                    JOptionPane.WARNING_MESSAGE, null
-                            );
-                        }
-                    });
+                    Main.warn(e, tr("Error occured with query ''{0}'': ''{1}''", urlString, e.getMessage()));
+                    GuiHelper.runInEDTAndWait(() -> HelpAwareOptionPane.showOptionDialog(
+                            Main.parent,
+                            tr("Name server returned invalid data. Please try again."),
+                            tr("Bad response"),
+                            JOptionPane.WARNING_MESSAGE, null
+                    ));
                 }
             } catch (IOException | ParserConfigurationException e) {
                 if (!canceled) {

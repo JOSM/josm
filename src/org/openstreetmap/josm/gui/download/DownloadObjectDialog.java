@@ -4,8 +4,6 @@ package org.openstreetmap.josm.gui.download;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.Collection;
@@ -69,14 +67,9 @@ public class DownloadObjectDialog extends OsmIdSelectionDialog {
         fullRel.setToolTipText(tr("Select if the members of a relation should be downloaded as well"));
         fullRel.setSelected(Main.pref.getBoolean("downloadprimitive.full", true));
 
-        cbType.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                referrers.setText(cbType.getType() == OsmPrimitiveType.NODE
-                        ? tr("Download referrers (parent relations and ways)")
-                        : tr("Download referrers (parent relations)"));
-            }
-        });
+        cbType.addItemListener(e -> referrers.setText(cbType.getType() == OsmPrimitiveType.NODE
+                ? tr("Download referrers (parent relations and ways)")
+                : tr("Download referrers (parent relations)")));
 
         return Arrays.<Component>asList(referrers, fullRel, newLayer);
     }

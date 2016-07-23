@@ -6,7 +6,6 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -104,21 +103,13 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
      * @param selected the collection of changesets to select. Ignored if empty.
      */
     public void setSelectedChangesets(Collection<Changeset> selected) {
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override public void run() {
-                selectionModel.clearSelection();
-            }
-        });
+        GuiHelper.runInEDTAndWait(selectionModel::clearSelection);
         if (selected == null || selected.isEmpty())
             return;
         for (Changeset cs: selected) {
             final int idx = data.indexOf(cs);
             if (idx >= 0) {
-                GuiHelper.runInEDTAndWait(new Runnable() {
-                    @Override public void run() {
-                        selectionModel.addSelectionInterval(idx, idx);
-                    }
-                });
+                GuiHelper.runInEDTAndWait(() -> selectionModel.addSelectionInterval(idx, idx));
             }
         }
     }
@@ -161,12 +152,10 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
     protected void sort() {
         Collections.sort(
                 this.data,
-                new Comparator<Changeset>() {
-                    @Override public int compare(Changeset o1, Changeset o2) {
-                        if (o1.getId() < o2.getId()) return 1;
-                        if (o1.getId() == o2.getId()) return 0;
-                        return -1;
-                    }
+                (o1, o2) -> {
+                    if (o1.getId() < o2.getId()) return 1;
+                    if (o1.getId() == o2.getId()) return 0;
+                    return -1;
                 }
         );
     }

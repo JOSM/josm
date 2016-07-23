@@ -138,31 +138,23 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
 
     private void getMOTD() {
         // Asynchronously get MOTD to speed-up JOSM startup
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (!contentInitialized && Main.pref.getBoolean("help.displaymotd", true)) {
-                    try {
-                        content = new MotdContent().updateIfRequiredString();
-                        contentInitialized = true;
-                        ProxyPreference.removeProxyPreferenceListener(GettingStarted.this);
-                    } catch (IOException ex) {
-                        Main.warn(tr("Failed to read MOTD. Exception was: {0}", ex.toString()));
-                        content = "<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
-                                + "</h1>\n<h2 align=\"center\">(" + tr("Message of the day not available") + ")</h2></html>";
-                        // In case of MOTD not loaded because of proxy error, listen to preference changes to retry after update
-                        ProxyPreference.addProxyPreferenceListener(GettingStarted.this);
-                    }
+        Thread t = new Thread((Runnable) () -> {
+            if (!contentInitialized && Main.pref.getBoolean("help.displaymotd", true)) {
+                try {
+                    content = new MotdContent().updateIfRequiredString();
+                    contentInitialized = true;
+                    ProxyPreference.removeProxyPreferenceListener(GettingStarted.this);
+                } catch (IOException ex) {
+                    Main.warn(tr("Failed to read MOTD. Exception was: {0}", ex.toString()));
+                    content = "<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
+                            + "</h1>\n<h2 align=\"center\">(" + tr("Message of the day not available") + ")</h2></html>";
+                    // In case of MOTD not loaded because of proxy error, listen to preference changes to retry after update
+                    ProxyPreference.addProxyPreferenceListener(GettingStarted.this);
                 }
+            }
 
-                if (content != null) {
-                    EventQueue.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            lg.setText(fixImageLinks(content));
-                        }
-                    });
-                }
+            if (content != null) {
+                EventQueue.invokeLater(() -> lg.setText(fixImageLinks(content)));
             }
         }, "MOTD-Loader");
         t.setDaemon(true);

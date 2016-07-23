@@ -195,26 +195,17 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
             Main.worker.submit(task);
         }
 
-        Runnable r = new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    for (PrimitiveId p : notNewPrimitives) {
-                        final History h = HistoryDataSet.getInstance().getHistory(p);
-                        if (h == null) {
-                            continue;
-                        }
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                show(h);
-                            }
-                        });
+        Runnable r = () -> {
+            try {
+                for (PrimitiveId p : notNewPrimitives) {
+                    final History h = HistoryDataSet.getInstance().getHistory(p);
+                    if (h == null) {
+                        continue;
                     }
-                } catch (final RuntimeException e) {
-                    BugReportExceptionHandler.handleException(e);
+                    SwingUtilities.invokeLater(() -> show(h));
                 }
+            } catch (final RuntimeException e) {
+                BugReportExceptionHandler.handleException(e);
             }
         };
         Main.worker.submit(r);
@@ -236,11 +227,5 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         }
     };
 
-    private final Predicate<PrimitiveId> notNewPredicate = new Predicate<PrimitiveId>() {
-
-        @Override
-        public boolean evaluate(PrimitiveId p) {
-            return !p.isNew();
-        }
-    };
+    private final Predicate<PrimitiveId> notNewPredicate = p -> !p.isNew();
 }

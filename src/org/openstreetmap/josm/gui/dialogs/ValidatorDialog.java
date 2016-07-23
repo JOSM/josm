@@ -592,12 +592,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             if (error.isFixable()) {
                 final Command fixCommand = error.getFix();
                 if (fixCommand != null) {
-                    SwingUtilities.invokeAndWait(new Runnable() {
-                        @Override
-                        public void run() {
-                            Main.main.undoRedo.addNoRedraw(fixCommand);
-                        }
-                    });
+                    SwingUtilities.invokeAndWait(() -> Main.main.undoRedo.addNoRedraw(fixCommand));
                 }
                 // It is wanted to ignore an error if it said fixable, even if fixCommand was null
                 // This is to fix #5764 and #5773:
@@ -613,12 +608,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 monitor.setTicksCount(testErrors.size());
                 final DataSet ds = Main.getLayerManager().getEditDataSet();
                 int i = 0;
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        ds.beginUpdate();
-                    }
-                });
+                SwingUtilities.invokeAndWait(ds::beginUpdate);
                 try {
                     for (TestError error: testErrors) {
                         i++;
@@ -629,26 +619,17 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                         monitor.worked(1);
                     }
                 } finally {
-                    SwingUtilities.invokeAndWait(new Runnable() {
-                        @Override
-                        public void run() {
-                            ds.endUpdate();
-                        }
-                    });
+                    SwingUtilities.invokeAndWait(ds::endUpdate);
                 }
                 monitor.subTask(tr("Updating map ..."));
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        Main.main.undoRedo.afterAdd();
-                        Main.map.repaint();
-                        tree.resetErrors();
-                        ds.fireSelectionChanged();
-                    }
+                SwingUtilities.invokeAndWait(() -> {
+                    Main.main.undoRedo.afterAdd();
+                    Main.map.repaint();
+                    tree.resetErrors();
+                    ds.fireSelectionChanged();
                 });
             } catch (InterruptedException | InvocationTargetException e) {
-                // FIXME: signature of realRun should have a generic checked exception we
-                // could throw here
+                // FIXME: signature of realRun should have a generic checked exception we could throw here
                 throw new RuntimeException(e);
             } finally {
                 monitor.finishTask();

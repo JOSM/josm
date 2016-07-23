@@ -419,12 +419,7 @@ public class ChildRelationBrowser extends JPanel {
                     mergeDataSet(dataSet);
                     refreshView(r);
                 }
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        Main.map.repaint();
-                    }
-                });
+                SwingUtilities.invokeLater(() -> Main.map.repaint());
             } catch (OsmTransferException e) {
                 if (canceled) {
                     Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));

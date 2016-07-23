@@ -53,6 +53,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Utils.Function;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
@@ -232,20 +233,10 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         if (h == null) {
                             continue;
                         }
-                        GuiHelper.runInEDT(new Runnable() {
-                            @Override
-                            public void run() {
-                                HistoryBrowserDialogManager.getInstance().show(h);
-                            }
-                        });
+                        GuiHelper.runInEDT(() -> HistoryBrowserDialogManager.getInstance().show(h));
                     }
                 } catch (final RuntimeException e) {
-                    GuiHelper.runInEDT(new Runnable() {
-                        @Override
-                        public void run() {
-                            BugReportExceptionHandler.handleException(e);
-                        }
-                    });
+                    GuiHelper.runInEDT(() -> BugReportExceptionHandler.handleException(e));
                 }
             }
         }
@@ -310,12 +301,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         @Override
         public void actionPerformed(ActionEvent arg0) {
             final List<PrimitiveId> primitiveIds = new ArrayList<>(Utils.transform(
-                    model.getSelectedPrimitives(), new Utils.Function<HistoryOsmPrimitive, PrimitiveId>() {
-                        @Override
-                        public PrimitiveId apply(HistoryOsmPrimitive x) {
-                            return x.getPrimitiveId();
-                        }
-                    }));
+                    model.getSelectedPrimitives(), (Function<HistoryOsmPrimitive, PrimitiveId>) x -> x.getPrimitiveId()));
             Main.worker.submit(new DownloadPrimitivesWithReferrersTask(false, primitiveIds, true, true, null, null));
         }
 

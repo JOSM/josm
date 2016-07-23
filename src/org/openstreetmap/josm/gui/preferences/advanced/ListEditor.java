@@ -18,7 +18,6 @@ import javax.swing.table.AbstractTableModel;
 import org.openstreetmap.josm.data.preferences.ListSetting;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -43,12 +42,7 @@ public class ListEditor extends AbstractListEditor<String> {
 
     @Override
     public List<String> getData() {
-        return new ArrayList<>(Utils.filter(model.getData(), new Predicate<String>() {
-            @Override
-            public boolean evaluate(String object) {
-                return object != null && !object.isEmpty();
-            }
-        }));
+        return new ArrayList<>(Utils.filter(model.getData(), object -> object != null && !object.isEmpty()));
     }
 
     @Override

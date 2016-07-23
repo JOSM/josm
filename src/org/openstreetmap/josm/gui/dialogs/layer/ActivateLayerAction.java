@@ -87,18 +87,15 @@ implements IEnabledStateUpdating, ActiveLayerChangeListener, MultikeyShortcutAct
 
     @Override
     public void updateEnabledState() {
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-                if (layer == null) {
-                    if (model.getSelectedLayers().size() != 1) {
-                        setEnabled(false);
-                        return;
-                    }
-                    setEnabled(!isActiveLayer(model.getSelectedLayers().get(0)));
-                } else {
-                    setEnabled(!isActiveLayer(layer));
+        GuiHelper.runInEDTAndWait(() -> {
+            if (layer == null) {
+                if (model.getSelectedLayers().size() != 1) {
+                    setEnabled(false);
+                    return;
                 }
+                setEnabled(!isActiveLayer(model.getSelectedLayers().get(0)));
+            } else {
+                setEnabled(!isActiveLayer(layer));
             }
         });
     }

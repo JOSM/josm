@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -50,13 +49,10 @@ public class CacheContentsPanel extends JPanel {
      */
     public CacheContentsPanel() {
         super(new GridBagLayout());
-        Main.worker.submit(new Runnable() {
-            @Override
-            public void run() {
-                addToPanel(TMSLayer.getCache(), "TMS");
-                addToPanel(WMSLayer.getCache(), "WMS");
-                addToPanel(WMTSLayer.getCache(), "WMTS");
-            }
+        Main.worker.submit(() -> {
+            addToPanel(TMSLayer.getCache(), "TMS");
+            addToPanel(WMSLayer.getCache(), "WMS");
+            addToPanel(WMTSLayer.getCache(), "WMTS");
         });
     }
 
@@ -64,17 +60,11 @@ public class CacheContentsPanel extends JPanel {
         final Long cacheSize = getCacheSize(cache);
         final TableModel tableModel = getTableModel(cache);
 
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                add(
-                        new JLabel(tr("{0} cache, total cache size: {1} bytes", name, cacheSize)),
-                        GBC.eol().insets(5, 5, 0, 0));
-
-                add(
-                        new JScrollPane(getTableForCache(cache, tableModel)),
-                        GBC.eol().fill(GBC.BOTH));
-            }
+        GuiHelper.runInEDT(() -> {
+            add(new JLabel(tr("{0} cache, total cache size: {1} bytes", name, cacheSize)),
+                GBC.eol().insets(5, 5, 0, 0));
+            add(new JScrollPane(getTableForCache(cache, tableModel)),
+                GBC.eol().fill(GBC.BOTH));
         });
     }
 
@@ -87,7 +77,6 @@ public class CacheContentsPanel extends JPanel {
                     if (val instanceof Long) {
                         return (Long) val;
                     }
-
                 }
             }
         }
@@ -115,12 +104,7 @@ public class CacheContentsPanel extends JPanel {
         for (Entry<String, int[]> e: temp.entrySet()) {
             sortedStats.add(new Pair<>(e.getKey(), e.getValue()[0]));
         }
-        Collections.sort(sortedStats, new Comparator<Pair<String, Integer>>() {
-            @Override
-            public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2) {
-                return -1 * o1.b.compareTo(o2.b);
-            }
-        });
+        Collections.sort(sortedStats, (o1, o2) -> -1 * o1.b.compareTo(o2.b));
         String[][] ret = new String[sortedStats.size()][3];
         int index = 0;
         for (Pair<String, Integer> e: sortedStats) {

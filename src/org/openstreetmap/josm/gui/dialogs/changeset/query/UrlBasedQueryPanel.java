@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -85,17 +84,12 @@ public class UrlBasedQueryPanel extends JPanel {
                         + "host, port and path of the URL entered below.", apiUrl)
                         + "</body></html>"
         );
-        pnl.getEditorPane().addHyperlinkListener(
-                new HyperlinkListener() {
-                    @Override
-                    public void hyperlinkUpdate(HyperlinkEvent e) {
-                        if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                            tfUrl.setText(e.getDescription());
-                            tfUrl.requestFocusInWindow();
-                        }
-                    }
+        pnl.getEditorPane().addHyperlinkListener(e -> {
+                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                    tfUrl.setText(e.getDescription());
+                    tfUrl.requestFocusInWindow();
                 }
-        );
+            });
         return pnl;
     }
 

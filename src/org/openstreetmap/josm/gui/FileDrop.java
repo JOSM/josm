@@ -15,8 +15,6 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.dnd.InvalidDnDOperationException;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -96,14 +94,11 @@ public class FileDrop {
                 c,     // Drop target
                 BorderFactory.createMatteBorder(2, 2, 2, 2, defaultBorderColor), // Drag border
                 true, // Recursive
-                new FileDrop.Listener() {
-                    @Override
-                    public void filesDropped(File[] files) {
-                        // start asynchronous loading of files
-                        OpenFileAction.OpenFileTask task = new OpenFileAction.OpenFileTask(Arrays.asList(files), null);
-                        task.setRecordHistory(true);
-                        Main.worker.submit(task);
-                    }
+                files -> {
+                    // start asynchronous loading of files
+                    OpenFileAction.OpenFileTask task = new OpenFileAction.OpenFileTask(Arrays.asList(files), null);
+                    task.setRecordHistory(true);
+                    Main.worker.submit(task);
                 }
         );
     }
@@ -172,18 +167,15 @@ public class FileDrop {
         }
 
         // Listen for hierarchy changes and remove the drop target when the parent gets cleared out.
-        c.addHierarchyListener(new HierarchyListener() {
-            @Override
-            public void hierarchyChanged(HierarchyEvent evt) {
-                Main.trace("FileDrop: Hierarchy changed.");
-                Component parent = c.getParent();
-                if (parent == null) {
-                    c.setDropTarget(null);
-                    Main.trace("FileDrop: Drop target cleared from component.");
-                } else {
-                    new DropTarget(c, dropListener);
-                    Main.trace("FileDrop: Drop target added to component.");
-                }
+        c.addHierarchyListener(evt -> {
+            Main.trace("FileDrop: Hierarchy changed.");
+            Component parent = c.getParent();
+            if (parent == null) {
+                c.setDropTarget(null);
+                Main.trace("FileDrop: Drop target cleared from component.");
+            } else {
+                new DropTarget(c, dropListener);
+                Main.trace("FileDrop: Drop target added to component.");
             }
         });
         if (c.getParent() != null) {

@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.dialogs.relation.sort;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -65,19 +64,16 @@ public class RelationSorter {
 
         @Override
         public List<RelationMember> sortMembers(List<RelationMember> list) {
-            Collections.sort(list, new Comparator<RelationMember>() {
-                @Override
-                public int compare(RelationMember a, RelationMember b) {
-                    final int houseNumber = AlphanumComparator.getInstance().compare(
-                            a.getMember().get("addr:housenumber"),
-                            b.getMember().get("addr:housenumber"));
-                    if (houseNumber != 0) {
-                        return houseNumber;
-                    }
-                    final String aDisplayName = a.getMember().getDisplayName(DefaultNameFormatter.getInstance());
-                    final String bDisplayName = b.getMember().getDisplayName(DefaultNameFormatter.getInstance());
-                    return AlphanumComparator.getInstance().compare(aDisplayName, bDisplayName);
+            Collections.sort(list, (a, b) -> {
+                final int houseNumber = AlphanumComparator.getInstance().compare(
+                        a.getMember().get("addr:housenumber"),
+                        b.getMember().get("addr:housenumber"));
+                if (houseNumber != 0) {
+                    return houseNumber;
                 }
+                final String aDisplayName = a.getMember().getDisplayName(DefaultNameFormatter.getInstance());
+                final String bDisplayName = b.getMember().getDisplayName(DefaultNameFormatter.getInstance());
+                return AlphanumComparator.getInstance().compare(aDisplayName, bDisplayName);
             });
             return list;
         }

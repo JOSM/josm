@@ -13,8 +13,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -318,16 +315,13 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         tagTable.getSelectionModel().addListSelectionListener(removeHiddenSelection);
         tagRowSorter.addRowSorterListener(removeHiddenSelection);
         tagRowSorter.setComparator(0, AlphanumComparator.getInstance());
-        tagRowSorter.setComparator(1, new Comparator<Object>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                if (o1 instanceof Map && o2 instanceof Map) {
-                    final String v1 = ((Map) o1).size() == 1 ? (String) ((Map) o1).keySet().iterator().next() : tr("<different>");
-                    final String v2 = ((Map) o2).size() == 1 ? (String) ((Map) o2).keySet().iterator().next() : tr("<different>");
-                    return AlphanumComparator.getInstance().compare(v1, v2);
-                } else {
-                    return AlphanumComparator.getInstance().compare(String.valueOf(o1), String.valueOf(o2));
-                }
+        tagRowSorter.setComparator(1, (o1, o2) -> {
+            if (o1 instanceof Map && o2 instanceof Map) {
+                final String v1 = ((Map) o1).size() == 1 ? (String) ((Map) o1).keySet().iterator().next() : tr("<different>");
+                final String v2 = ((Map) o2).size() == 1 ? (String) ((Map) o2).keySet().iterator().next() : tr("<different>");
+                return AlphanumComparator.getInstance().compare(v1, v2);
+            } else {
+                return AlphanumComparator.getInstance().compare(String.valueOf(o1), String.valueOf(o2));
             }
         });
     }
@@ -544,12 +538,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         final JosmTextField f = new DisableShortcutsOnFocusGainedTextField();
         f.setToolTipText(tr("Tag filter"));
         final CompileSearchTextDecorator decorator = CompileSearchTextDecorator.decorate(f);
-        f.addPropertyChangeListener("filter", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                setFilter(decorator.getMatch());
-            }
-        });
+        f.addPropertyChangeListener("filter", evt -> setFilter(decorator.getMatch()));
         return f;
     }
 
@@ -712,12 +701,9 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         }
 
         List<Relation> sortedRelations = new ArrayList<>(roles.keySet());
-        Collections.sort(sortedRelations, new Comparator<Relation>() {
-            @Override
-            public int compare(Relation o1, Relation o2) {
-                int comp = Boolean.compare(o1.isDisabledAndHidden(), o2.isDisabledAndHidden());
-                return comp != 0 ? comp : DefaultNameFormatter.getInstance().getRelationComparator().compare(o1, o2);
-            }
+        Collections.sort(sortedRelations, (o1, o2) -> {
+            int comp = Boolean.compare(o1.isDisabledAndHidden(), o2.isDisabledAndHidden());
+            return comp != 0 ? comp : DefaultNameFormatter.getInstance().getRelationComparator().compare(o1, o2);
         });
 
         for (Relation r: sortedRelations) {
@@ -1174,46 +1160,44 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                     uris.add(new URI(String.format("%sMap_Features", base)));
                 }
 
-                Main.worker.execute(new Runnable() {
-                    @Override public void run() {
-                        try {
-                            // find a page that actually exists in the wiki
-                            HttpClient.Response conn;
-                            for (URI u : uris) {
-                                conn = HttpClient.create(u.toURL(), "HEAD").connect();
+                Main.worker.execute(() -> {
+                    try {
+                        // find a page that actually exists in the wiki
+                        HttpClient.Response conn;
+                        for (URI u : uris) {
+                            conn = HttpClient.create(u.toURL(), "HEAD").connect();
 
-                                if (conn.getResponseCode() != 200) {
+                            if (conn.getResponseCode() != 200) {
+                                conn.disconnect();
+                            } else {
+                                long osize = conn.getContentLength();
+                                if (osize > -1) {
+                                    conn.disconnect();
+
+                                    final URI newURI = new URI(u.toString()
+                                            .replace("=", "%3D") /* do not URLencode whole string! */
+                                            .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
+                                    );
+                                    conn = HttpClient.create(newURI.toURL(), "HEAD").connect();
+                                }
+
+                                /* redirect pages have different content length, but retrieving a "nonredirect"
+                                 *  page using index.php and the direct-link method gives slightly different
+                                 *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
+                                 */
+                                if (conn.getContentLength() != -1 && osize > -1 && Math.abs(conn.getContentLength() - osize) > 200) {
+                                    Main.info("{0} is a mediawiki redirect", u);
                                     conn.disconnect();
                                 } else {
-                                    long osize = conn.getContentLength();
-                                    if (osize > -1) {
-                                        conn.disconnect();
+                                    conn.disconnect();
 
-                                        final URI newURI = new URI(u.toString()
-                                                .replace("=", "%3D") /* do not URLencode whole string! */
-                                                .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
-                                        );
-                                        conn = HttpClient.create(newURI.toURL(), "HEAD").connect();
-                                    }
-
-                                    /* redirect pages have different content length, but retrieving a "nonredirect"
-                                     *  page using index.php and the direct-link method gives slightly different
-                                     *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
-                                     */
-                                    if (conn.getContentLength() != -1 && osize > -1 && Math.abs(conn.getContentLength() - osize) > 200) {
-                                        Main.info("{0} is a mediawiki redirect", u);
-                                        conn.disconnect();
-                                    } else {
-                                        conn.disconnect();
-
-                                        OpenBrowser.displayUrl(u.toString());
-                                        break;
-                                    }
+                                    OpenBrowser.displayUrl(u.toString());
+                                    break;
                                 }
                             }
-                        } catch (URISyntaxException | IOException e) {
-                            Main.error(e);
                         }
+                    } catch (URISyntaxException | IOException e1) {
+                        Main.error(e1);
                     }
                 });
             } catch (URISyntaxException e1) {

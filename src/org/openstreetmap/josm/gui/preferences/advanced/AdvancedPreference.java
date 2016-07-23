@@ -74,19 +74,16 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
     private final Map<String, String> profileTypes = new LinkedHashMap<>();
 
-    private final Comparator<PrefEntry> customComparator = new Comparator<PrefEntry>() {
-        @Override
-        public int compare(PrefEntry o1, PrefEntry o2) {
-            if (o1.isChanged() && !o2.isChanged())
-                return -1;
-            if (o2.isChanged() && !o1.isChanged())
-                return 1;
-            if (!(o1.isDefault()) && o2.isDefault())
-                return -1;
-            if (!(o2.isDefault()) && o1.isDefault())
-                return 1;
-            return o1.compareTo(o2);
-        }
+    private final Comparator<PrefEntry> customComparator = (o1, o2) -> {
+        if (o1.isChanged() && !o2.isChanged())
+            return -1;
+        if (o2.isChanged() && !o1.isChanged())
+            return 1;
+        if (!(o1.isDefault()) && o2.isDefault())
+            return -1;
+        if (!(o2.isDefault()) && o1.isDefault())
+            return 1;
+        return o1.compareTo(o2);
     };
 
     private AdvancedPreference() {
@@ -138,49 +135,33 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         JButton add = new JButton(tr("Add"));
         p.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
         p.add(add, GBC.std().insets(0, 5, 0, 0));
-        add.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                PrefEntry pe = table.addPreference(gui);
-                if (pe != null) {
-                    allData.add(pe);
-                    Collections.sort(allData);
-                    applyFilter();
-                }
+        add.addActionListener(e -> {
+            PrefEntry pe = table.addPreference(gui);
+            if (pe != null) {
+                allData.add(pe);
+                Collections.sort(allData);
+                applyFilter();
             }
         });
 
         JButton edit = new JButton(tr("Edit"));
         p.add(edit, GBC.std().insets(5, 5, 5, 0));
-        edit.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                if (table.editPreference(gui))
-                    applyFilter();
-            }
+        edit.addActionListener(e -> {
+            if (table.editPreference(gui))
+                applyFilter();
         });
 
         JButton reset = new JButton(tr("Reset"));
         p.add(reset, GBC.std().insets(0, 5, 0, 0));
-        reset.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                table.resetPreferences(gui);
-            }
-        });
+        reset.addActionListener(e -> table.resetPreferences(gui));
 
         JButton read = new JButton(tr("Read from file"));
         p.add(read, GBC.std().insets(5, 5, 0, 0));
-        read.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                readPreferencesFromXML();
-            }
-        });
+        read.addActionListener(e -> readPreferencesFromXML());
 
         JButton export = new JButton(tr("Export selected items"));
         p.add(export, GBC.std().insets(5, 5, 0, 0));
-        export.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                exportSelectedToXML();
-            }
-        });
+        export.addActionListener(e -> exportSelectedToXML());
 
         final JButton more = new JButton(tr("More..."));
         p.add(more, GBC.std().insets(5, 5, 0, 0));

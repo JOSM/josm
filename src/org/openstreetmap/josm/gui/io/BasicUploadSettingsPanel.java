@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -69,15 +68,12 @@ public class BasicUploadSettingsPanel extends JPanel {
 
         JEditorPane sourceLabel = new JMultilineLabel("<html><b>" + tr("Specify the data source for the changes")
                 + "</b> (<a href=\"urn:changeset-source\">" + tr("obtain from current layers") + "</a>)<b>:</b>");
-        sourceLabel.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
-                    final String source = Main.map.mapView.getLayerInformationForSourceTag();
-                    hcbUploadSource.setText(Utils.shortenString(source, Changeset.MAX_CHANGESET_TAG_LENGTH));
-                    // Fix #9965
-                    changesetSourceModel.setComment(hcbUploadSource.getText());
-                }
+        sourceLabel.addHyperlinkListener(e -> {
+            if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
+                final String source = Main.map.mapView.getLayerInformationForSourceTag();
+                hcbUploadSource.setText(Utils.shortenString(source, Changeset.MAX_CHANGESET_TAG_LENGTH));
+                // Fix #9965
+                changesetSourceModel.setComment(hcbUploadSource.getText());
             }
         });
         pnl.add(sourceLabel, GBC.eol().insets(0, 8, 10, 3).fill(GBC.HORIZONTAL));

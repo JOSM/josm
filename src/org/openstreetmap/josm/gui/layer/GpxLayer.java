@@ -182,12 +182,7 @@ public class GpxLayer extends Layer {
 
         final JScrollPane sp = new JScrollPane(new HtmlPanel(info.toString()));
         sp.setPreferredSize(new Dimension(sp.getPreferredSize().width+20, 370));
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                sp.getVerticalScrollBar().setValue(0);
-            }
-        });
+        SwingUtilities.invokeLater(() -> sp.getVerticalScrollBar().setValue(0));
         return sp;
     }
 

@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -26,8 +25,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
@@ -204,14 +201,11 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
 
     /** listens to selection changes in the table and redraws the map */
     private void listenToSelectionChanges() {
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (noUpdates || !(e.getSource() instanceof ListSelectionModel)) {
-                    return;
-                }
-                updateVisibilityFromTable();
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (noUpdates || !(e.getSource() instanceof ListSelectionModel)) {
+                return;
             }
+            updateVisibilityFromTable();
         });
     }
 
@@ -229,14 +223,12 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         final JPanel msg = new JPanel(new GridBagLayout());
 
         dateFilter = new DateFilterPanel(layer, "gpx.traces", false);
-        dateFilter.setFilterAppliedListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                noUpdates = true;
-                selectVisibleTracksInTable();
-                noUpdates = false;
-                Main.map.mapView.preferenceChanged(null);
-                Main.map.repaint(100);
-            }
+        dateFilter.setFilterAppliedListener(e -> {
+            noUpdates = true;
+            selectVisibleTracksInTable();
+            noUpdates = false;
+            Main.map.mapView.preferenceChanged(null);
+            Main.map.repaint(100);
         });
         dateFilter.loadFromPrefs();
 

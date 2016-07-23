@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -36,9 +37,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -361,14 +359,7 @@ public class LayerListDialog extends ToggleDialog {
      * @param listSelectionModel  the source emitting {@link ListSelectionEvent}s
      */
     protected void adaptTo(final IEnabledStateUpdating listener, ListSelectionModel listSelectionModel) {
-        listSelectionModel.addListSelectionListener(
-                new ListSelectionListener() {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e) {
-                        listener.updateEnabledState();
-                    }
-                }
-                );
+        listSelectionModel.addListSelectionListener(e -> listener.updateEnabledState());
     }
 
     /**
@@ -380,14 +371,7 @@ public class LayerListDialog extends ToggleDialog {
      * @param listModel the source emitting {@link ListDataEvent}s
      */
     protected void adaptTo(final IEnabledStateUpdating listener, LayerListModel listModel) {
-        listModel.addTableModelListener(
-                new TableModelListener() {
-                    @Override
-                    public void tableChanged(TableModelEvent e) {
-                        listener.updateEnabledState();
-                    }
-                }
-                );
+        listModel.addTableModelListener(e -> listener.updateEnabledState());
     }
 
     @Override
@@ -1131,7 +1115,9 @@ public class LayerListDialog extends ToggleDialog {
         LayerList(LayerListModel dataModel) {
             super(dataModel);
             dataModel.setLayerList(this);
-            setDragEnabled(true);
+            if (!GraphicsEnvironment.isHeadless()) {
+                setDragEnabled(true);
+            }
             setDropMode(DropMode.INSERT_ROWS);
             setTransferHandler(new LayerListTransferHandler());
         }

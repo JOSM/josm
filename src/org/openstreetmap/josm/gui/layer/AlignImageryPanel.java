@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -54,14 +52,11 @@ public class AlignImageryPanel extends JPanel {
         closeButton.setRolloverEnabled(true);
         closeButton.setBorderPainted(false);
         closeButton.setToolTipText(tr("Hide this message and never show it again"));
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (Main.isDisplayingMapView()) {
-                    Main.map.removeTopPanel(AlignImageryPanel.class);
-                    if (doNotShowAgain.isSelected()) {
-                        showAgain.put(Boolean.FALSE);
-                    }
+        closeButton.addActionListener(e -> {
+            if (Main.isDisplayingMapView()) {
+                Main.map.removeTopPanel(AlignImageryPanel.class);
+                if (doNotShowAgain.isSelected()) {
+                    showAgain.put(Boolean.FALSE);
                 }
             }
         });

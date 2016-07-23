@@ -19,8 +19,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.SideButton;
@@ -68,12 +66,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         putValue(SHORT_DESCRIPTION, tr("Change visibility of the selected layer."));
 
         visibilityCheckbox = new JCheckBox(tr("Show layer"));
-        visibilityCheckbox.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                setVisibleFlag(visibilityCheckbox.isSelected());
-            }
-        });
+        visibilityCheckbox.addChangeListener(e -> setVisibleFlag(visibilityCheckbox.isSelected()));
         content.add(visibilityCheckbox, GBC.eop());
 
         addSlider(content, opacitySlider);
@@ -177,12 +170,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             setMajorTickSpacing(tick);
             setPaintTicks(true);
 
-            addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    onStateChanged();
-                }
-            });
+            addChangeListener(e -> onStateChanged());
         }
 
         /**

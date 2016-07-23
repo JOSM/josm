@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -448,12 +447,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         if (size < 1)
             return;
 
-        final ActionListener listener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateMeta(pc);
-            }
-        };
+        final ActionListener listener = e -> updateMeta(pc);
 
         // Replace old panel with new one
         projSubPrefPanelWrapper.removeAll();
@@ -484,12 +478,9 @@ public class ProjectionPreference implements SubPreferenceSetting {
         if (pc == null)
             throw new RuntimeException("Couldn't find the current projection in the list of available projections!");
 
-        projectionCombo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ProjectionChoice pc = (ProjectionChoice) projectionCombo.getSelectedItem();
-                selectedProjectionChanged(pc);
-            }
+        projectionCombo.addActionListener(e -> {
+            ProjectionChoice pc1 = (ProjectionChoice) projectionCombo.getSelectedItem();
+            selectedProjectionChanged(pc1);
         });
         return pc;
     }

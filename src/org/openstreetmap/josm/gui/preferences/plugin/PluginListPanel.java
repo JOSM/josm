@@ -14,9 +14,7 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkEvent.EventType;
-import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
@@ -150,12 +148,9 @@ public class PluginListPanel extends VerticallyScrollablePanel {
 
             HtmlPanel description = new HtmlPanel();
             description.setText(pi.getDescriptionAsHtml());
-            description.getEditorPane().addHyperlinkListener(new HyperlinkListener() {
-                @Override
-                public void hyperlinkUpdate(HyperlinkEvent e) {
-                    if (e.getEventType() == EventType.ACTIVATED) {
-                        OpenBrowser.displayUrl(e.getURL().toString());
-                    }
+            description.getEditorPane().addHyperlinkListener(e -> {
+                if (e.getEventType() == EventType.ACTIVATED) {
+                    OpenBrowser.displayUrl(e.getURL().toString());
                 }
             });
             lblPlugin.setLabelFor(description);
@@ -169,12 +164,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
         revalidate();
         repaint();
         if (visibleRect != null && visibleRect.width > 0 && visibleRect.height > 0) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    scrollRectToVisible(visibleRect);
-                }
-            });
+            SwingUtilities.invokeLater(() -> scrollRectToVisible(visibleRect));
         }
     }
 }

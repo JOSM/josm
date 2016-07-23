@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
  * AutoCompletionManager holds a cache of keys with a list of
@@ -335,11 +336,7 @@ public class AutoCompletionManager implements DataSetListener {
         if (r != null && presets != null && !presets.isEmpty()) {
             for (TaggingPreset tp : presets) {
                 if (tp.roles != null) {
-                    list.add(Utils.transform(tp.roles.roles, new Utils.Function<Role, String>() {
-                        public String apply(Role x) {
-                            return x.key;
-                        }
-                    }), AutoCompletionItemPriority.IS_IN_STANDARD);
+                    list.add(Utils.transform(tp.roles.roles, (Function<Role, String>) x -> x.key), AutoCompletionItemPriority.IS_IN_STANDARD);
                 }
             }
             list.add(r.getMemberRoles(), AutoCompletionItemPriority.IS_IN_DATASET);

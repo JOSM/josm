@@ -13,7 +13,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -31,7 +30,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
@@ -93,13 +91,8 @@ public class DownloadDialog extends JDialog {
     protected final JPanel buildMainPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
 
-        final ChangeListener checkboxChangeListener = new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                // size check depends on selected data source
-                updateSizeCheck();
-            }
-        };
+        // size check depends on selected data source
+        final ChangeListener checkboxChangeListener = e -> updateSizeCheck();
 
         // adding the download tasks
         pnl.add(new JLabel(tr("Data Sources and Types:")), GBC.std().insets(5, 5, 1, 5));
@@ -158,12 +151,7 @@ public class DownloadDialog extends JDialog {
         cbStartup.setToolTipText(
                 tr("<html>Autostart ''Download from OSM'' dialog every time JOSM is started.<br>" +
                         "You can open it manually from File menu or toolbar.</html>"));
-        cbStartup.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                 Main.pref.put("download.autorun", cbStartup.isSelected());
-            }
-        });
+        cbStartup.addActionListener(e -> Main.pref.put("download.autorun", cbStartup.isSelected()));
 
         pnl.add(cbNewLayer, GBC.std().anchor(GBC.WEST).insets(5, 5, 5, 5));
         pnl.add(cbStartup, GBC.std().anchor(GBC.WEST).insets(15, 5, 5, 5));

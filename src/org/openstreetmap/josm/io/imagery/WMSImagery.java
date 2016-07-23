@@ -10,10 +10,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
@@ -24,7 +29,6 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.tools.HttpClient;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -34,8 +38,45 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/**
+ * This class represents the capabilites of a WMS imagery server.
+ */
 public class WMSImagery {
 
+    private static final class ChildIterator implements Iterator<Element> {
+        private Element child;
+
+        ChildIterator(Element parent) {
+            child = advanceToElement(parent.getFirstChild());
+        }
+
+        private static Element advanceToElement(Node firstChild) {
+            Node node = firstChild;
+            while (node != null && !(node instanceof Element)) {
+                node = node.getNextSibling();
+            }
+            return (Element) node;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return child != null;
+        }
+
+        @Override
+        public Element next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("No next sibling.");
+            }
+            Element next = child;
+            child = advanceToElement(child.getNextSibling());
+            return next;
+        }
+    }
+
+    /**
+     * An exception that is thrown if there was an error while getting the capabilities of the WMS server.
+     */
     public static class WMSGetCapabilitiesException extends Exception {
         private final String incomingData;
 
@@ -61,8 +102,8 @@ public class WMSImagery {
         }
 
         /**
-         * Returns the answer from WMS server.
-         * @return the answer from WMS server
+         * The data that caused this exception.
+         * @return The server response to the capabilites request.
          */
         public String getIncomingData() {
             return incomingData;
@@ -78,7 +119,7 @@ public class WMSImagery {
      * @return the list of layers
      */
     public List<LayerDetails> getLayers() {
-        return layers;
+        return Collections.unmodifiableList(layers);
     }
 
     /**
@@ -97,11 +138,20 @@ public class WMSImagery {
         return Collections.unmodifiableList(formats);
     }
 
+    /**
+     * Gets the preffered format for this imagery layer.
+     * @return The preffered format as mime type.
+     */
     public String getPreferredFormats() {
-        return formats.contains("image/jpeg") ? "image/jpeg"
-                : formats.contains("image/png") ? "image/png"
-                : formats.isEmpty() ? null
-                : formats.get(0);
+        if (formats.contains("image/jpeg")) {
+            return "image/jpeg";
+        } else if (formats.contains("image/png")) {
+            return "image/png";
+        } else if (formats.isEmpty()) {
+            return null;
+        } else {
+            return formats.get(0);
+        }
     }
 
     String buildRootUrl() {
@@ -128,19 +178,13 @@ public class WMSImagery {
     }
 
     public String buildGetMapUrl(Collection<LayerDetails> selectedLayers, String format) {
-        return buildRootUrl()
-                + "FORMAT=" + format + (imageFormatHasTransparency(format) ? "&TRANSPARENT=TRUE" : "")
+        return buildRootUrl() + "FORMAT=" + format + (imageFormatHasTransparency(format) ? "&TRANSPARENT=TRUE" : "")
                 + "&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS="
-                + Utils.join(",", Utils.transform(selectedLayers, new Utils.Function<LayerDetails, String>() {
-            @Override
-            public String apply(LayerDetails x) {
-                return x.ident;
-            }
-        }))
+                + Utils.join(",", Utils.transform(selectedLayers, x -> x.ident))
                 + "&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}";
     }
 
-    public void attemptGetCapabilities(String serviceUrlStr) throws MalformedURLException, IOException, WMSGetCapabilitiesException {
+    public void attemptGetCapabilities(String serviceUrlStr) throws IOException, WMSGetCapabilitiesException {
         URL getCapabilitiesUrl = null;
         try {
             if (!Pattern.compile(".*GetCapabilities.*", Pattern.CASE_INSENSITIVE).matcher(serviceUrlStr).matches()) {
@@ -161,6 +205,7 @@ public class WMSImagery {
             }
             serviceUrl = new URL(serviceUrlStr);
         } catch (HeadlessException e) {
+            Main.warn(e);
             return;
         }
 
@@ -191,24 +236,10 @@ public class WMSImagery {
             child = getChild(child, "Request");
             child = getChild(child, "GetMap");
 
-            formats = new ArrayList<>(Utils.filter(Utils.transform(getChildren(child, "Format"),
-                    new Utils.Function<Element, String>() {
-                        @Override
-                        public String apply(Element x) {
-                            return x.getTextContent();
-                        }
-                    }),
-                    new Predicate<String>() {
-                        @Override
-                        public boolean evaluate(String format) {
-                            boolean isFormatSupported = isImageFormatSupported(format);
-                            if (!isFormatSupported) {
-                                Main.info("Skipping unsupported image format {0}", format);
-                            }
-                            return isFormatSupported;
-                        }
-                    }
-            ));
+            formats = getChildrenStream(child, "Format")
+                    .map(x -> x.getTextContent())
+                    .filter(WMSImagery::isImageFormatSupportedWarn)
+                    .collect(Collectors.toList());
 
             child = getChild(child, "DCPType");
             child = getChild(child, "HTTP");
@@ -230,10 +261,19 @@ public class WMSImagery {
         }
     }
 
+    private static boolean isImageFormatSupportedWarn(String format) {
+        boolean isFormatSupported = isImageFormatSupported(format);
+        if (!isFormatSupported) {
+            Main.info("Skipping unsupported image format {0}", format);
+        }
+        return isFormatSupported;
+    }
+
     static boolean isImageFormatSupported(final String format) {
         return ImageIO.getImageReadersByMIMEType(format).hasNext()
                 // handles image/tiff image/tiff8 image/geotiff image/geotiff8
-                || (format.startsWith("image/tiff") || format.startsWith("image/geotiff")) && ImageIO.getImageReadersBySuffix("tiff").hasNext()
+                || (format.startsWith("image/tiff") || format.startsWith("image/geotiff"))
+                        && ImageIO.getImageReadersBySuffix("tiff").hasNext()
                 || format.startsWith("image/png") && ImageIO.getImageReadersBySuffix("png").hasNext()
                 || format.startsWith("image/svg") && ImageIO.getImageReadersBySuffix("svg").hasNext()
                 || format.startsWith("image/bmp") && ImageIO.getImageReadersBySuffix("bmp").hasNext();
@@ -275,15 +315,12 @@ public class WMSImagery {
 
         // Parse the CRS/SRS pulled out of this layer's XML element
         // I think CRS and SRS are the same at this point
-        List<Element> crsChildren = getChildren(element, "CRS");
-        crsChildren.addAll(getChildren(element, "SRS"));
-        for (Element child : crsChildren) {
-            String crs = (String) getContent(child);
-            if (!crs.isEmpty()) {
-                String upperCase = crs.trim().toUpperCase(Locale.ENGLISH);
-                crsList.add(upperCase);
-            }
-        }
+        getChildrenStream(element)
+            .filter(child -> "CRS".equals(child.getNodeName()) || "SRS".equals(child.getNodeName()))
+            .map(child -> (String) getContent(child))
+            .filter(crs -> !crs.isEmpty())
+            .map(crs -> crs.trim().toUpperCase(Locale.ENGLISH))
+            .forEach(crsList::add);
 
         // Check to see if any of the specified projections are supported by JOSM
         boolean josmSupportsThisLayer = false;
@@ -350,40 +387,51 @@ public class WMSImagery {
         return content.toString().trim();
     }
 
-    private static List<Element> getChildren(Element parent, String name) {
-        List<Element> retVal = new ArrayList<>();
-        if (parent != null) {
-            for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
-                if (child instanceof Element && name.equals(child.getNodeName())) {
-                    retVal.add((Element) child);
-                }
-            }
+    private static Stream<Element> getChildrenStream(Element parent) {
+        if (parent == null) {
+            // ignore missing elements
+            return Stream.empty();
+        } else {
+            Iterable<Element> it = () -> new ChildIterator(parent);
+            return StreamSupport.stream(it.spliterator(), false);
         }
-        return retVal;
+    }
+
+    private static Stream<Element> getChildrenStream(Element parent, String name) {
+        return getChildrenStream(parent).filter(child -> name.equals(child.getNodeName()));
+    }
+
+    private static List<Element> getChildren(Element parent, String name) {
+        return getChildrenStream(parent, name).collect(Collectors.toList());
     }
 
     private static Element getChild(Element parent, String name) {
-        if (parent == null)
-            return null;
-        for (Node child = parent.getFirstChild(); child != null; child = child.getNextSibling()) {
-            if (child instanceof Element && name.equals(child.getNodeName()))
-                return (Element) child;
-        }
-        return null;
+        return getChildrenStream(parent, name).findFirst().orElse(null);
     }
 
+    /**
+     * The details of a layer of this wms server.
+     */
     public static class LayerDetails {
 
+        /**
+         * The layer name
+         */
         public final String name;
         public final String ident;
+        /**
+         * The child layers of this layer
+         */
         public final List<LayerDetails> children;
+        /**
+         * The bounds this layer can be used for
+         */
         public final Bounds bounds;
         public final Set<String> crsList;
         public final boolean supported;
 
-        public LayerDetails(String name, String ident, Set<String> crsList,
-                            boolean supportedLayer, Bounds bounds,
-                            List<LayerDetails> childLayers) {
+        public LayerDetails(String name, String ident, Set<String> crsList, boolean supportedLayer, Bounds bounds,
+                List<LayerDetails> childLayers) {
             this.name = name;
             this.ident = ident;
             this.supported = supportedLayer;

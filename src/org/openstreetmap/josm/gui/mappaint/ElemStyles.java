@@ -58,12 +58,9 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     public void clearCached() {
         // run in EDT to make sure this isn't called during rendering run
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                cacheIdx++;
-                preferenceCache.clear();
-            }
+        GuiHelper.runInEDT(() -> {
+            cacheIdx++;
+            preferenceCache.clear();
         });
     }
 

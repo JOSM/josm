@@ -171,12 +171,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         eventSource.addMouseListener(this);
         eventSource.addMouseMotionListener(this);
         selectionEndedListener.addPropertyChangeListener(this);
-        eventSource.addPropertyChangeListener("scale", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                abortSelecting();
-            }
-        });
+        eventSource.addPropertyChangeListener("scale", evt -> abortSelecting());
         eventSource.addTemporaryLayer(selectionHintLayer);
     }
 

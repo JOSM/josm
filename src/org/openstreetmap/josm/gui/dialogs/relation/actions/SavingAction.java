@@ -20,9 +20,9 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationDialogManager;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -80,13 +80,8 @@ abstract class SavingAction extends AbstractRelationEditorAction {
             RelationDialogManager.getRelationDialogManager().updateContext(
                     layer, editor.getRelation(), (RelationEditor) editor);
         }
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                // Relation list gets update in EDT so selecting my be postponed to following EDT run
-                Main.map.relationListDialog.selectRelation(newRelation);
-            }
-        });
+        // Relation list gets update in EDT so selecting my be postponed to following EDT run
+        SwingUtilities.invokeLater(() -> Main.map.relationListDialog.selectRelation(newRelation));
     }
 
     /**

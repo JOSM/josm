@@ -12,7 +12,6 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.BufferedInputStream;
@@ -49,8 +48,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -138,12 +135,7 @@ public class MapPaintDialog extends ToggleDialog {
                 downAction.updateEnabledState();
             }
         });
-        cbWireframe.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Main.main.menu.wireFrameToggleAction.actionPerformed(null);
-            }
-        });
+        cbWireframe.addActionListener(e -> Main.main.menu.wireFrameToggleAction.actionPerformed(null));
         cbWireframe.setBorder(new EmptyBorder(new Insets(1, 1, 1, 1)));
 
         tblStyles = new StylesTable(model);
@@ -440,20 +432,12 @@ public class MapPaintDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             final int[] rows = tblStyles.getSelectedRows();
             MapPaintStyles.reloadStyles(rows);
-            Main.worker.submit(new Runnable() {
-                @Override
-                public void run() {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            selectionModel.clearSelection();
-                            for (int r: rows) {
-                                selectionModel.addSelectionInterval(r, r);
-                            }
-                        }
-                    });
+            Main.worker.submit(() -> SwingUtilities.invokeLater(() -> {
+                selectionModel.clearSelection();
+                for (int r: rows) {
+                    selectionModel.addSelectionInterval(r, r);
                 }
-            });
+            }));
         }
     }
 
@@ -530,16 +514,13 @@ public class MapPaintDialog extends ToggleDialog {
 
             @Override
             protected void finish() {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!error && !canceled) {
-                            SourceEntry se = new SourceEntry(s);
-                            se.url = file.getPath();
-                            MapPaintStyles.addStyle(se);
-                            tblStyles.getSelectionModel().setSelectionInterval(model.getRowCount() - 1, model.getRowCount() - 1);
-                            model.ensureSelectedIsVisible();
-                        }
+                SwingUtilities.invokeLater(() -> {
+                    if (!error && !canceled) {
+                        SourceEntry se = new SourceEntry(s);
+                        se.url = file.getPath();
+                        MapPaintStyles.addStyle(se);
+                        tblStyles.getSelectionModel().setSelectionInterval(model.getRowCount() - 1, model.getRowCount() - 1);
+                        model.ensureSelectedIsVisible();
                     }
                 });
             }
@@ -593,21 +574,18 @@ public class MapPaintDialog extends ToggleDialog {
             lblSource.setFont(lblSource.getFont().deriveFont(Font.PLAIN));
             tabs.setTabComponentAt(3, lblSource);
 
-            tabs.getModel().addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    if (!errorsTabLoaded && ((SingleSelectionModel) e.getSource()).getSelectedIndex() == 1) {
-                        errorsTabLoaded = true;
-                        buildErrorsOrWarningPanel(s.getErrors(), pErrors);
-                    }
-                    if (!warningsTabLoaded && ((SingleSelectionModel) e.getSource()).getSelectedIndex() == 2) {
-                        warningsTabLoaded = true;
-                        buildErrorsOrWarningPanel(s.getWarnings(), pWarnings);
-                    }
-                    if (!sourceTabLoaded && ((SingleSelectionModel) e.getSource()).getSelectedIndex() == 3) {
-                        sourceTabLoaded = true;
-                        buildSourcePanel(s, pSource);
-                    }
+            tabs.getModel().addChangeListener(e1 -> {
+                if (!errorsTabLoaded && ((SingleSelectionModel) e1.getSource()).getSelectedIndex() == 1) {
+                    errorsTabLoaded = true;
+                    buildErrorsOrWarningPanel(s.getErrors(), pErrors);
+                }
+                if (!warningsTabLoaded && ((SingleSelectionModel) e1.getSource()).getSelectedIndex() == 2) {
+                    warningsTabLoaded = true;
+                    buildErrorsOrWarningPanel(s.getWarnings(), pWarnings);
+                }
+                if (!sourceTabLoaded && ((SingleSelectionModel) e1.getSource()).getSelectedIndex() == 3) {
+                    sourceTabLoaded = true;
+                    buildSourcePanel(s, pSource);
                 }
             });
             info.setContent(tabs, false);

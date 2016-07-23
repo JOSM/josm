@@ -12,7 +12,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -77,12 +76,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         pnl.add(cbShowAdvancedParameters, gc);
         cbShowAdvancedParameters.setSelected(false);
         cbShowAdvancedParameters.addItemListener(
-                new ItemListener() {
-                    @Override
-                    public void itemStateChanged(ItemEvent evt) {
-                        pnlAdvancedProperties.setVisible(evt.getStateChange() == ItemEvent.SELECTED);
-                    }
-                }
+                evt -> pnlAdvancedProperties.setVisible(evt.getStateChange() == ItemEvent.SELECTED)
         );
 
         gc.gridx = 1;

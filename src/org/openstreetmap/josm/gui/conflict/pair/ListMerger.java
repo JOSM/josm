@@ -805,16 +805,11 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
          */
         public void adapt(final JToggleButton btn) {
             btn.addItemListener(this);
-            addPropertyChangeListener(
-                    new PropertyChangeListener() {
-                        @Override
-                        public void propertyChange(PropertyChangeEvent evt) {
-                            if (evt.getPropertyName().equals(PROP_SELECTED)) {
-                                btn.setSelected((Boolean) evt.getNewValue());
-                            }
-                        }
+            addPropertyChangeListener(evt -> {
+                    if (evt.getPropertyName().equals(PROP_SELECTED)) {
+                        btn.setSelected((Boolean) evt.getNewValue());
                     }
-            );
+                });
         }
 
         @Override

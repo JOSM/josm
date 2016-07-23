@@ -300,12 +300,7 @@ public abstract class ImageryLayer extends Layer {
      * @return the {@link ImageProcessor} wrapper
      */
     public static ImageProcessor createImageProcessor(final BufferedImageOp op, final boolean inPlace) {
-        return new ImageProcessor() {
-            @Override
-            public BufferedImage process(BufferedImage image) {
-                return op.filter(image, inPlace ? image : null);
-            }
-        };
+        return image -> op.filter(image, inPlace ? image : null);
     }
 
     /**

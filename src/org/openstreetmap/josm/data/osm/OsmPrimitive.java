@@ -255,7 +255,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      *
      * @see #FLAG_HAS_DIRECTIONS
      */
-    public static final Predicate<Tag> directionalKeyPredicate = tag -> directionKeys.match(tag);
+    public static final Predicate<Tag> directionalKeyPredicate = directionKeys::match;
 
     /**
      * Creates a new primitive for the given id.

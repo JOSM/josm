@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.preferences.validator;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -75,12 +74,7 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
         prefOtherUpload.setToolTipText(tr("Show the informational tests in the upload check windows."));
         testPanel.add(prefOtherUpload, GBC.eol());
 
-        ActionListener otherUploadEnabled = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                prefOtherUpload.setEnabled(prefOther.isSelected());
-            }
-        };
+        ActionListener otherUploadEnabled = e -> prefOtherUpload.setEnabled(prefOther.isSelected());
         prefOther.addActionListener(otherUploadEnabled);
         otherUploadEnabled.actionPerformed(null);
 

@@ -137,22 +137,17 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         // Warm about missing primitives
         final Set<PrimitiveId> errs = mainTask.getMissingPrimitives();
         if (errs != null && !errs.isEmpty())
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    reportProblemDialog(errs,
-                            trn("Object could not be downloaded", "Some objects could not be downloaded", errs.size()),
-                            trn("One object could not be downloaded.<br>",
-                                    "{0} objects could not be downloaded.<br>",
-                                    errs.size(),
-                                    errs.size())
-                                    + tr("The server replied with response code 404.<br>"
-                                         + "This usually means, the server does not know an object with the requested id."),
-                            tr("missing objects:"),
-                            JOptionPane.ERROR_MESSAGE
-                            ).showDialog();
-                }
-            });
+            GuiHelper.runInEDTAndWait(() -> reportProblemDialog(errs,
+                    trn("Object could not be downloaded", "Some objects could not be downloaded", errs.size()),
+                    trn("One object could not be downloaded.<br>",
+                            "{0} objects could not be downloaded.<br>",
+                            errs.size(),
+                            errs.size())
+                            + tr("The server replied with response code 404.<br>"
+                                 + "This usually means, the server does not know an object with the requested id."),
+                    tr("missing objects:"),
+                    JOptionPane.ERROR_MESSAGE
+                    ).showDialog());
 
         // Warm about deleted primitives
         final Set<PrimitiveId> del = new HashSet<>();
@@ -164,21 +159,16 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
             }
         }
         if (!del.isEmpty())
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    reportProblemDialog(del,
-                            trn("Object deleted", "Objects deleted", del.size()),
-                            trn(
-                                "One downloaded object is deleted.",
-                                "{0} downloaded objects are deleted.",
-                                del.size(),
-                                del.size()),
-                            null,
-                            JOptionPane.WARNING_MESSAGE
-                    ).showDialog();
-                }
-            });
+            GuiHelper.runInEDTAndWait(() -> reportProblemDialog(del,
+                    trn("Object deleted", "Objects deleted", del.size()),
+                    trn(
+                        "One downloaded object is deleted.",
+                        "{0} downloaded objects are deleted.",
+                        del.size(),
+                        del.size()),
+                    null,
+                    JOptionPane.WARNING_MESSAGE
+            ).showDialog());
     }
 
     /**

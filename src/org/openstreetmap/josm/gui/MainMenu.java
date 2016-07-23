@@ -112,8 +112,6 @@ import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.gui.dialogs.MenuItemSearchDialog;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
@@ -802,12 +800,9 @@ public class MainMenu extends JMenuBar {
             showAudioMenu(true);
         }
 
-        Main.pref.addPreferenceChangeListener(new PreferenceChangedListener() {
-            @Override
-            public void preferenceChanged(PreferenceChangeEvent e) {
-                if ("audio.menuinvisible".equals(e.getKey())) {
-                    showAudioMenu(!Boolean.parseBoolean(e.getNewValue().toString()));
-                }
+        Main.pref.addPreferenceChangeListener(e -> {
+            if ("audio.menuinvisible".equals(e.getKey())) {
+                showAudioMenu(!Boolean.parseBoolean(e.getNewValue().toString()));
             }
         });
 

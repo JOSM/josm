@@ -1879,12 +1879,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     public AbstractTileSourceLayer<T>.PrecacheTask downloadAreaToCache(final ProgressMonitor progressMonitor, List<LatLon> points,
             double bufferX, double bufferY) {
         PrecacheTask precacheTask = new PrecacheTask(progressMonitor);
-        final Set<Tile> requestedTiles = new ConcurrentSkipListSet<>(new Comparator<Tile>() {
-            @Override
-            public int compare(Tile o1, Tile o2) {
-                return String.CASE_INSENSITIVE_ORDER.compare(o1.getKey(), o2.getKey());
-            }
-        });
+        final Set<Tile> requestedTiles = new ConcurrentSkipListSet<>(
+                (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getKey(), o2.getKey()));
         for (LatLon point: points) {
 
             TileXY minTile = tileSource.latLonToTileXY(point.lat() - bufferY, point.lon() - bufferX, currentZoomLevel);

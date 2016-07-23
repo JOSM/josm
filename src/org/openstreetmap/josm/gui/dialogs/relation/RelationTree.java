@@ -140,14 +140,7 @@ public class RelationTree extends JTree {
                 Main.getLayerManager().getEditLayer().getConflicts().add(visitor.getConflicts());
             }
             final RelationTreeModel model = (RelationTreeModel) getModel();
-            SwingUtilities.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            model.refreshNode(path);
-                        }
-                    }
-            );
+            SwingUtilities.invokeLater(() -> model.refreshNode(path));
         }
 
         @Override

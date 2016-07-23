@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,66 +43,57 @@ public class EditableList extends JPanel {
 
         setLayout(new BorderLayout());
 
-        addSrcButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String source = JOptionPane.showInputDialog(
-                        Main.parent,
+        addSrcButton.addActionListener(e -> {
+            String source = JOptionPane.showInputDialog(
+                    Main.parent,
+                    title,
+                    title,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (source != null) {
+                ((DefaultListModel<String>) sourcesList.getModel()).addElement(source);
+            }
+            sourcesList.clearSelection();
+        });
+
+        editSrcButton.addActionListener(e -> {
+            int row = sourcesList.getSelectedIndex();
+            if (row == -1 && sourcesList.getModel().getSize() == 1) {
+                sourcesList.setSelectedIndex(0);
+                row = 0;
+            }
+            if (row == -1) {
+                if (sourcesList.getModel().getSize() == 0) {
+                    String source1 = JOptionPane.showInputDialog(Main.parent, title, title, JOptionPane.QUESTION_MESSAGE);
+                    if (source1 != null) {
+                        ((DefaultListModel<String>) sourcesList.getModel()).addElement(source1);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            tr("Please select the row to edit."),
+                            tr("Information"),
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+            } else {
+                String source2 = (String) JOptionPane.showInputDialog(Main.parent,
                         title,
                         title,
+                        JOptionPane.QUESTION_MESSAGE, null, null,
+                        sourcesList.getSelectedValue());
+                if (source2 != null) {
+                    ((DefaultListModel<String>) sourcesList.getModel()).setElementAt(source2, row);
+                }
+            }
+            sourcesList.clearSelection();
+        });
+
+        deleteSrcButton.addActionListener(e -> {
+            if (sourcesList.getSelectedIndex() == -1) {
+                JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."), tr("Information"),
                         JOptionPane.QUESTION_MESSAGE);
-                if (source != null) {
-                    ((DefaultListModel<String>) sourcesList.getModel()).addElement(source);
-                }
-                sourcesList.clearSelection();
-            }
-        });
-
-        editSrcButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int row = sourcesList.getSelectedIndex();
-                if (row == -1 && sourcesList.getModel().getSize() == 1) {
-                    sourcesList.setSelectedIndex(0);
-                    row = 0;
-                }
-                if (row == -1) {
-                    if (sourcesList.getModel().getSize() == 0) {
-                        String source = JOptionPane.showInputDialog(Main.parent, title, title, JOptionPane.QUESTION_MESSAGE);
-                        if (source != null) {
-                            ((DefaultListModel<String>) sourcesList.getModel()).addElement(source);
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(
-                                Main.parent,
-                                tr("Please select the row to edit."),
-                                tr("Information"),
-                                JOptionPane.INFORMATION_MESSAGE
-                        );
-                    }
-                } else {
-                    String source = (String) JOptionPane.showInputDialog(Main.parent,
-                            title,
-                            title,
-                            JOptionPane.QUESTION_MESSAGE, null, null,
-                            sourcesList.getSelectedValue());
-                    if (source != null) {
-                        ((DefaultListModel<String>) sourcesList.getModel()).setElementAt(source, row);
-                    }
-                }
-                sourcesList.clearSelection();
-            }
-        });
-
-        deleteSrcButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (sourcesList.getSelectedIndex() == -1) {
-                    JOptionPane.showMessageDialog(Main.parent, tr("Please select the row to delete."), tr("Information"),
-                            JOptionPane.QUESTION_MESSAGE);
-                } else {
-                    ((DefaultListModel<String>) sourcesList.getModel()).remove(sourcesList.getSelectedIndex());
-                }
+            } else {
+                ((DefaultListModel<String>) sourcesList.getModel()).remove(sourcesList.getSelectedIndex());
             }
         });
         sourcesList.setMinimumSize(new Dimension(300, 50));

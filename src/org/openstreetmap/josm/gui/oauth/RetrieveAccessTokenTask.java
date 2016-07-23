@@ -89,12 +89,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
             return;
         } catch (final OsmOAuthAuthorizationException e) {
             Main.error(e);
-            GuiHelper.runInEDT(new Runnable() {
-                @Override
-                public void run() {
-                    alertRetrievingAccessTokenFailed(e);
-                }
-            });
+            GuiHelper.runInEDT(() -> alertRetrievingAccessTokenFailed(e));
             accessToken = null;
         } finally {
             synchronized (this) {

@@ -275,12 +275,8 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     }
 
     public void updateDialogHeader() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                setTitle(tr("Filter Hidden:{0} Disabled:{1}", filterModel.disabledAndHiddenCount, filterModel.disabledCount));
-            }
-        });
+        SwingUtilities.invokeLater(() -> setTitle(
+                tr("Filter Hidden:{0} Disabled:{1}", filterModel.disabledAndHiddenCount, filterModel.disabledCount)));
     }
 
     public void drawOSDText(Graphics2D g) {

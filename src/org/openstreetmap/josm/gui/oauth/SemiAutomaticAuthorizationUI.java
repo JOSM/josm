@@ -12,7 +12,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.concurrent.Executor;
 
 import javax.swing.AbstractAction;
@@ -142,12 +141,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             pnl.add(cbShowAdvancedParameters, gc);
             cbShowAdvancedParameters.setSelected(false);
             cbShowAdvancedParameters.addItemListener(
-                    new ItemListener() {
-                        @Override
-                        public void itemStateChanged(ItemEvent evt) {
-                            getAdvancedPropertiesPanel().setVisible(evt.getStateChange() == ItemEvent.SELECTED);
-                        }
-                    }
+                    evt -> getAdvancedPropertiesPanel().setVisible(evt.getStateChange() == ItemEvent.SELECTED)
             );
 
             gc.gridx = 1;
@@ -399,19 +393,11 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                     getAdvancedPropertiesPanel().getAdvancedParameters()
             );
             executor.execute(task);
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    if (task.isCanceled()) return;
-                    if (task.getRequestToken() == null) return;
-                    requestToken = task.getRequestToken();
-                    GuiHelper.runInEDT(new Runnable() {
-                        @Override
-                        public void run() {
-                            transitionToRetrieveAccessToken();
-                        }
-                    });
-                }
+            Runnable r = () -> {
+                if (task.isCanceled()) return;
+                if (task.getRequestToken() == null) return;
+                requestToken = task.getRequestToken();
+                GuiHelper.runInEDT(SemiAutomaticAuthorizationUI.this::transitionToRetrieveAccessToken);
             };
             executor.execute(r);
         }
@@ -436,19 +422,13 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                     requestToken
             );
             executor.execute(task);
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    if (task.isCanceled()) return;
-                    if (task.getAccessToken() == null) return;
-                    GuiHelper.runInEDT(new Runnable() {
-                        @Override
-                        public void run() {
-                            setAccessToken(task.getAccessToken());
-                            transitionToShowAccessToken();
-                        }
-                    });
-                }
+            Runnable r = () -> {
+                if (task.isCanceled()) return;
+                if (task.getAccessToken() == null) return;
+                GuiHelper.runInEDT(() -> {
+                    setAccessToken(task.getAccessToken());
+                    transitionToShowAccessToken();
+                });
             };
             executor.execute(r);
         }

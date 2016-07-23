@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
@@ -112,23 +111,15 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
             };
 
             JButton btnCheck = new JButton(tr("Validate"));
-            btnCheck.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    val.validate();
-                }
-            });
+            btnCheck.addActionListener(e -> val.validate());
             btnCheck.setLayout(new BorderLayout());
             btnCheck.setMargin(new Insets(-1, 0, -1, 0));
 
             JButton btnInfo = new JButton(tr("Parameter information..."));
-            btnInfo.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    CustomProjectionChoice.ParameterInfoDialog dlg = new CustomProjectionChoice.ParameterInfoDialog();
-                    dlg.showDialog();
-                    dlg.toFront();
-                }
+            btnInfo.addActionListener(e -> {
+                CustomProjectionChoice.ParameterInfoDialog dlg = new CustomProjectionChoice.ParameterInfoDialog();
+                dlg.showDialog();
+                dlg.toFront();
             });
 
             this.setLayout(new GridBagLayout());

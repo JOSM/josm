@@ -149,18 +149,13 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         }
         sb.append("</html>");
         if (!GraphicsEnvironment.isHeadless()) {
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    HelpAwareOptionPane.showOptionDialog(
-                            parent,
-                            sb.toString(),
-                            tr("Update plugins"),
-                            !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
-                                    HelpUtil.ht("/Preferences/Plugins")
-                            );
-                }
-            });
+            GuiHelper.runInEDTAndWait(() -> HelpAwareOptionPane.showOptionDialog(
+                    parent,
+                    sb.toString(),
+                    tr("Update plugins"),
+                    !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
+                            HelpUtil.ht("/Preferences/Plugins")
+                    ));
         }
     }
 
@@ -317,18 +312,12 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
      */
     public void readLocalPluginInformation() {
         final ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask();
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                if (!task.isCanceled()) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            model.setAvailablePlugins(task.getAvailablePlugins());
-                            pnlPluginPreferences.refreshView();
-                        }
-                    });
-                }
+        Runnable r = () -> {
+            if (!task.isCanceled()) {
+                SwingUtilities.invokeLater(() -> {
+                    model.setAvailablePlugins(task.getAvailablePlugins());
+                    pnlPluginPreferences.refreshView();
+                });
             }
         };
         Main.worker.submit(task);
@@ -356,19 +345,13 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 return;
             }
             final ReadRemotePluginInformationTask task = new ReadRemotePluginInformationTask(pluginSites);
-            Runnable continuation = new Runnable() {
-                @Override
-                public void run() {
-                    if (!task.isCanceled()) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                model.updateAvailablePlugins(task.getAvailablePlugins());
-                                pnlPluginPreferences.refreshView();
-                                Main.pref.putInteger("pluginmanager.version", Version.getInstance().getVersion()); // fix #7030
-                            }
-                        });
-                    }
+            Runnable continuation = () -> {
+                if (!task.isCanceled()) {
+                    SwingUtilities.invokeLater(() -> {
+                        model.updateAvailablePlugins(task.getAvailablePlugins());
+                        pnlPluginPreferences.refreshView();
+                        Main.pref.putInteger("pluginmanager.version", Version.getInstance().getVersion()); // fix #7030
+                    });
                 }
             };
             Main.worker.submit(task);
@@ -388,18 +371,13 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
         protected void alertNothingToUpdate() {
             try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        HelpAwareOptionPane.showOptionDialog(
-                                pnlPluginPreferences,
-                                tr("All installed plugins are up to date. JOSM does not have to download newer versions."),
-                                tr("Plugins up to date"),
-                                JOptionPane.INFORMATION_MESSAGE,
-                                null // FIXME: provide help context
-                                );
-                    }
-                });
+                SwingUtilities.invokeAndWait(() -> HelpAwareOptionPane.showOptionDialog(
+                        pnlPluginPreferences,
+                        tr("All installed plugins are up to date. JOSM does not have to download newer versions."),
+                        tr("Plugins up to date"),
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null // FIXME: provide help context
+                        ));
             } catch (InterruptedException | InvocationTargetException e) {
                 Main.error(e);
             }
@@ -420,62 +398,50 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
 
             // to be run asynchronously after the plugin download
             //
-            final Runnable pluginDownloadContinuation = new Runnable() {
-                @Override
-                public void run() {
-                    if (pluginDownloadTask.isCanceled())
-                        return;
-                    boolean restartRequired = false;
-                    for (PluginInformation pi : pluginDownloadTask.getDownloadedPlugins()) {
-                        if (!model.getNewlyActivatedPlugins().contains(pi) || !pi.canloadatruntime) {
-                            restartRequired = true;
-                            break;
-                        }
+            final Runnable pluginDownloadContinuation = () -> {
+                if (pluginDownloadTask.isCanceled())
+                    return;
+                boolean restartRequired = false;
+                for (PluginInformation pi : pluginDownloadTask.getDownloadedPlugins()) {
+                    if (!model.getNewlyActivatedPlugins().contains(pi) || !pi.canloadatruntime) {
+                        restartRequired = true;
+                        break;
                     }
-                    notifyDownloadResults(pnlPluginPreferences, pluginDownloadTask, restartRequired);
-                    model.refreshLocalPluginVersion(pluginDownloadTask.getDownloadedPlugins());
-                    model.clearPendingPlugins(pluginDownloadTask.getDownloadedPlugins());
-                    GuiHelper.runInEDT(new Runnable() {
-                        @Override
-                        public void run() {
-                            pnlPluginPreferences.refreshView();
-                        }
-                    });
                 }
+                notifyDownloadResults(pnlPluginPreferences, pluginDownloadTask, restartRequired);
+                model.refreshLocalPluginVersion(pluginDownloadTask.getDownloadedPlugins());
+                model.clearPendingPlugins(pluginDownloadTask.getDownloadedPlugins());
+                GuiHelper.runInEDT(pnlPluginPreferences::refreshView);
             };
 
             // to be run asynchronously after the plugin list download
             //
-            final Runnable pluginInfoDownloadContinuation = new Runnable() {
-                @Override
-                public void run() {
-                    if (pluginInfoDownloadTask.isCanceled())
-                        return;
-                    model.updateAvailablePlugins(pluginInfoDownloadTask.getAvailablePlugins());
-                    // select plugins which actually have to be updated
-                    //
-                    Iterator<PluginInformation> it = toUpdate.iterator();
-                    while (it.hasNext()) {
-                        PluginInformation pi = it.next();
-                        if (!pi.isUpdateRequired()) {
-                            it.remove();
-                        }
+            final Runnable pluginInfoDownloadContinuation = () -> {
+                if (pluginInfoDownloadTask.isCanceled())
+                    return;
+                model.updateAvailablePlugins(pluginInfoDownloadTask.getAvailablePlugins());
+                // select plugins which actually have to be updated
+                //
+                Iterator<PluginInformation> it = toUpdate.iterator();
+                while (it.hasNext()) {
+                    PluginInformation pi = it.next();
+                    if (!pi.isUpdateRequired()) {
+                        it.remove();
                     }
-                    if (toUpdate.isEmpty()) {
-                        alertNothingToUpdate();
-                        return;
-                    }
-                    pluginDownloadTask.setPluginsToDownload(toUpdate);
-                    Main.worker.submit(pluginDownloadTask);
-                    Main.worker.submit(pluginDownloadContinuation);
                 }
+                if (toUpdate.isEmpty()) {
+                    alertNothingToUpdate();
+                    return;
+                }
+                pluginDownloadTask.setPluginsToDownload(toUpdate);
+                Main.worker.submit(pluginDownloadTask);
+                Main.worker.submit(pluginDownloadContinuation);
             };
 
             Main.worker.submit(pluginInfoDownloadTask);
             Main.worker.submit(pluginInfoDownloadContinuation);
         }
     }
-
 
     /**
      * The action for configuring the plugin download sites
@@ -508,17 +474,17 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         }
 
         @Override
-        public void changedUpdate(DocumentEvent arg0) {
+        public void changedUpdate(DocumentEvent evt) {
             filter();
         }
 
         @Override
-        public void insertUpdate(DocumentEvent arg0) {
+        public void insertUpdate(DocumentEvent evt) {
             filter();
         }
 
         @Override
-        public void removeUpdate(DocumentEvent arg0) {
+        public void removeUpdate(DocumentEvent evt) {
             filter();
         }
     }

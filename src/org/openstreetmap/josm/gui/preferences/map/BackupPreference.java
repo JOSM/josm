@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.preferences.map;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
@@ -100,15 +99,12 @@ public class BackupPreference implements SubPreferenceSetting {
         notification.setToolTipText(tr("When saving, display a small notification"));
         panel.add(notification, GBC.eop());
 
-        ActionListener autosaveEnabled = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean enabled = autosave.isSelected();
-                autosaveIntervalLabel.setEnabled(enabled);
-                autosaveInterval.setEnabled(enabled);
-                backupPerLayerLabel.setEnabled(enabled);
-                backupPerLayer.setEnabled(enabled);
-            }
+        ActionListener autosaveEnabled = e -> {
+            boolean enabled = autosave.isSelected();
+            autosaveIntervalLabel.setEnabled(enabled);
+            autosaveInterval.setEnabled(enabled);
+            backupPerLayerLabel.setEnabled(enabled);
+            backupPerLayer.setEnabled(enabled);
         };
         autosave.addActionListener(autosaveEnabled);
         autosaveEnabled.actionPerformed(null);

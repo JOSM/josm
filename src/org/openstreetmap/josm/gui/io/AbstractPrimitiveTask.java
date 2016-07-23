@@ -183,14 +183,11 @@ public abstract class AbstractPrimitiveTask extends PleaseWaitRunnable {
             ExceptionDialogUtil.explainException(lastException);
             return;
         }
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-                layer.mergeFrom(ds);
-                if (zoom && Main.map != null)
-                    AutoScaleAction.zoomTo(ds.allPrimitives());
-                layer.onPostDownloadFromServer();
-            }
+        GuiHelper.runInEDTAndWait(() -> {
+            layer.mergeFrom(ds);
+            if (zoom && Main.map != null)
+                AutoScaleAction.zoomTo(ds.allPrimitives());
+            layer.onPostDownloadFromServer();
         });
     }
 }

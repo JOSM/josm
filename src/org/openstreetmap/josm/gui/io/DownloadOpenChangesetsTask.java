@@ -84,19 +84,11 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
             );
             return;
         }
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    @Override public void run() {
-                        ChangesetCache.getInstance().update(changesets);
-                    }
-                }
-        );
+        SwingUtilities.invokeLater(() -> ChangesetCache.getInstance().update(changesets));
     }
 
     /**
-     * Refreshes the user info from the server. This is necessary if we don't know
-     * the users id yet.
-     *
+     * Refreshes the user info from the server. This is necessary if we don't know the users id yet.
      */
     protected void refreshUserIdentity() {
         JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();

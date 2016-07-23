@@ -162,11 +162,6 @@ public class MainPanel extends JPanel {
                 updateContent(false);
             }
         });
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-                updateContent(!layerManager.getLayers().isEmpty());
-            }
-        });
+        GuiHelper.runInEDTAndWait(() -> updateContent(!layerManager.getLayers().isEmpty()));
     }
 }

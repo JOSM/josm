@@ -38,6 +38,7 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
  * Factory to generate Expressions.
@@ -1126,12 +1127,7 @@ public final class ExpressionFactory {
         }
 
         public Float aggregateList(List<?> lst) {
-            final List<Float> floats = Utils.transform(lst, new Utils.Function<Object, Float>() {
-                @Override
-                public Float apply(Object x) {
-                    return Cascade.convertTo(x, float.class);
-                }
-            });
+            final List<Float> floats = Utils.transform(lst, (Function<Object, Float>) x -> Cascade.convertTo(x, float.class));
             final Collection<Float> nonNullList = Utils.filter(floats, Predicates.not(Predicates.isNull()));
             return nonNullList.isEmpty() ? (Float) Float.NaN : computeMax ? Collections.max(nonNullList) : Collections.min(nonNullList);
         }
@@ -1140,12 +1136,7 @@ public final class ExpressionFactory {
         public Object evaluate(final Environment env) {
             List<?> l = Cascade.convertTo(args.get(0).evaluate(env), List.class);
             if (args.size() != 1 || l == null)
-                l = Utils.transform(args, new Utils.Function<Expression, Object>() {
-                    @Override
-                    public Object apply(Expression x) {
-                        return x.evaluate(env);
-                    }
-                });
+                l = Utils.transform(args, (Function<Expression, Object>) x -> x.evaluate(env));
             return aggregateList(l);
         }
     }

@@ -97,16 +97,11 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
                 getProgressMonitor().worked(1);
             }
 
-            SwingUtilities.invokeAndWait(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            layer.mergeFrom(allDownloads);
-                            layer.onPostDownloadFromServer();
-                            Main.map.repaint();
-                        }
-                    }
-            );
+            SwingUtilities.invokeAndWait(() -> {
+                layer.mergeFrom(allDownloads);
+                layer.onPostDownloadFromServer();
+                Main.map.repaint();
+            });
         } catch (OsmTransferException | InvocationTargetException | InterruptedException e) {
             if (canceled) {
                 Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));

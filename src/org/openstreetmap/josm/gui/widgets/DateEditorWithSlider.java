@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.tools.GBC;
@@ -51,31 +50,25 @@ public class DateEditorWithSlider extends JPanel {
         spinner.getPreferredSize().height));
 
         slider = new JSlider(0, MAX_SLIDER);
-        spinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int i = slider.getValue();
-                Date d = (Date) spinner.getValue();
-                int j = intFromDate(d);
-                if (i != j) {
-                    watchSlider = false;
-                    slider.setValue(j);
-                    watchSlider = true;
-                }
-                for (ChangeListener l : listeners) {
-                    l.stateChanged(e);
-                }
+        spinner.addChangeListener(e -> {
+            int i = slider.getValue();
+            Date d = (Date) spinner.getValue();
+            int j = intFromDate(d);
+            if (i != j) {
+                watchSlider = false;
+                slider.setValue(j);
+                watchSlider = true;
+            }
+            for (ChangeListener l : listeners) {
+                l.stateChanged(e);
             }
         });
-        slider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (!watchSlider) return;
-                Date d = (Date) spinner.getValue();
-                Date d1 = dateFromInt(slider.getValue());
-                if (!d.equals(d1)) {
-                    spinner.setValue(d1);
-                }
+        slider.addChangeListener(e -> {
+            if (!watchSlider) return;
+            Date d = (Date) spinner.getValue();
+            Date d1 = dateFromInt(slider.getValue());
+            if (!d.equals(d1)) {
+                spinner.setValue(d1);
             }
         });
         add(new JLabel(labelText), GBC.std());

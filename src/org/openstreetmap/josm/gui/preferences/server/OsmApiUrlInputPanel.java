@@ -185,27 +185,21 @@ public class OsmApiUrlInputPanel extends JPanel {
             final String url = getStrippedApiUrl();
             final ApiUrlTestTask task = new ApiUrlTestTask(OsmApiUrlInputPanel.this, url);
             Main.worker.submit(task);
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    if (task.isCanceled())
-                        return;
-                    Runnable r = new Runnable() {
-                        @Override
-                        public void run() {
-                            if (task.isSuccess()) {
-                                lblValid.setIcon(ImageProvider.get("dialogs", "valid"));
-                                lblValid.setToolTipText(tr("The API URL is valid."));
-                                lastTestedUrl = url;
-                                updateEnabledState();
-                            } else {
-                                lblValid.setIcon(ImageProvider.get("warning-small"));
-                                lblValid.setToolTipText(tr("Validation failed. The API URL seems to be invalid."));
-                            }
-                        }
-                    };
-                    SwingUtilities.invokeLater(r);
-                }
+            Runnable r = () -> {
+                if (task.isCanceled())
+                    return;
+                Runnable r1 = () -> {
+                    if (task.isSuccess()) {
+                        lblValid.setIcon(ImageProvider.get("dialogs", "valid"));
+                        lblValid.setToolTipText(tr("The API URL is valid."));
+                        lastTestedUrl = url;
+                        updateEnabledState();
+                    } else {
+                        lblValid.setIcon(ImageProvider.get("warning-small"));
+                        lblValid.setToolTipText(tr("Validation failed. The API URL seems to be invalid."));
+                    }
+                };
+                SwingUtilities.invokeLater(r1);
             };
             Main.worker.submit(r);
         }

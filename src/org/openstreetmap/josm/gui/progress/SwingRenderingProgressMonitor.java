@@ -31,12 +31,9 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
 
     @Override
     public void doBeginTask() {
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                delegate.setCustomText("");
-                delegate.setMaximum(PROGRESS_BAR_MAX);
-            }
+        GuiHelper.runInEDT(() -> {
+            delegate.setCustomText("");
+            delegate.setMaximum(PROGRESS_BAR_MAX);
         });
     }
 
@@ -50,45 +47,25 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
         final int newValue = (int) (progressValue * PROGRESS_BAR_MAX);
         if (newValue != currentProgressValue) {
             currentProgressValue = newValue;
-            GuiHelper.runInEDT(new Runnable() {
-                @Override
-                public void run() {
-                    delegate.setValue(currentProgressValue);
-                }
-            });
+            GuiHelper.runInEDT(() -> delegate.setValue(currentProgressValue));
         }
     }
 
     @Override
     protected void doSetCustomText(final String title) {
         checkState(State.IN_TASK, State.IN_SUBTASK);
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                delegate.setCustomText(title);
-            }
-        });
+        GuiHelper.runInEDT(() -> delegate.setCustomText(title));
     }
 
     @Override
     protected void doSetTitle(final String title) {
         checkState(State.IN_TASK, State.IN_SUBTASK);
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                delegate.setTaskTitle(title);
-            }
-        });
+        GuiHelper.runInEDT(() -> delegate.setTaskTitle(title));
     }
 
     @Override
     protected void doSetIntermediate(final boolean value) {
-        GuiHelper.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                delegate.setIndeterminate(value);
-            }
-        });
+        GuiHelper.runInEDT(() -> delegate.setIndeterminate(value));
     }
 
     @Override

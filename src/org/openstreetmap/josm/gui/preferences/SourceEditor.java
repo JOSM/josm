@@ -17,8 +17,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -65,7 +62,6 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -164,28 +160,17 @@ public abstract class SourceEditor extends JPanel {
             tblActiveSources.getColumnModel().getColumn(0).setCellRenderer(sourceEntryRenderer);
         }
 
-        activeSourcesModel.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                listCellRenderer.updateSources(activeSourcesModel.getSources());
-                lstAvailableSources.repaint();
-            }
+        activeSourcesModel.addTableModelListener(e -> {
+            listCellRenderer.updateSources(activeSourcesModel.getSources());
+            lstAvailableSources.repaint();
         });
-        tblActiveSources.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                listCellRenderer.updateSources(activeSourcesModel.getSources());
-                lstAvailableSources.repaint();
-            }
+        tblActiveSources.addPropertyChangeListener(evt -> {
+            listCellRenderer.updateSources(activeSourcesModel.getSources());
+            lstAvailableSources.repaint();
         });
-        activeSourcesModel.addTableModelListener(new TableModelListener() {
-            // Force swing to show horizontal scrollbars for the JTable
-            // Yes, this is a little ugly, but should work
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                TableHelper.adjustColumnWidth(tblActiveSources, canEnable ? 1 : 0, 800);
-            }
-        });
+        // Force Swing to show horizontal scrollbars for the JTable
+        // Yes, this is a little ugly, but should work
+        activeSourcesModel.addTableModelListener(e -> TableHelper.adjustColumnWidth(tblActiveSources, canEnable ? 1 : 0, 800));
         activeSourcesModel.setActiveSources(getInitialSourcesList());
 
         final EditActiveSourceAction editActiveSourceAction = new EditActiveSourceAction();
@@ -1237,19 +1222,14 @@ public abstract class SourceEditor extends JPanel {
         }
 
         protected void sort() {
-            Collections.sort(
-                    data,
-                    new Comparator<String>() {
-                        @Override
-                        public int compare(String o1, String o2) {
-                            if (o1.isEmpty() && o2.isEmpty())
-                                return 0;
-                            if (o1.isEmpty()) return 1;
-                            if (o2.isEmpty()) return -1;
-                            return o1.compareTo(o2);
-                        }
-                    }
-                    );
+            Collections.sort(data,
+                    (o1, o2) -> {
+                        if (o1.isEmpty() && o2.isEmpty())
+                            return 0;
+                        if (o1.isEmpty()) return 1;
+                        if (o2.isEmpty()) return -1;
+                        return o1.compareTo(o2);
+                    });
         }
 
         public List<String> getIconPaths() {
@@ -1379,18 +1359,13 @@ public abstract class SourceEditor extends JPanel {
             String emsg = Utils.escapeReservedCharactersHTML(e.getMessage() != null ? e.getMessage() : e.toString());
             final String msg = tr(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM), url, emsg);
 
-            GuiHelper.runInEDT(new Runnable() {
-                @Override
-                public void run() {
-                    HelpAwareOptionPane.showOptionDialog(
-                            Main.parent,
-                            msg,
-                            tr("Error"),
-                            JOptionPane.ERROR_MESSAGE,
-                            ht(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC))
-                            );
-                }
-            });
+            GuiHelper.runInEDT(() -> HelpAwareOptionPane.showOptionDialog(
+                    Main.parent,
+                    msg,
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE,
+                    ht(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC))
+                    ));
         }
 
         @Override
@@ -1745,16 +1720,11 @@ public abstract class SourceEditor extends JPanel {
      * @since 6670
      */
     public final void deferLoading(final DefaultTabPreferenceSetting tab, final Component component) {
-        tab.getTabPane().addChangeListener(
-                new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        if (tab.getTabPane().getSelectedComponent() == component) {
-                            SourceEditor.this.initiallyLoadAvailableSources();
-                        }
-                    }
-                }
-                );
+        tab.getTabPane().addChangeListener(e -> {
+            if (tab.getTabPane().getSelectedComponent() == component) {
+                SourceEditor.this.initiallyLoadAvailableSources();
+            }
+        });
     }
 
     protected String getTitleForSourceEntry(SourceEntry entry) {

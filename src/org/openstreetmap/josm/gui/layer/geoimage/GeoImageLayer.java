@@ -65,8 +65,6 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
-import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
-import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -430,15 +428,12 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
         }
 
         if (selected != null && !data.isEmpty()) {
-            GuiHelper.runInEDTAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < data.size(); i++) {
-                        if (selected.equals(data.get(i))) {
-                            currentPhoto = i;
-                            ImageViewerDialog.showImage(GeoImageLayer.this, data.get(i));
-                            break;
-                        }
+            GuiHelper.runInEDTAndWait(() -> {
+                for (int i = 0; i < data.size(); i++) {
+                    if (selected.equals(data.get(i))) {
+                        currentPhoto = i;
+                        ImageViewerDialog.showImage(GeoImageLayer.this, data.get(i));
+                        break;
                     }
                 }
             });
@@ -880,27 +875,21 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             }
         };
 
-        mapModeListener = new MapModeChangeListener() {
-            @Override
-            public void mapModeChange(MapMode oldMapMode, MapMode newMapMode) {
-                if (newMapMode == null || isSupportedMapMode(newMapMode)) {
-                    Main.map.mapView.addMouseListener(mouseAdapter);
-                } else {
-                    Main.map.mapView.removeMouseListener(mouseAdapter);
-                }
+        mapModeListener = (oldMapMode, newMapMode) -> {
+            if (newMapMode == null || isSupportedMapMode(newMapMode)) {
+                Main.map.mapView.addMouseListener(mouseAdapter);
+            } else {
+                Main.map.mapView.removeMouseListener(mouseAdapter);
             }
         };
 
         MapFrame.addMapModeChangeListener(mapModeListener);
         mapModeListener.mapModeChange(null, Main.map.mapMode);
 
-        Main.getLayerManager().addActiveLayerChangeListener(new ActiveLayerChangeListener() {
-            @Override
-            public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-                if (Main.getLayerManager().getActiveLayer() == GeoImageLayer.this) {
-                    // only in select mode it is possible to click the images
-                    Main.map.selectSelectTool(false);
-                }
+        Main.getLayerManager().addActiveLayerChangeListener(e -> {
+            if (Main.getLayerManager().getActiveLayer() == GeoImageLayer.this) {
+                // only in select mode it is possible to click the images
+                Main.map.selectSelectTool(false);
             }
         });
 

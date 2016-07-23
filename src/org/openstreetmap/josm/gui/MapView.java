@@ -47,7 +47,6 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
@@ -1266,12 +1265,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
     }
 
-    private final transient SelectionChangedListener repaintSelectionChangedListener = new SelectionChangedListener() {
-        @Override
-        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            repaint();
-        }
-    };
+    private final transient SelectionChangedListener repaintSelectionChangedListener = newSelection -> repaint();
 
     /**
      * Destroy this map view panel. Should be called once when it is not needed any more.

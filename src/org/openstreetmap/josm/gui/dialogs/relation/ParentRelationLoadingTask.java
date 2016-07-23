@@ -164,17 +164,9 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable {
 
                 // copy the merged layer's data source info
                 getLayer().data.dataSources.addAll(referrers.dataSources);
-                // FIXME: this is necessary because there are  dialogs listening
+                // FIXME: this is necessary because there are dialogs listening
                 // for DataChangeEvents which manipulate Swing components on this thread.
-                //
-                SwingUtilities.invokeLater(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                getLayer().onPostDownloadFromServer();
-                            }
-                        }
-                );
+                SwingUtilities.invokeLater(() -> getLayer().onPostDownloadFromServer());
 
                 if (visitor.getConflicts().isEmpty())
                     return;
