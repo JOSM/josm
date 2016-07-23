@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -597,12 +596,7 @@ public class TagChecker extends TagTest {
         testPanel.add(new JLabel(tr("Data sources ({0})", "*.cfg")), GBC.eol().insets(23, 0, 0, 0));
         testPanel.add(sourcesList, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(23, 0, 0, 0));
 
-        ActionListener disableCheckActionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handlePrefEnable();
-            }
-        };
+        ActionListener disableCheckActionListener = e -> handlePrefEnable();
         prefCheckKeys.addActionListener(disableCheckActionListener);
         prefCheckKeysBeforeUpload.addActionListener(disableCheckActionListener);
         prefCheckComplex.addActionListener(disableCheckActionListener);

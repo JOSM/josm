@@ -124,12 +124,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
             Semaphore limit = getSemaphore(jcsJob);
             if (limit != null) {
                 limit.acquire();
-                jcsJob.setFinishedTask(new Runnable() {
-                    @Override
-                    public void run() {
-                        releaseSemaphore(jcsJob);
-                    }
-                });
+                jcsJob.setFinishedTask(() -> releaseSemaphore(jcsJob));
             }
         }
     }
@@ -140,12 +135,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
         if (limit != null) {
             ret = limit.tryAcquire();
             if (ret) {
-                job.setFinishedTask(new Runnable() {
-                    @Override
-                    public void run() {
-                        releaseSemaphore(job);
-                    }
-                });
+                job.setFinishedTask(() -> releaseSemaphore(job));
             }
         }
         return ret;

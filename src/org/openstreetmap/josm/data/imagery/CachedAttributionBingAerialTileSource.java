@@ -60,26 +60,22 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
 
     @Override
     protected Callable<List<Attribution>> getAttributionLoaderCallable() {
-        return new Callable<List<Attribution>>() {
-
-            @Override
-            public List<Attribution> call() throws Exception {
-                BingAttributionData attributionLoader = new BingAttributionData();
-                int waitTimeSec = 1;
-                while (true) {
-                    try {
-                        String xml = attributionLoader.updateIfRequiredString();
-                        List<Attribution> ret = parseAttributionText(new InputSource(new StringReader(xml)));
-                        if (attributionDownloadedTask != null) {
-                            GuiHelper.runInEDT(attributionDownloadedTask);
-                            attributionDownloadedTask = null;
-                        }
-                        return ret;
-                    } catch (IOException ex) {
-                        Main.warn(ex, "Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
-                        Thread.sleep(waitTimeSec * 1000L);
-                        waitTimeSec *= 2;
+        return () -> {
+            BingAttributionData attributionLoader = new BingAttributionData();
+            int waitTimeSec = 1;
+            while (true) {
+                try {
+                    String xml = attributionLoader.updateIfRequiredString();
+                    List<Attribution> ret = parseAttributionText(new InputSource(new StringReader(xml)));
+                    if (attributionDownloadedTask != null) {
+                        GuiHelper.runInEDT(attributionDownloadedTask);
+                        attributionDownloadedTask = null;
                     }
+                    return ret;
+                } catch (IOException ex) {
+                    Main.warn(ex, "Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
+                    Thread.sleep(waitTimeSec * 1000L);
+                    waitTimeSec *= 2;
                 }
             }
         };

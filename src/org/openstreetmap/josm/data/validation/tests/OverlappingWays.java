@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -174,17 +173,14 @@ public class OverlappingWays extends Test {
 
     protected static Set<WaySegment> checkDuplicateWaySegment(Way w) {
         // test for ticket #4959
-        Set<WaySegment> segments = new TreeSet<>(new Comparator<WaySegment>() {
-            @Override
-            public int compare(WaySegment o1, WaySegment o2) {
-                final List<Node> n1 = Arrays.asList(o1.getFirstNode(), o1.getSecondNode());
-                final List<Node> n2 = Arrays.asList(o2.getFirstNode(), o2.getSecondNode());
-                Collections.sort(n1);
-                Collections.sort(n2);
-                final int first = n1.get(0).compareTo(n2.get(0));
-                final int second = n1.get(1).compareTo(n2.get(1));
-                return first != 0 ? first : second;
-            }
+        Set<WaySegment> segments = new TreeSet<>((o1, o2) -> {
+            final List<Node> n1 = Arrays.asList(o1.getFirstNode(), o1.getSecondNode());
+            final List<Node> n2 = Arrays.asList(o2.getFirstNode(), o2.getSecondNode());
+            Collections.sort(n1);
+            Collections.sort(n2);
+            final int first = n1.get(0).compareTo(n2.get(0));
+            final int second = n1.get(1).compareTo(n2.get(1));
+            return first != 0 ? first : second;
         });
         final Set<WaySegment> duplicateWaySegments = new HashSet<>();
 

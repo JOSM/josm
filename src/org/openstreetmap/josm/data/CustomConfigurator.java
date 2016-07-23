@@ -371,52 +371,46 @@ public final class CustomConfigurator {
         }
 
         final ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask();
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                if (task.isCanceled()) return;
-                synchronized (CustomConfigurator.class) {
-                    try { // proceed only after all other tasks were finished
-                        while (busy) CustomConfigurator.class.wait();
-                    } catch (InterruptedException ex) {
-                        Main.warn("InterruptedException while reading local plugin information");
-                    }
-
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            List<PluginInformation> availablePlugins = task.getAvailablePlugins();
-                            List<PluginInformation> toInstallPlugins = new ArrayList<>();
-                            List<PluginInformation> toRemovePlugins = new ArrayList<>();
-                            List<PluginInformation> toDeletePlugins = new ArrayList<>();
-                            for (PluginInformation pi: availablePlugins) {
-                                String name = pi.name.toLowerCase(Locale.ENGLISH);
-                                if (installList.contains(name)) toInstallPlugins.add(pi);
-                                if (removeList.contains(name)) toRemovePlugins.add(pi);
-                                if (deleteList.contains(name)) toDeletePlugins.add(pi);
-                            }
-                            if (!installList.isEmpty()) {
-                                PluginDownloadTask pluginDownloadTask =
-                                        new PluginDownloadTask(Main.parent, toInstallPlugins, tr("Installing plugins"));
-                                Main.worker.submit(pluginDownloadTask);
-                            }
-                            Collection<String> pls = new ArrayList<>(Main.pref.getCollection("plugins"));
-                            for (PluginInformation pi: toInstallPlugins) {
-                                if (!pls.contains(pi.name)) {
-                                    pls.add(pi.name);
-                                }
-                            }
-                            for (PluginInformation pi: toRemovePlugins) {
-                                pls.remove(pi.name);
-                            }
-                            for (PluginInformation pi: toDeletePlugins) {
-                                pls.remove(pi.name);
-                                new File(Main.pref.getPluginsDirectory(), pi.name+".jar").deleteOnExit();
-                            }
-                            Main.pref.putCollection("plugins", pls);
-                        }
-                    });
+        Runnable r = () -> {
+            if (task.isCanceled()) return;
+            synchronized (CustomConfigurator.class) {
+                try { // proceed only after all other tasks were finished
+                    while (busy) CustomConfigurator.class.wait();
+                } catch (InterruptedException ex) {
+                    Main.warn(ex, "InterruptedException while reading local plugin information");
                 }
+
+                SwingUtilities.invokeLater(() -> {
+                    List<PluginInformation> availablePlugins = task.getAvailablePlugins();
+                    List<PluginInformation> toInstallPlugins = new ArrayList<>();
+                    List<PluginInformation> toRemovePlugins = new ArrayList<>();
+                    List<PluginInformation> toDeletePlugins = new ArrayList<>();
+                    for (PluginInformation pi1: availablePlugins) {
+                        String name = pi1.name.toLowerCase(Locale.ENGLISH);
+                        if (installList.contains(name)) toInstallPlugins.add(pi1);
+                        if (removeList.contains(name)) toRemovePlugins.add(pi1);
+                        if (deleteList.contains(name)) toDeletePlugins.add(pi1);
+                    }
+                    if (!installList.isEmpty()) {
+                        PluginDownloadTask pluginDownloadTask =
+                                new PluginDownloadTask(Main.parent, toInstallPlugins, tr("Installing plugins"));
+                        Main.worker.submit(pluginDownloadTask);
+                    }
+                    Collection<String> pls = new ArrayList<>(Main.pref.getCollection("plugins"));
+                    for (PluginInformation pi2: toInstallPlugins) {
+                        if (!pls.contains(pi2.name)) {
+                            pls.add(pi2.name);
+                        }
+                    }
+                    for (PluginInformation pi3: toRemovePlugins) {
+                        pls.remove(pi3.name);
+                    }
+                    for (PluginInformation pi4: toDeletePlugins) {
+                        pls.remove(pi4.name);
+                        new File(Main.pref.getPluginsDirectory(), pi4.name+".jar").deleteOnExit();
+                    }
+                    Main.pref.putCollection("plugins", pls);
+                });
             }
         };
         Main.worker.submit(task);

@@ -361,12 +361,7 @@ public class GpxData extends WithAttributes implements Data {
      * over all routes
      */
     public Iterable<Collection<WayPoint>> getLinesIterable(final boolean[] trackVisibility) {
-        return new Iterable<Collection<WayPoint>>() {
-            @Override
-            public Iterator<Collection<WayPoint>> iterator() {
-                return new LinesIterator(GpxData.this, trackVisibility);
-            }
-        };
+        return () -> new LinesIterator(GpxData.this, trackVisibility);
     }
 
     /**

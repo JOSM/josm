@@ -14,8 +14,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
  * A relation, having a set of tags and any number (0...n) of members.
@@ -348,12 +348,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @return all relation members for the given primitives
      */
     public Collection<RelationMember> getMembersFor(final Collection<? extends OsmPrimitive> primitives) {
-        return Utils.filter(getMembers(), new Predicate<RelationMember>() {
-            @Override
-            public boolean evaluate(RelationMember member) {
-                return primitives.contains(member.getMember());
-            }
-        });
+        return Utils.filter(getMembers(), member -> primitives.contains(member.getMember()));
     }
 
     /**
@@ -404,12 +399,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     public List<OsmPrimitive> getMemberPrimitivesList() {
-        return Utils.transform(getMembers(), new Utils.Function<RelationMember, OsmPrimitive>() {
-            @Override
-            public OsmPrimitive apply(RelationMember x) {
-                return x.getMember();
-            }
-        });
+        return Utils.transform(getMembers(), (Function<RelationMember, OsmPrimitive>) x -> x.getMember());
     }
 
     @Override

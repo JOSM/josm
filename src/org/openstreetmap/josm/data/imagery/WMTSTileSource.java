@@ -13,7 +13,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -84,13 +83,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     private static class TileMatrixSetBuilder {
-        SortedSet<TileMatrix> tileMatrix = new TreeSet<>(new Comparator<TileMatrix>() {
-            @Override
-            public int compare(TileMatrix o1, TileMatrix o2) {
-                // reverse the order, so it will be from greatest (lowest zoom level) to lowest value (highest zoom level)
-                return -1 * Double.compare(o1.scaleDenominator, o2.scaleDenominator);
-            }
-        }); // sorted by zoom level
+        // sorted by zoom level
+        SortedSet<TileMatrix> tileMatrix = new TreeSet<>((o1, o2) -> -1 * Double.compare(o1.scaleDenominator, o2.scaleDenominator));
         private String crs;
         private String identifier;
 

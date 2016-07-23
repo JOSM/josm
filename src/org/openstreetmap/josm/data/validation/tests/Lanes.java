@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
  * Test that validates {@code lane:} tags.
@@ -50,12 +51,8 @@ public class Lanes extends Test.TagTest {
             // nothing to check
             return;
         }
-        final Set<Integer> lanesCount = new HashSet<>(Utils.transform(keysForPattern, new Utils.Function<String, Integer>() {
-            @Override
-            public Integer apply(String key) {
-                return getLanesCount(p.get(key));
-            }
-        }));
+        final Set<Integer> lanesCount = new HashSet<>(Utils.transform(keysForPattern,
+                (Function<String, Integer>) key -> getLanesCount(p.get(key))));
         if (lanesCount.size() > 1) {
             // if not all numbers are the same
             errors.add(new TestError(this, Severity.WARNING, message, 3100, p));

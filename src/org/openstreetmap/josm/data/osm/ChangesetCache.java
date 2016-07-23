@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -69,11 +68,9 @@ public final class ChangesetCache implements PreferenceChangedListener {
     }
 
     protected void fireChangesetCacheEvent(final ChangesetCacheEvent e) {
-        GuiHelper.runInEDT(new Runnable() {
-            @Override public void run() {
-                for (ChangesetCacheListener l: listeners) {
-                    l.changesetCacheUpdated(e);
-                }
+        GuiHelper.runInEDT(() -> {
+            for (ChangesetCacheListener l: listeners) {
+                l.changesetCacheUpdated(e);
             }
         });
     }
@@ -205,12 +202,8 @@ public final class ChangesetCache implements PreferenceChangedListener {
         if (JosmUserIdentityManager.getInstance().isAnonymous()) {
             return getOpenChangesets();
         } else {
-            return new ArrayList<>(Utils.filter(getOpenChangesets(), new Predicate<Changeset>() {
-                @Override
-                public boolean evaluate(Changeset object) {
-                    return JosmUserIdentityManager.getInstance().isCurrentUser(object.getUser());
-                }
-            }));
+            return new ArrayList<>(Utils.filter(getOpenChangesets(),
+                    object -> JosmUserIdentityManager.getInstance().isCurrentUser(object.getUser())));
         }
     }
 

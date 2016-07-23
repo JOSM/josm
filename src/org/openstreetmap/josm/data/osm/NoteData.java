@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -36,54 +35,40 @@ public class NoteData {
      * 3) New notes
      * Within each subgroup it sorts by ID
      */
-    public static final Comparator<Note> DEFAULT_COMPARATOR = new Comparator<Note>() {
-        @Override
-        public int compare(Note n1, Note n2) {
-            if (n1.getId() < 0 && n2.getId() > 0) {
-                return 1;
-            }
-            if (n1.getId() > 0 && n2.getId() < 0) {
-                return -1;
-            }
-            if (n1.getState() == State.CLOSED && n2.getState() == State.OPEN) {
-                return 1;
-            }
-            if (n1.getState() == State.OPEN && n2.getState() == State.CLOSED) {
-                return -1;
-            }
-            return Long.compare(Math.abs(n1.getId()), Math.abs(n2.getId()));
+    public static final Comparator<Note> DEFAULT_COMPARATOR = (n1, n2) -> {
+        if (n1.getId() < 0 && n2.getId() > 0) {
+            return 1;
         }
+        if (n1.getId() > 0 && n2.getId() < 0) {
+            return -1;
+        }
+        if (n1.getState() == State.CLOSED && n2.getState() == State.OPEN) {
+            return 1;
+        }
+        if (n1.getState() == State.OPEN && n2.getState() == State.CLOSED) {
+            return -1;
+        }
+        return Long.compare(Math.abs(n1.getId()), Math.abs(n2.getId()));
     };
 
     /** Sorts notes strictly by creation date */
-    public static final Comparator<Note> DATE_COMPARATOR = new Comparator<Note>() {
-        @Override
-        public int compare(Note n1, Note n2) {
-            return n1.getCreatedAt().compareTo(n2.getCreatedAt());
-        }
-    };
+    public static final Comparator<Note> DATE_COMPARATOR = (n1, n2) -> n1.getCreatedAt().compareTo(n2.getCreatedAt());
 
     /** Sorts notes by user, then creation date */
-    public static final Comparator<Note> USER_COMPARATOR = new Comparator<Note>() {
-        @Override
-        public int compare(Note n1, Note n2) {
-            String n1User = n1.getFirstComment().getUser().getName();
-            String n2User = n2.getFirstComment().getUser().getName();
-            if (n1User.equals(n2User)) {
-                return n1.getCreatedAt().compareTo(n2.getCreatedAt());
-            }
-            return n1.getFirstComment().getUser().getName().compareTo(n2.getFirstComment().getUser().getName());
+    public static final Comparator<Note> USER_COMPARATOR = (n1, n2) -> {
+        String n1User = n1.getFirstComment().getUser().getName();
+        String n2User = n2.getFirstComment().getUser().getName();
+        if (n1User.equals(n2User)) {
+            return n1.getCreatedAt().compareTo(n2.getCreatedAt());
         }
+        return n1.getFirstComment().getUser().getName().compareTo(n2.getFirstComment().getUser().getName());
     };
 
     /** Sorts notes by the last modified date */
-    public static final Comparator<Note> LAST_ACTION_COMPARATOR = new Comparator<Note>() {
-        @Override
-        public int compare(Note n1, Note n2) {
-            Date n1Date = n1.getComments().get(n1.getComments().size()-1).getCommentTimestamp();
-            Date n2Date = n2.getComments().get(n2.getComments().size()-1).getCommentTimestamp();
-            return n1Date.compareTo(n2Date);
-        }
+    public static final Comparator<Note> LAST_ACTION_COMPARATOR = (n1, n2) -> {
+        Date n1Date = n1.getComments().get(n1.getComments().size()-1).getCommentTimestamp();
+        Date n2Date = n2.getComments().get(n2.getComments().size()-1).getCommentTimestamp();
+        return n1Date.compareTo(n2Date);
     };
 
     /**
@@ -168,12 +153,7 @@ public class NoteData {
                 noteList.add(newNote);
             } else {
                 final Note existingNote = noteList.get(newNote);
-                final boolean isDirty = Utils.exists(existingNote.getComments(), new Predicate<NoteComment>() {
-                    @Override
-                    public boolean evaluate(NoteComment object) {
-                        return object.isNew();
-                    }
-                });
+                final boolean isDirty = Utils.exists(existingNote.getComments(), object -> object.isNew());
                 if (!isDirty) {
                     noteList.put(newNote);
                 } else {

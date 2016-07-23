@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data.osm.history;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -69,15 +68,7 @@ public class History {
      */
     public History sortAscending() {
         List<HistoryOsmPrimitive> copy = new ArrayList<>(versions);
-        Collections.sort(
-                copy,
-                new Comparator<HistoryOsmPrimitive>() {
-                    @Override
-                    public int compare(HistoryOsmPrimitive o1, HistoryOsmPrimitive o2) {
-                        return o1.compareTo(o2);
-                    }
-                }
-            );
+        Collections.sort(copy, (o1, o2) -> o1.compareTo(o2));
         return new History(id, type, copy);
     }
 
@@ -87,15 +78,7 @@ public class History {
      */
     public History sortDescending() {
         List<HistoryOsmPrimitive> copy = new ArrayList<>(versions);
-        Collections.sort(
-                copy,
-                new Comparator<HistoryOsmPrimitive>() {
-                    @Override
-                    public int compare(HistoryOsmPrimitive o1, HistoryOsmPrimitive o2) {
-                        return o2.compareTo(o1);
-                    }
-                }
-            );
+        Collections.sort(copy, (o1, o2) -> o2.compareTo(o1));
         return new History(id, type, copy);
     }
 
@@ -105,15 +88,7 @@ public class History {
      * @return a new partial copy of this history, from the given date
      */
     public History from(final Date fromDate) {
-        return filter(
-                this,
-                new FilterPredicate() {
-                    @Override
-                    public boolean matches(HistoryOsmPrimitive primitive) {
-                        return primitive.getTimestamp().compareTo(fromDate) >= 0;
-                    }
-                }
-            );
+        return filter(this, primitive -> primitive.getTimestamp().compareTo(fromDate) >= 0);
     }
 
     /**
@@ -122,15 +97,7 @@ public class History {
      * @return a new partial copy of this history, until the given date
      */
     public History until(final Date untilDate) {
-        return filter(
-                this,
-                new FilterPredicate() {
-                    @Override
-                    public boolean matches(HistoryOsmPrimitive primitive) {
-                        return primitive.getTimestamp().compareTo(untilDate) <= 0;
-                    }
-                }
-            );
+        return filter(this, primitive -> primitive.getTimestamp().compareTo(untilDate) <= 0);
     }
 
     /**
@@ -149,15 +116,7 @@ public class History {
      * @return a new partial copy of this history, from the given version number
      */
     public History from(final long fromVersion) {
-        return filter(
-                this,
-                new FilterPredicate() {
-                    @Override
-                    public boolean matches(HistoryOsmPrimitive primitive) {
-                        return primitive.getVersion() >= fromVersion;
-                    }
-                }
-            );
+        return filter(this, primitive -> primitive.getVersion() >= fromVersion);
     }
 
     /**
@@ -166,15 +125,7 @@ public class History {
      * @return a new partial copy of this history, to the given version number
      */
     public History until(final long untilVersion) {
-        return filter(
-                this,
-                new FilterPredicate() {
-                    @Override
-                    public boolean matches(HistoryOsmPrimitive primitive) {
-                        return primitive.getVersion() <= untilVersion;
-                    }
-                }
-            );
+        return filter(this, primitive -> primitive.getVersion() <= untilVersion);
     }
 
     /**
@@ -193,15 +144,7 @@ public class History {
      * @return a new partial copy of this history, for the given user id
      */
     public History forUserId(final long uid) {
-        return filter(
-                this,
-                new FilterPredicate() {
-                    @Override
-                    public boolean matches(HistoryOsmPrimitive primitive) {
-                        return primitive.getUser() != null && primitive.getUser().getId() == uid;
-                    }
-                }
-            );
+        return filter(this, primitive -> primitive.getUser() != null && primitive.getUser().getId() == uid);
     }
 
     /**
@@ -282,7 +225,7 @@ public class History {
      * @return the history primitive at index <code>idx</code>
      * @throws IndexOutOfBoundsException if index out or range
      */
-    public HistoryOsmPrimitive get(int idx) throws IndexOutOfBoundsException {
+    public HistoryOsmPrimitive get(int idx) {
         if (idx < 0 || idx >= versions.size())
             throw new IndexOutOfBoundsException(MessageFormat.format(
                     "Parameter ''{0}'' in range 0..{1} expected. Got ''{2}''.", "idx", versions.size()-1, idx));
@@ -337,7 +280,7 @@ public class History {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("History ["
-                + (type != null ? "type=" + type + ", " : "") + "id=" + id);
+                + (type != null ? ("type=" + type + ", ") : "") + "id=" + id);
         if (versions != null) {
             result.append(", versions=\n");
             for (HistoryOsmPrimitive v : versions) {
