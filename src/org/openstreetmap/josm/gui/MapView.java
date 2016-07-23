@@ -52,6 +52,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
+import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
 import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
@@ -580,6 +581,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         for (JComponent c : getMapNavigationComponents(MapView.this)) {
             add(c);
         }
+        setTransferHandler(new OsmTransferHandler());
     }
 
     /**

@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
@@ -12,11 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventObject;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
@@ -31,24 +27,20 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.CopyAction;
-import org.openstreetmap.josm.actions.PasteTagsAction;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.TagMap;
+import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
+import org.openstreetmap.josm.gui.tagging.TagEditorModel.EndEditListener;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.JosmTable;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.TextTagParser;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is the tabular editor component for OSM tags.
  * @since 1762
  */
-public class TagTable extends JosmTable {
+public class TagTable extends JosmTable implements EndEditListener {
     /** the table cell editor used by this table */
     private TagCellEditor editor;
     private final TagEditorModel model;
@@ -210,12 +202,7 @@ public class TagTable extends JosmTable {
             default: // Do nothing
             }
 
-            if (isEditing()) {
-                CellEditor cEditor = getCellEditor();
-                if (cEditor != null) {
-                    cEditor.cancelCellEditing();
-                }
-            }
+            endCellEditing();
 
             if (model.getRowCount() == 0) {
                 model.ensureOneTag();
@@ -232,11 +219,7 @@ public class TagTable extends JosmTable {
         }
 
         protected final void updateEnabledState() {
-            if (isEditing() && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
-                setEnabled(true);
-            } else if (!isEditing() && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
-                setEnabled(true);
-            } else if (getSelectedColumnCount() > 1 || getSelectedRowCount() > 1) {
+            if (getSelectedColumnCount() >= 1 && getSelectedRowCount() >= 1) {
                 setEnabled(true);
             } else {
                 setEnabled(false);
@@ -294,29 +277,8 @@ public class TagTable extends JosmTable {
         public void actionPerformed(ActionEvent e) {
             Relation relation = new Relation();
             model.applyToPrimitive(relation);
-
-            String buf = Utils.getClipboardContent();
-            if (buf == null || buf.isEmpty() || buf.matches(CopyAction.CLIPBOARD_REGEXP)) {
-                List<PrimitiveData> directlyAdded = Main.pasteBuffer.getDirectlyAdded();
-                if (directlyAdded == null || directlyAdded.isEmpty()) return;
-                PasteTagsAction.TagPaster tagPaster = new PasteTagsAction.TagPaster(directlyAdded,
-                        Collections.<OsmPrimitive>singletonList(relation));
-                model.updateTags(tagPaster.execute());
-            } else {
-                 // Paste tags from arbitrary text
-                 Map<String, String> tags = TextTagParser.readTagsFromText(buf);
-                 if (tags == null || tags.isEmpty()) {
-                    TextTagParser.showBadBufferMessage(ht("/Action/PasteTags"));
-                 } else if (TextTagParser.validateTags(tags)) {
-                     List<Tag> newTags = new ArrayList<>();
-                     for (Map.Entry<String, String> entry: tags.entrySet()) {
-                        String k = entry.getKey();
-                        String v = entry.getValue();
-                        newTags.add(new Tag(k, v));
-                     }
-                     model.updateTags(newTags);
-                 }
-            }
+            new OsmTransferHandler().pasteTags(Collections.singleton(relation));
+            model.updateTags(new TagMap(relation.getKeys()).getTags());
         }
 
         protected final void updateEnabledState() {
@@ -414,6 +376,7 @@ public class TagTable extends JosmTable {
                   .setSelectionModel(model.getColumnSelectionModel()).build(),
               model.getRowSelectionModel());
         this.model = model;
+        model.setEndEditListener(this);
         init(maxCharacters);
     }
 
@@ -487,9 +450,7 @@ public class TagTable extends JosmTable {
      * @param editor tag cell editor
      */
     public void setTagCellEditor(TagCellEditor editor) {
-        if (isEditing()) {
-            this.editor.cancelCellEditing();
-        }
+        endCellEditing();
         this.editor = editor;
         getColumnModel().getColumn(0).setCellEditor(editor);
         getColumnModel().getColumn(1).setCellEditor(editor);
@@ -545,6 +506,18 @@ public class TagTable extends JosmTable {
 
         // delegate to the default implementation
         return super.editCellAt(row, column, e);
+    }
+
+    @Override
+    public void endCellEditing() {
+        if (isEditing()) {
+            CellEditor cEditor = getCellEditor();
+            if (cEditor != null) {
+                // First attempt to commit. If this does not work, cancel.
+                cEditor.stopCellEditing();
+                cEditor.cancelCellEditing();
+            }
+        }
     }
 
     @Override

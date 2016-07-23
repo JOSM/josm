@@ -86,6 +86,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -1264,7 +1265,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                 return;
             String key = editHelper.getDataKey(tagTable.getSelectedRow());
             Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
-            String clipboard = Utils.getClipboardContent();
+            String clipboard = ClipboardUtils.getClipboardStringContent();
             if (sel.isEmpty() || clipboard == null)
                 return;
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, Utils.strip(clipboard)));
@@ -1294,7 +1295,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                 }
             }
             if (!values.isEmpty()) {
-                Utils.copyToClipboard(Utils.join("\n", values));
+                ClipboardUtils.copyString(Utils.join("\n", values));
             }
         }
     }

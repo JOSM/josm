@@ -11,6 +11,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.FlavorListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -61,6 +63,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MainMenu;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAfterSelection;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAtEndAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAtStartAction;
@@ -152,6 +155,10 @@ public class GenericRelationEditor extends RelationEditor {
      * Action for performing the {@link CancelAction}
      */
     private final CancelAction cancelAction;
+    /**
+     * A list of listeners that need to be notified on clipboard content changes.
+     */
+    private final ArrayList<FlavorListener> clipboardListeners = new ArrayList<>();
 
     /**
      * Creates a new relation editor for the given relation. The relation will be saved if the user
@@ -273,7 +280,7 @@ public class GenericRelationEditor extends RelationEditor {
                 getRootPane(), memberTable, selectionTable);
         // CHECKSTYLE.ON: LineLength
 
-        registerCopyPasteAction(new PasteMembersAction(memberTableModel, getLayer(), this) {
+        registerCopyPasteAction(new PasteMembersAction(memberTable, getLayer(), this) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 super.actionPerformed(e);
@@ -742,6 +749,7 @@ public class GenericRelationEditor extends RelationEditor {
             tagEditorPanel.initAutoCompletion(getLayer());
         }
         super.setVisible(visible);
+        Clipboard clipboard = ClipboardUtils.getClipboard();
         if (visible) {
             leftButtonToolbar.sortBelowButton.setVisible(ExpertToggleAction.isExpert());
             RelationDialogManager.getRelationDialogManager().positionOnScreen(this);
@@ -749,6 +757,9 @@ public class GenericRelationEditor extends RelationEditor {
                 windowMenuItem = addToWindowMenu(this, getLayer().getName());
             }
             tagEditorPanel.requestFocusInWindow();
+            for (FlavorListener listener : clipboardListeners) {
+                clipboard.addFlavorListener(listener);
+            }
         } else {
             // make sure all registered listeners are unregistered
             //
@@ -759,6 +770,9 @@ public class GenericRelationEditor extends RelationEditor {
             if (windowMenuItem != null) {
                 Main.main.menu.windowMenu.remove(windowMenuItem);
                 windowMenuItem = null;
+            }
+            for (FlavorListener listener : clipboardListeners) {
+                clipboard.removeFlavorListener(listener);
             }
             dispose();
         }
@@ -823,7 +837,7 @@ public class GenericRelationEditor extends RelationEditor {
         }
     }
 
-    private static void registerCopyPasteAction(AbstractAction action, Object actionName, KeyStroke shortcut,
+    private void registerCopyPasteAction(AbstractAction action, Object actionName, KeyStroke shortcut,
             JRootPane rootPane, JTable... tables) {
         int mods = shortcut.getModifiers();
         int code = shortcut.getKeyCode();
@@ -839,6 +853,9 @@ public class GenericRelationEditor extends RelationEditor {
             table.getInputMap(JComponent.WHEN_FOCUSED).put(shortcut, actionName);
             table.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(shortcut, actionName);
             table.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
+        }
+        if (action instanceof FlavorListener) {
+            clipboardListeners.add((FlavorListener) action);
         }
     }
 

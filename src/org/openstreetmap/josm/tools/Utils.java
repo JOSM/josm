@@ -7,14 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.io.BufferedReader;
@@ -72,6 +66,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -644,20 +639,11 @@ public final class Utils {
      * Copies the string {@code s} to system clipboard.
      * @param s string to be copied to clipboard.
      * @return true if succeeded, false otherwise.
+     * @deprecated Use {@link ClipboardUtils#copyString(String)}. To be removed end of 2016.
      */
+    @Deprecated
     public static boolean copyToClipboard(String s) {
-        try {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), new ClipboardOwner() {
-                @Override
-                public void lostOwnership(Clipboard clpbrd, Transferable t) {
-                    // Do nothing
-                }
-            });
-            return true;
-        } catch (IllegalStateException | HeadlessException ex) {
-            Main.error(ex);
-            return false;
-        }
+        return ClipboardUtils.copyString(s);
     }
 
     /**
@@ -665,43 +651,21 @@ public final class Utils {
      * @param clipboard clipboard from which contents are retrieved
      * @return clipboard contents if available, {@code null} otherwise.
      * @since 8429
+     * @deprecated Use {@link ClipboardUtils#getClipboardContent(Clipboard)} instead. To be removed end of 2016.
      */
+    @Deprecated
     public static Transferable getTransferableContent(Clipboard clipboard) {
-        Transferable t = null;
-        for (int tries = 0; t == null && tries < 10; tries++) {
-            try {
-                t = clipboard.getContents(null);
-            } catch (IllegalStateException e) {
-                // Clipboard currently unavailable.
-                // On some platforms, the system clipboard is unavailable while it is accessed by another application.
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ex) {
-                    Main.warn("InterruptedException in "+Utils.class.getSimpleName()+" while getting clipboard content");
-                }
-            } catch (NullPointerException e) {
-                // JDK-6322854: On Linux/X11, NPE can happen for unknown reasons, on all versions of Java
-                Main.error(e);
-            }
-        }
-        return t;
+        return ClipboardUtils.getClipboardContent(clipboard);
     }
 
     /**
      * Extracts clipboard content as string.
      * @return string clipboard contents if available, {@code null} otherwise.
+     * @deprecated Use {@link ClipboardUtils#getClipboardStringContent()}. To be removed end of 2016
      */
+    @Deprecated
     public static String getClipboardContent() {
-        try {
-            Transferable t = getTransferableContent(Toolkit.getDefaultToolkit().getSystemClipboard());
-            if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                return (String) t.getTransferData(DataFlavor.stringFlavor);
-            }
-        } catch (UnsupportedFlavorException | IOException | HeadlessException ex) {
-            Main.error(ex);
-            return null;
-        }
-        return null;
+        return ClipboardUtils.getClipboardStringContent();
     }
 
     /**

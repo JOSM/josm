@@ -4,7 +4,7 @@ package org.openstreetmap.josm.gui.widgets;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 
 /**
  * An abstract class for ID text fields.
@@ -70,7 +70,7 @@ public abstract class AbstractIdTextField<T extends AbstractTextComponentValidat
      * Tries to set text from clipboard (no effect with invalid or empty clipboard)
      */
     public void tryToPasteFromClipboard() {
-        tryToPasteFrom(Utils.getClipboardContent());
+        tryToPasteFrom(ClipboardUtils.getClipboardStringContent());
     }
 
     /**

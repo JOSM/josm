@@ -7,33 +7,24 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.datatransfer.FlavorEvent;
+import java.awt.datatransfer.FlavorListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.command.AddPrimitivesCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.osm.NodeData;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.PrimitiveData;
-import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
-import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy.PasteBufferChangedListener;
-import org.openstreetmap.josm.data.osm.RelationData;
-import org.openstreetmap.josm.data.osm.RelationMemberData;
-import org.openstreetmap.josm.data.osm.WayData;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
+import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Paste OSM primitives from clipboard to the current edit layer.
  * @since 404
  */
-public final class PasteAction extends JosmAction implements PasteBufferChangedListener {
+public final class PasteAction extends JosmAction implements FlavorListener {
+
+    private final OsmTransferHandler transferHandler;
 
     /**
      * Constructs a new {@code PasteAction}.
@@ -45,59 +36,12 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
         // CUA shortcut for paste (https://en.wikipedia.org/wiki/IBM_Common_User_Access#Description)
         Main.registerActionShortcut(this,
                 Shortcut.registerShortcut("system:paste:cua", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_INSERT, Shortcut.SHIFT));
-        Main.pasteBuffer.addPasteBufferChangedListener(this);
+        transferHandler = new OsmTransferHandler();
+        ClipboardUtils.getClipboard().addFlavorListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled())
-            return;
-        pasteData(Main.pasteBuffer, Main.pasteSource, e);
-    }
-
-    /**
-     * Paste OSM primitives from the given paste buffer and OSM data layer source to the current edit layer.
-     * @param pasteBuffer The paste buffer containing primitive ids to copy
-     * @param source The OSM data layer used to look for primitive ids
-     * @param e The ActionEvent that triggered this operation
-     */
-    public void pasteData(PrimitiveDeepCopy pasteBuffer, Layer source, ActionEvent e) {
-        /* Find the middle of the pasteBuffer area */
-        double maxEast = -1E100;
-        double minEast = 1E100;
-        double maxNorth = -1E100;
-        double minNorth = 1E100;
-        boolean incomplete = false;
-        for (PrimitiveData data : pasteBuffer.getAll()) {
-            if (data instanceof NodeData) {
-                NodeData n = (NodeData) data;
-                if (n.getEastNorth() != null) {
-                    double east = n.getEastNorth().east();
-                    double north = n.getEastNorth().north();
-                    if (east > maxEast) {
-                        maxEast = east;
-                    }
-                    if (east < minEast) {
-                        minEast = east;
-                    }
-                    if (north > maxNorth) {
-                        maxNorth = north;
-                    }
-                    if (north < minNorth) {
-                        minNorth = north;
-                    }
-                }
-            }
-            if (data.isIncomplete()) {
-                incomplete = true;
-            }
-        }
-
-        // Allow to cancel paste if there are incomplete primitives
-        if (incomplete && !confirmDeleteIncomplete()) {
-            return;
-        }
-
         // default to paste in center of map (pasted via menu or cursor not in MapView)
         EastNorth mPosition = Main.map.mapView.getCenter();
         // We previously checked for modifier to know if the action has been trigerred via shortcut or via menu
@@ -112,103 +56,16 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
             }
         }
 
-        double offsetEast = mPosition.east() - (maxEast + minEast)/2.0;
-        double offsetNorth = mPosition.north() - (maxNorth + minNorth)/2.0;
-
-        // Make a copy of pasteBuffer and map from old id to copied data id
-        List<PrimitiveData> bufferCopy = new ArrayList<>();
-        List<PrimitiveData> toSelect = new ArrayList<>();
-        Map<Long, Long> newNodeIds = new HashMap<>();
-        Map<Long, Long> newWayIds = new HashMap<>();
-        Map<Long, Long> newRelationIds = new HashMap<>();
-        for (PrimitiveData data: pasteBuffer.getAll()) {
-            if (data.isIncomplete()) {
-                continue;
-            }
-            PrimitiveData copy = data.makeCopy();
-            copy.clearOsmMetadata();
-            if (data instanceof NodeData) {
-                newNodeIds.put(data.getUniqueId(), copy.getUniqueId());
-            } else if (data instanceof WayData) {
-                newWayIds.put(data.getUniqueId(), copy.getUniqueId());
-            } else if (data instanceof RelationData) {
-                newRelationIds.put(data.getUniqueId(), copy.getUniqueId());
-            }
-            bufferCopy.add(copy);
-            if (pasteBuffer.getDirectlyAdded().contains(data)) {
-                toSelect.add(copy);
-            }
-        }
-
-        // Update references in copied buffer
-        for (PrimitiveData data:bufferCopy) {
-            if (data instanceof NodeData) {
-                NodeData nodeData = (NodeData) data;
-                if (Main.getLayerManager().getEditLayer() == source) {
-                    nodeData.setEastNorth(nodeData.getEastNorth().add(offsetEast, offsetNorth));
-                }
-            } else if (data instanceof WayData) {
-                List<Long> newNodes = new ArrayList<>();
-                for (Long oldNodeId: ((WayData) data).getNodes()) {
-                    Long newNodeId = newNodeIds.get(oldNodeId);
-                    if (newNodeId != null) {
-                        newNodes.add(newNodeId);
-                    }
-                }
-                ((WayData) data).setNodes(newNodes);
-            } else if (data instanceof RelationData) {
-                List<RelationMemberData> newMembers = new ArrayList<>();
-                for (RelationMemberData member: ((RelationData) data).getMembers()) {
-                    OsmPrimitiveType memberType = member.getMemberType();
-                    Long newId;
-                    switch (memberType) {
-                    case NODE:
-                        newId = newNodeIds.get(member.getMemberId());
-                        break;
-                    case WAY:
-                        newId = newWayIds.get(member.getMemberId());
-                        break;
-                    case RELATION:
-                        newId = newRelationIds.get(member.getMemberId());
-                        break;
-                    default: throw new AssertionError();
-                    }
-                    if (newId != null) {
-                        newMembers.add(new RelationMemberData(member.getRole(), memberType, newId));
-                    }
-                }
-                ((RelationData) data).setMembers(newMembers);
-            }
-        }
-
-        /* Now execute the commands to add the duplicated contents of the paste buffer to the map */
-        Main.main.undoRedo.add(new AddPrimitivesCommand(bufferCopy, toSelect));
-        Main.map.mapView.repaint();
-    }
-
-    private static boolean confirmDeleteIncomplete() {
-        ExtendedDialog ed = new ExtendedDialog(Main.parent,
-                tr("Delete incomplete members?"),
-                new String[] {tr("Paste without incomplete members"), tr("Cancel")});
-        ed.setButtonIcons(new String[] {"dialogs/relation/deletemembers", "cancel"});
-        ed.setContent(tr("The copied data contains incomplete objects.  "
-                + "When pasting the incomplete objects are removed.  "
-                + "Do you want to paste the data without the incomplete objects?"));
-        ed.showDialog();
-        return ed.getValue() == 1;
+        transferHandler.pasteOn(Main.getLayerManager().getEditLayer(), mPosition);
     }
 
     @Override
     protected void updateEnabledState() {
-        if (getLayerManager().getEditDataSet() == null || Main.pasteBuffer == null) {
-            setEnabled(false);
-            return;
-        }
-        setEnabled(!Main.pasteBuffer.isEmpty());
+        setEnabled(getLayerManager().getEditDataSet() != null && transferHandler.isDataAvailable());
     }
 
     @Override
-    public void pasteBufferChanged(PrimitiveDeepCopy pasteBuffer) {
+    public void flavorsChanged(FlavorEvent e) {
         updateEnabledState();
     }
 }

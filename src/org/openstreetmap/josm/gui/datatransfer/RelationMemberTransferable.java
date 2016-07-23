@@ -6,11 +6,16 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -36,14 +41,27 @@ public class RelationMemberTransferable implements Transferable {
          * @return the contained {@link RelationMemberData}
          */
         public Collection<RelationMemberData> getRelationMemberData() {
-            return relationMemberDatas;
+            return Collections.unmodifiableCollection(relationMemberDatas);
+        }
+
+        /**
+         * Gets the Data for the given list of members.
+         * @param members The collection. The order is preserved.
+         * @return The data.
+         */
+        public static Data getData(Collection<RelationMember> members) {
+            final Collection<RelationMemberData> r = new ArrayList<>(members.size());
+            for (RelationMember member : members) {
+                r.add(new RelationMemberData(member.getRole(), member.getType(), member.getUniqueId()));
+            }
+            return new Data(r);
         }
     }
 
     /**
      * Data flavor for {@link RelationMemberData} which is wrapped in {@link Data}.
      */
-    public static final DataFlavor RELATION_MEMBER_DATA = new DataFlavor(Data.class, Data.class.getName());
+    public static final DataFlavor RELATION_MEMBER_DATA = new DataFlavor(Data.class, "Relation member");
     private final Collection<RelationMember> members;
 
     /**
@@ -51,17 +69,17 @@ public class RelationMemberTransferable implements Transferable {
      * @param members list of relation members
      */
     public RelationMemberTransferable(Collection<RelationMember> members) {
-        this.members = members;
+        this.members = new ArrayList<>(members);
     }
 
     @Override
     public DataFlavor[] getTransferDataFlavors() {
-        return new DataFlavor[]{RELATION_MEMBER_DATA, DataFlavor.stringFlavor};
+        return new DataFlavor[]{RELATION_MEMBER_DATA, PrimitiveTransferData.DATA_FLAVOR, DataFlavor.stringFlavor};
     }
 
     @Override
     public boolean isDataFlavorSupported(DataFlavor flavor) {
-        return flavor == RELATION_MEMBER_DATA;
+        return Arrays.asList(getTransferDataFlavors()).contains(flavor);
     }
 
     @Override
@@ -70,8 +88,18 @@ public class RelationMemberTransferable implements Transferable {
             return getStringData();
         } else if (RELATION_MEMBER_DATA.equals(flavor)) {
             return getRelationMemberData();
+        } else if (PrimitiveTransferData.DATA_FLAVOR.equals(flavor)) {
+            return getPrimitiveData();
         }
         throw new UnsupportedFlavorException(flavor);
+    }
+
+    private PrimitiveTransferData getPrimitiveData() {
+        Collection<OsmPrimitive> primitives = new HashSet<>();
+        for (RelationMember member : members) {
+            primitives.add(member.getMember());
+        }
+        return PrimitiveTransferData.getData(primitives);
     }
 
     protected String getStringData() {
@@ -87,10 +115,6 @@ public class RelationMemberTransferable implements Transferable {
     }
 
     protected Data getRelationMemberData() {
-        final Collection<RelationMemberData> r = new ArrayList<>(members.size());
-        for (RelationMember member : members) {
-            r.add(new RelationMemberData(member.getRole(), member.getType(), member.getUniqueId()));
-        }
-        return new Data(r);
+        return Data.getData(members);
     }
 }

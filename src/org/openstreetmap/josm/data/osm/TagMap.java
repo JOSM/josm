@@ -1,11 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -16,7 +20,8 @@ import java.util.Set;
  *
  * @author Michael Zangl
  */
-public class TagMap extends AbstractMap<String, String> {
+public class TagMap extends AbstractMap<String, String> implements Serializable {
+    static final long serialVersionUID = 1;
     /**
      * We use this array every time we want to represent an empty map.
      * This saves us the burden of checking for null every time but saves some object allocations.
@@ -107,7 +112,25 @@ public class TagMap extends AbstractMap<String, String> {
      * Creates a new, empty tag map.
      */
     public TagMap() {
-        this(null);
+        this((String[]) null);
+    }
+
+    /**
+     * Create a new tag map and load it from the other map.
+     * @param tags The map to load from.
+     * @since 10604
+     */
+    public TagMap(Map<String, String> tags) {
+        putAll(tags);
+    }
+
+    /**
+     * Copy constructor.
+     * @param tagMap The map to copy from.
+     * @since 10604
+     */
+    public TagMap(TagMap tagMap) {
+        this(tagMap.tags);
     }
 
     /**
@@ -206,6 +229,19 @@ public class TagMap extends AbstractMap<String, String> {
     @Override
     public int size() {
         return tags.length / 2;
+    }
+
+    /**
+     * Gets a list of all tags contained in this map.
+     * @return The list of tags in the order they were added.
+     * @since 10604
+     */
+    public List<Tag> getTags() {
+        List<Tag> tagList = new ArrayList<>();
+        for (int i = 0; i < tags.length; i += 2) {
+            tagList.add(new Tag(tags[i], tags[i+1]));
+        }
+        return tagList;
     }
 
     /**

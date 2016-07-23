@@ -20,7 +20,6 @@ import java.awt.Image;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
@@ -493,18 +492,6 @@ public final class GuiHelper {
             return new Dimension(800, 600);
         }
         return new Dimension(width, height);
-    }
-
-    /**
-     * Gets the singleton instance of the system selection as a <code>Clipboard</code> object.
-     * This allows an application to read and modify the current, system-wide selection.
-     * @return the system selection as a <code>Clipboard</code>, or <code>null</code> if the native platform does not
-     *         support a system selection <code>Clipboard</code> or if GraphicsEnvironment.isHeadless() returns true
-     * @see Toolkit#getSystemSelection
-     * @since 9576
-     */
-    public static Clipboard getSystemSelection() {
-        return GraphicsEnvironment.isHeadless() ? null : Toolkit.getDefaultToolkit().getSystemSelection();
     }
 
     /**

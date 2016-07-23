@@ -1,9 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation.actions;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditorTest;
@@ -14,22 +13,23 @@ import org.openstreetmap.josm.gui.dialogs.relation.SelectionTableModel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for relation editor actions.
  */
 public class RelationEditorActionsTest {
-
     /**
-     * Setup test.
+     * Plattform for tooltips.
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init(true);
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences().platform().commands();
 
     /**
-     * Test all actions with minimal data.
+     * Check that all actions do not crash.
      */
     @Test
     public void testAllActions() {
@@ -57,7 +57,7 @@ public class RelationEditorActionsTest {
         new CancelAction(memberTable, memberTableModel, tagModel, layer, editor, tfRole).actionPerformed(null);
 
         new CopyMembersAction(memberTableModel, layer, editor).actionPerformed(null);
-        new PasteMembersAction(memberTableModel, layer, editor).actionPerformed(null);
+        new PasteMembersAction(memberTable, layer, editor).actionPerformed(null);
 
         new DeleteCurrentRelationAction(layer, editor).actionPerformed(null);
 

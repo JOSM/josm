@@ -11,9 +11,14 @@ import java.util.Collection;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
+import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
+import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
+import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * An action that dupplicates the given nodes. They are not added to the clipboard.
+ */
 public final class DuplicateAction extends JosmAction {
 
     /**
@@ -21,15 +26,15 @@ public final class DuplicateAction extends JosmAction {
      */
     public DuplicateAction() {
         super(tr("Duplicate"), "duplicate",
-                tr("Duplicate selection by copy and immediate paste."),
+                tr("Duplicate selection."),
                 Shortcut.registerShortcut("system:duplicate", tr("Edit: {0}", tr("Duplicate")), KeyEvent.VK_D, Shortcut.CTRL), true);
         putValue("help", ht("/Action/Duplicate"));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Main.main.menu.paste.pasteData(
-                new PrimitiveDeepCopy(getLayerManager().getEditDataSet().getSelected()), getLayerManager().getEditLayer(), e);
+        PrimitiveTransferData data = PrimitiveTransferData.getDataWithReferences(getLayerManager().getEditDataSet().getSelected());
+        new OsmTransferHandler().pasteOn(Main.getLayerManager().getEditLayer(), data.getCenter(), new PrimitiveTransferable(data));
     }
 
     @Override

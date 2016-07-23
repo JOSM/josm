@@ -1,30 +1,28 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
+import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
+import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 
 /**
  * This class allows to create and keep a deep copy of primitives. Provides methods to access directly added
  * primitives and reference primitives
+ * <p>
+ * To be removed end of 2016
  * @since 2305
+ * @deprecated This has been replaced by Swing Copy+Paste support. Use {@link OsmTransferHandler} instead.
  */
+@Deprecated
 public class PrimitiveDeepCopy {
-
-    @FunctionalInterface
-    public interface PasteBufferChangedListener {
-        void pasteBufferChanged(PrimitiveDeepCopy pasteBuffer);
-    }
-
-    private final List<PrimitiveData> directlyAdded = new ArrayList<>();
-    private final List<PrimitiveData> referenced = new ArrayList<>();
-    private final CopyOnWriteArrayList<PasteBufferChangedListener> listeners = new CopyOnWriteArrayList<>();
 
     /**
      * Constructs a new {@code PrimitiveDeepCopy} without data. Use {@link #makeCopy(Collection)} after that.
@@ -34,100 +32,20 @@ public class PrimitiveDeepCopy {
     }
 
     /**
-     * Constructs a new {@code PrimitiveDeepCopy} of given OSM primitives.
-     * @param primitives OSM primitives to copy
-     * @since 7961
+     * Gets the list of primitives that were explicitly added to this copy.
+     * @return The added primitives
      */
-    public PrimitiveDeepCopy(final Collection<? extends OsmPrimitive> primitives) {
-        makeCopy(primitives);
-    }
-
-    /**
-     * Replace content of the object with copy of provided primitives.
-     * @param primitives OSM primitives to copy
-     * @since 7961
-     */
-    public final void makeCopy(final Collection<? extends OsmPrimitive> primitives) {
-        directlyAdded.clear();
-        referenced.clear();
-
-        final Set<Long> visitedNodeIds = new HashSet<>();
-        final Set<Long> visitedWayIds = new HashSet<>();
-        final Set<Long> visitedRelationIds = new HashSet<>();
-
-        new AbstractVisitor() {
-            private boolean firstIteration;
-
-            @Override
-            public void visit(Node n) {
-                if (!visitedNodeIds.add(n.getUniqueId()))
-                    return;
-                (firstIteration ? directlyAdded : referenced).add(n.save());
-            }
-
-            @Override
-            public void visit(Way w) {
-                if (!visitedWayIds.add(w.getUniqueId()))
-                    return;
-                (firstIteration ? directlyAdded : referenced).add(w.save());
-                firstIteration = false;
-                for (Node n : w.getNodes()) {
-                    visit(n);
-                }
-            }
-
-            @Override
-            public void visit(Relation r) {
-                if (!visitedRelationIds.add(r.getUniqueId()))
-                    return;
-                (firstIteration ? directlyAdded : referenced).add(r.save());
-                firstIteration = false;
-                for (RelationMember m : r.getMembers()) {
-                    m.getMember().accept(this);
-                }
-            }
-
-            public void visitAll() {
-                for (OsmPrimitive osm : primitives) {
-                    firstIteration = true;
-                    osm.accept(this);
-                }
-            }
-        }.visitAll();
-
-        firePasteBufferChanged();
-    }
-
     public List<PrimitiveData> getDirectlyAdded() {
-        return directlyAdded;
-    }
-
-    public List<PrimitiveData> getReferenced() {
-        return referenced;
-    }
-
-    public List<PrimitiveData> getAll() {
-        List<PrimitiveData> result = new ArrayList<>(directlyAdded.size() + referenced.size());
-        result.addAll(directlyAdded);
-        result.addAll(referenced);
-        return result;
-    }
-
-    public boolean isEmpty() {
-        return directlyAdded.isEmpty() && referenced.isEmpty();
-    }
-
-    private void firePasteBufferChanged() {
-        for (PasteBufferChangedListener listener: listeners) {
-            listener.pasteBufferChanged(this);
+        try {
+            PrimitiveTransferData data = (PrimitiveTransferData) ClipboardUtils.getClipboard().getData(PrimitiveTransferData.DATA_FLAVOR);
+            return new ArrayList<>(data.getDirectlyAdded());
+        } catch (UnsupportedFlavorException | IOException e) {
+            Main.debug(e);
+            return Collections.emptyList();
         }
     }
 
-    public void addPasteBufferChangedListener(PasteBufferChangedListener listener) {
-        listeners.addIfAbsent(listener);
-    }
-
-    public void removePasteBufferChangedListener(PasteBufferChangedListener listener) {
-        listeners.remove(listener);
+    public boolean isEmpty() {
+        return !ClipboardUtils.getClipboard().isDataFlavorAvailable(PrimitiveTransferData.DATA_FLAVOR);
     }
 }

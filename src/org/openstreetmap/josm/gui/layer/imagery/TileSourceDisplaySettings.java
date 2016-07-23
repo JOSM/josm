@@ -180,7 +180,7 @@ public class TileSourceDisplaySettings {
     /**
      * Gets the displacement of the image
      * @return The displacement.
-     * @since xxx
+     * @since 10571
      */
     public EastNorth getDisplacement() {
         return displacement;
@@ -189,7 +189,7 @@ public class TileSourceDisplaySettings {
     /**
      * Set the displacement
      * @param displacement The new displacement
-     * @since xxx
+     * @since 10571
      */
     public void setDisplacement(EastNorth displacement) {
         CheckParameterUtil.ensureValidCoordinates(displacement, "displacement");
@@ -200,7 +200,7 @@ public class TileSourceDisplaySettings {
     /**
      * Adds the given value to the displacement.
      * @param displacement The value to add.
-     * @since xxx
+     * @since 10571
      */
     public void addDisplacement(EastNorth displacement) {
         CheckParameterUtil.ensureValidCoordinates(displacement, "displacement");

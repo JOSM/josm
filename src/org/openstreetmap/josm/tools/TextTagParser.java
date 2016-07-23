@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.io.XmlWriter;
@@ -290,7 +291,7 @@ public final class TextTagParser {
         int r = ed.getValue();
         if (r == 0) r = 2;
         // clean clipboard if user asked
-        if (r == 3) Utils.copyToClipboard("");
+        if (r == 3) ClipboardUtils.copyString("");
         return r;
     }
 
@@ -325,6 +326,6 @@ public final class TextTagParser {
 
         int r = ed.getValue();
         // clean clipboard if user asked
-        if (r == 2) Utils.copyToClipboard("");
+        if (r == 2) ClipboardUtils.copyString("");
     }
 }

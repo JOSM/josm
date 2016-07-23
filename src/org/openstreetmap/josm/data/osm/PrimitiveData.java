@@ -80,6 +80,7 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
         oos.writeInt(version);
         oos.writeInt(changesetId);
         oos.writeInt(timestamp);
+        oos.writeObject(keys);
         oos.defaultWriteObject();
     }
 
@@ -91,6 +92,7 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
         version = ois.readInt();
         changesetId = ois.readInt();
         timestamp = ois.readInt();
+        keys = (String[]) ois.readObject();
         ois.defaultReadObject();
     }
 }

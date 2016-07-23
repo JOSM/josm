@@ -11,6 +11,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -39,6 +40,7 @@ public class JOSMTestRules implements TestRule {
     private String i18n = null;
     private boolean platform;
     private boolean useProjection;
+    private boolean commands;
     private boolean allowMemoryManagerLeaks;
 
     /**
@@ -135,6 +137,15 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
+      * Allow the execution of commands using {@link Main#undoRedo}
+      * @return this instance, for easy chaining
+      */
+    public JOSMTestRules commands() {
+        commands = true;
+        return this;
+    }
+
+    /**
      * Allow the memory manager to contain items after execution of the test cases.
      * @return this instance, for easy chaining
      */
@@ -220,6 +231,11 @@ public class JOSMTestRules implements TestRule {
         // Set Platform
         if (platform) {
             Main.determinePlatformHook();
+        }
+
+        if (commands) {
+            // TODO: Implement a more selective version of this once Main is restructured.
+            JOSMFixture.createUnitTestFixture().init(true);
         }
     }
 
