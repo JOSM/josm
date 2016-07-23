@@ -1095,8 +1095,8 @@ public final class DomainValidator extends AbstractValidator {
         "school", // school Little Galley, LLC
         "schule", // schule Outer Moon, LLC
         "schwarz", // schwarz Schwarz Domains und Services GmbH &amp; Co. KG
-        "scjohnson", // scjohnson Johnson Shareholdings, Inc.
         "science", // science dot Science Limited
+        "scjohnson", // scjohnson Johnson Shareholdings, Inc.
         "scor", // scor SCOR SE
         "scot", // scot Dot Scot Registry Limited
         "seat", // seat SEAT, S.A. (Sociedad Unipersonal)
