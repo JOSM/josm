@@ -8,7 +8,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -196,9 +195,6 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         setLayout(new BorderLayout());
 
         mapView = new MapView(Main.getLayerManager(), contentPane, viewportData);
-        if (!GraphicsEnvironment.isHeadless()) {
-            new FileDrop(mapView);
-        }
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
 

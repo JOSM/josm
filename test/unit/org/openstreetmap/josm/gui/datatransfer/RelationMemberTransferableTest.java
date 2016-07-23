@@ -37,7 +37,7 @@ public class RelationMemberTransferableTest {
      */
     @Test
     public void testGetTransferDataFlavors() {
-        DataFlavor[] flavors = new RelationMemberTransferable(null).getTransferDataFlavors();
+        DataFlavor[] flavors = new RelationMemberTransferable(Collections.<RelationMember>emptyList()).getTransferDataFlavors();
         assertEquals(2, flavors.length);
         assertEquals(RELATION_MEMBER_DATA, flavors[0]);
         assertEquals(DataFlavor.stringFlavor, flavors[1]);
@@ -48,8 +48,9 @@ public class RelationMemberTransferableTest {
      */
     @Test
     public void testIsDataFlavorSupported() {
-        assertTrue(new RelationMemberTransferable(null).isDataFlavorSupported(RELATION_MEMBER_DATA));
-        assertFalse(new RelationMemberTransferable(null).isDataFlavorSupported(null));
+        RelationMemberTransferable transferable = new RelationMemberTransferable(Collections.<RelationMember>emptyList());
+        assertTrue(transferable.isDataFlavorSupported(RELATION_MEMBER_DATA));
+        assertFalse(transferable.isDataFlavorSupported(null));
     }
 
     /**

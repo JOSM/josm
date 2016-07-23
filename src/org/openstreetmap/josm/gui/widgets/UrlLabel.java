@@ -10,8 +10,8 @@ import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Label that contains a clickable link.
@@ -111,7 +111,7 @@ public class UrlLabel extends JLabel implements MouseListener {
         if (SwingUtilities.isLeftMouseButton(e)) {
             OpenBrowser.displayUrl(url);
         } else if (SwingUtilities.isRightMouseButton(e)) {
-            Utils.copyToClipboard(url);
+            ClipboardUtils.copyString(url);
         }
     }
 

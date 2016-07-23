@@ -38,6 +38,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -47,7 +48,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -242,7 +242,7 @@ public class DownloadDialog extends JDialog {
         getRootPane().getActionMap().put("checkClipboardContents", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String clip = Utils.getClipboardContent();
+                String clip = ClipboardUtils.getClipboardStringContent();
                 if (clip == null) {
                     return;
                 }

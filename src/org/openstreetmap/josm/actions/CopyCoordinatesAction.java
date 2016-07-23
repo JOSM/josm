@@ -11,6 +11,7 @@ import java.util.Collections;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -34,7 +35,7 @@ public class CopyCoordinatesAction extends JosmAction {
             s.append(n.getCoor().lon());
             s.append('\n');
         }
-        Utils.copyToClipboard(s.toString().trim());
+        ClipboardUtils.copyString(s.toString().trim());
     }
 
     @Override

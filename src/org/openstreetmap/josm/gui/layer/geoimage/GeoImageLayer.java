@@ -52,6 +52,7 @@ import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
@@ -724,7 +725,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
 
     public void copyCurrentPhotoPath() {
         if (data != null && !data.isEmpty() && currentPhoto >= 0 && currentPhoto < data.size()) {
-            Utils.copyToClipboard(data.get(currentPhoto).getFile().toString());
+            ClipboardUtils.copyString(data.get(currentPhoto).getFile().toString());
         }
     }
 

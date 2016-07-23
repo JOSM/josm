@@ -479,9 +479,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
             members.add(idx++, member);
         }
         invalidateConnectionType();
-        final List<Integer> selection = getSelectedIndices();
         fireTableRowsInserted(index, idx - 1);
-        setSelectedMembersIdx(selection);
     }
 
     public void addMembersAtBeginning(List<? extends OsmPrimitive> primitives) {

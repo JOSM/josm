@@ -69,6 +69,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
+import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
@@ -880,7 +881,7 @@ public class SelectionListDialog extends ToggleDialog {
 
         @Override
         protected Transferable createTransferable(JComponent c) {
-            return new PrimitiveTransferable(getSelectedPrimitives());
+            return new PrimitiveTransferable(PrimitiveTransferData.getData(getSelectedPrimitives()));
         }
     }
 }

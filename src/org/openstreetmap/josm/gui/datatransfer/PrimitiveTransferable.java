@@ -4,92 +4,75 @@ package org.openstreetmap.josm.gui.datatransfer;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.List;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
-import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
+import org.openstreetmap.josm.gui.datatransfer.data.TagTransferData;
 
 /**
- * Transferable objects for {@link PrimitiveData}.
+ * Transferable objects for {@link PrimitiveTransferData} objects
  * @since 9369
+ * @since 10604 Complete rework
  */
 public class PrimitiveTransferable implements Transferable {
 
     /**
-     * A wrapper for a collection of {@link PrimitiveData}.
+     * The flavors that are available for normal primitives.
      */
-    public static final class Data implements Serializable {
-        private static final long serialVersionUID = -1485089993600213704L;
-        private final Collection<PrimitiveData> primitiveData;
-
-        private Data(Collection<PrimitiveData> primitiveData) {
-            CheckParameterUtil.ensureThat(primitiveData instanceof Serializable, "primitiveData must be instanceof Serializable");
-            this.primitiveData = primitiveData;
-        }
-
-        /**
-         * Returns the contained {@link PrimitiveData}
-         * @return the contained {@link PrimitiveData}
-         */
-        public Collection<PrimitiveData> getPrimitiveData() {
-            return primitiveData;
-        }
-    }
-
-    /**
-     * Data flavor for {@link PrimitiveData} which is wrapped in {@link Data}.
-     */
-    public static final DataFlavor PRIMITIVE_DATA = new DataFlavor(Data.class, Data.class.getName());
-    private final Collection<? extends OsmPrimitive> primitives;
+    private static final List<DataFlavor> PRIMITIVE_FLAVORS = Arrays.asList(PrimitiveTransferData.DATA_FLAVOR,
+            TagTransferData.FLAVOR, DataFlavor.stringFlavor);
+    private final PrimitiveTransferData primitives;
 
     /**
      * Constructs a new {@code PrimitiveTransferable}.
      * @param primitives collection of OSM primitives
      */
-    public PrimitiveTransferable(Collection<? extends OsmPrimitive> primitives) {
+    public PrimitiveTransferable(PrimitiveTransferData primitives) {
         this.primitives = primitives;
     }
 
     @Override
     public DataFlavor[] getTransferDataFlavors() {
-        return new DataFlavor[]{PRIMITIVE_DATA, DataFlavor.stringFlavor};
+        ArrayList<DataFlavor> flavors = new ArrayList<>(PRIMITIVE_FLAVORS);
+        return flavors.toArray(new DataFlavor[flavors.size()]);
     }
 
     @Override
     public boolean isDataFlavorSupported(DataFlavor flavor) {
-        return flavor == PRIMITIVE_DATA;
+        DataFlavor[] flavors = getTransferDataFlavors();
+        for (DataFlavor f : flavors) {
+            if (flavor.equals(f)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
         if (DataFlavor.stringFlavor.equals(flavor)) {
             return getStringData();
-        } else if (PRIMITIVE_DATA.equals(flavor)) {
-            return getPrimitiveData();
+        } else if (PrimitiveTransferData.DATA_FLAVOR.equals(flavor)) {
+            return primitives;
+        } else if (TagTransferData.FLAVOR.equals(flavor)) {
+            return new TagTransferData(primitives.getDirectlyAdded());
+        } else {
+            throw new UnsupportedFlavorException(flavor);
         }
-        throw new UnsupportedFlavorException(flavor);
     }
 
     protected String getStringData() {
         final StringBuilder sb = new StringBuilder();
-        for (OsmPrimitive primitive : primitives) {
-            sb.append(primitive.getType())
-              .append(' ').append(primitive.getUniqueId())
-              .append(" # ").append(primitive.getDisplayName(DefaultNameFormatter.getInstance()))
-              .append('\n');
+        for (PrimitiveData primitive : primitives.getAll()) {
+            if (sb.length() > 0) {
+                sb.append("\n");
+            }
+            sb.append(OsmPrimitiveType.from(primitive).getAPIName()).append(' ').append(primitive.getId());
         }
         return sb.toString().replace("\u200E", "").replace("\u200F", "");
-    }
-
-    protected Data getPrimitiveData() {
-        final Collection<PrimitiveData> r = new ArrayList<>(primitives.size());
-        for (OsmPrimitive primitive : primitives) {
-            r.add(primitive.save());
-        }
-        return new Data(r);
     }
 }

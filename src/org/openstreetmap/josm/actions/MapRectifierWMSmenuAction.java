@@ -22,12 +22,12 @@ import javax.swing.JRadioButton;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Download rectified images from various services.
@@ -123,7 +123,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
 
         JosmTextField tfWmsUrl = new JosmTextField(30);
 
-        String clip = Utils.getClipboardContent();
+        String clip = ClipboardUtils.getClipboardStringContent();
         clip = clip == null ? "" : clip.trim();
         ButtonGroup group = new ButtonGroup();
 

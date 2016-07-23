@@ -76,6 +76,7 @@ import org.openstreetmap.josm.data.preferences.EnumProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
@@ -583,9 +584,9 @@ public class TagEditHelper {
 
         private void selectACComboBoxSavingUnixBuffer(AutoCompletingComboBox cb) {
             // select combobox with saving unix system selection (middle mouse paste)
-            Clipboard sysSel = GuiHelper.getSystemSelection();
+            Clipboard sysSel = ClipboardUtils.getSystemSelection();
             if (sysSel != null) {
-                Transferable old = Utils.getTransferableContent(sysSel);
+                Transferable old = ClipboardUtils.getClipboardContent(sysSel);
                 cb.requestFocusInWindow();
                 cb.getEditor().selectAll();
                 if (old != null) {

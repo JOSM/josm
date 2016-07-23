@@ -25,10 +25,10 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog;
+import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.TextTagParser;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Action, to paste all tags from one primitive to another.
@@ -41,6 +41,7 @@ import org.openstreetmap.josm.tools.Utils;
 public final class PasteTagsAction extends JosmAction {
 
     private static final String help = ht("/Action/PasteTags");
+    private final OsmTransferHandler transferHandler = new OsmTransferHandler();
 
     /**
      * Constructs a new {@code PasteTagsAction}.
@@ -53,6 +54,9 @@ public final class PasteTagsAction extends JosmAction {
         putValue("help", help);
     }
 
+    /**
+     * Used to update the tags.
+     */
     public static class TagPaster {
 
         private final Collection<PrimitiveData> source;
@@ -258,13 +262,7 @@ public final class PasteTagsAction extends JosmAction {
         if (selection.isEmpty())
             return;
 
-        String buf = Utils.getClipboardContent();
-        if (buf == null || buf.isEmpty() || buf.matches(CopyAction.CLIPBOARD_REGEXP)) {
-            pasteTagsFromJOSMBuffer(selection);
-        } else {
-            // Paste tags from arbitrary text
-            pasteTagsFromText(selection, buf);
-        }
+        transferHandler.pasteTags(selection);
     }
 
     /**
@@ -289,24 +287,6 @@ public final class PasteTagsAction extends JosmAction {
         }
         commitCommands(selection, commands);
         return !commands.isEmpty();
-    }
-
-    /**
-     * Paste tags from JOSM buffer
-     * @param selection objects that will have the tags
-     * @return false if JOSM buffer was empty
-     */
-    public static boolean pasteTagsFromJOSMBuffer(Collection<OsmPrimitive> selection) {
-        List<PrimitiveData> directlyAdded = Main.pasteBuffer.getDirectlyAdded();
-        if (directlyAdded == null || directlyAdded.isEmpty()) return false;
-
-        PasteTagsAction.TagPaster tagPaster = new PasteTagsAction.TagPaster(directlyAdded, selection);
-        List<Command> commands = new ArrayList<>();
-        for (Tag tag : tagPaster.execute()) {
-            commands.add(new ChangePropertyCommand(selection, tag.getKey(), "".equals(tag.getValue()) ? null : tag.getValue()));
-        }
-        commitCommands(selection, commands);
-        return true;
     }
 
     /**

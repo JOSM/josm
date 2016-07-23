@@ -85,6 +85,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         JPopupMenu menu = super.buildPopupMenu();
         zoomToGap = new ZoomToGapAction();
         registerListeners();
+        menu.addSeparator();
         getSelectionModel().addListSelectionListener(zoomToGap);
         menu.add(zoomToGap);
         menu.addSeparator();

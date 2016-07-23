@@ -23,9 +23,8 @@ import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Auto-completing ComboBox.
@@ -133,9 +132,9 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
             }
             final JTextComponent editorComponent = comboBox.getEditorComponent();
             // save unix system selection (middle mouse paste)
-            Clipboard sysSel = GuiHelper.getSystemSelection();
+            Clipboard sysSel = ClipboardUtils.getSystemSelection();
             if (sysSel != null) {
-                Transferable old = Utils.getTransferableContent(sysSel);
+                Transferable old = ClipboardUtils.getClipboardContent(sysSel);
                 editorComponent.select(start, end);
                 if (old != null) {
                     sysSel.setContents(old, null);
@@ -200,9 +199,9 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
                             Main.map.keyDetector.setEnabled(false);
                         }
                         // save unix system selection (middle mouse paste)
-                        Clipboard sysSel = GuiHelper.getSystemSelection();
+                        Clipboard sysSel = ClipboardUtils.getSystemSelection();
                         if (sysSel != null) {
-                            Transferable old = Utils.getTransferableContent(sysSel);
+                            Transferable old = ClipboardUtils.getClipboardContent(sysSel);
                             editorComponent.selectAll();
                             if (old != null) {
                                 sysSel.setContents(old, null);
