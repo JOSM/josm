@@ -7,10 +7,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.Authenticator.RequestorType;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.concurrent.FutureTask;
 
@@ -23,7 +21,6 @@ import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
-import org.openstreetmap.josm.tools.Base64;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -79,12 +76,7 @@ public class OsmConnection {
             String username = response.getUsername() == null ? "" : response.getUsername();
             String password = response.getPassword() == null ? "" : String.valueOf(response.getPassword());
             token = username + ':' + password;
-            try {
-                ByteBuffer bytes = StandardCharsets.UTF_8.newEncoder().encode(CharBuffer.wrap(token));
-                con.setHeader("Authorization", "Basic "+Base64.encode(bytes));
-            } catch (CharacterCodingException e) {
-                throw new OsmTransferException(e);
-            }
+            con.setHeader("Authorization", "Basic "+Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8)));
         }
     }
 
