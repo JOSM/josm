@@ -8,8 +8,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -446,12 +444,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             selectPrims(asColl(toSelect), false, false);
             useLastMoveCommandIfPossible();
             // Schedule a timer to update status line "initialMoveDelay+1" ms in the future
-            GuiHelper.scheduleTimer(initialMoveDelay+1, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent evt) {
-                    updateStatusLine();
-                }
-            }, false);
+            GuiHelper.scheduleTimer(initialMoveDelay+1, evt -> updateStatusLine(), false);
             break;
         case SELECT:
         default:
@@ -615,12 +608,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
                     if (e.getClickCount() >= 2 && c.size() == 1 && c.iterator().next() instanceof Node) {
                         // We need to do it like this as otherwise drawAction will see a double
                         // click and switch back to SelectMode
-                        Main.worker.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                Main.map.selectDrawTool(true);
-                            }
-                        });
+                        Main.worker.execute(() -> Main.map.selectDrawTool(true));
                         return;
                     }
                 }

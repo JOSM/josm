@@ -103,31 +103,24 @@ public class CreateMultipolygonAction extends JosmAction {
             final Relation relation = commandAndRelation.b;
 
             // to avoid EDT violations
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
+            SwingUtilities.invokeLater(() -> {
                     Main.main.undoRedo.add(command);
 
                     // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
                     // knows about the new relation before we try to select it.
                     // (Yes, we are already in event dispatch thread. But DatasetEventManager
                     // uses 'SwingUtilities.invokeLater' to fire events so we have to do the same.)
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
+                    SwingUtilities.invokeLater(() -> {
                             Main.map.relationListDialog.selectRelation(relation);
                             if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
                                 //Open relation edit window, if set up in preferences
                                 RelationEditor editor = RelationEditor.getEditor(Main.getLayerManager().getEditLayer(), relation, null);
-
                                 editor.setModal(true);
                                 editor.setVisible(true);
                             } else {
                                 Main.getLayerManager().getEditLayer().setRecentRelation(relation);
                             }
-                        }
                     });
-                }
             });
         }
     }
@@ -295,14 +288,10 @@ public class CreateMultipolygonAction extends JosmAction {
 
         if (error != null) {
             if (showNotif) {
-                GuiHelper.runInEDT(new Runnable() {
-                    @Override
-                    public void run() {
+                GuiHelper.runInEDT(
                         new Notification(error)
                         .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                        .show();
-                    }
-                });
+                        ::show);
             }
             return null;
         } else {

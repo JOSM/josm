@@ -111,14 +111,11 @@ public class SessionLoadAction extends DiskAccessAction {
 
         @Override
         protected void finish() {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (canceled)
-                        return;
-                    addLayers();
-                    runPostLoadTasks();
-                }
+            SwingUtilities.invokeLater(() -> {
+                if (canceled)
+                    return;
+                addLayers();
+                runPostLoadTasks();
             });
         }
 

@@ -26,8 +26,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
@@ -251,21 +249,18 @@ public class SplitWayAction extends JosmAction {
 
         private void configureList() {
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            list.addListSelectionListener(new ListSelectionListener() {
-                @Override
-                public void valueChanged(ListSelectionEvent e) {
-                    final Way selected = list.getSelectedValue();
-                    if (Main.isDisplayingMapView() && selected != null && selected.getNodesCount() > 1) {
-                        final Collection<WaySegment> segments = new ArrayList<>(selected.getNodesCount() - 1);
-                        final Iterator<Node> it = selected.getNodes().iterator();
-                        Node previousNode = it.next();
-                        while (it.hasNext()) {
-                            final Node node = it.next();
-                            segments.add(WaySegment.forNodePair(selectedWay, previousNode, node));
-                            previousNode = node;
-                        }
-                        setHighlightedWaySegments(segments);
+            list.addListSelectionListener(e -> {
+                final Way selected = list.getSelectedValue();
+                if (Main.isDisplayingMapView() && selected != null && selected.getNodesCount() > 1) {
+                    final Collection<WaySegment> segments = new ArrayList<>(selected.getNodesCount() - 1);
+                    final Iterator<Node> it = selected.getNodes().iterator();
+                    Node previousNode = it.next();
+                    while (it.hasNext()) {
+                        final Node node = it.next();
+                        segments.add(WaySegment.forNodePair(selectedWay, previousNode, node));
+                        previousNode = node;
                     }
+                    setHighlightedWaySegments(segments);
                 }
             });
             list.setCellRenderer(new DefaultListCellRenderer() {

@@ -57,20 +57,17 @@ public class PostDownloadHandler implements Runnable {
         if (errors.size() == 1) {
             final Object error = errors.iterator().next();
             if (!GraphicsEnvironment.isHeadless()) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (error instanceof Exception) {
-                            ExceptionDialogUtil.explainException((Exception) error);
-                        } else if (tr("No data found in this area.").equals(error)) {
-                            new Notification(error.toString()).setIcon(JOptionPane.WARNING_MESSAGE).show();
-                        } else {
-                            JOptionPane.showMessageDialog(
-                                    Main.parent,
-                                    error.toString(),
-                                    tr("Error during download"),
-                                    JOptionPane.ERROR_MESSAGE);
-                        }
+                SwingUtilities.invokeLater(() -> {
+                    if (error instanceof Exception) {
+                        ExceptionDialogUtil.explainException((Exception) error);
+                    } else if (tr("No data found in this area.").equals(error)) {
+                        new Notification(error.toString()).setIcon(JOptionPane.WARNING_MESSAGE).show();
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                Main.parent,
+                                error.toString(),
+                                tr("Error during download"),
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 });
             }
@@ -90,16 +87,11 @@ public class PostDownloadHandler implements Runnable {
             }
 
             if (!GraphicsEnvironment.isHeadless()) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        JOptionPane.showMessageDialog(
-                                Main.parent,
-                                "<html>"+Utils.joinAsHtmlUnorderedList(items)+"</html>",
-                                tr("Errors during download"),
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                });
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
+                        Main.parent,
+                        "<html>"+Utils.joinAsHtmlUnorderedList(items)+"</html>",
+                        tr("Errors during download"),
+                        JOptionPane.ERROR_MESSAGE));
             }
             return;
         }

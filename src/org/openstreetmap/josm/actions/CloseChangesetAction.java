@@ -96,10 +96,7 @@ public class CloseChangesetAction extends JosmAction {
 
         @Override
         protected void finish() {
-            SwingUtilities.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
+            SwingUtilities.invokeLater(() -> {
                             if (lastException != null) {
                                 ExceptionDialogUtil.explainException(lastException);
                             }
@@ -107,9 +104,7 @@ public class CloseChangesetAction extends JosmAction {
                             if (!canceled && lastException == null) {
                                 onPostDownloadOpenChangesets();
                             }
-                        }
-                    }
-            );
+                        });
         }
 
         /**

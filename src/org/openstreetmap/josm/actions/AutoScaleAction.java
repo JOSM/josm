@@ -16,9 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JOptionPane;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 import org.openstreetmap.josm.Main;
@@ -409,19 +407,9 @@ public class AutoScaleAction extends JosmAction {
 
         MapFrameAdapter() {
             if ("conflict".equals(mode)) {
-                conflictSelectionListener = new ListSelectionListener() {
-                    @Override
-                    public void valueChanged(ListSelectionEvent e) {
-                        updateEnabledState();
-                    }
-                };
+                conflictSelectionListener = e -> updateEnabledState();
             } else if ("problem".equals(mode)) {
-                validatorSelectionListener = new TreeSelectionListener() {
-                    @Override
-                    public void valueChanged(TreeSelectionEvent e) {
-                        updateEnabledState();
-                    }
-                };
+                validatorSelectionListener = e -> updateEnabledState();
             }
         }
 

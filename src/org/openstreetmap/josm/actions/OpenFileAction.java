@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -126,13 +125,8 @@ public class OpenFileAction extends DiskAccessAction {
                     this.files.add(file);
                 } else if (file.getParentFile() != null) {
                     // try to guess an extension using the specified fileFilter
-                    final File[] matchingFiles = file.getParentFile().listFiles(new FilenameFilter() {
-                        @Override
-                        public boolean accept(File dir, String name) {
-                            return name.startsWith(file.getName())
-                                    && fileFilter != null && fileFilter.accept(new File(dir, name));
-                        }
-                    });
+                    final File[] matchingFiles = file.getParentFile().listFiles((dir, name) ->
+                            name.startsWith(file.getName()) && fileFilter != null && fileFilter.accept(new File(dir, name)));
                     if (matchingFiles != null && matchingFiles.length == 1) {
                         // use the unique match as filename
                         this.files.add(matchingFiles[0]);
@@ -259,14 +253,9 @@ public class OpenFileAction extends DiskAccessAction {
                 for (final File f : files) {
                     if (!chosenImporter.acceptFile(f)) {
                         if (f.isDirectory()) {
-                            SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    JOptionPane.showMessageDialog(Main.parent, tr(
-                                            "<html>Cannot open directory ''{0}''.<br>Please select a file.</html>",
-                                            f.getAbsolutePath()), tr("Open file"), JOptionPane.ERROR_MESSAGE);
-                                }
-                            });
+                            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(Main.parent, tr(
+                                    "<html>Cannot open directory ''{0}''.<br>Please select a file.</html>",
+                                    f.getAbsolutePath()), tr("Open file"), JOptionPane.ERROR_MESSAGE));
                             // TODO when changing to Java 6: Don't cancel the task here but use different modality. (Currently 2 dialogs
                             // would block each other.)
                             return;

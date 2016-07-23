@@ -595,12 +595,7 @@ public abstract class Main {
      */
     public Main() {
         main = this;
-        mainPanel.addMapFrameListener(new MapFrameListener() {
-            @Override
-            public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
-                redoUndoListener.commandChanged(0, 0);
-            }
-        });
+        mainPanel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
     }
 
     /**
@@ -696,16 +691,9 @@ public abstract class Main {
         }
 
         // hooks for the jmapviewer component
-        FeatureAdapter.registerBrowserAdapter(new FeatureAdapter.BrowserAdapter() {
-            @Override
-            public void openLink(String url) {
-                OpenBrowser.displayUrl(url);
-            }
-        });
+        FeatureAdapter.registerBrowserAdapter(OpenBrowser::displayUrl);
         FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
-        FeatureAdapter.registerLoggingAdapter(new FeatureAdapter.LoggingAdapter() {
-            @Override
-            public Logger getLogger(String name) {
+        FeatureAdapter.registerLoggingAdapter(name -> {
                 Logger logger = Logger.getAnonymousLogger();
                 logger.setUseParentHandlers(false);
                 logger.setLevel(Level.ALL);
@@ -739,8 +727,7 @@ public abstract class Main {
                     });
                 }
                 return logger;
-            }
-        });
+            });
 
         new InitializationTask(tr("Updating user interface")) {
 
@@ -990,13 +977,10 @@ public abstract class Main {
      */
     public static final JPanel panel = mainPanel;
 
-    private final CommandQueueListener redoUndoListener = new CommandQueueListener() {
-        @Override
-        public void commandChanged(final int queueSize, final int redoSize) {
+    private final CommandQueueListener redoUndoListener = (queueSize, redoSize) -> {
             menu.undo.setEnabled(queueSize > 0);
             menu.redo.setEnabled(redoSize > 0);
-        }
-    };
+        };
 
     /**
      * Should be called before the main constructor to setup some parameter stuff

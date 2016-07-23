@@ -9,11 +9,9 @@ import java.util.Collection;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -41,12 +39,7 @@ public class DownloadMembersAction extends AbstractRelationAction {
     @Override
     public void setPrimitives(Collection<? extends OsmPrimitive> primitives) {
         // selected non-new relations
-        this.relations = Utils.filter(getRelations(primitives), new Predicate<Relation>() {
-            @Override
-            public boolean evaluate(Relation r) {
-                return !r.isNew();
-            }
-        });
+        this.relations = Utils.filter(getRelations(primitives), r -> !r.isNew());
         updateEnabledState();
     }
 
