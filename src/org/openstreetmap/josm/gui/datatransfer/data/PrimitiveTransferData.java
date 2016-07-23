@@ -61,7 +61,7 @@ public final class PrimitiveTransferData implements Serializable {
      * It will be queried recursively.
      */
     private PrimitiveTransferData(Collection<? extends OsmPrimitive> primitives, ReferenceGetter referencedGetter) {
-        // convert to hash set first to remove dupplicates
+        // convert to hash set first to remove duplicates
         HashSet<OsmPrimitive> visited = new HashSet<>(primitives);
         this.direct = new ArrayList<>(visited.size());
 

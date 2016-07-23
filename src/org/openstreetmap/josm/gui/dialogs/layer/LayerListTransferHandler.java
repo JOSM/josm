@@ -144,7 +144,7 @@ public class LayerListTransferHandler extends TransferHandler {
     /**
      * Suggests a new name in the form "copy of name"
      * @param name The base name
-     * @param namesToAvoid The list of layers to use to avoid dupplicate names.
+     * @param namesToAvoid The list of layers to use to avoid duplicate names.
      * @return The new name
      */
     public static String suggestNewLayerName(String name, List<Layer> namesToAvoid) {

@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * The action to dupplicate the given selected layer into another layer.
+ * The action to duplicate the given selected layer into another layer.
  */
 public final class DuplicateAction extends AbstractAction implements IEnabledStateUpdating {
     private transient Layer layer;
