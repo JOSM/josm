@@ -11,23 +11,26 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Determines how an icon is to be rotated depending on the primitive to displayed.
+ * Determines how an icon is to be rotated depending on the primitive to be displayed.
+ * @since  8199 (creation)
+ * @since 10599 (functional interface)
  */
-public abstract class RotationAngle {
+@FunctionalInterface
+public interface RotationAngle {
 
     /**
-     * Calculates the rotation angle depending on the primitive to displayed.
+     * Calculates the rotation angle depending on the primitive to be displayed.
      * @param p primitive
      * @return rotation angle
      */
-    public abstract double getRotationAngle(OsmPrimitive p);
+    double getRotationAngle(OsmPrimitive p);
 
     /**
      * Always returns the fixed {@code angle}.
      * @param angle angle
      * @return rotation angle
      */
-    public static RotationAngle buildStaticRotation(final double angle) {
+    static RotationAngle buildStaticRotation(final double angle) {
         return new RotationAngle() {
             @Override
             public double getRotationAngle(OsmPrimitive p) {
@@ -46,7 +49,7 @@ public abstract class RotationAngle {
      * @param string angle as string
      * @return rotation angle
      */
-    public static RotationAngle buildStaticRotation(final String string) {
+    static RotationAngle buildStaticRotation(final String string) {
         try {
             return buildStaticRotation(parseCardinalRotation(string));
         } catch (IllegalArgumentException e) {
@@ -62,7 +65,7 @@ public abstract class RotationAngle {
      * @param cardinal the angle in cardinal directions
      * @return the angle in radians
      */
-    public static double parseCardinalRotation(final String cardinal) {
+    static double parseCardinalRotation(final String cardinal) {
         switch (cardinal.toLowerCase(Locale.ENGLISH)) {
             case "n":
             case "north":
@@ -97,7 +100,7 @@ public abstract class RotationAngle {
      * Computes the angle depending on the referencing way segment, or {@code 0} if none exists.
      * @return rotation angle
      */
-    public static RotationAngle buildWayDirectionRotation() {
+    static RotationAngle buildWayDirectionRotation() {
         return new RotationAngle() {
             @Override
             public double getRotationAngle(OsmPrimitive p) {

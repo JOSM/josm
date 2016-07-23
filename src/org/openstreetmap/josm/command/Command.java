@@ -36,8 +36,10 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * The command remembers the {@link OsmDataLayer} it is operating on.
  *
  * @author imi
+ * @since 21 (creation)
+ * @since 10599 (signature)
  */
-public abstract class Command extends PseudoCommand {
+public abstract class Command implements PseudoCommand {
 
     private static final class CloneVisitor extends AbstractVisitor {
         public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<>();

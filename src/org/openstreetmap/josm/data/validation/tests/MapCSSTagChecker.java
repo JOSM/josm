@@ -129,7 +129,8 @@ public class MapCSSTagChecker extends Test.TagTest {
     /**
      * Represents a fix to a validation test. The fixing {@link Command} can be obtained by {@link #createCommand(OsmPrimitive, Selector)}.
      */
-    abstract static class FixCommand {
+    @FunctionalInterface
+    interface FixCommand {
         /**
          * Creates the fixing {@link Command} for the given primitive. The {@code matchingSelector} is used to evaluate placeholders
          * (cf. {@link MapCSSTagChecker.TagCheck#insertArguments(Selector, String, OsmPrimitive)}).
@@ -137,9 +138,9 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @param matchingSelector  matching selector
          * @return fix command
          */
-        abstract Command createCommand(final OsmPrimitive p, final Selector matchingSelector);
+        Command createCommand(final OsmPrimitive p, final Selector matchingSelector);
 
-        private static void checkObject(final Object obj) {
+        static void checkObject(final Object obj) {
             CheckParameterUtil.ensureThat(obj instanceof Expression || obj instanceof String,
                     "instance of Exception or String expected, but got " + obj);
         }
@@ -151,7 +152,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @param matchingSelector matching selector
          * @return result string
          */
-        private static String evaluateObject(final Object obj, final OsmPrimitive p, final Selector matchingSelector) {
+        static String evaluateObject(final Object obj, final OsmPrimitive p, final Selector matchingSelector) {
             final String s;
             if (obj instanceof Expression) {
                 s = (String) ((Expression) obj).evaluate(new Environment(p));
@@ -172,7 +173,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             checkObject(obj);
             return new FixCommand() {
                 @Override
-                Command createCommand(OsmPrimitive p, Selector matchingSelector) {
+                public Command createCommand(OsmPrimitive p, Selector matchingSelector) {
                     final Tag tag = Tag.ofString(evaluateObject(obj, p, matchingSelector));
                     return new ChangePropertyCommand(p, tag.getKey(), tag.getValue());
                 }
@@ -193,7 +194,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             checkObject(obj);
             return new FixCommand() {
                 @Override
-                Command createCommand(OsmPrimitive p, Selector matchingSelector) {
+                public Command createCommand(OsmPrimitive p, Selector matchingSelector) {
                     final String key = evaluateObject(obj, p, matchingSelector);
                     return new ChangePropertyCommand(p, key, "");
                 }
@@ -214,7 +215,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         static FixCommand fixChangeKey(final String oldKey, final String newKey) {
             return new FixCommand() {
                 @Override
-                Command createCommand(OsmPrimitive p, Selector matchingSelector) {
+                public Command createCommand(OsmPrimitive p, Selector matchingSelector) {
                     return new ChangePropertyKeyCommand(p,
                             TagCheck.insertArguments(matchingSelector, oldKey, p),
                             TagCheck.insertArguments(matchingSelector, newKey, p));

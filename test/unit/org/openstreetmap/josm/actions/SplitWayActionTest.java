@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.SplitWayAction.Strategy;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -176,17 +177,13 @@ public final class SplitWayActionTest {
         route.addMember(new RelationMember("", w3));
         dataSet.setSelected(Arrays.asList(w2, n3, n4, n5));
 
-        final SplitWayAction.Strategy strategy = new SplitWayAction.Strategy() {
-
-            @Override
-            public Way determineWayToKeep(Iterable<Way> wayChunks) {
+        final Strategy strategy = wayChunks -> {
                 final Iterator<Way> it = wayChunks.iterator();
                 for (int i = 0; i < indexOfWayToKeep; i++) {
                     it.next();
                 }
                 return it.next();
-            }
-        };
+            };
         final SplitWayAction.SplitWayResult result = SplitWayAction.splitWay(
                 layer, w2, SplitWayAction.buildSplitChunks(w2, Arrays.asList(n3, n4, n5)), new ArrayList<OsmPrimitive>(), strategy);
         Main.main.undoRedo.add(result.getCommand());

@@ -29,11 +29,11 @@ import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
-public abstract class Condition {
+public interface Condition {
 
-    public abstract boolean applies(Environment e);
+    boolean applies(Environment e);
 
-    public static Condition createKeyValueCondition(String k, String v, Op op, Context context, boolean considerValAsKey) {
+    static Condition createKeyValueCondition(String k, String v, Op op, Context context, boolean considerValAsKey) {
         switch (context) {
         case PRIMITIVE:
             if (KeyValueRegexpCondition.SUPPORTED_OPS.contains(op) && !considerValAsKey)
@@ -56,11 +56,11 @@ public abstract class Condition {
         }
     }
 
-    public static Condition createRegexpKeyRegexpValueCondition(String k, String v, Op op) {
+    static Condition createRegexpKeyRegexpValueCondition(String k, String v, Op op) {
         return new RegexpKeyValueRegexpCondition(k, v, op);
     }
 
-    public static Condition createKeyCondition(String k, boolean not, KeyMatchType matchType, Context context) {
+    static Condition createKeyCondition(String k, boolean not, KeyMatchType matchType, Context context) {
         switch (context) {
         case PRIMITIVE:
             return new KeyCondition(k, not, matchType);
@@ -76,22 +76,22 @@ public abstract class Condition {
         }
     }
 
-    public static PseudoClassCondition createPseudoClassCondition(String id, boolean not, Context context) {
+    static PseudoClassCondition createPseudoClassCondition(String id, boolean not, Context context) {
         return PseudoClassCondition.createPseudoClassCondition(id, not, context);
     }
 
-    public static ClassCondition createClassCondition(String id, boolean not, Context context) {
+    static ClassCondition createClassCondition(String id, boolean not, Context context) {
         return new ClassCondition(id, not);
     }
 
-    public static ExpressionCondition createExpressionCondition(Expression e, Context context) {
+    static ExpressionCondition createExpressionCondition(Expression e, Context context) {
         return new ExpressionCondition(e);
     }
 
     /**
      * This is the operation that {@link KeyValueCondition} uses to match.
      */
-    public enum Op {
+    enum Op {
         /** The value equals the given reference. */
         EQ,
         /** The value does not equal the reference. */
@@ -182,7 +182,7 @@ public abstract class Condition {
     /**
      * Context, where the condition applies.
      */
-    public enum Context {
+    enum Context {
         /**
          * normal primitive selector, e.g. way[highway=residential]
          */
@@ -199,7 +199,7 @@ public abstract class Condition {
      *
      * Extra class for performance reasons.
      */
-    public static class SimpleKeyValueCondition extends Condition {
+    class SimpleKeyValueCondition implements Condition {
         /**
          * The key to search for.
          */
@@ -239,7 +239,7 @@ public abstract class Condition {
      * <p>Represents a key/value condition which is either applied to a primitive.</p>
      *
      */
-    public static class KeyValueCondition extends Condition {
+    class KeyValueCondition implements Condition {
         /**
          * The key to search for.
          */
@@ -287,7 +287,7 @@ public abstract class Condition {
         }
     }
 
-    public static class KeyValueRegexpCondition extends KeyValueCondition {
+    class KeyValueRegexpCondition extends KeyValueCondition {
 
         public final Pattern pattern;
         protected static final Set<Op> SUPPORTED_OPS = EnumSet.of(Op.REGEX, Op.NREGEX);
@@ -316,7 +316,7 @@ public abstract class Condition {
         }
     }
 
-    public static class RegexpKeyValueRegexpCondition extends KeyValueRegexpCondition {
+    class RegexpKeyValueRegexpCondition extends KeyValueRegexpCondition {
 
         public final Pattern keyPattern;
 
@@ -336,7 +336,7 @@ public abstract class Condition {
         }
     }
 
-    public static class RoleCondition extends Condition {
+    class RoleCondition implements Condition {
         public final String role;
         public final Op op;
 
@@ -353,7 +353,7 @@ public abstract class Condition {
         }
     }
 
-    public static class IndexCondition extends Condition {
+    class IndexCondition implements Condition {
         public final String index;
         public final Op op;
 
@@ -376,7 +376,7 @@ public abstract class Condition {
     /**
      * This defines how {@link KeyCondition} matches a given key.
      */
-    public enum KeyMatchType {
+    enum KeyMatchType {
         /**
          * The key needs to be equal to the given label.
          */
@@ -416,7 +416,7 @@ public abstract class Condition {
      *                   LINK:       not supported
      * </pre>
      */
-    public static class KeyCondition extends Condition {
+    class KeyCondition implements Condition {
 
         /**
          * The key name.
@@ -498,7 +498,7 @@ public abstract class Condition {
         }
     }
 
-    public static class ClassCondition extends Condition {
+    class ClassCondition implements Condition {
 
         public final String id;
         public final boolean not;
@@ -523,7 +523,11 @@ public abstract class Condition {
      * Like <a href="http://www.w3.org/TR/css3-selectors/#pseudo-classes">CSS pseudo classes</a>, MapCSS pseudo classes
      * are written in lower case with dashes between words.
      */
-    static class PseudoClasses {
+    final class PseudoClasses {
+
+        private PseudoClasses() {
+            // Hide default constructor for utilities classes
+        }
 
         /**
          * {@code closed} tests whether the way is closed or the relation is a closed multipolygon
@@ -686,7 +690,7 @@ public abstract class Condition {
         }
     }
 
-    public static class PseudoClassCondition extends Condition {
+    class PseudoClassCondition implements Condition {
 
         public final Method method;
         public final boolean not;
@@ -735,7 +739,7 @@ public abstract class Condition {
         }
     }
 
-    public static class OpenEndPseudoClassCondition extends PseudoClassCondition {
+    class OpenEndPseudoClassCondition extends PseudoClassCondition {
         public OpenEndPseudoClassCondition(boolean not) {
             super(null, not);
         }
@@ -746,7 +750,7 @@ public abstract class Condition {
         }
     }
 
-    public static class ExpressionCondition extends Condition {
+    class ExpressionCondition implements Condition {
 
         private final Expression e;
 
