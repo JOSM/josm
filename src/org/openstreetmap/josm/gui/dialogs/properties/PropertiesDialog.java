@@ -701,7 +701,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         }
 
         List<Relation> sortedRelations = new ArrayList<>(roles.keySet());
-        Collections.sort(sortedRelations, (o1, o2) -> {
+        sortedRelations.sort((o1, o2) -> {
             int comp = Boolean.compare(o1.isDisabledAndHidden(), o2.isDisabledAndHidden());
             return comp != 0 ? comp : DefaultNameFormatter.getInstance().getRelationComparator().compare(o1, o2);
         });

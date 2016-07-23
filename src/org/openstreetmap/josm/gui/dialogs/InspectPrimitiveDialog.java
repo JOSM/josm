@@ -9,7 +9,6 @@ import java.awt.GridBagLayout;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -106,7 +105,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected static String buildDataText(OsmDataLayer layer, List<OsmPrimitive> primitives) {
         InspectPrimitiveDataText dt = new InspectPrimitiveDataText(layer);
-        Collections.sort(primitives, new OsmPrimitiveComparator());
+        primitives.sort(new OsmPrimitiveComparator());
         for (OsmPrimitive o : primitives) {
             dt.addPrimitive(o);
         }

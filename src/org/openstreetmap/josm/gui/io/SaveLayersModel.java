@@ -5,7 +5,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.table.DefaultTableModel;
@@ -70,7 +69,7 @@ public class SaveLayersModel extends DefaultTableModel {
         for (AbstractModifiableLayer layer: layers) {
             layerInfo.add(new SaveLayerInfo(layer));
         }
-        Collections.sort(layerInfo, (o1, o2) -> o1.compareTo(o2));
+        layerInfo.sort((o1, o2) -> o1.compareTo(o2));
         fireTableDataChanged();
     }
 

@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.conflict.tags;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -64,15 +63,13 @@ public class TagConflictResolverModel extends DefaultTableModel {
     }
 
     protected void sort() {
-        Collections.sort(
-                displayedKeys,
-                (key1, key2) -> {
-                    if (decisions.get(key1).isDecided() && !decisions.get(key2).isDecided())
-                        return 1;
-                    else if (!decisions.get(key1).isDecided() && decisions.get(key2).isDecided())
-                        return -1;
-                    return key1.compareTo(key2);
-                }
+        displayedKeys.sort((key1, key2) -> {
+                if (decisions.get(key1).isDecided() && !decisions.get(key2).isDecided())
+                    return 1;
+                else if (!decisions.get(key1).isDecided() && decisions.get(key2).isDecided())
+                    return -1;
+                return key1.compareTo(key2);
+            }
         );
     }
 

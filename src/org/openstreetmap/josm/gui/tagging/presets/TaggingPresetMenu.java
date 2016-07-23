@@ -10,7 +10,6 @@ import java.awt.PointerInfo;
 import java.awt.event.ActionEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -139,7 +138,7 @@ public class TaggingPresetMenu extends TaggingPreset {
     }
 
     private static void handleMenuItem(JMenu menu, PresetTextComparator comp, List<JMenuItem> sortarray, int lastSeparator) {
-        Collections.sort(sortarray, comp);
+        sortarray.sort(comp);
         int pos = 0;
         for (JMenuItem menuItem : sortarray) {
             int oldPos;

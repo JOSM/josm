@@ -394,10 +394,7 @@ public class RelationListDialog extends ToggleDialog
         }
 
         public void sort() {
-            Collections.sort(
-                    relations,
-                    DefaultNameFormatter.getInstance().getRelationComparator()
-                    );
+            relations.sort(DefaultNameFormatter.getInstance().getRelationComparator());
         }
 
         private boolean isValid(Relation r) {

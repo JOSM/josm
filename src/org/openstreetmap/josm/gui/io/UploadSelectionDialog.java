@@ -201,18 +201,16 @@ public class UploadSelectionDialog extends JDialog {
         protected void sort() {
             if (data == null)
                 return;
-            Collections.sort(
-                    data,
-                    new Comparator<OsmPrimitive>() {
-                        private DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
-                        @Override
-                        public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-                            int ret = OsmPrimitiveType.from(o1).compareTo(OsmPrimitiveType.from(o2));
-                            if (ret != 0)
-                                return ret;
-                            return o1.getDisplayName(formatter).compareTo(o1.getDisplayName(formatter));
-                        }
+            data.sort(new Comparator<OsmPrimitive>() {
+                    private DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
+                    @Override
+                    public int compare(OsmPrimitive o1, OsmPrimitive o2) {
+                        int ret = OsmPrimitiveType.from(o1).compareTo(OsmPrimitiveType.from(o2));
+                        if (ret != 0)
+                            return ret;
+                        return o1.getDisplayName(formatter).compareTo(o1.getDisplayName(formatter));
                     }
+                }
             );
         }
 

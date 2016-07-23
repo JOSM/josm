@@ -745,13 +745,11 @@ public final class PluginHandler {
             // sort the plugins according to their "staging" equivalence class. The
             // lower the value of "stage" the earlier the plugin should be loaded.
             //
-            Collections.sort(
-                    toLoad,
-                    (o1, o2) -> {
-                        if (o1.stage < o2.stage) return -1;
-                        if (o1.stage == o2.stage) return 0;
-                        return 1;
-                    }
+            toLoad.sort((o1, o2) -> {
+                    if (o1.stage < o2.stage) return -1;
+                    if (o1.stage == o2.stage) return 0;
+                    return 1;
+                }
             );
             if (toLoad.isEmpty())
                 return;

@@ -414,7 +414,7 @@ public class TagEditHelper {
 
             AutoCompletionManager autocomplete = Main.getLayerManager().getEditLayer().data.getAutoCompletionManager();
             List<AutoCompletionListItem> keyList = autocomplete.getKeys();
-            Collections.sort(keyList, defaultACItemComparator);
+            keyList.sort(defaultACItemComparator);
 
             keys = new AutoCompletingComboBox(key);
             keys.setPossibleACItems(keyList);
@@ -427,7 +427,7 @@ public class TagEditHelper {
             p.add(keys, GBC.eol().fill(GBC.HORIZONTAL));
 
             List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
-            Collections.sort(valueList, usedValuesAwareComparator);
+            valueList.sort(usedValuesAwareComparator);
 
             final String selection = m.size() != 1 ? tr("<different>") : m.entrySet().iterator().next().getKey();
 
@@ -611,7 +611,7 @@ public class TagEditHelper {
                    String key = keys.getEditor().getItem().toString();
 
                    List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
-                   Collections.sort(valueList, comparator);
+                   valueList.sort(comparator);
                    if (Main.isTraceEnabled()) {
                        Main.trace("Focus gained by {0}, e={1}", values, e);
                    }
@@ -686,7 +686,7 @@ public class TagEditHelper {
                 }
             }
 
-            Collections.sort(keyList, defaultACItemComparator);
+            keyList.sort(defaultACItemComparator);
             keys.setPossibleACItems(keyList);
             keys.setEditable(true);
 

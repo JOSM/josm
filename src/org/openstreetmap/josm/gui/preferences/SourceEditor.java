@@ -1222,14 +1222,13 @@ public abstract class SourceEditor extends JPanel {
         }
 
         protected void sort() {
-            Collections.sort(data,
-                    (o1, o2) -> {
-                        if (o1.isEmpty() && o2.isEmpty())
-                            return 0;
-                        if (o1.isEmpty()) return 1;
-                        if (o2.isEmpty()) return -1;
-                        return o1.compareTo(o2);
-                    });
+            data.sort((o1, o2) -> {
+                    if (o1.isEmpty() && o2.isEmpty())
+                        return 0;
+                    if (o1.isEmpty()) return 1;
+                    if (o2.isEmpty()) return -1;
+                    return o1.compareTo(o2);
+                });
         }
 
         public List<String> getIconPaths() {
