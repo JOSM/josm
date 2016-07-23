@@ -317,8 +317,10 @@ public class SplitWayAction extends JosmAction {
      * Determines which way chunk should reuse the old id and its history
      *
      * @since 8954
+     * @since 10599 (functional interface)
      */
-    public abstract static class Strategy {
+    @FunctionalInterface
+    public interface Strategy {
 
         /**
          * Determines which way chunk should reuse the old id and its history.
@@ -326,16 +328,14 @@ public class SplitWayAction extends JosmAction {
          * @param wayChunks the way chunks
          * @return the way to keep
          */
-        public abstract Way determineWayToKeep(Iterable<Way> wayChunks);
+        Way determineWayToKeep(Iterable<Way> wayChunks);
 
         /**
          * Returns a strategy which selects the way chunk with the highest node count to keep.
          * @return strategy which selects the way chunk with the highest node count to keep
          */
-        public static Strategy keepLongestChunk() {
-            return new Strategy() {
-                @Override
-                public Way determineWayToKeep(Iterable<Way> wayChunks) {
+        static Strategy keepLongestChunk() {
+            return wayChunks -> {
                     Way wayToKeep = null;
                     for (Way i : wayChunks) {
                         if (wayToKeep == null || i.getNodesCount() > wayToKeep.getNodesCount()) {
@@ -343,21 +343,15 @@ public class SplitWayAction extends JosmAction {
                         }
                     }
                     return wayToKeep;
-                }
-            };
+                };
         }
 
         /**
          * Returns a strategy which selects the first way chunk.
          * @return strategy which selects the first way chunk
          */
-        public static Strategy keepFirstChunk() {
-            return new Strategy() {
-                @Override
-                public Way determineWayToKeep(Iterable<Way> wayChunks) {
-                    return wayChunks.iterator().next();
-                }
-            };
+        static Strategy keepFirstChunk() {
+            return wayChunks -> wayChunks.iterator().next();
         }
     }
 

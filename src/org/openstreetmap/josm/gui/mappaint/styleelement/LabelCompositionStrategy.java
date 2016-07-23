@@ -33,9 +33,11 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  *   content of a tag whose name specified in the MapCSS style file, see the preference
  *   options <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.</li>
  * </ul>
- *
+ * @since  3987 (creation)
+ * @since 10599 (functional interface)
  */
-public abstract class LabelCompositionStrategy {
+@FunctionalInterface
+public interface LabelCompositionStrategy {
 
     /**
      * Replies the text value to be rendered as label for the primitive {@code primitive}.
@@ -45,9 +47,9 @@ public abstract class LabelCompositionStrategy {
      * @return the text value to be rendered or null, if primitive is null or
      * if no suitable value could be composed
      */
-    public abstract String compose(OsmPrimitive primitive);
+    String compose(OsmPrimitive primitive);
 
-    public static class StaticLabelCompositionStrategy extends LabelCompositionStrategy {
+    class StaticLabelCompositionStrategy implements LabelCompositionStrategy {
         private final String defaultLabel;
 
         public StaticLabelCompositionStrategy(String defaultLabel) {
@@ -82,7 +84,7 @@ public abstract class LabelCompositionStrategy {
         }
     }
 
-    public static class TagLookupCompositionStrategy extends LabelCompositionStrategy {
+    class TagLookupCompositionStrategy implements LabelCompositionStrategy {
 
         private final String defaultLabelTag;
 
@@ -126,8 +128,7 @@ public abstract class LabelCompositionStrategy {
         }
     }
 
-    public static class DeriveLabelFromNameTagsCompositionStrategy
-        extends LabelCompositionStrategy implements PreferenceChangedListener {
+    class DeriveLabelFromNameTagsCompositionStrategy implements LabelCompositionStrategy, PreferenceChangedListener {
 
         /**
          * The list of default name tags from which a label candidate is derived.
