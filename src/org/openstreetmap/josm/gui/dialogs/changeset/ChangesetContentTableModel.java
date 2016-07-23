@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.dialogs.changeset;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -79,32 +78,30 @@ public class ChangesetContentTableModel extends AbstractTableModel {
     }
 
     protected void sort() {
-        Collections.sort(
-                data,
-                (c1, c2) -> {
-                    if (c1.getModificationType().equals(c2.getModificationType())) {
-                        long id1 = c1.getPrimitive().getId();
-                        long id2 = c2.getPrimitive().getId();
+        data.sort((c1, c2) -> {
+                if (c1.getModificationType().equals(c2.getModificationType())) {
+                    long id1 = c1.getPrimitive().getId();
+                    long id2 = c2.getPrimitive().getId();
 
-                        if (id1 == id2)
-                            return 0;
-                        else if (id1 < id2)
-                            return -1;
-                        return 1;
-                    }
-                    switch(c1.getModificationType()) {
-                    case CREATED: return -1;
-                    case UPDATED:
-                        switch(c2.getModificationType()) {
-                        case CREATED: return 1;
-                        default: return -1;
-                        }
-                    case DELETED:
-                        return 1;
-                    }
-                    // should not happen
-                    return 0;
+                    if (id1 == id2)
+                        return 0;
+                    else if (id1 < id2)
+                        return -1;
+                    return 1;
                 }
+                switch(c1.getModificationType()) {
+                case CREATED: return -1;
+                case UPDATED:
+                    switch(c2.getModificationType()) {
+                    case CREATED: return 1;
+                    default: return -1;
+                    }
+                case DELETED:
+                    return 1;
+                }
+                // should not happen
+                return 0;
+            }
         );
     }
 

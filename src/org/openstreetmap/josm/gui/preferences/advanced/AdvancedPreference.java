@@ -273,7 +273,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
         readPreferences(tmpPrefs);
         // sorting after modification - first modified, then non-default, then default entries
-        Collections.sort(allData, customComparator);
+        allData.sort(customComparator);
         applyFilter();
     }
 
@@ -417,7 +417,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                }
             }
             // allow user to review the changes in table
-            Collections.sort(allData, customComparator);
+            allData.sort(customComparator);
             applyFilter();
         }
     }

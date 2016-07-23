@@ -58,7 +58,7 @@ public class CodeProjectionChoice extends AbstractProjectionChoice implements Su
         CodeSelectionPanel(String initialCode, ActionListener listener) {
             this.listener = listener;
             data = new ArrayList<>(Projections.getAllProjectionCodes());
-            Collections.sort(data, new CodeComparator());
+            data.sort(new CodeComparator());
             filteredData = new ArrayList<>(data);
             build();
             setCode(initialCode != null ? initialCode : DEFAULT_CODE);

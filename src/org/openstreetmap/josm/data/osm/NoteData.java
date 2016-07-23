@@ -101,7 +101,7 @@ public class NoteData {
      */
     public Collection<Note> getSortedNotes() {
         final List<Note> list = new ArrayList<>(noteList);
-        Collections.sort(list, comparator);
+        list.sort(comparator);
         return list;
     }
 

@@ -129,7 +129,7 @@ public class JoinNodeWayAction extends JosmAction {
 
             List<Integer> segmentIndexes = new LinkedList<>();
             segmentIndexes.addAll(innerEntry.keySet());
-            Collections.sort(segmentIndexes, Collections.reverseOrder());
+            segmentIndexes.sort(Collections.reverseOrder());
 
             List<Node> wayNodes = w.getNodes();
             for (Integer segmentIndex : segmentIndexes) {
@@ -148,7 +148,7 @@ public class JoinNodeWayAction extends JosmAction {
                 }
                 List<Node> nodesToAdd = new LinkedList<>();
                 nodesToAdd.addAll(nodesInSegment);
-                Collections.sort(nodesToAdd, new NodeDistanceToRefNodeComparator(
+                nodesToAdd.sort(new NodeDistanceToRefNodeComparator(
                         w.getNode(segmentIndex), w.getNode(segmentIndex+1), !joinWayToNode));
                 wayNodes.addAll(segmentIndex + 1, nodesToAdd);
             }

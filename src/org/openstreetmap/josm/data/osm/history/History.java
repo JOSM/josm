@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.osm.history;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -68,7 +67,7 @@ public class History {
      */
     public History sortAscending() {
         List<HistoryOsmPrimitive> copy = new ArrayList<>(versions);
-        Collections.sort(copy, (o1, o2) -> o1.compareTo(o2));
+        copy.sort((o1, o2) -> o1.compareTo(o2));
         return new History(id, type, copy);
     }
 
@@ -78,7 +77,7 @@ public class History {
      */
     public History sortDescending() {
         List<HistoryOsmPrimitive> copy = new ArrayList<>(versions);
-        Collections.sort(copy, (o1, o2) -> o2.compareTo(o1));
+        copy.sort((o1, o2) -> o2.compareTo(o1));
         return new History(id, type, copy);
     }
 

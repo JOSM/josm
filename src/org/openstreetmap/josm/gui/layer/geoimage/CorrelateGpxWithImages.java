@@ -1080,7 +1080,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             dateImgLst.add(e);
         }
 
-        Collections.sort(dateImgLst, (o1, o2) -> o1.getExifTime().compareTo(o2.getExifTime()));
+        dateImgLst.sort((o1, o2) -> o1.getExifTime().compareTo(o2.getExifTime()));
 
         return dateImgLst;
     }

@@ -118,17 +118,15 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
     private final String defaultExtension;
 
     protected static void sort(List<ExtensionFileFilter> filters) {
-        Collections.sort(
-                filters,
-                new Comparator<ExtensionFileFilter>() {
-                    private AllFormatsImporter all = new AllFormatsImporter();
-                    @Override
-                    public int compare(ExtensionFileFilter o1, ExtensionFileFilter o2) {
-                        if (o1.getDescription().equals(all.filter.getDescription())) return 1;
-                        if (o2.getDescription().equals(all.filter.getDescription())) return -1;
-                        return o1.getDescription().compareTo(o2.getDescription());
-                    }
+        filters.sort(new Comparator<ExtensionFileFilter>() {
+                private AllFormatsImporter all = new AllFormatsImporter();
+                @Override
+                public int compare(ExtensionFileFilter o1, ExtensionFileFilter o2) {
+                    if (o1.getDescription().equals(all.filter.getDescription())) return 1;
+                    if (o2.getDescription().equals(all.filter.getDescription())) return -1;
+                    return o1.getDescription().compareTo(o2.getDescription());
                 }
+            }
         );
     }
 

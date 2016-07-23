@@ -13,7 +13,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -201,19 +200,17 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         }
 
         protected void sort() {
-            Collections.sort(
-                    data,
-                    new Comparator<RelationToChildReference>() {
-                        private NameFormatter nf = DefaultNameFormatter.getInstance();
-                        @Override
-                        public int compare(RelationToChildReference o1, RelationToChildReference o2) {
-                            int cmp = o1.getChild().getDisplayName(nf).compareTo(o2.getChild().getDisplayName(nf));
-                            if (cmp != 0) return cmp;
-                            cmp = o1.getParent().getDisplayName(nf).compareTo(o2.getParent().getDisplayName(nf));
-                            if (cmp != 0) return cmp;
-                            return Integer.compare(o1.getPosition(), o2.getPosition());
-                        }
+            data.sort(new Comparator<RelationToChildReference>() {
+                    private NameFormatter nf = DefaultNameFormatter.getInstance();
+                    @Override
+                    public int compare(RelationToChildReference o1, RelationToChildReference o2) {
+                        int cmp = o1.getChild().getDisplayName(nf).compareTo(o2.getChild().getDisplayName(nf));
+                        if (cmp != 0) return cmp;
+                        cmp = o1.getParent().getDisplayName(nf).compareTo(o2.getParent().getDisplayName(nf));
+                        if (cmp != 0) return cmp;
+                        return Integer.compare(o1.getPosition(), o2.getPosition());
                     }
+                }
             );
         }
 

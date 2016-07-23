@@ -645,7 +645,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
          * (Only works if the data layer has not been saved to and been loaded from an osm file before.)
          */
         final List<Way> sortedWays = new ArrayList<>(ways);
-        Collections.sort(sortedWays, new OsmPrimitiveComparator(true, false)); // sort by OsmPrimitive#getUniqueId ascending
+        sortedWays.sort(new OsmPrimitiveComparator(true, false)); // sort by OsmPrimitive#getUniqueId ascending
         Collections.reverse(sortedWays); // sort by OsmPrimitive#getUniqueId descending
         for (Way w : sortedWays) {
             if (!w.isUsable()) {

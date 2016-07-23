@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -277,7 +276,7 @@ public class ImportAudioAction extends AbstractAction {
 
         /* we must have got at least one waypoint now */
 
-        Collections.sort((ArrayList<WayPoint>) waypoints, (a, b) -> a.time <= b.time ? -1 : 1);
+        ((ArrayList<WayPoint>) waypoints).sort((a, b) -> a.time <= b.time ? -1 : 1);
 
         firstTime = -1.0; /* this time of the first waypoint, not first trackpoint */
         for (WayPoint w : waypoints) {

@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -109,7 +108,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     protected <T extends OsmPrimitive> Collection<T> sortById(Collection<T> primitives) {
         List<T> result = new ArrayList<>(primitives.size());
         result.addAll(primitives);
-        Collections.sort(result, byIdComparator);
+        result.sort(byIdComparator);
         return result;
     }
 
@@ -268,7 +267,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
                 out.println(">");
             }
             List<Entry<String, String>> entries = new ArrayList<>(osm.getKeys().entrySet());
-            Collections.sort(entries, byKeyComparator);
+            entries.sort(byKeyComparator);
             for (Entry<String, String> e : entries) {
                 out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
                         "' v='"+XmlWriter.encode(e.getValue())+ "' />");

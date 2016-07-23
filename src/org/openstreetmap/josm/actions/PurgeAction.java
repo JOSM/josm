@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -243,7 +242,7 @@ public class PurgeAction extends JosmAction {
                             "in addition to the selected objects:")+"</html>",
                             ImageProvider.get("warning-small"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
 
-            Collections.sort(toPurgeAdditionally, (o1, o2) -> {
+            toPurgeAdditionally.sort((o1, o2) -> {
                 int type = o2.getType().compareTo(o1.getType());
                 if (type != 0)
                     return type;

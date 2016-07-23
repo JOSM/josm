@@ -10,7 +10,6 @@ import java.awt.MenuComponent;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -149,7 +148,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
 
         // for each configured ImageryInfo, add a menu entry.
         final List<ImageryInfo> savedLayers = new ArrayList<>(ImageryLayerInfo.instance.getLayers());
-        Collections.sort(savedLayers, alphabeticImageryComparator);
+        savedLayers.sort(alphabeticImageryComparator);
         for (final ImageryInfo u : savedLayers) {
             addDynamic(new AddImageryLayerAction(u));
         }
@@ -183,7 +182,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
                 }
             }
             if (!inViewLayers.isEmpty()) {
-                Collections.sort(inViewLayers, alphabeticImageryComparator);
+                inViewLayers.sort(alphabeticImageryComparator);
                 addDynamicSeparator();
                 for (ImageryInfo i : inViewLayers) {
                     addDynamic(new AddImageryLayerAction(i));

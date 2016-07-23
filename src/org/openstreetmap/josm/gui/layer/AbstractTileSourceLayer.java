@@ -1446,7 +1446,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             if (!getDisplaySettings().isAutoLoad() && !force)
                 return;
             List<Tile> allTiles = allTilesCreate();
-            Collections.sort(allTiles, getTileDistanceComparator());
+            allTiles.sort(getTileDistanceComparator());
             for (Tile t : allTiles) {
                 loadTile(t, force);
             }

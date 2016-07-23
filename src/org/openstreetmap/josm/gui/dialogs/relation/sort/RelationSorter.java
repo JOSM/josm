@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.dialogs.relation.sort;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -64,7 +63,7 @@ public class RelationSorter {
 
         @Override
         public List<RelationMember> sortMembers(List<RelationMember> list) {
-            Collections.sort(list, (a, b) -> {
+            list.sort((a, b) -> {
                 final int houseNumber = AlphanumComparator.getInstance().compare(
                         a.getMember().get("addr:housenumber"),
                         b.getMember().get("addr:housenumber"));
