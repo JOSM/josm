@@ -305,7 +305,9 @@ public class Diff {
 
     /**
      * Script builder.
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface ScriptBuilder {
         /**
          * Scan the tables of which lines are inserted and deleted, producing an edit script.
@@ -314,19 +316,20 @@ public class Diff {
          * @param changed1 true for lines in 2nd file which do not match 1st
          * @param len1 number of lines in 2nd file
          * @return a linked list of changes - or null
+         * @since 10600 (renamed)
          */
-        Change build_script(
+        Change buildScript(
                 boolean[] changed0, int len0,
                 boolean[] changed1, int len1
         );
     }
 
-    /** Scan the tables of which lines are inserted and deleted,
-     producing an edit script in reverse order.  */
-
+    /**
+     * Scan the tables of which lines are inserted and deleted, producing an edit script in reverse order.
+     */
     static class ReverseScript implements ScriptBuilder {
         @Override
-        public Change build_script(
+        public Change buildScript(
                 final boolean[] changed0, int len0,
                 final boolean[] changed1, int len1) {
             Change script = null;
@@ -359,7 +362,7 @@ public class Diff {
         /** Scan the tables of which lines are inserted and deleted,
             producing an edit script in forward order.  */
         @Override
-        public Change build_script(
+        public Change buildScript(
                 final boolean[] changed0, int len0,
                 final boolean[] changed1, int len1) {
             Change script = null;
@@ -437,7 +440,7 @@ public class Diff {
         shift_boundaries();
 
         // Get the results of comparison in the form of a chain of `struct change's -- an edit script.
-        return bld.build_script(
+        return bld.buildScript(
                 filevec[0].changedFlag,
                 filevec[0].bufferedLines,
                 filevec[1].changedFlag,

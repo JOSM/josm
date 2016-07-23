@@ -90,7 +90,7 @@ public abstract class AbstractMapViewPaintable implements MapViewPaintable {
      */
     public void invalidate() {
         for (PaintableInvalidationListener l : invalidationListeners) {
-            l.paintablInvalidated(new PaintableInvalidationEvent(this));
+            l.paintableInvalidated(new PaintableInvalidationEvent(this));
         }
     }
 }

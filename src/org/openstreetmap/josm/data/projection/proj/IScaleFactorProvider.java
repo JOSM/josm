@@ -9,7 +9,10 @@ package org.openstreetmap.josm.data.projection.proj;
  * class does not deal with it.)
  *
  * @see Proj
+ * @since  9565 (creation)
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface IScaleFactorProvider {
     /**
      * Get the scale factor.

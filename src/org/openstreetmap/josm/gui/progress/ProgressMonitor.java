@@ -31,6 +31,7 @@ import java.awt.Component;
  */
 public interface ProgressMonitor {
 
+    @FunctionalInterface
     public interface CancelListener {
         void operationCanceled();
     }

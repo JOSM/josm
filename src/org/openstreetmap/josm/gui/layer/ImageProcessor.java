@@ -9,7 +9,10 @@ import java.awt.image.BufferedImage;
  * displayed images (implemented in plugins).
  *
  * @author Nipel-Crumple
+ * @since  8625 (creation)
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface ImageProcessor {
 
     /**

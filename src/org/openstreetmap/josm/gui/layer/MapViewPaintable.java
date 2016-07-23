@@ -12,7 +12,10 @@ import org.openstreetmap.josm.gui.MapView;
  * You might want to extend {@link AbstractMapViewPaintable} to ease implementation of this.
  * <p>
  * That class allows you to listen to paintable change events. Those methods may be moved here some time in the future.
+ * @since   608 (creation)
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface MapViewPaintable {
 
     /**
@@ -50,13 +53,16 @@ public interface MapViewPaintable {
     /**
      * This is a listener that listens to {@link PaintableInvalidationEvent}s
      * @author Michael Zangl
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     interface PaintableInvalidationListener {
         /**
          * Called whenever a {@link PaintableInvalidationEvent} is fired. This might be called from any thread.
          * @param event The event
+         * @ince 10600 (renamed)
          */
-        void paintablInvalidated(PaintableInvalidationEvent event);
+        void paintableInvalidated(PaintableInvalidationEvent event);
     }
 
     /**

@@ -9,6 +9,7 @@ package org.openstreetmap.josm.data.osm.event;
  */
 public class DataSetListenerAdapter implements DataSetListener {
 
+    @FunctionalInterface
     public interface Listener {
         void processDatasetEvent(AbstractDatasetChangedEvent event);
     }

@@ -4,7 +4,9 @@ package org.openstreetmap.josm.data.cache;
 /**
  * Cache loader listener.
  * @since 8168
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface ICachedLoaderListener {
 
     /**

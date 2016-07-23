@@ -143,6 +143,7 @@ public class MultiSplitPane extends JPanel {
      * @see #getDividerPainter
      * @see #setDividerPainter
      */
+    @FunctionalInterface
     public interface DividerPainter {
         /**
          * Paint a single Divider.

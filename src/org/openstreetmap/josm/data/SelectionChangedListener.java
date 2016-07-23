@@ -15,7 +15,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  * is issued within a one message dispatch routine.
  *
  * @author imi
+ * @since     8 (creation)
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface SelectionChangedListener {
 
     /**

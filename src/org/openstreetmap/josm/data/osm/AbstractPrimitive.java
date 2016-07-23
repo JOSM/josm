@@ -30,7 +30,9 @@ public abstract class AbstractPrimitive implements IPrimitive {
      *
      * @author Michael Zangl
      * @since 8742
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface KeyValueVisitor {
 
         /**

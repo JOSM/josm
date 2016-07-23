@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.layer.TMSLayer;
 
 public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
 
+    @FunctionalInterface
     public interface TileSourceProvider {
         List<TileSource> getTileSources();
     }

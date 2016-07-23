@@ -25,7 +25,9 @@ public class SystemOfMeasurement {
     /**
      * Interface to notify listeners of the change of the system of measurement.
      * @since 8554
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface SoMChangeListener {
         /**
          * The current SoM has changed.

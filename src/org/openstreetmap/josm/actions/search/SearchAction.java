@@ -554,7 +554,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * Interfaces implementing this may receive the result of the current search.
      * @author Michael Zangl
      * @since 10457
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     interface SearchReceiver {
         /**
          * Receive the search result

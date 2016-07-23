@@ -33,7 +33,9 @@ public class BoxTextElement extends StyleElement {
 
     /**
      * Something that provides us with a {@link BoxProviderResult}
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface BoxProvider {
         /**
          * Compute and get the {@link BoxProviderResult}. The temporary flag is set if the result of the computation may change in the future.

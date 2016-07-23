@@ -10,7 +10,10 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 /**
  * Represents a layer that has native scales.
  * @author András Kolesár
+ * @since  9818 (creation)
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface NativeScaleLayer {
 
     /**

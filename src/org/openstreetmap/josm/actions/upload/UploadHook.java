@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.upload;
 
 import org.openstreetmap.josm.data.APIDataSet;
 
+@FunctionalInterface
 public interface UploadHook {
 
     /**

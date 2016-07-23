@@ -109,7 +109,9 @@ public class ImageryFilterSettings {
     /**
      * A listener that listens to filter changes
      * @author Michael Zangl
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface FilterChangeListener {
         /**
          * Invoked when the filter is changed.

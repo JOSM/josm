@@ -130,6 +130,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * @deprecated Use {@link ActiveLayerChangeListener} instead.
      */
     @Deprecated
+    @FunctionalInterface
     public interface EditLayerChangeListener {
 
         /**
@@ -148,7 +149,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     private class LayerInvalidatedListener implements PaintableInvalidationListener {
         private boolean ignoreRepaint;
         @Override
-        public void paintablInvalidated(PaintableInvalidationEvent event) {
+        public void paintableInvalidated(PaintableInvalidationEvent event) {
             ignoreRepaint = true;
             repaint();
         }
@@ -1317,7 +1318,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * <p>
      * This is the only safe method to find changes to the map view, since many components call MapView.repaint() directly.
      * @author Michael Zangl
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface RepaintListener {
         /**
          * Called when any repaint method is called (using default arguments if required).

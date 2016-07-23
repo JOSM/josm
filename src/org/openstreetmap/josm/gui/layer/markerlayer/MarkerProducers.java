@@ -13,7 +13,10 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
  * the Marker are consecutively called until one returns a Marker object.
  *
  * @author Frederik Ramm
+ * @since   200 (creation)
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface MarkerProducers {
     /**
      * Returns a collection of Marker objects if this implementation wants to create one for the

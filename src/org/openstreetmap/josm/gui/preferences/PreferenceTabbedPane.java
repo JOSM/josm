@@ -181,8 +181,9 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     /**
      * Allows PreferenceSettings to do validation of entered values when ok was pressed.
      * If data is invalid then event can return false to cancel closing of preferences dialog.
-     *
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface ValidationListener {
         /**
          *
@@ -301,6 +302,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         return p;
     }
 
+    @FunctionalInterface
     private interface TabIdentifier {
         boolean identify(TabPreferenceSetting tps, Object param);
     }

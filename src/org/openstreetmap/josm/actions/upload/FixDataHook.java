@@ -59,7 +59,9 @@ public class FixDataHook implements UploadHook {
 
     /**
      * Common set of commands for data fixing
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface FixData {
         /**
          * Checks if data needs to be fixed and change keys

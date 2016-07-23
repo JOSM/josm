@@ -718,7 +718,9 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
 
     /**
      * Interface to notify listeners of the change of the mapMode.
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface MapModeChangeListener {
         /**
          * Trigerred when map mode changes.

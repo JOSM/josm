@@ -6,7 +6,10 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 
 /**
  * A subpart identifies different rendering layers (<code>::subpart</code> syntax).
+ * @since  8086 (creation)
+ * @since 10600 (functional interface)
  */
+@FunctionalInterface
 public interface Subpart {
     String getId(Environment env);
 

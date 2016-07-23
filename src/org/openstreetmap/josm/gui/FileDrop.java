@@ -436,6 +436,7 @@ public class FileDrop {
      *      ...
      * </code>
      */
+    @FunctionalInterface
     public interface Listener {
 
         /**
@@ -650,6 +651,7 @@ public class FileDrop {
          *
          * @author Robert Harder
          */
+        @FunctionalInterface
         public interface Fetcher {
             /**
              * Return the object being encapsulated in the

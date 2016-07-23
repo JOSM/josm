@@ -34,7 +34,9 @@ public abstract class AddImageryPanel extends JPanel {
 
     /**
      * A listener notified when the validation status of this panel change.
+     * @since 10600 (functional interface)
      */
+    @FunctionalInterface
     public interface ContentValidationListener {
         /**
          * Called when the validation status of this panel changed
