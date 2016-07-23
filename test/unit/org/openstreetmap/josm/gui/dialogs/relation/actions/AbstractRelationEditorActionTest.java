@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -26,6 +27,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * This class provides the basic test environment for relation editor actions.
  * @author Michael Zangl
  */
+@Ignore
 public abstract class AbstractRelationEditorActionTest {
     /**
      * Platform for tooltips.
