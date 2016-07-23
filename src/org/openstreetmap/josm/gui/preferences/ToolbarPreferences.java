@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
@@ -764,7 +765,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 updateEnabledState();
             });
 
-            selectedList.setDragEnabled(true);
+            if (!GraphicsEnvironment.isHeadless()) {
+                selectedList.setDragEnabled(true);
+            }
             selectedList.setTransferHandler(new SelectedListTransferHandler());
 
             actionsTree.setTransferHandler(new TransferHandler() {
@@ -791,7 +794,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     return new ActionTransferable(dragActions);
                 }
             });
-            actionsTree.setDragEnabled(true);
+            if (!GraphicsEnvironment.isHeadless()) {
+                actionsTree.setDragEnabled(true);
+            }
             actionsTree.getSelectionModel().addTreeSelectionListener(e -> updateEnabledState());
 
             final JPanel left = new JPanel(new GridBagLayout());

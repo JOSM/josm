@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -1114,7 +1115,9 @@ public class LayerListDialog extends ToggleDialog {
         LayerList(LayerListModel dataModel) {
             super(dataModel);
             dataModel.setLayerList(this);
-            setDragEnabled(true);
+            if (!GraphicsEnvironment.isHeadless()) {
+                setDragEnabled(true);
+            }
             setDropMode(DropMode.INSERT_ROWS);
             setTransferHandler(new LayerListTransferHandler());
         }

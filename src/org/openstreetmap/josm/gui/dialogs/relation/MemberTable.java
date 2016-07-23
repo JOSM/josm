@@ -70,7 +70,9 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         if (!GraphicsEnvironment.isHeadless()) {
             setTransferHandler(new MemberTransferHandler());
             setFillsViewportHeight(true); // allow drop on empty table
-            setDragEnabled(true);
+            if (!GraphicsEnvironment.isHeadless()) {
+                setDragEnabled(true);
+            }
             setDropMode(DropMode.INSERT_ROWS);
         }
     }
