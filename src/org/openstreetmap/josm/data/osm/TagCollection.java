@@ -769,9 +769,7 @@ public class TagCollection implements Iterable<Tag> {
             try {
                 result += Integer.parseInt(value);
             } catch (NumberFormatException e) {
-                if (Main.isTraceEnabled()) {
-                    Main.trace(e.getMessage());
-                }
+                Main.trace(e);
             }
         }
         return Integer.toString(result);

@@ -426,9 +426,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                     url = clickedTile.getUrl();
                 } catch (IOException e) {
                     // silence exceptions
-                    if (Main.isTraceEnabled()) {
-                        Main.trace(e.getMessage());
-                    }
+                    Main.trace(e);
                 }
 
                 String[][] content = {

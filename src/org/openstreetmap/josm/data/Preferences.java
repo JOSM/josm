@@ -792,9 +792,7 @@ public class Preferences {
             return Integer.parseInt(v);
         } catch (NumberFormatException e) {
             // fall out
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
         return def;
     }
@@ -810,9 +808,7 @@ public class Preferences {
             return Integer.parseInt(v);
         } catch (NumberFormatException e) {
             // fall out
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
         return def;
     }
@@ -826,9 +822,7 @@ public class Preferences {
             return Long.parseLong(v);
         } catch (NumberFormatException e) {
             // fall out
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
         return def;
     }
@@ -842,9 +836,7 @@ public class Preferences {
             return Double.parseDouble(v);
         } catch (NumberFormatException e) {
             // fall out
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
         return def;
     }

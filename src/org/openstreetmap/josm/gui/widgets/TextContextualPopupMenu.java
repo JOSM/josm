@@ -195,9 +195,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
             try {
                 undo.undo();
             } catch (CannotUndoException ex) {
-                if (Main.isTraceEnabled()) {
-                    Main.trace(ex.getMessage());
-                }
+                Main.trace(ex);
             } finally {
                 updateUndoState();
                 redoAction.updateRedoState();
@@ -230,9 +228,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
             try {
                 undo.redo();
             } catch (CannotRedoException ex) {
-                if (Main.isTraceEnabled()) {
-                    Main.trace(ex.getMessage());
-                }
+                Main.trace(ex);
             } finally {
                 updateRedoState();
                 undoAction.updateUndoState();

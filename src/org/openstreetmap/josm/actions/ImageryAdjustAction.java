@@ -234,9 +234,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                     layer.getDisplaySettings().setDisplacement(new EastNorth(dx, dy));
                 } catch (NumberFormatException nfe) {
                     // we repaint offset numbers in any case
-                    if (Main.isTraceEnabled()) {
-                        Main.trace(nfe.getMessage());
-                    }
+                    Main.trace(nfe);
                 }
             }
             updateOffsetIntl();

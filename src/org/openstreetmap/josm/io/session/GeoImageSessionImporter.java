@@ -116,9 +116,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
             }
             // TODO: handle thumbnail loading
         } catch (NumberFormatException e) {
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
     }
 }

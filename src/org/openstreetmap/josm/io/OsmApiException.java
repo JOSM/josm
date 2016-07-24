@@ -145,9 +145,7 @@ public class OsmApiException extends OsmTransferException {
             }
         } catch (IllegalArgumentException e) {
             // Ignored
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
         try {
             String eb = errorBody != null ? tr(errorBody.trim()) : "";
@@ -158,9 +156,7 @@ public class OsmApiException extends OsmTransferException {
             }
         } catch (IllegalArgumentException e) {
             // Ignored
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
         return sb.toString();
     }

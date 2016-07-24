@@ -359,9 +359,7 @@ public class NodeListMergeModelTest {
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // OK
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
 
         try {
@@ -369,9 +367,7 @@ public class NodeListMergeModelTest {
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // OK
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
     }
 

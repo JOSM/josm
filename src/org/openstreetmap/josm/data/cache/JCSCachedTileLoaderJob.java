@@ -440,9 +440,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 }
             } catch (NumberFormatException e) {
                 // ignore malformed Cache-Control headers
-                if (Main.isTraceEnabled()) {
-                    Main.trace(e.getMessage());
-                }
+                Main.trace(e);
             }
         }
 

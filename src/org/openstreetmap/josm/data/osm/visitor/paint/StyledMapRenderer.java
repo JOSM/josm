@@ -303,7 +303,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             GlyphVector gv = font.createGlyphVector(frc, "x");
             gv.setGlyphTransform(0, AffineTransform.getTranslateInstance(1000, 1000));
             Shape shape = gv.getGlyphOutline(0);
-            Main.trace("#10446: shape: "+shape.getBounds());
+            if (Main.isTraceEnabled()) {
+                Main.trace("#10446: shape: "+shape.getBounds());
+            }
             // x is about 1000 on normal stystems and about 2000 when the bug occurs
             int x = shape.getBounds().x;
             boolean isBug = x > 1500;

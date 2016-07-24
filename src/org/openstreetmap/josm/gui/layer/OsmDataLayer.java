@@ -751,9 +751,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                         break;
                     }
                 } catch (NumberFormatException e) {
-                    if (Main.isTraceEnabled()) {
-                        Main.trace(e.getMessage());
-                    }
+                    Main.trace(e);
                 }
             }
         }
@@ -773,9 +771,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                         break;
                     }
                 } catch (NumberFormatException e) {
-                    if (Main.isTraceEnabled()) {
-                        Main.trace(e.getMessage());
-                    }
+                    Main.trace(e);
                 }
             }
         }

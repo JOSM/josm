@@ -90,9 +90,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
                     return;
                 } catch (NumberFormatException e) {
                     // either the new text or the current text isn't a number. We continue with autocompletion
-                    if (Main.isTraceEnabled()) {
-                        Main.trace(e.getMessage());
-                    }
+                    Main.trace(e);
                 }
             }
             String prefix = currentText.substring(0, offs);
