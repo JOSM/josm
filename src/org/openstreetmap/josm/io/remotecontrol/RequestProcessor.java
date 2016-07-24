@@ -240,10 +240,13 @@ public class RequestProcessor extends Thread {
                     out.write(handler.getContent());
                     out.flush();
                 } catch (RequestHandlerErrorException ex) {
+                    Main.debug(ex);
                     sendError(out);
                 } catch (RequestHandlerBadRequestException ex) {
+                    Main.debug(ex);
                     sendBadRequest(out, ex.getMessage());
                 } catch (RequestHandlerForbiddenException ex) {
+                    Main.debug(ex);
                     sendForbidden(out, ex.getMessage());
                 }
             }

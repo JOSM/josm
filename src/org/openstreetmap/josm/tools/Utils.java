@@ -1325,6 +1325,7 @@ public final class Utils {
             new URL(url);
             return true;
         } catch (MalformedURLException | NullPointerException e) {
+            Main.trace(e);
             return false;
         }
     }

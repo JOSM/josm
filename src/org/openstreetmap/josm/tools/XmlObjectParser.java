@@ -203,6 +203,7 @@ public class XmlObjectParser implements Iterable<Object> {
                     fields.put(s, f);
                     return f;
                 } catch (NoSuchFieldException ex) {
+                    Main.trace(ex);
                     fields.put(s, null);
                     return null;
                 }
@@ -250,7 +251,7 @@ public class XmlObjectParser implements Iterable<Object> {
                 reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             } catch (SAXException e) {
                 // Exception very unlikely to happen, so no need to translate this
-                Main.error("Cannot disable 'load-external-dtd' feature: "+e.getMessage());
+                Main.error(e, "Cannot disable 'load-external-dtd' feature:");
             }
             reader.parse(new InputSource(in));
             queueIterator = queue.iterator();

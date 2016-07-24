@@ -452,6 +452,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         try {
             parser.parse();
         } catch (ParseError e) {
+            Main.warn(e);
             JOptionPane.showMessageDialog(Main.parent,
                     tr("Incorrect waypoint label pattern: {0}", e.getMessage()), tr("Incorrect pattern"), JOptionPane.ERROR_MESSAGE);
             waypointLabelPattern.requestFocus();
@@ -461,6 +462,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         try {
             parser.parse();
         } catch (ParseError e) {
+            Main.warn(e);
             JOptionPane.showMessageDialog(Main.parent,
                     tr("Incorrect audio waypoint label pattern: {0}", e.getMessage()), tr("Incorrect pattern"), JOptionPane.ERROR_MESSAGE);
             audioWaypointLabelPattern.requestFocus();

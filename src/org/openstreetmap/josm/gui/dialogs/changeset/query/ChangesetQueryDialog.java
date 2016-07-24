@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -191,6 +192,7 @@ public class ChangesetQueryDialog extends JDialog {
                 setCanceled(false);
                 setVisible(false);
             } catch (IllegalStateException e) {
+                Main.error(e);
                 JOptionPane.showMessageDialog(ChangesetQueryDialog.this, e.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
             }
         }

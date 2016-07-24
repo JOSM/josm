@@ -190,7 +190,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
             try {
                 Capabilities.CapabilitiesParser.parse(new InputSource(connection.getResponse().getContent()));
             } catch (SAXException | ParserConfigurationException e) {
-                Main.warn(e.getMessage());
+                Main.warn(e);
                 alertInvalidCapabilities();
                 return;
             }

@@ -63,6 +63,7 @@ public class FilterTableModel extends AbstractTableModel {
             try {
                 filterMatcher.add(filter);
             } catch (ParseError e) {
+                Main.error(e);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("<html>Error in filter <code>{0}</code>:<br>{1}", Utils.shortenString(filter.text, 80), e.getMessage()),

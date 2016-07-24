@@ -641,6 +641,7 @@ public final class I18n {
                 }
             }
         } catch (IOException e) {
+            Main.trace(e);
             return false;
         }
         if (!s.isEmpty()) {

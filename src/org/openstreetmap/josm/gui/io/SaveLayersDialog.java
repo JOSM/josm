@@ -492,6 +492,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     //
                     currentFuture.get();
                 } catch (CancellationException e) {
+                    Main.trace(e);
                     model.setUploadState(layer, UploadOrSaveState.CANCELED);
                 } catch (InterruptedException | ExecutionException e) {
                     Main.error(e);
@@ -533,6 +534,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     //
                     currentFuture.get();
                 } catch (CancellationException e) {
+                    Main.trace(e);
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                 } catch (InterruptedException | ExecutionException e) {
                     Main.error(e);

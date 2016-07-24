@@ -86,6 +86,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
             }
             accessToken = client.getAccessToken(getProgressMonitor().createSubTaskMonitor(0, false));
         } catch (OsmTransferCanceledException e) {
+            Main.trace(e);
             return;
         } catch (final OsmOAuthAuthorizationException e) {
             Main.error(e);

@@ -227,8 +227,10 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         try {
             SwingUtilities.invokeAndWait(r);
         } catch (InterruptedException e) {
+            Main.trace(e);
             lastException = e;
         } catch (InvocationTargetException e) {
+            Main.trace(e);
             lastException = new OsmTransferException(e.getCause());
         }
     }

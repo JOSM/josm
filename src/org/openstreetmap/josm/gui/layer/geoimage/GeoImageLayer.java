@@ -182,6 +182,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             try {
                 addRecursiveFiles(files, selection);
             } catch (IllegalStateException e) {
+                Main.debug(e);
                 rememberError(e.getMessage());
             }
 

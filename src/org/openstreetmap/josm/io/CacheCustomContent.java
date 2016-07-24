@@ -96,6 +96,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
             checkOfflineAccess();
             return false;
         } catch (OfflineAccessException e) {
+            Main.trace(e);
             return true;
         }
     }
@@ -184,6 +185,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
                 Main.error("Failed to read expected contents from "+path);
             }
         } catch (IOException e) {
+            Main.trace(e);
             if (!isOffline()) {
                 this.data = updateForce();
             }

@@ -439,6 +439,7 @@ public class NmeaReader {
 
         } catch (RuntimeException x) {
             // out of bounds and such
+            Main.debug(x);
             ps.malformed++;
             ps.pWp = null;
             return false;

@@ -910,6 +910,7 @@ public final class Geometry {
             outerRings = MultipolygonBuilder.joinWays(mpm.outers);
             innerRings = MultipolygonBuilder.joinWays(mpm.inners);
         } catch (MultipolygonBuilder.JoinedPolygonCreationException ex) {
+            Main.trace(ex);
             Main.debug("Invalid multipolygon " + multiPolygon);
             return false;
         }

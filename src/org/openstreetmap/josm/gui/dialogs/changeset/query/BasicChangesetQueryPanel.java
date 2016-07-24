@@ -194,7 +194,7 @@ public class BasicChangesetQueryPanel extends JPanel {
             try {
                 q = BasicQuery.valueOf(BasicQuery.class, value);
             } catch (IllegalArgumentException e) {
-                Main.warn(tr("Unexpected value for preference ''{0}'', got ''{1}''. Resetting to default query.",
+                Main.warn(e, tr("Unexpected value for preference ''{0}'', got ''{1}''. Resetting to default query.",
                         "changeset-query.basic.query", value));
                 q = BasicQuery.MOST_RECENT_CHANGESETS;
             }

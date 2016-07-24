@@ -85,7 +85,7 @@ public class LafPreference implements SubPreferenceSetting {
                 );
             } catch (ReflectiveOperationException ex) {
                 // just debug, Quaqua may not even be installed...
-                Main.debug(ex.getMessage());
+                Main.debug(ex);
             }
         }
 

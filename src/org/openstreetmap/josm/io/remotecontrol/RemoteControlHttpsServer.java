@@ -317,6 +317,7 @@ public class RemoteControlHttpsServer extends Thread {
                 instance4 = new RemoteControlHttpsServer(port, false);
                 instance4.start();
             } catch (IOException | GeneralSecurityException ex) {
+                Main.debug(ex);
                 Main.warn(marktr("Cannot start IPv4 remotecontrol https server on port {0}: {1}"),
                         Integer.toString(port), ex.getLocalizedMessage());
             }
@@ -326,6 +327,7 @@ public class RemoteControlHttpsServer extends Thread {
             } catch (IOException | GeneralSecurityException ex) {
                 /* only show error when we also have no IPv4 */
                 if (instance4 == null) {
+                    Main.debug(ex);
                     Main.warn(marktr("Cannot start IPv6 remotecontrol https server on port {0}: {1}"),
                         Integer.toString(port), ex.getLocalizedMessage());
                 }

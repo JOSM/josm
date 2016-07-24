@@ -527,6 +527,7 @@ public class OsmReader extends AbstractReader {
                 }
             } catch (IllegalStateException e) {
                 // thrown for positive changeset id on new primitives
+                Main.debug(e);
                 Main.info(e.getMessage());
                 current.setChangesetId(0);
             }

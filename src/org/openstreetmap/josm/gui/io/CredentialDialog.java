@@ -109,7 +109,7 @@ public class CredentialDialog extends JDialog {
         try {
             setAlwaysOnTop(true);
         } catch (SecurityException e) {
-            Main.warn(tr("Failed to put Credential Dialog always on top. Caught security exception."));
+            Main.warn(e, tr("Failed to put Credential Dialog always on top. Caught security exception."));
         }
         build();
     }
