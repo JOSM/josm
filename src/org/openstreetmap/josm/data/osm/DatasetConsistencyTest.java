@@ -214,6 +214,7 @@ public class DatasetConsistencyTest {
         } catch (RuntimeException e) {
             writer.println("Exception during dataset integrity test:");
             e.printStackTrace(writer);
+            Main.warn(e);
         }
     }
 

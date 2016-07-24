@@ -260,6 +260,7 @@ public final class ExpressionFactory {
             try {
                 return new Color(r, g, b);
             } catch (IllegalArgumentException e) {
+                Main.trace(e);
                 return null;
             }
         }
@@ -278,6 +279,7 @@ public final class ExpressionFactory {
             try {
                 return new Color(r, g, b, alpha);
             } catch (IllegalArgumentException e) {
+                Main.trace(e);
                 return null;
             }
         }
@@ -293,6 +295,7 @@ public final class ExpressionFactory {
             try {
                 return Color.getHSBColor(h, s, b);
             } catch (IllegalArgumentException e) {
+                Main.trace(e);
                 return null;
             }
         }
@@ -627,6 +630,7 @@ public final class ExpressionFactory {
             try {
                 return RotationAngle.parseCardinalRotation(cardinal);
             } catch (IllegalArgumentException ignore) {
+                Main.trace(ignore);
                 return null;
             }
         }
@@ -667,6 +671,7 @@ public final class ExpressionFactory {
             try {
                 m = SearchCompiler.compile(searchStr);
             } catch (ParseError ex) {
+                Main.trace(ex);
                 return null;
             }
             return m.match(env.osm);

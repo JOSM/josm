@@ -58,7 +58,7 @@ public final class OpenBrowser {
                     } catch (IOException e) {
                         // Workaround for KDE (Desktop API is severely flawed)
                         // see https://bugs.openjdk.java.net/browse/JDK-6486393
-                        Main.warn("Desktop class failed. Platform dependent fall back for open url in browser.");
+                        Main.warn(e, "Desktop class failed. Platform dependent fall back for open url in browser.");
                         displayUrlFallback(uri);
                     }
                 }
@@ -71,6 +71,7 @@ public final class OpenBrowser {
                 Main.warn("Desktop class is not supported. Platform dependent fall back for open url in browser.");
                 displayUrlFallback(uri);
             } catch (IOException e) {
+                Main.debug(e);
                 return e.getMessage();
             }
         }
@@ -89,6 +90,7 @@ public final class OpenBrowser {
         try {
             return displayUrl(new URI(url));
         } catch (URISyntaxException e) {
+            Main.debug(e);
             return e.getMessage();
         }
     }

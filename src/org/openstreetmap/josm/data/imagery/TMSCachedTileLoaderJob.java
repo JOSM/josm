@@ -127,6 +127,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 return content != null || cacheData.getImage() != null || isNoTileAtZoom();
             } catch (IOException e) {
                 LOG.log(Level.WARNING, "JCS TMS - error loading from cache for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
+                Main.warn(e);
             }
         }
         return false;
@@ -295,6 +296,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 return tile;
             } catch (IOException e) {
                 LOG.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
+                Main.warn(e);
                 return null;
             }
 

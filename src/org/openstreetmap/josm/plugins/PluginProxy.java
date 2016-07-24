@@ -44,6 +44,7 @@ public class PluginProxy extends Plugin {
         try {
             plugin.getClass().getMethod("mapFrameInitialized", MapFrame.class, MapFrame.class).invoke(plugin, oldFrame, newFrame);
         } catch (NoSuchMethodException e) {
+            Main.trace(e);
             Main.debug("Plugin "+plugin+" does not define mapFrameInitialized");
         } catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
             handlePluginException(e);
@@ -55,6 +56,7 @@ public class PluginProxy extends Plugin {
         try {
             return (PreferenceSetting) plugin.getClass().getMethod("getPreferenceSetting").invoke(plugin);
         } catch (NoSuchMethodException e) {
+            Main.trace(e);
             Main.debug("Plugin "+plugin+" does not define getPreferenceSetting");
             return null;
         } catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
@@ -68,6 +70,7 @@ public class PluginProxy extends Plugin {
         try {
             plugin.getClass().getMethod("addDownloadSelection", List.class).invoke(plugin, list);
         } catch (NoSuchMethodException e) {
+            Main.trace(e);
             Main.debug("Plugin "+plugin+" does not define addDownloadSelection");
         } catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
             handlePluginException(e);

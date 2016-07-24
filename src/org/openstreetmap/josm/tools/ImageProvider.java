@@ -958,13 +958,14 @@ public class ImageProvider {
                 try {
                     img = read(Utils.fileToURL(cf.getFile()), false, false);
                 } catch (IOException e) {
-                    Main.warn("IOException while reading HTTP image: "+e.getMessage());
+                    Main.warn(e, "IOException while reading HTTP image:");
                 }
                 return img == null ? null : new ImageResource(img);
             default:
                 throw new AssertionError();
             }
         } catch (IOException e) {
+            Main.debug(e);
             return null;
         } finally {
             cf.close();
@@ -989,7 +990,7 @@ public class ImageProvider {
                 try {
                     bytes = Utils.decodeUrl(data).getBytes(StandardCharsets.UTF_8);
                 } catch (IllegalArgumentException ex) {
-                    Main.warn("Unable to decode URL data part: "+ex.getMessage() + " (" + data + ')');
+                    Main.warn(ex, "Unable to decode URL data part: "+ex.getMessage() + " (" + data + ')');
                     return null;
                 }
             }
@@ -1016,7 +1017,7 @@ public class ImageProvider {
                     Image img = read(new ByteArrayInputStream(bytes), false, true);
                     return img == null ? null : new ImageResource(img);
                 } catch (IOException e) {
-                    Main.warn("IOException while reading image: "+e.getMessage());
+                    Main.warn(e, "IOException while reading image:");
                 }
             }
         }
@@ -1110,7 +1111,7 @@ public class ImageProvider {
                 }
             }
         } catch (IOException e) {
-            Main.warn(tr("Failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
+            Main.warn(e, tr("Failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
         }
         return null;
     }
@@ -1181,7 +1182,7 @@ public class ImageProvider {
                     if (u != null)
                         return u;
                 } catch (SecurityException e) {
-                    Main.warn(tr(
+                    Main.warn(e, tr(
                             "Failed to access directory ''{0}'' for security reasons. Exception was: {1}",
                             name, e.toString()));
                 }
@@ -1196,7 +1197,7 @@ public class ImageProvider {
                 if (u != null)
                     return u;
             } catch (SecurityException e) {
-                Main.warn(tr(
+                Main.warn(e, tr(
                         "Failed to access directory ''{0}'' for security reasons. Exception was: {1}", dir, e
                         .toString()));
             }
@@ -1270,6 +1271,7 @@ public class ImageProvider {
             }
             cf.close();
         } catch (SAXReturnException r) {
+            Main.trace(r);
             return r.getResult();
         } catch (IOException | SAXException e) {
             Main.warn("Parsing " + base + fn + " failed:\n" + e);
@@ -1544,7 +1546,7 @@ public class ImageProvider {
                 svg.render(g);
             }
         } catch (SVGException ex) {
-            Main.error("Unable to load svg: {0}", ex.getMessage());
+            Main.error(ex, "Unable to load svg:");
             return null;
         }
         return img;

@@ -256,6 +256,7 @@ public final class PluginHandler {
             sources.add(ClassLoader.getSystemClassLoader());
             sources.add(org.openstreetmap.josm.gui.MainApplication.class.getClassLoader());
         } catch (SecurityException ex) {
+            Main.debug(ex);
             sources.add(ImageProvider.class.getClassLoader());
         }
     }

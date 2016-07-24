@@ -300,14 +300,17 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
         try {
             content = reader.fetchHelpTopicContent(url, true);
         } catch (MissingHelpContentException e) {
+            Main.trace(e);
             url = getHelpTopicUrl(buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.BASELANGUAGE));
             try {
                 content = reader.fetchHelpTopicContent(url, true);
             } catch (MissingHelpContentException e1) {
+                Main.trace(e1);
                 url = getHelpTopicUrl(buildAbsoluteHelpTopic(relativeHelpTopic, LocaleType.ENGLISH));
                 try {
                     content = reader.fetchHelpTopicContent(url, true);
                 } catch (MissingHelpContentException e2) {
+                    Main.debug(e2);
                     this.url = url;
                     handleMissingHelpContent(relativeHelpTopic);
                     return;
@@ -343,6 +346,7 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
         try {
             content = reader.fetchHelpTopicContent(url, true);
         } catch (MissingHelpContentException e) {
+            Main.debug(e);
             this.url = url;
             handleMissingHelpContent(absoluteHelpTopic);
             return;

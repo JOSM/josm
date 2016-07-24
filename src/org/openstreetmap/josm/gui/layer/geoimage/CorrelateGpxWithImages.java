@@ -941,6 +941,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 final long deciSeconds = timezoneOffsetPair.b.getMilliseconds() / 100;
                 sldSeconds.setValue((int) (deciSeconds % 60));
             } catch (RuntimeException e) {
+                Main.warn(e);
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("An error occurred while trying to match the photos to the GPX track."
                                 +" You can adjust the sliders to manually match the photos."),

@@ -100,7 +100,7 @@ public class LoadObjectHandler extends RequestHandler {
             try {
                 ps.add(SimplePrimitiveId.fromString(i));
             } catch (IllegalArgumentException e) {
-                Main.warn("RemoteControl: invalid selection '"+i+"' ignored");
+                Main.warn(e, "RemoteControl: invalid selection '"+i+"' ignored.");
             }
         }
     }

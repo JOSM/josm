@@ -934,6 +934,7 @@ public class GenericRelationEditor extends RelationEditor {
             }
             return modified ? new ChangeCommand(orig, relation) : null;
         } catch (AddAbortException ign) {
+            Main.trace(ign);
             return null;
         }
     }

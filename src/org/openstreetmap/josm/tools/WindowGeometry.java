@@ -88,9 +88,7 @@ public class WindowGeometry {
         try {
             initFromPreferences(preferenceKey);
         } catch (WindowGeometryException e) {
-            if (Main.isDebugEnabled()) {
-                Main.debug(e.getMessage());
-            }
+            Main.debug(e);
             initFromWindowGeometry(defaultGeometry);
         }
     }

@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 
 import javax.swing.text.JTextComponent;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
@@ -109,6 +110,7 @@ public class OsmIdTextField extends AbstractIdTextField<OsmIdTextField.OsmIdVali
                         ids.addAll(SimplePrimitiveId.multipleFromString(s));
                     } catch (IllegalArgumentException ex) {
                         try {
+                            Main.trace(ex);
                             long id = Long.parseLong(s);
                             if (id <= 0) {
                                 return false;
@@ -122,6 +124,7 @@ public class OsmIdTextField extends AbstractIdTextField<OsmIdTextField.OsmIdVali
                                 return false;
                             }
                         } catch (IllegalArgumentException ex2) {
+                            Main.trace(ex2);
                             return false;
                         }
                     }

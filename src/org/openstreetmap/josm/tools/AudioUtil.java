@@ -40,9 +40,7 @@ public final class AudioUtil {
             double calibration = Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
             return naturalLength / calibration;
         } catch (UnsupportedAudioFileException | IOException e) {
-            if (Main.isDebugEnabled()) {
-                Main.debug(e.getMessage());
-            }
+            Main.debug(e);
             return 0.0;
         }
     }

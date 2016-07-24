@@ -146,7 +146,7 @@ public final class MessageNotifier {
                     }
                 }
             } catch (CredentialsAgentException e) {
-                Main.warn("Unable to get credentials: "+e.getMessage());
+                Main.warn(e, "Unable to get credentials:");
             }
         }
         return false;

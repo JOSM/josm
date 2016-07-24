@@ -109,6 +109,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 return super.parse(s);
             } catch (IllegalArgumentException e) {
                 // Legacy settings
+                Main.trace(e);
                 return Boolean.parseBoolean(s) ? ButtonHidingType.DYNAMIC : ButtonHidingType.ALWAYS_SHOWN;
             }
         }
@@ -698,6 +699,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             try {
                 new WindowGeometry(preferencePrefix+".geometry").applySafe(this);
             } catch (WindowGeometryException e) {
+                Main.debug(e);
                 ToggleDialog.this.setPreferredSize(ToggleDialog.this.getDefaultDetachedSize());
                 pack();
                 setLocationRelativeTo(Main.parent);

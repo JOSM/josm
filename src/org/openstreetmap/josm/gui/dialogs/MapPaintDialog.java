@@ -655,6 +655,7 @@ public class MapPaintDialog extends ToggleDialog {
                     s.closeSourceInputStream(is);
                 }
             } catch (IOException ex) {
+                Main.error(ex);
                 txtSource.append("<ERROR: failed to read file!>");
             }
         }

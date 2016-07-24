@@ -235,6 +235,7 @@ public class LatLonDialog extends ExtendedDialog {
                 latLon = null;
             }
         } catch (IllegalArgumentException e) {
+            Main.trace(e);
             latLon = null;
         }
         if (latLon == null) {
@@ -253,6 +254,7 @@ public class LatLonDialog extends ExtendedDialog {
         try {
             en = parseEastNorth(tfEastNorth.getText());
         } catch (IllegalArgumentException e) {
+            Main.trace(e);
             en = null;
         }
         if (en == null) {

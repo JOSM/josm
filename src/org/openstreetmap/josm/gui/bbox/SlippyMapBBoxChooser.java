@@ -74,6 +74,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
                         sources.add(source);
                     }
                 } catch (IllegalArgumentException ex) {
+                    Main.warn(ex);
                     if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
                         JOptionPane.showMessageDialog(Main.parent,
                                 ex.getMessage(), tr("Warning"),

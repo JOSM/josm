@@ -56,7 +56,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                             TaggingPresetReader.readAll(source.url, false);
                             canLoad = true;
                         } catch (IOException e) {
-                            Main.warn(tr("Could not read tagging preset source: {0}", source));
+                            Main.warn(e, tr("Could not read tagging preset source: {0}", source));
                             ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Error"),
                                     new String[] {tr("Yes"), tr("No"), tr("Cancel")});
                             ed.setContent(tr("Could not read tagging preset source: {0}\nDo you want to keep it?", source));
@@ -81,7 +81,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                         } catch (IOException e) {
                             // Should not happen, but at least show message
                             String msg = tr("Could not read tagging preset source {0}", source);
-                            Main.error(msg);
+                            Main.error(e, msg);
                             JOptionPane.showMessageDialog(Main.parent, msg);
                             return false;
                         } catch (SAXParseException e) {
@@ -94,6 +94,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                                         "Do you really want to use it?<br><br><table width=400>Error is: [{1}:{2}] {3}</table></html>",
                                         source, e.getLineNumber(), e.getColumnNumber(), e.getMessage());
                             }
+                            Main.warn(e, errorMessage);
                         } catch (SAXException e) {
                             if (canLoad) {
                                 errorMessage = tr("<html>Tagging preset source {0} can be loaded but it contains errors. " +
@@ -104,6 +105,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                                         "Do you really want to use it?<br><br><table width=600>Error is: {1}</table></html>",
                                         source, e.getMessage());
                             }
+                            Main.warn(e, errorMessage);
                         }
 
                         if (errorMessage != null) {

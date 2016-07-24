@@ -191,10 +191,8 @@ public class PlatformHookUnixoid implements PlatformHook {
             String dist = Utils.execOutput(Arrays.asList("lsb_release", "-i", "-s"));
             return "Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist) || "Mint".equalsIgnoreCase(dist);
         } catch (IOException e) {
-            if (Main.isDebugEnabled()) {
-                // lsb_release is not available on all Linux systems, so don't log at warning level
-                Main.debug(e.getMessage());
-            }
+            // lsb_release is not available on all Linux systems, so don't log at warning level
+            Main.debug(e);
             return false;
         }
     }
@@ -302,6 +300,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                     }
                 }
             } catch (IOException e) {
+                Main.debug(e);
                 // Non LSB-compliant Linux system. List of common fallback release files: http://linuxmafia.com/faq/Admin/release-files.html
                 for (LinuxReleaseInfo info : new LinuxReleaseInfo[]{
                         new LinuxReleaseInfo("/etc/lsb-release", "DISTRIB_DESCRIPTION", "DISTRIB_ID", "DISTRIB_RELEASE"),

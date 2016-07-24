@@ -221,7 +221,7 @@ public class AutoCompletionManager implements DataSetListener {
                 try {
                     PRESET_TAG_CACHE.putAll(ki.key, ki.getValues());
                 } catch (NullPointerException e) {
-                    Main.error(p + ": Unable to cache " + ki);
+                    Main.error(e, p + ": Unable to cache " + ki);
                 }
             }
         } else if (item instanceof Roles) {

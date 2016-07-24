@@ -360,17 +360,13 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             Main.getLayerManager().removeLayerChangeListener(adapter);
         } catch (IllegalArgumentException e) {
             // Ignored in old implementation
-            if (Main.isDebugEnabled()) {
-                Main.debug(e.getMessage());
-            }
+            Main.debug(e);
         }
         try {
             Main.getLayerManager().removeActiveLayerChangeListener(adapter);
         } catch (IllegalArgumentException e) {
             // Ignored in old implementation
-            if (Main.isDebugEnabled()) {
-                Main.debug(e.getMessage());
-            }
+            Main.debug(e);
         }
     }
 
@@ -388,9 +384,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             Main.getLayerManager().removeActiveLayerChangeListener(new EditLayerChangeAdapter(listener));
         } catch (IllegalArgumentException e) {
             // Ignored in old implementation
-            if (Main.isDebugEnabled()) {
-                Main.debug(e.getMessage());
-            }
+            Main.debug(e);
         }
     }
 

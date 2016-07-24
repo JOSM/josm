@@ -109,7 +109,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
             if (im.isFullyIdentified()) {
                 im.setPartiallyIdentified(im.getUserName());
             }
-            Main.warn(tr("Failed to retrieve user infos for the current JOSM user. Exception was: {0}", e.toString()));
+            Main.warn(e, tr("Failed to retrieve user infos for the current JOSM user. Exception was: {0}", e.toString()));
         }
     }
 

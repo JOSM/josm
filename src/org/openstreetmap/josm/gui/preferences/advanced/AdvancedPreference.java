@@ -337,7 +337,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                     try {
                         Main.pref.save();
                     } catch (IOException e) {
-                        Main.warn("IOException while saving preferences: "+e.getMessage());
+                        Main.warn(e, "IOException while saving preferences:");
                     }
                     readPreferences(Main.pref);
                     applyFilter();

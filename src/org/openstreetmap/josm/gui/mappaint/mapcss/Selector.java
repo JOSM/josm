@@ -330,6 +330,7 @@ public interface Selector {
                         }
                     };
                 } catch (NoSuchElementException ignore) {
+                    Main.trace(ignore);
                     containsFinder = new ContainsFinder(e);
                 }
                 e.parent = e.osm;
@@ -467,7 +468,7 @@ public interface Selector {
                 try {
                     if (!c.applies(env)) return false;
                 } catch (PatternSyntaxException e) {
-                    Main.error("PatternSyntaxException while applying condition" + c +": "+e.getMessage());
+                    Main.error(e, "PatternSyntaxException while applying condition" + c + ':');
                     return false;
                 }
             }

@@ -342,6 +342,7 @@ public class OsmOAuthAuthorizationClient {
                 throw new OsmOAuthAuthorizationException(tr("Failed to authenticate user ''{0}'' with password ''***'' as OAuth user",
                         userName));
         } catch (OsmOAuthAuthorizationException e) {
+            Main.debug(e);
             throw new OsmLoginFailedException(e.getCause());
         } catch (IOException e) {
             throw new OsmLoginFailedException(e);

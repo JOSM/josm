@@ -144,7 +144,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
                     contentInitialized = true;
                     ProxyPreference.removeProxyPreferenceListener(GettingStarted.this);
                 } catch (IOException ex) {
-                    Main.warn(tr("Failed to read MOTD. Exception was: {0}", ex.toString()));
+                    Main.warn(ex, tr("Failed to read MOTD. Exception was: {0}", ex.toString()));
                     content = "<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
                             + "</h1>\n<h2 align=\"center\">(" + tr("Message of the day not available") + ")</h2></html>";
                     // In case of MOTD not loaded because of proxy error, listen to preference changes to retry after update

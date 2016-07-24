@@ -392,6 +392,7 @@ public class ChangesetCacheManager extends JFrame {
                         ChangesetCacheManager.getInstance().runDownloadTask(new ChangesetQueryTask(parent, query));
                     }
                 } catch (IllegalStateException e) {
+                    Main.error(e);
                     JOptionPane.showMessageDialog(parent, e.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
                 }
             }

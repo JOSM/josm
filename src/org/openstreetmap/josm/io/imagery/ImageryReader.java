@@ -202,6 +202,7 @@ public class ImageryReader implements Closeable {
                                         atts.getValue("max-lat") + ',' +
                                         atts.getValue("max-lon"), ",");
                     } catch (IllegalArgumentException e) {
+                        Main.trace(e);
                         break;
                     }
                     newState = State.BOUNDS;
@@ -234,6 +235,7 @@ public class ImageryReader implements Closeable {
                     try {
                         shape.addPoint(atts.getValue("lat"), atts.getValue("lon"));
                     } catch (IllegalArgumentException e) {
+                        Main.trace(e);
                         break;
                     }
                 }

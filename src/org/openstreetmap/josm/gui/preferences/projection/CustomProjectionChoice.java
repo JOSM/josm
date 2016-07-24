@@ -96,6 +96,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
                         CustomProjection test = new CustomProjection();
                         test.update(input.getText());
                     } catch (ProjectionConfigurationException ex) {
+                        Main.warn(ex);
                         error = ex.getMessage();
                         valStatus.setIcon(ImageProvider.get("data", "error"));
                         valStatus.setVisible(true);

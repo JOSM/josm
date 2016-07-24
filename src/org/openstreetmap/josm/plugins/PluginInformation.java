@@ -215,6 +215,7 @@ public class PluginInformation {
                 try {
                     s = tr(s);
                 } catch (IllegalArgumentException e) {
+                    Main.debug(e);
                     Main.info(tr("Invalid plugin description ''{0}'' in plugin {1}", s, name));
                 }
             }

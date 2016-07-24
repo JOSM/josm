@@ -211,6 +211,7 @@ public class OsmApi extends OsmConnection {
             try {
                 initializeCapabilities(cache.updateIfRequiredString());
             } catch (SAXParseException parseException) {
+                Main.trace(parseException);
                 // XML parsing may fail if JOSM previously stored a corrupted capabilities document (see #8278)
                 // In that case, force update and try again
                 initializeCapabilities(cache.updateForceString());

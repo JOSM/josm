@@ -147,7 +147,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
                 try {
                     bookmarks.add(new Bookmark(entry));
                 } catch (IllegalArgumentException e) {
-                    Main.error(tr("Error reading bookmark entry: %s", e.getMessage()));
+                    Main.error(e, tr("Error reading bookmark entry: %s", e.getMessage()));
                 }
             }
             Collections.sort(bookmarks);

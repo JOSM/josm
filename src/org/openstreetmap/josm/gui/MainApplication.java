@@ -535,7 +535,7 @@ public class MainApplication extends Main {
                 try {
                     Main.setOffline(OnlineResource.valueOf(s.toUpperCase(Locale.ENGLISH)));
                 } catch (IllegalArgumentException e) {
-                    Main.error(tr("''{0}'' is not a valid value for argument ''{1}''. Possible values are {2}, possibly delimited by commas.",
+                    Main.error(e, tr("''{0}'' is not a valid value for argument ''{1}''. Possible values are {2}, possibly delimited by commas.",
                             s.toUpperCase(Locale.ENGLISH), Option.OFFLINE.getName(), Arrays.toString(OnlineResource.values())));
                     System.exit(1);
                     return;

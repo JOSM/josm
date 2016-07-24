@@ -151,6 +151,7 @@ public class Marker implements TemplateEngineDataProvider {
             try {
                 return new TemplateParser(s).parse();
             } catch (ParseError e) {
+                Main.debug(e);
                 Main.warn("Unable to parse template engine pattern ''{0}'' for property {1}. Using default (''{2}'') instead",
                         s, getKey(), super.getDefaultValueAsString());
                 return getDefaultValue();

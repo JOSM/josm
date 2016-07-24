@@ -143,6 +143,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         try {
             HistoryOsmPrimitive.forOsmPrimitive(primitive);
         } catch (IllegalArgumentException ign) {
+            Main.trace(ign);
             return false;
         }
 

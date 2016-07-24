@@ -267,7 +267,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid {
                 try {
                     ks.deleteEntry(alias);
                 } catch (KeyStoreException e) {
-                    Main.error(tr("Unable to remove insecure certificate from keystore: {0}", e.getMessage()));
+                    Main.error(e, tr("Unable to remove insecure certificate from keystore: {0}", e.getMessage()));
                 }
             }
         }
