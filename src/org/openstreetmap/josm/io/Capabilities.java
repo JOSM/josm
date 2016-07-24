@@ -97,7 +97,7 @@ public class Capabilities {
      * @return the value; {@code null}, if the respective configuration item does not exist
      * @throws NumberFormatException if the value is not a valid double
      */
-    public Double getDouble(String element, String attribute) throws NumberFormatException {
+    public Double getDouble(String element, String attribute) {
         String s = get(element, attribute);
         if (s == null) return null;
         return Double.valueOf(s);

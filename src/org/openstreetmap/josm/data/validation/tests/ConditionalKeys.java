@@ -101,7 +101,13 @@ public class ConditionalKeys extends Test.TagTest {
             this.conditions = conditions;
         }
 
-        public static List<ConditionalValue> parse(String value) throws ConditionalParsingException {
+        /**
+         * Parses the condition values as string.
+         * @param value value, must match {@code <restriction-value> @ <condition>[;<restriction-value> @ <condition>]} pattern
+         * @return list of {@code ConditionalValue}s
+         * @throws ConditionalParsingException if {@code value} does not match expected pattern
+         */
+        public static List<ConditionalValue> parse(String value) {
             // <restriction-value> @ <condition>[;<restriction-value> @ <condition>]
             final List<ConditionalValue> r = new ArrayList<>();
             final String part = Pattern.compile("([^@\\p{Space}][^@]*?)"

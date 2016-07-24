@@ -446,8 +446,7 @@ public class NmeaReader {
         }
     }
 
-    private static LatLon parseLatLon(String ns, String ew, String dlat, String dlon)
-    throws NumberFormatException {
+    private static LatLon parseLatLon(String ns, String ew, String dlat, String dlon) {
         String widthNorth = dlat.trim();
         String lengthEast = dlon.trim();
 

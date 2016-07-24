@@ -483,7 +483,11 @@ public final class Relation extends OsmPrimitive implements IRelation {
         bbox = null; // bbox might have changed if relation was in ds, was removed, modified, added back to dataset
     }
 
-    private void checkMembers() throws DataIntegrityProblemException {
+    /**
+     * Checks that members are part of the same dataset, and that they're not deleted.
+     * @throws DataIntegrityProblemException if one the above conditions is not met
+     */
+    private void checkMembers() {
         DataSet dataSet = getDataSet();
         if (dataSet != null) {
             RelationMember[] members = this.members;
@@ -502,7 +506,12 @@ public final class Relation extends OsmPrimitive implements IRelation {
         }
     }
 
-    private void fireMembersChanged() throws DataIntegrityProblemException {
+    /**
+     * Fires the {@code RelationMembersChangedEvent} to listeners.
+     * @throws DataIntegrityProblemException if members are not valid
+     * @see #checkMembers
+     */
+    private void fireMembersChanged() {
         checkMembers();
         if (getDataSet() != null) {
             getDataSet().fireRelationMembersChanged(this);

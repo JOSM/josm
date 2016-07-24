@@ -4,7 +4,6 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -75,7 +74,7 @@ public class OsmExporter extends FileExporter {
         }
     }
 
-    protected static OutputStream getOutputStream(File file) throws FileNotFoundException, IOException {
+    protected static OutputStream getOutputStream(File file) throws IOException {
         return Compression.getCompressedFileOutputStream(file);
     }
 
@@ -124,7 +123,7 @@ public class OsmExporter extends FileExporter {
         }
     }
 
-    protected void doSave(File file, OsmDataLayer layer) throws IOException, FileNotFoundException {
+    protected void doSave(File file, OsmDataLayer layer) throws IOException {
         // create outputstream and wrap it with gzip or bzip, if necessary
         try (
             OutputStream out = getOutputStream(file);

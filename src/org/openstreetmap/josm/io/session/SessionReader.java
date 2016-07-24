@@ -605,7 +605,7 @@ public class SessionReader {
         }
     }
 
-    private static InputStream getZipInputStream(ZipFile zipFile) throws ZipException, IOException, IllegalDataException {
+    private static InputStream getZipInputStream(ZipFile zipFile) throws IOException, IllegalDataException {
         ZipEntry josEntry = null;
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         while (entries.hasMoreElements()) {
