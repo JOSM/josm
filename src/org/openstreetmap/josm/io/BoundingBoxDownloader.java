@@ -202,8 +202,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
     }
 
     @Override
-    public List<Note> parseNotes(int noteLimit, int daysClosed, ProgressMonitor progressMonitor)
-            throws OsmTransferException, MoreNotesException {
+    public List<Note> parseNotes(int noteLimit, int daysClosed, ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask(tr("Downloading notes"));
         CheckParameterUtil.ensureThat(noteLimit > 0, "Requested note limit is less than 1.");
         // see result_limit in https://github.com/openstreetmap/openstreetmap-website/blob/master/app/controllers/notes_controller.rb

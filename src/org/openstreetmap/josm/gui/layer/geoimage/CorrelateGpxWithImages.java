@@ -979,7 +979,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
      * @throws IndexOutOfBoundsException when there are no images
      * @throws NoGpxTimestamps when the gpx track does not contain a timestamp
      */
-    static Pair<Timezone, Offset> autoGuess(List<ImageEntry> imgs, GpxData gpx) throws IndexOutOfBoundsException, NoGpxTimestamps {
+    static Pair<Timezone, Offset> autoGuess(List<ImageEntry> imgs, GpxData gpx) throws NoGpxTimestamps {
 
         // Init variables
         long firstExifDate = imgs.get(0).getExifTime().getTime();

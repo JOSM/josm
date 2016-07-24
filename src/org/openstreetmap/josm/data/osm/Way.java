@@ -447,7 +447,7 @@ public final class Way extends OsmPrimitive implements IWay {
      * @throws IndexOutOfBoundsException if offs is out of bounds
      * @since 1313
      */
-    public void addNode(int offs, Node n) throws IndexOutOfBoundsException {
+    public void addNode(int offs, Node n) {
         if (n == null) return;
 
         boolean locked = writeLock();

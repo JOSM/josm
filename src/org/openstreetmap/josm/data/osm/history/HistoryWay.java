@@ -96,7 +96,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      * @return the idx-th node id
      * @throws IndexOutOfBoundsException if  idx &lt; 0 || idx &gt;= {#see {@link #getNumNodes()}
      */
-    public long getNodeId(int idx) throws IndexOutOfBoundsException {
+    public long getNodeId(int idx) {
         if (idx < 0 || idx >= nodeIds.size())
             throw new IndexOutOfBoundsException(tr("Parameter {0} not in range 0..{1}. Got ''{2}''.", "idx", nodeIds.size(), idx));
         return nodeIds.get(idx);

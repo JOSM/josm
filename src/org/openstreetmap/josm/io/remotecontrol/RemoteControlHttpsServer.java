@@ -362,11 +362,10 @@ public class RemoteControlHttpsServer extends Thread {
      * @param port The port this server will listen on
      * @param ipv6 Whether IPv6 or IPv4 server should be started
      * @throws IOException when connection errors
-     * @throws NoSuchAlgorithmException if the JVM does not support TLS (can not happen)
      * @throws GeneralSecurityException in case of SSL setup errors
      * @since 8339
      */
-    public RemoteControlHttpsServer(int port, boolean ipv6) throws IOException, NoSuchAlgorithmException, GeneralSecurityException {
+    public RemoteControlHttpsServer(int port, boolean ipv6) throws IOException, GeneralSecurityException {
         super("RemoteControl HTTPS Server");
         this.setDaemon(true);
 

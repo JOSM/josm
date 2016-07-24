@@ -169,7 +169,7 @@ public class MultipolygonBuilder {
      * @return a list of multipolygon rings.
      * @throws JoinedPolygonCreationException if the creation fails.
      */
-    public static List<JoinedPolygon> joinWays(Collection<Way> ways) throws JoinedPolygonCreationException {
+    public static List<JoinedPolygon> joinWays(Collection<Way> ways) {
         List<JoinedPolygon> joinedWays = new ArrayList<>();
 
         //collect ways connecting to each node.
