@@ -674,22 +674,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         }
     }
 
-    private final transient AWTEventListener awtListener = new AWTEventListener() {
-         @Override
-         public void eventDispatched(AWTEvent event) {
-            if (event instanceof InputEvent &&
-                    ((InputEvent) event).getComponent() == mv) {
-                synchronized (collector) {
-                    int modifiers = ((InputEvent) event).getModifiersEx();
-                    Point mousePos = null;
-                    if (event instanceof MouseEvent) {
-                        mousePos = ((MouseEvent) event).getPoint();
-                    }
-                    collector.updateMousePosition(mousePos, modifiers);
-                }
-            }
-        }
-    };
+    private final transient AWTEventListener awtListener;
 
     private final transient MouseMotionListener mouseMotionListener = new MouseMotionListener() {
         @Override
@@ -718,12 +703,12 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
     };
 
     private void registerListeners() {
-        // Listen to keyboard/mouse events for pressing/releasing alt key and
-        // inform the collector.
+        // Listen to keyboard/mouse events for pressing/releasing alt key and inform the collector.
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(awtListener,
                     AWTEvent.KEY_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
         } catch (SecurityException ex) {
+            Main.trace(ex);
             mv.addMouseMotionListener(mouseMotionListener);
             mv.addKeyListener(keyAdapter);
         }
@@ -734,9 +719,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
             Toolkit.getDefaultToolkit().removeAWTEventListener(awtListener);
         } catch (SecurityException e) {
             // Don't care, awtListener probably wasn't registered anyway
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
         mv.removeMouseMotionListener(mouseMotionListener);
         mv.removeKeyListener(keyAdapter);
@@ -825,6 +808,19 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
     public MapStatus(final MapFrame mapFrame) {
         this.mv = mapFrame.mapView;
         this.collector = new Collector(mapFrame);
+        this.awtListener = event -> {
+            if (event instanceof InputEvent &&
+                    ((InputEvent) event).getComponent() == mv) {
+                synchronized (collector) {
+                    int modifiers = ((InputEvent) event).getModifiersEx();
+                    Point mousePos = null;
+                    if (event instanceof MouseEvent) {
+                        mousePos = ((MouseEvent) event).getPoint();
+                    }
+                    collector.updateMousePosition(mousePos, modifiers);
+                }
+            }
+        };
 
         // Context menu of status bar
         setComponentPopupMenu(new MapStatusPopupMenu());

@@ -736,7 +736,7 @@ public final class I18n {
     }
 
     public static TranslationAdapter getTranslationAdapter() {
-        return (text, objects) -> I18n.tr(text, objects);
+        return I18n::tr;
     }
 
     /**
