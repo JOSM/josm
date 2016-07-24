@@ -74,10 +74,10 @@ public class NMEAImporter extends FileImporter {
         msg.append(tr("Zero coordinates: {0}", r.getParserZeroCoordinates()))
            .append("</html>");
         if (success) {
-            SwingUtilities.invokeLater(new Notification(
+            SwingUtilities.invokeLater(() -> new Notification(
                     "<h3>" + tr("NMEA import success:") + "</h3>" + msg.toString())
                     .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                    ::show);
+                    .show());
         } else {
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,

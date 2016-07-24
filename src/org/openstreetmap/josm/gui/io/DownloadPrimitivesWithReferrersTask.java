@@ -137,7 +137,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         // Warm about missing primitives
         final Set<PrimitiveId> errs = mainTask.getMissingPrimitives();
         if (errs != null && !errs.isEmpty())
-            GuiHelper.runInEDTAndWait(reportProblemDialog(errs,
+            GuiHelper.runInEDTAndWait(() -> reportProblemDialog(errs,
                     trn("Object could not be downloaded", "Some objects could not be downloaded", errs.size()),
                     trn("One object could not be downloaded.<br>",
                             "{0} objects could not be downloaded.<br>",
@@ -147,7 +147,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
                                  + "This usually means, the server does not know an object with the requested id."),
                     tr("missing objects:"),
                     JOptionPane.ERROR_MESSAGE
-                    )::showDialog);
+                    ).showDialog());
 
         // Warm about deleted primitives
         final Set<PrimitiveId> del = new HashSet<>();
@@ -159,7 +159,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
             }
         }
         if (!del.isEmpty())
-            GuiHelper.runInEDTAndWait(reportProblemDialog(del,
+            GuiHelper.runInEDTAndWait(() -> reportProblemDialog(del,
                     trn("Object deleted", "Objects deleted", del.size()),
                     trn(
                         "One downloaded object is deleted.",
@@ -168,7 +168,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
                         del.size()),
                     null,
                     JOptionPane.WARNING_MESSAGE
-            )::showDialog);
+            ).showDialog());
     }
 
     /**

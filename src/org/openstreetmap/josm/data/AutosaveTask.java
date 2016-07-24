@@ -231,7 +231,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 }
                 changedDatasets.clear();
                 if (PROP_NOTIFICATION.get() && !layersInfo.isEmpty()) {
-                    displayNotification();
+                    GuiHelper.runInEDT(this::displayNotification);
                 }
             } catch (RuntimeException t) {
                 // Don't let exception stop time thread
@@ -242,10 +242,9 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     }
 
     protected void displayNotification() {
-        GuiHelper.runInEDT(
-                new Notification(tr("Your work has been saved automatically."))
-                .setDuration(Notification.TIME_SHORT)
-                ::show);
+        new Notification(tr("Your work has been saved automatically."))
+        .setDuration(Notification.TIME_SHORT)
+        .show();
     }
 
     @Override
