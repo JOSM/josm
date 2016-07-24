@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -24,6 +23,7 @@ import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.datatransfer.FileTransferHandler;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferenceListener;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
@@ -124,6 +124,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
                 + "</h1><h2 align=\"center\">" + tr("Downloading \"Message of the day\"") + "</h2></html>");
         // clear the build-in command ctrl+shift+O, because it is used as shortcut in JOSM
         lg.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "none");
+        lg.setTransferHandler(null);
 
         JScrollPane scroller = new JScrollPane(lg);
         scroller.setViewportBorder(new EmptyBorder(10, 100, 10, 100));
@@ -131,9 +132,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
 
         getMOTD();
 
-        if (!GraphicsEnvironment.isHeadless()) {
-            new FileDrop(scroller);
-        }
+        setTransferHandler(new FileTransferHandler());
     }
 
     private void getMOTD() {
