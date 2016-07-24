@@ -466,9 +466,7 @@ public final class PluginHandler {
                 try {
                     OnlineResource.JOSM_WEBSITE.checkOfflineAccess(updateSite, Main.getJOSMWebsite());
                 } catch (OfflineAccessException e) {
-                    if (Main.isTraceEnabled()) {
-                        Main.trace(e.getMessage());
-                    }
+                    Main.trace(e);
                     return false;
                 }
             }

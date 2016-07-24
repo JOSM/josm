@@ -87,9 +87,7 @@ public class SearchNotesDownloadAction extends JosmAction {
             new DownloadNotesTask().download(id, null);
             return;
         } catch (NumberFormatException ignore) {
-            if (Main.isTraceEnabled()) {
-                Main.trace(ignore.getMessage());
-            }
+            Main.trace(ignore);
         }
 
         int noteLimit = Main.pref.getInteger("osm.notes.downloadLimit", 1000);

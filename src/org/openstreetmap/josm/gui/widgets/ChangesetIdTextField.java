@@ -83,9 +83,7 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
                     }
                 } catch (NumberFormatException e) {
                     // Ignored
-                    if (Main.isTraceEnabled()) {
-                        Main.trace(e.getMessage());
-                    }
+                    Main.trace(e);
                 }
             }
             return false;

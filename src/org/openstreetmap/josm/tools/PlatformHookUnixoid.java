@@ -402,9 +402,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                         }
                     } catch (IOException e) {
                         // Ignore
-                        if (Main.isTraceEnabled()) {
-                            Main.trace(e.getMessage());
-                        }
+                        Main.trace(e);
                     }
                 }
             }

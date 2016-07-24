@@ -92,9 +92,7 @@ public class TagMergeItemTest {
             fail("expected IllegalArgumentException not thrown");
         } catch (IllegalArgumentException e) {
             // OK
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
     }
 
@@ -141,9 +139,7 @@ public class TagMergeItemTest {
             fail("expected IllegalStateException");
         } catch (IllegalStateException e) {
             // OK
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
     }
 
@@ -156,9 +152,7 @@ public class TagMergeItemTest {
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // OK
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
     }
 }

@@ -1446,9 +1446,7 @@ public abstract class SourceEditor extends JPanel {
                                     last.minJosmVersion = Integer.valueOf(value);
                                 } catch (NumberFormatException e) {
                                     // ignore
-                                    if (Main.isTraceEnabled()) {
-                                        Main.trace(e.getMessage());
-                                    }
+                                    Main.trace(e);
                                 }
                             } else if ("style-type".equals(key)) {
                                 last.styleType = value;

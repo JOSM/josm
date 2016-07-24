@@ -733,9 +733,7 @@ public class SearchCompiler {
                     v = Double.valueOf(referenceValue);
                 }
             } catch (NumberFormatException ignore) {
-                if (Main.isTraceEnabled()) {
-                    Main.trace(ignore.getMessage());
-                }
+                Main.trace(ignore);
             }
             this.referenceNumber = v;
             this.compareMode = compareMode;

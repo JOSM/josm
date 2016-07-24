@@ -241,6 +241,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid {
                 } catch (InvalidKeyException | NoSuchProviderException | SignatureException e) {
                     // If exception this is not a certificate related to JOSM, just trace it
                     Main.trace(alias + " --> " + e.getClass().getName());
+                    Main.trace(e);
                 }
             }
         }

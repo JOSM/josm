@@ -81,9 +81,7 @@ public class HistoryWayTest {
             fail("expected expection of type " + IndexOutOfBoundsException.class.toString());
         } catch (IndexOutOfBoundsException e) {
             // OK
-            if (Main.isTraceEnabled()) {
-                Main.trace(e.getMessage());
-            }
+            Main.trace(e);
         }
 
         way.addNode(5);

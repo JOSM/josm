@@ -195,9 +195,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
                 days = Integer.parseInt(pref);
             } catch (NumberFormatException e) {
                 // ignore - load from preference pluginmanager.time-based-update.interval
-                if (Main.isTraceEnabled()) {
-                    Main.trace(e.getMessage());
-                }
+                Main.trace(e);
             }
             if (days <= 0) {
                 days = PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL;

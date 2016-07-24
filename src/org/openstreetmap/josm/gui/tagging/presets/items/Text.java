@@ -83,9 +83,7 @@ public class Text extends KeyedItem {
                             LAST_VALUES.get(key)) + auto_increment_selected));
                 } catch (NumberFormatException ex) {
                     // Ignore - cannot auto-increment if last was non-numeric
-                    if (Main.isTraceEnabled()) {
-                        Main.trace(ex.getMessage());
-                    }
+                    Main.trace(ex);
                 }
             } else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                 // selected osm primitives are untagged or filling default values feature is enabled
