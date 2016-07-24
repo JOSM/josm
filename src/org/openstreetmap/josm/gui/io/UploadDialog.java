@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -59,6 +58,7 @@ import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
+import org.openstreetmap.josm.tools.MultiLineFlowLayout;
 
 /**
  * This is a dialog for entering upload options like the parameters for
@@ -165,6 +165,8 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         tpConfigPanels.setToolTipTextAt(3, tr("Configure advanced settings"));
 
         pnl.add(tpConfigPanels, GBC.eol().fill(GBC.HORIZONTAL));
+
+        pnl.add(buildActionPanel(), GBC.eol().fill(GBC.HORIZONTAL));
         return pnl;
     }
 
@@ -174,7 +176,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      * @return The panel with the OK and CANCEL buttons
      */
     protected JPanel buildActionPanel() {
-        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel pnl = new JPanel(new MultiLineFlowLayout(FlowLayout.CENTER));
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // -- upload button
@@ -201,9 +203,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      */
     protected void build() {
         setTitle(tr("Upload to ''{0}''", OsmApi.getOsmApi().getBaseUrl()));
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(buildContentPanel(), BorderLayout.CENTER);
-        getContentPane().add(buildActionPanel(), BorderLayout.SOUTH);
+        setContentPane(buildContentPanel());
 
         addWindowListener(new WindowEventHandler());
 
