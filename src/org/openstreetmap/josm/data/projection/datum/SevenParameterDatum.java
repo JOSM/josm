@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
  * - general rotation
  * - scale
  *
- * This method is described by EPSG as EPSG::9606.
+ * This method is described by EPSG as EPSG:9606.
  * Also known as Bursa-Wolf.
  */
 public class SevenParameterDatum extends AbstractDatum {

@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016072200, Last Updated Fri Jul 22 07:07:01 2016 UTC
+        // Taken from Version 2016072400, Last Updated Sun Jul 24 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -328,6 +328,7 @@ public final class DomainValidator extends AbstractValidator {
         "ally", // ally Ally Financial Inc.
         "alsace", // alsace REGION D ALSACE
         "alstom", // alstom ALSTOM
+        "amfam", // amfam AmFam, Inc.
         "amica", // amica Amica Mutual Insurance Company
         "amsterdam", // amsterdam Gemeente Amsterdam
         "analytics", // analytics Campus IP LLC
@@ -406,6 +407,7 @@ public final class DomainValidator extends AbstractValidator {
         "bond", // bond Bond University Limited
         "boo", // boo Charleston Road Registry Inc.
         "book", // book Amazon Registry Services, Inc.
+        "booking", // booking Booking.com B.V.
         "boots", // boots THE BOOTS COMPANY PLC
         "bosch", // bosch Robert Bosch GMBH
         "bostik", // bostik Bostik SA
@@ -471,6 +473,7 @@ public final class DomainValidator extends AbstractValidator {
         "cipriani", // cipriani Hotel Cipriani Srl
         "circle", // circle Amazon Registry Services, Inc.
         "cisco", // cisco Cisco Technology, Inc.
+        "citadel", // citadel Citadel Domain LLC
         "citic", // citic CITIC Group Corporation
         "city", // city Snow Sky, LLC
         "cityeats", // cityeats Lifestyle Domain Holdings, Inc.
@@ -564,6 +567,7 @@ public final class DomainValidator extends AbstractValidator {
         "dubai", // dubai Dubai Smart Government Department
         "duck", // duck Johnson Shareholdings, Inc.
         "dunlop", // dunlop The Goodyear Tire &amp; Rubber Company
+        "duns", // duns The Dun &amp; Bradstreet Corporation
         "dupont", // dupont E. I. du Pont de Nemours and Company
         "durban", // durban ZA Central Registry NPC trading as ZA Central Registry
         "dvag", // dvag Deutsche Vermögensberatung Aktiengesellschaft DVAG
@@ -585,6 +589,7 @@ public final class DomainValidator extends AbstractValidator {
         "erni", // erni ERNI Group Holding AG
         "esq", // esq Charleston Road Registry Inc.
         "estate", // estate Trixy Park, LLC
+        "esurance", // esurance Esurance Insurance Company
         "eurovision", // eurovision European Broadcasting Union (EBU)
         "eus", // eus Puntueus Fundazioa
         "events", // events Pioneer Maple, LLC
@@ -906,6 +911,7 @@ public final class DomainValidator extends AbstractValidator {
         "mov", // mov Charleston Road Registry Inc.
         "movie", // movie New Frostbite, LLC
         "movistar", // movistar Telefónica S.A.
+        "msd", // msd MSD Registry Holdings, Inc.
         "mtn", // mtn MTN Dubai Limited
         "mtpc", // mtpc Mitsubishi Tanabe Pharma Corporation
         "mtr", // mtr MTR Corporation Limited

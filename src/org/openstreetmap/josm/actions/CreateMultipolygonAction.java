@@ -288,10 +288,10 @@ public class CreateMultipolygonAction extends JosmAction {
 
         if (error != null) {
             if (showNotif) {
-                GuiHelper.runInEDT(
+                GuiHelper.runInEDT(() ->
                         new Notification(error)
                         .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                        ::show);
+                        .show());
             }
             return null;
         } else {
