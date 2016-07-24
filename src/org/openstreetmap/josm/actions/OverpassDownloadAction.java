@@ -220,6 +220,10 @@ public class OverpassDownloadAction extends JosmAction {
             OverpassQueryHistoryPopup.addToHistory(getOverpassQuery());
         }
 
+        @Override
+        protected void updateSizeCheck() {
+            displaySizeCheckResult(false);
+        }
     }
 
     static class OverpassQueryHistoryPopup extends JPopupMenu {

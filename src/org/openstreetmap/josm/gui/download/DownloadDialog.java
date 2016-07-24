@@ -245,7 +245,7 @@ public class DownloadDialog extends JDialog {
         restoreSettings();
     }
 
-    private void updateSizeCheck() {
+    protected void updateSizeCheck() {
         boolean isAreaTooLarge = false;
         if (currentBounds == null) {
             sizeCheck.setText(tr("No area selected yet"));
@@ -257,6 +257,10 @@ public class DownloadDialog extends JDialog {
             // see max_request_area in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
             isAreaTooLarge = currentBounds.getArea() > Main.pref.getDouble("osm-server.max-request-area", 0.25);
         }
+        displaySizeCheckResult(isAreaTooLarge);
+    }
+
+    protected void displaySizeCheckResult(boolean isAreaTooLarge) {
         if (isAreaTooLarge) {
             sizeCheck.setText(tr("Download area too large; will probably be rejected by server"));
             sizeCheck.setForeground(Color.red);
