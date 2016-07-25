@@ -587,6 +587,7 @@ public class MainApplication extends Main {
                     if (Main.isDebugEnabled()) {
                         Main.debug("Exception while checking IPv6 connectivity: "+e);
                     }
+                    Main.trace(e);
                 }
                 if (wasv6 && !hasv6) {
                     Main.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
