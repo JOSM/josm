@@ -1719,7 +1719,7 @@ public abstract class SourceEditor extends JPanel {
     public final void deferLoading(final DefaultTabPreferenceSetting tab, final Component component) {
         tab.getTabPane().addChangeListener(e -> {
             if (tab.getTabPane().getSelectedComponent() == component) {
-                SourceEditor.this.initiallyLoadAvailableSources();
+                initiallyLoadAvailableSources();
             }
         });
     }

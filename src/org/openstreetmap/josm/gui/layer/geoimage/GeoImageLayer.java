@@ -433,7 +433,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
                 for (int i = 0; i < data.size(); i++) {
                     if (selected.equals(data.get(i))) {
                         currentPhoto = i;
-                        ImageViewerDialog.showImage(GeoImageLayer.this, data.get(i));
+                        ImageViewerDialog.showImage(this, data.get(i));
                         break;
                     }
                 }
@@ -888,7 +888,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
         mapModeListener.mapModeChange(null, Main.map.mapMode);
 
         Main.getLayerManager().addActiveLayerChangeListener(e -> {
-            if (Main.getLayerManager().getActiveLayer() == GeoImageLayer.this) {
+            if (Main.getLayerManager().getActiveLayer() == this) {
                 // only in select mode it is possible to click the images
                 Main.map.selectSelectTool(false);
             }

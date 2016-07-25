@@ -99,7 +99,7 @@ public class MapImage {
                 .setHeight(height)
                 .setOptional(true)
                 .getInBackground((ImageCallback) result -> {
-                    synchronized (MapImage.this) {
+                    synchronized (this) {
                         if (result == null) {
                             source.logWarning(tr("Failed to locate image ''{0}''", name));
                             ImageIcon noIcon = MapPaintStyles.getNoIcon_Icon(source);

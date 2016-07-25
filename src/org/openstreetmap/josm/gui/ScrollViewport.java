@@ -67,7 +67,7 @@ public class ScrollViewport extends JPanel {
 
     private final List<JButton> buttons = new ArrayList<>();
 
-    private final Timer timer = new Timer(100, evt -> ScrollViewport.this.scroll());
+    private final Timer timer = new Timer(100, evt -> scroll());
 
     private int scrollDirection = NO_SCROLL;
 

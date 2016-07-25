@@ -165,7 +165,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     @Override
     public void doBeginTask() {
         doInEDT(() -> {
-            Main.currentProgressMonitor = PleaseWaitProgressMonitor.this;
+            Main.currentProgressMonitor = this;
             if (GraphicsEnvironment.isHeadless()) {
                 return;
             }
@@ -295,7 +295,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         isInBackground = false;
         doInEDT(() -> {
             if (dialog != null) {
-                dialog.setInBackgroundPossible(PleaseWaitProgressMonitor.this.taskId != null && Main.isDisplayingMapView());
+                dialog.setInBackgroundPossible(taskId != null && Main.isDisplayingMapView());
                 reset();
                 getDialog();
             }
@@ -307,7 +307,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         this.taskId = taskId;
         doInEDT(() -> {
             if (dialog != null) {
-                dialog.setInBackgroundPossible(PleaseWaitProgressMonitor.this.taskId != null && Main.isDisplayingMapView());
+                dialog.setInBackgroundPossible(taskId != null && Main.isDisplayingMapView());
             }
         });
     }
