@@ -11,6 +11,8 @@ import javax.swing.table.TableColumn;
  * @since 1709
  */
 public class TagTableColumnModel extends DefaultTableColumnModel {
+    protected static final int COLUMN_KEY = 0;
+    protected static final int COLUMN_VALUE = 1;
 
     /**
      * Constructs a new {@code TagTableColumnModel}.
