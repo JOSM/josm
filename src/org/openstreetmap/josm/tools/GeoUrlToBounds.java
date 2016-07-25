@@ -14,7 +14,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  */
 public final class GeoUrlToBounds {
 
-    public static final Pattern PATTERN = Pattern.compile("geo:(?<lat>[0-9.]+),(?<lon>[0-9.]+)(\\?z=(?<zoom>[0-9]+))?");
+    public static final Pattern PATTERN = Pattern.compile("geo:(?<lat>[+-]?[0-9.]+),(?<lon>[+-]?[0-9.]+)(\\?z=(?<zoom>[0-9]+))?");
 
     private GeoUrlToBounds() {
         // Hide default constructor for utils classes
