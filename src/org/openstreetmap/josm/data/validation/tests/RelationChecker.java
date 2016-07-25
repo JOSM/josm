@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -292,7 +293,7 @@ public class RelationChecker extends Test {
         // verify unwanted members
         for (String key : map.keySet()) {
             if (!allroles.containsKey(key)) {
-                String templates = allroles.keySet().stream().map(x -> tr(x)).collect(Collectors.joining("/"));
+                String templates = allroles.keySet().stream().map(I18n::tr).collect(Collectors.joining("/"));
 
                 if (!key.isEmpty()) {
                     String s = marktr("Role {0} unknown in templates {1}");
