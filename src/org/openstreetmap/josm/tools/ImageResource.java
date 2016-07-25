@@ -197,6 +197,9 @@ public class ImageResource {
         if (isDisabled) {
             //Use default Swing functionality to make icon look disabled by applying grayscaling filter.
             Icon disabledIcon = UIManager.getLookAndFeel().getDisabledIcon(null, new ImageIcon(bimg));
+            if (disabledIcon == null) {
+                return null;
+            }
 
             //Convert Icon to ImageIcon with BufferedImage inside
             bimg = new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
