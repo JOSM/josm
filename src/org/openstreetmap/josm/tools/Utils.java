@@ -326,13 +326,7 @@ public final class Utils {
      * @return An unordered HTML list
      */
     public static String joinAsHtmlUnorderedList(Iterable<?> values) {
-        StringBuilder sb = new StringBuilder(1024);
-        sb.append("<ul>");
-        for (Object i : values) {
-            sb.append("<li>").append(i).append("</li>");
-        }
-        sb.append("</ul>");
-        return sb.toString();
+        return StreamUtils.toStream(values.iterator()).map(x -> x.toString()).collect(StreamUtils.toHtmlList());
     }
 
     /**

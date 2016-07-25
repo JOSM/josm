@@ -179,7 +179,7 @@ public class WMSImagery {
     public String buildGetMapUrl(Collection<LayerDetails> selectedLayers, String format) {
         return buildRootUrl() + "FORMAT=" + format + (imageFormatHasTransparency(format) ? "&TRANSPARENT=TRUE" : "")
                 + "&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS="
-                + Utils.join(",", Utils.transform(selectedLayers, x -> x.ident))
+                + selectedLayers.stream().map(x -> x.ident).collect(Collectors.joining(","))
                 + "&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}";
     }
 

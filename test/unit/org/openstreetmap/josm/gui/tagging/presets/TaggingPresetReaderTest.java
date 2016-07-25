@@ -4,10 +4,12 @@ package org.openstreetmap.josm.gui.tagging.presets;
 import static org.CustomMatchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -16,7 +18,6 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.tagging.presets.items.Check;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -58,12 +59,8 @@ public class TaggingPresetReaderTest {
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll(TestUtils.getTestDataRoot() + "preset_chunk.xml", true);
         assertThat(presets, hasSize(1));
         final TaggingPreset abc = presets.iterator().next();
-        final List<String> keys = Utils.transform(abc.data, new Utils.Function<TaggingPresetItem, String>() {
-            @Override
-            public String apply(TaggingPresetItem x) {
-                return x instanceof Key ? ((Key) x).key : null;
-            }
-        });
+        assertTrue(abc.data.stream().allMatch(Key.class::isInstance));
+        final List<String> keys = abc.data.stream().map(x -> ((Key) x).key).collect(Collectors.toList());
         assertEquals("[A1, A2, A3, B1, B2, B3, C1, C2, C3]", keys.toString());
     }
 

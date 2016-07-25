@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -47,9 +48,8 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.UserCancelException;
-import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.Utils.Function;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -568,9 +568,8 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     protected static void informAboutTagConflicts(
             final Collection<? extends OsmPrimitive> primitives,
             final TagCollection normalizedTags) throws UserCancelException {
-        String conflicts = Utils.joinAsHtmlUnorderedList(Utils.transform(normalizedTags.getKeysWithMultipleValues(),
-                (Function<String, String>) key -> tr("{0} ({1})", key, Utils.join(tr(", "), Utils.transform(normalizedTags.getValues(key),
-                        (Function<String, String>) x -> x == null || x.isEmpty() ? tr("<i>missing</i>") : x)))));
+        String conflicts = normalizedTags.getKeysWithMultipleValues().stream().map(
+                key -> getKeyDescription(key, normalizedTags)).collect(StreamUtils.toHtmlList());
         String msg = /* for correct i18n of plural forms - see #9110 */ trn("You are about to combine {0} objects, "
                 + "but the following tags are used conflictingly:<br/>{1}"
                 + "If these objects are combined, the resulting object may have unwanted tags.<br/>"
@@ -592,5 +591,13 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 JOptionPane.YES_OPTION)) {
             throw new UserCancelException();
         }
+    }
+
+    private static String getKeyDescription(String key, TagCollection normalizedTags) {
+        String values = normalizedTags.getValues(key)
+                .stream()
+                .map(x -> ((x == null || x.isEmpty()) ? tr("<i>missing</i>") : x))
+                .collect(Collectors.joining(tr(", ")));
+        return tr("{0} ({1})", key, values);
     }
 }
