@@ -32,6 +32,10 @@ public class GeoUrlToBoundsTest {
                 GeoUrlToBounds.parse("geo:12.34,56.78"),
                 is(OsmUrlToBounds.positionToBounds(12.34, 56.78, 18))
         );
+        assertThat(
+                GeoUrlToBounds.parse("geo:-37.786971,-122.399677"),
+                is(OsmUrlToBounds.positionToBounds(-37.786971, -122.399677, 18))
+        );
     }
 
     /**
