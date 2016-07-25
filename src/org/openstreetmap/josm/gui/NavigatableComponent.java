@@ -87,7 +87,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         // if it isn't displayed on screen, you cannot click on it
         MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
         try {
-            return !MapPaintStyles.getStyles().get(prim, getDist100Pixel(), NavigatableComponent.this).isEmpty();
+            return !MapPaintStyles.getStyles().get(prim, getDist100Pixel(), this).isEmpty();
         } finally {
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
         }

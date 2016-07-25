@@ -631,7 +631,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      */
     public String formatAsHtmlUnorderedList(Collection<? extends OsmPrimitive> primitives, int maxElements) {
         final Collection<String> displayNames = Utils.transform(primitives,
-                (Function<OsmPrimitive, String>) x -> x.getDisplayName(DefaultNameFormatter.this));
+                (Function<OsmPrimitive, String>) x -> x.getDisplayName(this));
         return Utils.joinAsHtmlUnorderedList(Utils.limit(displayNames, maxElements, "..."));
     }
 

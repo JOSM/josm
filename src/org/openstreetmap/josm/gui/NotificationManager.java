@@ -153,7 +153,10 @@ class NotificationManager {
             hideTimer.stop();
             if (currentNotificationPanel != null) {
                 currentNotificationPanel.setVisible(false);
-                ((JFrame) Main.parent).getLayeredPane().remove(currentNotificationPanel);
+                JFrame parent = (JFrame) Main.parent;
+                if (parent != null) {
+                    parent.getLayeredPane().remove(currentNotificationPanel);
+                }
                 currentNotificationPanel = null;
             }
             pauseTimer.restart();

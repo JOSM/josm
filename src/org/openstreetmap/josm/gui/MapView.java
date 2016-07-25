@@ -571,7 +571,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             setFocusTraversalKeysEnabled(false);
         }
 
-        for (JComponent c : getMapNavigationComponents(MapView.this)) {
+        for (JComponent c : getMapNavigationComponents(this)) {
             add(c);
         }
         setTransferHandler(new OsmTransferHandler());

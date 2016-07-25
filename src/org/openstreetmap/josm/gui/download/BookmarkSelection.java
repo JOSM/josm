@@ -112,7 +112,7 @@ public class BookmarkSelection implements DownloadSelection {
         bookmarks.getSelectionModel().addListSelectionListener(e -> {
             Bookmark b = bookmarks.getSelectedValue();
             if (b != null && gui != null) {
-                gui.boundingBoxChanged(b.getArea(), BookmarkSelection.this);
+                gui.boundingBoxChanged(b.getArea(), this);
             }
         });
         bookmarks.addMouseListener(new DoubleClickAdapter());

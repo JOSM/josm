@@ -91,11 +91,11 @@ public class VersionTable extends JTable implements ChangeListener {
             }
         });
         getModel().addTableModelListener(e -> {
-            adjustColumnWidth(VersionTable.this, 0, 0);
-            adjustColumnWidth(VersionTable.this, 1, -8);
-            adjustColumnWidth(VersionTable.this, 2, -8);
-            adjustColumnWidth(VersionTable.this, 3, 0);
-            adjustColumnWidth(VersionTable.this, 4, 0);
+            adjustColumnWidth(this, 0, 0);
+            adjustColumnWidth(this, 1, -8);
+            adjustColumnWidth(this, 2, -8);
+            adjustColumnWidth(this, 3, 0);
+            adjustColumnWidth(this, 4, 0);
         });
     }
 

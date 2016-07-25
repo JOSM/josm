@@ -56,7 +56,7 @@ public class CommonSettingsPanel extends JPanel {
         this.btnFadeColor.addActionListener(e -> {
             JColorChooser chooser = new JColorChooser(btnFadeColor.getBackground());
             int answer = JOptionPane.showConfirmDialog(
-                    CommonSettingsPanel.this, chooser,
+                    this, chooser,
                     tr("Choose a color for {0}", tr("imagery fade")),
                     JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE);

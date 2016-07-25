@@ -205,9 +205,9 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         imgProv.setOptional(true);
         imgProv.getInBackground((ImageResourceCallback) result -> {
             if (result != null) {
-                GuiHelper.runInEDT(() -> result.attachImageIcon(TaggingPreset.this));
+                GuiHelper.runInEDT(() -> result.attachImageIcon(this));
             } else {
-                Main.warn(TaggingPreset.this + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
+                Main.warn(toString() + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
             }
         });
     }

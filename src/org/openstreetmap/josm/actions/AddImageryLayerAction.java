@@ -57,7 +57,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         if (icon != null) {
             new ImageProvider(icon).setOptional(true).getInBackground((ImageResource result) -> {
                 if (result != null) {
-                    GuiHelper.runInEDT(() -> result.attachImageIcon(AddImageryLayerAction.this));
+                    GuiHelper.runInEDT(() -> result.attachImageIcon(this));
                 }
             });
         }

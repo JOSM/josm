@@ -674,7 +674,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         initializeIfRequired();
 
         event.getMapView().addMouseListener(adapter);
-        MapView.addZoomChangeListener(AbstractTileSourceLayer.this);
+        MapView.addZoomChangeListener(this);
 
         if (this instanceof NativeScaleLayer) {
             event.getMapView().setNativeScaleLayer((NativeScaleLayer) this);

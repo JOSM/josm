@@ -89,7 +89,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 Main.error(ex3, "Could not parse WMS layer list. Incoming data:\n"+incomingData);
                 if ((incomingData.startsWith("<html>") || incomingData.startsWith("<HTML>"))
                   && (incomingData.endsWith("</html>") || incomingData.endsWith("</HTML>"))) {
-                    GuiHelper.notifyUserHtmlError(AddWMSLayerPanel.this, title, message, incomingData);
+                    GuiHelper.notifyUserHtmlError(this, title, message, incomingData);
                 } else {
                     if (ex3.getMessage() != null) {
                         message += '\n' + ex3.getMessage();

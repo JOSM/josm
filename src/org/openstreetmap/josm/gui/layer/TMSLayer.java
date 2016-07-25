@@ -74,7 +74,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
     protected TMSTileSource getTileSource(ImageryInfo info) {
         return getTileSourceStatic(info, () -> {
             Main.debug("Attribution loaded, running loadAllErrorTiles");
-            TMSLayer.this.loadAllErrorTiles(false);
+            this.loadAllErrorTiles(false);
         });
     }
 
