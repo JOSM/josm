@@ -12,10 +12,10 @@ import java.awt.event.WindowListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -38,7 +38,6 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.OsmIdTextField;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitiveTypesComboBox;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
  * Dialog prompt to user to let him choose OSM primitives by specifying their type and IDs.
@@ -203,11 +202,10 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
         if (buf.length() > Main.pref.getInteger("downloadprimitive.max-autopaste-length", 2000)) return;
         final List<SimplePrimitiveId> ids = SimplePrimitiveId.fuzzyParse(buf);
         if (!ids.isEmpty()) {
-            final String parsedText = Utils.join(", ", Utils.transform(ids,
-                    (Function<SimplePrimitiveId, String>) x -> x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId())));
+            final String parsedText = ids.stream().map(x -> x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId()))
+                    .collect(Collectors.joining(", "));
             tfId.tryToPasteFrom(parsedText);
-            final Set<OsmPrimitiveType> types = EnumSet.copyOf(Utils.transform(ids,
-                    (Function<SimplePrimitiveId, OsmPrimitiveType>) x -> x.getType()));
+            final Set<OsmPrimitiveType> types = ids.stream().map(x -> x.getType()).collect(Collectors.toSet());
             if (types.size() == 1) {
                 // select corresponding type
                 cbType.setSelectedItem(types.iterator().next());

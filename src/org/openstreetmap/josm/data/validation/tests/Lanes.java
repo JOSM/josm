@@ -3,21 +3,16 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
  * Test that validates {@code lane:} tags.
@@ -44,15 +39,13 @@ public class Lanes extends Test.TagTest {
     }
 
     protected void checkNumberOfLanesByKey(final OsmPrimitive p, String lanesKey, String message) {
-        final Collection<String> keysForPattern = new ArrayList<>(Utils.filter(p.keySet(),
-                Predicates.stringContainsPattern(Pattern.compile(':' + lanesKey + '$'))));
-        keysForPattern.removeAll(Arrays.asList(BLACKLIST));
-        if (keysForPattern.isEmpty()) {
-            // nothing to check
-            return;
-        }
-        final Set<Integer> lanesCount = new HashSet<>(Utils.transform(keysForPattern,
-                (Function<String, Integer>) key -> getLanesCount(p.get(key))));
+        final Set<Integer> lanesCount =
+                p.keySet().stream()
+                .filter(x -> x.endsWith(":" + lanesKey))
+                .filter(x -> !Arrays.asList(BLACKLIST).contains(x))
+                .map(key -> getLanesCount(p.get(key)))
+                .collect(Collectors.toSet());
+
         if (lanesCount.size() > 1) {
             // if not all numbers are the same
             errors.add(new TestError(this, Severity.WARNING, message, 3100, p));

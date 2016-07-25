@@ -6,21 +6,20 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.Utils.Function;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 public class ChangesetQuery {
@@ -404,9 +403,11 @@ public class ChangesetQuery {
         }
 
         protected Collection<Long> parseLongs(String value) {
-            return value == null || value.isEmpty()
-                    ? Collections.<Long>emptySet() :
-                    new HashSet<>(Utils.transform(Arrays.asList(value.split(",")), (Function<String, Long>) x -> Long.valueOf(x)));
+            if (value == null || value.isEmpty()) {
+                return Collections.<Long>emptySet();
+            } else {
+                return Stream.of(value.split(",")).map(Long::valueOf).collect(Collectors.toSet());
+            }
         }
 
         protected ChangesetQuery createFromMap(Map<String, String> queryParams) throws ChangesetQueryUrlException {

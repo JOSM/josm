@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -28,7 +29,6 @@ import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
  * Check for wrong relations.
@@ -255,7 +255,7 @@ public class RelationChecker extends Test {
             }
 
             // convert in localization friendly way to string of accepted types
-            String typesStr = Utils.join("/", Utils.transform(types, (Function<TaggingPresetType, Object>) x -> tr(x.getName())));
+            String typesStr = types.stream().map(x -> tr(x.getName())).collect(Collectors.joining("/"));
 
             errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                     tr(s, member.getType(), typesStr, rolePreset.name), s, WRONG_TYPE,
@@ -292,7 +292,7 @@ public class RelationChecker extends Test {
         // verify unwanted members
         for (String key : map.keySet()) {
             if (!allroles.containsKey(key)) {
-                String templates = Utils.join("/", Utils.transform(allroles.keySet(), (Function<String, Object>) x -> tr(x)));
+                String templates = allroles.keySet().stream().map(x -> tr(x)).collect(Collectors.joining("/"));
 
                 if (!key.isEmpty()) {
                     String s = marktr("Role {0} unknown in templates {1}");

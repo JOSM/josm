@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,7 +20,6 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector.PresetClassification;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector.PresetClassifications;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -47,12 +47,7 @@ public class PresetClassificationsTest {
     }
 
     private List<String> getMatchingPresetNames(String searchText, OsmPrimitive w) {
-        return Utils.transform(getMatchingPresets(searchText, w), new Utils.Function<PresetClassification, String>() {
-            @Override
-            public String apply(PresetClassification x) {
-                return x.preset.name;
-            }
-        });
+        return getMatchingPresets(searchText, w).stream().map(x -> x.preset.name).collect(Collectors.toList());
     }
 
     /**

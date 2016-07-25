@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
@@ -41,7 +42,6 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetNameTemplateList;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.Utils.Function;
 
 /**
  * This is the default implementation of a {@link NameFormatter} for names of {@link OsmPrimitive}s
@@ -630,8 +630,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @return HTML unordered list
      */
     public String formatAsHtmlUnorderedList(Collection<? extends OsmPrimitive> primitives, int maxElements) {
-        final Collection<String> displayNames = Utils.transform(primitives,
-                (Function<OsmPrimitive, String>) x -> x.getDisplayName(this));
+        Collection<String> displayNames = primitives.stream().map(x -> x.getDisplayName(this)).collect(Collectors.toList());
         return Utils.joinAsHtmlUnorderedList(Utils.limit(displayNames, maxElements, "..."));
     }
 
