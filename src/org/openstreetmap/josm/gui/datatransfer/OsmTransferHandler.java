@@ -111,11 +111,15 @@ public class OsmTransferHandler extends TransferHandler {
      * @return <code>true</code> if any flavor is supported.
      */
     public boolean isDataAvailable() {
-        Collection<DataFlavor> available = Arrays.asList(ClipboardUtils.getClipboard().getAvailableDataFlavors());
-        for (AbstractOsmDataPaster s : SUPPORTED) {
-            if (s.supports(available)) {
-                return true;
+        try {
+            Collection<DataFlavor> available = Arrays.asList(ClipboardUtils.getClipboard().getAvailableDataFlavors());
+            for (AbstractOsmDataPaster s : SUPPORTED) {
+                if (s.supports(available)) {
+                    return true;
+                }
             }
+        } catch (IllegalStateException e) {
+            Main.debug(e);
         }
         return false;
     }
