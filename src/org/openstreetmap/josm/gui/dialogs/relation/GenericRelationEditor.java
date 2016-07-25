@@ -731,6 +731,9 @@ public class GenericRelationEditor extends RelationEditor {
 
     @Override
     public void setVisible(boolean visible) {
+        if (isVisible() == visible) {
+            return;
+        }
         if (visible) {
             tagEditorPanel.initAutoCompletion(getLayer());
         }
