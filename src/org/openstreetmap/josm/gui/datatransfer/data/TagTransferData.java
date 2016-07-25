@@ -39,6 +39,15 @@ public class TagTransferData implements Serializable {
     }
 
     /**
+     * Create a new {@link TagTransferData} object with the given tags.
+     * @param tags The tags.
+     * @since 10637
+     */
+    public TagTransferData(Map<String, String> tags) {
+        this.tags.putAll(tags);
+    }
+
+    /**
      * Gets all tags contained in this data.
      * @return The tags.
      */

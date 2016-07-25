@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
@@ -15,6 +18,30 @@ import javax.swing.ListSelectionModel;
  *
  */
 public class TagInfoViewer extends HistoryViewerPanel {
+    private static final class RepaintOnFocusChange implements FocusListener {
+        @Override
+        public void focusLost(FocusEvent e) {
+            repaintSelected(e);
+        }
+
+        @Override
+        public void focusGained(FocusEvent e) {
+            repaintSelected(e);
+        }
+
+        private static void repaintSelected(FocusEvent e) {
+            // we would only need the selected rows, but this is easier:
+            e.getComponent().repaint();
+        }
+    }
+
+    /**
+     * Constructs a new {@code TagInfoViewer}.
+     * @param model The history browsing model
+     */
+    public TagInfoViewer(HistoryBrowserModel model) {
+        super(model);
+    }
 
     @Override
     protected JTable buildReferenceTable() {
@@ -23,8 +50,7 @@ public class TagInfoViewer extends HistoryViewerPanel {
                 new TagTableColumnModel()
         );
         table.setName("table.referencetagtable");
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
+        setUpDataTransfer(table);
         return table;
     }
 
@@ -35,16 +61,14 @@ public class TagInfoViewer extends HistoryViewerPanel {
                 new TagTableColumnModel()
         );
         table.setName("table.currenttagtable");
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
+        setUpDataTransfer(table);
         return table;
     }
 
-    /**
-     * Constructs a new {@code TagInfoViewer}.
-     * @param model The history browsing model
-     */
-    public TagInfoViewer(HistoryBrowserModel model) {
-        super(model);
+    private void setUpDataTransfer(JTable table) {
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
+        table.setTransferHandler(new TagInfoTransferHandler());
+        table.addFocusListener(new RepaintOnFocusChange());
     }
 }

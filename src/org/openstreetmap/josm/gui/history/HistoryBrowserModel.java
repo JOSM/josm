@@ -581,6 +581,16 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
 
         @Override
         public Object getValueAt(int row, int column) {
+            return getKeyAt(row);
+        }
+
+        /**
+         * Get the key for the given row.
+         * @param row The row
+         * @return The key in that row.
+         * @since 10637
+         */
+        public String getKeyAt(int row) {
             return keys.get(row);
         }
 
@@ -636,7 +646,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
 
         @Override
         public int getColumnCount() {
-            return 1;
+            return 2;
         }
     }
 

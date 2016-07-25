@@ -12,6 +12,7 @@ import javax.swing.event.ListSelectionListener;
 public class SelectionSynchronizer implements ListSelectionListener {
 
     private final Set<ListSelectionModel> participants;
+    private boolean preventRecursion = false;
 
     /**
      * Constructs a new {@code SelectionSynchronizer}.
@@ -31,6 +32,10 @@ public class SelectionSynchronizer implements ListSelectionListener {
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
+        if (preventRecursion) {
+            return;
+        }
+        preventRecursion = true;
         DefaultListSelectionModel referenceModel = (DefaultListSelectionModel) e.getSource();
         int i = referenceModel.getMinSelectionIndex();
         for (ListSelectionModel model : participants) {
@@ -39,5 +44,6 @@ public class SelectionSynchronizer implements ListSelectionListener {
             }
             model.setSelectionInterval(i, i);
         }
+        preventRecursion = false;
     }
 }

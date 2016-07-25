@@ -16,7 +16,14 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  *
  */
 public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
-    public static final Color BGCOLOR_SELECTED = new Color(143, 170, 255);
+    /**
+     * The background color for a selected row that has the focus.
+     */
+    public static final Color BGCOLOR_SELECTED_FOCUS = new Color(0xff8faaff);
+    /**
+     * The background color for a selected row while the table is not focused.
+     */
+    public static final Color BGCOLOR_SELECTED = new Color(0xffafc2ff);
 
     /**
      * Constructs a new {@code TagTableCellRenderer}.
@@ -25,7 +32,8 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         setOpaque(true);
     }
 
-    protected void setBackgroundReadable(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected, boolean isValue) {
+    protected void setBackgroundReadable(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected, boolean hasFocus,
+            boolean isValue) {
         Color bgColor = UIManager.getColor("Table.background");
         if (!model.hasTag(key) && model.isCurrentPointInTime()
                 || !model.oppositeHasTag(key) && model.isReferencePointInTime()) {
@@ -37,7 +45,11 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
             bgColor = TwoColumnDiff.Item.DiffItemType.CHANGED.getColor();
         }
         if (isSelected) {
-            bgColor = BGCOLOR_SELECTED;
+            if (hasFocus) {
+                bgColor = BGCOLOR_SELECTED_FOCUS;
+            } else {
+                bgColor = BGCOLOR_SELECTED;
+            }
         }
 
         GuiHelper.setBackgroundReadable(this, bgColor);
@@ -53,22 +65,24 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         String key = (String) value;
         HistoryBrowserModel.TagTableModel model = getTagTableModel(table);
 
-        switch(column) {
-        case 0:
-            // the name column
-            setText(model.hasTag(key) ? key : "");
-            setToolTipText(getText());
-            setBackgroundReadable(key, model, isSelected, false);
-            break;
-        case 1:
-            // the value column
-            setText(model.hasTag(key) ? model.getValue(key) : "");
-            setToolTipText(getText());
-            setBackgroundReadable(key, model, isSelected, true);
-            break;
-        default: // Do nothing
+        String text = "";
+        if (model.hasTag(key)) {
+            switch(column) {
+            case TagTableColumnModel.COLUMN_KEY:
+                // the name column
+                text = key;
+                break;
+            case TagTableColumnModel.COLUMN_VALUE:
+                // the value column
+                text = model.getValue(key);
+                break;
+            default: // Do nothing
+            }
         }
 
+        setText(text);
+        setToolTipText(text);
+        setBackgroundReadable(key, model, isSelected, table.hasFocus(), column == TagTableColumnModel.COLUMN_VALUE);
         return this;
     }
 
