@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -330,7 +331,7 @@ public class APIDataSet {
                 visit(path, relation);
             }
             List<Relation> ret = new ArrayList<>(relations);
-            ret.sort((o1, o2) -> Integer.compare(uploadOrder.indexOf(o1), uploadOrder.indexOf(o2)));
+            ret.sort(Comparator.comparingInt(uploadOrder::indexOf));
             return ret;
         }
     }

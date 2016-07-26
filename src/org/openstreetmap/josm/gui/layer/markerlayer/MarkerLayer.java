@@ -18,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -232,7 +233,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     public void mergeFrom(Layer from) {
         if (from instanceof MarkerLayer) {
             data.addAll(((MarkerLayer) from).data);
-            data.sort((o1, o2) -> Double.compare(o1.time, o2.time));
+            data.sort(Comparator.comparingDouble(o -> o.time));
         }
     }
 
