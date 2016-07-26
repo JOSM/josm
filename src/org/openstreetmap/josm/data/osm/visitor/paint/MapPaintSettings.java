@@ -150,7 +150,7 @@ public final class MapPaintSettings implements PreferenceChangedListener {
      * @return color for selected objects
      */
     public Color getSelectedColor(int alpha) {
-        return new Color(selectedColor.getRGB() & 0x00ffffff | (alpha << 24), true);
+        return new Color((selectedColor.getRGB() & 0x00ffffff) | (alpha << 24), true);
     }
 
     /**
@@ -175,7 +175,7 @@ public final class MapPaintSettings implements PreferenceChangedListener {
      * @return color for selected relations
      */
     public Color getRelationSelectedColor(int alpha) {
-        return new Color(relationSelectedColor.getRGB() & 0x00ffffff | (alpha << 24), true);
+        return new Color((relationSelectedColor.getRGB() & 0x00ffffff) | (alpha << 24), true);
     }
 
     /**
