@@ -12,11 +12,12 @@ import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
@@ -36,6 +37,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -67,6 +69,7 @@ import org.openstreetmap.josm.actions.ImageryAdjustAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -77,11 +80,13 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChangeListener;
+import org.openstreetmap.josm.gui.layer.imagery.TileCoordinateConverter;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeEvent;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeListener;
@@ -169,6 +174,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     private final TileSourceDisplaySettings displaySettings = createDisplaySettings();
 
     private final ImageryAdjustAction adjustAction = new ImageryAdjustAction(this);
+    // prepared to be moved to the painter
+    private TileCoordinateConverter coordinateConverter;
 
     /**
      * Creates Tile Source based Imagery Layer based on Imagery Info
@@ -223,6 +230,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     protected void initTileSource(T tileSource) {
+        coordinateConverter = new TileCoordinateConverter(Main.map.mapView, getDisplaySettings());
         attribution.initialize(tileSource);
 
         currentZoomLevel = getBestZoom();
@@ -420,7 +428,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             if (clickedTile != null) {
                 ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), new String[]{tr("OK")});
                 JPanel panel = new JPanel(new GridBagLayout());
-                Rectangle displaySize = tileToRect(clickedTile);
+                Rectangle2D displaySize = coordinateConverter.getRectangleForTile(clickedTile);
                 String url = "";
                 try {
                     url = clickedTile.getUrl();
@@ -433,7 +441,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                         {"Tile name", clickedTile.getKey()},
                         {"Tile url", url},
                         {"Tile size", getSizeString(clickedTile.getTileSource().getTileSize()) },
-                        {"Tile display size", new StringBuilder().append(displaySize.width).append('x').append(displaySize.height).toString()},
+                        {"Tile display size", new StringBuilder().append(displaySize.getWidth())
+                                                                 .append('x')
+                                                                 .append(displaySize.getHeight()).toString()},
                 };
 
                 for (String[] entry: content) {
@@ -999,9 +1009,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     private TileSet getVisibleTileSet() {
         MapView mv = Main.map.mapView;
-        EastNorth topLeft = mv.getEastNorth(0, 0);
-        EastNorth botRight = mv.getEastNorth(mv.getWidth(), mv.getHeight());
-        return new MapWrappingTileSet(topLeft, botRight, currentZoomLevel);
+        MapViewRectangle area = mv.getState().getViewArea();
+        ProjectionBounds bounds = area.getProjectionBounds();
+        return getTileSet(bounds.getMin(), bounds.getMax(), currentZoomLevel);
     }
 
     protected void loadAllTiles(boolean force) {
@@ -1056,31 +1066,19 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return img;
     }
 
-    private Rectangle tileToRect(Tile t1) {
-        /*
-         * We need to get a box in which to draw, so advance by one tile in
-         * each direction to find the other corner of the box.
-         * Note: this somewhat pollutes the tile cache
-         */
-        Tile t2 = tempCornerTile(t1);
-        Rectangle rect = new Rectangle(pixelPos(t1));
-        rect.add(pixelPos(t2));
-        return rect;
-    }
-
     // 'source' is the pixel coordinates for the area that
     // the img is capable of filling in.  However, we probably
     // only want a portion of it.
     //
     // 'border' is the screen cordinates that need to be drawn.
     //  We must not draw outside of it.
-    private void drawImageInside(Graphics g, Image sourceImg, Rectangle source, Rectangle border) {
-        Rectangle target = source;
+    private void drawImageInside(Graphics g, Image sourceImg, Rectangle2D source, Rectangle2D border) {
+        Rectangle2D target = source;
 
         // If a border is specified, only draw the intersection
         // if what we have combined with what we are supposed to draw.
         if (border != null) {
-            target = source.intersection(border);
+            target = source.createIntersection(border);
             if (Main.isDebugEnabled()) {
                 Main.debug("source: " + source + "\nborder: " + border + "\nintersection: " + target);
             }
@@ -1097,8 +1095,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         double imageXScaling = sourceImg.getWidth(this) / source.getWidth();
 
         // How many pixels into the 'source' rectangle are we drawing?
-        int screenXoffset = target.x - source.x;
-        int screenYoffset = target.y - source.y;
+        double screenXoffset = target.getX() - source.getX();
+        double screenYoffset = target.getY() - source.getY();
         // And how many pixels into the image itself does that correlate to?
         int imgXoffset = (int) (screenXoffset * imageXScaling + 0.5);
         int imgYoffset = (int) (screenYoffset * imageYScaling + 0.5);
@@ -1111,16 +1109,15 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             Main.debug("drawing image into target rect: " + target);
         }
         g.drawImage(sourceImg,
-                target.x, target.y,
-                target.x + target.width, target.y + target.height,
+                (int) target.getX(), (int) target.getY(),
+                (int) target.getMaxX(), (int) target.getMaxY(),
                 imgXoffset, imgYoffset,
                 imgXend, imgYend,
                 this);
         if (PROP_FADE_AMOUNT.get() != 0) {
             // dimm by painting opaque rect...
             g.setColor(getFadeColorWithAlpha());
-            g.fillRect(target.x, target.y,
-                    target.width, target.height);
+            ((Graphics2D) g).fill(target);
         }
     }
 
@@ -1135,9 +1132,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     // border is null and we draw the entire tile set.
     private List<Tile> paintTileImages(Graphics g, TileSet ts, int zoom, Tile border) {
         if (zoom <= 0) return Collections.emptyList();
-        Rectangle borderRect = null;
+        Rectangle2D borderRect = null;
         if (border != null) {
-            borderRect = tileToRect(border);
+            borderRect = coordinateConverter.getRectangleForTile(border);
         }
         List<Tile> missedTiles = new LinkedList<>();
         // The callers of this code *require* that we return any tiles
@@ -1157,7 +1154,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             // applying all filters to this layer
             img = applyImageProcessors((BufferedImage) img);
 
-            Rectangle sourceRect = tileToRect(tile);
+            Rectangle2D sourceRect = coordinateConverter.getRectangleForTile(tile);
             if (borderRect != null && !sourceRect.intersects(borderRect)) {
                 continue;
             }
@@ -1194,11 +1191,14 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     private void paintTileText(TileSet ts, Tile tile, Graphics g, MapView mv, int zoom, Tile t) {
-        int fontHeight = g.getFontMetrics().getHeight();
-        if (tile == null)
+        if (tile == null) {
             return;
-        Point p = pixelPos(t);
-        int texty = p.y + 2 + fontHeight;
+        }
+        Point2D p = coordinateConverter.getPixelForTile(t);
+        int fontHeight = g.getFontMetrics().getHeight();
+        int x = (int) p.getX();
+        int y = (int) p.getY();
+        int texty = y + 2 + fontHeight;
 
         /*if (PROP_DRAW_DEBUG.get()) {
             myDrawString(g, "x=" + t.getXtile() + " y=" + t.getYtile() + " z=" + zoom + "", p.x + 2, texty);
@@ -1216,7 +1216,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }*/
 
         if (tile.hasError() && getDisplaySettings().isShowErrors()) {
-            myDrawString(g, tr("Error") + ": " + tr(tile.getErrorMessage()), p.x + 2, texty);
+            myDrawString(g, tr("Error") + ": " + tr(tile.getErrorMessage()), x + 2, texty);
             //texty += 1 + fontHeight;
         }
 
@@ -1225,9 +1225,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (Main.isDebugEnabled()) {
             if (yCursor < t.getYtile()) {
                 if (t.getYtile() % 32 == 31) {
-                    g.fillRect(0, p.y - 1, mv.getWidth(), 3);
+                    g.fillRect(0, y - 1, mv.getWidth(), 3);
                 } else {
-                    g.drawLine(0, p.y, mv.getWidth(), p.y);
+                    g.drawLine(0, y, mv.getWidth(), y);
                 }
                 //yCursor = t.getYtile();
             }
@@ -1235,22 +1235,13 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             if (xCursor < t.getXtile()) {
                 if (t.getXtile() % 32 == 0) {
                     // level 7 tile boundary
-                    g.fillRect(p.x - 1, 0, 3, mv.getHeight());
+                    g.fillRect(x - 1, 0, 3, mv.getHeight());
                 } else {
-                    g.drawLine(p.x, 0, p.x, mv.getHeight());
+                    g.drawLine(x, 0, x, mv.getHeight());
                 }
                 //xCursor = t.getXtile();
             }
         }
-    }
-
-    private Point pixelPos(LatLon ll) {
-        return Main.map.mapView.getPoint(Main.getProjection().latlon2eastNorth(ll).add(getDx(), getDy()));
-    }
-
-    private Point pixelPos(Tile t) {
-        ICoordinate coord = tileSource.tileXYToLatLon(t);
-        return pixelPos(new LatLon(coord));
     }
 
     private LatLon getShiftedLatLon(EastNorth en) {
@@ -1268,59 +1259,40 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     private final TileSet nullTileSet = new TileSet();
 
-    private final class MapWrappingTileSet extends TileSet {
-        private MapWrappingTileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
-            this(getShiftedLatLon(topLeft), getShiftedLatLon(botRight), zoom);
+    /**
+     * This is a rectangular range of tiles.
+     */
+    private static class TileRange {
+        int minX, maxX, minY, maxY;
+        int zoom;
+
+        private TileRange() {
         }
 
-        private MapWrappingTileSet(LatLon topLeft, LatLon botRight, int zoom) {
-            super(topLeft, botRight, zoom);
-            double centerLon = getShiftedLatLon(Main.map.mapView.getCenter()).lon();
+        protected TileRange(TileXY t1, TileXY t2, int zoom) {
+            minX = (int) Math.floor(Math.min(t1.getX(), t2.getX()));
+            minY = (int) Math.floor(Math.min(t1.getY(), t2.getY()));
+            maxX = (int) Math.ceil(Math.max(t1.getX(), t2.getX()));
+            maxY = (int) Math.ceil(Math.max(t1.getY(), t2.getY()));
+            this.zoom = zoom;
+        }
 
-            if (topLeft.lon() > centerLon) {
-                x0 = tileSource.getTileXMin(zoom);
-            }
-            if (botRight.lon() < centerLon) {
-                x1 = tileSource.getTileXMax(zoom);
-            }
-            sanitize();
+        protected double tilesSpanned() {
+            return Math.sqrt(1.0 * this.size());
+        }
+
+        protected int size() {
+            int xSpan = maxX - minX + 1;
+            int ySpan = maxY - minY + 1;
+            return xSpan * ySpan;
         }
     }
 
-    private class TileSet {
-        int x0, x1, y0, y1;
-        int zoom;
+    private class TileSet extends TileRange {
 
-        /**
-         * Create a TileSet by EastNorth bbox taking a layer shift in account
-         * @param topLeft top-left lat/lon
-         * @param botRight bottom-right lat/lon
-         * @param zoom zoom level
-         */
-        protected TileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
-            this(getShiftedLatLon(topLeft), getShiftedLatLon(botRight), zoom);
-        }
-
-        /**
-         * Create a TileSet by known LatLon bbox without layer shift correction
-         * @param topLeft top-left lat/lon
-         * @param botRight bottom-right lat/lon
-         * @param zoom zoom level
-         */
-        protected TileSet(LatLon topLeft, LatLon botRight, int zoom) {
-            this.zoom = zoom;
-            if (zoom == 0)
-                return;
-
-            TileXY t1 = tileSource.latLonToTileXY(topLeft.toCoordinate(), zoom);
-            TileXY t2 = tileSource.latLonToTileXY(botRight.toCoordinate(), zoom);
-
-            x0 = (int) Math.floor(t1.getX());
-            y0 = (int) Math.floor(t1.getY());
-            x1 = (int) Math.ceil(t2.getX());
-            y1 = (int) Math.ceil(t2.getY());
+        protected TileSet(TileXY t1, TileXY t2, int zoom) {
+            super(t1, t2, zoom);
             sanitize();
-
         }
 
         /**
@@ -1331,28 +1303,17 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         protected void sanitize() {
-            if (x0 > x1) {
-                int tmp = x0;
-                x0 = x1;
-                x1 = tmp;
+            if (minX < tileSource.getTileXMin(zoom)) {
+                minX = tileSource.getTileXMin(zoom);
             }
-            if (y0 > y1) {
-                int tmp = y0;
-                y0 = y1;
-                y1 = tmp;
+            if (minY < tileSource.getTileYMin(zoom)) {
+                minY = tileSource.getTileYMin(zoom);
             }
-
-            if (x0 < tileSource.getTileXMin(zoom)) {
-                x0 = tileSource.getTileXMin(zoom);
+            if (maxX > tileSource.getTileXMax(zoom)) {
+                maxX = tileSource.getTileXMax(zoom);
             }
-            if (y0 < tileSource.getTileYMin(zoom)) {
-                y0 = tileSource.getTileYMin(zoom);
-            }
-            if (x1 > tileSource.getTileXMax(zoom)) {
-                x1 = tileSource.getTileXMax(zoom);
-            }
-            if (y1 > tileSource.getTileYMax(zoom)) {
-                y1 = tileSource.getTileYMax(zoom);
+            if (maxY > tileSource.getTileYMax(zoom)) {
+                maxY = tileSource.getTileYMax(zoom);
             }
         }
 
@@ -1366,16 +1327,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         private boolean insane() {
             return tileCache == null || size() > tileCache.getCacheSize();
-        }
-
-        private double tilesSpanned() {
-            return Math.sqrt(1.0 * this.size());
-        }
-
-        private int size() {
-            int xSpan = x1 - x0 + 1;
-            int ySpan = y1 - y0 + 1;
-            return xSpan * ySpan;
         }
 
         /*
@@ -1395,8 +1346,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             if (zoom == 0 || this.insane())
                 return Collections.emptyList();
             List<Tile> ret = new ArrayList<>();
-            for (int x = x0; x <= x1; x++) {
-                for (int y = y0; y <= y1; y++) {
+            for (int x = minX; x <= maxX; x++) {
+                for (int y = minY; y <= maxY; y++) {
                     Tile t;
                     if (create) {
                         t = getOrCreateTile(x, y, zoom);
@@ -1424,8 +1375,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          * @return comparator, that sorts the tiles from the center to the edge of the current screen
          */
         private Comparator<Tile> getTileDistanceComparator() {
-            final int centerX = (int) Math.ceil((x0 + x1) / 2d);
-            final int centerY = (int) Math.ceil((y0 + y1) / 2d);
+            final int centerX = (int) Math.ceil((minX + maxX) / 2d);
+            final int centerY = (int) Math.ceil((minY + maxY) / 2d);
             return new Comparator<Tile>() {
                 private int getDistance(Tile t) {
                     return Math.abs(t.getXtile() - centerX) + Math.abs(t.getYtile() - centerY);
@@ -1462,8 +1413,37 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         @Override
         public String toString() {
-            return getClass().getName() + ": zoom: " + zoom + " X(" + x0 + ", " + x1 + ") Y(" + y0 + ", " + y1 + ") size: " + size();
+            return getClass().getName() + ": zoom: " + zoom + " X(" + minX + ", " + maxX + ") Y(" + minY + ", " + maxY + ") size: " + size();
         }
+    }
+
+    /**
+     * Create a TileSet by EastNorth bbox taking a layer shift in account
+     * @param topLeft top-left lat/lon
+     * @param botRight bottom-right lat/lon
+     * @param zoom zoom level
+     * @return the tile set
+     * @since 10651
+     */
+    protected TileSet getTileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
+        return getTileSet(getShiftedLatLon(topLeft), getShiftedLatLon(botRight), zoom);
+    }
+
+    /**
+     * Create a TileSet by known LatLon bbox without layer shift correction
+     * @param topLeft top-left lat/lon
+     * @param botRight bottom-right lat/lon
+     * @param zoom zoom level
+     * @return the tile set
+     * @since 10651
+     */
+    protected TileSet getTileSet(LatLon topLeft, LatLon botRight, int zoom) {
+        if (zoom == 0)
+            return new TileSet();
+
+        TileXY t1 = tileSource.latLonToTileXY(topLeft.toCoordinate(), zoom);
+        TileXY t2 = tileSource.latLonToTileXY(botRight.toCoordinate(), zoom);
+        return new TileSet(t1, t2, zoom);
     }
 
     private static class TileSetInfo {
@@ -1493,15 +1473,14 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     private class DeepTileSet {
-        private final EastNorth topLeft, botRight;
+        private final ProjectionBounds bounds;
         private final int minZoom, maxZoom;
         private final TileSet[] tileSets;
         private final TileSetInfo[] tileSetInfos;
 
         @SuppressWarnings("unchecked")
-        DeepTileSet(EastNorth topLeft, EastNorth botRight, int minZoom, int maxZoom) {
-            this.topLeft = topLeft;
-            this.botRight = botRight;
+        DeepTileSet(ProjectionBounds bounds, int minZoom, int maxZoom) {
+            this.bounds = bounds;
             this.minZoom = minZoom;
             this.maxZoom = maxZoom;
             this.tileSets = new AbstractTileSourceLayer.TileSet[maxZoom - minZoom + 1];
@@ -1514,7 +1493,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             synchronized (tileSets) {
                 TileSet ts = tileSets[zoom-minZoom];
                 if (ts == null) {
-                    ts = new MapWrappingTileSet(topLeft, botRight, zoom);
+                    ts = AbstractTileSourceLayer.this.getTileSet(bounds.getMin(), bounds.getMax(), zoom);
                     tileSets[zoom-minZoom] = ts;
                 }
                 return ts;
@@ -1537,14 +1516,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds bounds) {
-        EastNorth topLeft = mv.getEastNorth(0, 0);
-        EastNorth botRight = mv.getEastNorth(mv.getWidth(), mv.getHeight());
-
-        if (botRight.east() == 0 || botRight.north() == 0) {
-            /*Main.debug("still initializing??");*/
-            // probably still initializing
-            return;
-        }
+        ProjectionBounds pb = mv.getState().getViewArea().getProjectionBounds();
 
         needRedraw = false;
 
@@ -1553,7 +1525,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             zoom = getBestZoom();
         }
 
-        DeepTileSet dts = new DeepTileSet(topLeft, botRight, getMinZoomLvl(), zoom);
+        DeepTileSet dts = new DeepTileSet(pb, getMinZoomLvl(), zoom);
         TileSet ts = dts.getTileSet(zoom);
 
         int displayZoomLevel = zoom;
@@ -1632,7 +1604,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                     continue;
                 }
                 Tile t2 = tempCornerTile(missed);
-                TileSet ts2 = new TileSet(
+                TileSet ts2 = getTileSet(
                         getShiftedLatLon(tileSource.tileXYToLatLon(missed)),
                         getShiftedLatLon(tileSource.tileXYToLatLon(t2)),
                         newzoom);
@@ -1660,7 +1632,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             this.paintTileText(ts, t, g, mv, displayZoomLevel, t);
         }
 
-        attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), getShiftedCoord(topLeft), getShiftedCoord(botRight),
+        EastNorth min = pb.getMin();
+        EastNorth max = pb.getMax();
+        attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), getShiftedCoord(min), getShiftedCoord(max),
                 displayZoomLevel, this);
 
         //g.drawString("currentZoomLevel=" + currentZoomLevel, 120, 120);
@@ -1710,32 +1684,18 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         EastNorth topLeft = mv.getEastNorth(0, 0);
         EastNorth botRight = mv.getEastNorth(mv.getWidth(), mv.getHeight());
         int z = currentZoomLevel;
-        TileSet ts = new TileSet(topLeft, botRight, z);
+        TileSet ts = getTileSet(topLeft, botRight, z);
 
         if (!ts.tooLarge()) {
             ts.loadAllTiles(false); // make sure there are tile objects for all tiles
         }
-        Tile clickedTile = null;
-        for (Tile t1 : ts.allExistingTiles()) {
-            Tile t2 = tempCornerTile(t1);
-            Rectangle r = new Rectangle(pixelPos(t1));
-            r.add(pixelPos(t2));
-            if (Main.isDebugEnabled()) {
-                Main.debug("r: " + r + " clicked: " + clicked);
-            }
-            if (!r.contains(clicked)) {
-                continue;
-            }
-            clickedTile = t1;
-            break;
-        }
-        if (clickedTile == null)
-            return null;
+        Stream<Tile> clickedTiles = ts.allExistingTiles().stream()
+                .filter(t -> coordinateConverter.getRectangleForTile(t).contains(clicked));
         if (Main.isTraceEnabled()) {
-            Main.trace("Clicked on tile: " + clickedTile.getXtile() + ' ' + clickedTile.getYtile() +
-                " currentZoomLevel: " + currentZoomLevel);
+            clickedTiles = clickedTiles.peek(t -> Main.trace("Clicked on tile: " + t.getXtile() + ' ' + t.getYtile() +
+                    " currentZoomLevel: " + currentZoomLevel));
         }
-        return clickedTile;
+        return clickedTiles.findAny().orElse(null);
     }
 
     @Override
