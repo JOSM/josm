@@ -42,7 +42,7 @@ public class MainLayerManager extends LayerManager {
      * This event is fired whenever the active or the edit layer changes.
      * @author Michael Zangl
      */
-    public class ActiveLayerChangeEvent extends LayerManagerEvent {
+    public static class ActiveLayerChangeEvent extends LayerManagerEvent {
 
         private final OsmDataLayer previousEditLayer;
 
@@ -100,7 +100,7 @@ public class MainLayerManager extends LayerManager {
      * @author Michael Zangl
      * @since 10508
      */
-    public class LayerAvailabilityEvent extends LayerManagerEvent {
+    public static class LayerAvailabilityEvent extends LayerManagerEvent {
         private final boolean hasLayers;
 
         LayerAvailabilityEvent(LayerManager source, boolean hasLayers) {
