@@ -52,8 +52,7 @@ public class JCSCacheManagerTest {
 
             CacheAccess<Object, Object> cache = JCSCacheManager.getCache("testUseBigDiskFile", 1, 100, "foobar");
             assertEquals("BlockDiskCache use file size to calculate its size", 10*1024,
-                    ((BlockDiskCacheAttributes)cache.getCacheControl().getAuxCaches()[0].getAuxiliaryCacheAttributes()).getMaxKeySize());
+                    ((BlockDiskCacheAttributes) cache.getCacheControl().getAuxCaches()[0].getAuxiliaryCacheAttributes()).getMaxKeySize());
         }
     }
-
 }

@@ -1407,7 +1407,7 @@ public abstract class Main {
     private static final List<WeakReference<ProjectionChangeListener>> listeners = new ArrayList<>();
 
     private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
-        if (newValue == null ^ oldValue == null
+        if ((newValue == null ^ oldValue == null)
                 || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
             if (Main.map != null) {
                 // This needs to be called first
