@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
 
@@ -140,6 +141,16 @@ public final class MapViewState {
      */
     public MapViewPoint getPointFor(EastNorth eastNorth) {
         return new MapViewEastNorthPoint(eastNorth);
+    }
+
+    /**
+     * Gets the {@link MapViewPoint} for the given {@link LatLon} coordinate.
+     * @param latlon the position
+     * @return The point for that position.
+     * @since 10651
+     */
+    public MapViewPoint getPointFor(LatLon latlon) {
+        return getPointFor(getProjection().latlon2eastNorth(latlon));
     }
 
     /**
@@ -350,6 +361,16 @@ public final class MapViewState {
         public LatLon getLatLon() {
             return projection.eastNorth2latlon(getEastNorth());
         }
+
+        /**
+         * Add the given offset to this point
+         * @param en The offset in east/north space.
+         * @return The new point
+         * @since 10651
+         */
+        public MapViewPoint add(EastNorth en) {
+            return new MapViewEastNorthPoint(getEastNorth().add(en));
+        }
     }
 
     private class MapViewViewPoint extends MapViewPoint {
@@ -453,6 +474,19 @@ public final class MapViewState {
          */
         public Bounds getLatLonBoundsBox() {
             return projection.getLatLonBoundsBox(getProjectionBounds());
+        }
+
+        /**
+         * Gets this rectangle on the screen.
+         * @return The rectangle.
+         * @since 10651
+         */
+        public Rectangle2D getInView() {
+            double x1 = p1.getInViewX();
+            double y1 = p1.getInViewY();
+            double x2 = p2.getInViewX();
+            double y2 = p2.getInViewY();
+            return new Rectangle2D.Double(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
         }
     }
 

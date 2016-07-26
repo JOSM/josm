@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -145,7 +146,7 @@ public class ExtendedDialog extends JDialog {
     }
 
     public ExtendedDialog(Component parent, String title, String[] buttonTexts, boolean modal, boolean disposeOnClose) {
-        super(GuiHelper.getFrameForComponent(parent), title, modal ? ModalityType.DOCUMENT_MODAL : ModalityType.MODELESS);
+        super(searchRealParent(parent), title, modal ? ModalityType.DOCUMENT_MODAL : ModalityType.MODELESS);
         this.parent = parent;
         this.modal = modal;
         bTexts = Utils.copyArray(buttonTexts);
@@ -153,6 +154,14 @@ public class ExtendedDialog extends JDialog {
             setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         }
         this.disposeOnClose = disposeOnClose;
+    }
+
+    private static Frame searchRealParent(Component parent) {
+        if (parent == null) {
+            return null;
+        } else {
+            return GuiHelper.getFrameForComponent(parent);
+        }
     }
 
     /**

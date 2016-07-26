@@ -59,11 +59,6 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
     }
 
     @Override
-    public TileLoader makeTileLoader(TileLoaderListener listener) {
-        return makeTileLoader(listener, null);
-    }
-
-    @Override
     public TileLoader makeTileLoader(TileLoaderListener listener, Map<String, String> inputHeaders) {
         Map<String, String> headers = new ConcurrentHashMap<>();
         headers.put("User-Agent", Version.getInstance().getFullAgentString());

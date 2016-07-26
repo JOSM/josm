@@ -25,7 +25,7 @@ public class BugReportSettingsPanel extends JPanel {
         statusReport.addChangeListener(e -> report.setIncludeStatusReport(statusReport.isSelected()));
         add(statusReport);
 
-        JCheckBox data = new JCheckBox(tr("Include information about the data that was worked on."));
+        JCheckBox data = new JCheckBox(tr("Include information about the data you were working on."));
         data.setSelected(report.isIncludeData());
         data.addChangeListener(e -> report.setIncludeData(data.isSelected()));
         add(data);
