@@ -1032,7 +1032,7 @@ public class SearchCompiler {
             for (OsmPrimitive ref: osm.getReferrers()) {
                 if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
                     for (RelationMember m : ((Relation) ref).getMembers()) {
-                        if (m.getMember() == osm) {
+                        if (osm.equals(m.getMember())) {
                             String testRole = m.getRole();
                             if (role.equals(testRole == null ? "" : testRole))
                                 return true;

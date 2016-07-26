@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -87,7 +88,7 @@ public final class Way extends OsmPrimitive implements IWay {
         int count = nodes.size();
         for (int i = 0; i < count && count > 2;) {
             Node n = nodes.get(i);
-            if (last == n) {
+            if (Objects.equals(last, n)) {
                 nodes.remove(i);
                 --count;
             } else {
@@ -360,7 +361,7 @@ public final class Way extends OsmPrimitive implements IWay {
         if (n == null || isIncomplete()) return;
         boolean locked = writeLock();
         try {
-            boolean closed = lastNode() == n && firstNode() == n;
+            boolean closed = Objects.equals(lastNode(), n) && Objects.equals(firstNode(), n);
             int i;
             List<Node> copy = getNodes();
             while ((i = copy.indexOf(n)) >= 0) {
@@ -369,7 +370,7 @@ public final class Way extends OsmPrimitive implements IWay {
             i = copy.size();
             if (closed && i > 2) {
                 copy.add(copy.get(0));
-            } else if (i >= 2 && i <= 3 && copy.get(0) == copy.get(i-1)) {
+            } else if (i >= 2 && i <= 3 && Objects.equals(copy.get(0), copy.get(i-1))) {
                 copy.remove(i-1);
             }
             setNodes(removeDouble(copy));
@@ -400,7 +401,7 @@ public final class Way extends OsmPrimitive implements IWay {
             int i = copy.size();
             if (closed && i > 2) {
                 copy.add(copy.get(0));
-            } else if (i >= 2 && i <= 3 && copy.get(0) == copy.get(i-1)) {
+            } else if (i >= 2 && i <= 3 && Objects.equals(copy.get(0), copy.get(i-1))) {
                 copy.remove(i-1);
             }
             setNodes(removeDouble(copy));
@@ -493,7 +494,7 @@ public final class Way extends OsmPrimitive implements IWay {
         if (isIncomplete()) return false;
 
         Node[] nodes = this.nodes;
-        return nodes.length >= 3 && nodes[nodes.length-1] == nodes[0];
+        return nodes.length >= 3 && Objects.equals(nodes[nodes.length-1], nodes[0]);
     }
 
     /**
@@ -506,9 +507,9 @@ public final class Way extends OsmPrimitive implements IWay {
         if (this.nodes.length >= 4 && isClosed()) {
             Node distinctNode = null;
             for (int i = 1; i < nodes.length-1; i++) {
-                if (distinctNode == null && nodes[i] != nodes[0]) {
+                if (distinctNode == null && !Objects.equals(nodes[i], nodes[0])) {
                     distinctNode = nodes[i];
-                } else if (distinctNode != null && nodes[i] != nodes[0] && nodes[i] != distinctNode) {
+                } else if (distinctNode != null && !Objects.equals(nodes[i], nodes[0]) && !Objects.equals(nodes[i], distinctNode)) {
                     return true;
                 }
             }
@@ -549,7 +550,7 @@ public final class Way extends OsmPrimitive implements IWay {
     public boolean isFirstLastNode(Node n) {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return false;
-        return n == nodes[0] || n == nodes[nodes.length -1];
+        return Objects.equals(n, nodes[0]) || Objects.equals(n, nodes[nodes.length -1]);
     }
 
     /**
@@ -562,9 +563,9 @@ public final class Way extends OsmPrimitive implements IWay {
         Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length <= 2) return false;
         /* circular ways have only inner nodes, so return true for them! */
-        if (n == nodes[0] && n == nodes[nodes.length-1]) return true;
+        if (Objects.equals(n, nodes[0]) && Objects.equals(n, nodes[nodes.length-1])) return true;
         for (int i = 1; i < nodes.length - 1; ++i) {
-            if (nodes[i] == n) return true;
+            if (Objects.equals(nodes[i], n)) return true;
         }
         return false;
     }

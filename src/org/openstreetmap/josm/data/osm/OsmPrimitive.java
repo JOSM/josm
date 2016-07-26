@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -1003,18 +1004,19 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Add new referrer. If referrer is already included then no action is taken
-     * @param referrer The referrer to add
+     * @param referrer The referrer to add. Must not be null
+     * @throws NullPointerException if {@code referrer} is null
      */
     protected void addReferrer(OsmPrimitive referrer) {
         if (referrers == null) {
             referrers = referrer;
         } else if (referrers instanceof OsmPrimitive) {
-            if (referrers != referrer) {
+            if (!referrer.equals(referrers)) {
                 referrers = new OsmPrimitive[] {(OsmPrimitive) referrers, referrer};
             }
         } else {
             for (OsmPrimitive primitive:(OsmPrimitive[]) referrers) {
-                if (primitive == referrer)
+                if (referrer.equals(primitive))
                     return;
             }
             referrers = Utils.addInArrayCopy((OsmPrimitive[]) referrers, referrer);
@@ -1023,18 +1025,19 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Remove referrer. No action is taken if referrer is not registered
-     * @param referrer The referrer to remove
+     * @param referrer The referrer to remove. Must not be null
+     * @throws NullPointerException if {@code referrer} is null
      */
     protected void removeReferrer(OsmPrimitive referrer) {
         if (referrers instanceof OsmPrimitive) {
-            if (referrers == referrer) {
+            if (referrer.equals(referrers)) {
                 referrers = null;
             }
         } else if (referrers instanceof OsmPrimitive[]) {
             OsmPrimitive[] orig = (OsmPrimitive[]) referrers;
             int idx = -1;
             for (int i = 0; i < orig.length; i++) {
-                if (orig[i] == referrer) {
+                if (referrer.equals(orig[i])) {
                     idx = i;
                     break;
                 }
@@ -1262,7 +1265,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
                 && timestamp == other.timestamp
                 && version == other.version
                 && isVisible() == other.isVisible()
-                && (user == null ? other.user == null : user == other.user)
+                && Objects.equals(user, other.user)
                 && changesetId == other.changesetId;
     }
 

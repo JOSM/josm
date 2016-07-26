@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -114,7 +115,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
         try {
             RelationMember originalMember = members[index];
             members[index] = member;
-            if (originalMember.getMember() != member.getMember()) {
+            if (!Objects.equals(originalMember.getMember(), member.getMember())) {
                 member.getMember().addReferrer(this);
                 member.getMember().clearCachedStyle();
                 originalMember.getMember().removeReferrer(this);

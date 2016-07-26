@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -297,7 +298,7 @@ public class Multipolygon {
                     }
                 }
             }
-            if (nodes.size() >= 3 && nodes.get(0) == nodes.get(nodes.size() - 1)) {
+            if (nodes.size() >= 3 && Objects.equals(nodes.get(0), nodes.get(nodes.size() - 1))) {
                 poly.closePath();
             }
             for (PolyData inner : inners) {
@@ -547,24 +548,24 @@ public class Multipolygon {
                             int nl;
                             if (nodes == null) {
                                 nl = w.getNodesCount()-1;
-                                if (w.getNode(nl) == c.getNode(0)) {
+                                if (Objects.equals(w.getNode(nl), c.getNode(0))) {
                                     mode = 21;
-                                } else if (w.getNode(nl) == c.getNode(cl)) {
+                                } else if (Objects.equals(w.getNode(nl), c.getNode(cl))) {
                                     mode = 22;
-                                } else if (w.getNode(0) == c.getNode(0)) {
+                                } else if (Objects.equals(w.getNode(0), c.getNode(0))) {
                                     mode = 11;
-                                } else if (w.getNode(0) == c.getNode(cl)) {
+                                } else if (Objects.equals(w.getNode(0), c.getNode(cl))) {
                                     mode = 12;
                                 }
                             } else {
                                 nl = nodes.size()-1;
-                                if (nodes.get(nl) == c.getNode(0)) {
+                                if (Objects.equals(nodes.get(nl), c.getNode(0))) {
                                     mode = 21;
-                                } else if (nodes.get(0) == c.getNode(cl)) {
+                                } else if (Objects.equals(nodes.get(0), c.getNode(cl))) {
                                     mode = 12;
-                                } else if (nodes.get(0) == c.getNode(0)) {
+                                } else if (Objects.equals(nodes.get(0), c.getNode(0))) {
                                     mode = 11;
-                                } else if (nodes.get(nl) == c.getNode(cl)) {
+                                } else if (Objects.equals(nodes.get(nl), c.getNode(cl))) {
                                     mode = 22;
                                 }
                             }
