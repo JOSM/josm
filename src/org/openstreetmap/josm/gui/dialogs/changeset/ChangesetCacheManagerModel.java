@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -149,12 +150,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
     }
 
     protected void sort() {
-        data.sort((o1, o2) -> {
-                if (o1.getId() < o2.getId()) return 1;
-                if (o1.getId() == o2.getId()) return 0;
-                return -1;
-            }
-        );
+        data.sort(Comparator.comparingInt(Changeset::getId).reversed());
     }
 
     /* ------------------------------------------------------------------------------ */

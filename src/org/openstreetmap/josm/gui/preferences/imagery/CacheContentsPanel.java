@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -103,7 +104,7 @@ public class CacheContentsPanel extends JPanel {
         for (Entry<String, int[]> e: temp.entrySet()) {
             sortedStats.add(new Pair<>(e.getKey(), e.getValue()[0]));
         }
-        sortedStats.sort((o1, o2) -> -1 * o1.b.compareTo(o2.b));
+        sortedStats.sort(Comparator.comparing(o -> o.b, Comparator.reverseOrder()));
         String[][] ret = new String[sortedStats.size()][3];
         int index = 0;
         for (Pair<String, Integer> e: sortedStats) {

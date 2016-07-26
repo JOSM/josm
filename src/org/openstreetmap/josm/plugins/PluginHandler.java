@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -744,12 +745,7 @@ public final class PluginHandler {
             // sort the plugins according to their "staging" equivalence class. The
             // lower the value of "stage" the earlier the plugin should be loaded.
             //
-            toLoad.sort((o1, o2) -> {
-                    if (o1.stage < o2.stage) return -1;
-                    if (o1.stage == o2.stage) return 0;
-                    return 1;
-                }
-            );
+            toLoad.sort(Comparator.comparingInt(o -> o.stage));
             if (toLoad.isEmpty())
                 return;
 

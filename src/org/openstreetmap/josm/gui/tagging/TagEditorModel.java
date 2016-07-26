@@ -7,6 +7,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -560,7 +561,7 @@ public class TagEditorModel extends AbstractTableModel {
      * sorts the current tags according alphabetical order of names
      */
     protected void sort() {
-        tags.sort((self, other) -> self.getName().compareTo(other.getName()));
+        tags.sort(Comparator.comparing(TagModel::getName));
     }
 
     /**

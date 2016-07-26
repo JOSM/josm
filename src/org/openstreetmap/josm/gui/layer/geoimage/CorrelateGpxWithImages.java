@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -1081,7 +1082,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             dateImgLst.add(e);
         }
 
-        dateImgLst.sort((o1, o2) -> o1.getExifTime().compareTo(o2.getExifTime()));
+        dateImgLst.sort(Comparator.comparing(ImageEntry::getExifTime));
 
         return dateImgLst;
     }
