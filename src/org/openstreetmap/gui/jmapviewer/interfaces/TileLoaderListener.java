@@ -3,6 +3,10 @@ package org.openstreetmap.gui.jmapviewer.interfaces;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 
+/**
+ * This listener listens to successful tile loads.
+ */
+@FunctionalInterface
 public interface TileLoaderListener {
 
     /**
