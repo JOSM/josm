@@ -308,7 +308,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         int mapZoomMax = tileController.getTileSource().getMaxZoom();
 
         if (markers && mapMarkerList != null) {
-            synchronized (mapMarkerList) {
+            synchronized (this) {
                 for (MapMarker marker : mapMarkerList) {
                     if (marker.isVisible()) {
                         Point p = tileSource.latLonToXY(marker.getCoordinate(), mapZoomMax);
@@ -322,7 +322,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         }
 
         if (rectangles && mapRectangleList != null) {
-            synchronized (mapRectangleList) {
+            synchronized (this) {
                 for (MapRectangle rectangle : mapRectangleList) {
                     if (rectangle.isVisible()) {
                         Point bottomRight = tileSource.latLonToXY(rectangle.getBottomRight(), mapZoomMax);
@@ -337,7 +337,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         }
 
         if (polygons && mapPolygonList != null) {
-            synchronized (mapPolygonList) {
+            synchronized (this) {
                 for (MapPolygon polygon : mapPolygonList) {
                     if (polygon.isVisible()) {
                         for (ICoordinate c : polygon.getPoints()) {
@@ -656,7 +656,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         }
 
         if (mapPolygonsVisible && mapPolygonList != null) {
-            synchronized (mapPolygonList) {
+            synchronized (this) {
                 for (MapPolygon polygon : mapPolygonList) {
                     if (polygon.isVisible())
                         paintPolygon(g, polygon);
@@ -665,7 +665,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         }
 
         if (mapRectanglesVisible && mapRectangleList != null) {
-            synchronized (mapRectangleList) {
+            synchronized (this) {
                 for (MapRectangle rectangle : mapRectangleList) {
                     if (rectangle.isVisible())
                         paintRectangle(g, rectangle);
@@ -674,7 +674,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         }
 
         if (mapMarkersVisible && mapMarkerList != null) {
-            synchronized (mapMarkerList) {
+            synchronized (this) {
                 for (MapMarker marker : mapMarkerList) {
                     if (marker.isVisible())
                         paintMarker(g, marker);
