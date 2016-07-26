@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.layer;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -187,7 +188,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
 
     @Override
     public String getToolTipText() {
-        return noteData.getNotes().size() + " " + tr("Notes");
+        return trn("{0} note", "{0} notes", noteData.getNotes().size(), noteData.getNotes().size());
     }
 
     @Override
