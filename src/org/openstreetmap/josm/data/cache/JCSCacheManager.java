@@ -44,7 +44,7 @@ public final class JCSCacheManager {
     private static volatile CompositeCacheManager cacheManager;
     private static long maxObjectTTL = -1;
     private static final String PREFERENCE_PREFIX = "jcs.cache";
-    public static BooleanProperty USE_BLOCK_CACHE = new BooleanProperty(PREFERENCE_PREFIX + ".use_block_cache", true);
+    public static final BooleanProperty USE_BLOCK_CACHE = new BooleanProperty(PREFERENCE_PREFIX + ".use_block_cache", true);
 
     private static final AuxiliaryCacheFactory diskCacheFactory =
             USE_BLOCK_CACHE.get() ? new BlockDiskCacheFactory() : new IndexedDiskCacheFactory();
@@ -172,16 +172,6 @@ public final class JCSCacheManager {
 
         if (cachePath != null && cacheDirLock != null) {
             IDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath, cacheName);
-            /*
-             * BlockDiskCache never optimizes the file, so when file size is reduced, it will never be truncated to desired size.
-             *
-             * If for some mysterious reason, file size is greater than the value set in preferences, just use the whole file. If the user
-             * wants to reduce the file size, (s)he may just go to preferences and there it should be handled (by removing old file)
-             */
-            if (USE_BLOCK_CACHE.get()) {
-                File diskCacheFile = new File(cachePath + File.separator + diskAttributes.getCacheName() + ".data");
-                maxDiskObjects = (int) Math.max(maxDiskObjects, diskCacheFile.length()/1024);
-            }
             try {
                 if (cc.getAuxCaches().length == 0) {
                     AuxiliaryCache<K, V> diskCache = diskCacheFactory.createCache(diskAttributes, cacheManager, null, new StandardSerializer());
@@ -209,9 +199,23 @@ public final class JCSCacheManager {
 
     private static IDiskCacheAttributes getDiskCacheAttributes(int maxDiskObjects, String cachePath, String cacheName) {
         IDiskCacheAttributes ret;
+        removeStaleFiles(cachePath + File.separator + cacheName, (USE_BLOCK_CACHE.get() ? "_INDEX_v2" : "_BLOCK_v2"));
+        cacheName = cacheName + (USE_BLOCK_CACHE.get() ? "_BLOCK_v2" : "_INDEX_v2");
+
         if (USE_BLOCK_CACHE.get()) {
             BlockDiskCacheAttributes blockAttr = new BlockDiskCacheAttributes();
-            blockAttr.setMaxKeySize(maxDiskObjects);
+            /*
+             * BlockDiskCache never optimizes the file, so when file size is reduced, it will never be truncated to desired size.
+             *
+             * If for some mysterious reason, file size is greater than the value set in preferences, just use the whole file. If the user
+             * wants to reduce the file size, (s)he may just go to preferences and there it should be handled (by removing old file)
+             */
+            File diskCacheFile = new File(cachePath + File.separator + cacheName + ".data");
+            if (diskCacheFile.exists()) {
+                blockAttr.setMaxKeySize((int) Math.max(maxDiskObjects, diskCacheFile.length()/1024));
+            } else {
+                blockAttr.setMaxKeySize(maxDiskObjects);
+            }
             blockAttr.setBlockSizeBytes(4096); // use 4k blocks
             ret = blockAttr;
         } else {
@@ -226,9 +230,8 @@ public final class JCSCacheManager {
         } else {
             ret.setDiskPath(cachePath);
         }
-        ret.setCacheName(cacheName + (USE_BLOCK_CACHE.get() ? "_BLOCK_v2" : "_INDEX_v2"));
+        ret.setCacheName(cacheName);
 
-        removeStaleFiles(cachePath + File.separator + cacheName, (USE_BLOCK_CACHE.get() ? "_INDEX_v2" : "_BLOCK_v2"));
         return ret;
     }
 
