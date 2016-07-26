@@ -25,6 +25,6 @@ public class NoteLayerTest {
      */
     @Test
     public void testTicket13208() {
-        assertEquals("0 Notes", new NoteLayer().getToolTipText());
+        assertEquals("0 notes", new NoteLayer().getToolTipText());
     }
 }
