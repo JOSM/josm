@@ -36,6 +36,10 @@ MouseWheelListener {
     private boolean wheelZoomEnabled = true;
     private boolean doubleClickZoomEnabled = true;
 
+    /**
+     * Constructs a new {@code DefaultMapController}.
+     * @param map map panel
+     */
     public DefaultMapController(JMapViewer map) {
         super(map);
     }
@@ -46,7 +50,7 @@ MouseWheelListener {
             return;
         // Is only the selected mouse button pressed?
         if ((e.getModifiersEx() & MOUSE_BUTTONS_MASK) == movementMouseButtonMask
-                || isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK) {
+                || (isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK)) {
             Point p = e.getPoint();
             if (lastDragPoint != null) {
                 int diffx = lastDragPoint.x - p.x;
@@ -66,7 +70,7 @@ MouseWheelListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.getButton() == movementMouseButton || isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK) {
+        if (e.getButton() == movementMouseButton || (isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK)) {
             lastDragPoint = null;
             isMoving = true;
         }
@@ -74,7 +78,7 @@ MouseWheelListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == movementMouseButton || isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == movementMouseButton || (isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1)) {
             lastDragPoint = null;
             isMoving = false;
         }
@@ -88,6 +92,10 @@ MouseWheelListener {
         }
     }
 
+    /**
+     * Determines if the map pane is allowed to be moved using the mouse
+     * @return {@code true} to allow the map pane to be moved using the mouse
+     */
     public boolean isMovementEnabled() {
         return movementEnabled;
     }
@@ -150,10 +158,12 @@ MouseWheelListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
+        // do nothing
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
+        // do nothing
     }
 
     @Override
@@ -173,9 +183,7 @@ MouseWheelListener {
                 }
                 lastDragPoint = p;
             }
-
         }
-
     }
 
     /**
