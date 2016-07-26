@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
@@ -225,9 +226,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 return dz;
 
             // simple node on top of icons and shapes
-            if (this.style == NodeElement.SIMPLE_NODE_ELEMSTYLE && other.style != NodeElement.SIMPLE_NODE_ELEMSTYLE)
+            if (NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(this.style) && !NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(other.style))
                 return 1;
-            if (this.style != NodeElement.SIMPLE_NODE_ELEMSTYLE && other.style == NodeElement.SIMPLE_NODE_ELEMSTYLE)
+            if (!NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(this.style) && NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(other.style))
                 return -1;
 
             // newer primitives to the front
@@ -1145,7 +1146,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         /* find the "direct" nodes before the via node */
         Node fromNode;
-        if (fromWay.firstNode() == via) {
+        if (Objects.equals(fromWay.firstNode(), via)) {
             fromNode = fromWay.getNode(1);
         } else {
             fromNode = fromWay.getNode(fromWay.getNodesCount()-2);
@@ -1440,7 +1441,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (!way.isHighlighted() && highlightWaySegments != null) {
             GeneralPath highlightSegs = null;
             for (WaySegment ws : highlightWaySegments) {
-                if (ws.way != way || ws.lowerIndex < offset) {
+                if (!Objects.equals(ws.way, way) || ws.lowerIndex < offset) {
                     continue;
                 }
                 if (highlightSegs == null) {
