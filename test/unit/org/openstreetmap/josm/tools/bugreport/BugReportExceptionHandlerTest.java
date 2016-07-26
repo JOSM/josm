@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.tools.bugreport;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,14 +18,6 @@ public class BugReportExceptionHandlerTest {
     @Before
     public void setUp() {
         JOSMFixture.createUnitTestFixture().init(true);
-    }
-
-    /**
-     * Unit test for {@link BugReportExceptionHandler#buildPanel} method.
-     */
-    @Test
-    public void testBuildPanel() {
-        assertNotNull(BugReportExceptionHandler.buildPanel(new Exception("testBuildPanel")));
     }
 
     /**

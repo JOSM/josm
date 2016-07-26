@@ -96,6 +96,17 @@ public final class GBC extends GridBagConstraints {
     }
 
     /**
+     * Adds insets to this GBC.
+     * @param insets The insets in all directions.
+     * @return This constraint for chaining.
+     * @since 10649
+     */
+    public GBC insets(int insets) {
+        insets(insets, insets, insets, insets);
+        return this;
+    }
+
+    /**
      * Specifies how to distribute extra horizontal space.
      * @param weightx   Weight in horizontal direction
      * @param weighty   Weight in vertical direction

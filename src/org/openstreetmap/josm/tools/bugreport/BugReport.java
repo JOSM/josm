@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools.bugreport;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -37,7 +38,9 @@ import org.openstreetmap.josm.actions.ShowStatusReportAction;
  * @author Michael Zangl
  * @since 10285
  */
-public final class BugReport {
+public final class BugReport implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private boolean includeStatusReport = true;
     private boolean includeData = true;
     private boolean includeAllStackTraces;
