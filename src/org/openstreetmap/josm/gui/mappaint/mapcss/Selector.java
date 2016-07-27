@@ -24,6 +24,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Predicates;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -319,7 +320,7 @@ public interface Selector {
                             && !((OptimizedGeneralSelector) right).matchesBase(OsmPrimitiveType.RELATION))) {
                         throw new NoSuchElementException();
                     }
-                    final Collection<Relation> multipolygons = Utils.filteredCollection(Utils.filter(
+                    final Collection<Relation> multipolygons = Utils.filteredCollection(SubclassFilteredCollection.filter(
                             e.osm.getReferrers(), Predicates.hasTag("type", "multipolygon")), Relation.class);
                     final Relation multipolygon = multipolygons.iterator().next();
                     if (multipolygon == null) throw new NoSuchElementException();

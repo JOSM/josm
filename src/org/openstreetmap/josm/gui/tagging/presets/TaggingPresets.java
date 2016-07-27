@@ -114,11 +114,11 @@ public final class TaggingPresets {
      *
      * @param primitive the primitive
      * @return a new collection of all presets matching the given preset.
-     * @see TaggingPreset#evaluate(OsmPrimitive)
+     * @see TaggingPreset#test(OsmPrimitive)
      * @since 9265
      */
     public static Collection<TaggingPreset> getMatchingPresets(final OsmPrimitive primitive) {
-        return SubclassFilteredCollection.filter(getTaggingPresets(), preset -> preset.evaluate(primitive));
+        return SubclassFilteredCollection.filter(getTaggingPresets(), preset -> preset.test(primitive));
     }
 
     /**

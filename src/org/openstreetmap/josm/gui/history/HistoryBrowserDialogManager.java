@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -25,8 +26,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
-import org.openstreetmap.josm.tools.Predicate;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.WindowGeometry;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
@@ -176,7 +176,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
      * @param primitives The primitive(s) for which history will be displayed
      */
     public void showHistory(final Collection<? extends PrimitiveId> primitives) {
-        final Collection<? extends PrimitiveId> notNewPrimitives = Utils.filter(primitives, notNewPredicate);
+        final Collection<? extends PrimitiveId> notNewPrimitives = SubclassFilteredCollection.filter(primitives, notNewPredicate);
         if (notNewPrimitives.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -186,7 +186,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
             return;
         }
 
-        Collection<? extends PrimitiveId> toLoad = Utils.filter(primitives, unloadedHistoryPredicate);
+        Collection<? extends PrimitiveId> toLoad = SubclassFilteredCollection.filter(primitives, unloadedHistoryPredicate);
         if (!toLoad.isEmpty()) {
             HistoryLoadTask task = new HistoryLoadTask();
             for (PrimitiveId p : notNewPrimitives) {
@@ -216,7 +216,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         private HistoryDataSet hds = HistoryDataSet.getInstance();
 
         @Override
-        public boolean evaluate(PrimitiveId p) {
+        public boolean test(PrimitiveId p) {
             History h = hds.getHistory(p);
             if (h == null)
                 // reload if the history is not in the cache yet

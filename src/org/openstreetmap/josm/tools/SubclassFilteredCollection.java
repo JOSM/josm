@@ -119,7 +119,7 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
      * @param predicate The predicate to filter for.
      * @return The filtered collection. It is a {@code Collection<T>}.
      */
-    public static <T> SubclassFilteredCollection<T, T> filter(Collection<T> collection, java.util.function.Predicate<T> predicate) {
+    public static <T> SubclassFilteredCollection<T, T> filter(Collection<? extends T> collection, java.util.function.Predicate<T> predicate) {
         return new SubclassFilteredCollection<>(collection, predicate);
     }
 }

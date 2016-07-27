@@ -79,7 +79,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * A dialog showing all known relations, with buttons to add, edit, and delete them.
@@ -487,7 +487,7 @@ public class RelationListDialog extends ToggleDialog
 
         private void updateFilteredRelations() {
             if (filter != null) {
-                filteredRelations = new ArrayList<>(Utils.filter(relations, filter::match));
+                filteredRelations = new ArrayList<>(SubclassFilteredCollection.filter(relations, filter::match));
             } else if (filteredRelations != null) {
                 filteredRelations = null;
             }

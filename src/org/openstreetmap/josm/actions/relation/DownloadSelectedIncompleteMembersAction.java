@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * Action for downloading incomplete members of selected relations
@@ -41,7 +41,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
     public static Set<OsmPrimitive> buildSetOfIncompleteMembers(Collection<Relation> rels) {
         Set<OsmPrimitive> ret = new HashSet<>();
         for (Relation r : rels) {
-            ret.addAll(Utils.filter(r.getIncompleteMembers(), osm -> !osm.isNew()));
+            ret.addAll(SubclassFilteredCollection.filter(r.getIncompleteMembers(), osm -> !osm.isNew()));
         }
         return ret;
     }
@@ -58,7 +58,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
     @Override
     public void setPrimitives(Collection<? extends OsmPrimitive> primitives) {
         // selected relations with incomplete members
-        this.relations = Utils.filter(getRelations(primitives), r -> r.hasIncompleteMembers());
+        this.relations = SubclassFilteredCollection.filter(getRelations(primitives), r -> r.hasIncompleteMembers());
         this.incompleteMembers = buildSetOfIncompleteMembers(relations);
         updateEnabledState();
     }

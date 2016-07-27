@@ -24,7 +24,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This model manages a list of conflicting relation members.
@@ -199,7 +198,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      */
     public void prepareDefaultRelationDecisions() {
 
-        if (Utils.forAll(primitives, OsmPrimitive.nodePredicate)) {
+        if (primitives.stream().allMatch(OsmPrimitive.nodePredicate)) {
             final Collection<OsmPrimitive> primitivesInDecisions = new HashSet<>();
             for (final RelationMemberConflictDecision i : decisions) {
                 primitivesInDecisions.add(i.getOriginalPrimitive());
@@ -233,7 +232,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                 for (final Collection<RelationMemberConflictDecision> i : decisionsByPrimitive.values()) {
                     iterators.add(i.iterator());
                 }
-                while (Utils.forAll(iterators, it -> it.hasNext())) {
+                while (iterators.stream().allMatch(it -> it.hasNext())) {
                     final List<RelationMemberConflictDecision> decisions = new ArrayList<>();
                     final Collection<String> roles = new HashSet<>();
                     final Collection<Integer> indices = new TreeSet<>();

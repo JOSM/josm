@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.openstreetmap.josm.data.osm.FilterMatcher.FilterType;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * Class for applying {@link Filter}s to {@link OsmPrimitive}s.
@@ -31,9 +31,9 @@ public final class FilterWorker {
     public static boolean executeFilters(Collection<OsmPrimitive> all, FilterMatcher filterMatcher) {
         boolean changed;
         // first relations, then ways and nodes last; this is required to resolve dependencies
-        changed = doExecuteFilters(Utils.filter(all, OsmPrimitive.relationPredicate), filterMatcher);
-        changed |= doExecuteFilters(Utils.filter(all, OsmPrimitive.wayPredicate), filterMatcher);
-        changed |= doExecuteFilters(Utils.filter(all, OsmPrimitive.nodePredicate), filterMatcher);
+        changed = doExecuteFilters(SubclassFilteredCollection.filter(all, OsmPrimitive.relationPredicate), filterMatcher);
+        changed |= doExecuteFilters(SubclassFilteredCollection.filter(all, OsmPrimitive.wayPredicate), filterMatcher);
+        changed |= doExecuteFilters(SubclassFilteredCollection.filter(all, OsmPrimitive.nodePredicate), filterMatcher);
         return changed;
     }
 

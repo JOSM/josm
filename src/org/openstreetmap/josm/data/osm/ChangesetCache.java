@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * ChangesetCache is global in-memory cache for changesets downloaded from
@@ -202,7 +202,7 @@ public final class ChangesetCache implements PreferenceChangedListener {
         if (JosmUserIdentityManager.getInstance().isAnonymous()) {
             return getOpenChangesets();
         } else {
-            return new ArrayList<>(Utils.filter(getOpenChangesets(),
+            return new ArrayList<>(SubclassFilteredCollection.filter(getOpenChangesets(),
                     object -> JosmUserIdentityManager.getInstance().isCurrentUser(object.getUser())));
         }
     }

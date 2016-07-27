@@ -27,7 +27,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UserCancelException;
-import org.openstreetmap.josm.tools.Utils;
 
 public final class ReverseWayAction extends JosmAction {
 
@@ -134,6 +133,6 @@ public final class ReverseWayAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(Utils.exists(selection, OsmPrimitive.wayPredicate));
+        setEnabled(selection.stream().anyMatch(OsmPrimitive.wayPredicate));
     }
 }

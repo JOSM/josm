@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Class to hold and perform operations on a set of notes
@@ -153,7 +152,7 @@ public class NoteData {
                 noteList.add(newNote);
             } else {
                 final Note existingNote = noteList.get(newNote);
-                final boolean isDirty = Utils.exists(existingNote.getComments(), object -> object.isNew());
+                final boolean isDirty = existingNote.getComments().stream().anyMatch(object -> object.isNew());
                 if (!isDirty) {
                     noteList.put(newNote);
                 } else {

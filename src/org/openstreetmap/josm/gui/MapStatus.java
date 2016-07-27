@@ -293,7 +293,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                     // display them if the middle mouse button is pressed and keep them until the mouse is moved
                     if (middleMouseDown || isAtOldPosition) {
                         Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos,
-                                o -> isUsablePredicate.evaluate(o) && isSelectablePredicate.evaluate(o));
+                                o -> isUsablePredicate.test(o) && isSelectablePredicate.test(o));
 
                         final JPanel c = new JPanel(new GridBagLayout());
                         final JLabel lbl = new JLabel(

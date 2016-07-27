@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -59,7 +60,6 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageResourceCallback;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
@@ -296,7 +296,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             Label.addLabel(p, getIcon(), getName());
         }
 
-        boolean presetInitiallyMatches = !selected.isEmpty() && Utils.forAll(selected, this);
+        boolean presetInitiallyMatches = !selected.isEmpty() && selected.stream().allMatch(this);
         JPanel items = new JPanel(new GridBagLayout());
         for (TaggingPresetItem i : data) {
             if (i instanceof Link) {
@@ -555,7 +555,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * @return {@code true} if this preset matches the primitive
      */
     @Override
-    public boolean evaluate(OsmPrimitive p) {
+    public boolean test(OsmPrimitive p) {
         return matches(EnumSet.of(TaggingPresetType.forPrimitive(p)), p.getKeys(), false);
     }
 
