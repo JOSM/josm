@@ -691,7 +691,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                     roles.put(r, mi);
                     int i = 1;
                     for (RelationMember m : r.getMembers()) {
-                        if (primitive.equals(m.getMember())) {
+                        if (m.getMember() == primitive) {
                             mi.add(m, i);
                         }
                         ++i;

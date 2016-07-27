@@ -47,11 +47,11 @@ public class Conflict<T extends OsmPrimitive> {
     }
 
     public boolean isMatchingMy(OsmPrimitive my) {
-        return Objects.equals(this.my, my);
+        return this.my == my;
     }
 
     public boolean isMatchingTheir(OsmPrimitive their) {
-        return Objects.equals(this.their, their);
+        return this.their == their;
     }
 
     /**
