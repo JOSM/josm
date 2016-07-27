@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -443,7 +444,7 @@ public class SplitWayAction extends JosmAction {
         }
 
         if (wayChunks.size() < 2) {
-            if (wayChunks.get(0).get(0) == wayChunks.get(0).get(wayChunks.get(0).size() - 1)) {
+            if (Objects.equals(wayChunks.get(0).get(0), wayChunks.get(0).get(wayChunks.get(0).size() - 1))) {
                 new Notification(
                         tr("You must select two or more nodes to split a circular way."))
                         .setIcon(JOptionPane.WARNING_MESSAGE)
@@ -568,7 +569,7 @@ public class SplitWayAction extends JosmAction {
             int ir = 0;
             List<RelationMember> relationMembers = r.getMembers();
             for (RelationMember rm: relationMembers) {
-                if (rm.isWay() && rm.getMember() == way) {
+                if (rm.isWay() && Objects.equals(rm.getMember(), way)) {
                     boolean insert = true;
                     if ("restriction".equals(type) || "destination_sign".equals(type)) {
                         /* this code assumes the restriction is correct. No real error checking done */
@@ -629,18 +630,18 @@ public class SplitWayAction extends JosmAction {
                         while (ir - k >= 0 || ir + k < relationMembers.size()) {
                             if ((ir - k >= 0) && relationMembers.get(ir - k).isWay()) {
                                 Way w = relationMembers.get(ir - k).getWay();
-                                if ((w.lastNode() == way.firstNode()) || w.firstNode() == way.firstNode()) {
+                                if (Objects.equals(w.lastNode(), way.firstNode()) || Objects.equals(w.firstNode(), way.firstNode())) {
                                     backwards = Boolean.FALSE;
-                                } else if ((w.firstNode() == way.lastNode()) || w.lastNode() == way.lastNode()) {
+                                } else if (Objects.equals(w.firstNode(), way.lastNode()) || Objects.equals(w.lastNode(), way.lastNode())) {
                                     backwards = Boolean.TRUE;
                                 }
                                 break;
                             }
                             if ((ir + k < relationMembers.size()) && relationMembers.get(ir + k).isWay()) {
                                 Way w = relationMembers.get(ir + k).getWay();
-                                if ((w.lastNode() == way.firstNode()) || w.firstNode() == way.firstNode()) {
+                                if (Objects.equals(w.lastNode(), way.firstNode()) || Objects.equals(w.firstNode(), way.firstNode())) {
                                     backwards = Boolean.TRUE;
-                                } else if ((w.firstNode() == way.lastNode()) || w.lastNode() == way.lastNode()) {
+                                } else if (Objects.equals(w.firstNode(), way.lastNode()) || Objects.equals(w.lastNode(), way.lastNode())) {
                                     backwards = Boolean.FALSE;
                                 }
                                 break;

@@ -193,7 +193,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3 || Main.isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == MouseEvent.BUTTON3 || (Main.isPlatformOsx() && e.getButton() == MouseEvent.BUTTON1)) {
             endMovement();
         }
     }

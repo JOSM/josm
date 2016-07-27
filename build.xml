@@ -264,6 +264,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xlint:unchecked"/>
             <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
             <compilerarg value="-XDignore.symbol.file"/>
+            <compilerarg line="-Xmaxwarns 1000"/>
         </javac>
         <!-- JOSM -->
         <javac compiler="${javac.compiler}" sourcepath="" srcdir="${src.dir}" 
@@ -285,6 +286,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xlint:unchecked"/>
             <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
             <compilerarg value="-XDignore.symbol.file"/>
+            <compilerarg line="-Xmaxwarns 1000"/>
         </javac>
 
         <copy todir="build" failonerror="no" includeemptydirs="no">

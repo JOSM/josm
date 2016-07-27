@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.AbstractAction;
@@ -658,7 +659,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
             @Override
             public boolean isDataFlavorSupported(DataFlavor flavor) {
-                return flavors[0] == flavor;
+                return Objects.equals(flavors[0], flavor);
             }
         }
 
