@@ -188,7 +188,7 @@ public interface Selector {
             }
         }
 
-        private abstract class AbstractFinder extends AbstractVisitor {
+        private abstract static class AbstractFinder extends AbstractVisitor {
             protected final Environment e;
 
             protected AbstractFinder(Environment e) {

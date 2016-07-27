@@ -146,7 +146,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
                 }
             }
             for (OsmPrimitive o: rhs.getPrimitives(root)) {
-                if (condition == null || condition.match(o) && !result.contains(o)) {
+                if (condition == null || (condition.match(o) && !result.contains(o))) {
                     result.add(o);
                 }
             }

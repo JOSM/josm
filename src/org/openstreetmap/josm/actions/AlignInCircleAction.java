@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -312,11 +313,11 @@ public final class AlignInCircleAction extends JosmAction {
         Node firstNode = ways.get(0).firstNode();
         Node lastNode = null;
         Way lastWay = null;
-        while (firstNode != lastNode) {
+        while (!Objects.equals(firstNode, lastNode)) {
             if (lastNode == null) lastNode = firstNode;
             for (Way way: ways) {
-                if (way == lastWay) continue;
-                if (way.firstNode() == lastNode) {
+                if (Objects.equals(way, lastWay)) continue;
+                if (Objects.equals(way.firstNode(), lastNode)) {
                     List<Node> wayNodes = way.getNodes();
                     for (int i = 0; i < wayNodes.size() - 1; i++) {
                         nodes.add(wayNodes.get(i));
@@ -325,7 +326,7 @@ public final class AlignInCircleAction extends JosmAction {
                     lastWay = way;
                     break;
                 }
-                if (way.lastNode() == lastNode) {
+                if (Objects.equals(way.lastNode(), lastNode)) {
                     List<Node> wayNodes = way.getNodes();
                     for (int i = wayNodes.size() - 1; i > 0; i--) {
                         nodes.add(wayNodes.get(i));
@@ -393,7 +394,7 @@ public final class AlignInCircleAction extends JosmAction {
             for (Node node: way.getNodes()) {
                 if (way.isFirstLastNode(node)) continue;
                 for (Way wayOther: ways) {
-                    if (way == wayOther) continue;
+                    if (Objects.equals(way, wayOther)) continue;
                     if (node.getReferrers().contains(wayOther)) return false;
                 }
             }
@@ -406,19 +407,19 @@ public final class AlignInCircleAction extends JosmAction {
             Way nextWay = null;
             for (Way w: ways) {
                 if (w.isClosed()) return ways.size() == 1;
-                if (w == currentWay) continue;
+                if (Objects.equals(w, currentWay)) continue;
                 if (currentWay == null) {
                     nextWay = w;
                     startNode = w.firstNode();
                     endNode = w.lastNode();
                     break;
                 }
-                if (w.firstNode() == endNode) {
+                if (Objects.equals(w.firstNode(), endNode)) {
                     nextWay = w;
                     endNode = w.lastNode();
                     break;
                 }
-                if (w.lastNode() == endNode) {
+                if (Objects.equals(w.lastNode(), endNode)) {
                     nextWay = w;
                     endNode = w.firstNode();
                     break;
@@ -427,7 +428,7 @@ public final class AlignInCircleAction extends JosmAction {
             if (nextWay == null) return false;
             used += 1;
             currentWay = nextWay;
-            if (endNode == startNode) return used == ways.size();
+            if (Objects.equals(endNode, startNode)) return used == ways.size();
         }
     }
 }

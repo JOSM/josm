@@ -294,11 +294,11 @@ public class CombineWayAction extends JosmAction {
         }
 
         public boolean isSuccessorOf(NodePair other) {
-            return other.getB() == a;
+            return Objects.equals(other.getB(), a);
         }
 
         public boolean isPredecessorOf(NodePair other) {
-            return b == other.getA();
+            return Objects.equals(b, other.getA());
         }
 
         public NodePair swap() {
@@ -322,7 +322,7 @@ public class CombineWayAction extends JosmAction {
          * @return {@code true} if {@code n} is in the pair, {@code false} otherwise
          */
         public boolean contains(Node n) {
-            return a == n || b == n;
+            return Objects.equals(a, n) || Objects.equals(b, n);
         }
 
         @Override
@@ -336,7 +336,7 @@ public class CombineWayAction extends JosmAction {
             if (obj == null || getClass() != obj.getClass()) return false;
             NodePair nodePair = (NodePair) obj;
             return Objects.equals(a, nodePair.a) &&
-                    Objects.equals(b, nodePair.b);
+                   Objects.equals(b, nodePair.b);
         }
     }
 

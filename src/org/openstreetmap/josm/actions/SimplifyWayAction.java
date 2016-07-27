@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -242,10 +243,10 @@ public class SimplifyWayAction extends JosmAction {
             buildSimplifiedNodeList(wnew, imax, to, threshold, simplifiedNodes);
         } else {
             // Simplify segment
-            if (simplifiedNodes.isEmpty() || simplifiedNodes.get(simplifiedNodes.size()-1) != fromN) {
+            if (simplifiedNodes.isEmpty() || !Objects.equals(simplifiedNodes.get(simplifiedNodes.size()-1), fromN)) {
                 simplifiedNodes.add(fromN);
             }
-            if (fromN != toN) {
+            if (!Objects.equals(fromN, toN)) {
                 simplifiedNodes.add(toN);
             }
         }

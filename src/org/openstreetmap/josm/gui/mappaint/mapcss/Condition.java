@@ -512,7 +512,7 @@ public interface Condition {
 
         @Override
         public boolean applies(Environment env) {
-            return env != null && env.getCascade(env.layer) != null && not ^ env.getCascade(env.layer).containsKey(id);
+            return env != null && env.getCascade(env.layer) != null && (not ^ env.getCascade(env.layer).containsKey(id));
         }
 
         @Override

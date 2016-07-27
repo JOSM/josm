@@ -481,7 +481,7 @@ public class GpxDrawHelper implements SoMChangeListener {
                         hdop = 0;
                     }
                     Color customColoringTransparent = hdopAlpha < 0 ? trkPnt.customColoring :
-                        new Color(trkPnt.customColoring.getRGB() & 0x00ffffff | hdopAlpha << 24, true);
+                        new Color((trkPnt.customColoring.getRGB() & 0x00ffffff) | (hdopAlpha << 24), true);
                     g.setColor(customColoringTransparent);
                     // hdop circles
                     int hdopp = mv.getPoint(new LatLon(
@@ -493,7 +493,7 @@ public class GpxDrawHelper implements SoMChangeListener {
                     // color the large GPS points like the gps lines
                     if (trkPnt.customColoring != null) {
                         Color customColoringTransparent = largePointAlpha < 0 ? trkPnt.customColoring :
-                            new Color(trkPnt.customColoring.getRGB() & 0x00ffffff | largePointAlpha << 24, true);
+                            new Color((trkPnt.customColoring.getRGB() & 0x00ffffff) | (largePointAlpha << 24), true);
 
                         g.setColor(customColoringTransparent);
                     }
