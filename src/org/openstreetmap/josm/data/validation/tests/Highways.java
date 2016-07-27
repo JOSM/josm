@@ -157,7 +157,7 @@ public class Highways extends Test {
     public static boolean isHighwayLinkOkay(final Way way) {
         final String highway = way.get("highway");
         if (highway == null || !highway.endsWith("_link")
-                || !IN_DOWNLOADED_AREA.evaluate(way.getNode(0)) || !IN_DOWNLOADED_AREA.evaluate(way.getNode(way.getNodesCount()-1))) {
+                || !IN_DOWNLOADED_AREA.test(way.getNode(0)) || !IN_DOWNLOADED_AREA.test(way.getNode(way.getNodesCount()-1))) {
             return true;
         }
 
@@ -173,7 +173,7 @@ public class Highways extends Test {
             referrers.addAll(way.lastNode().getReferrers());
         }
 
-        return Utils.exists(Utils.filteredCollection(referrers, Way.class),
+        return Utils.filteredCollection(referrers, Way.class).stream().anyMatch(
                 otherWay -> !way.equals(otherWay) && otherWay.hasTag("highway", highway, highway.replaceAll("_link$", "")));
     }
 

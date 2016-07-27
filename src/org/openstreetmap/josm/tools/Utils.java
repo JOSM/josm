@@ -101,12 +101,13 @@ public final class Utils {
     /**
      * Tests whether {@code predicate} applies to at least one element from {@code collection}.
      * <p>
-     * Note: you can use {@link Stream#anyMatch(java.util.function.Predicate)} instead.
      * @param <T> type of items
      * @param collection the collection
      * @param predicate the predicate
      * @return {@code true} if {@code predicate} applies to at least one element from {@code collection}
+     * @deprecated use {@link Stream#anyMatch(java.util.function.Predicate)} instead.
      */
+    @Deprecated
     public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
             if (predicate.evaluate(item)) {
@@ -119,12 +120,13 @@ public final class Utils {
     /**
      * Tests whether {@code predicate} applies to all elements from {@code collection}.
      * <p>
-     * Note: you can use {@link Stream#allMatch(java.util.function.Predicate)} instead.
      * @param <T> type of items
      * @param collection the collection
      * @param predicate the predicate
      * @return {@code true} if {@code predicate} applies to all elements from {@code collection}
+     * @deprecated use {@link Stream#allMatch(java.util.function.Predicate)} instead.
      */
+    @Deprecated
     public static <T> boolean forAll(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         return !exists(collection, Predicates.not(predicate));
     }

@@ -42,7 +42,7 @@ public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisi
     public void visit(Node n) {
         if (n.isUsable() && !n.isTagged() && n.getReferrers().isEmpty()) {
 
-            if (!n.hasKeys() && IN_DOWNLOADED_AREA.evaluate(n)) {
+            if (!n.hasKeys() && IN_DOWNLOADED_AREA.test(n)) {
                 String msg = marktr("No tags");
                 errors.add(new TestError(this, Severity.WARNING, ERROR_MESSAGE, tr(msg), msg, UNTAGGED_NODE_BLANK, n));
                 return;

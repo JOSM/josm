@@ -70,7 +70,8 @@ public class GeometryTest {
     public void testClosedWayArea() throws Exception {
         try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm")) {
             DataSet ds = OsmReader.parseDataSet(in, null);
-            Way closedWay = (Way) Utils.filter(ds.allPrimitives(), SearchCompiler.compile("landuse=forest")).iterator().next();
+            Way closedWay = (Way) SubclassFilteredCollection.filter(ds.allPrimitives(),
+                    SearchCompiler.compile("landuse=forest")).iterator().next();
             Assert.assertEquals(5760015.7353515625, Geometry.closedWayArea(closedWay), 1e-3);
             Assert.assertEquals(5760015.7353515625, Geometry.computeArea(closedWay), 1e-3);
         }
@@ -100,7 +101,8 @@ public class GeometryTest {
     public void testAreaAndPerimeter() throws Exception {
         try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm")) {
             DataSet ds = OsmReader.parseDataSet(in, null);
-            Way closedWay = (Way) Utils.filter(ds.allPrimitives(), SearchCompiler.compile("landuse=forest")).iterator().next();
+            Way closedWay = (Way) SubclassFilteredCollection.filter(ds.allPrimitives(),
+                    SearchCompiler.compile("landuse=forest")).iterator().next();
             Geometry.AreaAndPerimeter areaAndPerimeter = Geometry.getAreaAndPerimeter(closedWay.getNodes());
             Assert.assertEquals(12495000., areaAndPerimeter.getArea(), 1e-3);
             Assert.assertEquals(15093.201209424187, areaAndPerimeter.getPerimeter(), 1e-3);

@@ -877,11 +877,11 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         private final List<RelationMember> role = new ArrayList<>();
         private Set<OsmPrimitive> members = new HashSet<>();
         private List<Integer> position = new ArrayList<>();
-        private Iterable<OsmPrimitive> selection;
+        private Collection<OsmPrimitive> selection;
         private String positionString;
         private String roleString;
 
-        MemberInfo(Iterable<OsmPrimitive> selection) {
+        MemberInfo(Collection<OsmPrimitive> selection) {
             this.selection = selection;
         }
 
@@ -895,7 +895,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             if (positionString == null) {
                 positionString = Utils.getPositionListString(position);
                 // if not all objects from the selection are member of this relation
-                if (Utils.exists(selection, Predicates.not(Predicates.inCollection(members)))) {
+                if (selection.stream().anyMatch(Predicates.not(Predicates.inCollection(members)))) {
                     positionString += ",\u2717";
                 }
                 members = null;

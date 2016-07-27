@@ -234,7 +234,7 @@ public class UnGlueAction extends JosmAction {
             setResizable(false);
         }
 
-        static PropertiesMembershipDialog showIfNecessary(Iterable<Node> selectedNodes, boolean preselectNew) throws UserCancelException {
+        static PropertiesMembershipDialog showIfNecessary(Collection<Node> selectedNodes, boolean preselectNew) throws UserCancelException {
             final boolean tagged = isTagged(selectedNodes);
             final boolean usedInRelations = isUsedInRelations(selectedNodes);
             if (tagged || usedInRelations) {
@@ -248,12 +248,13 @@ public class UnGlueAction extends JosmAction {
             return null;
         }
 
-        private static boolean isTagged(final Iterable<Node> existingNodes) {
-            return Utils.exists(existingNodes, selectedNode -> selectedNode.hasKeys());
+        private static boolean isTagged(final Collection<Node> existingNodes) {
+            return existingNodes.stream().anyMatch(selectedNode -> selectedNode.hasKeys());
         }
 
-        private static boolean isUsedInRelations(final Iterable<Node> existingNodes) {
-            return Utils.exists(existingNodes, selectedNode -> Utils.exists(selectedNode.getReferrers(), OsmPrimitive.relationPredicate));
+        private static boolean isUsedInRelations(final Collection<Node> existingNodes) {
+            return existingNodes.stream().anyMatch(
+                    selectedNode -> selectedNode.getReferrers().stream().anyMatch(OsmPrimitive.relationPredicate));
         }
 
         void update(final Node existingNode, final List<Node> newNodes, final Collection<Command> cmds) {

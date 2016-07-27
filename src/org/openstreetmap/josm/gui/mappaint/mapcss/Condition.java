@@ -10,6 +10,7 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
@@ -25,8 +26,8 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Predicates;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
 @FunctionalInterface
@@ -462,7 +463,7 @@ public interface Condition {
                 case FALSE:
                     return e.osm.isKeyFalse(label) ^ negateResult;
                 case REGEX:
-                    return Utils.exists(e.osm.keySet(), containsPattern) ^ negateResult;
+                    return e.osm.keySet().stream().anyMatch(containsPattern) ^ negateResult;
                 default:
                     return e.osm.hasKey(label) ^ negateResult;
                 }
@@ -485,7 +486,7 @@ public interface Condition {
         public Tag asTag(OsmPrimitive p) {
             String key = label;
             if (KeyMatchType.REGEX.equals(matchType)) {
-                final Collection<String> matchingKeys = Utils.filter(p.keySet(), containsPattern);
+                final Collection<String> matchingKeys = SubclassFilteredCollection.filter(p.keySet(), containsPattern);
                 if (!matchingKeys.isEmpty()) {
                     key = matchingKeys.iterator().next();
                 }
@@ -665,7 +666,7 @@ public interface Condition {
          * @see InDataSourceArea
          */
         static boolean inDownloadedArea(Environment e) { // NO_UCD (unused code)
-            return IN_DOWNLOADED_AREA.evaluate(e.osm);
+            return IN_DOWNLOADED_AREA.test(e.osm);
         }
 
         static boolean completely_downloaded(Environment e) { // NO_UCD (unused code)

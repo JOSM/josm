@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 import java.util.zip.CRC32;
 
 import javax.swing.JComponent;
@@ -58,7 +59,6 @@ import org.openstreetmap.josm.gui.layer.NativeScaleLayer.ScaleList;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.util.CursorManager;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -817,7 +817,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             snapDistanceSq *= snapDistanceSq;
 
             for (Node n : ds.searchNodes(getBBox(p, PROP_SNAP_DISTANCE.get()))) {
-                if (predicate.evaluate(n)
+                if (predicate.test(n)
                         && (dist = getPoint2D(n).distanceSq(p)) < snapDistanceSq) {
                     List<Node> nlist;
                     if (nearestMap.containsKey(dist)) {
@@ -1026,7 +1026,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             snapDistanceSq *= snapDistanceSq;
 
             for (Way w : ds.searchWays(getBBox(p, Main.pref.getInteger("mappaint.segment.snap-distance", 10)))) {
-                if (!predicate.evaluate(w)) {
+                if (!predicate.test(w)) {
                     continue;
                 }
                 Node lastN = null;
@@ -1470,7 +1470,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         Set<OsmPrimitive> parentRelations = new HashSet<>();
         for (OsmPrimitive o : nearestList) {
             for (OsmPrimitive r : o.getReferrers()) {
-                if (r instanceof Relation && predicate.evaluate(r)) {
+                if (r instanceof Relation && predicate.test(r)) {
                     parentRelations.add(r);
                 }
             }

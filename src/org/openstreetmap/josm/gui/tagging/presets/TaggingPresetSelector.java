@@ -281,7 +281,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
                     if (!suitable && preset.types.contains(TaggingPresetType.RELATION)
                             && preset.roles != null && !preset.roles.roles.isEmpty()) {
                         suitable = preset.roles.roles.stream().anyMatch(
-                                object -> object.memberExpression != null && Utils.exists(selectedPrimitives, object.memberExpression));
+                                object -> object.memberExpression != null && selectedPrimitives.stream().anyMatch(object.memberExpression));
                         // keep the preset to allow the creation of new relations
                     }
                     if (!suitable) {

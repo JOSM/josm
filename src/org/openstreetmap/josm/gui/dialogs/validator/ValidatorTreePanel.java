@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
@@ -35,9 +36,7 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Predicates;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A panel that displays the error tree. The selection manager
@@ -363,7 +362,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                     && ((DefaultMutableTreeNode) child).getUserObject() instanceof TestError) {
                 final TestError error = (TestError) ((DefaultMutableTreeNode) child).getUserObject();
                 if (error.getPrimitives() != null) {
-                    if (Utils.exists(error.getPrimitives(), isRelevant)) {
+                    if (error.getPrimitives().stream().anyMatch(isRelevant)) {
                         paths.add(p.pathByAddingChild(child));
                     }
                 }

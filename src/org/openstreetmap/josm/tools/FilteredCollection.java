@@ -16,7 +16,7 @@ public class FilteredCollection<T> extends SubclassFilteredCollection<T, T> {
      * @param collection The base collection to filter
      * @param predicate The predicate to use as filter
      */
-    public FilteredCollection(Collection<? extends T> collection, Predicate<? super T> predicate) {
+    public FilteredCollection(Collection<? extends T> collection, java.util.function.Predicate<? super T> predicate) {
         super(collection, predicate);
     }
 }

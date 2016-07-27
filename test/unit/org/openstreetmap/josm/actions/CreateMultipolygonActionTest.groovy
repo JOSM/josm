@@ -9,7 +9,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler
 import org.openstreetmap.josm.data.osm.Relation
 import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.io.OsmReader
-import org.openstreetmap.josm.tools.Utils
+import org.openstreetmap.josm.tools.SubclassFilteredCollection
 
 class CreateMultipolygonActionTest {
 
@@ -44,7 +44,7 @@ class CreateMultipolygonActionTest {
     @Test
     public void testCreate2() {
         def ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
-        def ways = Utils.filter(ds.getWays(), SearchCompiler.compile("ref=1 OR ref:1.1."))
+        def ways = SubclassFilteredCollection.filter(ds.getWays(), SearchCompiler.compile("ref=1 OR ref:1.1."))
         def mp = CreateMultipolygonAction.createMultipolygonCommand(ways as Collection<Way>, null)
         assert getRefToRoleMap(mp.b).toString() == "[1:outer, 1.1.1:inner, 1.1.2:inner]"
     }
@@ -52,11 +52,11 @@ class CreateMultipolygonActionTest {
     @Test
     public void testUpdate1() {
         def ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
-        def ways = Utils.filter(ds.getWays(), SearchCompiler.compile(regexpSearch("ref=\".*1\$\"")))
+        def ways = SubclassFilteredCollection.filter(ds.getWays(), SearchCompiler.compile(regexpSearch("ref=\".*1\$\"")))
         def mp = CreateMultipolygonAction.createMultipolygonCommand(ways as Collection<Way>, null)
         assert mp.b.getMembersCount() == 3
         assert getRefToRoleMap(mp.b).toString() == "[1:outer, 1.1:inner, 1.1.1:outer]"
-        def ways2 = Utils.filter(ds.getWays(), SearchCompiler.compile(regexpSearch("ref=1.2")))
+        def ways2 = SubclassFilteredCollection.filter(ds.getWays(), SearchCompiler.compile(regexpSearch("ref=1.2")))
         def mp2 = CreateMultipolygonAction.createMultipolygonCommand(ways2 as Collection<Way>, mp.b)
         assert mp2.b.getMembersCount() == 4
         assert getRefToRoleMap(mp2.b).toString() == "[1:outer, 1.1:inner, 1.1.1:outer, 1.2:inner]"
@@ -65,10 +65,10 @@ class CreateMultipolygonActionTest {
     @Test
     public void testUpdate2() {
         def ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
-        def ways = Utils.filter(ds.getWays(), SearchCompiler.compile("ref=1 OR ref:1.1.1"))
+        def ways = SubclassFilteredCollection.filter(ds.getWays(), SearchCompiler.compile("ref=1 OR ref:1.1.1"))
         def mp = CreateMultipolygonAction.createMultipolygonCommand(ways as Collection<Way>, null)
         assert getRefToRoleMap(mp.b).toString() == "[1:outer, 1.1.1:inner]"
-        def ways2 = Utils.filter(ds.getWays(), SearchCompiler.compile(regexpSearch("ref=1.1 OR ref=1.2 OR ref=1.1.2")))
+        def ways2 = SubclassFilteredCollection.filter(ds.getWays(), SearchCompiler.compile(regexpSearch("ref=1.1 OR ref=1.2 OR ref=1.1.2")))
         def mp2 = CreateMultipolygonAction.createMultipolygonCommand(ways2 as Collection<Way>, mp.b)
         assert getRefToRoleMap(mp2.b).toString() == "[1:outer, 1.1:inner, 1.1.1:outer, 1.1.2:outer, 1.2:inner]"
     }

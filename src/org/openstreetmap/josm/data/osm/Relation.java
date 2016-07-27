@@ -15,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.Utils.Function;
 
@@ -349,7 +350,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
      * @return all relation members for the given primitives
      */
     public Collection<RelationMember> getMembersFor(final Collection<? extends OsmPrimitive> primitives) {
-        return Utils.filter(getMembers(), member -> primitives.contains(member.getMember()));
+        return SubclassFilteredCollection.filter(getMembers(), member -> primitives.contains(member.getMember()));
     }
 
     /**

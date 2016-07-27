@@ -28,7 +28,7 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * Performs validation tests on addresses (addr:housenumber) and associatedStreet relations.
@@ -90,7 +90,7 @@ public class Addresses extends Test {
             Severity level;
             // warning level only if several relations have different names, see #10945
             final String name = list.get(0).get("name");
-            if (name == null || Utils.filter(list, r -> name.equals(r.get("name"))).size() < list.size()) {
+            if (name == null || SubclassFilteredCollection.filter(list, r -> name.equals(r.get("name"))).size() < list.size()) {
                 level = Severity.WARNING;
             } else {
                 level = Severity.OTHER;
@@ -242,7 +242,7 @@ public class Addresses extends Test {
         }
         // No street segment found near this house, report error on if the relation does not contain incomplete street ways (fix #8314)
         if (hasIncompleteWays) return;
-        List<OsmPrimitive> errorList = new ArrayList<OsmPrimitive>(street);
+        List<OsmPrimitive> errorList = new ArrayList<>(street);
         errorList.add(0, house);
         errors.add(new AddressError(this, HOUSE_NUMBER_TOO_FAR, errorList,
                 tr("House number too far from street")));

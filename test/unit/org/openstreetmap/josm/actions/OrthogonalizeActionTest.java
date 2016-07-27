@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.tools.Geometry;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * Unit tests for class {@link OsmDataLayer}.
@@ -86,7 +86,7 @@ public class OrthogonalizeActionTest {
         try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "orthogonalize.osm")) {
             final DataSet ds = OsmReader.parseDataSet(in, null);
             for (String s : search) {
-                ds.addSelected(Utils.filter(ds.allPrimitives(), SearchCompiler.compile(s)));
+                ds.addSelected(SubclassFilteredCollection.filter(ds.allPrimitives(), SearchCompiler.compile(s)));
             }
             OrthogonalizeAction.orthogonalize(ds.getSelected()).executeCommand();
             return ds;

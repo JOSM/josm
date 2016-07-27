@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -53,7 +54,6 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -688,13 +688,13 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                             selection.add(osm);
                             ++foundMatches;
                         }
-                    } else if (setting.mode == SearchMode.add && !predicate.evaluate(osm) && matcher.match(osm)) {
+                    } else if (setting.mode == SearchMode.add && !predicate.test(osm) && matcher.match(osm)) {
                         selection.add(osm);
                         ++foundMatches;
-                    } else if (setting.mode == SearchMode.remove && predicate.evaluate(osm) && matcher.match(osm)) {
+                    } else if (setting.mode == SearchMode.remove && predicate.test(osm) && matcher.match(osm)) {
                         selection.remove(osm);
                         ++foundMatches;
-                    } else if (setting.mode == SearchMode.in_selection && predicate.evaluate(osm) && !matcher.match(osm)) {
+                    } else if (setting.mode == SearchMode.in_selection && predicate.test(osm) && !matcher.match(osm)) {
                         selection.remove(osm);
                         --foundMatches;
                     }

@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -192,7 +193,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                 final SearchCompiler.Match search = SearchCompiler.compile(args.get("search"));
                 Main.worker.submit(() -> {
                     final DataSet ds = Main.getLayerManager().getEditDataSet();
-                    final Collection<OsmPrimitive> filteredPrimitives = Utils.filter(ds.allPrimitives(), search);
+                    final Collection<OsmPrimitive> filteredPrimitives = SubclassFilteredCollection.filter(ds.allPrimitives(), search);
                     ds.setSelected(filteredPrimitives);
                     forTagAdd.addAll(filteredPrimitives);
                     zoom(filteredPrimitives, bbox);
