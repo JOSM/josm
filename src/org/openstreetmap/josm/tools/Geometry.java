@@ -887,7 +887,7 @@ public final class Geometry {
      * @param isOuterWayAMatch allows to decide if the immediate {@code outer} way of the multipolygon is a match
      * @return {@code true} if the node is inside the multipolygon
      */
-    public static boolean isNodeInsideMultiPolygon(Node node, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
+    public static boolean isNodeInsideMultiPolygon(Node node, Relation multiPolygon, java.util.function.Predicate<Way> isOuterWayAMatch) {
         return isPolygonInsideMultiPolygon(Collections.singletonList(node), multiPolygon, isOuterWayAMatch);
     }
 
@@ -901,7 +901,8 @@ public final class Geometry {
      * @param isOuterWayAMatch allows to decide if the immediate {@code outer} way of the multipolygon is a match
      * @return {@code true} if the polygon formed by nodes is inside the multipolygon
      */
-    public static boolean isPolygonInsideMultiPolygon(List<Node> nodes, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
+    public static boolean isPolygonInsideMultiPolygon(List<Node> nodes, Relation multiPolygon,
+            java.util.function.Predicate<Way> isOuterWayAMatch) {
         // Extract outer/inner members from multipolygon
         final MultiPolygonMembers mpm = new MultiPolygonMembers(multiPolygon);
         // Construct complete rings for the inner/outer members
@@ -935,7 +936,7 @@ public final class Geometry {
                 // Inside outer but not inside inner -> the polygon appears to be inside a the multipolygon
                 if (!insideInner) {
                     // Final check using predicate
-                    if (isOuterWayAMatch == null || isOuterWayAMatch.evaluate(out.ways.get(0)
+                    if (isOuterWayAMatch == null || isOuterWayAMatch.test(out.ways.get(0)
                             /* TODO give a better representation of the outer ring to the predicate */)) {
                         return true;
                     }
