@@ -187,12 +187,10 @@ public abstract class Command implements PseudoCommand {
      * any buffer if it is not longer applicable to the dataset (e.g. it was part of
      * the removed layer)
      *
-     * @param oldLayer the old layer
-     * @return true if this command
+     * @param oldLayer the old layer that was removed
+     * @return true if this command is invalid after that layer is removed.
      */
     public boolean invalidBecauselayerRemoved(Layer oldLayer) {
-        if (!(oldLayer instanceof OsmDataLayer))
-            return false;
         return layer == oldLayer;
     }
 

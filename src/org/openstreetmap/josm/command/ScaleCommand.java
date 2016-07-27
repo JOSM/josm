@@ -34,7 +34,7 @@ public class ScaleCommand extends TransformNodesCommand {
      * @param objects objects to fetch nodes from
      * @param currentEN cuurent eats/north
      */
-    public ScaleCommand(Collection<OsmPrimitive> objects, EastNorth currentEN) {
+    public ScaleCommand(Collection<? extends OsmPrimitive> objects, EastNorth currentEN) {
         super(objects);
 
         pivot = getNodesCenter();
@@ -57,8 +57,16 @@ public class ScaleCommand extends TransformNodesCommand {
         double endAngle = Math.atan2(currentEN.east()-pivot.east(), currentEN.north()-pivot.north());
         double startDistance = pivot.distance(startEN);
         double currentDistance = pivot.distance(currentEN);
-        scalingFactor = Math.cos(startAngle-endAngle) * currentDistance / startDistance;
+        setScalingFactor(Math.cos(startAngle-endAngle) * currentDistance / startDistance);
         transformNodes();
+    }
+
+    /**
+     * Set the scaling factor
+     * @param scalingFactor The scaling factor.
+     */
+    protected void setScalingFactor(double scalingFactor) {
+        this.scalingFactor = scalingFactor;
     }
 
     /**

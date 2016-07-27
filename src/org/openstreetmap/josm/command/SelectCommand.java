@@ -4,6 +4,8 @@ package org.openstreetmap.josm.command;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
@@ -27,7 +29,11 @@ public class SelectCommand extends Command {
      * @param newSelection the primitives to select when executing the command.
      */
     public SelectCommand(Collection<OsmPrimitive> newSelection) {
-        this.newSelection = newSelection;
+        if (newSelection == null || newSelection.isEmpty()) {
+            this.newSelection = Collections.emptySet();
+        } else {
+            this.newSelection = new HashSet<>(newSelection);
+        }
     }
 
     @Override
