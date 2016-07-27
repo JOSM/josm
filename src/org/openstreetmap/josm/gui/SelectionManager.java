@@ -91,7 +91,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     private class SelectionHintLayer extends AbstractMapViewPaintable {
         @Override
         public void paint(Graphics2D g, MapView mv, Bounds bbox) {
-            if (mousePos == null || mousePosStart == null || mousePos.equals(mousePosStart))
+            if (mousePos == null || mousePosStart == null || mousePos == mousePosStart)
                 return;
             Color color = Utils.complement(PaintColors.getBackgroundColor());
             g.setColor(color);
@@ -278,7 +278,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     }
 
     private boolean isNoSelection() {
-        return mousePos == null || mousePosStart == null || mousePos.equals(mousePosStart);
+        return mousePos == null || mousePosStart == null || mousePos == mousePosStart;
     }
 
     /**
