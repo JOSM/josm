@@ -1004,19 +1004,18 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Add new referrer. If referrer is already included then no action is taken
-     * @param referrer The referrer to add. Must not be null
-     * @throws NullPointerException if {@code referrer} is null
+     * @param referrer The referrer to add
      */
     protected void addReferrer(OsmPrimitive referrer) {
         if (referrers == null) {
             referrers = referrer;
         } else if (referrers instanceof OsmPrimitive) {
-            if (!referrer.equals(referrers)) {
+            if (referrers != referrer) {
                 referrers = new OsmPrimitive[] {(OsmPrimitive) referrers, referrer};
             }
         } else {
             for (OsmPrimitive primitive:(OsmPrimitive[]) referrers) {
-                if (referrer.equals(primitive))
+                if (primitive == referrer)
                     return;
             }
             referrers = Utils.addInArrayCopy((OsmPrimitive[]) referrers, referrer);
@@ -1025,19 +1024,18 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Remove referrer. No action is taken if referrer is not registered
-     * @param referrer The referrer to remove. Must not be null
-     * @throws NullPointerException if {@code referrer} is null
+     * @param referrer The referrer to remove
      */
     protected void removeReferrer(OsmPrimitive referrer) {
         if (referrers instanceof OsmPrimitive) {
-            if (referrer.equals(referrers)) {
+            if (referrers == referrer) {
                 referrers = null;
             }
         } else if (referrers instanceof OsmPrimitive[]) {
             OsmPrimitive[] orig = (OsmPrimitive[]) referrers;
             int idx = -1;
             for (int i = 0; i < orig.length; i++) {
-                if (referrer.equals(orig[i])) {
+                if (orig[i] == referrer) {
                     idx = i;
                     break;
                 }
