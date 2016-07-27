@@ -37,6 +37,9 @@ public class ChangeNodesCommand extends Command {
     public ChangeNodesCommand(Way way, List<Node> newNodes) {
         this.way = way;
         this.newNodes = newNodes;
+        if (newNodes.isEmpty()) {
+            throw new IllegalArgumentException("Cannot set nodes to be an empty list.");
+        }
     }
 
     @Override
@@ -54,7 +57,7 @@ public class ChangeNodesCommand extends Command {
 
     @Override
     public String getDescriptionText() {
-        return tr("Changed nodes of {0}", way.getDisplayName(DefaultNameFormatter.getInstance()));
+        return tr("Change nodes of {0}", way.getDisplayName(DefaultNameFormatter.getInstance()));
     }
 
     @Override

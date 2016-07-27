@@ -38,7 +38,7 @@ public class RotateCommand extends TransformNodesCommand {
      * @param objects objects to fetch nodes from
      * @param currentEN cuurent eats/north
      */
-    public RotateCommand(Collection<OsmPrimitive> objects, EastNorth currentEN) {
+    public RotateCommand(Collection<? extends OsmPrimitive> objects, EastNorth currentEN) {
         super(objects);
 
         pivot = getNodesCenter();
@@ -70,13 +70,21 @@ public class RotateCommand extends TransformNodesCommand {
     }
 
     /**
+     * Set the rotation angle.
+     * @param rotationAngle The rotate angle
+     */
+    protected void setRotationAngle(double rotationAngle) {
+        this.rotationAngle = rotationAngle;
+    }
+
+    /**
      * Rotate nodes.
      */
     @Override
     protected void transformNodes() {
+        double cosPhi = Math.cos(rotationAngle);
+        double sinPhi = Math.sin(rotationAngle);
         for (Node n : nodes) {
-            double cosPhi = Math.cos(rotationAngle);
-            double sinPhi = Math.sin(rotationAngle);
             EastNorth oldEastNorth = oldStates.get(n).getEastNorth();
             double x = oldEastNorth.east() - pivot.east();
             double y = oldEastNorth.north() - pivot.north();

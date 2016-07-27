@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
@@ -1146,7 +1145,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         /* find the "direct" nodes before the via node */
         Node fromNode;
-        if (Objects.equals(fromWay.firstNode(), via)) {
+        if (fromWay.firstNode() == via) {
             fromNode = fromWay.getNode(1);
         } else {
             fromNode = fromWay.getNode(fromWay.getNodesCount()-2);
@@ -1441,7 +1440,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (!way.isHighlighted() && highlightWaySegments != null) {
             GeneralPath highlightSegs = null;
             for (WaySegment ws : highlightWaySegments) {
-                if (!Objects.equals(ws.way, way) || ws.lowerIndex < offset) {
+                if (ws.way != way || ws.lowerIndex < offset) {
                     continue;
                 }
                 if (highlightSegs == null) {

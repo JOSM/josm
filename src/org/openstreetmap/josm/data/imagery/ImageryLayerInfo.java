@@ -333,7 +333,7 @@ public class ImageryLayerInfo {
      * the corresponding id otherwise
      */
     public String getUniqueId(ImageryInfo info) {
-        if (info.getId() != null && info.equals(layerIds.get(info.getId()))) {
+        if (info.getId() != null && layerIds.get(info.getId()) == info) {
             return info.getId();
         }
         return null;

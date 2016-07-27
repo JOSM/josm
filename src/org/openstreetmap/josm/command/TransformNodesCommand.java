@@ -48,7 +48,7 @@ public abstract class TransformNodesCommand extends Command {
      * Find out the impacted nodes and store their initial state.
      * @param objects objects to fetch nodes from
      */
-    public TransformNodesCommand(Collection<OsmPrimitive> objects) {
+    public TransformNodesCommand(Collection<? extends OsmPrimitive> objects) {
         this.nodes = AllNodesVisitor.getAllNodes(objects);
         storeOldState();
     }

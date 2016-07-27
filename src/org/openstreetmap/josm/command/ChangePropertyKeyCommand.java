@@ -65,7 +65,7 @@ public class ChangePropertyKeyCommand extends Command {
         if (!super.executeCommand())
             return false; // save old
         for (OsmPrimitive osm : objects) {
-            if (osm.hasKeys()) {
+            if (osm.hasKey(key) || osm.hasKey(newKey)) {
                 osm.setModified(true);
                 String oldValue = osm.get(key);
                 osm.put(newKey, oldValue);
@@ -86,9 +86,9 @@ public class ChangePropertyKeyCommand extends Command {
         if (objects.size() == 1) {
             NameVisitor v = new NameVisitor();
             objects.get(0).accept(v);
-            text += ' '+tr(v.className)+' '+v.name;
+            text += " "+tr(v.className)+" "+v.name;
         } else {
-            text += ' '+objects.size()+' '+trn("object", "objects", objects.size());
+            text += " "+objects.size()+" "+trn("object", "objects", objects.size());
         }
         return text;
     }
@@ -107,15 +107,17 @@ public class ChangePropertyKeyCommand extends Command {
         final NameVisitor v = new NameVisitor();
         for (final OsmPrimitive osm : objects) {
             osm.accept(v);
+            final String name = v.name;
+            final Icon icon = v.icon;
             children.add(new PseudoCommand() {
                 @Override
                 public String getDescriptionText() {
-                    return v.name;
+                    return name;
                 }
 
                 @Override
                 public Icon getDescriptionIcon() {
-                    return v.icon;
+                    return icon;
                 }
 
                 @Override

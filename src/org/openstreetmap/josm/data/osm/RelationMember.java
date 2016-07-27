@@ -160,7 +160,7 @@ public class RelationMember implements PrimitiveId {
      * @return true, if this relation member refers to the primitive
      */
     public boolean refersTo(OsmPrimitive primitive) {
-        return Objects.equals(member, primitive);
+        return member == primitive;
     }
 
     @Override

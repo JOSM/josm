@@ -48,7 +48,7 @@ public class ChangeRelationMemberRoleCommand extends Command {
     @Override
     public boolean executeCommand() {
         if (position < 0 || position >= relation.getMembersCount())
-            return false;
+            return true;
 
         oldRole = relation.getMember(position).getRole();
         if (newRole.equals(oldRole)) return true;
@@ -61,9 +61,11 @@ public class ChangeRelationMemberRoleCommand extends Command {
 
     @Override
     public void undoCommand() {
-        relation.setMember(position, new RelationMember(oldRole, relation.getMember(position).getMember()));
-        if (oldModified != null) {
-            relation.setModified(oldModified);
+        if (position >= 0 && position < relation.getMembersCount()) {
+            relation.setMember(position, new RelationMember(oldRole, relation.getMember(position).getMember()));
+            if (oldModified != null) {
+                relation.setModified(oldModified);
+            }
         }
     }
 

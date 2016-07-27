@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -297,7 +296,7 @@ public final class AudioPlayer extends Thread {
                         case PLAY:
                             double offset = command.offset();
                             speed = command.speed();
-                            if (!Objects.equals(playingUrl, command.url()) ||
+                            if (playingUrl != command.url() ||
                                     stateChange != State.PAUSED ||
                                     offset != 0) {
                                 if (audioInputStream != null) {

@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -526,7 +525,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     return;
 
                 // User clicked last node again, finish way
-                if (Objects.equals(n0, n)) {
+                if (n0 == n) {
                     finishDrawing();
                     return;
                 }
@@ -575,7 +574,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
 
                 // Add new node to way
-                if (Objects.equals(way.getNode(way.getNodesCount() - 1), n0)) {
+                if (way.getNode(way.getNodesCount() - 1) == n0) {
                     way.addNode(n);
                 } else {
                     way.addNode(0, n);
@@ -817,8 +816,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             snapHelper.noSnapNow();
         }
 
-        if (getCurrentBaseNode() == null || getCurrentBaseNode().equals(currentMouseNode))
+        if (getCurrentBaseNode() == null || getCurrentBaseNode() == currentMouseNode)
             return; // Don't create zero length way segments.
+
 
         double curHdg = Math.toDegrees(getCurrentBaseNode().getEastNorth()
                 .heading(currentMouseEastNorth));
@@ -903,10 +903,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      */
     private void continueWayFromNode(Way way, Node node) {
         int n = way.getNodesCount();
-        if (Objects.equals(node, way.firstNode())) {
+        if (node == way.firstNode()) {
             currentBaseNode = node;
             if (n > 1) previousNode = way.getNode(1);
-        } else if (Objects.equals(node, way.lastNode())) {
+        } else if (node == way.lastNode()) {
             currentBaseNode = node;
             if (n > 1) previousNode = way.getNode(n-2);
         }
@@ -943,7 +943,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
             Node firstNode = w.getNode(0);
             Node lastNode = w.getNode(w.getNodesCount() - 1);
-            if ((Objects.equals(firstNode, n) || Objects.equals(lastNode, n)) && !Objects.equals(firstNode, lastNode)) {
+            if ((firstNode == n || lastNode == n) && (firstNode != lastNode)) {
                 if (way != null)
                     return null;
                 way = w;

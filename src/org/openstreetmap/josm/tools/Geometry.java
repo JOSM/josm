@@ -14,7 +14,6 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -115,7 +114,7 @@ public final class Geometry {
 
                         int commonCount = 0;
                         //test if we have common nodes to add.
-                        if (Objects.equals(seg1Node1, seg2Node1) || Objects.equals(seg1Node1, seg2Node2)) {
+                        if (seg1Node1 == seg2Node1 || seg1Node1 == seg2Node2) {
                             commonCount++;
 
                             if (seg1Way == seg2Way &&
@@ -127,7 +126,7 @@ public final class Geometry {
                             }
                         }
 
-                        if (Objects.equals(seg1Node2, seg2Node1) || Objects.equals(seg1Node2, seg2Node2)) {
+                        if (seg1Node2 == seg2Node1 || seg1Node2 == seg2Node2) {
                             commonCount++;
 
                             intersectionNodes.add(seg1Node2);
@@ -189,7 +188,7 @@ public final class Geometry {
 
                                 intersectionNodes.add(intNode);
 
-                                if (Objects.equals(intNode, newNode)) {
+                                if (intNode == newNode) {
                                     cmds.add(new AddCommand(intNode));
                                 }
                             }
@@ -702,7 +701,7 @@ public final class Geometry {
      */
     public static boolean isClockwise(List<Node> nodes) {
         int nodesCount = nodes.size();
-        if (nodesCount < 3 || !Objects.equals(nodes.get(0), nodes.get(nodesCount - 1))) {
+        if (nodesCount < 3 || nodes.get(0) != nodes.get(nodesCount - 1)) {
             throw new IllegalArgumentException("Way must be closed to check orientation.");
         }
         double area2 = 0.;
@@ -991,7 +990,7 @@ public final class Geometry {
         double area = 0;
         double perimeter = 0;
         if (!nodes.isEmpty()) {
-            boolean closed = Objects.equals(nodes.get(0), nodes.get(nodes.size() - 1));
+            boolean closed = nodes.get(0) == nodes.get(nodes.size() - 1);
             int numSegments = closed ? nodes.size() - 1 : nodes.size();
             EastNorth p1 = projection == null ? nodes.get(0).getEastNorth() : projection.latlon2eastNorth(nodes.get(0).getCoor());
             for (int i = 1; i <= numSegments; i++) {

@@ -244,6 +244,14 @@ public class MoveCommand extends Command {
         return nodes;
     }
 
+    /**
+     * Gets the offset.
+     * @return The current offset.
+     */
+    protected EastNorth getOffset() {
+        return new EastNorth(x, y);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), nodes, startEN, x, y, backupX, backupY, oldState);

@@ -155,7 +155,7 @@ public class ChangePropertyCommand extends Command {
             OsmPrimitive primitive = objects.get(0);
             String msg;
             Map.Entry<String, String> entry = tags.entrySet().iterator().next();
-            if (entry.getValue() == null) {
+            if (entry.getValue() == null || entry.getValue().isEmpty()) {
                 switch(OsmPrimitiveType.from(primitive)) {
                 case NODE: msg = marktr("Remove \"{0}\" for node ''{1}''"); break;
                 case WAY: msg = marktr("Remove \"{0}\" for way ''{1}''"); break;
@@ -174,7 +174,7 @@ public class ChangePropertyCommand extends Command {
             }
         } else if (objects.size() > 1 && tags.size() == 1) {
             Map.Entry<String, String> entry = tags.entrySet().iterator().next();
-            if (entry.getValue() == null) {
+            if (entry.getValue() == null || entry.getValue().isEmpty()) {
                 /* I18n: plural form for objects, but value < 2 not possible! */
                 text = trn("Remove \"{0}\" for {1} object", "Remove \"{0}\" for {1} objects", objects.size(), entry.getKey(), objects.size());
             } else {
@@ -185,7 +185,7 @@ public class ChangePropertyCommand extends Command {
         } else {
             boolean allnull = true;
             for (Map.Entry<String, String> tag : this.tags.entrySet()) {
-                if (tag.getValue() != null) {
+                if (tag.getValue() != null && !tag.getValue().isEmpty()) {
                     allnull = false;
                     break;
                 }
@@ -225,7 +225,6 @@ public class ChangePropertyCommand extends Command {
                 @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
                     return Collections.singleton(osm);
                 }
-
             });
         }
         return children;

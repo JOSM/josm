@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import java.awt.Color;
-import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
@@ -83,7 +82,7 @@ public final class MapPaintSettings implements PreferenceChangedListener {
         nodeColor = PaintColors.NODE.get();
         taggedColor = PaintColors.TAGGED.get();
         connectionColor = PaintColors.CONNECTION.get();
-        if (!Objects.equals(taggedColor, nodeColor)) {
+        if (taggedColor != nodeColor) {
             taggedConnectionColor = taggedColor;
         } else {
             taggedConnectionColor = connectionColor;

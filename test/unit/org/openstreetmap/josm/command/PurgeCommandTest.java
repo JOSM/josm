@@ -1,18 +1,34 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import org.junit.BeforeClass;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Hash;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
@@ -20,13 +36,107 @@ import nl.jqno.equalsverifier.Warning;
  * Unit tests of {@link PurgeCommand} class.
  */
 public class PurgeCommandTest {
+    /**
+     * We need prefs for nodes.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences();
+    private CommandTestDataWithRelation testData;
 
     /**
-     * Setup test.
+     * Set up the test data.
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init(false);
+    @Before
+    public void createTestData() {
+        testData = new CommandTestDataWithRelation();
+    }
+
+    /**
+     * Test {@link PurgeCommand#executeCommand()}
+     */
+    @Test
+    public void testExecute() {
+        Relation relationParent = testData.createRelation(100, new RelationMember("child", testData.existingRelation));
+        Relation relationParent2 = testData.createRelation(101, new RelationMember("child", testData.existingRelation));
+        // to check that algorithm ignores it:
+        Relation relationParent3 = testData.createRelation(102, new RelationMember("child", testData.existingRelation));
+        PurgeCommand command = new PurgeCommand(testData.layer,
+                Arrays.<OsmPrimitive>asList(testData.existingNode, testData.existingNode2, testData.existingWay,
+                        testData.existingRelation, relationParent, relationParent2),
+                Arrays.<OsmPrimitive>asList(testData.existingNode2, testData.existingWay, testData.existingRelation));
+        command.executeCommand();
+        assertTrue(testData.existingNode2.isIncomplete());
+        assertTrue(testData.existingWay.isIncomplete());
+        assertTrue(testData.existingRelation.isIncomplete());
+        assertNull(relationParent.getDataSet());
+        assertNull(relationParent2.getDataSet());
+        assertNotNull(relationParent3.getDataSet());
+        assertFalse(relationParent3.isIncomplete());
+        assertNull(testData.existingNode.getDataSet());
+        assertFalse(testData.existingNode.isIncomplete());
+    }
+
+    /**
+     * Test {@link PurgeCommand#undoCommand()}
+     */
+    @Test
+    public void testUndo() {
+        PurgeCommand command = new PurgeCommand(testData.layer,
+                Arrays.<OsmPrimitive>asList(testData.existingNode, testData.existingWay),
+                Arrays.<OsmPrimitive>asList(testData.existingWay));
+        command.executeCommand();
+        assertTrue(testData.existingWay.isIncomplete());
+        assertNull(testData.existingNode.getDataSet());
+
+        command.undoCommand();
+        assertFalse(testData.existingWay.isIncomplete());
+        assertSame(testData.layer.data, testData.existingNode.getDataSet());
+
+        command.executeCommand();
+        assertTrue(testData.existingWay.isIncomplete());
+        assertNull(testData.existingNode.getDataSet());
+    }
+
+    /**
+     * Tests {@link PurgeCommand#fillModifiedData(java.util.Collection, java.util.Collection, java.util.Collection)}
+     */
+    @Test
+    public void testFillModifiedData() {
+        ArrayList<OsmPrimitive> modified = new ArrayList<>();
+        ArrayList<OsmPrimitive> deleted = new ArrayList<>();
+        ArrayList<OsmPrimitive> added = new ArrayList<>();
+        PurgeCommand command = new PurgeCommand(testData.layer, Arrays.<OsmPrimitive>asList(testData.existingNode),
+                Arrays.<OsmPrimitive>asList(testData.existingRelation));
+        command.fillModifiedData(modified, deleted, added);
+        // intentianally empty (?)
+        assertArrayEquals(new Object[] {}, modified.toArray());
+        assertArrayEquals(new Object[] {}, deleted.toArray());
+        assertArrayEquals(new Object[] {}, added.toArray());
+    }
+
+    /**
+     * Tests {@link PurgeCommand#getParticipatingPrimitives()}
+     */
+    @Test
+    public void testGetParticipatingPrimitives() {
+        PurgeCommand command = new PurgeCommand(testData.layer, Arrays.<OsmPrimitive>asList(testData.existingNode),
+                Arrays.<OsmPrimitive>asList(testData.existingRelation));
+        assertArrayEquals(new Object[] {testData.existingNode }, command.getParticipatingPrimitives().toArray());
+    }
+
+    /**
+     * Test {@link PurgeCommand#getDescriptionText()}
+     */
+    @Test
+    public void testDescription() {
+        List<OsmPrimitive> shortList = Arrays.<OsmPrimitive>asList(testData.existingWay);
+        assertTrue(new PurgeCommand(testData.layer, shortList, Arrays.<OsmPrimitive>asList()).getDescriptionText()
+                .matches("Purged 1 object"));
+        List<OsmPrimitive> longList = Arrays.<OsmPrimitive>asList(testData.existingNode, testData.existingNode2,
+                testData.existingWay);
+        assertTrue(new PurgeCommand(testData.layer, longList, Arrays.<OsmPrimitive>asList()).getDescriptionText()
+                .matches("Purged 3 objects"));
     }
 
     /**
