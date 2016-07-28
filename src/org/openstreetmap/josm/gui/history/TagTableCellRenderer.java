@@ -35,11 +35,11 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
     protected void setBackgroundReadable(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected, boolean hasFocus,
             boolean isValue) {
         Color bgColor = UIManager.getColor("Table.background");
-        if (!model.hasTag(key) && model.isCurrentPointInTime()
-                || !model.oppositeHasTag(key) && model.isReferencePointInTime()) {
+        if ((!model.hasTag(key) && model.isCurrentPointInTime())
+                || (!model.oppositeHasTag(key) && model.isReferencePointInTime())) {
             bgColor = TwoColumnDiff.Item.DiffItemType.DELETED.getColor();
-        } else if (!model.oppositeHasTag(key) && model.isCurrentPointInTime()
-                || !model.hasTag(key) && model.isReferencePointInTime()) {
+        } else if ((!model.oppositeHasTag(key) && model.isCurrentPointInTime())
+                || (!model.hasTag(key) && model.isReferencePointInTime())) {
             bgColor = TwoColumnDiff.Item.DiffItemType.INSERTED.getColor();
         } else if (isValue && model.hasTag(key) && model.oppositeHasTag(key) && !model.hasSameValueAsOpposite(key)) {
             bgColor = TwoColumnDiff.Item.DiffItemType.CHANGED.getColor();

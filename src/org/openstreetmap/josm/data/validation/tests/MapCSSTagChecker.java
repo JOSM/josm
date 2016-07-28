@@ -635,14 +635,14 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public synchronized boolean equals(Object obj) {
             return super.equals(obj)
                     || (obj instanceof TagCheck && rule.equals(((TagCheck) obj).rule))
                     || (obj instanceof GroupedMapCSSRule && rule.equals(obj));
         }
 
         @Override
-        public int hashCode() {
+        public synchronized int hashCode() {
             return Objects.hash(super.hashCode(), rule);
         }
 

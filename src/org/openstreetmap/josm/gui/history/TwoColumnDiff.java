@@ -78,7 +78,7 @@ class TwoColumnDiff {
         Collections.reverse(Arrays.asList(referenceReversed));
         Diff.Change scriptReversed = new Diff(referenceReversed, current).diff_2(false);
         if (scriptReversed == null /* reference and current are identical */
-                || script != null && scriptReversed.getTotalNumberOfChanges() < script.getTotalNumberOfChanges()) {
+                || (script != null && scriptReversed.getTotalNumberOfChanges() < script.getTotalNumberOfChanges())) {
             this.referenceReversed = true;
             twoColumnDiffFromScript(scriptReversed, referenceReversed, current, true);
         } else {

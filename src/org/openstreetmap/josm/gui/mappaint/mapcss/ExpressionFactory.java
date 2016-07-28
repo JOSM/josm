@@ -883,8 +883,8 @@ public final class ExpressionFactory {
                 return false;
             }
             final Way way = (Way) env.osm;
-            return way.isClosed() && Geometry.isClockwise(way)
-                    || !way.isClosed() && way.getNodesCount() > 2 && Geometry.angleIsClockwise(way.getNode(0), way.getNode(1), way.lastNode());
+            return (way.isClosed() && Geometry.isClockwise(way))
+                || (!way.isClosed() && way.getNodesCount() > 2 && Geometry.angleIsClockwise(way.getNode(0), way.getNode(1), way.lastNode()));
         }
 
         /**
@@ -899,8 +899,8 @@ public final class ExpressionFactory {
                 return false;
             }
             final Way way = (Way) env.osm;
-            return way.isClosed() && !Geometry.isClockwise(way)
-                    || !way.isClosed() && way.getNodesCount() > 2 && !Geometry.angleIsClockwise(way.getNode(0), way.getNode(1), way.lastNode());
+            return (way.isClosed() && !Geometry.isClockwise(way))
+                || (!way.isClosed() && way.getNodesCount() > 2 && !Geometry.angleIsClockwise(way.getNode(0), way.getNode(1), way.lastNode()));
         }
 
         /**

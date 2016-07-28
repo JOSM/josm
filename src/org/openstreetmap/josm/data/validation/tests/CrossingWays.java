@@ -241,7 +241,7 @@ public abstract class CrossingWays extends Test {
                     List<Way> prims;
                     List<WaySegment> highlight;
 
-                    if (errorSegments.contains(es1) && errorSegments.contains(es2)
+                    if ((errorSegments.contains(es1) && errorSegments.contains(es2))
                             || !es1.intersects(es2)
                             || ignoreWaySegmentCombination(es1.way, es2.way)) {
                         continue;

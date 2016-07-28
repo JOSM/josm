@@ -91,7 +91,7 @@ public class QuadStateCheckBox extends JCheckBox {
 
     /** Do not let anyone add mouse listeners */
     @Override
-    public void addMouseListener(MouseListener l) {
+    public synchronized void addMouseListener(MouseListener l) {
         // Do nothing
     }
 
