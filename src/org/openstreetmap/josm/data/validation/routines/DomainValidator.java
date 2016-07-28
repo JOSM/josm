@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016072400, Last Updated Sun Jul 24 07:07:01 2016 UTC
+        // Taken from Version 2016072700, Last Updated Wed Jul 27 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -328,6 +328,7 @@ public final class DomainValidator extends AbstractValidator {
         "ally", // ally Ally Financial Inc.
         "alsace", // alsace REGION D ALSACE
         "alstom", // alstom ALSTOM
+        "americanfamily", // americanfamily AmFam, Inc.
         "amfam", // amfam AmFam, Inc.
         "amica", // amica Amica Mutual Insurance Company
         "amsterdam", // amsterdam Gemeente Amsterdam
@@ -725,6 +726,7 @@ public final class DomainValidator extends AbstractValidator {
         "homes", // homes DERHomes, LLC
         "homesense", // homesense The TJX Companies, Inc.
         "honda", // honda Honda Motor Co., Ltd.
+        "honeywell", // honeywell Honeywell GTLD LLC
         "horse", // horse Top Level Domain Holdings Limited
         "host", // host DotHost Inc.
         "hosting", // hosting Uniregistry, Corp.
