@@ -224,7 +224,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             if (ignoreListener) return;
             String ostr = tOffset.getText();
             int semicolon = ostr.indexOf(';');
-            if (semicolon >= 0 && semicolon + 1 < ostr.length()) {
+            if (layer != null && semicolon >= 0 && semicolon + 1 < ostr.length()) {
                 try {
                     // here we assume that Double.parseDouble() needs '.' as a decimal separator
                     String easting = ostr.substring(0, semicolon).trim().replace(',', '.');
