@@ -146,8 +146,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
             return appendWay((Way) p);
         case RELATION:
             return appendRelation((Relation) p);
+        default:
+            return this;
         }
-        return this;
     }
 
     /**
@@ -216,6 +217,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                 case NODE: return appendNode((Node) primitive);
                 case WAY: return appendWay((Way) primitive);
                 case RELATION: return appendRelation((Relation) primitive);
+                default: break;
             }
         }
         return this;

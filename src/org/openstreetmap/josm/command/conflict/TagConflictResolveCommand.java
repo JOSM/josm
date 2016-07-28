@@ -68,8 +68,9 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
                 /* for correct i18n of plural forms - see #9110 */
                 return trn("Resolve {0} tag conflict in relation {1}", "Resolve {0} tag conflicts in relation {1}",
                         getNumDecidedConflicts(), getNumDecidedConflicts(), conflict.getMy().getId());
+            default:
+                return "";
         }
-        return "";
     }
 
     @Override
