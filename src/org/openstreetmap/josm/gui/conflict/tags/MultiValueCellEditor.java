@@ -90,22 +90,24 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         editor = new JosmComboBox<Object>(editorModel) {
             @Override
             public void processKeyEvent(KeyEvent e) {
-                int keyCode = e.getKeyCode();
-                if (e.getID() == KeyEvent.KEY_PRESSED && keyCode == KeyEvent.VK_ENTER) {
-                    fireGotoNextDecision();
-                } else if (e.getID() == KeyEvent.KEY_PRESSED && keyCode == KeyEvent.VK_TAB) {
-                    if (e.isShiftDown()) {
-                        fireGotoPreviousDecision();
-                    } else {
+                if (e.getID() == KeyEvent.KEY_PRESSED) {
+                    int keyCode = e.getKeyCode();
+                    if (keyCode == KeyEvent.VK_ENTER) {
                         fireGotoNextDecision();
+                    } else if (keyCode == KeyEvent.VK_TAB) {
+                        if (e.isShiftDown()) {
+                            fireGotoPreviousDecision();
+                        } else {
+                            fireGotoNextDecision();
+                        }
+                    } else if (keyCode == KeyEvent.VK_DELETE || keyCode == KeyEvent.VK_BACK_SPACE) {
+                        if (editorModel.getIndexOf(MultiValueDecisionType.KEEP_NONE) > 0) {
+                            editorModel.setSelectedItem(MultiValueDecisionType.KEEP_NONE);
+                            fireGotoNextDecision();
+                        }
+                    } else if (keyCode == KeyEvent.VK_ESCAPE) {
+                        cancelCellEditing();
                     }
-                } else if (e.getID() == KeyEvent.KEY_PRESSED && keyCode == KeyEvent.VK_DELETE || keyCode == KeyEvent.VK_BACK_SPACE) {
-                    if (editorModel.getIndexOf(MultiValueDecisionType.KEEP_NONE) > 0) {
-                        editorModel.setSelectedItem(MultiValueDecisionType.KEEP_NONE);
-                        fireGotoNextDecision();
-                    }
-                } else if (e.getID() == KeyEvent.KEY_PRESSED && keyCode == KeyEvent.VK_ESCAPE) {
-                    cancelCellEditing();
                 }
                 super.processKeyEvent(e);
             }
