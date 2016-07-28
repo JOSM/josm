@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractButton;
@@ -1285,17 +1286,17 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * @return A String of sources separated by ';'
      */
     public String getLayerInformationForSourceTag() {
-        final Collection<String> layerInfo = new ArrayList<>();
-        if (!getLayersOfType(GpxLayer.class).isEmpty()) {
+        final Set<String> layerInfo = new TreeSet<>();
+        if (!layerManager.getLayersOfType(GpxLayer.class).isEmpty()) {
             // no i18n for international values
             layerInfo.add("survey");
         }
-        for (final GeoImageLayer i : getLayersOfType(GeoImageLayer.class)) {
+        for (final GeoImageLayer i : layerManager.getLayersOfType(GeoImageLayer.class)) {
             if (i.isVisible()) {
                 layerInfo.add(i.getName());
             }
         }
-        for (final ImageryLayer i : getLayersOfType(ImageryLayer.class)) {
+        for (final ImageryLayer i : layerManager.getLayersOfType(ImageryLayer.class)) {
             if (i.isVisible()) {
                 layerInfo.add(ImageryInfo.ImageryType.BING.equals(i.getInfo().getImageryType()) ? "Bing" : i.getName());
             }
