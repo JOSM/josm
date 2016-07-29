@@ -1849,7 +1849,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             int minY = Math.min(curTile.getYIndex() - 1, minTile.getYIndex());
             int maxY = Math.max(curTile.getYIndex() + 1, maxTile.getYIndex());
             int minX = Math.min(curTile.getXIndex() - 1, minTile.getXIndex());
-            int maxX = Math.min(curTile.getXIndex() + 1, minTile.getXIndex());
+            int maxX = Math.max(curTile.getXIndex() + 1, maxTile.getXIndex());
 
             for (int x = minX; x <= maxX; x++) {
                 for (int y = minY; y <= maxY; y++) {

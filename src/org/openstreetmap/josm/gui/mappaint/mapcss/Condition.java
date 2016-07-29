@@ -5,11 +5,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -27,14 +28,30 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicates;
-import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * This is a condition that needs to be fulfilled in order to apply a MapCSS style.
+ */
 @FunctionalInterface
 public interface Condition {
 
+    /**
+     * Checks if the condition applies in the given MapCSS {@link Environment}.
+     * @param e The environment to check. May not be <code>null</code>.
+     * @return <code>true</code> if the condition applies.
+     */
     boolean applies(Environment e);
 
+    /**
+     * Create a new condition that checks the key and the value of the object.
+     * @param k The key.
+     * @param v The reference value
+     * @param op The operation to use when comparing the value
+     * @param context The type of context to use.
+     * @param considerValAsKey whether to consider {@code v} as another key and compare the values of key {@code k} and key {@code v}.
+     * @return The new condition.
+     */
     static Condition createKeyValueCondition(String k, String v, Op op, Context context, boolean considerValAsKey) {
         switch (context) {
         case PRIMITIVE:
@@ -58,10 +75,25 @@ public interface Condition {
         }
     }
 
+    /**
+     * Create a condition in which the key and the value need to match a given regexp
+     * @param k The key regexp
+     * @param v The value regexp
+     * @param op The operation to use when comparing the key and the value.
+     * @return The new condition.
+     */
     static Condition createRegexpKeyRegexpValueCondition(String k, String v, Op op) {
         return new RegexpKeyValueRegexpCondition(k, v, op);
     }
 
+    /**
+     * Creates a condition that checks the given key.
+     * @param k The key to test for
+     * @param not <code>true</code> to invert the match
+     * @param matchType The match type to check for.
+     * @param context The context this rule is found in.
+     * @return the new condition.
+     */
     static Condition createKeyCondition(String k, boolean not, KeyMatchType matchType, Context context) {
         switch (context) {
         case PRIMITIVE:
@@ -78,14 +110,34 @@ public interface Condition {
         }
     }
 
+    /**
+     * Create a new pseudo class condition
+     * @param id The id of the pseudo class
+     * @param not <code>true</code> to invert the condition
+     * @param context The context the class is found in.
+     * @return The new condition
+     */
     static PseudoClassCondition createPseudoClassCondition(String id, boolean not, Context context) {
         return PseudoClassCondition.createPseudoClassCondition(id, not, context);
     }
 
+    /**
+     * Create a new class condition
+     * @param id The id of the class to match
+     * @param not <code>true</code> to invert the condition
+     * @param context Ignored
+     * @return The new condition
+     */
     static ClassCondition createClassCondition(String id, boolean not, Context context) {
         return new ClassCondition(id, not);
     }
 
+    /**
+     * Create a new condition that a expression needs to be fulfilled
+     * @param e the expression to check
+     * @param context Ignored
+     * @return The new condition
+     */
     static ExpressionCondition createExpressionCondition(Expression e, Context context) {
         return new ExpressionCondition(e);
     }
@@ -95,32 +147,74 @@ public interface Condition {
      */
     enum Op {
         /** The value equals the given reference. */
-        EQ,
+        EQ(Objects::equals),
         /** The value does not equal the reference. */
-        NEQ,
+        NEQ(EQ),
         /** The value is greater than or equal to the given reference value (as float). */
-        GREATER_OR_EQUAL,
+        GREATER_OR_EQUAL(comparisonResult -> comparisonResult >= 0),
         /** The value is greater than the given reference value (as float). */
-        GREATER,
+        GREATER(comparisonResult -> comparisonResult > 0),
         /** The value is less than or equal to the given reference value (as float). */
-        LESS_OR_EQUAL,
+        LESS_OR_EQUAL(comparisonResult -> comparisonResult <= 0),
         /** The value is less than the given reference value (as float). */
-        LESS,
+        LESS(comparisonResult -> comparisonResult < 0),
         /** The reference is treated as regular expression and the value needs to match it. */
-        REGEX,
+        REGEX((test, prototype) -> Pattern.compile(prototype).matcher(test).find()),
         /** The reference is treated as regular expression and the value needs to not match it. */
-        NREGEX,
+        NREGEX(REGEX),
         /** The reference is treated as a list separated by ';'. Spaces around the ; are ignored.
          *  The value needs to be equal one of the list elements. */
-        ONE_OF,
+        ONE_OF((test, prototype) -> Arrays.asList(test.split("\\s*;\\s*")).contains(prototype)),
         /** The value needs to begin with the reference string. */
-        BEGINS_WITH,
+        BEGINS_WITH((test, prototype) -> test.startsWith(prototype)),
         /** The value needs to end with the reference string. */
-        ENDS_WITH,
+        ENDS_WITH((test, prototype) -> test.endsWith(prototype)),
         /** The value needs to contain the reference string. */
-        CONTAINS;
+        CONTAINS((test, prototype) -> test.contains(prototype));
 
         static final Set<Op> NEGATED_OPS = EnumSet.of(NEQ, NREGEX);
+
+        private final BiFunction<String, String, Boolean> function;
+
+        private final boolean negated;
+
+        /**
+         * Create a new string operation.
+         * @param func The function to apply during {@link #eval(String, String)}.
+         */
+        Op(BiFunction<String, String, Boolean> func) {
+            this.function = func;
+            negated = false;
+        }
+
+        /**
+         * Create a new float operation that compares two float values
+         * @param comparatorResult A function to mapt the result of the comparison
+         */
+        Op(IntFunction<Boolean> comparatorResult) {
+            this.function = (test, prototype) -> {
+                float testFloat;
+                try {
+                    testFloat = Float.parseFloat(test);
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+                float prototypeFloat = Float.parseFloat(prototype);
+
+                int res = Float.compare(testFloat, prototypeFloat);
+                return comparatorResult.apply(res);
+            };
+            negated = false;
+        }
+
+        /**
+         * Create a new Op by negating an other op.
+         * @param negate inverse operation
+         */
+        Op(Op negate) {
+            this.function = (a, b) -> !negate.function.apply(a, b);
+            negated = true;
+        }
 
         /**
          * Evaluates a value against a reference string.
@@ -129,55 +223,10 @@ public interface Condition {
          * @return <code>true</code> if and only if this operation matches for the given value/reference pair.
          */
         public boolean eval(String testString, String prototypeString) {
-            if (testString == null && !NEGATED_OPS.contains(this))
-                return false;
-            switch (this) {
-            case EQ:
-                return Objects.equals(testString, prototypeString);
-            case NEQ:
-                return !Objects.equals(testString, prototypeString);
-            case REGEX:
-            case NREGEX:
-                final boolean contains = Pattern.compile(prototypeString).matcher(testString).find();
-                return REGEX.equals(this) ? contains : !contains;
-            case ONE_OF:
-                return testString != null && Arrays.asList(testString.split("\\s*;\\s*")).contains(prototypeString);
-            case BEGINS_WITH:
-                return testString != null && testString.startsWith(prototypeString);
-            case ENDS_WITH:
-                return testString != null && testString.endsWith(prototypeString);
-            case CONTAINS:
-                return testString != null && testString.contains(prototypeString);
-            case GREATER_OR_EQUAL:
-            case GREATER:
-            case LESS_OR_EQUAL:
-            case LESS:
-                // See below
-                break;
-            default:
-                throw new AssertionError();
-            }
-
-            float testFloat;
-            try {
-                testFloat = Float.parseFloat(testString);
-            } catch (NumberFormatException e) {
-                return false;
-            }
-            float prototypeFloat = Float.parseFloat(prototypeString);
-
-            switch (this) {
-            case GREATER_OR_EQUAL:
-                return testFloat >= prototypeFloat;
-            case GREATER:
-                return testFloat > prototypeFloat;
-            case LESS_OR_EQUAL:
-                return testFloat <= prototypeFloat;
-            case LESS:
-                return testFloat < prototypeFloat;
-            default:
-                throw new AssertionError();
-            }
+            if (testString == null)
+                return negated;
+            else
+                return function.apply(testString, prototypeString);
         }
     }
 
@@ -201,7 +250,7 @@ public interface Condition {
      *
      * Extra class for performance reasons.
      */
-    class SimpleKeyValueCondition implements Condition {
+    class SimpleKeyValueCondition implements Condition, ToTagConvertable {
         /**
          * The key to search for.
          */
@@ -226,7 +275,8 @@ public interface Condition {
             return v.equals(e.osm.get(k));
         }
 
-        public Tag asTag() {
+        @Override
+        public Tag asTag(OsmPrimitive primitive) {
             return new Tag(k, v);
         }
 
@@ -241,7 +291,7 @@ public interface Condition {
      * <p>Represents a key/value condition which is either applied to a primitive.</p>
      *
      */
-    class KeyValueCondition implements Condition {
+    class KeyValueCondition implements Condition, ToTagConvertable {
         /**
          * The key to search for.
          */
@@ -257,7 +307,7 @@ public interface Condition {
         /**
          * If this flag is set, {@link #v} is treated as a key and the value is the value set for that key.
          */
-        public boolean considerValAsKey;
+        public final boolean considerValAsKey;
 
         /**
          * <p>Creates a key/value-condition.</p>
@@ -279,7 +329,8 @@ public interface Condition {
             return op.eval(env.osm.get(k), considerValAsKey ? env.osm.get(v) : v);
         }
 
-        public Tag asTag() {
+        @Override
+        public Tag asTag(OsmPrimitive primitive) {
             return new Tag(k, v);
         }
 
@@ -289,10 +340,13 @@ public interface Condition {
         }
     }
 
+    /**
+     * This condition requires a fixed key to match a given regexp
+     */
     class KeyValueRegexpCondition extends KeyValueCondition {
-
-        public final Pattern pattern;
         protected static final Set<Op> SUPPORTED_OPS = EnumSet.of(Op.REGEX, Op.NREGEX);
+
+        final Pattern pattern;
 
         public KeyValueRegexpCondition(String k, String v, Op op, boolean considerValAsKey) {
             super(k, v, op, considerValAsKey);
@@ -318,10 +372,19 @@ public interface Condition {
         }
     }
 
+    /**
+     * A condition that checks that a key with the matching pattern has a value with the matching pattern.
+     */
     class RegexpKeyValueRegexpCondition extends KeyValueRegexpCondition {
 
         public final Pattern keyPattern;
 
+        /**
+         * Create a condition in which the key and the value need to match a given regexp
+         * @param k The key regexp
+         * @param v The value regexp
+         * @param op The operation to use when comparing the key and the value.
+         */
         public RegexpKeyValueRegexpCondition(String k, String v, Op op) {
             super(k, v, op, false);
             this.keyPattern = Pattern.compile(k);
@@ -418,7 +481,7 @@ public interface Condition {
      *                   LINK:       not supported
      * </pre>
      */
-    class KeyCondition implements Condition {
+    class KeyCondition implements Condition, ToTagConvertable {
 
         /**
          * The key name.
@@ -483,13 +546,11 @@ public interface Condition {
          * @param p The primitive to get the value from.
          * @return The tag.
          */
+        @Override
         public Tag asTag(OsmPrimitive p) {
             String key = label;
             if (KeyMatchType.REGEX.equals(matchType)) {
-                final Collection<String> matchingKeys = SubclassFilteredCollection.filter(p.keySet(), containsPattern);
-                if (!matchingKeys.isEmpty()) {
-                    key = matchingKeys.iterator().next();
-                }
+                key = p.keySet().stream().filter(containsPattern).findAny().orElse(key);
             }
             return new Tag(key, p.get(key));
         }
@@ -512,7 +573,8 @@ public interface Condition {
 
         @Override
         public boolean applies(Environment env) {
-            return env != null && env.getCascade(env.layer) != null && (not ^ env.getCascade(env.layer).containsKey(id));
+            Cascade cascade = env.getCascade(env.layer);
+            return cascade != null && (not ^ cascade.containsKey(id));
         }
 
         @Override
@@ -702,6 +764,13 @@ public interface Condition {
             this.not = not;
         }
 
+        /**
+         * Create a new pseudo class condition
+         * @param id The id of the pseudo class
+         * @param not <code>true</code> to invert the condition
+         * @param context The context the class is found in.
+         * @return The new condition
+         */
         public static PseudoClassCondition createPseudoClassCondition(String id, boolean not, Context context) {
             CheckParameterUtil.ensureThat(!"sameTags".equals(id) || Context.LINK.equals(context), "sameTags only supported in LINK context");
             if ("open_end".equals(id)) {
@@ -752,6 +821,9 @@ public interface Condition {
         }
     }
 
+    /**
+     * A condition that is fulfilled whenever the expression is evaluated to be true.
+     */
     class ExpressionCondition implements Condition {
 
         private final Expression e;
@@ -774,5 +846,19 @@ public interface Condition {
         public String toString() {
             return '[' + e.toString() + ']';
         }
+    }
+
+    /**
+     * This is a condition that can be converted to a tag
+     * @author Michael Zangl
+     * @since 10674
+     */
+    public interface ToTagConvertable {
+        /**
+         * Converts the current condition to a tag
+         * @param primitive A primitive to use as context. May be ignored.
+         * @return A tag with the key/value of this condition.
+         */
+        Tag asTag(OsmPrimitive primitive);
     }
 }
