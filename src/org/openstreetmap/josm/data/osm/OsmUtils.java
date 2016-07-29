@@ -74,8 +74,10 @@ public final class OsmUtils {
         if (p == null) {
             throw new IllegalArgumentException("Expecting n/node/w/way/r/relation/area, but got '" + x[0] + '\'');
         }
-        for (final Map.Entry<String, String> i : TextTagParser.readTagsFromText(x[1]).entrySet()) {
-            p.put(i.getKey(), i.getValue());
+        if (x.length > 1) {
+            for (final Map.Entry<String, String> i : TextTagParser.readTagsFromText(x[1]).entrySet()) {
+                p.put(i.getKey(), i.getValue());
+            }
         }
         return p;
     }

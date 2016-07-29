@@ -420,12 +420,8 @@ public class MapCSSTagChecker extends Test.TagTest {
         static String determineArgument(Selector.GeneralSelector matchingSelector, int index, String type, OsmPrimitive p) {
             try {
                 final Condition c = matchingSelector.getConditions().get(index);
-                final Tag tag = c instanceof Condition.KeyCondition
-                        ? ((Condition.KeyCondition) c).asTag(p)
-                        : c instanceof Condition.SimpleKeyValueCondition
-                        ? ((Condition.SimpleKeyValueCondition) c).asTag()
-                        : c instanceof Condition.KeyValueCondition
-                        ? ((Condition.KeyValueCondition) c).asTag()
+                final Tag tag = c instanceof Condition.ToTagConvertable
+                        ? ((Condition.ToTagConvertable) c).asTag(p)
                         : null;
                 if (tag == null) {
                     return null;

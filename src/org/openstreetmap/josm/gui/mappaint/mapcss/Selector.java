@@ -464,6 +464,7 @@ public interface Selector {
          */
         @Override
         public boolean matches(Environment env) {
+            CheckParameterUtil.ensureParameterNotNull(env, "env");
             if (conds == null) return true;
             for (Condition c : conds) {
                 try {
