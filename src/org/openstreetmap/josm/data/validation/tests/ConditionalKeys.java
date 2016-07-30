@@ -75,11 +75,20 @@ public class ConditionalKeys extends Test.TagTest {
             return false;
         }
         final String[] parts = key.replaceAll(":conditional", "").split(":");
-        return parts.length == 3 && isRestrictionType(parts[0]) && isTransportationMode(parts[1]) && isDirection(parts[2])
-                || parts.length == 1 && (isRestrictionType(parts[0]) || isTransportationMode(parts[0]))
-                || parts.length == 2 && (
-                isRestrictionType(parts[0]) && (isTransportationMode(parts[1]) || isDirection(parts[1]))
-                        || isTransportationMode(parts[0]) && isDirection(parts[1]));
+        return isKeyValid3Parts(parts) || isKeyValid1Part(parts) || isKeyValid2Parts(parts);
+    }
+
+    private static boolean isKeyValid3Parts(String[] parts) {
+        return parts.length == 3 && isRestrictionType(parts[0]) && isTransportationMode(parts[1]) && isDirection(parts[2]);
+    }
+
+    private static boolean isKeyValid2Parts(String[] parts) {
+        return parts.length == 2 && ((isRestrictionType(parts[0]) && (isTransportationMode(parts[1]) || isDirection(parts[1])))
+                                  || (isTransportationMode(parts[0]) && isDirection(parts[1])));
+    }
+
+    private static boolean isKeyValid1Part(String[] parts) {
+        return parts.length == 1 && (isRestrictionType(parts[0]) || isTransportationMode(parts[0]));
     }
 
     public boolean isValueValid(String key, String value) {
