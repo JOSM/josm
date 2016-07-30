@@ -9008,6 +9008,14 @@
             <key key="place" value="islet" />
             <reference ref="name_wikipedia" />
         </item> <!-- Islet -->
+        <item name="Reef" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=reef"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=reef" />
+            <space />
+            <key key="natural" value="reef" />
+            <text key="name" text="Name" />
+            <combo key="reef" text="Type" values="coral,oyster,rock,sand" />
+        </item> <!-- Islet -->
     </group> <!-- Geography -->
     <group name="Nature" icon="presets/misc/landmark/trees.png">
         <item name="Tree" icon="presets/misc/landmark/trees.png" type="node" preset_name_label="true">
