@@ -691,9 +691,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (selectedWay != null) {
             int posn0 = selectedWay.getNodes().indexOf(currentNode);
             // CHECKSTYLE.OFF: SingleSpaceSeparator
-            if (posn0 != -1 && // n0 is part of way
-               (posn0 >= 1                             && targetNode.equals(selectedWay.getNode(posn0-1))) || // previous node
-               (posn0 < selectedWay.getNodesCount()-1) && targetNode.equals(selectedWay.getNode(posn0+1))) {  // next node
+            if ((posn0 != -1 && // n0 is part of way
+                (posn0 >= 1                            && targetNode.equals(selectedWay.getNode(posn0-1)))) || // previous node
+                (posn0 < selectedWay.getNodesCount()-1 && targetNode.equals(selectedWay.getNode(posn0+1)))) {  // next node
                 getLayerManager().getEditDataSet().setSelected(targetNode);
                 lastUsedNode = targetNode;
                 return true;
