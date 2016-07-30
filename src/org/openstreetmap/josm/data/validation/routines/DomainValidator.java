@@ -295,9 +295,9 @@ public final class DomainValidator extends AbstractValidator {
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
-        "abc", // abc Disney Enterprises, Inc.
         "abbott", // abbott Abbott Laboratories, Inc.
         "abbvie", // abbvie AbbVie Inc.
+        "abc", // abc Disney Enterprises, Inc.
         "able", // able Able Inc.
         "abogado", // abogado Top Level Domain Holdings Limited
         "abudhabi", // abudhabi Abu Dhabi Systems and Information Centre
