@@ -1830,7 +1830,7 @@ public final class DomainValidator extends AbstractValidator {
      * @throws IllegalArgumentException if one of the read-only tables is requested
      * @since 1.5.0
      */
-    public static synchronized void updateTLDOverride(ArrayType table, String[] tlds) {
+    public static synchronized void updateTLDOverride(ArrayType table, String ... tlds) {
         if (inUse) {
             throw new IllegalStateException("Can only invoke this method before calling getInstance");
         }

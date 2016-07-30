@@ -141,7 +141,7 @@ public class NodeElement extends StyleElement {
         return new NodeElement(c, mapImage, symbol, defaultMajorZindex, rotationAngle);
     }
 
-    public static MapImage createIcon(final Environment env, final String[] keys) {
+    public static MapImage createIcon(final Environment env, final String ... keys) {
         CheckParameterUtil.ensureParameterNotNull(env, "env");
         CheckParameterUtil.ensureParameterNotNull(keys, "keys");
 

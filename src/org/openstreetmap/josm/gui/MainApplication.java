@@ -241,7 +241,7 @@ public class MainApplication extends Main {
      * @param args command-line arguments array
      * @return command-line argument map
      */
-    public static Map<Option, Collection<String>> buildCommandLineArgumentMap(String[] args) {
+    public static Map<Option, Collection<String>> buildCommandLineArgumentMap(String ... args) {
 
         List<LongOpt> los = new ArrayList<>();
         for (Option o : Option.values()) {

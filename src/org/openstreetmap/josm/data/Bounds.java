@@ -149,7 +149,7 @@ public class Bounds {
         }
     }
 
-    public Bounds(double[] coords) {
+    public Bounds(double ... coords) {
         this(coords, true);
     }
 

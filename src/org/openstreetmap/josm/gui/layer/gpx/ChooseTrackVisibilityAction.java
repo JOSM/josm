@@ -127,7 +127,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
      * @param content table data
      * @return non-editable table
      */
-    private JTable buildTable(Object[][] content) {
+    private JTable buildTable(Object[]... content) {
         final String[] headers = {tr("Name"), tr("Description"), tr("Timespan"), tr("Length"), tr("URL")};
         DefaultTableModel model = new DefaultTableModel(content, headers);
         final JTable t = new JTable(model) {
