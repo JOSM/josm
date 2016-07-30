@@ -1837,7 +1837,7 @@ public class ImageProvider {
         return null;
     }
 
-    private static Color parseRGB(String[] s) {
+    private static Color parseRGB(String ... s) {
         int[] rgb = new int[3];
         try {
             for (int i = 0; i < 3; i++) {

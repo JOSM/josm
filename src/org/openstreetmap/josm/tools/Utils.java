@@ -404,7 +404,7 @@ public final class Utils {
      * @return A copy of the original array, or {@code null} if {@code array} is null
      * @since 6222
      */
-    public static char[] copyArray(char[] array) {
+    public static char[] copyArray(char ... array) {
         if (array != null) {
             return Arrays.copyOf(array, array.length);
         }
@@ -417,7 +417,7 @@ public final class Utils {
      * @return A copy of the original array, or {@code null} if {@code array} is null
      * @since 7436
      */
-    public static int[] copyArray(int[] array) {
+    public static int[] copyArray(int ... array) {
         if (array != null) {
             return Arrays.copyOf(array, array.length);
         }
@@ -927,7 +927,7 @@ public final class Utils {
         return strip(str, stripChars(skipChars));
     }
 
-    private static String strip(final String str, final char[] skipChars) {
+    private static String strip(final String str, final char ... skipChars) {
 
         int start = 0;
         int end = str.length();

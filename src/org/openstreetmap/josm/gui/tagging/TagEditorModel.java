@@ -271,7 +271,7 @@ public class TagEditorModel extends AbstractTableModel {
      *
      * @param tagIndices a list of tag indices
      */
-    public void deleteTagNames(int[] tagIndices) {
+    public void deleteTagNames(int ... tagIndices) {
         if (tags == null)
             return;
         commitPendingEdit();
@@ -290,7 +290,7 @@ public class TagEditorModel extends AbstractTableModel {
      *
      * @param tagIndices the lit of tag indices
      */
-    public void deleteTagValues(int[] tagIndices) {
+    public void deleteTagValues(int ... tagIndices) {
         if (tags == null)
             return;
         commitPendingEdit();
@@ -333,7 +333,7 @@ public class TagEditorModel extends AbstractTableModel {
      *
      * @param tagIndices the list of tag indices
      */
-    public void deleteTags(int[] tagIndices) {
+    public void deleteTags(int ... tagIndices) {
         if (tags == null)
             return;
         commitPendingEdit();

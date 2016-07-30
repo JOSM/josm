@@ -600,7 +600,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * @return true if tag was found, false otherwise
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
-    private static boolean moveReaderToTag(XMLStreamReader reader, QName[] tags) throws XMLStreamException {
+    private static boolean moveReaderToTag(XMLStreamReader reader, QName ... tags) throws XMLStreamException {
         QName stopTag = reader.getName();
         int currentLevel = 0;
         QName searchTag = tags[currentLevel];

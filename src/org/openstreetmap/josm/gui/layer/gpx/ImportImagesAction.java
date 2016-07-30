@@ -40,7 +40,7 @@ public class ImportImagesAction extends AbstractAction {
                 JOptionPane.WARNING_MESSAGE, ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer"));
     }
 
-    private static void addRecursiveFiles(List<File> files, File[] sel) {
+    private static void addRecursiveFiles(List<File> files, File ... sel) {
         if (sel == null) { // listFiles might return null
             return;
         }

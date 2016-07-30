@@ -157,7 +157,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
     protected static class ConcatenatingJList extends JList<PresetListEntry> {
         private final String delimiter;
 
-        protected ConcatenatingJList(String del, PresetListEntry[] o) {
+        protected ConcatenatingJList(String del, PresetListEntry ... o) {
             super(o);
             delimiter = del;
         }

@@ -957,7 +957,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             updateEnabledState();
         }
 
-        protected void deleteTags(int[] rows) {
+        protected void deleteTags(int ... rows) {
             // convert list of rows to HashMap (and find gap for nextKey)
             Map<String, String> tags = new HashMap<>(rows.length);
             int nextKeyIndex = rows[0];

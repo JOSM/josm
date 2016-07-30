@@ -116,7 +116,7 @@ public class SequenceCommand extends Command {
         return prims;
     }
 
-    protected final void setSequence(Command[] sequence) {
+    protected final void setSequence(Command ... sequence) {
         this.sequence = Utils.copyArray(sequence);
     }
 

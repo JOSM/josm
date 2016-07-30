@@ -253,7 +253,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         return members.get(idx).getMember();
     }
 
-    public void moveUp(int[] selectedRows) {
+    public void moveUp(int ... selectedRows) {
         if (!canMoveUp(selectedRows))
             return;
 
@@ -274,7 +274,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         fireMakeMemberVisible(selectedRows[0] - 1);
     }
 
-    public void moveDown(int[] selectedRows) {
+    public void moveDown(int ... selectedRows) {
         if (!canMoveDown(selectedRows))
             return;
 
@@ -297,7 +297,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         fireMakeMemberVisible(selectedRows[0] + 1);
     }
 
-    public void remove(int[] selectedRows) {
+    public void remove(int ... selectedRows) {
         if (!canRemove(selectedRows))
             return;
         int offset = 0;
@@ -311,21 +311,21 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         fireTableDataChanged();
     }
 
-    public boolean canMoveUp(int[] rows) {
+    public boolean canMoveUp(int ... rows) {
         if (rows == null || rows.length == 0)
             return false;
         Arrays.sort(rows);
         return rows[0] > 0 && !members.isEmpty();
     }
 
-    public boolean canMoveDown(int[] rows) {
+    public boolean canMoveDown(int ... rows) {
         if (rows == null || rows.length == 0)
             return false;
         Arrays.sort(rows);
         return !members.isEmpty() && rows[rows.length - 1] < members.size() - 1;
     }
 
-    public boolean canRemove(int[] rows) {
+    public boolean canRemove(int ... rows) {
         if (rows == null || rows.length == 0)
             return false;
         return true;

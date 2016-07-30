@@ -272,7 +272,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
         fireStateChanged();
     }
 
-    protected void copyToTop(ListRole role, int[] rows) {
+    protected void copyToTop(ListRole role, int ... rows) {
         copy(role, rows, 0);
         mergedEntriesSelectionModel.setSelectionInterval(0, rows.length -1);
     }
@@ -284,7 +284,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
      *
      * @param rows the indices
      */
-    public void copyMyToTop(int[] rows) {
+    public void copyMyToTop(int ... rows) {
         copyToTop(MY_ENTRIES, rows);
     }
 
@@ -295,7 +295,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
      *
      * @param rows the indices
      */
-    public void copyTheirToTop(int[] rows) {
+    public void copyTheirToTop(int ... rows) {
         copyToTop(THEIR_ENTRIES, rows);
     }
 
@@ -308,7 +308,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
      * @param rows the indices
      */
 
-    public void copyToEnd(ListRole source, int[] rows) {
+    public void copyToEnd(ListRole source, int ... rows) {
         copy(source, rows, getMergedEntriesSize());
         mergedEntriesSelectionModel.setSelectionInterval(getMergedEntriesSize()-rows.length, getMergedEntriesSize() -1);
 
@@ -321,7 +321,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
      *
      * @param rows the indices
      */
-    public void copyMyToEnd(int[] rows) {
+    public void copyMyToEnd(int ... rows) {
         copyToEnd(MY_ENTRIES, rows);
     }
 
@@ -332,7 +332,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
      *
      * @param rows the indices
      */
-    public void copyTheirToEnd(int[] rows) {
+    public void copyTheirToEnd(int ... rows) {
         copyToEnd(THEIR_ENTRIES, rows);
     }
 
@@ -490,7 +490,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
      * @param rows the indices
      *
      */
-    public void moveUpMerged(int[] rows) {
+    public void moveUpMerged(int ... rows) {
         if (rows == null || rows.length == 0)
             return;
         if (rows[0] == 0)
@@ -515,7 +515,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
      *
      * @param rows the indices
      */
-    public void moveDownMerged(int[] rows) {
+    public void moveDownMerged(int ... rows) {
         if (rows == null || rows.length == 0)
             return;
         List<T> mergedEntries = getMergedEntries();
@@ -541,7 +541,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
      *
      * @param rows the indices
      */
-    public void removeMerged(int[] rows) {
+    public void removeMerged(int ... rows) {
         if (rows == null || rows.length == 0)
             return;
 
