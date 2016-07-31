@@ -635,7 +635,6 @@ public final class DomainValidator extends AbstractValidator {
         "flir", // flir FLIR Systems, Inc.
         "florist", // florist Half Cypress, LLC
         "flowers", // flowers Uniregistry, Corp.
-        "flsmidth", // flsmidth FLSmidth A/S
         "fly", // fly Charleston Road Registry Inc.
         "foo", // foo Charleston Road Registry Inc.
         "foodnetwork", // foodnetwork Lifestyle Domain Holdings, Inc.
