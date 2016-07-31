@@ -49,6 +49,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -747,14 +748,14 @@ public final class Utils {
 
     /**
      * Transforms the collection {@code c} into an unmodifiable collection and
-     * applies the {@link org.openstreetmap.josm.tools.Utils.Function} {@code f} on each element upon access.
+     * applies the {@link Function} {@code f} on each element upon access.
      * @param <A> class of input collection
      * @param <B> class of transformed collection
      * @param c a collection
      * @param f a function that transforms objects of {@code A} to objects of {@code B}
      * @return the transformed unmodifiable collection
      */
-    public static <A, B> Collection<B> transform(final Collection<? extends A> c, final java.util.function.Function<A, B> f) {
+    public static <A, B> Collection<B> transform(final Collection<? extends A> c, final Function<A, B> f) {
         return new AbstractCollection<B>() {
 
             @Override
@@ -789,14 +790,14 @@ public final class Utils {
 
     /**
      * Transforms the list {@code l} into an unmodifiable list and
-     * applies the {@link org.openstreetmap.josm.tools.Utils.Function} {@code f} on each element upon access.
+     * applies the {@link Function} {@code f} on each element upon access.
      * @param <A> class of input collection
      * @param <B> class of transformed collection
      * @param l a collection
      * @param f a function that transforms objects of {@code A} to objects of {@code B}
      * @return the transformed unmodifiable list
      */
-    public static <A, B> List<B> transform(final List<? extends A> l, final java.util.function.Function<A, B> f) {
+    public static <A, B> List<B> transform(final List<? extends A> l, final Function<A, B> f) {
         return new AbstractList<B>() {
 
             @Override
