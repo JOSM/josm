@@ -481,6 +481,8 @@ public class CachedFile implements Closeable {
                 Main.pref.putCollection(prefKey,
                         Arrays.asList(Long.toString(System.currentTimeMillis()), localPathEntry.get(1)));
                 return localFile;
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                throw new IOException(tr("The requested URL {0} was not found", urlStr));
             }
             try (InputStream bis = new BufferedInputStream(con.getContent())) {
                 Files.copy(bis, destDirFile.toPath(), StandardCopyOption.REPLACE_EXISTING);

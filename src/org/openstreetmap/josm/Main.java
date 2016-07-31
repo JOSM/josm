@@ -72,7 +72,6 @@ import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -83,8 +82,6 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
-import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
-import org.openstreetmap.josm.gui.datatransfer.data.OsmLayerTransferData;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
@@ -176,20 +173,6 @@ public abstract class Main {
      * Global application preferences
      */
     public static Preferences pref;
-
-    /**
-     * The global paste buffer.
-     * @deprecated Use swing CCP instead. See {@link OsmTransferHandler}
-     */
-    @Deprecated
-    public static final PrimitiveDeepCopy pasteBuffer = new PrimitiveDeepCopy();
-
-    /**
-     * The layer source from which {@link Main#pasteBuffer} data comes from.
-     * @deprecated During a copy operation, the layer should be added. See {@link OsmLayerTransferData}.
-     */
-    @Deprecated
-    public static Layer pasteSource;
 
     /**
      * The MapFrame. Use {@link Main#setMapFrame} to set or clear it.
