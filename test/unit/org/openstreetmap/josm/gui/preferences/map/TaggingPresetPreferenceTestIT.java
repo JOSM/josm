@@ -93,7 +93,8 @@ public class TaggingPresetPreferenceTestIT {
             if (message.contains(TaggingPreset.PRESET_ICON_ERROR_MSG_PREFIX)) {
                 error = true;
                 // ignore https://github.com/yopaseopor/traffic_signs_preset_JOSM because of far too frequent missing icons errors
-                if (!source.url.contains("yopaseopor/traffic_signs")) {
+                // ignore https://github.com/molysgaard/OAM-JOSM not responding fast enough to our pull requests
+                if (!source.url.contains("yopaseopor/traffic_signs") && !source.url.contains("molysgaard/OAM-JOSM")) {
                     allMessages.add(message);
                 }
             }
