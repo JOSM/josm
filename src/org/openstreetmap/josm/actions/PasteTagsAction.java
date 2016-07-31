@@ -148,7 +148,7 @@ public final class PasteTagsAction extends JosmAction {
         }
 
         /**
-         * Pastes the tags from a homogeneous source (the {@link Main#pasteBuffer}s selection consisting
+         * Pastes the tags from a homogeneous source (the selection consisting
          * of one type of {@link OsmPrimitive}s only).
          *
          * Tags from a homogeneous source can be pasted to a heterogeneous target. All target primitives,
@@ -174,9 +174,7 @@ public final class PasteTagsAction extends JosmAction {
                     return;
                 buildTags(dialog.getResolution());
             } else {
-                // no conflicts in the source tags to resolve. Just apply the tags
-                // to the target primitives
-                //
+                // no conflicts in the source tags to resolve. Just apply the tags to the target primitives
                 buildTags(tc);
             }
         }
