@@ -206,7 +206,7 @@ public class UrlValidator extends AbstractValidator {
      * Create a UrlValidator with default properties.
      */
     public UrlValidator() {
-        this(null);
+        this((String[]) null);
     }
 
     /**
