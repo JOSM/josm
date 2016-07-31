@@ -563,9 +563,9 @@ public final class Geometry {
 
         if (inter.isEmpty() || bounds.getHeight()*bounds.getWidth() <= eps) {
             return PolygonIntersection.OUTSIDE;
-        } else if (inter.equals(a1)) {
+        } else if (a2.getBounds2D().contains(a1.getBounds2D()) && inter.equals(a1)) {
             return PolygonIntersection.FIRST_INSIDE_SECOND;
-        } else if (inter.equals(a2)) {
+        } else if (a1.getBounds2D().contains(a2.getBounds2D()) && inter.equals(a2)) {
             return PolygonIntersection.SECOND_INSIDE_FIRST;
         } else {
             return PolygonIntersection.CROSSING;
