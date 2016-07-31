@@ -128,7 +128,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         }
         if (dx != 0 || dy != 0) {
             double ppd = layer.getPPD();
-            layer.displace(dx / ppd, dy / ppd);
+            layer.getDisplaySettings().addDisplacement(new EastNorth(dx / ppd, dy / ppd));
             if (offsetDialog != null) {
                 offsetDialog.updateOffset();
             }
