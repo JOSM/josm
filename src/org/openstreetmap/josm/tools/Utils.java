@@ -49,6 +49,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -105,12 +106,12 @@ public final class Utils {
      * @param collection the collection
      * @param predicate the predicate
      * @return {@code true} if {@code predicate} applies to at least one element from {@code collection}
-     * @deprecated use {@link Stream#anyMatch(java.util.function.Predicate)} instead.
+     * @deprecated use {@link Stream#anyMatch(Predicate)} instead.
      */
     @Deprecated
     public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
-            if (predicate.evaluate(item)) {
+            if (predicate.test(item)) {
                 return true;
             }
         }
@@ -124,11 +125,11 @@ public final class Utils {
      * @param collection the collection
      * @param predicate the predicate
      * @return {@code true} if {@code predicate} applies to all elements from {@code collection}
-     * @deprecated use {@link Stream#allMatch(java.util.function.Predicate)} instead.
+     * @deprecated use {@link Stream#allMatch(Predicate)} instead.
      */
     @Deprecated
     public static <T> boolean forAll(Iterable<? extends T> collection, Predicate<? super T> predicate) {
-        return !exists(collection, Predicates.not(predicate));
+        return !exists(collection, predicate.negate());
     }
 
     /**
@@ -151,7 +152,7 @@ public final class Utils {
      */
     public static <T> T find(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
-            if (predicate.evaluate(item)) {
+            if (predicate.test(item)) {
                 return item;
             }
         }
@@ -168,21 +169,6 @@ public final class Utils {
     @SuppressWarnings("unchecked")
     public static <T> T find(Iterable<? extends Object> collection, Class<? extends T> clazz) {
         return (T) find(collection, Predicates.<Object>isInstanceOf(clazz));
-    }
-
-    /**
-     * Creates a new {@link FilteredCollection}.
-     * @param <T> The collection type.
-     * @param collection The collection to filter.
-     * @param predicate The predicate to filter for.
-     * @return The new {@link FilteredCollection}
-     * @deprecated Use java predicates and {@link SubclassFilteredCollection#filter(Collection, java.util.function.Predicate)} instead.
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public static <T> Collection<T> filter(Collection<? extends T> collection, Predicate<? super T> predicate) {
-        // Diamond operator does not work with Java 9 here
-        return new FilteredCollection<T>(collection, predicate);
     }
 
     /**
@@ -224,7 +210,7 @@ public final class Utils {
     public static <T> int indexOf(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         int i = 0;
         for (T item : collection) {
-            if (predicate.evaluate(item))
+            if (predicate.test(item))
                 return i;
             i++;
         }
@@ -757,27 +743,6 @@ public final class Utils {
      */
     public static String escapeReservedCharactersHTML(String s) {
         return s == null ? "" : s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-    }
-
-    /**
-     * Represents a function that can be applied to objects of {@code A} and
-     * returns objects of {@code B}.
-     * @param <A> class of input objects
-     * @param <B> class of transformed objects
-     *
-     * @deprecated Use java.util.function.Function instead.
-     */
-    @Deprecated
-    @FunctionalInterface
-    public interface Function<A, B> extends java.util.function.Function<A, B> {
-
-        /**
-         * Applies the function on {@code x}.
-         * @param x an object of
-         * @return the transformed object
-         */
-        @Override
-        B apply(A x);
     }
 
     /**

@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
@@ -886,7 +887,7 @@ public final class Geometry {
      * @param isOuterWayAMatch allows to decide if the immediate {@code outer} way of the multipolygon is a match
      * @return {@code true} if the node is inside the multipolygon
      */
-    public static boolean isNodeInsideMultiPolygon(Node node, Relation multiPolygon, java.util.function.Predicate<Way> isOuterWayAMatch) {
+    public static boolean isNodeInsideMultiPolygon(Node node, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
         return isPolygonInsideMultiPolygon(Collections.singletonList(node), multiPolygon, isOuterWayAMatch);
     }
 
@@ -900,8 +901,7 @@ public final class Geometry {
      * @param isOuterWayAMatch allows to decide if the immediate {@code outer} way of the multipolygon is a match
      * @return {@code true} if the polygon formed by nodes is inside the multipolygon
      */
-    public static boolean isPolygonInsideMultiPolygon(List<Node> nodes, Relation multiPolygon,
-            java.util.function.Predicate<Way> isOuterWayAMatch) {
+    public static boolean isPolygonInsideMultiPolygon(List<Node> nodes, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
         // Extract outer/inner members from multipolygon
         final MultiPolygonMembers mpm = new MultiPolygonMembers(multiPolygon);
         // Construct complete rings for the inner/outer members

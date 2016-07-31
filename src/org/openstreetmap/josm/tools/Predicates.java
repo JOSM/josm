@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -33,18 +34,6 @@ public final class Predicates {
      */
     public static <T> Predicate<T> alwaysFalse() {
         return o -> false;
-    }
-
-    /**
-     * Returns the negation of {@code predicate}.
-     * @param <T> type of items
-     * @param predicate the predicate to negate
-     * @return the negation of {@code predicate}
-     * @deprecated Use {@link java.util.function.Predicate#negate()}
-     */
-    @Deprecated
-    public static <T> Predicate<T> not(final Predicate<T> predicate) {
-        return obj -> !predicate.evaluate(obj);
     }
 
     /**

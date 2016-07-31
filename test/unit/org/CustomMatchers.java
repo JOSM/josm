@@ -3,6 +3,7 @@ package org;
 
 import java.awt.geom.Point2D;
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Description;
@@ -11,7 +12,6 @@ import org.hamcrest.TypeSafeMatcher;
 import org.junit.Ignore;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.tools.Predicate;
 
 /**
  * Custom matchers for unit tests.
@@ -34,7 +34,7 @@ public final class CustomMatchers {
 
             @Override
             protected boolean matchesSafely(T item) {
-                return predicate.evaluate(item);
+                return predicate.test(item);
             }
 
             @Override

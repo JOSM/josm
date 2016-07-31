@@ -5,6 +5,7 @@ import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 
 /**
  * Filtered view of a collection.
@@ -21,7 +22,7 @@ import java.util.NoSuchElementException;
 public class SubclassFilteredCollection<S, T extends S> extends AbstractCollection<T> {
 
     private final Collection<? extends S> collection;
-    private final java.util.function.Predicate<? super S> predicate;
+    private final Predicate<? super S> predicate;
     private int size = -1;
 
     private class FilterIterator implements Iterator<T> {
@@ -71,20 +72,9 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
      * Constructs a new {@code SubclassFilteredCollection}.
      * @param collection The base collection to filter
      * @param predicate The predicate to use as filter
-     * @deprecated Use java predicates instead.
+     * @see #filter(Collection, Predicate) for an alternative way to construct this.
      */
-    @Deprecated
     public SubclassFilteredCollection(Collection<? extends S> collection, Predicate<? super S> predicate) {
-        this(collection, (java.util.function.Predicate<? super S>) predicate);
-    }
-
-    /**
-     * Constructs a new {@code SubclassFilteredCollection}.
-     * @param collection The base collection to filter
-     * @param predicate The predicate to use as filter
-     * @see #filter(Collection, java.util.function.Predicate) for an alternative way to construct this.
-     */
-    public SubclassFilteredCollection(Collection<? extends S> collection, java.util.function.Predicate<? super S> predicate) {
         this.collection = collection;
         this.predicate = predicate;
     }
@@ -119,7 +109,7 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
      * @param predicate The predicate to filter for.
      * @return The filtered collection. It is a {@code Collection<T>}.
      */
-    public static <T> SubclassFilteredCollection<T, T> filter(Collection<? extends T> collection, java.util.function.Predicate<T> predicate) {
+    public static <T> SubclassFilteredCollection<T, T> filter(Collection<? extends T> collection, Predicate<T> predicate) {
         return new SubclassFilteredCollection<>(collection, predicate);
     }
 }

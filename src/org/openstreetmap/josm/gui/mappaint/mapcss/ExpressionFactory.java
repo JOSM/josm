@@ -1134,7 +1134,7 @@ public final class ExpressionFactory {
 
         public Float aggregateList(List<?> lst) {
             final List<Float> floats = Utils.transform(lst, (Function<Object, Float>) x -> Cascade.convertTo(x, float.class));
-            final Collection<Float> nonNullList = SubclassFilteredCollection.filter(floats, Predicates.not(Predicates.isNull()));
+            final Collection<Float> nonNullList = SubclassFilteredCollection.filter(floats, Predicates.<Float>isNull().negate());
             return nonNullList.isEmpty() ? (Float) Float.NaN : computeMax ? Collections.max(nonNullList) : Collections.min(nonNullList);
         }
 
