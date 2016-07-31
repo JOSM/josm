@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +34,6 @@ import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
-import org.openstreetmap.josm.tools.Utils.Function;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**

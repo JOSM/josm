@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io;
 
 import java.util.Set;
+import java.util.function.Function;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.preferences.server.OverpassServerPreference;
@@ -16,7 +17,7 @@ class MultiFetchOverpassObjectReader extends MultiFetchServerObjectReader {
 
     @Override
     protected String buildRequestString(final OsmPrimitiveType type, Set<Long> idPackage) {
-        final Utils.Function<Long, Object> toOverpassExpression = x -> type.getAPIName() + '(' + x + ");>;";
+        final Function<Long, Object> toOverpassExpression = x -> type.getAPIName() + '(' + x + ");>;";
         final String query = '(' + Utils.join("", Utils.transform(idPackage, toOverpassExpression)) + ");out meta;";
         return "interpreter?data=" + Utils.encodeUrl(query);
     }
