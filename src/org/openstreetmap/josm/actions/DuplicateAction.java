@@ -34,7 +34,8 @@ public final class DuplicateAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         PrimitiveTransferData data = PrimitiveTransferData.getDataWithReferences(getLayerManager().getEditDataSet().getSelected());
-        new OsmTransferHandler().pasteOn(Main.getLayerManager().getEditLayer(), data.getCenter(), new PrimitiveTransferable(data));
+        new OsmTransferHandler().pasteOn(Main.getLayerManager().getEditLayer(),
+                PasteAction.computePastePosition(e, getValue(NAME)), new PrimitiveTransferable(data));
     }
 
     @Override

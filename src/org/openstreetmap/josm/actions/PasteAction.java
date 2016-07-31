@@ -42,12 +42,16 @@ public final class PasteAction extends JosmAction implements FlavorListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        transferHandler.pasteOn(Main.getLayerManager().getEditLayer(), computePastePosition(e, getValue(NAME)));
+    }
+
+    static EastNorth computePastePosition(ActionEvent e, Object name) {
         // default to paste in center of map (pasted via menu or cursor not in MapView)
         EastNorth mPosition = Main.map.mapView.getCenter();
         // We previously checked for modifier to know if the action has been trigerred via shortcut or via menu
         // But this does not work if the shortcut is changed to a single key (see #9055)
         // Observed behaviour: getActionCommand() returns Action.NAME when triggered via menu, but shortcut text when triggered with it
-        if (e != null && !getValue(NAME).equals(e.getActionCommand())) {
+        if (e != null && !name.equals(e.getActionCommand())) {
             final Point mp = MouseInfo.getPointerInfo().getLocation();
             final Point tl = Main.map.mapView.getLocationOnScreen();
             final Point pos = new Point(mp.x-tl.x, mp.y-tl.y);
@@ -55,8 +59,7 @@ public final class PasteAction extends JosmAction implements FlavorListener {
                 mPosition = Main.map.mapView.getEastNorth(pos.x, pos.y);
             }
         }
-
-        transferHandler.pasteOn(Main.getLayerManager().getEditLayer(), mPosition);
+        return mPosition;
     }
 
     @Override
