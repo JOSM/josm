@@ -6,10 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.DropMode;
@@ -109,7 +109,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     private transient ListSelectionListener highlighterListener = lse -> {
         if (Main.isDisplayingMapView()) {
             Collection<RelationMember> sel = getMemberTableModel().getSelectedMembers();
-            final List<OsmPrimitive> toHighlight = new ArrayList<>();
+            final Set<OsmPrimitive> toHighlight = new HashSet<>();
             for (RelationMember r: sel) {
                 if (r.getMember().isUsable()) {
                     toHighlight.add(r.getMember());
