@@ -20,6 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Predicate;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -318,7 +319,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return The list of primtives.
      * @since 10590
      */
-    public <T extends OsmPrimitive> Collection<T> getPrimitives(java.util.function.Predicate<? super OsmPrimitive> predicate) {
+    public <T extends OsmPrimitive> Collection<T> getPrimitives(Predicate<? super OsmPrimitive> predicate) {
         return new SubclassFilteredCollection<>(allPrimitives, predicate);
     }
 

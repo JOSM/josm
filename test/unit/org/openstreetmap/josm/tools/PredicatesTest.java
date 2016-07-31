@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import org.junit.Rule;
@@ -37,8 +38,8 @@ public class PredicatesTest {
     @Test
     public void testAlwaysTrue() {
         Predicate<Object> alwaysTrue = Predicates.alwaysTrue();
-        assertTrue(alwaysTrue.evaluate(new Object()));
-        assertTrue(alwaysTrue.evaluate(Boolean.TRUE));
+        assertTrue(alwaysTrue.test(new Object()));
+        assertTrue(alwaysTrue.test(Boolean.TRUE));
     }
 
     /**
@@ -47,23 +48,8 @@ public class PredicatesTest {
     @Test
     public void testAlwaysFalse() {
         Predicate<Object> alwaysFalse = Predicates.alwaysFalse();
-        assertFalse(alwaysFalse.evaluate(new Object()));
-        assertFalse(alwaysFalse.evaluate(Boolean.TRUE));
-    }
-
-    /**
-     * Test {@link Predicates#not(Predicate)}
-     */
-    @Test
-    public void testNot() {
-        Predicate<Boolean> not = Predicates.not(new Predicate<Boolean>() {
-            @Override
-            public boolean evaluate(Boolean object) {
-                return object;
-            }
-        });
-        assertFalse(not.evaluate(Boolean.TRUE));
-        assertTrue(not.evaluate(Boolean.FALSE));
+        assertFalse(alwaysFalse.test(new Object()));
+        assertFalse(alwaysFalse.test(Boolean.TRUE));
     }
 
     /**
@@ -73,11 +59,11 @@ public class PredicatesTest {
     public void testEqualTo() {
         Integer testObject = Integer.valueOf(1);
         Predicate<Integer> equalTo = Predicates.equalTo(testObject);
-        assertTrue(equalTo.evaluate(testObject));
-        assertTrue(equalTo.evaluate(Integer.valueOf(1)));
+        assertTrue(equalTo.test(testObject));
+        assertTrue(equalTo.test(Integer.valueOf(1)));
 
-        assertFalse(equalTo.evaluate(Integer.valueOf(2)));
-        assertFalse(equalTo.evaluate(null));
+        assertFalse(equalTo.test(Integer.valueOf(2)));
+        assertFalse(equalTo.test(null));
     }
 
     /**
@@ -86,10 +72,10 @@ public class PredicatesTest {
     @Test
     public void testIsOfClass() {
         Predicate<Object> isOfClass = Predicates.<Object>isOfClass(Hashtable.class);
-        assertFalse(isOfClass.evaluate(null));
-        assertFalse(isOfClass.evaluate(new Object()));
-        assertFalse(isOfClass.evaluate(new Properties()));
-        assertTrue(isOfClass.evaluate(new Hashtable<>()));
+        assertFalse(isOfClass.test(null));
+        assertFalse(isOfClass.test(new Object()));
+        assertFalse(isOfClass.test(new Properties()));
+        assertTrue(isOfClass.test(new Hashtable<>()));
     }
 
     /**
@@ -98,10 +84,10 @@ public class PredicatesTest {
     @Test
     public void testIsInstanceOf() {
         Predicate<Object> isInstanceOf = Predicates.<Object>isInstanceOf(Hashtable.class);
-        assertFalse(isInstanceOf.evaluate(null));
-        assertFalse(isInstanceOf.evaluate(new Object()));
-        assertTrue(isInstanceOf.evaluate(new Properties()));
-        assertTrue(isInstanceOf.evaluate(new Hashtable<>()));
+        assertFalse(isInstanceOf.test(null));
+        assertFalse(isInstanceOf.test(new Object()));
+        assertTrue(isInstanceOf.test(new Properties()));
+        assertTrue(isInstanceOf.test(new Hashtable<>()));
     }
 
     /**
@@ -111,11 +97,11 @@ public class PredicatesTest {
     public void testStringMatchesPattern() {
         Pattern p = Pattern.compile("ab?c");
         Predicate<String> stringMatchesPattern = Predicates.stringMatchesPattern(p);
-        assertFalse(stringMatchesPattern.evaluate(""));
-        assertFalse(stringMatchesPattern.evaluate("a"));
-        assertFalse(stringMatchesPattern.evaluate("xabcx"));
-        assertTrue(stringMatchesPattern.evaluate("ac"));
-        assertTrue(stringMatchesPattern.evaluate("abc"));
+        assertFalse(stringMatchesPattern.test(""));
+        assertFalse(stringMatchesPattern.test("a"));
+        assertFalse(stringMatchesPattern.test("xabcx"));
+        assertTrue(stringMatchesPattern.test("ac"));
+        assertTrue(stringMatchesPattern.test("abc"));
     }
 
     /**
@@ -125,12 +111,12 @@ public class PredicatesTest {
     public void testStringContainsPattern() {
         Pattern p = Pattern.compile("ab?c");
         Predicate<String> stringContainsPattern = Predicates.stringContainsPattern(p);
-        assertFalse(stringContainsPattern.evaluate(""));
-        assertFalse(stringContainsPattern.evaluate("a"));
-        assertTrue(stringContainsPattern.evaluate("xabcx"));
-        assertTrue(stringContainsPattern.evaluate("ac"));
-        assertTrue(stringContainsPattern.evaluate("abc"));
-        assertTrue(stringContainsPattern.evaluate("xx\nabc\nx"));
+        assertFalse(stringContainsPattern.test(""));
+        assertFalse(stringContainsPattern.test("a"));
+        assertTrue(stringContainsPattern.test("xabcx"));
+        assertTrue(stringContainsPattern.test("ac"));
+        assertTrue(stringContainsPattern.test("abc"));
+        assertTrue(stringContainsPattern.test("xx\nabc\nx"));
     }
 
     /**
@@ -139,11 +125,11 @@ public class PredicatesTest {
     @Test
     public void testStringContains() {
         Predicate<String> stringContains = Predicates.stringContains("abc");
-        assertFalse(stringContains.evaluate(""));
-        assertFalse(stringContains.evaluate("a"));
-        assertTrue(stringContains.evaluate("xabcx"));
-        assertFalse(stringContains.evaluate("ac"));
-        assertTrue(stringContains.evaluate("abc"));
+        assertFalse(stringContains.test(""));
+        assertFalse(stringContains.test("a"));
+        assertTrue(stringContains.test("xabcx"));
+        assertFalse(stringContains.test("ac"));
+        assertTrue(stringContains.test("abc"));
     }
 
     /**
@@ -153,13 +139,13 @@ public class PredicatesTest {
     public void testHasTag() {
         Predicate<OsmPrimitive> hasTag = Predicates.hasTag("key", "value");
         Node n1 = new Node();
-        assertFalse(hasTag.evaluate(n1));
+        assertFalse(hasTag.test(n1));
         n1.put("Key", "x");
-        assertFalse(hasTag.evaluate(n1));
+        assertFalse(hasTag.test(n1));
         n1.put("key", "x");
-        assertFalse(hasTag.evaluate(n1));
+        assertFalse(hasTag.test(n1));
         n1.put("key", "value");
-        assertTrue(hasTag.evaluate(n1));
+        assertTrue(hasTag.test(n1));
     }
 
     /**
@@ -169,11 +155,11 @@ public class PredicatesTest {
     public void testHasKey() {
         Predicate<OsmPrimitive> hasKey = Predicates.hasKey("key");
         Node n1 = new Node();
-        assertFalse(hasKey.evaluate(n1));
+        assertFalse(hasKey.test(n1));
         n1.put("Key", "x");
-        assertFalse(hasKey.evaluate(n1));
+        assertFalse(hasKey.test(n1));
         n1.put("key", "x");
-        assertTrue(hasKey.evaluate(n1));
+        assertTrue(hasKey.test(n1));
     }
 
     /**
@@ -183,17 +169,17 @@ public class PredicatesTest {
     public void testInCollection() {
         List<String> list = Arrays.asList("a", "b", "c");
         Predicate<String> inCollection = Predicates.inCollection(list);
-        assertTrue(inCollection.evaluate("a"));
-        assertTrue(inCollection.evaluate("c"));
-        assertFalse(inCollection.evaluate("d"));
-        assertFalse(inCollection.evaluate(null));
+        assertTrue(inCollection.test("a"));
+        assertTrue(inCollection.test("c"));
+        assertFalse(inCollection.test("d"));
+        assertFalse(inCollection.test(null));
 
         List<String> list2 = Arrays.asList("a", "b", "c", null);
         Predicate<String> inCollection2 = Predicates.inCollection(list2);
-        assertTrue(inCollection2.evaluate("a"));
-        assertTrue(inCollection2.evaluate("c"));
-        assertFalse(inCollection2.evaluate("d"));
-        assertTrue(inCollection2.evaluate(null));
+        assertTrue(inCollection2.test("a"));
+        assertTrue(inCollection2.test("c"));
+        assertFalse(inCollection2.test("d"));
+        assertTrue(inCollection2.test(null));
     }
 
     /**
@@ -202,7 +188,7 @@ public class PredicatesTest {
     @Test
     public void testIsNull() {
         Predicate<Object> isNull = Predicates.isNull();
-        assertTrue(isNull.evaluate(null));
-        assertFalse(isNull.evaluate(Integer.valueOf(2)));
+        assertTrue(isNull.test(null));
+        assertFalse(isNull.test(Integer.valueOf(2)));
     }
 }

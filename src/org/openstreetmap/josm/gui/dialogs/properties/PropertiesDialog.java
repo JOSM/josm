@@ -895,7 +895,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             if (positionString == null) {
                 positionString = Utils.getPositionListString(position);
                 // if not all objects from the selection are member of this relation
-                if (selection.stream().anyMatch(Predicates.not(Predicates.inCollection(members)))) {
+                if (selection.stream().anyMatch(Predicates.inCollection(members).negate())) {
                     positionString += ",\u2717";
                 }
                 members = null;
