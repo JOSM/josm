@@ -769,13 +769,14 @@ public final class Utils {
      */
     @Deprecated
     @FunctionalInterface
-    public interface Function<A, B> {
+    public interface Function<A, B> extends java.util.function.Function<A, B> {
 
         /**
          * Applies the function on {@code x}.
          * @param x an object of
          * @return the transformed object
          */
+        @Override
         B apply(A x);
     }
 
@@ -788,7 +789,7 @@ public final class Utils {
      * @param f a function that transforms objects of {@code A} to objects of {@code B}
      * @return the transformed unmodifiable collection
      */
-    public static <A, B> Collection<B> transform(final Collection<? extends A> c, final Function<A, B> f) {
+    public static <A, B> Collection<B> transform(final Collection<? extends A> c, final java.util.function.Function<A, B> f) {
         return new AbstractCollection<B>() {
 
             @Override
@@ -830,7 +831,7 @@ public final class Utils {
      * @param f a function that transforms objects of {@code A} to objects of {@code B}
      * @return the transformed unmodifiable list
      */
-    public static <A, B> List<B> transform(final List<? extends A> l, final Function<A, B> f) {
+    public static <A, B> List<B> transform(final List<? extends A> l, final java.util.function.Function<A, B> f) {
         return new AbstractList<B>() {
 
             @Override
