@@ -58,6 +58,7 @@ public class DebugTextDisplay extends JScrollPane {
     private void setCodeText(String textToDisplay) {
         text = Utils.strip(textToDisplay).replaceAll("\r", "");
         textArea.setText(String.format(CODE_PATTERN, text));
+        textArea.setCaretPosition(0);
     }
 
     /**
