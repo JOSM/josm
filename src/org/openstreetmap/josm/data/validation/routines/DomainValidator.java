@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016073000, Last Updated Sat Jul 30 07:07:01 2016 UTC
+        // Taken from Version 2016080100, Last Updated Mon Aug  1 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -314,6 +314,7 @@ public final class DomainValidator extends AbstractValidator {
         "aeg", // aeg Aktiebolaget Electrolux
         "aero", // aero Societe Internationale de Telecommunications Aeronautique (SITA INC USA)
         "aetna", // aetna Aetna Life Insurance Company
+        "afamilycompany", // afamilycompany Johnson Shareholdings, Inc.
         "afl", // afl Australian Football League
         "agakhan", // agakhan Fondation Aga Khan (Aga Khan Foundation)
         "agency", // agency Steel Falls, LLC
@@ -845,6 +846,7 @@ public final class DomainValidator extends AbstractValidator {
         "lifestyle", // lifestyle Lifestyle Domain Holdings, Inc.
         "lighting", // lighting John McCook, LLC
         "like", // like Amazon Registry Services, Inc.
+        "lilly", // lilly Eli Lilly and Company
         "limited", // limited Big Fest, LLC
         "limo", // limo Hidden Frostbite, LLC
         "lincoln", // lincoln Ford Motor Company
@@ -886,6 +888,7 @@ public final class DomainValidator extends AbstractValidator {
         "marshalls", // marshalls The TJX Companies, Inc.
         "mattel", // mattel Mattel Sites, Inc.
         "mba", // mba Lone Hollow, LLC
+        "mckinsey", // mckinsey McKinsey Holdings, Inc.
         "med", // med Medistry LLC
         "media", // media Grand Glen, LLC
         "meet", // meet Afilias Limited
