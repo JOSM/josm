@@ -36,10 +36,18 @@ public abstract class AbstractProjection implements Projection {
 
     private volatile ProjectionBounds projectionBoundsBox;
 
+    /**
+     * Get the base ellipsoid that this projection uses.
+     * @return The {@link Ellipsoid}
+     */
     public final Ellipsoid getEllipsoid() {
         return ellps;
     }
 
+    /**
+     * Gets the datum this projection is based on.
+     * @return The datum
+     */
     public final Datum getDatum() {
         return datum;
     }
@@ -52,14 +60,26 @@ public abstract class AbstractProjection implements Projection {
         return proj;
     }
 
+    /**
+     * Gets an east offset that gets applied when converting the coordinate
+     * @return The offset to apply in meter
+     */
     public final double getFalseEasting() {
         return x0;
     }
 
+    /**
+     * Gets an north offset that gets applied when converting the coordinate
+     * @return The offset to apply in meter
+     */
     public final double getFalseNorthing() {
         return y0;
     }
 
+    /**
+     * Gets the meridian that this projection is centered on.
+     * @return The longitude of the meridian.
+     */
     public final double getCentralMeridian() {
         return lon0;
     }
@@ -75,7 +95,7 @@ public abstract class AbstractProjection implements Projection {
      * always given in meters, which means the preliminary projection result will
      * be in meters as well. This factor is used to convert to the intended units
      * of east/north coordinates (e.g. feet in the US).
-     * 
+     *
      * For geographic coordinate systems, the preliminary "projection" result will
      * be in degrees, so there is no reason to convert anything and this factor
      * will by 1 by default.
