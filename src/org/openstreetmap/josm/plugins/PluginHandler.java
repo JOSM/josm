@@ -1376,25 +1376,17 @@ public final class PluginHandler {
 
     /**
      * Returns the list of loaded plugins as a {@code String} to be displayed in status report. Useful for bug reports.
-     * @return The list of loaded plugins (one plugin per line)
+     * @return The list of loaded plugins
      */
-    public static String getBugReportText() {
-        StringBuilder text = new StringBuilder();
-        List<String> pl = new LinkedList<>(Main.pref.getCollection("plugins", new LinkedList<String>()));
+    public static Collection<String> getBugReportInformation() {
+        final Collection<String> pl = new TreeSet<>(Main.pref.getCollection("plugins", new LinkedList<>()));
         for (final PluginProxy pp : pluginList) {
             PluginInformation pi = pp.getPluginInformation();
             pl.remove(pi.name);
             pl.add(pi.name + " (" + (pi.localversion != null && !pi.localversion.isEmpty()
                     ? pi.localversion : "unknown") + ')');
         }
-        Collections.sort(pl);
-        if (!pl.isEmpty()) {
-            text.append("Plugins:\n");
-        }
-        for (String s : pl) {
-            text.append("- ").append(s).append('\n');
-        }
-        return text.toString();
+        return pl;
     }
 
     /**
