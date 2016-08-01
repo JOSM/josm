@@ -658,6 +658,7 @@ public class MapPaintDialog extends ToggleDialog {
                 Main.error(ex);
                 txtSource.append("<ERROR: failed to read file!>");
             }
+            txtSource.setCaretPosition(0);
         }
 
         private <T> void buildErrorsOrWarningPanel(Collection<T> items, JPanel p) {
@@ -668,6 +669,7 @@ public class MapPaintDialog extends ToggleDialog {
             for (T t : items) {
                 txtErrors.append(t.toString() + '\n');
             }
+            txtErrors.setCaretPosition(0);
         }
     }
 

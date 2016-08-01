@@ -99,6 +99,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         jte.setFont(GuiHelper.getMonospacedFont(jte));
         jte.setEditable(false);
         jte.append(s);
+        jte.setCaretPosition(0);
         p.add(new JScrollPane(jte), GBC.std().fill());
         return p;
     }
