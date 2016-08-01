@@ -287,6 +287,9 @@ public class ImproveWayAccuracyAction extends MapMode implements
                 if (index != 0 && index != (nodes.size() - 1)) {
                     p1 = mv.getPoint(nodes.get(index - 1));
                     p2 = mv.getPoint(nodes.get(index + 1));
+                } else if (targetWay.isClosed()) {
+                    p1 = mv.getPoint(targetWay.getNode(1));
+                    p2 = mv.getPoint(targetWay.getNode(nodes.size() - 2));
                 }
                 // TODO: indicate what part that will be deleted? (for end nodes)
             }
