@@ -10,9 +10,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -29,7 +31,9 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.visitor.paint.RenderBenchmarkCollector.CapturingBenchmark;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer.StyleRecord;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
@@ -207,16 +211,15 @@ public class MapRendererPerformanceTest {
                 } catch (InterruptedException ex) {
                     Main.warn(ex);
                 }
-                StyledMapRenderer.BenchmarkData data = new StyledMapRenderer.BenchmarkData();
-                data.skipDraw = skipDraw;
-                renderer.benchmarkData = data;
+                BenchmarkData data = new BenchmarkData();
+                renderer.setBenchmarkFactory(() -> data);
                 renderer.render(dsCity, false, bounds);
 
                 if (i > noWarmup) {
-                    generateTimes.add(data.generateTime);
-                    sortTimes.add(data.sortTime);
-                    drawTimes.add(data.drawTime);
-                    totalTimes.add(data.generateTime + data.sortTime + data.drawTime);
+                    generateTimes.add(data.getGenerateTime());
+                    sortTimes.add(data.getSortTime());
+                    drawTimes.add(data.getDrawTime());
+                    totalTimes.add(data.getGenerateTime() + data.getSortTime() + data.getDrawTime());
                 }
                 if (i == 1) {
                     dumpElementCount(data);
@@ -317,20 +320,36 @@ public class MapRendererPerformanceTest {
         ImageIO.write(img, "png", outputfile);
     }
 
-    public static void dumpTimes(StyledMapRenderer.BenchmarkData bd) {
-        System.out.print(String.format("gen. %3d, sort %3d, draw %3d%n", bd.generateTime, bd.sortTime, bd.drawTime));
+    public static void dumpTimes(BenchmarkData bd) {
+        System.out.print(String.format("gen. %3d, sort %3d, draw %3d%n", bd.getGenerateTime(), bd.getSortTime(), bd.getDrawTime()));
     }
 
-    public static void dumpElementCount(StyledMapRenderer.BenchmarkData bd) {
-        String sep = null;
-        for (Map.Entry<Class<? extends StyleElement>, Integer> e : bd.styleElementCount.entrySet()) {
-            if (sep == null) {
-                sep = " ";
-            } else {
-                System.out.print(sep);
-            }
-            System.out.print(e.getKey().getSimpleName().replace("Element", "") + ":" + e.getValue());
+    public static void dumpElementCount(BenchmarkData bd) {
+        System.out.println(bd.recordElementStats().entrySet().stream()
+                .map(e -> e.getKey().getSimpleName().replace("Element", "") + ":" + e.getValue()).collect(Collectors.joining(" ")));
+    }
+
+    public static class BenchmarkData extends CapturingBenchmark {
+
+        private List<StyleRecord> allStyleElems;
+
+        @Override
+        public boolean renderDraw(List<StyleRecord> allStyleElems) {
+            this.allStyleElems = allStyleElems;
+            return super.renderDraw(allStyleElems);
         }
-        System.out.println();
+
+        private Map<Class<? extends StyleElement>, Integer> recordElementStats() {
+            Map<Class<? extends StyleElement>, Integer> styleElementCount = new HashMap<>();
+            for (StyleRecord r : allStyleElems) {
+                Class<? extends StyleElement> klass = r.getStyle().getClass();
+                Integer count = styleElementCount.get(klass);
+                if (count == null) {
+                    count = 0;
+                }
+                styleElementCount.put(klass, count + 1);
+            }
+            return styleElementCount;
+        }
     }
 }
