@@ -5,8 +5,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.JTextArea;
-import javax.swing.text.Caret;
-import javax.swing.text.DefaultCaret;
 import javax.swing.text.Document;
 
 import org.openstreetmap.josm.Main;
@@ -89,11 +87,6 @@ public class JosmTextArea extends JTextArea implements FocusListener {
         super(doc, text, rows, columns);
         TextContextualPopupMenu.enableMenuFor(this, true);
         addFocusListener(this);
-        Caret c = getCaret();
-        if (c instanceof DefaultCaret) {
-            // Prevent component to scroll down after setting large text, forcing users to initially scroll up
-            ((DefaultCaret) c).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-        }
     }
 
     @Override
