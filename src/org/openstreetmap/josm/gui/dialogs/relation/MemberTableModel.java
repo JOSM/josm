@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -266,10 +267,12 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         fireTableDataChanged();
         getSelectionModel().setValueIsAdjusting(true);
         getSelectionModel().clearSelection();
+        BitSet selected = new BitSet();
         for (int row : selectedRows) {
             row--;
-            getSelectionModel().addSelectionInterval(row, row);
+            selected.set(row);
         }
+        addToSelectedMembers(selected);
         getSelectionModel().setValueIsAdjusting(false);
         fireMakeMemberVisible(selectedRows[0] - 1);
     }
@@ -289,10 +292,12 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         getSelectionModel();
         getSelectionModel().setValueIsAdjusting(true);
         getSelectionModel().clearSelection();
+        BitSet selected = new BitSet();
         for (int row : selectedRows) {
             row++;
-            getSelectionModel().addSelectionInterval(row, row);
+            selected.set(row);
         }
+        addToSelectedMembers(selected);
         getSelectionModel().setValueIsAdjusting(false);
         fireMakeMemberVisible(selectedRows[0] + 1);
     }
@@ -529,9 +534,11 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
             members.add(row, newMember);
         }
         fireTableDataChanged();
+        BitSet selected = new BitSet();
         for (int row : idx) {
-            getSelectionModel().addSelectionInterval(row, row);
+            selected.set(row);
         }
+        addToSelectedMembers(selected);
     }
 
     /**
@@ -615,9 +622,11 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         //
         getSelectionModel().setValueIsAdjusting(true);
         getSelectionModel().clearSelection();
+        BitSet selected = new BitSet();
         for (int row : selectedIndices) {
-            getSelectionModel().addSelectionInterval(row, row);
+            selected.set(row);
         }
+        addToSelectedMembers(selected);
         getSelectionModel().setValueIsAdjusting(false);
         // make the first selected member visible
         //
@@ -627,12 +636,41 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     }
 
     /**
-     * Replies true if the index-th relation members referrs
+     * Add one or more members indices to the selection.
+     * Detect groups of consecutive indices.
+     * Only one costly call of addSelectionInterval is performed for each group
+
+     * @param selectedIndices selected indices as a bitset
+     * @return number of groups
+     */
+    private int addToSelectedMembers(BitSet selectedIndices) {
+        if (selectedIndices == null || selectedIndices.isEmpty()) {
+            return 0;
+        }
+        // select the members
+        //
+        int start = selectedIndices.nextSetBit(0);
+        int end;
+        int steps = 0;
+        int last = selectedIndices.length();
+        while (start >= 0) {
+            end = selectedIndices.nextClearBit(start);
+            steps++;
+            getSelectionModel().addSelectionInterval(start, end-1);
+            start = selectedIndices.nextSetBit(end);
+            if (start < 0 || end == last)
+                break;
+        }
+        return steps;
+    }
+
+    /**
+     * Replies true if the index-th relation members refers
      * to an editable relation, i.e. a relation which is not
      * incomplete.
      *
      * @param index the index
-     * @return true, if the index-th relation members referrs
+     * @return true, if the index-th relation members refers
      * to an editable relation, i.e. a relation which is not
      * incomplete
      */
@@ -693,12 +731,14 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         if (primitives == null) return;
         getSelectionModel().setValueIsAdjusting(true);
         getSelectionModel().clearSelection();
+        BitSet selected = new BitSet();
         for (int i = 0; i < members.size(); i++) {
             RelationMember m = members.get(i);
             if (primitives.contains(m.getMember())) {
-                this.getSelectionModel().addSelectionInterval(i, i);
+                selected.set(i);
             }
         }
+        addToSelectedMembers(selected);
         getSelectionModel().setValueIsAdjusting(false);
         if (!getSelectedIndices().isEmpty()) {
             fireMakeMemberVisible(getSelectedIndices().get(0));
