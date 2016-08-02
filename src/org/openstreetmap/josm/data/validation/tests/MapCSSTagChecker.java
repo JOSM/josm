@@ -254,13 +254,23 @@ public class MapCSSTagChecker extends Test.TagTest {
     }
 
     public static class TagCheck implements Predicate<OsmPrimitive> {
+        /** The selector of this {@code TagCheck} */
         protected final GroupedMapCSSRule rule;
+        /** Commands to apply in order to fix a matching primitive */
         protected final List<FixCommand> fixCommands = new ArrayList<>();
+        /** Tags (or arbitraty strings) of alternatives to be presented to the user */
         protected final List<String> alternatives = new ArrayList<>();
+        /** An {@link Instruction.AssignmentInstruction}-{@link Severity} pair.
+         * Is evaluated on the matching primitive to give the error message. Map is checked to contain exactly one element. */
         protected final Map<Instruction.AssignmentInstruction, Severity> errors = new HashMap<>();
+        /** Unit tests */
         protected final Map<String, Boolean> assertions = new HashMap<>();
+        /** MapCSS Classes to set on matching primitives */
         protected final Set<String> setClassExpressions = new HashSet<>();
+        /** Denotes whether the object should be deleted for fixing it */
         protected boolean deletion;
+        /** A string used to group similar tests */
+        protected String group;
 
         TagCheck(GroupedMapCSSRule rule) {
             this.rule = rule;
@@ -323,6 +333,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                         check.assertions.put(val, Boolean.TRUE);
                     } else if ("assertNoMatch".equals(ai.key) && val != null) {
                         check.assertions.put(val, Boolean.FALSE);
+                    } else if ("group".equals(ai.key) && val != null) {
+                        check.group = val;
                     } else {
                         throw new IllegalDataException("Cannot add instruction " + ai.key + ": " + ai.val + '!');
                     }
@@ -562,6 +574,8 @@ public class MapCSSTagChecker extends Test.TagTest {
             if (matchingSelector != null && !errors.isEmpty()) {
                 final Command fix = fixPrimitive(p);
                 final String description = getDescriptionForMatchingSelector(p, matchingSelector);
+                final String description1 = group == null ? description : group;
+                final String description2 = group == null ? null : description;
                 final List<OsmPrimitive> primitives;
                 if (env.child != null) {
                     primitives = Arrays.asList(p, env.child);
@@ -569,9 +583,9 @@ public class MapCSSTagChecker extends Test.TagTest {
                     primitives = Collections.singletonList(p);
                 }
                 if (fix != null) {
-                    return new FixableTestError(null, getSeverity(), description, null, matchingSelector.toString(), 3000, primitives, fix);
+                    return new FixableTestError(null, getSeverity(), description1, description2, matchingSelector.toString(), 3000, primitives, fix);
                 } else {
-                    return new TestError(null, getSeverity(), description, null, matchingSelector.toString(), 3000, primitives);
+                    return new TestError(null, getSeverity(), description1, description2, matchingSelector.toString(), 3000, primitives);
                 }
             } else {
                 return null;

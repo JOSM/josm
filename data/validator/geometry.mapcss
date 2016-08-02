@@ -151,18 +151,23 @@ area:closed:areaStyle[tag("landuse") = parent_tag("landuse")] ⧉ area:closed:ar
 /* see ticket:#9522 */
 node[tag("amenity") = parent_tag("amenity")] ∈ *[amenity][amenity != parking] {
   throwWarning: tr("{0} inside {1}", concat("amenity=", tag("amenity")), concat("amenity=", tag("amenity")));
+  group: tr("{0} inside {1}", "amenity", "amenity");
 }
 node[tag("leisure") = parent_tag("leisure")] ∈ *[leisure] {
   throwWarning: tr("{0} inside {1}", concat("leisure=", tag("leisure")), concat("leisure=", tag("leisure")));
+  group: tr("{0} inside {1}", "leisure", "leisure");
 }
 node[tag("tourism") = parent_tag("tourism")] ∈ *[tourism] {
   throwWarning: tr("{0} inside {1}", concat("tourism=", tag("tourism")), concat("tourism=", tag("tourism")));
+  group: tr("{0} inside {1}", "tourism", "tourism");
 }
 node[tag("shop") = parent_tag("shop")] ∈ *[shop] {
   throwWarning: tr("{0} inside {1}", concat("shop=", tag("shop")), concat("shop=", tag("shop")));
+  group: tr("{0} inside {1}", "shop", "shop");
 }
 node[tag("power") = parent_tag("power")] ∈ *[power] {
   throwWarning: tr("{0} inside {1}", concat("power=", tag("power")), concat("power=", tag("power")));
+  group: tr("{0} inside {1}", "power", "power");
 }
 
 /* isolated nodes which should be part of a way, see #10825 */
