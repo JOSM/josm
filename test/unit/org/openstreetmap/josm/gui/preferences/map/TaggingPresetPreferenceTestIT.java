@@ -74,7 +74,7 @@ public class TaggingPresetPreferenceTestIT {
                     }
                     System.out.println(" => KO");
                 }
-            } catch (SAXException e) {
+            } catch (SAXException | IllegalArgumentException e) {
                 e.printStackTrace();
                 allErrors.add(e);
                 System.out.println(" => KO");
