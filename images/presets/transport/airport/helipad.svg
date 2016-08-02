@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="11"
+   id="svg1985"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="helipad6.svg"
+   sodipodi:version="0.32"
+   width="16.000122"
+   version="1.1">
+  <metadata
+     id="metadata3">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title></dc:title>
+        <dc:description>EPS converted from  http://aiga.org</dc:description>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>symbol</rdf:li>
+            <rdf:li>mapsym</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://www.openclipart.org/">
+            <dc:title>Open Clip Art Library</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Jean-Victor Balin</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Jean-Victor Balin</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:date />
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:language>en</dc:language>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     bordercolor="#666666"
+     borderopacity="1.0"
+     id="base"
+     inkscape:current-layer="svg1985"
+     inkscape:cx="10.211695"
+     inkscape:cy="3.7197449"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:window-height="988"
+     inkscape:window-width="1680"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:zoom="39.295529"
+     pagecolor="#ffffff"
+     showgrid="true"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4188"
+       originx="0"
+       originy="3.0517578e-005" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1987">
+    <marker
+       id="ArrowEnd"
+       markerHeight="3"
+       markerUnits="strokeWidth"
+       markerWidth="4"
+       orient="auto"
+       refX="0"
+       refY="5"
+       viewBox="0 0 10 10">
+      <path
+         d="M 0,0 10,5 0,10 Z"
+         id="path1990"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       id="ArrowStart"
+       markerHeight="3"
+       markerUnits="strokeWidth"
+       markerWidth="4"
+       orient="auto"
+       refX="10"
+       refY="5"
+       viewBox="0 0 10 10">
+      <path
+         d="M 10,0 0,5 10,10 Z"
+         id="path1993"
+         inkscape:connector-curvature="0" />
+    </marker>
+  </defs>
+  <rect
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:30;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.60000002;stroke-opacity:1"
+     id="rect4176"
+     width="16.000122"
+     height="11"
+     x="0"
+     y="0"
+     ry="0" />
+  <g
+     id="g1997"
+     transform="matrix(0.03014857,0,0,0.02989701,0.73653678,0.99359484)">
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#000000;stroke:none"
+       id="path1999"
+       d="m 52.188,134.743 c 28.821,0 52.187,-23.366 52.187,-52.187 0,-28.823 -23.366,-52.189 -52.187,-52.189 C 23.367,30.367 0,53.733 0,82.556 c 0,28.821 23.367,52.187 52.188,52.187 z" />
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#000000;stroke:none"
+       id="path2001"
+       d="M 52.188,82.556" />
+  </g>
+  <g
+     id="g2003"
+     transform="matrix(0.03014857,0,0,0.02989701,0.73653678,0.99359484)">
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#ffffff;stroke:none"
+       id="path2005"
+       d="m 52.188,115.765 c 18.341,0 33.211,-14.869 33.211,-33.209 0,-18.343 -14.87,-33.211 -33.211,-33.211 -18.342,0 -33.211,14.868 -33.211,33.211 0,18.34 14.869,33.209 33.211,33.209 z" />
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#ffffff;stroke:none"
+       id="path2007"
+       d="M 52.188,82.556" />
+  </g>
+  <path
+     d="m 6.8241434,8.9966685 c -1.2882572,0 -1.2882572,1.0703405 0,1.0703405 l 7.4465326,0 c 1.249325,0 1.249325,-1.0703405 0,-1.0703405 l -7.4465326,0 z"
+     id="path2011"
+     style="fill:#000000;stroke:none"
+     inkscape:connector-curvature="0" />
+  <path
+     d="m 9.4287614,2.9441057 0,-1.4614855 -0.6213017,0 0,1.4614855 0.6213017,0 z"
+     id="path2017"
+     style="fill:#000000;stroke:none"
+     inkscape:connector-curvature="0" />
+  <path
+     d="M 9.1180804,2.213363"
+     id="path2019"
+     style="fill:#000000;stroke:none"
+     inkscape:connector-curvature="0" />
+  <path
+     d="m 10.382331,1.5237585 0,-0.3152341 -2.5140294,0 0,0.3152341 2.5140294,0 z"
+     id="path2023"
+     style="fill:#000000;stroke:none"
+     inkscape:connector-curvature="0" />
+  <path
+     d="M 9.1253462,1.3661415"
+     id="path2025"
+     style="fill:#000000;stroke:none"
+     inkscape:connector-curvature="0" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#000000;stroke:none"
+     id="path2027"
+     d="m 10.599038,0.99359484 4.012986,0 c 0.534595,0 0.534595,0.75941396 0,0.75941396 l -4.012986,0 c -0.520153,0 -0.520153,-0.75941396 0,-0.75941396 z" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#000000;stroke:none"
+     id="path2029"
+     d="m 3.640447,0.99359484 3.967793,0 c 0.5345945,0 0.5345945,0.75941396 0,0.75941396 l -3.967793,0 c -0.5651048,0 -0.5731243,-0.75941396 0,-0.75941396 z" />
+  <path
+     d="m 7.9939006,7.9904905 c -0.51542,0 -0.77313,-0.4186133 -0.8590233,-0.7727934 L 6.7339918,6.0906899 2.1509871,4.0621575 C 1.5941129,3.8209871 1.7297814,2.9029674 2.3629014,2.9029674 l 9.9547866,0 c 1.109739,0 1.727784,0.7416519 2.014196,1.5311079 L 15.130821,6.60088 c 0.286411,0.7390652 -0.198197,1.3857472 -0.911994,1.3896105 l -6.2249264,0 z"
+     id="path2031"
+     style="fill:#000000;stroke:none"
+     inkscape:connector-curvature="0" />
+  <g
+     id="g2033"
+     transform="matrix(0.03246113,0,0,0.03167459,-0.36356456,1.2502462)">
+    <g
+       id="g2035">
+      <path
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:none"
+         id="path2037"
+         d="m 324.249,141.706 0,-57.029 -35.615,0 0,57.029 35.615,0 z" />
+      <path
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:none"
+         id="path2039"
+         d="M 306.441,113.192" />
+    </g>
+    <g
+       id="g2041">
+      <path
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:none"
+         id="path2043"
+         d="m 380.536,84.677 0,57.029 -35.142,0 0,-57.029 35.142,0 z" />
+      <path
+         inkscape:connector-curvature="0"
+         style="fill:#ffffff;stroke:none"
+         id="path2045"
+         d="M 362.965,113.192" />
+    </g>
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#ffffff;stroke:none"
+       id="path2047"
+       d="m 402.182,86.942 c 11.013,2.656 22.013,12.5 29.263,28.75 l 11.25,26.25 -40.513,0 0,-55 z" />
+  </g>
+  <rect
+     style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:30;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.60000002;stroke-opacity:1"
+     id="rect4239"
+     width="1"
+     height="1"
+     x="9"
+     y="7.9999695" />
+  <rect
+     style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:30;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.60000002;stroke-opacity:1"
+     id="rect4241"
+     width="1"
+     height="1"
+     x="12"
+     y="7.9999695" />
+</svg>

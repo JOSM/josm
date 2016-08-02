@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="16"
+   height="14.127"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="crane.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <metadata
+     id="metadata6">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Christian Koerner</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:title></dc:title>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:window-height="988"
+     inkscape:window-width="1680"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="31.416667"
+     inkscape:cx="5.6049592"
+     inkscape:cy="6.7204503"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:current-layer="svg2"
+     showgrid="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4133"
+       originx="-16.085257"
+       originy="-15.4365" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4" />
+  <rect
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.60000002;stroke-opacity:1"
+     id="rect4135"
+     width="15.999872"
+     height="14.127"
+     x="0"
+     y="1.4495849e-007" />
+  <path
+     d="m 2.9204844,1.6979566 0,1.403644 1.414964,0.01132 0,0.475428 3.260077,0.01132 0.690503,0 -0.01132,-0.656543 -0.611265,-0.01132 0.565986,-0.271673 4.4146876,-0.04528 0,0.316952 0.396189,0 0,2.184705 c -0.05459,0.0057 -0.114211,0.0072 -0.158476,0.01132 -0.110638,0.05826 -0.226394,0.237714 -0.226394,0.237714 l 0,0.38487 0.305632,0.588625 0.09056,0 0,0.305633 c 0,0 -0.0076,0.100867 0.07924,0.147156 0.161292,0.08596 0.144725,0.294809 0.01132,0.316952 -0.05936,0.0099 -0.145587,-0.08886 -0.147156,-0.226394 -5.32e-4,-0.04753 -0.06665,0.03038 -0.06792,0.04528 -0.0091,0.107336 0.06304,0.305568 0.215075,0.328272 0.04949,0.0074 0.244286,-0.08237 0.237714,-0.339591 -0.0034,-0.136166 -0.226395,-0.271673 -0.226394,-0.271673 l 0,-0.305633 0.09056,0 0.294313,-0.588625 0,-0.38487 c 0,0 -0.104436,-0.179457 -0.215075,-0.237714 -0.04908,-0.02001 -0.106949,-0.02352 -0.169795,-0.02264 l 0,-2.173385 0.36223,0 0,-0.328271 0.8037,-0.01132 0,-0.554666 -6.0900046,-0.113197 -0.656543,-0.215075 -4.652402,-0.01132 z m 1.471563,2.026228 -0.101878,2.275262 0.101878,2.275262 -0.181116,2.2752614 -0.203754,2.150745 -3.22611798,0 0,0.475428 14.54582858,0 0,-0.475428 -7.3578116,0 -0.192435,-2.150745 -0.181116,-2.2752614 0.101878,-2.275262 -0.101878,-2.275262 -3.203478,0 z m 0.645223,0.260353 1.901712,0 0.101877,1.754556 -2.105466,0 0.101877,-1.754556 z m -0.101877,2.275262 2.105466,0 -0.101877,1.754556 -1.901712,0 -0.101877,-1.754556 z m 0.101877,2.275262 1.901712,0 0.181115,1.7545554 -2.263942,0 0.181115,-1.7545554 z m -0.181115,2.2752624 2.263942,0 0.192435,1.890391 -2.637492,0 0.181115,-1.890391 z"
+     style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.94199997;stroke-miterlimit:4;stroke-opacity:1"
+     id="symbol1"
+     inkscape:connector-curvature="0" />
+</svg>
