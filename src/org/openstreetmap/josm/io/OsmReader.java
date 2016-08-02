@@ -584,8 +584,11 @@ public class OsmReader extends AbstractReader {
             progressMonitor.indeterminateSubTask(tr("Parsing OSM data..."));
 
             try (InputStreamReader ir = UTFInputStreamReader.create(source)) {
-                XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(ir);
-                setParser(parser);
+                XMLInputFactory factory = XMLInputFactory.newInstance();
+                // do not try to load external entities
+                factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+                factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+                setParser(factory.createXMLStreamReader(ir));
                 parse();
             }
             progressMonitor.worked(1);
