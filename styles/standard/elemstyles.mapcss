@@ -442,6 +442,7 @@ node[barrier=cattle_grid] {
 }
 node[barrier=border_control] {
     icon-image: "presets/barrier/douane.png";
+    icon-width: 16;
     set icon_z17;
 }
 node[barrier=sally_port] {
@@ -1464,7 +1465,7 @@ node[man_made=wastewater_plant] {
     set icon_z17;
 }
 node[man_made=watermill] {
-    icon-image: "presets/landmark/watermill.png";
+    icon-image: "presets/landmark/watermill.svg";
     set icon_z17;
 }
 node[man_made=water_tower] {
@@ -1942,8 +1943,6 @@ node[shop=bicycle] {
 }
 node[shop=doityourself] {
     icon-image: "presets/shop/diy_store.svg";
-    icon-width: 16;
-    icon-height: 16;
     set icon_z17;
 }
 node[shop=dry_cleaning],
@@ -2265,7 +2264,7 @@ node[shop=wine] {
     set icon_z17;
 }
 node[shop=farm] {
-    icon-image: "presets/shop/apple.png";
+    icon-image: "presets/shop/groceries/apple.png";
     set icon_z17;
 }
 node[shop=tattoo] {
@@ -2345,14 +2344,12 @@ area[amenity=ice_cream] {
 }
 node[amenity=pub] {
     icon-image: "presets/food/pub.png";
-    icon-width: 15;
-    icon-height: 19;
+    icon-height: 16;
     set icon_z17;
 }
 node[amenity=biergarten] {
     icon-image: "presets/food/biergarten.png";
     icon-width: 16;
-    icon-height: 16;
     set icon_z17;
 }
 node[amenity=nightclub] {
@@ -2638,7 +2635,7 @@ node[amenity=place_of_worship][religion=zoroastrian][!is_prop_set(icon-image)] {
     set icon_z17;
 }
 node[amenity=grave_yard] {
-    icon-image: "presets/misc/landuse/graveyard.svg";
+    icon-image: "presets/landuse/graveyard.svg";
     set icon_z17;
 }
 node[amenity=crematorium][!is_prop_set(icon-image)] {
@@ -2837,7 +2834,7 @@ area[amenity=wlan] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=shelter] {
-    icon-image: "presets/accommodation/shelter.png";
+    icon-image: "presets/accommodation/shelter.svg";
     set icon_z17;
 }
 node[amenity=shelter][shelter_type=public_transport] {
@@ -3776,8 +3773,6 @@ node[sport=canadian_football],
 node[sport=rugby_league],
 node[sport=rugby_union] {
     icon-image: "presets/sport/football.svg";
-    icon-width: 20;
-    icon-height: 20;
     set icon_z17;
 }
 area[sport=baseball],
@@ -3797,8 +3792,6 @@ node[sport=baseball] {
 }
 node[sport=basketball] {
     icon-image: "presets/sport/basketball.svg";
-    icon-width: 16;
-    icon-height: 16;
     set icon_z17;
 }
 node[sport=boules] {
@@ -4163,6 +4156,13 @@ area[natural=cave_entrance] {
 }
 node[natural=bay] {
     icon-image: "presets/nautical/bay.svg";
+    set icon_z17;
+}
+area[natural=reef] {
+    fill-color: reef#80c9ff;
+}
+node[natural=reef] {
+    icon-image: "presets/misc/no_icon.svg";
     set icon_z17;
 }
 node[natural=cave_entrance] {
