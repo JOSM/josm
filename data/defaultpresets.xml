@@ -5349,7 +5349,7 @@
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,brown,green,red,blue,gray,white,#CD853F" />
             <combo key="seats" text="Amount of Seats" values="2,3,4,5,6,7,8,9,10" />
         </item> <!-- Bench -->
-        <item name="Shelter" icon="presets/accommodation/shelter.png" type="node,closedway" preset_name_label="true">
+        <item name="Shelter" icon="presets/accommodation/shelter.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=shelter"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=shelter"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=shelter"
@@ -5367,8 +5367,8 @@
                 <list_entry value="lean_to" icon="presets/accommodation/shelter_lean_to.svg" />
                 <list_entry value="picnic_shelter" icon="presets/accommodation/shelter_picnic_brown.png" />
                 <list_entry value="public_transport" icon="presets/accommodation/shelter_public_transport_brown.png" />
-                <list_entry value="weather_shelter" icon="presets/accommodation/shelter.png" />
-                <list_entry value="wildlife_hide" icon="presets/accommodation/shelter.png" />
+                <list_entry value="weather_shelter" icon="presets/accommodation/shelter.svg" />
+                <list_entry value="wildlife_hide" icon="presets/accommodation/shelter.svg" />
             </combo>
         </item> <!-- Shelter -->
         <item name="Hunting Stand" icon="presets/landmark/hunting_stand.png" type="node" preset_name_label="true">
@@ -6002,7 +6002,7 @@
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="racing" />
         </item> <!-- Motorsport -->
-        <item name="Kart Racing" icon="presets/sports/karting.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Kart Racing" icon="presets/sport/karting.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=karting"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=karting" />
             <space />
@@ -6374,7 +6374,7 @@
             <key key="man_made" value="wastewater_plant" />
             <text key="name" text="Name" />
         </item> <!-- Wastewater Treatment Plant -->
-        <item name="Watermill" icon="presets/landmark/watermill.png" type="node,closedway" preset_name_label="true">
+        <item name="Watermill" icon="presets/landmark/watermill.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=watermill"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=watermill"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=watermill"
@@ -7355,7 +7355,7 @@
             <combo key="organic" text="Organic" values="only,yes,no" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Greengrocer -->
-        <item name="Farm Stand" icon="presets/shop/apple.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Farm Stand" icon="presets/shop/groceries/apple.png" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=farm"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=farm"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=farm"
@@ -9015,7 +9015,7 @@
             <key key="natural" value="reef" />
             <text key="name" text="Name" />
             <combo key="reef" text="Type" values="coral,oyster,rock,sand" />
-        </item> <!-- Islet -->
+        </item> <!-- Reef -->
     </group> <!-- Geography -->
     <group name="Nature" icon="presets/landmark/trees.svg">
         <item name="Tree" icon="presets/landmark/trees.svg" type="node" preset_name_label="true">
