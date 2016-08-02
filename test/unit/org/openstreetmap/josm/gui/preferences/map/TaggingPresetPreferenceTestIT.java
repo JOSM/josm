@@ -76,7 +76,10 @@ public class TaggingPresetPreferenceTestIT {
                 }
             } catch (SAXException | IllegalArgumentException e) {
                 e.printStackTrace();
-                allErrors.add(e);
+                if (!source.url.contains("yopaseopor/traffic_signs")) {
+                    // ignore https://raw.githubusercontent.com/yopaseopor/traffic_signs_preset_JOSM cause too much errors
+                    allErrors.add(e);
+                }
                 System.out.println(" => KO");
             }
         }
