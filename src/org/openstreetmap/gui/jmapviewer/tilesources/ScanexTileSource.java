@@ -1,9 +1,13 @@
 // License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
+import java.awt.Point;
 import java.util.Random;
 
+import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
+import org.openstreetmap.gui.jmapviewer.TileXY;
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 
 /**
  * This tilesource uses different to OsmMercator projection.
@@ -20,11 +24,6 @@ public class ScanexTileSource extends TMSTileSource {
     private static final String DEFAULT_URL = "http://maps.kosmosnimki.ru";
     private static final int DEFAULT_MAXZOOM = 14;
     private static final String API_KEY = "4018C5A9AECAD8868ED5DEB2E41D09F7";
-
-    // Latitude to Y and back calculations.
-
-    /** eccentricity of Earth's ellipsoid */
-    private static double E = 0.0818191908426;
 
     private enum ScanexLayer {
         IRS("irs", "/TileSender.ashx?ModeKey=tile&MapName=F7B8CF651682420FA1749D894C8AD0F6&LayerName=BAC78D764F0443BD9AF93E7A998C9F5B"),
@@ -86,6 +85,50 @@ public class ScanexTileSource extends TMSTileSource {
         tiley = tmp - tiley - 1;
 
         return this.layer.getUri() + "&apikey=" + API_KEY + "&x=" + tilex + "&y=" + tiley + "&z=" + zoom;
+    }
+
+    // Latitude to Y and back calculations.
+    private static double RADIUS_E = 6378137;   /* radius of Earth at equator, m */
+    private static double EQUATOR = 40075016.68557849; /* equator length, m */
+    private static double E = 0.0818191908426;  /* eccentricity of Earth's ellipsoid */
+
+    @Override
+    public Point latLonToXY(double lat, double lon, int zoom) {
+        return new Point(
+                (int) osmMercator.lonToX(lon, zoom),
+                (int) latToTileY(lat, zoom)
+                );
+    }
+
+    @Override
+    public ICoordinate xyToLatLon(int x, int y, int zoom) {
+        return new Coordinate(
+                tileYToLat((double) y, zoom),
+                osmMercator.xToLon(x, zoom)
+                );
+    }
+
+    @Override
+    public TileXY latLonToTileXY(double lat, double lon, int zoom) {
+        return new TileXY(
+                osmMercator.lonToX(lon, zoom) / getTileSize(),
+                latToTileY(lat, zoom)
+                );
+    }
+
+    @Override
+    public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
+        return new Coordinate(
+                tileYToLat((double) y, zoom),
+                osmMercator.xToLon(x * getTileSize(), zoom)
+                );
+    }
+
+    private double latToTileY(double lat, int zoom) {
+        double tmp = Math.tan(Math.PI/4 * (1 + lat/90));
+        double pow = Math.pow(Math.tan(Math.PI/4 + Math.asin(E * Math.sin(Math.toRadians(lat)))/2), E);
+
+        return (EQUATOR/2 - (RADIUS_E * Math.log(tmp/pow))) * Math.pow(2.0, zoom) / EQUATOR;
     }
 
     /*
