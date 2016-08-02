@@ -4162,7 +4162,7 @@ area[natural=reef] {
     fill-color: reef#80c9ff;
 }
 node[natural=reef] {
-    icon-image: "presets/misc/no_icon.svg";
+    icon-image: "presets/landmark/reef.svg";
     set icon_z17;
 }
 node[natural=cave_entrance] {
