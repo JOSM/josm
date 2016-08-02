@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 10.0, SVG Export Plug-In . SVG Version: 3.0.0 Build 77)  --><svg enable-background="new 0 0 105.66 100.619" height="100.619" i:pageBounds="0 792 612 0" i:rulerOrigin="0 0" i:viewOrigin="253 446" overflow="visible" space="preserve" viewBox="0 0 105.66 100.619" width="105.66" xmlns="http://www.w3.org/2000/svg" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" xmlns:graph="http://ns.adobe.com/Graphs/1.0/" xmlns:i="http://ns.adobe.com/AdobeIllustrator/10.0/" xmlns:x="http://ns.adobe.com/Extensibility/1.0/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <metadata>
+    <rdf:RDF xmlns:cc="http://web.resource.org/cc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <cc:Work rdf:about="">
+        <dc:title>Soccer Ball</dc:title>
+        <dc:description>Soccer Ball.</dc:description>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>sports</rdf:li>
+            <rdf:li>toy</rdf:li>
+            <rdf:li>ball</rdf:li>
+            <rdf:li>soccer</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://www.openclipart.org/">
+            <dc:title>Open Clip Art Project</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent rdf:about="http://web.resource.org/cc/PublicDomain">
+            <dc:title>Gerald G.</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent rdf:about="http://web.resource.org/cc/PublicDomain">
+            <dc:title>Public Domain</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:date>2005-04-22</dc:date>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://web.resource.org/cc/PublicDomain"/>
+        <dc:language>en</dc:language>
+      </cc:Work>
+      <cc:License rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits rdf:resource="http://web.resource.org/cc/Reproduction"/>
+        <cc:permits rdf:resource="http://web.resource.org/cc/Distribution"/>
+        <cc:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g i:dimmedPercent="50" i:layer="yes" i:rgbTrio="#4F008000FFFF" id="Layer_1">
+    <g>
+      <path clip-rule="evenodd" d="     M52.83,0.018c29.152,0,52.813,22.531,52.813,50.292c0,27.76-23.66,50.292-52.813,50.292S0.018,78.07,0.018,50.31     C0.018,22.549,23.678,0.018,52.83,0.018" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
+      <path clip-rule="evenodd" d="     M25.254,11.218c-1.548,0.648-2.664,1.332-3.78,2.196c-1.116,0.756-1.908,1.692-2.664,2.664c-0.864,0.9-1.584,1.872-2.16,2.916     l7.128-1.836h0C24.246,15.178,24.75,13.198,25.254,11.218z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
+      <path clip-rule="evenodd" d="     M32.886,8.086L48.87,4.198l11.016,9.108L56.97,24.934l-12.24,5.688l-15.48-4.104l-2.304-9.468L32.886,8.086z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
+      <path clip-rule="evenodd" d="     M63.342,14.026l-1.943,11.016L73.53,37.174l12.96-1.944l3.996-14.544L76.302,9.058L63.342,14.026z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
+      <path clip-rule="evenodd" d="     M76.05,41.278l12.24-2.196l7.272,12.24L85.518,67.918l-12.6-1.188l-4.607-10.549L76.05,41.278z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
+      <path clip-rule="evenodd" d="     M94.482,75.91l-5.832-6.768l10.188-17.209l3.528-1.943c0.036,4.176-0.288,7.703-0.972,11.268     c-0.828,3.527-2.053,6.732-3.276,9.324C96.895,73.029,95.778,74.758,94.482,75.91z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
+      <path clip-rule="evenodd" d="     M33.894,63.418L48.33,52.762l16.236,4.248l5.184,12.205l-8.964,11.771l-20.232-4.248L33.894,63.418z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
+      <path clip-rule="evenodd" d="     M64.962,97.113c-2.988,0.434-6.012,0.756-9.216,0.828c-3.312,0.072-6.84,0-10.044-0.359c-3.42-0.504-6.588-1.404-9.36-2.305     c-2.772-0.971-4.896-2.051-6.768-3.383l-0.252-4.861l9.576-7.271l21.457,3.781l6.155,9.432L64.962,97.113z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
+      <path clip-rule="evenodd" d="     M14.31,43.726l13.212-13.428l14.292,3.996l3.636,15.48L30.546,61.295l-12.96-0.361L14.31,43.726z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
+      <path clip-rule="evenodd" d="     M9.45,71.123c-1.152,0.467-2.232-0.758-3.384-3.277c-1.26-2.736-2.952-8.244-3.528-12.348c-0.54-4.141-0.504-8.172,0.252-12.24     l7.524,2.412l3.996,16.705L9.45,71.123z" fill="#FFFFFF" fill-rule="evenodd" i:knockout="Off" stroke="#000000" stroke-miterlimit="10" stroke-width="0.036"/>
+    </g>
+  </g>
+</svg>
