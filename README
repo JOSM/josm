@@ -134,8 +134,9 @@ This is an overview of the files and directories in the JOSM code repository:
 
 The 'patches' directory
 -----------------------
-Some libraries that JOSM depends on, are patched for various reasons. The files in the patches directory can be used to roll back these customizations. This is useful in order to
-
+Some libraries that JOSM depends on, are patched for various reasons. The
+files in the patches directory can be used to roll back these customizations.
+This is useful in order to
  * inspect the changes
  * update to a newer version of the library but keep the modifications
 
