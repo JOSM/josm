@@ -424,9 +424,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     @Override public String getToolTipText() {
-        int nodes = new FilteredCollection<>(data.getNodes(), OsmPrimitive.nonDeletedPredicate).size();
-        int ways = new FilteredCollection<>(data.getWays(), OsmPrimitive.nonDeletedPredicate).size();
-        int rels = new FilteredCollection<>(data.getRelations(), OsmPrimitive.nonDeletedPredicate).size();
+        int nodes = new FilteredCollection<>(data.getNodes(), p -> !p.isDeleted()).size();
+        int ways = new FilteredCollection<>(data.getWays(), p -> !p.isDeleted()).size();
+        int rels = new FilteredCollection<>(data.getRelations(), p -> !p.isDeleted()).size();
 
         String tool = trn("{0} node", "{0} nodes", nodes, nodes)+", ";
         tool += trn("{0} way", "{0} ways", ways, ways)+", ";

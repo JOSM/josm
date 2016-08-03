@@ -40,7 +40,7 @@ final class ImproveWayAccuracyHelper {
             return null;
         }
 
-        Node node = mv.getNearestNode(p, OsmPrimitive.isSelectablePredicate);
+        Node node = mv.getNearestNode(p, OsmPrimitive::isSelectable);
         Way candidate = null;
 
         if (node != null) {
@@ -56,7 +56,7 @@ final class ImproveWayAccuracyHelper {
             }
         }
 
-        return Main.map.mapView.getNearestWay(p, OsmPrimitive.isSelectablePredicate);
+        return Main.map.mapView.getNearestWay(p, OsmPrimitive::isSelectable);
     }
 
     /**

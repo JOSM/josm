@@ -133,6 +133,6 @@ public final class ReverseWayAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection.stream().anyMatch(OsmPrimitive.wayPredicate));
+        setEnabled(selection.stream().anyMatch(Way.class::isInstance));
     }
 }

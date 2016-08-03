@@ -126,7 +126,7 @@ public class AddWayHandler extends RequestHandler {
 
         if (Main.isDisplayingMapView()) {
             Point p = Main.map.mapView.getPoint(ll);
-            nd = Main.map.mapView.getNearestNode(p, OsmPrimitive.isUsablePredicate);
+            nd = Main.map.mapView.getNearestNode(p, OsmPrimitive::isUsable);
             if (nd != null && nd.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remote.tolerance", 0.1)) {
                 nd = null; // node is too far
             }

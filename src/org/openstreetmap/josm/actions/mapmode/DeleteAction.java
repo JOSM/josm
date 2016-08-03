@@ -361,9 +361,9 @@ public class DeleteAction extends MapMode implements ModifierListener {
 
         DeleteParameters result = new DeleteParameters();
 
-        result.nearestNode = Main.map.mapView.getNearestNode(e.getPoint(), OsmPrimitive.isSelectablePredicate);
+        result.nearestNode = Main.map.mapView.getNearestNode(e.getPoint(), OsmPrimitive::isSelectable);
         if (result.nearestNode == null) {
-            result.nearestSegment = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
+            result.nearestSegment = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive::isSelectable);
             if (result.nearestSegment != null) {
                 if (shift) {
                     result.mode = DeleteMode.segment;

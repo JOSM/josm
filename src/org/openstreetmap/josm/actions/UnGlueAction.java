@@ -254,7 +254,7 @@ public class UnGlueAction extends JosmAction {
 
         private static boolean isUsedInRelations(final Collection<Node> existingNodes) {
             return existingNodes.stream().anyMatch(
-                    selectedNode -> selectedNode.getReferrers().stream().anyMatch(OsmPrimitive.relationPredicate));
+                    selectedNode -> selectedNode.getReferrers().stream().anyMatch(Relation.class::isInstance));
         }
 
         void update(final Node existingNode, final List<Node> newNodes, final Collection<Command> cmds) {
