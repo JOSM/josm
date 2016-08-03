@@ -48,6 +48,7 @@ public class ScanexTileSource extends TMSTileSource {
 
     /** IRS by default */
     private ScanexLayer layer = ScanexLayer.IRS;
+    private TemplatedTMSTileSource TemplateSource = null;
 
     /** cached latitude used in {@link #tileYToLat(double, int)} */
     private double cachedLat;
@@ -67,14 +68,25 @@ public class ScanexTileSource extends TMSTileSource {
                 this.baseUrl = DEFAULT_URL;
                 if (maxZoom == 0)
                     this.maxZoom = DEFAULT_MAXZOOM;
-                break;
+                return;
             }
         }
+        /** If not "irs" or "spot" keyword, then a custom URL. */
+        TemplatedTMSTileSource.checkUrl(info.getUrl());
+        this.TemplateSource = new TemplatedTMSTileSource(info);
     }
 
     @Override
     public String getExtension() {
         return "jpeg";
+    }
+
+   @Override
+    public String getTileUrl(int zoom, int tilex, int tiley) {
+        if (this.TemplateSource != null)
+            return this.TemplateSource.getTileUrl(zoom, tilex, tiley);
+        else
+            return this.getBaseUrl() + getTilePath(zoom, tilex, tiley);
     }
 
     @Override
