@@ -13,21 +13,18 @@ import java.util.concurrent.TimeUnit;
 import org.openstreetmap.josm.Main;
 
 /**
- * @author Wiktor Niesiobędzki
- *
  * Queue for ThreadPoolExecutor that implements per-host limit. It will acquire a semaphore for each task
  * and it will set a runnable task with semaphore release, when job has finished.
- *
+ * <p>
  * This implementation doesn't guarantee to have at most hostLimit connections per host[1], and it doesn't
- * guarantee that all threads will be busy, when there is work for them[2].
- *
+ * guarantee that all threads will be busy, when there is work for them[2]. <br>
  * [1] More connection per host may happen, when ThreadPoolExecutor is growing its pool, and thus
- *     tasks do not go through the Queue
+ *     tasks do not go through the Queue <br>
  * [2] If we have a queue, and for all hosts in queue we will fail to acquire semaphore, the thread
  *     take the first available job and wait for semaphore. It might be the case, that semaphore was released
  *     for some task further in queue, but this implementation doesn't try to detect such situation
  *
- *
+ * @author Wiktor Niesiobędzki
  */
 public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
     private static final long serialVersionUID = 1L;

@@ -19,10 +19,9 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * @author Wiktor Niesiobędzki
- *
  * Wrapper class that bridges between JCS cache and Tile Loaders
  *
+ * @author Wiktor Niesiobędzki
  */
 public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
 

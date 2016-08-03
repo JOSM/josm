@@ -34,9 +34,9 @@ import org.openstreetmap.josm.data.preferences.LongProperty;
 import org.openstreetmap.josm.tools.HttpClient;
 
 /**
- * @author Wiktor Niesiobędzki
- *
  * Class bridging TMS requests to JCS cache requests
+ *
+ * @author Wiktor Niesiobędzki
  * @since 8168
  */
 public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener {

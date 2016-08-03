@@ -32,10 +32,10 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * @author Wiktor Niesiobędzki
- *
  * Wrapper class for JCS Cache. Sets some sane environment and returns instances of cache objects.
  * Static configuration for now assumes some small LRU cache in memory and larger LRU cache on disk
+ *
+ * @author Wiktor Niesiobędzki
  * @since 8168
  */
 public final class JCSCacheManager {
