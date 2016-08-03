@@ -205,7 +205,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
             final String parsedText = ids.stream().map(x -> x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId()))
                     .collect(Collectors.joining(", "));
             tfId.tryToPasteFrom(parsedText);
-            final Set<OsmPrimitiveType> types = ids.stream().map(x -> x.getType()).collect(Collectors.toSet());
+            final Set<OsmPrimitiveType> types = ids.stream().map(SimplePrimitiveId::getType).collect(Collectors.toSet());
             if (types.size() == 1) {
                 // select corresponding type
                 cbType.setSelectedItem(types.iterator().next());

@@ -233,7 +233,7 @@ public class WMSImagery {
             child = getChild(child, "GetMap");
 
             formats = getChildrenStream(child, "Format")
-                    .map(x -> x.getTextContent())
+                    .map(Node::getTextContent)
                     .filter(WMSImagery::isImageFormatSupportedWarn)
                     .collect(Collectors.toList());
 

@@ -47,7 +47,7 @@ public class MemoryManagerTest {
         assertEquals(10, testMemory.getSize());
         assertTrue(testMemory.toString().startsWith("MemoryHandle"));
 
-        manager.allocateMemory("test2", 10, () -> new Object());
+        manager.allocateMemory("test2", 10, Object::new);
         assertEquals(available - 20, manager.getAvailableMemory());
 
         testMemory.free();
@@ -61,7 +61,7 @@ public class MemoryManagerTest {
     @Test(expected = IllegalStateException.class)
     public void testUseAfterFree() throws NotEnoughMemoryException {
         MemoryManager manager = MemoryManager.getInstance();
-        MemoryHandle<Object> testMemory = manager.allocateMemory("test", 10, () -> new Object());
+        MemoryHandle<Object> testMemory = manager.allocateMemory("test", 10, Object::new);
         testMemory.free();
         testMemory.get();
     }
@@ -73,7 +73,7 @@ public class MemoryManagerTest {
     @Test(expected = IllegalStateException.class)
     public void testFreeAfterFree() throws NotEnoughMemoryException {
         MemoryManager manager = MemoryManager.getInstance();
-        MemoryHandle<Object> testMemory = manager.allocateMemory("test", 10, () -> new Object());
+        MemoryHandle<Object> testMemory = manager.allocateMemory("test", 10, Object::new);
         testMemory.free();
         testMemory.free();
     }
@@ -135,8 +135,8 @@ public class MemoryManagerTest {
         MemoryManager manager = MemoryManager.getInstance();
         assertTrue(manager.resetState().isEmpty());
 
-        manager.allocateMemory("test", 10, () -> new Object());
-        manager.allocateMemory("test2", 10, () -> new Object());
+        manager.allocateMemory("test", 10, Object::new);
+        manager.allocateMemory("test2", 10, Object::new);
         assertEquals(2, manager.resetState().size());
 
         assertTrue(manager.resetState().isEmpty());
@@ -149,7 +149,7 @@ public class MemoryManagerTest {
     @Test(expected = IllegalStateException.class)
     public void testResetStateUseAfterFree() throws NotEnoughMemoryException {
         MemoryManager manager = MemoryManager.getInstance();
-        MemoryHandle<Object> testMemory = manager.allocateMemory("test", 10, () -> new Object());
+        MemoryHandle<Object> testMemory = manager.allocateMemory("test", 10, Object::new);
 
         assertFalse(manager.resetState().isEmpty());
         testMemory.get();

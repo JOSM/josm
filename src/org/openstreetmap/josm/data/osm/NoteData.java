@@ -152,7 +152,7 @@ public class NoteData {
                 noteList.add(newNote);
             } else {
                 final Note existingNote = noteList.get(newNote);
-                final boolean isDirty = existingNote.getComments().stream().anyMatch(object -> object.isNew());
+                final boolean isDirty = existingNote.getComments().stream().anyMatch(NoteComment::isNew);
                 if (!isDirty) {
                     noteList.put(newNote);
                 } else {

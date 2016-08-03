@@ -86,7 +86,7 @@ public class MemoryManager {
      * @return The memory that can be used for new allocations.
      */
     public synchronized long getAvailableMemory() {
-        return getMaxMemory() - activeHandles.stream().mapToLong(h -> h.getSize()).sum();
+        return getMaxMemory() - activeHandles.stream().mapToLong(MemoryHandle::getSize).sum();
     }
 
     /**
@@ -103,7 +103,7 @@ public class MemoryManager {
      */
     protected synchronized List<MemoryHandle<?>> resetState() {
         ArrayList<MemoryHandle<?>> toFree = new ArrayList<>(activeHandles);
-        toFree.stream().forEach(h -> h.free());
+        toFree.forEach(MemoryHandle::free);
         return toFree;
     }
 

@@ -165,11 +165,11 @@ public interface Condition {
          *  The value needs to be equal one of the list elements. */
         ONE_OF((test, prototype) -> Arrays.asList(test.split("\\s*;\\s*")).contains(prototype)),
         /** The value needs to begin with the reference string. */
-        BEGINS_WITH((test, prototype) -> test.startsWith(prototype)),
+        BEGINS_WITH(String::startsWith),
         /** The value needs to end with the reference string. */
-        ENDS_WITH((test, prototype) -> test.endsWith(prototype)),
+        ENDS_WITH(String::endsWith),
         /** The value needs to contain the reference string. */
-        CONTAINS((test, prototype) -> test.contains(prototype));
+        CONTAINS(String::contains);
 
         static final Set<Op> NEGATED_OPS = EnumSet.of(NEQ, NREGEX);
 

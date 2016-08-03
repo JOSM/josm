@@ -249,7 +249,7 @@ public class UnGlueAction extends JosmAction {
         }
 
         private static boolean isTagged(final Collection<Node> existingNodes) {
-            return existingNodes.stream().anyMatch(selectedNode -> selectedNode.hasKeys());
+            return existingNodes.stream().anyMatch(Node::hasKeys);
         }
 
         private static boolean isUsedInRelations(final Collection<Node> existingNodes) {

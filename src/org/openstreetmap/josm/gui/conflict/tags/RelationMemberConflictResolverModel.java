@@ -233,7 +233,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                 for (final Collection<RelationMemberConflictDecision> i : decisionsByPrimitive.values()) {
                     iterators.add(i.iterator());
                 }
-                while (iterators.stream().allMatch(it -> it.hasNext())) {
+                while (iterators.stream().allMatch(Iterator::hasNext)) {
                     final List<RelationMemberConflictDecision> decisions = new ArrayList<>();
                     final Collection<String> roles = new HashSet<>();
                     final Collection<Integer> indices = new TreeSet<>();

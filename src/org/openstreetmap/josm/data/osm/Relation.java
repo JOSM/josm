@@ -400,7 +400,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     public List<OsmPrimitive> getMemberPrimitivesList() {
-        return Utils.transform(getMembers(), (Function<RelationMember, OsmPrimitive>) x -> x.getMember());
+        return Utils.transform(getMembers(), RelationMember::getMember);
     }
 
     @Override
