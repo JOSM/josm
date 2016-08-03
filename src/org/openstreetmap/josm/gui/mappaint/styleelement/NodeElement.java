@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -323,7 +324,8 @@ public class NodeElement extends StyleElement {
                     }
                 }
 
-                final int size = Utils.max(selected ? settings.getSelectedNodeSize() : 0,
+                final int size = max(
+                        selected ? settings.getSelectedNodeSize() : 0,
                         n.isTagged() ? settings.getTaggedNodeSize() : 0,
                         isConnection ? settings.getConnectionNodeSize() : 0,
                         settings.getUnselectedNodeSize());
@@ -349,7 +351,7 @@ public class NodeElement extends StyleElement {
         else {
             // This is only executed once, so no performance concerns.
             // However, it would be better, if the settings could be changed at runtime.
-            int size = Utils.max(
+            int size = max(
                     Main.pref.getInteger("mappaint.node.selected-size", 5),
                     Main.pref.getInteger("mappaint.node.unselected-size", 3),
                     Main.pref.getInteger("mappaint.node.connection-size", 5),
@@ -357,6 +359,10 @@ public class NodeElement extends StyleElement {
             );
             return new SimpleBoxProvider(new Rectangle(-size/2, -size/2, size, size));
         }
+    }
+
+    private static int max(int... elements) {
+        return IntStream.of(elements).max().orElseThrow(IllegalStateException::new);
     }
 
     @Override
