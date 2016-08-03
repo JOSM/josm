@@ -755,7 +755,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     /* ---------------------------------------------------------------------------------- */
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        if (e.getSource().getEditLayer() != null) {
+        if (e.getSource().getEditLayer() == null) {
             editHelper.saveTagsIfNeeded();
         }
         // it is time to save history of tags
