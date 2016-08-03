@@ -31,7 +31,6 @@ import org.openstreetmap.josm.io.imagery.WMSImagery.LayerDetails;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ImageResource;
 
 /**
  * Action displayed in imagery menu to add a new imagery layer.
@@ -55,7 +54,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         // change toolbar icon from if specified
         String icon = info.getIcon();
         if (icon != null) {
-            new ImageProvider(icon).setOptional(true).getInBackground((ImageResource result) -> {
+            new ImageProvider(icon).setOptional(true).getResourceAsync().thenAccept(result -> {
                 if (result != null) {
                     GuiHelper.runInEDT(() -> result.attachImageIcon(this));
                 }

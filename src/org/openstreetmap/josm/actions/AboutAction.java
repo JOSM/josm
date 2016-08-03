@@ -57,11 +57,13 @@ public final class AboutAction extends JosmAction {
         Version version = Version.getInstance();
 
         JosmTextArea readme = new JosmTextArea();
+        readme.setFont(GuiHelper.getMonospacedFont(readme));
         readme.setEditable(false);
         setTextFromResourceFile(readme, "/README");
         readme.setCaretPosition(0);
 
         JosmTextArea revision = new JosmTextArea();
+        revision.setFont(GuiHelper.getMonospacedFont(revision));
         revision.setEditable(false);
         revision.setText(version.getReleaseAttributes());
         revision.setCaretPosition(0);
