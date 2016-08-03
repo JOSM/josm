@@ -8581,7 +8581,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Caterer -->
-    <item name="Roofer" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Roofer" icon="presets/craft/roofer.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=roofer" />
         <space />
         <key key="craft" value="roofer" />
