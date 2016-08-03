@@ -323,7 +323,7 @@ public final class GuiHelper {
                 dash = new float[]{5.0f};
             }
             if (sumAbs < 1e-1) {
-                Main.error("Error in stroke dash fomat (all zeros): "+code);
+                Main.error("Error in stroke dash format (all zeros): "+code);
                 return new BasicStroke(w);
             }
             // dashed stroke
