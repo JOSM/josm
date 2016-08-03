@@ -18,7 +18,6 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.LanguageInfo;
-import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
@@ -165,7 +164,7 @@ public class ConditionalKeys extends Test.TagTest {
     public List<TestError> validatePrimitive(OsmPrimitive p) {
         final List<TestError> errors = new ArrayList<>();
         for (final String key : SubclassFilteredCollection.filter(p.keySet(),
-                Predicates.stringMatchesPattern(Pattern.compile(".*:conditional(:.*)?$")))) {
+                Pattern.compile(":conditional(:.*)?$").asPredicate())) {
             if (!isKeyValid(key)) {
                 errors.add(new TestError(this, Severity.WARNING, tr("Wrong syntax in {0} key", key), 3201, p));
                 continue;

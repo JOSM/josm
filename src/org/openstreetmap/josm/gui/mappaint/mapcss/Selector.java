@@ -23,7 +23,6 @@ import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -321,7 +320,7 @@ public interface Selector {
                         throw new NoSuchElementException();
                     }
                     final Collection<Relation> multipolygons = Utils.filteredCollection(SubclassFilteredCollection.filter(
-                            e.osm.getReferrers(), Predicates.hasTag("type", "multipolygon")), Relation.class);
+                            e.osm.getReferrers(), p -> p.hasTag("type", "multipolygon")), Relation.class);
                     final Relation multipolygon = multipolygons.iterator().next();
                     if (multipolygon == null) throw new NoSuchElementException();
                     containsFinder = new ContainsFinder(new Environment(multipolygon)) {

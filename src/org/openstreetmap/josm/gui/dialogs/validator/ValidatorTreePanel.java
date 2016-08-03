@@ -36,7 +36,6 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.Predicates;
 
 /**
  * A panel that displays the error tree. The selection manager
@@ -346,7 +345,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      */
     public void selectRelatedErrors(final Collection<OsmPrimitive> primitives) {
         final Collection<TreePath> paths = new ArrayList<>();
-        walkAndSelectRelatedErrors(new TreePath(getRoot()), Predicates.inCollection(new HashSet<>(primitives)), paths);
+        walkAndSelectRelatedErrors(new TreePath(getRoot()), new HashSet<>(primitives)::contains, paths);
         getSelectionModel().clearSelection();
         for (TreePath path : paths) {
             expandPath(path);

@@ -104,7 +104,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -895,7 +894,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             if (positionString == null) {
                 positionString = Utils.getPositionListString(position);
                 // if not all objects from the selection are member of this relation
-                if (selection.stream().anyMatch(Predicates.inCollection(members).negate())) {
+                if (selection.stream().anyMatch(p -> !members.contains(p))) {
                     positionString += ",\u2717";
                 }
                 members = null;

@@ -27,7 +27,6 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Predicates;
 
 /**
  * Tests if there are overlapping ways.
@@ -155,7 +154,7 @@ public class OverlappingWays extends Test {
             if (error.getSeverity().equals(Severity.WARNING) || error.getHighlighted().size() / error.getPrimitives().size() >= 3) {
                 boolean ignore = false;
                 for (String ignoredKey : IGNORED_KEYS.get()) {
-                    if (error.getPrimitives().stream().anyMatch(Predicates.hasKey(ignoredKey))) {
+                    if (error.getPrimitives().stream().anyMatch(p -> p.hasKey(ignoredKey))) {
                         ignore = true;
                         break;
                     }

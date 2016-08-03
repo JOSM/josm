@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Predicate;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -41,24 +40,6 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimitive>> {
     private final List<Conflict<? extends OsmPrimitive>> conflicts;
     private final CopyOnWriteArrayList<IConflictListener> listeners;
-
-    private static class FilterPredicate implements Predicate<Conflict<? extends OsmPrimitive>> {
-
-        private final Class<? extends OsmPrimitive> c;
-
-        FilterPredicate(Class<? extends OsmPrimitive> c) {
-            this.c = c;
-        }
-
-        @Override
-        public boolean test(Conflict<? extends OsmPrimitive> conflict) {
-            return conflict != null && c.isInstance(conflict.getMy());
-        }
-    }
-
-    private static final FilterPredicate NODE_FILTER_PREDICATE = new FilterPredicate(Node.class);
-    private static final FilterPredicate WAY_FILTER_PREDICATE = new FilterPredicate(Way.class);
-    private static final FilterPredicate RELATION_FILTER_PREDICATE = new FilterPredicate(Relation.class);
 
     /**
      * Constructs a new {@code ConflictCollection}.
@@ -363,7 +344,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * @since 6555
      */
     public final Collection<Conflict<? extends OsmPrimitive>> getNodeConflicts() {
-        return SubclassFilteredCollection.filter(conflicts, NODE_FILTER_PREDICATE);
+        return SubclassFilteredCollection.filter(conflicts, c -> c != null && c.getMy() instanceof Node);
     }
 
     /**
@@ -372,7 +353,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * @since 6555
      */
     public final Collection<Conflict<? extends OsmPrimitive>> getWayConflicts() {
-        return SubclassFilteredCollection.filter(conflicts, WAY_FILTER_PREDICATE);
+        return SubclassFilteredCollection.filter(conflicts, c -> c != null && c.getMy() instanceof Way);
     }
 
     /**
@@ -381,7 +362,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * @since 6555
      */
     public final Collection<Conflict<? extends OsmPrimitive>> getRelationConflicts() {
-        return SubclassFilteredCollection.filter(conflicts, RELATION_FILTER_PREDICATE);
+        return SubclassFilteredCollection.filter(conflicts, c -> c != null && c.getMy() instanceof Relation);
     }
 
     @Override

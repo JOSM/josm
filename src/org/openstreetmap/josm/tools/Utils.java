@@ -141,7 +141,8 @@ public final class Utils {
      * @return <code>true</code> if that item exists in the collection.
      */
     public static <T> boolean exists(Iterable<T> collection, Class<? extends T> clazz) {
-        return exists(collection, Predicates.<T>isInstanceOf(clazz));
+        CheckParameterUtil.ensureParameterNotNull(clazz, "clazz");
+        return exists(collection, clazz::isInstance);
     }
 
     /**
@@ -169,7 +170,8 @@ public final class Utils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T find(Iterable<? extends Object> collection, Class<? extends T> clazz) {
-        return (T) find(collection, Predicates.<Object>isInstanceOf(clazz));
+        CheckParameterUtil.ensureParameterNotNull(clazz, "clazz");
+        return (T) find(collection, clazz::isInstance);
     }
 
     /**
@@ -198,7 +200,8 @@ public final class Utils {
      * @return a read-only filtered collection
      */
     public static <S, T extends S> SubclassFilteredCollection<S, T> filteredCollection(Collection<S> collection, final Class<T> clazz) {
-        return new SubclassFilteredCollection<>(collection, Predicates.<S>isInstanceOf(clazz));
+        CheckParameterUtil.ensureParameterNotNull(clazz, "clazz");
+        return new SubclassFilteredCollection<>(collection, clazz::isInstance);
     }
 
     /**

@@ -27,7 +27,6 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -512,7 +511,7 @@ public interface Condition {
             this.negateResult = negateResult;
             this.matchType = matchType == null ? KeyMatchType.EQ : matchType;
             this.containsPattern = KeyMatchType.REGEX.equals(matchType)
-                    ? Predicates.stringContainsPattern(Pattern.compile(label))
+                    ? Pattern.compile(label).asPredicate()
                     : null;
         }
 

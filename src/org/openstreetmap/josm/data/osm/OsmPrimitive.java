@@ -27,7 +27,6 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
@@ -233,17 +232,17 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     /**
      * A predicate filtering nodes.
      */
-    public static final Predicate<OsmPrimitive> nodePredicate = Predicates.<OsmPrimitive>isOfClass(Node.class);
+    public static final Predicate<OsmPrimitive> nodePredicate = Node.class::isInstance;
 
     /**
      * A predicate filtering ways.
      */
-    public static final Predicate<OsmPrimitive> wayPredicate = Predicates.<OsmPrimitive>isOfClass(Way.class);
+    public static final Predicate<OsmPrimitive> wayPredicate = Way.class::isInstance;
 
     /**
      * A predicate filtering relations.
      */
-    public static final Predicate<OsmPrimitive> relationPredicate = Predicates.<OsmPrimitive>isOfClass(Relation.class);
+    public static final Predicate<OsmPrimitive> relationPredicate = Relation.class::isInstance;
 
     /**
      * A predicate filtering multipolygon relations.

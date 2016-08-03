@@ -37,7 +37,6 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -275,7 +274,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
          * @param title the task title
          */
         public void finishTask(String title) {
-            final Task task = Utils.find(tasks, Predicates.<Task>equalTo(new MeasurableTask(title)));
+            final Task task = Utils.find(tasks, new MeasurableTask(title)::equals);
             if (task instanceof MeasurableTask) {
                 ((MeasurableTask) task).finish();
                 if (Main.isDebugEnabled()) {

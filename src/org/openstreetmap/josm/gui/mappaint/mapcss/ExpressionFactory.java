@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -36,7 +37,6 @@ import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Geometry;
-import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
@@ -1134,7 +1134,7 @@ public final class ExpressionFactory {
 
         public Float aggregateList(List<?> lst) {
             final List<Float> floats = Utils.transform(lst, (Function<Object, Float>) x -> Cascade.convertTo(x, float.class));
-            final Collection<Float> nonNullList = SubclassFilteredCollection.filter(floats, Predicates.<Float>isNull().negate());
+            final Collection<Float> nonNullList = SubclassFilteredCollection.filter(floats, Objects::nonNull);
             return nonNullList.isEmpty() ? (Float) Float.NaN : computeMax ? Collections.max(nonNullList) : Collections.min(nonNullList);
         }
 
