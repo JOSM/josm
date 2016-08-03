@@ -39,9 +39,9 @@ import sun.net.www.protocol.http.HttpURLConnection;
  * This class will keep only one Job running for specified tile. All others will just finish, but
  * listeners will be gathered and notified, once download job will be finished
  *
+ * @author Wiktor Niesiobędzki
  * @param <K> cache entry key type
  * @param <V> cache value type
- * @author Wiktor Niesiobędzki
  * @since 8168
  */
 public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements ICachedLoaderJob<K> {
