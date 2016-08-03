@@ -29,11 +29,6 @@ import org.openstreetmap.josm.tools.Utils;
 import sun.net.www.protocol.http.HttpURLConnection;
 
 /**
- * @author Wiktor Niesiobędzki
- *
- * @param <K> cache entry key type
- * @param <V> cache value type
- *
  * Generic loader for HTTP based tiles. Uses custom attribute, to check, if entry has expired
  * according to HTTP headers sent with tile. If so, it tries to verify using Etags
  * or If-Modified-Since / Last-Modified.
@@ -44,6 +39,9 @@ import sun.net.www.protocol.http.HttpURLConnection;
  * This class will keep only one Job running for specified tile. All others will just finish, but
  * listeners will be gathered and notified, once download job will be finished
  *
+ * @param <K> cache entry key type
+ * @param <V> cache value type
+ * @author Wiktor Niesiobędzki
  * @since 8168
  */
 public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements ICachedLoaderJob<K> {

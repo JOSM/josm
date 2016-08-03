@@ -5,10 +5,9 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * @author Wiktor Niesiobędzki
- *
  * Class that will hold JCS cache entries
  *
+ * @author Wiktor Niesiobędzki
  */
 public class CacheEntry implements Serializable {
     private static final long serialVersionUID = 1L; //version
