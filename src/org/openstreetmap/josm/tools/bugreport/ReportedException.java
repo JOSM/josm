@@ -256,7 +256,7 @@ public class ReportedException extends RuntimeException {
      * @since 10585
      */
     public boolean mayHaveConcurrentSource() {
-        return StreamUtils.toStream(new CauseTraceIterator())
+        return StreamUtils.toStream(CauseTraceIterator::new)
                 .anyMatch(t -> t instanceof ConcurrentModificationException || t instanceof InvocationTargetException);
     }
 

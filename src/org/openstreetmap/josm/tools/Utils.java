@@ -318,7 +318,7 @@ public final class Utils {
      * @return An unordered HTML list
      */
     public static String joinAsHtmlUnorderedList(Iterable<?> values) {
-        return StreamUtils.toStream(values.iterator()).map(Object::toString).collect(StreamUtils.toHtmlList());
+        return StreamUtils.toStream(values).map(Object::toString).collect(StreamUtils.toHtmlList());
     }
 
     /**
