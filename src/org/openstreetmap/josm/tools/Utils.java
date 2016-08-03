@@ -222,41 +222,6 @@ public final class Utils {
     }
 
     /**
-     * Returns the minimum of three values.
-     * @param   a   an argument.
-     * @param   b   another argument.
-     * @param   c   another argument.
-     * @return  the smaller of {@code a}, {@code b} and {@code c}.
-     */
-    public static int min(int a, int b, int c) {
-        if (b < c) {
-            if (a < b)
-                return a;
-            return b;
-        } else {
-            if (a < c)
-                return a;
-            return c;
-        }
-    }
-
-    /**
-     * Returns the greater of four {@code int} values. That is, the
-     * result is the argument closer to the value of
-     * {@link Integer#MAX_VALUE}. If the arguments have the same value,
-     * the result is that same value.
-     *
-     * @param   a   an argument.
-     * @param   b   another argument.
-     * @param   c   another argument.
-     * @param   d   another argument.
-     * @return  the larger of {@code a}, {@code b}, {@code c} and {@code d}.
-     */
-    public static int max(int a, int b, int c, int d) {
-        return Math.max(Math.max(a, b), Math.max(c, d));
-    }
-
-    /**
      * Ensures a logical condition is met. Otherwise throws an assertion error.
      * @param condition the condition to be met
      * @param message Formatted error message to raise if condition is not met
@@ -564,12 +529,7 @@ public final class Utils {
      * @param zip the zip file. May be null.
      */
     public static void close(ZipFile zip) {
-        if (zip == null) return;
-        try {
-            zip.close();
-        } catch (IOException e) {
-            Main.warn(e);
-        }
+        close((Closeable) zip);
     }
 
     /**

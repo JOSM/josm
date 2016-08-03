@@ -23,7 +23,6 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.ValUtil;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Checks for similar named ways, symptom of a possible typo. It uses the
@@ -157,7 +156,7 @@ public class SimilarNamedWays extends Test {
                 }
 
                 // Step 6
-                d[i][j] = Utils.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+                d[i][j] = Math.min(Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + cost);
             }
         }
 
