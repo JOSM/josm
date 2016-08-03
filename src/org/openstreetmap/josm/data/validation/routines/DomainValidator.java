@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016080100, Last Updated Mon Aug  1 07:07:01 2016 UTC
+        // Taken from Version 2016080300, Last Updated Wed Aug  3 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abb", // abb ABB Ltd
@@ -323,6 +323,7 @@ public final class DomainValidator extends AbstractValidator {
         "airforce", // airforce United TLD Holdco Ltd.
         "airtel", // airtel Bharti Airtel Limited
         "akdn", // akdn Fondation Aga Khan (Aga Khan Foundation)
+        "alfaromeo", // alfaromeo Fiat Chrysler Automobiles N.V.
         "alibaba", // alibaba Alibaba Group Holding Limited
         "alipay", // alipay Alibaba Group Holding Limited
         "allfinanz", // allfinanz Allfinanz Deutsche Vermögensberatung Aktiengesellschaft
@@ -407,6 +408,7 @@ public final class DomainValidator extends AbstractValidator {
         "bnpparibas", // bnpparibas BNP Paribas
         "boats", // boats DERBoats, LLC
         "boehringer", // boehringer Boehringer Ingelheim International GmbH
+        "bofa", // bofa NMS Services, Inc.
         "bom", // bom Núcleo de Informação e Coordenação do Ponto BR - NIC.br
         "bond", // bond Bond University Limited
         "boo", // boo Charleston Road Registry Inc.
@@ -619,7 +621,9 @@ public final class DomainValidator extends AbstractValidator {
         "fast", // fast Amazon Registry Services, Inc.
         "fedex", // fedex Federal Express Corporation
         "feedback", // feedback Top Level Spectrum, Inc.
+        "ferrari", // ferrari Fiat Chrysler Automobiles N.V.
         "ferrero", // ferrero Ferrero Trading Lux S.A.
+        "fiat", // fiat Fiat Chrysler Automobiles N.V.
         "film", // film Motion Picture Domain Registry Pty Ltd
         "final", // final Núcleo de Informação e Coordenação do Ponto BR - NIC.br
         "finance", // finance Cotton Cypress, LLC
@@ -796,6 +800,7 @@ public final class DomainValidator extends AbstractValidator {
         "jpmorgan", // jpmorgan JPMorgan Chase &amp; Co.
         "jprs", // jprs Japan Registry Services Co., Ltd.
         "juegos", // juegos Uniregistry, Corp.
+        "juniper", // juniper JUNIPER NETWORKS, INC.
         "kaufen", // kaufen United TLD Holdco Ltd.
         "kddi", // kddi KDDI CORPORATION
         "kerryhotels", // kerryhotels Kerry Trading Co. Limited
@@ -918,6 +923,7 @@ public final class DomainValidator extends AbstractValidator {
         "monash", // monash Monash University
         "money", // money Outer McCook, LLC
         "montblanc", // montblanc Richemont DNS Inc.
+        "mopar", // mopar FCA US LLC.
         "mormon", // mormon IRI Domain Management, LLC (&quot;Applicant&quot;)
         "mortgage", // mortgage United TLD Holdco, Ltd
         "moscow", // moscow Foundation for Assistance for Internet Technologies and Infrastructure Development (FAITID)
@@ -938,6 +944,7 @@ public final class DomainValidator extends AbstractValidator {
         "nationwide", // nationwide Nationwide Mutual Insurance Company
         "natura", // natura NATURA COSMÉTICOS S.A.
         "navy", // navy United TLD Holdco Ltd.
+        "nba", // nba NBA REGISTRY, LLC
         "nec", // nec NEC Corporation
         "net", // net VeriSign Global Registry Services
         "netbank", // netbank COMMONWEALTH BANK OF AUSTRALIA

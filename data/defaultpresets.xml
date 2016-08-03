@@ -5403,7 +5403,7 @@
                 <text key="description" text="Description" />
             </optional>
         </item> <!-- Drinking Water -->
-        <item name="Water Point" icon="presets/accommodation/chalet.svg" type="node" preset_name_label="true">
+        <item name="Water Point" icon="presets/accommodation/water.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=water_point" />
             <space />
             <key key="amenity" value="water_point" />
