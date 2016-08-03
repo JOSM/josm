@@ -2,9 +2,8 @@
 package org.openstreetmap.josm.gui.layer;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
-
-import org.openstreetmap.josm.tools.Predicates;
 
 /**
  * This class defines a position to insert a given layer in the list of layers.
@@ -45,7 +44,7 @@ public interface LayerPositionStrategy {
      * @return The strategy
      */
     static LayerPositionStrategy inFrontOf(Layer other) {
-        return inFrontOfFirst(Predicates.equalTo(other));
+        return inFrontOfFirst(obj -> Objects.equals(obj, other));
     }
 
     /**

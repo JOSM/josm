@@ -47,7 +47,6 @@ import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.FilteredCollection;
-import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -457,7 +456,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return A collection containing all primitives of the dataset. Data is not ordered
      */
     public Collection<OsmPrimitive> allPrimitives() {
-        return getPrimitives(Predicates.alwaysTrue());
+        return getPrimitives(o -> true);
     }
 
     /**

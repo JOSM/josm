@@ -10,7 +10,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
  * Utility class for creating {@link Predicate}s.
+ * @deprecated Use corresponding lambda expressions instead
  */
+@Deprecated
 public final class Predicates {
 
     private Predicates() {
@@ -86,7 +88,7 @@ public final class Predicates {
      * @return a {@link Predicate} executing {@link Pattern#matcher(CharSequence)} and {@link java.util.regex.Matcher#find}
      */
     public static Predicate<String> stringContainsPattern(final Pattern pattern) {
-        return string -> pattern.matcher(string).find();
+        return pattern.asPredicate();
     }
 
     /**
@@ -133,7 +135,7 @@ public final class Predicates {
      * @return a {@link Predicate} testing whether objects are {@code null}
      */
     public static <T> Predicate<T> isNull() {
-        return object -> object == null;
+        return Objects::isNull;
     }
 
 }
