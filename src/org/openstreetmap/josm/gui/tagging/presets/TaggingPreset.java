@@ -59,7 +59,6 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Space;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ImageProvider.ImageResourceCallback;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
@@ -203,7 +202,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         imgProv.setId("presets");
         imgProv.setArchive(arch);
         imgProv.setOptional(true);
-        imgProv.getInBackground((ImageResourceCallback) result -> {
+        imgProv.getResourceAsync().thenAccept(result -> {
             if (result != null) {
                 GuiHelper.runInEDT(() -> result.attachImageIcon(this));
             } else {

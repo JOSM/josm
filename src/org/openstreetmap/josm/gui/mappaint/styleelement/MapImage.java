@@ -18,7 +18,6 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvid
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProviderResult;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ImageProvider.ImageCallback;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -98,7 +97,7 @@ public class MapImage {
                 .setWidth(width)
                 .setHeight(height)
                 .setOptional(true)
-                .getInBackground((ImageCallback) result -> {
+                .getAsync().thenAccept(result -> {
                     synchronized (this) {
                         if (result == null) {
                             source.logWarning(tr("Failed to locate image ''{0}''", name));

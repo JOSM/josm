@@ -39,6 +39,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
@@ -305,33 +306,6 @@ public class ImageProvider {
 
     private static final ExecutorService IMAGE_FETCHER =
             Executors.newSingleThreadExecutor(Utils.newThreadFactory("image-fetcher-%d", Thread.NORM_PRIORITY));
-
-    /**
-     * Callback interface for asynchronous image loading.
-     * @since 10600 (functional interface)
-     */
-    @FunctionalInterface
-    public interface ImageCallback {
-        /**
-         * Called when image loading has finished.
-         * @param result the loaded image icon
-         */
-        void finished(ImageIcon result);
-    }
-
-    /**
-     * Callback interface for asynchronous image loading (with delayed scaling possibility).
-     * @since 7693
-     * @since 10600 (functional interface)
-     */
-    @FunctionalInterface
-    public interface ImageResourceCallback {
-        /**
-         * Called when image loading has finished.
-         * @param result the loaded image resource
-         */
-        void finished(ImageResource result);
-    }
 
     /**
      * Constructs a new {@code ImageProvider} from a filename in a given directory.
@@ -652,6 +626,18 @@ public class ImageProvider {
     }
 
     /**
+     * Load the image in a background thread.
+     *
+     * This method returns immediately and runs the image request asynchronously.
+     *
+     * @return the future of the requested image
+     * @since 10714
+     */
+    public CompletableFuture<ImageIcon> getAsync() {
+        return CompletableFuture.supplyAsync(this::get, IMAGE_FETCHER);
+    }
+
+    /**
      * Execute the image request.
      *
      * @return the requested image or null if the request failed
@@ -686,36 +672,11 @@ public class ImageProvider {
      *
      * This method returns immediately and runs the image request asynchronously.
      *
-     * @param callback a callback. It is called, when the image is ready.
-     * This can happen before the call to this method returns or it may be
-     * invoked some time (seconds) later. If no image is available, a null
-     * value is returned to callback (just like {@link #get}).
+     * @return the future of the requested image
+     * @since 10714
      */
-    public void getInBackground(final ImageCallback callback) {
-        if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)) {
-            IMAGE_FETCHER.submit(() -> callback.finished(get()));
-        } else {
-            callback.finished(get());
-        }
-    }
-
-    /**
-     * Load the image in a background thread.
-     *
-     * This method returns immediately and runs the image request asynchronously.
-     *
-     * @param callback a callback. It is called, when the image is ready.
-     * This can happen before the call to this method returns or it may be
-     * invoked some time (seconds) later. If no image is available, a null
-     * value is returned to callback (just like {@link #get}).
-     * @since 7693
-     */
-    public void getInBackground(final ImageResourceCallback callback) {
-        if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)) {
-            IMAGE_FETCHER.submit(() -> callback.finished(getResource()));
-        } else {
-            callback.finished(getResource());
-        }
+     public CompletableFuture<ImageResource> getResourceAsync() {
+        return CompletableFuture.supplyAsync(this::getResource, IMAGE_FETCHER);
     }
 
     /**
