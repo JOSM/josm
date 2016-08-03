@@ -85,7 +85,7 @@ public class AddNodeHandler extends RequestHandler {
 
         if (Main.isDisplayingMapView()) {
             Point p = Main.map.mapView.getPoint(ll);
-            node = Main.map.mapView.getNearestNode(p, OsmPrimitive.isUsablePredicate);
+            node = Main.map.mapView.getNearestNode(p, OsmPrimitive::isUsable);
             if (node != null && node.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
                 node = null; // node is too far
             }

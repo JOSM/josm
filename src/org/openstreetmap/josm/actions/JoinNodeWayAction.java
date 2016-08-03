@@ -93,7 +93,7 @@ public class JoinNodeWayAction extends JosmAction {
         // Planning phase: decide where we'll insert the nodes and put it all in "data"
         for (Node node : selectedNodes) {
             List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
-                    Main.map.mapView.getPoint(node), OsmPrimitive.isSelectablePredicate);
+                    Main.map.mapView.getPoint(node), OsmPrimitive::isSelectable);
 
             MultiMap<Way, Integer> insertPoints = new MultiMap<>();
             for (WaySegment ws : wss) {

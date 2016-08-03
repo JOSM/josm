@@ -398,7 +398,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Collection<OsmPrimitive> selection = new ArrayList<>(ds.getSelected());
 
         boolean newNode = false;
-        Node n = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
+        Node n = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive::isSelectable);
         if (ctrl) {
             Iterator<Way> it = ds.getSelectedWays().iterator();
             if (it.hasNext()) {
@@ -468,7 +468,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             if (!ctrl) {
                 // Insert the node into all the nearby way segments
                 List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
-                        Main.map.mapView.getPoint(n), OsmPrimitive.isSelectablePredicate);
+                        Main.map.mapView.getPoint(n), OsmPrimitive::isSelectable);
                 if (snapHelper.isActive()) {
                     tryToMoveNodeOnIntersection(wss, n);
                 }
@@ -760,7 +760,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * This method is used to detect segment under mouse and use it as reference for angle snapping
      */
     private void tryToSetBaseSegmentForAngleSnap() {
-        WaySegment seg = Main.map.mapView.getNearestWaySegment(mousePos, OsmPrimitive.isSelectablePredicate);
+        WaySegment seg = Main.map.mapView.getNearestWaySegment(mousePos, OsmPrimitive::isSelectable);
         if (seg != null) {
             snapHelper.setBaseSegment(seg);
         }
@@ -789,13 +789,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         showStatusInfo(-1, -1, -1, snapHelper.isSnapOn());
 
         if (!ctrl && mousePos != null) {
-            currentMouseNode = mv.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
+            currentMouseNode = mv.getNearestNode(mousePos, OsmPrimitive::isSelectable);
         }
 
         // We need this for highlighting and we'll only do so if we actually want to re-use
         // *and* there is no node nearby (because nodes beat ways when re-using)
         if (!ctrl && currentMouseNode == null) {
-            List<WaySegment> wss = mv.getNearestWaySegments(mousePos, OsmPrimitive.isSelectablePredicate);
+            List<WaySegment> wss = mv.getNearestWaySegments(mousePos, OsmPrimitive::isSelectable);
             for (WaySegment ws : wss) {
                 mouseOnExistingWays.add(ws.way);
             }
@@ -1087,7 +1087,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // This happens when nothing is selected, but we still want to highlight the "target node"
         if (mouseOnExistingNode == null && getLayerManager().getEditDataSet().selectionEmpty() && mousePos != null) {
-            mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
+            mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive::isSelectable);
         }
 
         if (mouseOnExistingNode != null) {

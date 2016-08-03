@@ -31,9 +31,9 @@ public final class FilterWorker {
     public static boolean executeFilters(Collection<OsmPrimitive> all, FilterMatcher filterMatcher) {
         boolean changed;
         // first relations, then ways and nodes last; this is required to resolve dependencies
-        changed = doExecuteFilters(SubclassFilteredCollection.filter(all, OsmPrimitive.relationPredicate), filterMatcher);
-        changed |= doExecuteFilters(SubclassFilteredCollection.filter(all, OsmPrimitive.wayPredicate), filterMatcher);
-        changed |= doExecuteFilters(SubclassFilteredCollection.filter(all, OsmPrimitive.nodePredicate), filterMatcher);
+        changed = doExecuteFilters(SubclassFilteredCollection.filter(all, Relation.class::isInstance), filterMatcher);
+        changed |= doExecuteFilters(SubclassFilteredCollection.filter(all, Way.class::isInstance), filterMatcher);
+        changed |= doExecuteFilters(SubclassFilteredCollection.filter(all, Node.class::isInstance), filterMatcher);
         return changed;
     }
 

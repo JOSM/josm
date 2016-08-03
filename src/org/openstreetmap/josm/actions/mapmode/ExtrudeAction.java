@@ -390,8 +390,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         requestFocusInMapView();
         updateKeyModifiers(e);
 
-        selectedNode = Main.map.mapView.getNearestNode(e.getPoint(), OsmPrimitive.isSelectablePredicate);
-        selectedSegment = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
+        selectedNode = Main.map.mapView.getNearestNode(e.getPoint(), OsmPrimitive::isSelectable);
+        selectedSegment = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive::isSelectable);
 
         // If nothing gets caught, stay in select mode
         if (selectedSegment == null && selectedNode == null) return;
@@ -569,7 +569,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      */
     private static void addNewNode(MouseEvent e) {
         // Should maybe do the same as in DrawAction and fetch all nearby segments?
-        WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
+        WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive::isSelectable);
         if (ws != null) {
             Node n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
             EastNorth a = ws.getFirstNode().getEastNorth();

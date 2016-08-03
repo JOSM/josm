@@ -15,7 +15,6 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.TreeSet;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -141,7 +140,7 @@ public final class ExceptionUtil {
         if (conflict != null) {
             OsmPrimitive firstRefs = conflict.b.iterator().next();
             String objId = Long.toString(conflict.a.getId());
-            Collection<Long> refIds = Utils.transform(conflict.b, (Function<OsmPrimitive, Long>) x -> x.getId());
+            Collection<Long> refIds = Utils.transform(conflict.b, OsmPrimitive::getId);
             String refIdsString = refIds.size() == 1 ? refIds.iterator().next().toString() : refIds.toString();
             if (conflict.a instanceof Node) {
                 if (firstRefs instanceof Node) {

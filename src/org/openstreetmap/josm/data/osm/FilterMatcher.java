@@ -206,7 +206,7 @@ public class FilterMatcher {
     private static boolean allParentMultipolygonsFiltered(OsmPrimitive primitive, boolean hidden) {
         boolean isExplicit = false;
         for (Relation r : new SubclassFilteredCollection<OsmPrimitive, Relation>(
-                primitive.getReferrers(), OsmPrimitive.multipolygonPredicate)) {
+                primitive.getReferrers(), OsmPrimitive::isMultipolygon)) {
             if (!isFiltered(r, hidden))
                 return false;
             isExplicit |= isFilterExplicit(r, hidden);
@@ -216,7 +216,7 @@ public class FilterMatcher {
 
     private static boolean oneParentMultipolygonNotFiltered(OsmPrimitive primitive, boolean hidden) {
         for (Relation r : new SubclassFilteredCollection<OsmPrimitive, Relation>(
-                primitive.getReferrers(), OsmPrimitive.multipolygonPredicate)) {
+                primitive.getReferrers(), OsmPrimitive::isMultipolygon)) {
             if (!isFiltered(r, hidden))
                 return true;
         }

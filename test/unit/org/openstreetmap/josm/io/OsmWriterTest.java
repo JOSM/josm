@@ -31,7 +31,7 @@ public class OsmWriterTest {
 
         Collections.sort(ids, OsmWriter.byIdComparator);
 
-        final long[] longIds = ids.stream().mapToLong(x -> x.getUniqueId()).toArray();
+        final long[] longIds = ids.stream().mapToLong(NodeData::getUniqueId).toArray();
         assertArrayEquals(new long[] {
                 -3, -12, -20, -9223372036854775808L, 0, 2, 12, 65, 9223372036854775807L
         }, longIds);

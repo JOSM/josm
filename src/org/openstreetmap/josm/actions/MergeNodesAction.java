@@ -72,7 +72,7 @@ public class MergeNodesAction extends JosmAction {
 
         if (selectedNodes.size() == 1) {
             List<Node> nearestNodes = Main.map.mapView.getNearestNodes(
-                    Main.map.mapView.getPoint(selectedNodes.get(0)), selectedNodes, OsmPrimitive.isUsablePredicate);
+                    Main.map.mapView.getPoint(selectedNodes.get(0)), selectedNodes, OsmPrimitive::isUsable);
             if (nearestNodes.isEmpty()) {
                 new Notification(
                         tr("Please select at least two nodes to merge or one node that is close to another node."))

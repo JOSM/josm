@@ -627,7 +627,7 @@ public class SelectionListDialog extends ToggleDialog {
                             }
                         }
                         Main.map.statusLine.setDist(
-                                new SubclassFilteredCollection<OsmPrimitive, Way>(selection, OsmPrimitive.wayPredicate));
+                                new SubclassFilteredCollection<OsmPrimitive, Way>(selection, Way.class::isInstance));
                     }
                 }
             });

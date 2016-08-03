@@ -299,7 +299,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            final List<PrimitiveId> primitiveIds = model.getSelectedPrimitives().stream().map(x -> x.getPrimitiveId())
+            final List<PrimitiveId> primitiveIds = model.getSelectedPrimitives().stream().map(HistoryOsmPrimitive::getPrimitiveId)
                     .collect(Collectors.toList());
             Main.worker.submit(new DownloadPrimitivesWithReferrersTask(false, primitiveIds, true, true, null, null));
         }

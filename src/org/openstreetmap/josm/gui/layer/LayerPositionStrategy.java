@@ -36,7 +36,7 @@ public interface LayerPositionStrategy {
      * If there is none, they are added at the end of the list.
      */
     LayerPositionStrategy BEFORE_FIRST_BACKGROUND_LAYER = inFrontOfFirst(
-            layer -> layer.isBackgroundLayer());
+            Layer::isBackgroundLayer);
 
     /**
      * Gets a {@link LayerPositionStrategy} that inserts this layer in front of a given layer

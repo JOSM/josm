@@ -47,12 +47,12 @@ public class MultiLineFlowLayout extends FlowLayout {
 
     @Override
     public Dimension preferredLayoutSize(Container target) {
-        return getLayoutSize(target, c -> c.getPreferredSize());
+        return getLayoutSize(target, Component::getPreferredSize);
     }
 
     @Override
     public Dimension minimumLayoutSize(Container target) {
-        return getLayoutSize(target, c -> c.getMinimumSize());
+        return getLayoutSize(target, Component::getMinimumSize);
     }
 
     private Dimension getLayoutSize(Container target, Function<Component, Dimension> baseSize) {

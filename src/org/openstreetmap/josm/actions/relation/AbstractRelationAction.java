@@ -26,7 +26,7 @@ public abstract class AbstractRelationAction extends AbstractAction implements O
         } else {
             // Diamond operator does not work with Java 9 here
             return new SubclassFilteredCollection<OsmPrimitive, Relation>(
-                    primitives, OsmPrimitive.relationPredicate);
+                    primitives, Relation.class::isInstance);
         }
     }
 

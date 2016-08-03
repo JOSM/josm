@@ -320,7 +320,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
 
         if (!mouseHasBeenDragged) {
             // use point from press or click event? (or are these always the same)
-            Way nearestWay = mv.getNearestWay(e.getPoint(), OsmPrimitive.isSelectablePredicate);
+            Way nearestWay = mv.getNearestWay(e.getPoint(), OsmPrimitive::isSelectable);
             if (nearestWay == null) {
                 if (matchesCurrentModifiers(setSelectedModifierCombo)) {
                     clearSourceWays();
@@ -521,7 +521,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
 
     // TODO: rename
     private boolean initParallelWays(Point p, boolean copyTags) {
-        referenceSegment = mv.getNearestWaySegment(p, Way.isUsablePredicate, true);
+        referenceSegment = mv.getNearestWaySegment(p, OsmPrimitive::isUsable, true);
         if (referenceSegment == null)
             return false;
 

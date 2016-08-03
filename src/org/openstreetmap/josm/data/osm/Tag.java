@@ -208,4 +208,15 @@ public class Tag implements Tagged, Entry<String, String> {
     public void removeAll() {
         throw new UnsupportedOperationException();
     }
+
+    /**
+     * true if this is a direction dependent tag (e.g. oneway)
+     *
+     * @return {@code true} if this is is a direction dependent tag
+     * @since 10716
+     */
+    public boolean isDirectionKey() {
+        return OsmPrimitive.directionKeys.match(this);
+    }
+
 }

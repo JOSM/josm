@@ -400,7 +400,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     public List<OsmPrimitive> getMemberPrimitivesList() {
-        return Utils.transform(getMembers(), (Function<RelationMember, OsmPrimitive>) x -> x.getMember());
+        return Utils.transform(getMembers(), RelationMember::getMember);
     }
 
     @Override
@@ -421,10 +421,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
         return "boundary".equals(get("type"));
     }
 
-    /**
-     * Determines if this relation behaves as a multipolygon.
-     * @return {@code true} if it's a real mutlipolygon or a boundary relation
-     */
+    @Override
     public boolean isMultipolygon() {
         return "multipolygon".equals(get("type")) || isBoundary();
     }

@@ -328,7 +328,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return an unmodifiable collection of nodes in this dataset
      */
     public Collection<Node> getNodes() {
-        return getPrimitives(OsmPrimitive.nodePredicate);
+        return getPrimitives(Node.class::isInstance);
     }
 
     /**
@@ -370,7 +370,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return an unmodifiable collection of ways in this dataset
      */
     public Collection<Way> getWays() {
-        return getPrimitives(OsmPrimitive.wayPredicate);
+        return getPrimitives(Way.class::isInstance);
     }
 
     /**
@@ -410,7 +410,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return an unmodifiable collection of relations in this dataset
      */
     public Collection<Relation> getRelations() {
-        return getPrimitives(OsmPrimitive.relationPredicate);
+        return getPrimitives(Relation.class::isInstance);
     }
 
     /**
@@ -465,7 +465,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @see OsmPrimitive#isDeleted
      */
     public Collection<OsmPrimitive> allNonDeletedPrimitives() {
-        return getPrimitives(OsmPrimitive.nonDeletedPredicate);
+        return getPrimitives(p -> !p.isDeleted());
     }
 
     /**
@@ -475,7 +475,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @see OsmPrimitive#isIncomplete
      */
     public Collection<OsmPrimitive> allNonDeletedCompletePrimitives() {
-        return getPrimitives(OsmPrimitive.nonDeletedCompletePredicate);
+        return getPrimitives(primitive -> !primitive.isDeleted() && !primitive.isIncomplete());
     }
 
     /**
@@ -485,7 +485,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @see OsmPrimitive#isIncomplete
      */
     public Collection<OsmPrimitive> allNonDeletedPhysicalPrimitives() {
-        return getPrimitives(OsmPrimitive.nonDeletedPhysicalPredicate);
+        return getPrimitives(primitive -> !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation));
     }
 
     /**
@@ -494,7 +494,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @see OsmPrimitive#isModified
      */
     public Collection<OsmPrimitive> allModifiedPrimitives() {
-        return getPrimitives(OsmPrimitive.modifiedPredicate);
+        return getPrimitives(OsmPrimitive::isModified);
     }
 
     /**
@@ -642,7 +642,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return unmodifiable collection of primitives
      */
     public Collection<OsmPrimitive> getSelected() {
-        return new SubclassFilteredCollection<>(getAllSelected(), OsmPrimitive.nonDeletedPredicate);
+        return new SubclassFilteredCollection<>(getAllSelected(), p -> !p.isDeleted());
     }
 
     /**
@@ -667,7 +667,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return selected nodes
      */
     public Collection<Node> getSelectedNodes() {
-        return new SubclassFilteredCollection<>(getSelected(), OsmPrimitive.nodePredicate);
+        return new SubclassFilteredCollection<>(getSelected(), Node.class::isInstance);
     }
 
     /**
@@ -675,7 +675,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return selected ways
      */
     public Collection<Way> getSelectedWays() {
-        return new SubclassFilteredCollection<>(getSelected(), OsmPrimitive.wayPredicate);
+        return new SubclassFilteredCollection<>(getSelected(), Way.class::isInstance);
     }
 
     /**
@@ -683,7 +683,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return selected relations
      */
     public Collection<Relation> getSelectedRelations() {
-        return new SubclassFilteredCollection<>(getSelected(), OsmPrimitive.relationPredicate);
+        return new SubclassFilteredCollection<>(getSelected(), Relation.class::isInstance);
     }
 
     /**
