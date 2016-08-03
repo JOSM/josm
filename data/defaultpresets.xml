@@ -9008,7 +9008,7 @@
             <key key="place" value="islet" />
             <reference ref="name_wikipedia" />
         </item> <!-- Islet -->
-        <item name="Reef" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Reef" icon="presets/landmark/reef.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=reef"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=reef" />
             <space />

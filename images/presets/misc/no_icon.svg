@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -8,13 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="252.14287"
-   height="252.14287"
+   width="16"
+   height="16"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
+   inkscape:version="0.91 r13725"
    version="1.0"
-   sodipodi:docbase="C:\Dokumente und Einstellungen\ulfl\Eigene Dateien\svn.openstreetmap.org\applications\share\map-icons\svg\misc"
    sodipodi:docname="no_icon.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
@@ -34,18 +34,23 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35"
-     inkscape:cx="350"
-     inkscape:cy="163.55228"
+     inkscape:zoom="15.839192"
+     inkscape:cx="2.2843151"
+     inkscape:cy="10.356284"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     inkscape:window-width="797"
-     inkscape:window-height="667"
-     inkscape:window-x="176"
-     inkscape:window-y="232"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      showguides="true"
      inkscape:guide-bbox="true"
-     showgrid="false" />
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -56,6 +61,7 @@
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <cc:license
            rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:title></dc:title>
       </cc:Work>
       <cc:License
          rdf:about="http://web.resource.org/cc/PublicDomain">
@@ -72,14 +78,14 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-216.07142,-141.29077)">
+     transform="translate(-334.14286,-259.36219)">
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#0d0000;stroke-width:13.75324631;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#ffffff;fill-opacity:1;stroke:#0d0000;stroke-width:0.87272722;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4123"
-       width="238.38962"
-       height="238.38962"
-       x="222.94804"
-       y="148.16739"
-       ry="31.069748" />
+       width="15.127273"
+       height="15.127273"
+       x="334.57922"
+       y="259.79855"
+       ry="1.9715647" />
   </g>
 </svg>
