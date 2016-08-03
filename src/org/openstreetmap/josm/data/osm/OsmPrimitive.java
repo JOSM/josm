@@ -220,6 +220,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * A predicate filtering primitives that are not deleted and not incomplete.
+     * @deprecated use lambda instead
      */
     @Deprecated
     public static final Predicate<OsmPrimitive> nonDeletedCompletePredicate =
@@ -227,6 +228,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * A predicate filtering primitives that are not deleted and not incomplete and that are not a relation.
+     * @deprecated use lambda instead
      */
     @Deprecated
     public static final Predicate<OsmPrimitive> nonDeletedPhysicalPredicate =
@@ -271,6 +273,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * This matches all ways that have a direction
      *
      * @see #FLAG_HAS_DIRECTIONS
+     * @deprecated use {@code directionKeys::match}
      */
     @Deprecated
     public static final Predicate<Tag> directionalKeyPredicate = directionKeys::match;

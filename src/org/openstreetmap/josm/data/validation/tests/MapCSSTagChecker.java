@@ -583,7 +583,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                     primitives = Collections.singletonList(p);
                 }
                 if (fix != null) {
-                    return new FixableTestError(null, getSeverity(), description1, description2, matchingSelector.toString(), 3000, primitives, fix);
+                    return new FixableTestError(null, getSeverity(), description1, description2, matchingSelector.toString(), 3000,
+                            primitives, fix);
                 } else {
                     return new TestError(null, getSeverity(), description1, description2, matchingSelector.toString(), 3000, primitives);
                 }
