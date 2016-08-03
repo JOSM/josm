@@ -672,9 +672,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
                 Collection<OsmPrimitive> all;
                 if (setting.allElements) {
-                    all = Main.getLayerManager().getEditDataSet().allPrimitives();
+                    all = ds.allPrimitives();
                 } else {
-                    all = Main.getLayerManager().getEditDataSet().allNonDeletedCompletePrimitives();
+                    all = ds.getPrimitives(OsmPrimitive::isSelectable);
                 }
                 final ProgressMonitor subMonitor = getProgressMonitor().createSubTaskMonitor(all.size(), false);
                 subMonitor.beginTask(trn("Searching in {0} object", "Searching in {0} objects", all.size(), all.size()));
