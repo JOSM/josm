@@ -23,19 +23,25 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * This test tests the {@link Predicate}s created by the {@link Predicates} class.
  *
  * @author Michael Zangl
+ * @deprecated to remove when {@code Predicates} class is removed
  */
+@Deprecated
 public class PredicatesTest {
     /**
      * Some of this depends on preferences.
+     * @deprecated to remove when {@code Predicates} class is removed
      */
+    @Deprecated
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Test {@link Predicates#alwaysTrue()}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testAlwaysTrue() {
         Predicate<Object> alwaysTrue = Predicates.alwaysTrue();
         assertTrue(alwaysTrue.test(new Object()));
@@ -44,8 +50,10 @@ public class PredicatesTest {
 
     /**
      * Test {@link Predicates#alwaysFalse()}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testAlwaysFalse() {
         Predicate<Object> alwaysFalse = Predicates.alwaysFalse();
         assertFalse(alwaysFalse.test(new Object()));
@@ -54,8 +62,10 @@ public class PredicatesTest {
 
     /**
      * Test {@link Predicates#equalTo(Object)}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testEqualTo() {
         Integer testObject = Integer.valueOf(1);
         Predicate<Integer> equalTo = Predicates.equalTo(testObject);
@@ -68,8 +78,10 @@ public class PredicatesTest {
 
     /**
      * Test {@link Predicates#isOfClass(Class)}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testIsOfClass() {
         Predicate<Object> isOfClass = Predicates.<Object>isOfClass(Hashtable.class);
         assertFalse(isOfClass.test(null));
@@ -80,8 +92,10 @@ public class PredicatesTest {
 
     /**
      * Test {@link Predicates#isOfClass(Class)}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testIsInstanceOf() {
         Predicate<Object> isInstanceOf = Predicates.<Object>isInstanceOf(Hashtable.class);
         assertFalse(isInstanceOf.test(null));
@@ -92,8 +106,10 @@ public class PredicatesTest {
 
     /**
      * Test {@link Predicates#stringMatchesPattern(java.util.regex.Pattern)}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testStringMatchesPattern() {
         Pattern p = Pattern.compile("ab?c");
         Predicate<String> stringMatchesPattern = Predicates.stringMatchesPattern(p);
@@ -106,8 +122,10 @@ public class PredicatesTest {
 
     /**
      * Test {@link Predicates#stringContainsPattern(java.util.regex.Pattern)}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testStringContainsPattern() {
         Pattern p = Pattern.compile("ab?c");
         Predicate<String> stringContainsPattern = Predicates.stringContainsPattern(p);
@@ -121,8 +139,10 @@ public class PredicatesTest {
 
     /**
      * Test {@link Predicates#stringContains(String)}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testStringContains() {
         Predicate<String> stringContains = Predicates.stringContains("abc");
         assertFalse(stringContains.test(""));
@@ -134,8 +154,10 @@ public class PredicatesTest {
 
     /**
      * Test {@link Predicates#hasTag(String, String...)}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testHasTag() {
         Predicate<OsmPrimitive> hasTag = Predicates.hasTag("key", "value");
         Node n1 = new Node();
@@ -150,8 +172,10 @@ public class PredicatesTest {
 
     /**
      * Test {@link Predicates#hasKey(String)}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testHasKey() {
         Predicate<OsmPrimitive> hasKey = Predicates.hasKey("key");
         Node n1 = new Node();
@@ -164,8 +188,10 @@ public class PredicatesTest {
 
     /**
      * Test {@link Predicates#inCollection(java.util.Collection)}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testInCollection() {
         List<String> list = Arrays.asList("a", "b", "c");
         Predicate<String> inCollection = Predicates.inCollection(list);
@@ -184,8 +210,10 @@ public class PredicatesTest {
 
     /**
      * Test {@link Predicates#isNull()}
+     * @deprecated to remove when {@code Predicates} class is removed
      */
     @Test
+    @Deprecated
     public void testIsNull() {
         Predicate<Object> isNull = Predicates.isNull();
         assertTrue(isNull.test(null));
