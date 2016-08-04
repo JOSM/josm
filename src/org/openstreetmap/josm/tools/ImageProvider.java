@@ -634,7 +634,9 @@ public class ImageProvider {
      * @since 10714
      */
     public CompletableFuture<ImageIcon> getAsync() {
-        return CompletableFuture.supplyAsync(this::get, IMAGE_FETCHER);
+        return name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)
+                ? CompletableFuture.supplyAsync(this::get, IMAGE_FETCHER)
+                : CompletableFuture.completedFuture(get());
     }
 
     /**
@@ -675,8 +677,10 @@ public class ImageProvider {
      * @return the future of the requested image
      * @since 10714
      */
-     public CompletableFuture<ImageResource> getResourceAsync() {
-        return CompletableFuture.supplyAsync(this::getResource, IMAGE_FETCHER);
+    public CompletableFuture<ImageResource> getResourceAsync() {
+        return name.startsWith(HTTP_PROTOCOL) || name.startsWith(WIKI_PROTOCOL)
+                ? CompletableFuture.supplyAsync(this::getResource, IMAGE_FETCHER)
+                : CompletableFuture.completedFuture(getResource());
     }
 
     /**
