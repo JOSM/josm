@@ -31,8 +31,8 @@ public class GpxReaderTest {
      */
     public static GpxData parseGpxData(String filename) throws IOException, SAXException {
         final GpxData result;
-        try (final FileInputStream in = new FileInputStream(new File(filename))) {
-            final GpxReader reader = new GpxReader(in);
+        try (FileInputStream in = new FileInputStream(new File(filename))) {
+            GpxReader reader = new GpxReader(in);
             assertTrue(reader.parse(false));
             result = reader.getGpxData();
         }
