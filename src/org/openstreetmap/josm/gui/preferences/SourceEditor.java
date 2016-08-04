@@ -1399,7 +1399,7 @@ public abstract class SourceEditor extends JPanel {
         protected void readFile() throws IOException {
             final String lang = LanguageInfo.getLanguageCodeXML();
             cachedFile = new CachedFile(url);
-            try (final BufferedReader reader = cachedFile.getContentReader()) {
+            try (BufferedReader reader = cachedFile.getContentReader()) {
 
                 String line;
                 ExtendedSourceEntry last = null;

@@ -371,7 +371,7 @@ public final class TaggingPresetReader {
                             JOptionPane.ERROR_MESSAGE
                             );
                 }
-            } catch (SAXException e) {
+            } catch (SAXException | IllegalArgumentException e) {
                 Main.error(e);
                 Main.error(source);
                 JOptionPane.showMessageDialog(

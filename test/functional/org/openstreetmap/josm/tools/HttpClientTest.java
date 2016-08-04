@@ -72,8 +72,8 @@ public class HttpClientTest {
         assertThat(response.getHeaderField("Content-TYPE"), is("application/json"));
         assertThat(response.getHeaderFields().get("Content-Type"), is(Collections.singletonList("application/json")));
         assertThat(response.getHeaderFields().get("Content-TYPE"), is(Collections.singletonList("application/json")));
-        try (final InputStream in = response.getContent();
-             final JsonReader json = JsonProvider.provider().createReader(in)) {
+        try (InputStream in = response.getContent();
+             JsonReader json = JsonProvider.provider().createReader(in)) {
             final JsonObject root = json.readObject();
             assertThat(root.getJsonObject("args").getString("foo"), is("bar"));
             assertThat(root.getString("url"), is("https://httpbin.org/get?foo=bar"));
@@ -82,8 +82,8 @@ public class HttpClientTest {
 
     @Test
     public void testUserAgent() throws IOException {
-        try (final InputStream in = HttpClient.create(new URL("https://httpbin.org/user-agent")).connect(progress).getContent();
-             final JsonReader json = JsonProvider.provider().createReader(in)) {
+        try (InputStream in = HttpClient.create(new URL("https://httpbin.org/user-agent")).connect(progress).getContent();
+             JsonReader json = JsonProvider.provider().createReader(in)) {
             assertThat(json.readObject().getString("user-agent"), is(Version.getInstance().getFullAgentString()));
         }
     }
@@ -106,8 +106,8 @@ public class HttpClientTest {
                 .setFinishOnCloseOutput(false) // to fix #12583, not sure if it's the best way to do it
                 .connect(progress);
         assertThat(response.getResponseCode(), is(200));
-        try (final InputStream in = response.getContent();
-             final JsonReader json = JsonProvider.provider().createReader(in)) {
+        try (InputStream in = response.getContent();
+             JsonReader json = JsonProvider.provider().createReader(in)) {
             assertThat(json.readObject().getString("data"), is(text));
         }
     }
@@ -120,8 +120,8 @@ public class HttpClientTest {
                 .setFinishOnCloseOutput(false) // to fix #12583, not sure if it's the best way to do it
                 .connect(progress);
         assertThat(response.getResponseCode(), is(200));
-        try (final InputStream in = response.getContent();
-             final JsonReader json = JsonProvider.provider().createReader(in)) {
+        try (InputStream in = response.getContent();
+             JsonReader json = JsonProvider.provider().createReader(in)) {
             assertThat(json.readObject().getString("data"), is(""));
         }
     }

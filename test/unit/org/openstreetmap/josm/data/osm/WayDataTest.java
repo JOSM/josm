@@ -19,10 +19,10 @@ public class WayDataTest {
         data.setVersion(14);
         data.setChangesetId(314159);
         final Object readData;
-        try (final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-             final ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+        try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+             ObjectOutputStream out = new ObjectOutputStream(bytes)) {
             out.writeObject(data);
-            try (final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
                 readData = in.readObject();
             }
         }

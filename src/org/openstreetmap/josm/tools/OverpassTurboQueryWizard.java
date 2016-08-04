@@ -38,8 +38,8 @@ public final class OverpassTurboQueryWizard {
 
     private OverpassTurboQueryWizard() {
 
-        try (final CachedFile file = new CachedFile("resource://data/overpass-wizard.js");
-             final Reader reader = file.getContentReader()) {
+        try (CachedFile file = new CachedFile("resource://data/overpass-wizard.js");
+             Reader reader = file.getContentReader()) {
             engine.eval("var console = {error: " + Main.class.getCanonicalName() + ".warn};");
             engine.eval("var global = {};");
             engine.eval(reader);
