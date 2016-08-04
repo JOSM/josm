@@ -61,6 +61,15 @@ public class ScanexTileSource extends TMSTileSource {
         super(info);
         String url = info.getUrl();
 
+        /**
+         * The formulae in tileYToLat() and latToTileY() have 2^8
+         * hardcoded in them, so explicitly state that.  For now
+         * the assignment matches OsmMercator.DEFAUL_TILE_SIZE, and
+         * thus is extraneous.  But let it be there just in case if
+         * OsmMercator changes.
+         */
+        this.tileSize = 256;
+
         for (ScanexLayer slayer : ScanexLayer.values()) {
             if (url.equalsIgnoreCase(slayer.getName())) {
                 this.layer = slayer;
