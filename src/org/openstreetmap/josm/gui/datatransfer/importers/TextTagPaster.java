@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.datatransfer.importers;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import org.openstreetmap.josm.tools.TextTagParser;
  * @since 10604
  */
 public final class TextTagPaster extends AbstractTagPaster {
+    private static final String help = ht("/Action/PasteTags");
 
     /**
      * Create a new {@link TextTagPaster}
@@ -28,15 +31,32 @@ public final class TextTagPaster extends AbstractTagPaster {
     @Override
     public boolean supports(TransferSupport support) {
         try {
-            return super.supports(support) && getTags(support) != null;
+            return super.supports(support) && containsValidTags(support);
         } catch (UnsupportedFlavorException | IOException e) {
             Main.warn(e);
             return false;
         }
     }
 
+    private boolean containsValidTags(TransferSupport support) throws UnsupportedFlavorException, IOException {
+        Map<String, String> tags = getTagsImpl(support);
+        return tags != null && !tags.isEmpty();
+    }
+
     @Override
     protected Map<String, String> getTags(TransferSupport support) throws UnsupportedFlavorException, IOException {
+        Map<String, String> tags = getTagsImpl(support);
+        if (tags == null || tags.isEmpty()) {
+            TextTagParser.showBadBufferMessage(help);
+            throw new IOException("Invalid tags to paste.");
+        }
+        if (!TextTagParser.validateTags(tags)) {
+            throw new IOException("Tags to paste are not valid.");
+        }
+        return tags;
+    }
+
+    private Map<String, String> getTagsImpl(TransferSupport support) throws UnsupportedFlavorException, IOException {
         return TextTagParser.readTagsFromText((String) support.getTransferable().getTransferData(df));
     }
 }

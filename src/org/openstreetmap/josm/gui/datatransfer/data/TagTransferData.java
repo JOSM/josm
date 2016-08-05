@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.Tagged;
 /**
  * This is a special transfer type that only transfers tag data.
  * <p>
- * It currently contains all tags contained in the selection that was copied.
+ * It contains all tags contained in the selection that was copied. For conflicting tags, any of the values may be used.
  * @author Michael Zangl
  * @since 10604
  */

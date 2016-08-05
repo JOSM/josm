@@ -11,6 +11,7 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.gui.datatransfer.data.OsmLayerTransferData;
+import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTagTransferData;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.datatransfer.data.TagTransferData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -74,6 +75,8 @@ public class PrimitiveTransferable implements Transferable {
             return getStringData();
         } else if (PrimitiveTransferData.DATA_FLAVOR.equals(flavor)) {
             return primitives;
+        } else if (PrimitiveTagTransferData.FLAVOR.equals(flavor)) {
+            return new PrimitiveTagTransferData(primitives);
         } else if (TagTransferData.FLAVOR.equals(flavor)) {
             return new TagTransferData(primitives.getDirectlyAdded());
         } else if (sourceLayer != null && OsmLayerTransferData.FLAVORS.contains(flavor)) {

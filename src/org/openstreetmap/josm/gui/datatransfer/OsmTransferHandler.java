@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.datatransfer.importers.AbstractOsmDataPaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.FilePaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.PrimitiveDataPaster;
+import org.openstreetmap.josm.gui.datatransfer.importers.PrimitiveTagTransferPaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.TagTransferPaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.TextTagPaster;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -29,6 +30,7 @@ public class OsmTransferHandler extends TransferHandler {
 
     private static final Collection<AbstractOsmDataPaster> SUPPORTED = Arrays.asList(
             new FilePaster(), new PrimitiveDataPaster(),
+            new PrimitiveTagTransferPaster(),
             new TagTransferPaster(), new TextTagPaster());
 
     @Override
