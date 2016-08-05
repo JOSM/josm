@@ -42,6 +42,18 @@ public class ImageryInfoTest {
     }
 
     /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/13264">Bug #13264</a>.
+     */
+    @Test
+    public void testConstruct13264() {
+        final ImageryInfo info = new ImageryInfo("test imagery", "tms[16-23]:http://localhost");
+        assertEquals(ImageryInfo.ImageryType.TMS, info.getImageryType());
+        assertEquals(16, info.getMinZoom());
+        assertEquals(23, info.getMaxZoom());
+        assertEquals("http://localhost", info.getUrl());
+    }
+
+    /**
      * Tests the {@linkplain Preferences#serializeStruct(Object, Class) serialization} of {@link ImageryInfo.ImageryPreferenceEntry}
      */
     @Test

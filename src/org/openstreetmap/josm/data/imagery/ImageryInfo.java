@@ -684,7 +684,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         defaultMaxZoom = 0;
         defaultMinZoom = 0;
         for (ImageryType type : ImageryType.values()) {
-            Matcher m = Pattern.compile(type.getTypeString()+"(?:\\[(?:(\\d+),)?(\\d+)\\])?:(.*)").matcher(url);
+            Matcher m = Pattern.compile(type.getTypeString()+"(?:\\[(?:(\\d+)[,-])?(\\d+)\\])?:(.*)").matcher(url);
             if (m.matches()) {
                 this.url = m.group(3);
                 this.imageryType = type;
