@@ -884,7 +884,7 @@ public abstract class Main {
         if (map != null && map.mapMode instanceof DrawAction) {
             return ((DrawAction) map.mapMode).getInProgressSelection();
         } else {
-            DataSet ds = getCurrentDataSet();
+            DataSet ds = getLayerManager().getEditDataSet();
             if (ds == null) return null;
             return ds.getSelected();
         }

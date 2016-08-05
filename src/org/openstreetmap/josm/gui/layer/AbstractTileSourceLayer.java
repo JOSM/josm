@@ -1245,7 +1245,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     private LatLon getShiftedLatLon(EastNorth en) {
-        return Main.getProjection().eastNorth2latlon(en.add(-getDx(), -getDy()));
+        return Main.getProjection().eastNorth2latlon(en.add(-getDisplaySettings().getDx(), -getDisplaySettings().getDy()));
     }
 
     private ICoordinate getShiftedCoord(EastNorth en) {

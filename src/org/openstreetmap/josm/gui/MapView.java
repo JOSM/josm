@@ -189,11 +189,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     /**
      * This class is an adapter for the old layer change interface.
-     * <p>
-     * New implementations should use {@link org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener}
      * @author Michael Zangl
      * @since 10271
+     * @deprecated New implementations should use {@link org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener}
      */
+    @Deprecated
     protected static class LayerChangeAdapter implements ActiveLayerChangeListener, LayerManager.LayerChangeListener {
 
         private final LayerChangeListener wrapped;
@@ -668,7 +668,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * @return true if the active data layer (edit layer) is drawable, false otherwise
      */
     public boolean isActiveLayerDrawable() {
-         return getEditLayer() != null;
+         return layerManager.getEditLayer() != null;
     }
 
     /**
@@ -677,7 +677,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * @return true if the active data layer (edit layer) is visible, false otherwise
      */
     public boolean isActiveLayerVisible() {
-        OsmDataLayer e = getEditLayer();
+        OsmDataLayer e = layerManager.getEditLayer();
         return e != null && e.isVisible();
     }
 

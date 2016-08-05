@@ -12,6 +12,7 @@ import java.util.ListIterator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
 public class OffsetBookmark {
@@ -100,7 +101,7 @@ public class OffsetBookmark {
         return null;
     }
 
-    public static void bookmarkOffset(String name, ImageryLayer layer) {
+    public static void bookmarkOffset(String name, AbstractTileSourceLayer layer) {
         LatLon center;
         if (Main.isDisplayingMapView()) {
             center = Main.getProjection().eastNorth2latlon(Main.map.mapView.getCenter());
@@ -109,7 +110,7 @@ public class OffsetBookmark {
         }
         OffsetBookmark nb = new OffsetBookmark(
                 Main.getProjection().toCode(), layer.getInfo().getName(),
-                name, layer.getDx(), layer.getDy(), center.lon(), center.lat());
+                name, layer.getDisplaySettings().getDx(), layer.getDisplaySettings().getDy(), center.lon(), center.lat());
         for (ListIterator<OffsetBookmark> it = allBookmarks.listIterator(); it.hasNext();) {
             OffsetBookmark b = it.next();
             if (b.isUsable(layer) && name.equals(b.name)) {
