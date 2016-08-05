@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class TagCheckerTest {
         assertEquals(1, errors.size());
         assertEquals("Misspelled property key", errors.get(0).getMessage());
         assertEquals("Key 'Name' looks like 'name'.", errors.get(0).getDescription());
-        assertEquals(true, errors.get(0).isFixable());
+        assertTrue(errors.get(0).isFixable());
     }
 
     /**
@@ -62,7 +63,7 @@ public class TagCheckerTest {
         assertEquals(1, errors.size());
         assertEquals("Misspelled property key", errors.get(0).getMessage());
         assertEquals("Key 'landuse;' looks like 'landuse'.", errors.get(0).getDescription());
-        assertEquals(true, errors.get(0).isFixable());
+        assertTrue(errors.get(0).isFixable());
     }
 
     /**
@@ -76,7 +77,7 @@ public class TagCheckerTest {
         assertEquals(1, errors.size());
         assertEquals("Misspelled property key", errors.get(0).getMessage());
         assertEquals("Key 'Brand' looks like 'brand'.", errors.get(0).getDescription());
-        assertEquals(false, errors.get(0).isFixable());
+        assertFalse(errors.get(0).isFixable());
     }
 
     /**

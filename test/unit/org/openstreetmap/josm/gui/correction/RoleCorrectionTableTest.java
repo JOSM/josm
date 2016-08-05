@@ -61,14 +61,14 @@ public class RoleCorrectionTableTest {
         assertEquals("relation (0, 1 member)", model.getValueAt(0, 0));
         assertEquals("foo", model.getValueAt(0, 1));
         assertEquals("bar", model.getValueAt(0, 2));
-        assertEquals(Boolean.TRUE, model.getValueAt(0, 3));
+        assertTrue((Boolean) model.getValueAt(0, 3));
         assertNull(model.getValueAt(0, 4));
         model.setValueAt("", 0, 0);
         assertEquals("relation (0, 1 member)", model.getValueAt(0, 0));
         model.setValueAt("", 0, 3);
-        assertEquals(Boolean.TRUE, model.getValueAt(0, 3));
+        assertTrue((Boolean) model.getValueAt(0, 3));
         model.setValueAt(Boolean.FALSE, 0, 3);
-        assertEquals(Boolean.FALSE, model.getValueAt(0, 3));
+        assertFalse((Boolean) model.getValueAt(0, 3));
         RoleCorrection[] array = new RoleCorrection[15];
         Arrays.fill(array, rc);
         t = new RoleCorrectionTable(Arrays.asList(array));
