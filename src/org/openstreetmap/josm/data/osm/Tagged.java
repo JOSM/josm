@@ -34,6 +34,16 @@ public interface Tagged {
     void put(String key, String value);
 
     /**
+     * Sets a key/value pairs
+     *
+     * @param tag The tag to set.
+     * @since 10736
+     */
+    default void put(Tag tag) {
+        put(tag.getKey(), tag.getValue());
+    }
+
+    /**
      * Replies the value of the given key; null, if there is no value for this key
      *
      * @param key the key
