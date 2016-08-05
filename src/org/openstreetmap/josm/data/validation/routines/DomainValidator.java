@@ -291,9 +291,10 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016080300, Last Updated Wed Aug  3 07:07:01 2016 UTC
+        // Taken from Version 2016080402, Last Updated Fri Aug  5 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
+        "abarth", // abarth Fiat Chrysler Automobiles N.V.
         "abb", // abb ABB Ltd
         "abbott", // abbott Abbott Laboratories, Inc.
         "abbvie", // abbvie AbbVie Inc.
@@ -350,6 +351,7 @@ public final class DomainValidator extends AbstractValidator {
         "arte", // arte Association Relative à la Télévision Européenne G.E.I.E.
         "asia", // asia DotAsia Organisation Ltd.
         "associates", // associates Baxter Hill, LLC
+        "athleta", // athleta The Gap, Inc.
         "attorney", // attorney United TLD Holdco, Ltd
         "auction", // auction United TLD HoldCo, Ltd.
         "audi", // audi AUDI Aktiengesellschaft
@@ -365,6 +367,7 @@ public final class DomainValidator extends AbstractValidator {
         "baby", // baby Johnson &amp; Johnson Services, Inc.
         "baidu", // baidu Baidu, Inc.
         "banamex", // banamex Citigroup Inc.
+        "bananarepublic", // bananarepublic The Gap, Inc.
         "band", // band United TLD Holdco, Ltd
         "bank", // bank fTLD Registry Services, LLC
         "bar", // bar Punto 2012 Sociedad Anonima Promotora de Inversion de Capital Variable
@@ -399,6 +402,7 @@ public final class DomainValidator extends AbstractValidator {
         "black", // black Afilias Limited
         "blackfriday", // blackfriday Uniregistry, Corp.
         "blanco", // blanco BLANCO GmbH + Co KG
+        "blockbuster", // blockbuster Dish DBS Corporation
         "blog", // blog Knock Knock WHOIS There, LLC
         "bloomberg", // bloomberg Bloomberg IP Holdings LLC
         "blue", // blue Afilias Limited
@@ -437,6 +441,7 @@ public final class DomainValidator extends AbstractValidator {
         "cafe", // cafe Pioneer Canyon, LLC
         "cal", // cal Charleston Road Registry Inc.
         "call", // call Amazon Registry Services, Inc.
+        "calvinklein", // calvinklein PVH gTLD Holdings LLC
         "cam", // cam AC Webconnecting Holding B.V.
         "camera", // camera Atomic Maple, LLC
         "camp", // camp Delta Dynamite, LLC
@@ -460,6 +465,7 @@ public final class DomainValidator extends AbstractValidator {
         "cba", // cba COMMONWEALTH BANK OF AUSTRALIA
         "cbn", // cbn The Christian Broadcasting Network, Inc.
         "cbre", // cbre CBRE, Inc.
+        "cbs", // cbs CBS Domains Inc.
         "ceb", // ceb The Corporate Executive Board Company
         "center", // center Tin Mill, LLC
         "ceo", // ceo CEOTLD Pty Ltd
@@ -566,6 +572,7 @@ public final class DomainValidator extends AbstractValidator {
         "dnp", // dnp Dai Nippon Printing Co., Ltd.
         "docs", // docs Charleston Road Registry Inc.
         "doctor", // doctor Brice Trail, LLC
+        "dodge", // dodge FCA US LLC.
         "dog", // dog Koko Mill, LLC
         "doha", // doha Communications Regulatory Authority (CRA)
         "domains", // domains Sugar Cross, LLC
@@ -624,6 +631,7 @@ public final class DomainValidator extends AbstractValidator {
         "ferrari", // ferrari Fiat Chrysler Automobiles N.V.
         "ferrero", // ferrero Ferrero Trading Lux S.A.
         "fiat", // fiat Fiat Chrysler Automobiles N.V.
+        "fidelity", // fidelity Fidelity Brokerage Services LLC
         "film", // film Motion Picture Domain Registry Pty Ltd
         "final", // final Núcleo de Informação e Coordenação do Ponto BR - NIC.br
         "finance", // finance Cotton Cypress, LLC
@@ -668,6 +676,7 @@ public final class DomainValidator extends AbstractValidator {
         "gallup", // gallup Gallup, Inc.
         "game", // game Uniregistry, Corp.
         "games", // games United TLD Holdco Ltd.
+        "gap", // gap The Gap, Inc.
         "garden", // garden Top Level Domain Holdings Limited
         "gbiz", // gbiz Charleston Road Registry Inc.
         "gdn", // gdn Joint Stock Company "Navigation-information systems"
@@ -827,12 +836,14 @@ public final class DomainValidator extends AbstractValidator {
         "lamborghini", // lamborghini Automobili Lamborghini S.p.A.
         "lamer", // lamer The Estée Lauder Companies Inc.
         "lancaster", // lancaster LANCASTER
+        "lancia", // lancia Fiat Chrysler Automobiles N.V.
         "lancome", // lancome L&#39;Oréal
         "land", // land Pine Moon, LLC
         "landrover", // landrover Jaguar Land Rover Ltd
         "lanxess", // lanxess LANXESS Corporation
         "lasalle", // lasalle Jones Lang LaSalle Incorporated
         "lat", // lat ECOM-LAC Federación de Latinoamérica y el Caribe para Internet y el Comercio Electrónico
+        "latino", // latino Dish DBS Corporation
         "latrobe", // latrobe La Trobe University
         "law", // law Minds + Machines Group Limited
         "lawyer", // lawyer United TLD Holdco, Ltd
@@ -865,6 +876,7 @@ public final class DomainValidator extends AbstractValidator {
         "loans", // loans June Woods, LLC
         "locker", // locker Dish DBS Corporation
         "locus", // locus Locus Analytics LLC
+        "loft", // loft Annco, Inc.
         "lol", // lol Uniregistry, Corp.
         "london", // london Dot London Domains Limited
         "lotte", // lotte Lotte Holdings Co., Ltd.
@@ -891,6 +903,7 @@ public final class DomainValidator extends AbstractValidator {
         "markets", // markets DOTMARKETS REGISTRY LTD
         "marriott", // marriott Marriott Worldwide Corporation
         "marshalls", // marshalls The TJX Companies, Inc.
+        "maserati", // maserati Fiat Chrysler Automobiles N.V.
         "mattel", // mattel Mattel Sites, Inc.
         "mba", // mba Lone Hollow, LLC
         "mckinsey", // mckinsey McKinsey Holdings, Inc.
@@ -981,6 +994,7 @@ public final class DomainValidator extends AbstractValidator {
         "okinawa", // okinawa BusinessRalliart inc.
         "olayan", // olayan Crescent Holding GmbH
         "olayangroup", // olayangroup Crescent Holding GmbH
+        "oldnavy", // oldnavy The Gap, Inc.
         "ollo", // ollo Dish DBS Corporation
         "omega", // omega The Swatch Group Ltd
         "one", // one One.com A/S
@@ -1059,6 +1073,7 @@ public final class DomainValidator extends AbstractValidator {
         "qpon", // qpon dotCOOL, Inc.
         "quebec", // quebec PointQuébec Inc
         "quest", // quest Quest ION Limited
+        "qvc", // qvc QVC, Inc.
         "racing", // racing Premier Registry Limited
         "raid", // raid Johnson Shareholdings, Inc.
         "read", // read Amazon Registry Services, Inc.
@@ -1152,6 +1167,7 @@ public final class DomainValidator extends AbstractValidator {
         "shopping", // shopping Over Keep, LLC
         "shouji", // shouji QIHOO 360 TECHNOLOGY CO. LTD.
         "show", // show Snow Beach, LLC
+        "showtime", // showtime CBS Domains Inc.
         "shriram", // shriram Shriram Capital Ltd.
         "silk", // silk Amazon Registry Service, Inc.
         "sina", // sina Sina Corporation
@@ -1213,6 +1229,7 @@ public final class DomainValidator extends AbstractValidator {
         "taipei", // taipei Taipei City Government
         "talk", // talk Amazon Registry Services, Inc.
         "taobao", // taobao Alibaba Group Holding Limited
+        "target", // target Target Domain Holdings, LLC
         "tatamotors", // tatamotors Tata Motors Ltd
         "tatar", // tatar Limited Liability Company "Coordination Center of Regional Domain of Tatarstan Republic"
         "tattoo", // tattoo Uniregistry, Corp.
