@@ -23,10 +23,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public final class AddImageryLayerActionTest {
     /**
      * We need prefs for this. We need platform for actions and the OSM API for checking blacklist.
+     * The timeout is set to default httpclient read timeout + connect timeout + a small delay to ignore
+     * common but harmless network issues.
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform().fakeAPI().timeout(15000);
+    public JOSMTestRules test = new JOSMTestRules().preferences().platform().fakeAPI().timeout(45500);
 
     /**
      * Unit test of {@link AddImageryLayerAction#updateEnabledState}.
