@@ -289,17 +289,13 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
             setVisible(false);
         }
 
-        protected void updateEnabledState() {
+        void updateEnabledState() {
             if (mode == null) {
                 setEnabled(false);
             } else if (mode.equals(Mode.RESOLVING_ONE_TAGCOLLECTION_ONLY)) {
                 setEnabled(allPrimitivesResolver.getModel().isResolvedCompletely());
             } else {
-                boolean enabled = true;
-                for (TagConflictResolver val: resolvers.values()) {
-                    enabled &= val.getModel().isResolvedCompletely();
-                }
-                setEnabled(enabled);
+                setEnabled(resolvers.values().stream().allMatch(val -> val.getModel().isResolvedCompletely()));
             }
         }
 
@@ -345,8 +341,7 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
                 TagConflictResolver resolver = (TagConflictResolver) tpResolvers.getComponentAt(i);
                 if (model == resolver.getModel()) {
                     tpResolvers.setIconAt(i,
-                            (Boolean) evt.getNewValue() ? iconResolved : iconUnresolved
-
+                            (Integer) evt.getNewValue() == 0 ? iconResolved : iconUnresolved
                     );
                 }
             }

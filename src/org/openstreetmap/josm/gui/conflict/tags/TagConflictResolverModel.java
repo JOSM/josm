@@ -21,7 +21,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     private transient TagCollection tags;
     private List<String> displayedKeys;
-    private Set<String> keysWithConflicts;
+    private Set<String> keysWithConflicts = new HashSet<>();
     private transient Map<String, MultiValueResolutionDecision> decisions;
     private int numConflicts;
     private final PropertyChangeSupport support;
@@ -53,13 +53,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
     }
 
     protected void refreshNumConflicts() {
-        int count = 0;
-        for (MultiValueResolutionDecision d : decisions.values()) {
-            if (!d.isDecided()) {
-                count++;
-            }
-        }
-        setNumConflicts(count);
+        setNumConflicts((int) decisions.values().stream().filter(d -> !d.isDecided()).count());
     }
 
     protected void sort() {
@@ -121,7 +115,9 @@ public class TagConflictResolverModel extends DefaultTableModel {
         CheckParameterUtil.ensureParameterNotNull(tags, "tags");
         this.tags = tags;
         displayedKeys = new ArrayList<>();
-        this.keysWithConflicts = keysWithConflicts == null ? new HashSet<>() : keysWithConflicts;
+        if (keysWithConflicts != null) {
+            this.keysWithConflicts.addAll(keysWithConflicts);
+        }
         decisions = new HashMap<>();
         rebuild();
     }
@@ -182,13 +178,21 @@ public class TagConflictResolverModel extends DefaultTableModel {
      * @return true if each {@link MultiValueResolutionDecision} is decided; false otherwise
      */
     public boolean isResolvedCompletely() {
-        return numConflicts == 0 && keysWithConflicts != null && keysWithConflicts.isEmpty();
+        return numConflicts == 0;
     }
 
+    /**
+     * Gets the number of reamining conflicts.
+     * @return The number
+     */
     public int getNumConflicts() {
         return numConflicts;
     }
 
+    /**
+     * Gets the number of decisions the user can take
+     * @return The number of decisions
+     */
     public int getNumDecisions() {
         return decisions == null ? 0 : decisions.size();
     }

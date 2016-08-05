@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,8 +15,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
@@ -44,7 +48,9 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @since 2008
  */
-public class TagCollection implements Iterable<Tag> {
+public class TagCollection implements Iterable<Tag>, Serializable {
+
+    private static final long serialVersionUID = 1;
 
     /**
      * Creates a tag collection from the tags managed by a specific
@@ -145,7 +151,7 @@ public class TagCollection implements Iterable<Tag> {
         return tags;
     }
 
-    private final Set<Tag> tags = new HashSet<>();
+    private final Map<Tag, Integer> tags = new HashMap<>();
 
     /**
      * Creates an empty tag collection.
@@ -162,7 +168,7 @@ public class TagCollection implements Iterable<Tag> {
      */
     public TagCollection(TagCollection other) {
         if (other != null) {
-            tags.addAll(other.tags);
+            tags.putAll(other.tags);
         }
     }
 
@@ -199,9 +205,19 @@ public class TagCollection implements Iterable<Tag> {
      * @param tag the tag to add
      */
     public final void add(Tag tag) {
-        if (tag == null) return;
-        if (tags.contains(tag)) return;
-        tags.add(tag);
+        if (tag != null) {
+            tags.merge(tag, 1, (i, j) -> i + j);
+        }
+    }
+
+    /**
+     * Gets the number of this this tag was added to the collection.
+     * @param tag The tag
+     * @return The number of thimes this tag is used in this collection.
+     * @since 10736
+     */
+    public int getTagOccurence(Tag tag) {
+        return tags.getOrDefault(tag, 0);
     }
 
     /**
@@ -224,8 +240,11 @@ public class TagCollection implements Iterable<Tag> {
      * @param tags the other tag collection
      */
     public final void add(TagCollection tags) {
-        if (tags == null) return;
-        this.tags.addAll(tags.tags);
+        if (tags != null) {
+            for (Entry<Tag, Integer> entry : tags.tags.entrySet()) {
+                this.tags.merge(entry.getKey(), entry.getValue(), (i, j) -> i + j);
+            }
+        }
     }
 
     /**
@@ -246,8 +265,9 @@ public class TagCollection implements Iterable<Tag> {
      * @param tags the tags to be removed
      */
     public void remove(Collection<Tag> tags) {
-        if (tags == null) return;
-        this.tags.removeAll(tags);
+        if (tags != null) {
+            tags.stream().forEach(this::remove);
+        }
     }
 
     /**
@@ -257,8 +277,9 @@ public class TagCollection implements Iterable<Tag> {
      * @param tags the tag collection to be removed.
      */
     public void remove(TagCollection tags) {
-        if (tags == null) return;
-        this.tags.removeAll(tags.tags);
+        if (tags != null) {
+            tags.tags.keySet().stream().forEach(this::remove);
+        }
     }
 
     /**
@@ -268,11 +289,12 @@ public class TagCollection implements Iterable<Tag> {
      * @param key the key to be removed
      */
     public void removeByKey(String key) {
-        if (key == null) return;
-        Iterator<Tag> it = tags.iterator();
-        while (it.hasNext()) {
-            if (it.next().matchesKey(key)) {
-                it.remove();
+        if (key != null) {
+            Iterator<Tag> it = tags.keySet().iterator();
+            while (it.hasNext()) {
+                if (it.next().matchesKey(key)) {
+                    it.remove();
+                }
             }
         }
     }
@@ -297,7 +319,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return true if the this tag collection contains <code>tag</code>; false, otherwise
      */
     public boolean contains(Tag tag) {
-        return tags.contains(tag);
+        return tags.containsKey(tag);
     }
 
     /**
@@ -305,13 +327,11 @@ public class TagCollection implements Iterable<Tag> {
      *
      * @param key the key to look up
      * @return true if this tag collection contains at least one tag with key <code>key</code>; false, otherwise
+     * @deprecated Use {@link #hasTagsFor(String)} instead.
      */
+    @Deprecated
     public boolean containsKey(String key) {
-        if (key == null) return false;
-        for (Tag tag: tags) {
-            if (tag.matchesKey(key)) return true;
-        }
-        return false;
+        return generateStreamForKey(key).findAny().isPresent();
     }
 
     /**
@@ -323,8 +343,11 @@ public class TagCollection implements Iterable<Tag> {
      * false, if tags is null.
      */
     public boolean containsAll(Collection<Tag> tags) {
-        if (tags == null) return false;
-        return this.tags.containsAll(tags);
+        if (tags == null) {
+            return false;
+        } else {
+            return this.tags.keySet().containsAll(tags);
+        }
     }
 
     /**
@@ -335,31 +358,21 @@ public class TagCollection implements Iterable<Tag> {
      * @return true if this tag collection at least one tag for every key in <code>keys</code>.
      */
     public boolean containsAllKeys(Collection<String> keys) {
-        if (keys == null) return false;
-        for (String key: keys) {
-            if (key == null) {
-                continue;
-            }
-            if (!containsKey(key)) return false;
+        if (keys == null) {
+            return false;
+        } else {
+            return keys.stream().filter(Objects::nonNull).allMatch(this::hasTagsFor);
         }
-        return true;
     }
 
     /**
      * Replies the number of tags with key <code>key</code>
      *
      * @param key the key to look up
-     * @return the number of tags with key <code>key</code>. 0, if key is null.
+     * @return the number of tags with key <code>key</code>, including the empty "" value. 0, if key is null.
      */
     public int getNumTagsFor(String key) {
-        if (key == null) return 0;
-        int count = 0;
-        for (Tag tag: tags) {
-            if (tag.matchesKey(key)) {
-                count++;
-            }
-        }
-        return count;
+        return (int) generateStreamForKey(key).count();
     }
 
     /**
@@ -380,10 +393,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return true it there is at least one tag with a non empty value for key.
      */
     public boolean hasValuesFor(String key) {
-        if (key == null) return false;
-        Set<String> values = getTagsFor(key).getValues();
-        values.remove("");
-        return !values.isEmpty();
+        return generateStreamForKey(key).filter(t -> !t.getValue().isEmpty()).findAny().isPresent();
     }
 
     /**
@@ -396,9 +406,7 @@ public class TagCollection implements Iterable<Tag> {
      * if the value of this tag is not empty
      */
     public boolean hasUniqueNonEmptyValue(String key) {
-        if (key == null) return false;
-        Set<String> values = getTagsFor(key).getValues();
-        return values.size() == 1 && !values.contains("");
+        return generateStreamForKey(key).filter(t -> !t.getValue().isEmpty()).count() == 1;
     }
 
     /**
@@ -409,9 +417,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return true if there is a tag with an empty value for <code>key</code>
      */
     public boolean hasEmptyValue(String key) {
-        if (key == null) return false;
-        Set<String> values = getTagsFor(key).getValues();
-        return values.contains("");
+        return generateStreamForKey(key).anyMatch(t -> t.getValue().isEmpty());
     }
 
     /**
@@ -423,8 +429,7 @@ public class TagCollection implements Iterable<Tag> {
      * the value for this tag is empty
      */
     public boolean hasUniqueEmptyValue(String key) {
-        if (key == null) return false;
-        Set<String> values = getTagsFor(key).getValues();
+        Set<String> values = getValues(key);
         return values.size() == 1 && values.contains("");
     }
 
@@ -438,13 +443,7 @@ public class TagCollection implements Iterable<Tag> {
      */
     public TagCollection getTagsFor(String key) {
         TagCollection ret = new TagCollection();
-        if (key == null)
-            return ret;
-        for (Tag tag: tags) {
-            if (tag.matchesKey(key)) {
-                ret.add(tag);
-            }
-        }
+        generateStreamForKey(key).forEach(ret::add);
         return ret;
     }
 
@@ -474,17 +473,17 @@ public class TagCollection implements Iterable<Tag> {
      * @return the tags of this tag collection as set
      */
     public Set<Tag> asSet() {
-        return new HashSet<>(tags);
+        return new HashSet<>(tags.keySet());
     }
 
     /**
      * Replies the tags of this tag collection as list.
      * Note that the order of the list is not preserved between method invocations.
      *
-     * @return the tags of this tag collection as list.
+     * @return the tags of this tag collection as list. There are no dupplicate values.
      */
     public List<Tag> asList() {
-        return new ArrayList<>(tags);
+        return new ArrayList<>(tags.keySet());
     }
 
     /**
@@ -494,7 +493,7 @@ public class TagCollection implements Iterable<Tag> {
      */
     @Override
     public Iterator<Tag> iterator() {
-        return tags.iterator();
+        return tags.keySet().iterator();
     }
 
     /**
@@ -503,11 +502,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of keys of this tag collection
      */
     public Set<String> getKeys() {
-        Set<String> ret = new HashSet<>();
-        for (Tag tag: tags) {
-            ret.add(tag.getKey());
-        }
-        return ret;
+        return generateKeyStream().collect(Collectors.toCollection(HashSet::new));
     }
 
     /**
@@ -516,18 +511,8 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of keys which have at least 2 matching tags.
      */
     public Set<String> getKeysWithMultipleValues() {
-        Map<String, Integer> counters = new HashMap<>();
-        for (Tag tag: tags) {
-            Integer v = counters.get(tag.getKey());
-            counters.put(tag.getKey(), (v == null) ? 1 : v+1);
-        }
-        Set<String> ret = new HashSet<>();
-        for (Entry<String, Integer> e : counters.entrySet()) {
-            if (e.getValue() > 1) {
-                ret.add(e.getKey());
-            }
-        }
-        return ret;
+        HashSet<String> singleKeys = new HashSet<>();
+        return generateKeyStream().filter(key -> !singleKeys.add(key)).collect(Collectors.toSet());
     }
 
     /**
@@ -561,11 +546,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return the set of values
      */
     public Set<String> getValues() {
-        Set<String> ret = new HashSet<>();
-        for (Tag tag: tags) {
-            ret.add(tag.getValue());
-        }
-        return ret;
+        return tags.keySet().stream().map(e -> e.getValue()).collect(Collectors.toSet());
     }
 
     /**
@@ -577,14 +558,8 @@ public class TagCollection implements Iterable<Tag> {
      * are no values for the given key
      */
     public Set<String> getValues(String key) {
-        Set<String> ret = new HashSet<>();
-        if (key == null) return ret;
-        for (Tag tag: tags) {
-            if (tag.matchesKey(key)) {
-                ret.add(tag.getValue());
-            }
-        }
-        return ret;
+        // null-safe
+        return generateStreamForKey(key).map(e -> e.getValue()).collect(Collectors.toSet());
     }
 
     /**
@@ -593,7 +568,7 @@ public class TagCollection implements Iterable<Tag> {
      * @return {@code true} if for every key there is one tag only
      */
     public boolean isApplicableToPrimitive() {
-        return size() == getKeys().size();
+        return getKeysWithMultipleValues().isEmpty();
     }
 
     /**
@@ -606,9 +581,8 @@ public class TagCollection implements Iterable<Tag> {
      */
     public void applyTo(Tagged primitive) {
         if (primitive == null) return;
-        if (!isApplicableToPrimitive())
-            throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
-        for (Tag tag: tags) {
+        ensureApplicableToPrimitive();
+        for (Tag tag: tags.keySet()) {
             if (tag.getValue() == null || tag.getValue().isEmpty()) {
                 primitive.remove(tag.getKey());
             } else {
@@ -627,8 +601,7 @@ public class TagCollection implements Iterable<Tag> {
      */
     public void applyTo(Collection<? extends Tagged> primitives) {
         if (primitives == null) return;
-        if (!isApplicableToPrimitive())
-            throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
+        ensureApplicableToPrimitive();
         for (Tagged primitive: primitives) {
             applyTo(primitive);
         }
@@ -644,10 +617,9 @@ public class TagCollection implements Iterable<Tag> {
      */
     public void replaceTagsOf(Tagged primitive) {
         if (primitive == null) return;
-        if (!isApplicableToPrimitive())
-            throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
+        ensureApplicableToPrimitive();
         primitive.removeAll();
-        for (Tag tag: tags) {
+        for (Tag tag: tags.keySet()) {
             primitive.put(tag.getKey(), tag.getValue());
         }
     }
@@ -662,27 +634,27 @@ public class TagCollection implements Iterable<Tag> {
      */
     public void replaceTagsOf(Collection<? extends Tagged> primitives) {
         if (primitives == null) return;
-        if (!isApplicableToPrimitive())
-            throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
+        ensureApplicableToPrimitive();
         for (Tagged primitive: primitives) {
             replaceTagsOf(primitive);
         }
+    }
+
+    private void ensureApplicableToPrimitive() {
+        if (!isApplicableToPrimitive())
+            throw new IllegalStateException(tr("Tag collection cannot be applied to a primitive because there are keys with multiple values."));
     }
 
     /**
      * Builds the intersection of this tag collection and another tag collection
      *
      * @param other the other tag collection. If null, replies an empty tag collection.
-     * @return the intersection of this tag collection and another tag collection
+     * @return the intersection of this tag collection and another tag collection. All counts are set to 1.
      */
     public TagCollection intersect(TagCollection other) {
         TagCollection ret = new TagCollection();
         if (other != null) {
-            for (Tag tag: tags) {
-                if (other.contains(tag)) {
-                    ret.add(tag);
-                }
-            }
+            tags.keySet().stream().filter(other::contains).forEach(ret::add);
         }
         return ret;
     }
@@ -705,7 +677,7 @@ public class TagCollection implements Iterable<Tag> {
      * Replies the union of this tag collection and another tag collection
      *
      * @param other the other tag collection. May be null.
-     * @return the union of this tag collection and another tag collection
+     * @return the union of this tag collection and another tag collection. The tag count is summed.
      */
     public TagCollection union(TagCollection other) {
         TagCollection ret = new TagCollection(this);
@@ -757,10 +729,10 @@ public class TagCollection implements Iterable<Tag> {
     }
 
     /**
-     * Replies the sum of all numeric tag values.
+     * Replies the sum of all numeric tag values. Ignores dupplicates.
      * @param key the key to look up
      *
-     * @return the sum of all numeric tag values, as string
+     * @return the sum of all numeric tag values, as string.
      * @since 7743
      */
     public String getSummedValues(String key) {
@@ -773,6 +745,19 @@ public class TagCollection implements Iterable<Tag> {
             }
         }
         return Integer.toString(result);
+    }
+
+    private Stream<String> generateKeyStream() {
+        return tags.keySet().stream().map(tag -> tag.getKey());
+    }
+
+    /**
+     * Get a stram for the given key.
+     * @param key The key
+     * @return The stream. An empty stream if key is <code>null</code>
+     */
+    private Stream<Tag> generateStreamForKey(String key) {
+        return tags.keySet().stream().filter(e -> e.matchesKey(key));
     }
 
     @Override
