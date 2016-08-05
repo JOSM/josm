@@ -62,12 +62,13 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Many SVG files can be loaded at one time. These files will quite likely need
@@ -573,11 +574,13 @@ public class SVGUniverse implements Serializable
         }
     }
 
-    private XMLReader getXMLReaderCached() throws SAXException
+    private XMLReader getXMLReaderCached() throws SAXException, ParserConfigurationException
     {
         if (cachedReader == null)
         {
-            cachedReader = XMLReaderFactory.createXMLReader();
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            cachedReader = factory.newSAXParser().getXMLReader();
         }
         return cachedReader;
     }

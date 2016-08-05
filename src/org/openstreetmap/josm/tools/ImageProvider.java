@@ -55,6 +55,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.swing.ImageIcon;
 import javax.xml.bind.DatatypeConverter;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -79,7 +80,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGException;
@@ -1215,7 +1215,7 @@ public class ImageProvider {
      */
     private static String getImgUrlFromWikiInfoPage(final String base, final String fn) {
         try {
-            final XMLReader parser = XMLReaderFactory.createXMLReader();
+            final XMLReader parser = Utils.newSafeSAXParser().getXMLReader();
             parser.setContentHandler(new DefaultHandler() {
                 @Override
                 public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
@@ -1238,7 +1238,7 @@ public class ImageProvider {
         } catch (SAXReturnException r) {
             Main.trace(r);
             return r.getResult();
-        } catch (IOException | SAXException e) {
+        } catch (IOException | SAXException | ParserConfigurationException e) {
             Main.warn("Parsing " + base + fn + " failed:\n" + e);
             return null;
         }
