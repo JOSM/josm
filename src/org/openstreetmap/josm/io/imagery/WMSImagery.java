@@ -208,7 +208,6 @@ public class WMSImagery {
             return;
         }
 
-        Main.info("GET " + getCapabilitiesUrl);
         final String incomingData = HttpClient.create(getCapabilitiesUrl).connect().fetchContent();
         Main.debug("Server response to Capabilities request:");
         Main.debug(incomingData);
