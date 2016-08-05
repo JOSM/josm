@@ -142,7 +142,7 @@ public final class Utils {
      */
     public static <T> boolean exists(Iterable<T> collection, Class<? extends T> clazz) {
         CheckParameterUtil.ensureParameterNotNull(clazz, "clazz");
-        return exists(collection, clazz::isInstance);
+        return StreamUtils.toStream(collection).anyMatch(clazz::isInstance);
     }
 
     /**
