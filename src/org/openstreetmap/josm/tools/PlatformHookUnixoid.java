@@ -281,6 +281,23 @@ public class PlatformHookUnixoid implements PlatformHook {
         return null;
     }
 
+    /**
+     * Get the Gnome ATK wrapper package name including detailed version.
+     *
+     * Debian and Ubuntu derivatives come with a pre-enabled accessibility software
+     * completely buggy that makes Swing crash in a lot of different ways.
+     *
+     * Simply return {@code null} if it's not found.
+     *
+     * @return The package name and package version if it can be identified, null otherwise
+     */
+    public String getAtkWrapperPackageDetails() {
+        if (isOpenJDK() && isDebianOrUbuntu()) {
+            return getPackageDetails("libatk-wrapper-java");
+        }
+        return null;
+    }
+
     protected String buildOSDescription() {
         String osName = System.getProperty("os.name");
         if ("Linux".equalsIgnoreCase(osName)) {
