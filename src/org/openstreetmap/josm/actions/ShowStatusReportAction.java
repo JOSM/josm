@@ -107,6 +107,13 @@ public final class ShowStatusReportAction extends JosmAction {
                         .append('\n');
                 }
             }
+            // Add Gnome Atk wrapper details if found
+            String atkWrapperDetails = ((PlatformHookUnixoid) Main.platform).getAtkWrapperPackageDetails();
+            if (atkWrapperDetails != null) {
+                text.append("Java ATK Wrapper package: ")
+                    .append(atkWrapperDetails)
+                    .append('\n');
+            }
         }
         try {
             // Build a new list of VM parameters to modify it below if needed (default implementation returns an UnmodifiableList instance)
