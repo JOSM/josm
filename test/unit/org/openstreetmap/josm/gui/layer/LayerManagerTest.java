@@ -32,7 +32,6 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.testutils.ExpectedRootException;
-import org.openstreetmap.josm.tools.Predicates;
 import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
@@ -108,7 +107,7 @@ public class LayerManagerTest {
 
         @Override
         public LayerPositionStrategy getDefaultLayerPosition() {
-            return LayerPositionStrategy.afterLast(Predicates.<Layer>alwaysTrue());
+            return LayerPositionStrategy.afterLast(o -> true);
         }
     }
 

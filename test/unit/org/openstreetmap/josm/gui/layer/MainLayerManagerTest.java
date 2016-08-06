@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.tools.Predicates;
 
 /**
  * Tests {@link MainLayerManager}.
@@ -50,7 +49,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
 
         @Override
         public LayerPositionStrategy getDefaultLayerPosition() {
-            return LayerPositionStrategy.afterLast(Predicates.<Layer>alwaysTrue());
+            return LayerPositionStrategy.afterLast(o -> true);
         }
     }
 
