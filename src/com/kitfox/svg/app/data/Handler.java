@@ -41,10 +41,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.xml.bind.DatatypeConverter;
 
 /**
  *
@@ -70,7 +69,7 @@ public class Handler extends URLStreamHandler
             {
                 try
                 {
-                    buf = DatatypeConverter.parseBase64Binary(content.substring(7));
+                    buf = Base64.getDecoder().decode(content.substring(7));
                 }
                 catch (IllegalArgumentException e)
                 {

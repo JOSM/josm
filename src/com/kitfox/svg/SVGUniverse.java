@@ -55,13 +55,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import javax.imageio.ImageIO;
-import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.EntityResolver;
@@ -194,7 +194,7 @@ public class SVGUniverse implements Serializable
             {
                 try
                 {
-                    byte[] buf = DatatypeConverter.parseBase64Binary(content.substring(6));
+                    byte[] buf = Base64.getDecoder().decode(content.substring(6));
                     ByteArrayInputStream bais = new ByteArrayInputStream(buf);
                     BufferedImage img = ImageIO.read(bais);
 
