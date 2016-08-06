@@ -937,7 +937,7 @@ public class MultiSplitLayout implements LayoutManager {
          *
          * @return the Node that comes after this one in the parent's list of children.
          * @see #previousSibling
-         * @see #parent_get
+         * @see #getParent
          */
         public Node nextSibling() {
             return siblingAtOffset(+1);
@@ -950,7 +950,7 @@ public class MultiSplitLayout implements LayoutManager {
          *
          * @return the Node that comes before this one in the parent's list of children.
          * @see #nextSibling
-         * @see #parent_get
+         * @see #getParent
          */
         public Node previousSibling() {
             return siblingAtOffset(-1);
