@@ -19,7 +19,6 @@ public class OsmLayerTransferData extends LayerTransferData {
 
     /**
      * This is a data flavor specific for OSM data layers.
-     * <p>
      * @see LayerTransferData#FLAVOR
      * @see #FLAVORS
      */
