@@ -16,7 +16,7 @@ package oauth.signpost.signature;
 
 import java.io.IOException;
 import java.io.Serializable;
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.http.HttpRequest;
@@ -53,11 +53,11 @@ public abstract class OAuthMessageSigner implements Serializable {
     }
 
     protected byte[] decodeBase64(String s) {
-        return DatatypeConverter.parseBase64Binary(s);
+        return Base64.getDecoder().decode(s);
     }
 
     protected String base64Encode(byte[] b) {
-        return DatatypeConverter.printBase64Binary(b);
+        return Base64.getEncoder().encodeToString(b);
     }
 
     private void readObject(java.io.ObjectInputStream stream)
