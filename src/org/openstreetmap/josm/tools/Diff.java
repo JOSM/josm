@@ -290,17 +290,17 @@ public class Diff {
 
     /** Discard lines from one file that have no matches in the other file.
      */
-    private void discard_confusing_lines() {
-        filevec[0].discard_confusing_lines(filevec[1]);
-        filevec[1].discard_confusing_lines(filevec[0]);
+    private void discardConfusingLines() {
+        filevec[0].discardConfusingLines(filevec[1]);
+        filevec[1].discardConfusingLines(filevec[0]);
     }
 
     /**
      * Adjust inserts/deletes of blank lines to join changes as much as possible.
      */
-    private void shift_boundaries() {
-        filevec[0].shift_boundaries(filevec[1]);
-        filevec[1].shift_boundaries(filevec[0]);
+    private void shiftBoundaries() {
+        filevec[0].shiftBoundaries(filevec[1]);
+        filevec[1].shiftBoundaries(filevec[0]);
     }
 
     /**
@@ -402,7 +402,7 @@ public class Diff {
      * @param reverse if {@code true} use {@link #reverseScript} else use {@link #forwardScript}
      * @return the differences of two files
      */
-    public final Change diff_2(final boolean reverse) {
+    public final Change diff2(final boolean reverse) {
         return diff(reverse ? reverseScript : forwardScript);
     }
 
@@ -419,7 +419,7 @@ public class Diff {
 
         // Some lines are obviously insertions or deletions because they don't match anything.
         // Detect them now, and avoid even thinking about them in the main comparison algorithm.
-        discard_confusing_lines();
+        discardConfusingLines();
 
         // Now do the main comparison algorithm, considering just the undiscarded lines.
         xvec = filevec[0].undiscarded;
@@ -437,7 +437,7 @@ public class Diff {
         bdiag = null;
 
         // Modify the results slightly to make them prettier in cases where that can validly be done.
-        shift_boundaries();
+        shiftBoundaries();
 
         // Get the results of comparison in the form of a chain of `struct change's -- an edit script.
         return bld.buildScript(
@@ -546,7 +546,7 @@ public class Diff {
          * When we discard a line, we also mark it as a deletion or insertion so that it will be printed in the output.
          * @param f the other file
          */
-        void discard_confusing_lines(FileData f) {
+        void discardConfusingLines(FileData f) {
             clear();
             // Set up table of which lines are going to be discarded.
             final byte[] discarded = discardable(f.equivCount());
@@ -748,19 +748,16 @@ public class Diff {
             }
         }
 
-        /** Adjust inserts/deletes of blank lines to join changes
-       as much as possible.
-
-       We do something when a run of changed lines include a blank
-       line at one end and have an excluded blank line at the other.
-       We are free to choose which blank line is included.
-       `compareseq' always chooses the one at the beginning,
-       but usually it is cleaner to consider the following blank line
-       to be the "change".  The only exception is if the preceding blank line
-       would join this change to other changes.
-      @param f the file being compared against
+        /**
+         * Adjust inserts/deletes of blank lines to join changes as much as possible.
+         *
+         * We do something when a run of changed lines include a blank line at one end and have an excluded blank line at the other.
+         * We are free to choose which blank line is included.
+         * `compareseq' always chooses the one at the beginning, but usually it is cleaner to consider the following blank line
+         * to be the "change". The only exception is if the preceding blank line would join this change to other changes.
+         * @param f the file being compared against
          */
-        void shift_boundaries(FileData f) {
+        void shiftBoundaries(FileData f) {
             final boolean[] changed = changedFlag;
             final boolean[] otherChanged = f.changedFlag;
             int i = 0;

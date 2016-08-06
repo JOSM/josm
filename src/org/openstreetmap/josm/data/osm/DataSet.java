@@ -711,7 +711,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
         boolean changed = false;
         synchronized (selectionLock) {
             for (PrimitiveId o : osm) {
-                changed = changed | this.__toggleSelected(o);
+                changed = changed | this.dotoggleSelected(o);
             }
             if (changed) {
                 selectionSnapshot = null;
@@ -730,7 +730,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
         toggleSelected(Arrays.asList(osm));
     }
 
-    private boolean __toggleSelected(PrimitiveId primitiveId) {
+    private boolean dotoggleSelected(PrimitiveId primitiveId) {
         OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
         if (primitive == null)
             return false;

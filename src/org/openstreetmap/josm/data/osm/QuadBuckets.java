@@ -133,7 +133,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             }
         }
 
-        boolean remove_content(T o) {
+        boolean removeContent(T o) {
             // If two threads try to remove item at the same time from different buckets of this QBLevel,
             // it might happen that one thread removes bucket but don't remove parent because it still sees
             // another bucket set. Second thread do the same. Due to thread memory caching, it's possible that
@@ -146,7 +146,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 this.content = null;
             }
             if (this.canRemove()) {
-                this.remove_from_parent();
+                this.removeFromParent();
             }
             return ret;
         }
@@ -157,14 +157,14 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
          * attempt to null out 'children' because it thinks this
          * is a dead end.
          */
-        void __split() {
+        void doSplit() {
             List<T> tmpcontent = content;
             content = null;
 
             for (T o : tmpcontent) {
                 int idx = o.getBBox().getIndex(level);
                 if (idx == -1) {
-                    __add_content(o);
+                    doAddContent(o);
                 } else {
                     getChild(idx).doAdd(o);
                 }
@@ -172,7 +172,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             isLeaf = false; // It's not enough to check children because all items could end up in this level (index == -1)
         }
 
-        boolean __add_content(T o) {
+        boolean doAddContent(T o) {
             // The split_lock will keep two concurrent calls from overwriting content
             if (content == null) {
                 content = new ArrayList<>();
@@ -189,7 +189,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             return o.getBBox().intersects(searchBbox);
         }
 
-        private void search_contents(BBox searchBbox, List<T> result) {
+        private void searchContents(BBox searchBbox, List<T> result) {
             /*
              * It is possible that this was created in a split
              * but never got any content populated.
@@ -218,7 +218,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             return nw != null || ne != null || sw != null || se != null;
         }
 
-        QBLevel<T> next_sibling() {
+        QBLevel<T> findNextSibling() {
             return (parent == null) ? null : parent.firstSiblingOf(this);
         }
 
@@ -228,7 +228,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         QBLevel<T> nextSibling() {
             QBLevel<T> next = this;
-            QBLevel<T> sibling = next.next_sibling();
+            QBLevel<T> sibling = next.findNextSibling();
             // Walk back up the tree to find the next sibling node.
             // It may be either a leaf or branch.
             while (sibling == null) {
@@ -236,7 +236,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 if (next == null) {
                     break;
                 }
-                sibling = next.next_sibling();
+                sibling = next.findNextSibling();
             }
             return sibling;
         }
@@ -288,9 +288,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                     abort("\nobject " + o + " does not belong in node at level: " + level + " bbox: " + this.bbox());
                 }
             }
-            __add_content(o);
+            doAddContent(o);
             if (isLeaf() && content.size() > MAX_OBJECTS_PER_LEVEL && level < QuadTiling.NR_LEVELS) {
-                __split();
+                doSplit();
             }
         }
 
@@ -306,7 +306,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             }
 
             if (this.hasContent()) {
-                search_contents(searchBbox, result);
+                searchContents(searchBbox, result);
             }
 
             //TODO Coincidence vector should be calculated here and only buckets that match search_bbox should be checked
@@ -329,7 +329,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             return Long.toHexString(quad);
         }
 
-        int index_of(QBLevel<T> findThis) {
+        int indexOf(QBLevel<T> findThis) {
             QBLevel<T>[] children = getChildren();
             for (int i = 0; i < QuadTiling.TILES_PER_LEVEL; i++) {
                 if (children[i] == findThis)
@@ -358,7 +358,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             return QuadTiling.tile2LatLon(this.quad);
         }
 
-        void remove_from_parent() {
+        void removeFromParent() {
             if (parent == null)
                 return;
 
@@ -377,7 +377,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             }
 
             if (parent.canRemove()) {
-                parent.remove_from_parent();
+                parent.removeFromParent();
             }
         }
 
@@ -460,7 +460,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         T t = (T) o;
         searchCache = null; // Search cache might point to one of removed buckets
         QBLevel<T> bucket = root.findBucket(t.getBBox());
-        if (bucket.remove_content(t)) {
+        if (bucket.removeContent(t)) {
             size--;
             return true;
         } else
@@ -563,7 +563,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             //    an element
             contentIndex--;
             T object = peek();
-            currentNode.remove_content(object);
+            currentNode.removeContent(object);
         }
     }
 
@@ -606,7 +606,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         // A way that spans this bucket may be stored in one
         // of the nodes which is a parent of the search cache
         while (tmp != null) {
-            tmp.search_contents(searchBbox, ret);
+            tmp.searchContents(searchBbox, ret);
             tmp = tmp.parent;
         }
         return ret;

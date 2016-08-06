@@ -72,11 +72,11 @@ class TwoColumnDiff {
     }
 
     private void diff() {
-        Diff.Change script = new Diff(reference, current).diff_2(false);
+        Diff.Change script = new Diff(reference, current).diff2(false);
         // attempt diff with reference reversed and test whether less deletions+inserts are required
         Object[] referenceReversed = Utils.copyArray(reference);
         Collections.reverse(Arrays.asList(referenceReversed));
-        Diff.Change scriptReversed = new Diff(referenceReversed, current).diff_2(false);
+        Diff.Change scriptReversed = new Diff(referenceReversed, current).diff2(false);
         if (scriptReversed == null /* reference and current are identical */
                 || (script != null && scriptReversed.getTotalNumberOfChanges() < script.getTotalNumberOfChanges())) {
             this.referenceReversed = true;

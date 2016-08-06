@@ -101,7 +101,7 @@ public class MapImage {
                     synchronized (this) {
                         if (result == null) {
                             source.logWarning(tr("Failed to locate image ''{0}''", name));
-                            ImageIcon noIcon = MapPaintStyles.getNoIcon_Icon(source);
+                            ImageIcon noIcon = MapPaintStyles.getNoIconIcon(source);
                             img = noIcon == null ? null : (BufferedImage) noIcon.getImage();
                         } else {
                             img = (BufferedImage) rescale(result.getImage());
@@ -133,7 +133,7 @@ public class MapImage {
     }
 
     public float getAlphaFloat() {
-        return Utils.color_int2float(alpha);
+        return Utils.colorInt2float(alpha);
     }
 
     /**
