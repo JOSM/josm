@@ -136,7 +136,7 @@ public abstract class AbstractProj implements Proj {
      * @return the latitude of the meridian distance.
      * @throws RuntimeException if the itteration does not converge.
      */
-    protected final double inv_mlfn(double arg) {
+    protected final double invMlfn(double arg) {
         double s, t, phi, k = 1.0/(1.0 - e2);
         int i;
         phi = arg;

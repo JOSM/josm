@@ -308,7 +308,7 @@ public final class Utils {
      * @return null if val is null, the corresponding int if val is in the
      *         range 0...1. If val is outside that range, return 255
      */
-    public static Integer color_float2int(Float val) {
+    public static Integer colorFloat2int(Float val) {
         if (val == null)
             return null;
         if (val < 0 || val > 1)
@@ -322,7 +322,7 @@ public final class Utils {
      * @param val integer value
      * @return corresponding float value in range 0 &lt;= x &lt;= 1
      */
-    public static Float color_int2float(Integer val) {
+    public static Float colorInt2float(Integer val) {
         if (val == null)
             return null;
         if (val < 0 || val > 255)

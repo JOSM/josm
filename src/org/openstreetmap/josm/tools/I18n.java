@@ -231,12 +231,12 @@ public final class I18n {
         return MessageFormat.format(gettext(text, context), (Object) null);
     }
 
-    public static String trc_lazy(String context, String text) {
+    public static String trcLazy(String context, String text) {
         if (context == null)
             return tr(text);
         if (text == null)
             return null;
-        return MessageFormat.format(gettext_lazy(text, context), (Object) null);
+        return MessageFormat.format(gettextLazy(text, context), (Object) null);
     }
 
     /**
@@ -336,7 +336,7 @@ public final class I18n {
     }
 
     /* try without context, when context try fails */
-    private static String gettext_lazy(String text, String ctx) {
+    private static String gettextLazy(String text, String ctx) {
         return gettext(text, ctx, true);
     }
 

@@ -326,7 +326,7 @@ public final class ExpressionFactory {
          * @see java.awt.Color#getRed()
          */
         public static float red(Color c) { // NO_UCD (unused code)
-            return Utils.color_int2float(c.getRed());
+            return Utils.colorInt2float(c.getRed());
         }
 
         /**
@@ -336,7 +336,7 @@ public final class ExpressionFactory {
          * @see java.awt.Color#getGreen()
          */
         public static float green(Color c) { // NO_UCD (unused code)
-            return Utils.color_int2float(c.getGreen());
+            return Utils.colorInt2float(c.getGreen());
         }
 
         /**
@@ -346,7 +346,7 @@ public final class ExpressionFactory {
          * @see java.awt.Color#getBlue()
          */
         public static float blue(Color c) { // NO_UCD (unused code)
-            return Utils.color_int2float(c.getBlue());
+            return Utils.colorInt2float(c.getBlue());
         }
 
         /**
@@ -356,7 +356,7 @@ public final class ExpressionFactory {
          * @see java.awt.Color#getAlpha()
          */
         public static float alpha(Color c) { // NO_UCD (unused code)
-            return Utils.color_int2float(c.getAlpha());
+            return Utils.colorInt2float(c.getAlpha());
         }
 
         /**

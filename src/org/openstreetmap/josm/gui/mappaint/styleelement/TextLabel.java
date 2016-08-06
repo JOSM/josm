@@ -146,7 +146,7 @@ public class TextLabel implements StyleKeys {
         Color color = c.get(TEXT_COLOR, defaultTextColor, Color.class);
         float alpha = c.get(TEXT_OPACITY, 1f, Float.class);
         color = new Color(color.getRed(), color.getGreen(),
-                color.getBlue(), Utils.color_float2int(alpha));
+                color.getBlue(), Utils.colorFloat2int(alpha));
 
         Float haloRadius = c.get(TEXT_HALO_RADIUS, null, Float.class);
         if (haloRadius != null && haloRadius <= 0) {
@@ -157,7 +157,7 @@ public class TextLabel implements StyleKeys {
             haloColor = c.get(TEXT_HALO_COLOR, Utils.complement(color), Color.class);
             float haloAlpha = c.get(TEXT_HALO_OPACITY, 1f, Float.class);
             haloColor = new Color(haloColor.getRed(), haloColor.getGreen(),
-                    haloColor.getBlue(), Utils.color_float2int(haloAlpha));
+                    haloColor.getBlue(), Utils.colorFloat2int(haloAlpha));
         }
 
         return new TextLabel(strategy, font, (int) xOffset, -(int) yOffset, color, haloRadius, haloColor);

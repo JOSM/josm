@@ -155,7 +155,7 @@ public class TransverseMercator extends AbstractProj {
 
     @Override
     public double[] invproject(double x, double y) {
-        double phi = inv_mlfn(ml0 + y);
+        double phi = invMlfn(ml0 + y);
 
         if (Math.abs(phi) >= Math.PI/2) {
             y = y < 0.0 ? -(Math.PI/2) : (Math.PI/2);

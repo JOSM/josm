@@ -1334,14 +1334,14 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          * already in the tileCache.
          */
         private List<Tile> allExistingTiles() {
-            return this.__allTiles(false);
+            return this.findAllTiles(false);
         }
 
         private List<Tile> allTilesCreate() {
-            return this.__allTiles(true);
+            return this.findAllTiles(true);
         }
 
-        private List<Tile> __allTiles(boolean create) {
+        private List<Tile> findAllTiles(boolean create) {
             // Tileset is either empty or too large
             if (zoom == 0 || this.insane())
                 return Collections.emptyList();

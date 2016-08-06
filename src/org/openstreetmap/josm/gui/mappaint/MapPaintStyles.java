@@ -163,7 +163,7 @@ public final class MapPaintStyles {
      *   - josm's default icon
      *  can be null if the defaults are turned off by user
      */
-    public static ImageIcon getNoIcon_Icon(StyleSource source) {
+    public static ImageIcon getNoIconIcon(StyleSource source) {
         return new ImageProvider("presets/misc/no_icon")
                 .setDirs(getIconSourceDirs(source))
                 .setId("mappaint."+source.getPrefName())

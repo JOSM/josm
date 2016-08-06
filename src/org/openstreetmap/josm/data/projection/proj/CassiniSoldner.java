@@ -78,7 +78,7 @@ public class CassiniSoldner extends AbstractProj {
 
     @Override
     public double[] invproject(double x, double y) {
-        double ph1 = inv_mlfn(ml0 + y);
+        double ph1 = invMlfn(ml0 + y);
         double tn = Math.tan(ph1);
         double t = tn * tn;
         double n = Math.sin(ph1);

@@ -16,90 +16,90 @@ public final class Ellipsoid {
     /**
      * Airy 1830
      */
-    public static final Ellipsoid Airy = Ellipsoid.create_a_b(6377563.396, 6356256.910);
+    public static final Ellipsoid Airy = Ellipsoid.createAb(6377563.396, 6356256.910);
 
     /**
      * Modified Airy 1849
      */
-    public static final Ellipsoid AiryMod = Ellipsoid.create_a_b(6377340.189, 6356034.446);
+    public static final Ellipsoid AiryMod = Ellipsoid.createAb(6377340.189, 6356034.446);
 
     /**
      * Australian National Spheroid (Australian Natl &amp; S. Amer. 1969)
      * same as GRS67 Modified
      */
-    public static final Ellipsoid AustSA = Ellipsoid.create_a_rf(6378160.0, 298.25);
+    public static final Ellipsoid AustSA = Ellipsoid.createArf(6378160.0, 298.25);
 
     /**
      * Bessel 1841 ellipsoid
      */
-    public static final Ellipsoid Bessel1841 = Ellipsoid.create_a_rf(6377397.155, 299.1528128);
+    public static final Ellipsoid Bessel1841 = Ellipsoid.createArf(6377397.155, 299.1528128);
 
     /**
      * Bessel 1841 (Namibia)
      */
-    public static final Ellipsoid BesselNamibia = Ellipsoid.create_a_rf(6377483.865, 299.1528128);
+    public static final Ellipsoid BesselNamibia = Ellipsoid.createArf(6377483.865, 299.1528128);
 
     /**
      * Clarke 1866 ellipsoid
      */
-    public static final Ellipsoid Clarke1866 = Ellipsoid.create_a_b(6378206.4, 6356583.8);
+    public static final Ellipsoid Clarke1866 = Ellipsoid.createAb(6378206.4, 6356583.8);
 
     /**
      * Clarke 1880 (modified)
      */
-    public static final Ellipsoid Clarke1880 = Ellipsoid.create_a_rf(6378249.145, 293.4663);
+    public static final Ellipsoid Clarke1880 = Ellipsoid.createArf(6378249.145, 293.4663);
 
     /**
      * Clarke 1880 IGN (French national geographic institute)
      */
-    public static final Ellipsoid ClarkeIGN = Ellipsoid.create_a_b(6378249.2, 6356515.0);
+    public static final Ellipsoid ClarkeIGN = Ellipsoid.createAb(6378249.2, 6356515.0);
 
     /**
      * Everest (Sabah &amp; Sarawak)
      */
-    public static final Ellipsoid EverestSabahSarawak = Ellipsoid.create_a_rf(6377298.556, 300.8017);
+    public static final Ellipsoid EverestSabahSarawak = Ellipsoid.createArf(6377298.556, 300.8017);
 
     /**
      * GRS67 ellipsoid
      */
-    public static final Ellipsoid GRS67 = Ellipsoid.create_a_rf(6378160.0, 298.247167427);
+    public static final Ellipsoid GRS67 = Ellipsoid.createArf(6378160.0, 298.247167427);
 
     /**
      * GRS80 ellipsoid
      */
-    public static final Ellipsoid GRS80 = Ellipsoid.create_a_rf(6378137.0, 298.257222101);
+    public static final Ellipsoid GRS80 = Ellipsoid.createArf(6378137.0, 298.257222101);
 
     /**
      * Hayford's ellipsoid 1909 (ED50 system)
      * Also known as International 1924
      * Proj.4 code: intl
      */
-    public static final Ellipsoid Hayford = Ellipsoid.create_a_rf(6378388.0, 297.0);
+    public static final Ellipsoid Hayford = Ellipsoid.createArf(6378388.0, 297.0);
 
     /**
      * Helmert 1906
      */
-    public static final Ellipsoid Helmert = Ellipsoid.create_a_rf(6378200.0, 298.3);
+    public static final Ellipsoid Helmert = Ellipsoid.createArf(6378200.0, 298.3);
 
     /**
      * Krassowsky 1940 ellipsoid
      */
-    public static final Ellipsoid Krassowsky = Ellipsoid.create_a_rf(6378245.0, 298.3);
+    public static final Ellipsoid Krassowsky = Ellipsoid.createArf(6378245.0, 298.3);
 
     /**
      * WGS66 ellipsoid
      */
-    public static final Ellipsoid WGS66 = Ellipsoid.create_a_rf(6378145.0, 298.25);
+    public static final Ellipsoid WGS66 = Ellipsoid.createArf(6378145.0, 298.25);
 
     /**
      * WGS72 ellipsoid
      */
-    public static final Ellipsoid WGS72 = Ellipsoid.create_a_rf(6378135.0, 298.26);
+    public static final Ellipsoid WGS72 = Ellipsoid.createArf(6378135.0, 298.26);
 
     /**
      * WGS84 ellipsoid
      */
-    public static final Ellipsoid WGS84 = Ellipsoid.create_a_rf(6378137.0, 298.257223563);
+    public static final Ellipsoid WGS84 = Ellipsoid.createArf(6378137.0, 298.257223563);
 
     /**
      * half long axis
@@ -161,7 +161,7 @@ public final class Ellipsoid {
      * @param b semiminor radius of the ellipsoid axis (in meters)
      * @return the new ellipsoid
      */
-    public static Ellipsoid create_a_b(double a, double b) {
+    public static Ellipsoid createAb(double a, double b) {
         double e2 = (a*a - b*b) / (a*a);
         double e = Math.sqrt(e2);
         double eb2 = e2 / (1.0 - e2);
@@ -175,7 +175,7 @@ public final class Ellipsoid {
      * @param es first eccentricity squared
      * @return the new ellipsoid
      */
-    public static Ellipsoid create_a_es(double a, double es) {
+    public static Ellipsoid createAes(double a, double es) {
         double b = a * Math.sqrt(1.0 - es);
         double e = Math.sqrt(es);
         double eb2 = es / (1.0 - es);
@@ -189,7 +189,7 @@ public final class Ellipsoid {
      * @param f flattening ( = (a - b) / a)
      * @return the new ellipsoid
      */
-    public static Ellipsoid create_a_f(double a, double f) {
+    public static Ellipsoid createAf(double a, double f) {
         double b = a * (1.0 - f);
         double e2 = f * (2 - f);
         double e = Math.sqrt(e2);
@@ -204,8 +204,8 @@ public final class Ellipsoid {
      * @param rf inverse flattening
      * @return the new ellipsoid
      */
-    public static Ellipsoid create_a_rf(double a, double rf) {
-        return create_a_f(a, 1.0 / rf);
+    public static Ellipsoid createArf(double a, double rf) {
+        return createAf(a, 1.0 / rf);
     }
 
     @Override

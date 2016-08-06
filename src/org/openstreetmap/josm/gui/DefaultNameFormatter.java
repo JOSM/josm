@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
-import static org.openstreetmap.josm.tools.I18n.trc_lazy;
+import static org.openstreetmap.josm.tools.I18n.trcLazy;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.ComponentOrientation;
@@ -435,9 +435,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         } else if (nameTag.startsWith("?") && OsmUtils.isFalse(relation.get(nameTag.substring(1)))) {
             return null;
         } else if (nameTag.startsWith("?")) {
-            return trc_lazy(nameTag, I18n.escape(relation.get(nameTag.substring(1))));
+            return trcLazy(nameTag, I18n.escape(relation.get(nameTag.substring(1))));
         } else {
-            return trc_lazy(nameTag, I18n.escape(relation.get(nameTag)));
+            return trcLazy(nameTag, I18n.escape(relation.get(nameTag)));
         }
     }
 

@@ -255,7 +255,7 @@ public class LineElement extends StyleElement {
             color = PaintColors.UNTAGGED.get();
         }
 
-        Integer pAlpha = Utils.color_float2int(c.get(type.prefix + OPACITY, null, Float.class));
+        Integer pAlpha = Utils.colorFloat2int(c.get(type.prefix + OPACITY, null, Float.class));
         if (pAlpha != null) {
             alpha = pAlpha;
         }
@@ -280,7 +280,7 @@ public class LineElement extends StyleElement {
         float dashesOffset = c.get(type.prefix + DASHES_OFFSET, 0f, Float.class);
         Color dashesBackground = c.get(type.prefix + DASHES_BACKGROUND_COLOR, null, Color.class);
         if (dashesBackground != null) {
-            pAlpha = Utils.color_float2int(c.get(type.prefix + DASHES_BACKGROUND_OPACITY, null, Float.class));
+            pAlpha = Utils.colorFloat2int(c.get(type.prefix + DASHES_BACKGROUND_OPACITY, null, Float.class));
             if (pAlpha != null) {
                 alpha = pAlpha;
             }

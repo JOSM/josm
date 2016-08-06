@@ -184,7 +184,7 @@ public class NodeElement extends StyleElement {
         mapImage.offsetY = Math.round(offsetYF);
 
         mapImage.alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.icon-image-alpha", 255))));
-        Integer pAlpha = Utils.color_float2int(c.get(keys[ICON_OPACITY_IDX], null, float.class));
+        Integer pAlpha = Utils.colorFloat2int(c.get(keys[ICON_OPACITY_IDX], null, float.class));
         if (pAlpha != null) {
             mapImage.alpha = pAlpha;
         }
@@ -246,7 +246,7 @@ public class NodeElement extends StyleElement {
 
         Stroke stroke = null;
         if (strokeColor != null && strokeWidth != null) {
-            Integer strokeAlpha = Utils.color_float2int(c.get("symbol-stroke-opacity", null, Float.class));
+            Integer strokeAlpha = Utils.colorFloat2int(c.get("symbol-stroke-opacity", null, Float.class));
             if (strokeAlpha != null) {
                 strokeColor = new Color(strokeColor.getRed(), strokeColor.getGreen(),
                         strokeColor.getBlue(), strokeAlpha);
@@ -260,7 +260,7 @@ public class NodeElement extends StyleElement {
         }
 
         if (fillColor != null) {
-            Integer fillAlpha = Utils.color_float2int(c.get("symbol-fill-opacity", null, Float.class));
+            Integer fillAlpha = Utils.colorFloat2int(c.get("symbol-fill-opacity", null, Float.class));
             if (fillAlpha != null) {
                 fillColor = new Color(fillColor.getRed(), fillColor.getGreen(),
                         fillColor.getBlue(), fillAlpha);

@@ -499,7 +499,7 @@ public final class OrthogonalizeAction extends JosmAction {
      * @param a angle
      * @return correct angle
      */
-    private static double standard_angle_0_to_2PI(double a) {
+    private static double standardAngle0to2PI(double a) {
         while (a >= 2 * Math.PI) {
             a -= 2 * Math.PI;
         }
@@ -514,7 +514,7 @@ public final class OrthogonalizeAction extends JosmAction {
      * @param a angle
      * @return correct angle
      */
-    private static double standard_angle_mPI_to_PI(double a) {
+    private static double standardAngleMPItoPI(double a) {
         while (a > Math.PI) {
             a -= 2 * Math.PI;
         }
@@ -571,7 +571,7 @@ public final class OrthogonalizeAction extends JosmAction {
      * @throws RejectedAngleException in case of invalid angle
      */
     private static int angleToDirectionChange(double a, double deltaMax) throws RejectedAngleException {
-        a = standard_angle_mPI_to_PI(a);
+        a = standardAngleMPItoPI(a);
         double d0 = Math.abs(a);
         double d90 = Math.abs(a - Math.PI / 2);
         double dm90 = Math.abs(a + Math.PI / 2);
@@ -583,7 +583,7 @@ public final class OrthogonalizeAction extends JosmAction {
         } else if (dm90 < deltaMax) {
             dirChange = -1;
         } else {
-            a = standard_angle_0_to_2PI(a);
+            a = standardAngle0to2PI(a);
             double d180 = Math.abs(a - Math.PI);
             if (d180 < deltaMax) {
                 dirChange = 2;

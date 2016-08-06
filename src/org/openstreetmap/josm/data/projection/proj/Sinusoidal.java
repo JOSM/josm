@@ -42,7 +42,7 @@ public class Sinusoidal extends AbstractProj {
         if (spherical) {
             return new double[]{north, east / cos(north)};
         } else {
-            final double phi = inv_mlfn(north);
+            final double phi = invMlfn(north);
             double s = abs(phi);
             final double lambda;
             if (abs(s - Math.PI / 2) < 1e-10) {

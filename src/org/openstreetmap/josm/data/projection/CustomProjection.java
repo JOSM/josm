@@ -415,19 +415,19 @@ public class CustomProjection extends AbstractProjection {
             double a = parseDouble(s, Param.a.key);
             if (parameters.get(Param.es.key) != null) {
                 double es = parseDouble(parameters, Param.es.key);
-                return Ellipsoid.create_a_es(a, es);
+                return Ellipsoid.createAes(a, es);
             }
             if (parameters.get(Param.rf.key) != null) {
                 double rf = parseDouble(parameters, Param.rf.key);
-                return Ellipsoid.create_a_rf(a, rf);
+                return Ellipsoid.createArf(a, rf);
             }
             if (parameters.get(Param.f.key) != null) {
                 double f = parseDouble(parameters, Param.f.key);
-                return Ellipsoid.create_a_f(a, f);
+                return Ellipsoid.createAf(a, f);
             }
             if (parameters.get(Param.b.key) != null) {
                 double b = parseDouble(parameters, Param.b.key);
-                return Ellipsoid.create_a_b(a, b);
+                return Ellipsoid.createAb(a, b);
             }
         }
         if (parameters.containsKey(Param.a.key) ||
