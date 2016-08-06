@@ -3328,8 +3328,7 @@ node[railway=station] {
     set icon_z17;
 }
 node[railway=halt] {
-    icon-image: "presets/transport/station.png";
-    icon-width: 16;
+    icon-image: "presets/transport/station16.png";
     set icon_z17;
 }
 node[railway=tram_stop] {
