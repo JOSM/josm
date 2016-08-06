@@ -1360,7 +1360,8 @@ node[man_made=lighthouse] {
     set icon_z17;
 }
 node[man_made=monitoring_station] {
-    icon-image: "presets/landmark/measurement_station.png";
+    icon-image: "presets/misc/monitoring_station.png";
+    icon-height: 16;
     set icon_z17;
 }
 node[man_made=mineshaft] {
