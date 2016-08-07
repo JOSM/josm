@@ -69,12 +69,16 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author Francisco R. Santos &lt;frsantos@gmail.com&gt;
  */
-public class OsmValidator {
+public final class OsmValidator {
+
+    private OsmValidator() {
+        // Hide default constructor for utilities classes
+    }
 
     public static volatile ValidatorLayer errorLayer;
 
     /** The validate action */
-    public ValidateAction validateAction = new ValidateAction();
+    public static final ValidateAction validateAction = new ValidateAction();
 
     /** Grid detail, multiplier of east,north values for valuable cell sizing */
     public static double griddetail;
@@ -149,9 +153,9 @@ public class OsmValidator {
     }
 
     /**
-     * Constructs a new {@code OsmValidator}.
+     * Initializes {@code OsmValidator}.
      */
-    public OsmValidator() {
+    public static void initialize() {
         checkValidatorDir();
         initializeGridDetail();
         loadIgnoredErrors(); //FIXME: load only when needed

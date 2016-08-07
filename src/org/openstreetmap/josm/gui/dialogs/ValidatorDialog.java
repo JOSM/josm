@@ -134,7 +134,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         buttons.add(lookupButton);
 
-        buttons.add(new SideButton(Main.main.validator.validateAction));
+        buttons.add(new SideButton(OsmValidator.validateAction));
 
         fixButton = new SideButton(new AbstractAction() {
             {
