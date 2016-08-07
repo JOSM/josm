@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -40,6 +42,7 @@ import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
 import org.apache.commons.jcs.engine.behavior.IRequireScheduler;
 import org.apache.commons.jcs.engine.control.group.GroupAttrName;
+import org.apache.commons.jcs.engine.control.group.GroupId;
 import org.apache.commons.jcs.engine.stats.StatElement;
 import org.apache.commons.jcs.engine.stats.Stats;
 import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
@@ -447,60 +450,17 @@ public class BlockDiskCache<K, V>
 
         try
         {
-            if ( key instanceof String && key.toString().endsWith( CacheConstants.NAME_COMPONENT_DELIMITER ) )
+            if (key instanceof String && key.toString().endsWith(CacheConstants.NAME_COMPONENT_DELIMITER))
             {
-                // remove all keys of the same name group.
-                Iterator<Map.Entry<K, int[]>> iter = this.keyStore.entrySet().iterator();
-
-                while ( iter.hasNext() )
-                {
-                    Map.Entry<K, int[]> entry = iter.next();
-                    K k = entry.getKey();
-
-                    if ( k instanceof String && k.toString().startsWith( key.toString() ) )
-                    {
-                        int[] ded = entry.getValue();
-                        this.dataFile.freeBlocks( ded );
-                        iter.remove();
-                        removed = true;
-                        // TODO this needs to update the remove count separately
-                    }
-                }
+                removed = performPartialKeyRemoval((String) key);
             }
-            else if ( key instanceof GroupAttrName && ((GroupAttrName<?>)key).attrName == null )
+            else if (key instanceof GroupAttrName && ((GroupAttrName<?>) key).attrName == null)
             {
-                // remove all keys of the same name hierarchy.
-                Iterator<Map.Entry<K, int[]>> iter = this.keyStore.entrySet().iterator();
-                while ( iter.hasNext() )
-                {
-                    Map.Entry<K, int[]> entry = iter.next();
-                    K k = entry.getKey();
-
-                    if ( k instanceof GroupAttrName &&
-                        ((GroupAttrName<?>)k).groupId.equals(((GroupAttrName<?>)key).groupId))
-                    {
-                        int[] ded = entry.getValue();
-                        this.dataFile.freeBlocks( ded );
-                        iter.remove();
-                        removed = true;
-                    }
-                }
+                removed = performGroupRemoval(((GroupAttrName<?>) key).groupId);
             }
             else
             {
-                // remove single item.
-                int[] ded = this.keyStore.remove( key );
-                removed = ded != null;
-                if ( removed )
-                {
-                    this.dataFile.freeBlocks( ded );
-                }
-
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( logCacheName + "Disk removal: Removed from key hash, key [" + key + "] removed = "
-                        + removed );
-                }
+                removed = performSingleKeyRemoval(key);
             }
         }
         catch ( Exception e )
@@ -520,6 +480,102 @@ public class BlockDiskCache<K, V>
 
         return removed;
     }
+
+    /**
+     * Remove all elements from the group. This does not use the iterator to remove. It builds a
+     * list of group elements and then removes them one by one.
+     * <p>
+     * This operates under a lock obtained in doRemove().
+     * <p>
+     *
+     * @param key
+     * @return true if an element was removed
+     */
+    private boolean performGroupRemoval(GroupId key)
+    {
+        boolean removed = false;
+
+        // remove all keys of the same name group.
+        List<K> itemsToRemove = new LinkedList<K>();
+
+        // remove all keys of the same name hierarchy.
+        for (K k : keyStore.keySet())
+        {
+            if (k instanceof GroupAttrName && ((GroupAttrName<?>) k).groupId.equals(key))
+            {
+                itemsToRemove.add(k);
+            }
+        }
+
+        // remove matches.
+        for (K fullKey : itemsToRemove)
+        {
+            // Don't add to recycle bin here
+            // https://issues.apache.org/jira/browse/JCS-67
+            performSingleKeyRemoval(fullKey);
+            removed = true;
+            // TODO this needs to update the remove count separately
+        }
+
+        return removed;
+    }
+
+    /**
+     * Iterates over the keyset. Builds a list of matches. Removes all the keys in the list. Does
+     * not remove via the iterator, since the map impl may not support it.
+     * <p>
+     * This operates under a lock obtained in doRemove().
+     * <p>
+     *
+     * @param key
+     * @return true if there was a match
+     */
+    private boolean performPartialKeyRemoval(String key)
+    {
+        boolean removed = false;
+
+        // remove all keys of the same name hierarchy.
+        List<K> itemsToRemove = new LinkedList<K>();
+
+        for (K k : keyStore.keySet())
+        {
+            if (k instanceof String && k.toString().startsWith(key))
+            {
+                itemsToRemove.add(k);
+            }
+        }
+
+        // remove matches.
+        for (K fullKey : itemsToRemove)
+        {
+            // Don't add to recycle bin here
+            // https://issues.apache.org/jira/browse/JCS-67
+            performSingleKeyRemoval(fullKey);
+            removed = true;
+            // TODO this needs to update the remove count separately
+        }
+
+        return removed;
+    }
+
+    
+	private boolean performSingleKeyRemoval(K key) {
+		boolean removed;
+		// remove single item.
+		int[] ded = this.keyStore.remove( key );
+		removed = ded != null;
+		if ( removed )
+		{
+		    this.dataFile.freeBlocks( ded );
+		}
+
+		if ( log.isDebugEnabled() )
+		{
+		    log.debug( logCacheName + "Disk removal: Removed from key hash, key [" + key + "] removed = "
+		        + removed );
+		}
+		return removed;
+	}
 
     /**
      * Resets the keyfile, the disk file, and the memory key map.
