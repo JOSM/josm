@@ -96,7 +96,10 @@ public class ColorfulImageProcessor implements ImageProcessor {
                 Main.trace("Cannot apply color filter: Src / Dest differ in type (" + type + '/' + dest.getType() + ')');
                 return src;
             }
-            int redOffset, greenOffset, blueOffset, alphaOffset = 0;
+            int redOffset;
+            int greenOffset;
+            int blueOffset;
+            int alphaOffset = 0;
             switch (type) {
             case BufferedImage.TYPE_3BYTE_BGR:
                 blueOffset = 0;

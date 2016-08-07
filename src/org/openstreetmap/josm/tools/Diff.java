@@ -178,7 +178,10 @@ public class Diff {
                 --fmax;
             }
             for (d = fmax; d >= fmin; d -= 2) {
-                int x, y, tlo = fd[fdiagoff + d - 1], thi = fd[fdiagoff + d + 1];
+                int x;
+                int y;
+                int tlo = fd[fdiagoff + d - 1];
+                int thi = fd[fdiagoff + d + 1];
 
                 if (tlo >= thi) {
                     x = tlo + 1;

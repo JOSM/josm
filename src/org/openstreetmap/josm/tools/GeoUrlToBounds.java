@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Bounds;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 
 /**
  * Parses a Geo URL (as specified in <a href="https://tools.ietf.org/html/rfc5870">RFC 5870</a>) into {@link Bounds}.
@@ -29,7 +29,8 @@ public final class GeoUrlToBounds {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         final Matcher m = PATTERN.matcher(url);
         if (m.matches()) {
-            final double lat, lon;
+            final double lat;
+            final double lon;
             final int zoom;
             try {
                 lat = Double.parseDouble(m.group("lat"));
