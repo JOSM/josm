@@ -84,7 +84,7 @@ public class SideButton extends JButton implements Destroyable {
         // SideButton is constructed get the proper icon size
         if (action != null) {
             propertyChangeListener = evt -> {
-                if (javax.swing.Action.SMALL_ICON.equals(evt.getPropertyName())) {
+                if (Action.SMALL_ICON.equals(evt.getPropertyName())) {
                     fixIcon(null);
                 }
             };

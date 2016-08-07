@@ -28,7 +28,7 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
     private final JButton renderButton;
     private final JButton editButton;
     private Object editorValue;
-    private String buttonName = null;
+    private String buttonName;
 
     /**
      * Creates a column that is rendered as a button with no action bound to the click event

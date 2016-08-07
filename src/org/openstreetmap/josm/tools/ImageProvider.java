@@ -290,7 +290,7 @@ public class ImageProvider {
     /** ordered list of overlay images */
     protected List<ImageOverlay> overlayInfo;
     /** <code>true</code> if icon must be grayed out */
-    protected boolean isDisabled = false;
+    protected boolean isDisabled;
 
     private static SVGUniverse svgUniverse;
 

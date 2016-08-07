@@ -22,7 +22,7 @@ import org.openstreetmap.josm.gui.history.HistoryBrowserModel.TagTableModel;
 public class TagInfoTransferHandler extends TransferHandler {
 
     @Override
-    public void exportToClipboard(JComponent comp, Clipboard clip, int action) throws IllegalStateException {
+    public void exportToClipboard(JComponent comp, Clipboard clip, int action) {
         if (comp instanceof JTable) {
             TableModel model = ((JTable) comp).getModel();
             if (model instanceof TagTableModel) {

@@ -682,7 +682,7 @@ public class MainApplication extends Main {
                     ));
         }
 
-        private boolean handleNetworkErrors() {
+        private static boolean handleNetworkErrors() {
             boolean condition = !NETWORK_ERRORS.isEmpty();
             if (condition) {
                 Set<String> errors = new TreeSet<>();

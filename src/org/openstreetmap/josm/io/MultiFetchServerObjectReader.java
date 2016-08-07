@@ -275,11 +275,6 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         return type.getAPIName() + "s?" + type.getAPIName() + "s=" + Utils.join(",", idPackage);
     }
 
-    @Override
-    protected String getBaseUrl() {
-        return super.getBaseUrl();
-    }
-
     protected void rememberNodesOfIncompleteWaysToLoad(DataSet from) {
         for (Way w: from.getWays()) {
             if (w.hasIncompleteNodes()) {

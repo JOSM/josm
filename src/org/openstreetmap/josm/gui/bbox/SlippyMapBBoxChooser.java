@@ -172,7 +172,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         new SlippyMapControler(this, this);
     }
 
-    private List<TileSource> getAllTileSources() {
+    private static List<TileSource> getAllTileSources() {
         List<TileSource> tileSources = new ArrayList<>();
         for (TileSourceProvider provider: providers) {
             tileSources.addAll(provider.getTileSources());

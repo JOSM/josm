@@ -67,7 +67,7 @@ public class SharpenImageProcessor implements ImageProcessor {
         }
     }
 
-    private ConvolveOp generateMixed(float aFactor, float[] a, float[] b) {
+    private static ConvolveOp generateMixed(float aFactor, float[] a, float[] b) {
         if (a.length != 9 || b.length != 9) {
             throw new IllegalArgumentException("Illegal kernel array length.");
         }

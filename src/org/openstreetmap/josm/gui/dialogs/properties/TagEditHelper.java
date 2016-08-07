@@ -467,12 +467,12 @@ public class TagEditHelper {
         @Override
         public void performTagEdit() {
             String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());
-            value = Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
+            value = Normalizer.normalize(value, Normalizer.Form.NFC);
             if (value.isEmpty()) {
                 value = null; // delete the key
             }
             String newkey = Tag.removeWhiteSpaces(keys.getEditor().getItem().toString());
-            newkey = Normalizer.normalize(newkey, java.text.Normalizer.Form.NFC);
+            newkey = Normalizer.normalize(newkey, Normalizer.Form.NFC);
             if (newkey.isEmpty()) {
                 newkey = key;
                 value = null; // delete the key instead
