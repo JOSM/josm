@@ -132,7 +132,7 @@ public class RotateCommandTest {
      * Unit test of methods {@link RotateCommand#equals} and {@link RotateCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(RotateCommand.class).usingGetClass()
                 .withPrefabValues(LatLon.class, LatLon.ZERO, new LatLon(45, 45))
                 .withPrefabValues(DataSet.class, new DataSet(), new DataSet())

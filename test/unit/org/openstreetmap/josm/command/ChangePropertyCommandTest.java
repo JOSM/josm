@@ -277,7 +277,7 @@ public class ChangePropertyCommandTest {
      * Unit test of methods {@link ChangePropertyCommand#equals} and {@link ChangePropertyCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(ChangePropertyCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,
                 new DataSet(), new DataSet())

@@ -31,7 +31,7 @@ public class VersionConflictResolveCommandTest {
      * Unit test of methods {@link VersionConflictResolveCommand#equals} and {@link VersionConflictResolveCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(VersionConflictResolveCommand.class).usingGetClass()
             .withPrefabValues(Conflict.class,
                     new Conflict<>(new Node(), new Node()), new Conflict<>(new Way(), new Way()))

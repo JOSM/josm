@@ -113,7 +113,7 @@ public class TextTagParserTest {
      * Test of {@link TextTagParser#readTagsFromText} method (error detection).
      */
     @Test
-    public void errorDetect() {
+    public void testErrorDetect() {
         String txt = "a=2 b=3 4";
         Map<String, String> tags = TextTagParser.readTagsFromText(txt);
         Assert.assertEquals(Collections.EMPTY_MAP, tags);

@@ -143,7 +143,7 @@ public class PurgeCommandTest {
      * Unit test of methods {@link PurgeCommand#equals} and {@link PurgeCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(PurgeCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,
                 new DataSet(), new DataSet())

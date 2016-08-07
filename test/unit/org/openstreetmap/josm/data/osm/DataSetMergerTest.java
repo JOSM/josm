@@ -80,7 +80,7 @@ public class DataSetMergerTest {
      * on the other.
      */
     @Test
-    public void nodeSimple_IdenticalNoConflict() {
+    public void testNodeSimpleIdenticalNoConflict() {
         Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setModified(false);
@@ -112,10 +112,9 @@ public class DataSetMergerTest {
     /**
      * two  nodes, my is unmodified, their is updated and has a higher version
      * => their version is going to be the merged version
-     *
      */
     @Test
-    public void nodeSimple_locallyUnmodifiedNoConflict() {
+    public void testNodeSimpleLocallyUnmodifiedNoConflict() {
         Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setModified(false);
@@ -155,7 +154,7 @@ public class DataSetMergerTest {
      * the server
      */
     @Test
-    public void nodeSimple_TagConflict() {
+    public void testNodeSimpleTagConflict() {
         Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setModified(true);
@@ -189,7 +188,7 @@ public class DataSetMergerTest {
      * the server
      */
     @Test
-    public void nodeSimple_DeleteConflict() {
+    public void testNodeSimpleDeleteConflict() {
         Node n = new Node(1, 1);
         n.setCoor(LatLon.ZERO);
         n.setDeleted(true);
@@ -217,10 +216,9 @@ public class DataSetMergerTest {
     /**
      * My node is deleted, their node has the same id and version and is not deleted.
      * => mine has precedence
-     *
      */
     @Test
-    public void nodeSimple_DeleteConflict_2() {
+    public void testNodeSimpleDeleteConflict2() {
         Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setDeleted(true);
@@ -248,7 +246,7 @@ public class DataSetMergerTest {
      * => Ignore my node, no conflict
      */
     @Test
-    public void nodeSimple_DeleteConflict_3() {
+    public void testNodeSimpleDeleteConflict3() {
         Node n = new Node(new LatLon(1, 1));
         n.setDeleted(true);
         my.addPrimitive(n);
@@ -269,10 +267,9 @@ public class DataSetMergerTest {
      * My and their node are new but semantically equal. Both are deleted.
      *
      * => take mine
-     *
      */
     @Test
-    public void nodeSimple_DeleteConflict_4() {
+    public void testNodeSimpleDeleteConflict4() {
         Node n = new Node(new LatLon(1, 1));
         n.setDeleted(true);
         my.addPrimitive(n);
@@ -280,7 +277,6 @@ public class DataSetMergerTest {
         Node n1 = new Node(new LatLon(1, 1));
         n1.setDeleted(true);
         their.addPrimitive(n1);
-
 
         DataSetMerger visitor = new DataSetMerger(my, their);
         visitor.merge();
@@ -296,10 +292,9 @@ public class DataSetMergerTest {
      * nodes with id == 0
      *
      * => merge it onto my node.
-     *
      */
     @Test
-    public void nodeSimple_NoIdSemanticallyEqual() {
+    public void testNodeSimpleNoIdSemanticallyEqual() {
 
         Calendar cal = GregorianCalendar.getInstance();
         User myUser = User.createOsmUser(1111, "my");
@@ -340,10 +335,9 @@ public class DataSetMergerTest {
      * my node is incomplete, their node is complete
      *
      * => merge it onto my node. My node becomes complete
-     *
      */
     @Test
-    public void nodeSimple_IncompleteNode() {
+    public void testNodeSimpleIncompleteNode() {
 
         Node n = new Node(1);
         my.addPrimitive(n);
@@ -372,10 +366,9 @@ public class DataSetMergerTest {
      * way is not modified. Merge is possible. No conflict.
      *
      * => merge it onto my way.
-     *
      */
     @Test
-    public void waySimple_IdenicalNodesDifferentTags() {
+    public void testWaySimpleIdenticalNodesDifferentTags() {
 
         // -- the target dataset
 
@@ -445,10 +438,9 @@ public class DataSetMergerTest {
      * of the existing nodes are modified.
      *
      * => merge it onto my way, no conflict
-     *
      */
     @Test
-    public void waySimple_AdditionalNodesAndChangedNodes() {
+    public void testWaySimpleAdditionalNodesAndChangedNodes() {
 
         // -- my data set
 
@@ -515,10 +507,9 @@ public class DataSetMergerTest {
      * their way has a higher version and different nodes. My way is modified.
      *
      * => merge onto my way not possible, create a conflict
-     *
      */
     @Test
-    public void waySimple_DifferentNodesAndMyIsModified() {
+    public void testWaySimpleDifferentNodesAndMyIsModified() {
 
         // -- the target dataset
 
@@ -580,10 +571,9 @@ public class DataSetMergerTest {
      * their way is not visible anymore.
      *
      * => conflict
-     *
      */
     @Test
-    public void waySimple_TheirVersionNotVisibleMyIsModified() {
+    public void testWaySimpleTheirVersionNotVisibleMyIsModified() {
 
         Node mn1 = new Node(LatLon.ZERO);
         mn1.setOsmId(1, 1);
@@ -623,10 +613,9 @@ public class DataSetMergerTest {
      * my and their way have no ids,  nodes they refer to have an id. but
      * my and  their way are semantically equal. so technical attributes of
      * their way can be merged on my way. No conflict.
-     *
      */
     @Test
-    public void waySimple_twoWaysWithNoId_NodesWithId() {
+    public void testWaySimpleTwoWaysWithNoIdNodesWithId() {
 
         // -- my data set
 
@@ -681,10 +670,9 @@ public class DataSetMergerTest {
      * my and their way have no ids, neither do the nodes they refer to. but
      * my and  their way are semantically equal. so technical attributes of
      * their way can be merged on my way. No conflict.
-     *
      */
     @Test
-    public void waySimple_twoWaysWithNoId_NodesWithoutId() {
+    public void testWaySimpleTwoWaysWithNoIdNodesWithoutId() {
 
         // -- my data set
 
@@ -737,10 +725,9 @@ public class DataSetMergerTest {
      *
      * => the merged way should include all three nodes. Deleted node should have deleted=false and
      * special conflict with isDeleted should exist
-     *
      */
     @Test
-    public void wayComplex_mergingADeletedNode() {
+    public void testWayComplexMergingADeletedNode() {
 
         // -- my dataset
 
@@ -792,16 +779,14 @@ public class DataSetMergerTest {
      *
      * => the merged relation should include all three nodes. There should be conflict for deleted
      * node with isMyDeleted set
-     *
      */
     @Test
-    public void relationComplex_mergingADeletedNode() {
+    public void testRelationComplexMergingADeletedNode() {
 
         Node mn1 = new Node(LatLon.ZERO);
         mn1.setOsmId(1, 1);
         mn1.setDeleted(true);
         my.addPrimitive(mn1);
-
 
         Node tn1 = new Node(LatLon.ZERO);
         tn1.setOsmId(1, 1);
@@ -814,7 +799,6 @@ public class DataSetMergerTest {
         Node tn3 = new Node(new LatLon(2, 2));
         tn3.setOsmId(3, 1);
         their.addPrimitive(tn3);
-
 
         Relation theirRelation = new Relation();
         theirRelation.setOsmId(4, 1);
@@ -846,7 +830,7 @@ public class DataSetMergerTest {
      * Use case: a way loaded with a multiget, i.e. GET /api/0.6/ways?ids=123456
      */
     @Test
-    public void newIncompleteWay() {
+    public void testNewIncompleteWay() {
 
         Node n1 = new Node(1);
         their.addPrimitive(n1);
@@ -888,7 +872,7 @@ public class DataSetMergerTest {
      * Use case: a way loaded with a multiget, i.e. GET /api/0.6/ways?ids=123456 after a "Update selection " of this way
      */
     @Test
-    public void incompleteWayOntoCompleteWay() {
+    public void testIncompleteWayOntoCompleteWay() {
 
         // an incomplete node
         Node n1 = new Node(1);
@@ -943,7 +927,7 @@ public class DataSetMergerTest {
      * => both the nodes and the way should be complete in the target dataset after merging
      */
     @Test
-    public void twoCompleteNodesOntoAnIncompleteWay() {
+    public void testTwoCompleteNodesOntoAnIncompleteWay() {
 
         // -- source dataset
 

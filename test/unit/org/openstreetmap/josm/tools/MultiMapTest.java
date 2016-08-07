@@ -19,7 +19,7 @@ public class MultiMapTest {
      * Unit test of methods {@link MultiMap#equals} and {@link MultiMap#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(MultiMap.class).usingGetClass().verify();
     }
 

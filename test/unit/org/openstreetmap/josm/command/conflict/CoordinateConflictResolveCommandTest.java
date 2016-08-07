@@ -90,7 +90,7 @@ public class CoordinateConflictResolveCommandTest {
      * Unit test of methods {@link CoordinateConflictResolveCommand#equals} and {@link CoordinateConflictResolveCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(CoordinateConflictResolveCommand.class).usingGetClass()
             .withPrefabValues(Conflict.class,
                     new Conflict<>(new Node(), new Node()), new Conflict<>(new Way(), new Way()))

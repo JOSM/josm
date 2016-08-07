@@ -36,7 +36,7 @@ public class PluginHandlerTest {
      * Unit test of methods {@link DeprecatedPlugin#equals} and {@link DeprecatedPlugin#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(DeprecatedPlugin.class).usingGetClass().verify();
     }
 

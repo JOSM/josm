@@ -31,7 +31,7 @@ public class TagConflictResolveCommandTest {
      * Unit test of methods {@link TagConflictResolveCommand#equals} and {@link TagConflictResolveCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(TagConflictResolveCommand.class).usingGetClass()
             .withPrefabValues(Conflict.class,
                     new Conflict<>(new Node(), new Node()), new Conflict<>(new Way(), new Way()))

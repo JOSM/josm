@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 public class BoundsTest {
 
     @Test
-    public void crossingTests() {
+    public void testCrossing() {
         Bounds b1 = new Bounds(0, 170, 50, -170);
         assertTrue(b1.crosses180thMeridian());
         assertFalse(b1.contains(new LatLon(-10, -180)));

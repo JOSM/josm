@@ -75,7 +75,7 @@ public class ConflictAddCommandTest {
      * Unit test of methods {@link ConflictAddCommand#equals} and {@link ConflictAddCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(ConflictAddCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,
                     new DataSet(), new DataSet())

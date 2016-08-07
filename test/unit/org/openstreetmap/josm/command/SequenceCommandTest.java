@@ -169,7 +169,7 @@ public class SequenceCommandTest {
      * Unit test of methods {@link SequenceCommand#equals} and {@link SequenceCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(SequenceCommand.class).usingGetClass()
             .withPrefabValues(Command.class,
                 new AddCommand(new Node(1)), new AddCommand(new Node(2)))

@@ -57,7 +57,7 @@ public class ToolbarPreferencesTest {
     }
 
     @Test
-    public void test1() {
+    public void testCase1() {
         Map<String, Action> actions = new HashMap<>();
         actions.put("action", new TestAction());
         ActionParser parser = new ActionParser(actions);

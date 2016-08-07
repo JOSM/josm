@@ -35,7 +35,7 @@ public class NmeaReaderTest {
      * Unit test of methods {@link NMEA_TYPE#equals} and {@link NMEA_TYPE#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(NMEA_TYPE.class).verify();
     }
 

@@ -35,7 +35,7 @@ public class RecentTagCollectionTest {
      * @throws SearchCompiler.ParseError if an error has been encountered while compiling
      */
     @Test
-    public void test() throws SearchCompiler.ParseError {
+    public void testVarious() throws SearchCompiler.ParseError {
         final RecentTagCollection recentTags = new RecentTagCollection(2);
         assertTrue(recentTags.isEmpty());
 
@@ -75,6 +75,5 @@ public class RecentTagCollectionTest {
         assertEquals(Arrays.asList(bar, baz), recentTags.toList());
         recentTags.ignoreTag(new Tag("name", /*all values */""), searchSetting);
         assertEquals(Collections.emptyList(), recentTags.toList());
-
     }
 }

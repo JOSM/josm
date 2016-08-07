@@ -132,7 +132,7 @@ public class ScaleCommandTest {
      * Unit test of methods {@link ScaleCommand#equals} and {@link ScaleCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(ScaleCommand.class).usingGetClass()
             .withPrefabValues(LatLon.class,
                 LatLon.ZERO, new LatLon(45, 45))

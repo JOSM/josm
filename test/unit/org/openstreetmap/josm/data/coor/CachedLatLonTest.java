@@ -27,7 +27,7 @@ public class CachedLatLonTest {
      * Unit test of methods {@link CachedLatLon#equals} and {@link CachedLatLon#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(CachedLatLon.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .withPrefabValues(DecimalFormat.class, new DecimalFormat("00.0"), new DecimalFormat("00.000"))

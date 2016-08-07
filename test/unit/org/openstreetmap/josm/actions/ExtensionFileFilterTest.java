@@ -40,7 +40,7 @@ public class ExtensionFileFilterTest {
      * Unit test of methods {@link ExtensionFileFilter#equals} and {@link ExtensionFileFilter#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(ExtensionFileFilter.class).usingGetClass()
             .verify();
     }

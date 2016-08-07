@@ -15,7 +15,7 @@ public class PairTest {
      * Unit test of methods {@link Pair#equals} and {@link Pair#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(Pair.class).suppress(Warning.NONFINAL_FIELDS).verify();
     }
 }

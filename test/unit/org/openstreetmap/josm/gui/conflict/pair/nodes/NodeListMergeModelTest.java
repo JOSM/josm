@@ -78,7 +78,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToTop_1() {
+    public void testCopyMyNodesToTop1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -100,7 +100,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToTop_2() {
+    public void testCopyMyNodesToTop2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -126,7 +126,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToTop_3() {
+    public void testCopyMyNodesToTop3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -152,7 +152,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToTop_4() {
+    public void testCopyMyNodesToTop4() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -179,7 +179,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToEnd_1() {
+    public void testCopyMyNodesToEnd1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -200,7 +200,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToEnd_2() {
+    public void testCopyMyNodesToEnd2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -225,7 +225,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToEnd_3() {
+    public void testCopyMyNodesToEnd3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
 
@@ -252,7 +252,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToEnd_4() {
+    public void testCopyMyNodesToEnd4() {
         NodeListMergeModel model = new NodeListMergeModel();
 
 
@@ -285,7 +285,7 @@ public class NodeListMergeModelTest {
     /* ----------------------------------------------------------------------------- */
 
     @Test
-    public void test_copyMyNodesBeforeCurrent_1() {
+    public void testCopyMyNodesBeforeCurrent1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -312,7 +312,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesBeforeCurrent_2() {
+    public void testCopyMyNodesBeforeCurrent2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -340,7 +340,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesBeforeCurrent_3() {
+    public void testCopyMyNodesBeforeCurrent3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -375,7 +375,7 @@ public class NodeListMergeModelTest {
     /* copyMyNodesAfterCurrent                                                       */
     /* ----------------------------------------------------------------------------- */
     @Test
-    public void test_copyMyNodesAfterCurrent_1() {
+    public void testCopyMyNodesAfterCurrent1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -402,7 +402,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesAfterCurrent_2() {
+    public void testCopyMyNodesAfterCurrent2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -431,7 +431,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesAfterCurrent_3() {
+    public void testCopyMyNodesAfterCurrent3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = my.addWay(1, 1);
@@ -464,7 +464,7 @@ public class NodeListMergeModelTest {
     /* moveUpMergedNodes                                                       */
     /* ----------------------------------------------------------------------------- */
     @Test
-    public void test_moveUpMergedNodes_1() {
+    public void testMoveUpMergedNodes1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1, 1);
@@ -490,7 +490,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_moveUpMergedNodes_2() {
+    public void testMoveUpMergedNodes2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1, 1);
@@ -520,7 +520,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_moveUpMergedNodes_3() {
+    public void testMoveUpMergedNodes3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1, 1);
@@ -553,7 +553,7 @@ public class NodeListMergeModelTest {
     /* moveDownMergedNodes                                                       */
     /* ----------------------------------------------------------------------------- */
     @Test
-    public void test_moveDownMergedNodes_1() {
+    public void testMoveDownMergedNodes1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1, 1);
@@ -579,7 +579,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_moveDownMergedNodes_2() {
+    public void testMoveDownMergedNodes2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1, 1);
@@ -609,7 +609,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_moveDownMergedNodes_3() {
+    public void testMoveDownMergedNodes3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1, 1);
@@ -643,7 +643,7 @@ public class NodeListMergeModelTest {
     /* ----------------------------------------------------------------------------- */
     @SuppressWarnings("unchecked")
     @Test
-    public void addPropertyChangeListener() {
+    public void testAddPropertyChangeListener() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         PropertyChangeListener listener = new PropertyChangeListener() {
@@ -665,7 +665,7 @@ public class NodeListMergeModelTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void removePropertyChangeListener() {
+    public void testRemovePropertyChangeListener() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         PropertyChangeListener listener = new PropertyChangeListener() {
@@ -689,7 +689,7 @@ public class NodeListMergeModelTest {
     /* property frozen                                                               */
     /* ----------------------------------------------------------------------------- */
     @Test
-    public void setFrozen() {
+    public void testSetFrozen() {
         NodeListMergeModel model = new NodeListMergeModel();
         model.setFrozen(true);
         assertTrue(model.isFrozen());
@@ -699,7 +699,7 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void setFrozenWithPropertyChangeNotification() {
+    public void testSetFrozenWithPropertyChangeNotification() {
         NodeListMergeModel model = new NodeListMergeModel();
 
         class MyListener implements PropertyChangeListener {

@@ -27,7 +27,7 @@ public class APIDataSetTest {
     }
 
     @Test
-    public void oneNewRelationOnly() {
+    public void testOneNewRelationOnly() {
         Relation r = new Relation();
         r.put("name", "r1");
         DataSet ds = new DataSet();
@@ -47,7 +47,7 @@ public class APIDataSetTest {
     }
 
     @Test
-    public void newParentChildPair() {
+    public void testNewParentChildPair() {
         DataSet ds = new DataSet();
         Relation r1 = new Relation();
         ds.addPrimitive(r1);
@@ -74,7 +74,7 @@ public class APIDataSetTest {
     }
 
     @Test
-    public void oneExistingAndThreNewInAChain() {
+    public void testOneExistingAndThreNewInAChain() {
         DataSet ds = new DataSet();
 
         Relation r1 = new Relation();
@@ -117,7 +117,7 @@ public class APIDataSetTest {
     }
 
     @Test
-    public void oneParentTwoNewChildren() {
+    public void testOneParentTwoNewChildren() {
         DataSet ds = new DataSet();
         Relation r1 = new Relation();
         ds.addPrimitive(r1);
@@ -150,7 +150,7 @@ public class APIDataSetTest {
     }
 
     @Test // for ticket #9624
-    public void deleteOneParentTwoNewChildren() {
+    public void testDeleteOneParentTwoNewChildren() {
         DataSet ds = new DataSet();
         Relation r1 = new Relation(1);
         ds.addPrimitive(r1);
@@ -197,7 +197,7 @@ public class APIDataSetTest {
     }
 
     @Test // for ticket #9656
-    public void deleteWay() {
+    public void testDeleteWay() {
         DataSet ds = new DataSet();
         final Way way = new Way(1, 2);
         way.put("highway", "unclassified");
@@ -238,7 +238,7 @@ public class APIDataSetTest {
     }
 
     @Test
-    public void oneCycle() {
+    public void testOneCycle() {
         DataSet ds = new DataSet();
         Relation r1 = new Relation();
         ds.addPrimitive(r1);

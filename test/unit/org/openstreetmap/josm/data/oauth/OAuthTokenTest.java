@@ -32,7 +32,7 @@ public class OAuthTokenTest {
      * Unit test of methods {@link OAuthToken#equals} and {@link OAuthToken#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(OAuthToken.class).usingGetClass().verify();
     }
 }

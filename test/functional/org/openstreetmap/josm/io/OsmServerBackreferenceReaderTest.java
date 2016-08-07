@@ -272,7 +272,7 @@ public class OsmServerBackreferenceReaderTest {
     }
 
     @Test
-    public void testBackreferenceForNode_Full() throws OsmTransferException {
+    public void testBackreferenceForNodeFull() throws OsmTransferException {
         Node n = lookupNode(ds, 0);
         assertNotNull(n);
 
@@ -356,7 +356,7 @@ public class OsmServerBackreferenceReaderTest {
     }
 
     @Test
-    public void testBackreferenceForWay_Full() throws OsmTransferException {
+    public void testBackreferenceForWayFull() throws OsmTransferException {
         Way w = lookupWay(ds, 1);
         assertNotNull(w);
         // way with name "way-1" is referred to by two relations
@@ -505,7 +505,7 @@ public class OsmServerBackreferenceReaderTest {
     }
 
     @Test
-    public void testBackreferenceForRelation_Full() throws OsmTransferException {
+    public void testBackreferenceForRelationFull() throws OsmTransferException {
         Relation r = lookupRelation(ds, 1);
         assertNotNull(r);
         // way with name "relation-1" is referred to by four relations:

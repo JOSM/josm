@@ -49,7 +49,7 @@ public final class UnJoinNodeWayActionTest {
      * see #10396
      */
     @Test
-    public void test10396() {
+    public void testTicket10396() {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 

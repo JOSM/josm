@@ -34,7 +34,7 @@ public class PublicTransportRouteTestTest {
      * Performs various tests.
      */
     @Test
-    public void test() {
+    public void testVarious() {
         final List<Node> nodes = Arrays.asList(new Node(), new Node(), new Node(), new Node(), new Node(), new Node());
         final Way w1 = TestUtils.newWay("", nodes.get(0), nodes.get(1));
         final Way w2 = TestUtils.newWay("", nodes.get(1), nodes.get(2));

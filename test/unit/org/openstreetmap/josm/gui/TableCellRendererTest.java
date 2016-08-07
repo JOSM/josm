@@ -54,7 +54,7 @@ public class TableCellRendererTest {
      * Unit test of all table cell renderers against null values.
      */
     @Test
-    public void tableCellRendererTest() {
+    public void testTableCellRenderer() {
         Reflections reflections = new Reflections("org.openstreetmap.josm");
         Set<Class<? extends TableCellRenderer>> renderers = reflections.getSubTypesOf(TableCellRenderer.class);
         Assert.assertTrue(renderers.size() >= 10); // if it finds less than 10 classes, something is broken

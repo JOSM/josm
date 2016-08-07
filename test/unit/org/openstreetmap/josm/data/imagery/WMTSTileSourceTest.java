@@ -214,7 +214,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void test12168() throws IOException {
+    public void testTicket12168() throws IOException {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImagery12168);
         testSource.initProjection(Main.getProjection());

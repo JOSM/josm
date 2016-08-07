@@ -146,7 +146,7 @@ public class HttpClientTest {
     }
 
     @Test
-    public void test418() throws IOException {
+    public void testHttp418() throws IOException {
         // https://tools.ietf.org/html/rfc2324
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/418")).connect(progress);
         assertThat(response.getResponseCode(), is(418));

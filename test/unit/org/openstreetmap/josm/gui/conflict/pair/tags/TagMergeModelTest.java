@@ -31,7 +31,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void addPropertyChangeListener() {
+    public void testAddPropertyChangeListener() {
         TagMergeModel model = new TagMergeModel();
         PropertyChangeListener listener = new PropertyChangeListener() {
 
@@ -49,7 +49,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void removePropertyChangeListener() {
+    public void testRemovePropertyChangeListener() {
         TagMergeModel model = new TagMergeModel();
         PropertyChangeListener listener = new PropertyChangeListener() {
 
@@ -68,7 +68,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void populateNoConflichts() {
+    public void testPopulateNoConflichts() {
         Node my = new Node(1);
         Node their = new Node(1);
         TagMergeModel model = new TagMergeModel();
@@ -83,7 +83,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void populateNoConflicts1() {
+    public void testPopulateNoConflicts1() {
         Node my = new Node(1);
         my.put("key", "value");
         Node their = new Node(1);
@@ -100,7 +100,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void populateMissingKeyMine() {
+    public void testPopulateMissingKeyMine() {
         Node my = new Node(1);
         Node their = new Node(1);
         their.put("key", "value");
@@ -121,7 +121,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void populateMissingKeyTheir() {
+    public void testPopulateMissingKeyTheir() {
         Node my = new Node(1);
         my.put("key", "value");
         Node their = new Node(1);
@@ -142,7 +142,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void populateConflictingValues() {
+    public void testPopulateConflictingValues() {
         Node my = new Node(1);
         my.put("key", "myvalue");
         Node their = new Node(1);
@@ -164,7 +164,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void addItem() {
+    public void testAddItem() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         TagMergeModel model = new TagMergeModel();
         model.addItem(item);
@@ -183,7 +183,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void decide() {
+    public void testDecide() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         TagMergeModel model = new TagMergeModel();
         model.addItem(item);
@@ -210,7 +210,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void decideMultiple() {
+    public void testDecideMultiple() {
 
         TagMergeModel model = new TagMergeModel();
         for (int i = 0; i < 10; i++) {

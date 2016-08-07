@@ -24,7 +24,7 @@ public class RoundingPerformanceTest {
      */
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
-    public void test() {
+    public void testRounding() {
         final int n = 1000000;
         long start = System.nanoTime();
         for (int i = 0; i < n; i++) {

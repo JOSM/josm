@@ -73,7 +73,7 @@ public final class CreateCircleActionTest {
      * see #7421
      */
     @Test
-    public void test7421_0() {
+    public void testTicket7421case0() {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
@@ -138,7 +138,7 @@ public final class CreateCircleActionTest {
      * see #7421
      */
     @Test
-    public void test7421_1() {
+    public void testTicket7421case1() {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 

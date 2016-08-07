@@ -44,7 +44,7 @@ public class TaginfoTestIT {
      * @throws ParseException if any MapCSS parsing error occurs
      */
     @Test
-    public void checkPopularTags() throws SAXException, IOException, ParseException {
+    public void testCheckPopularTags() throws SAXException, IOException, ParseException {
         TaggingPresets.readFromPreferences();
         new TagChecker().initialize();
         MapCSSTagChecker mapCssTagChecker = new MapCSSTagChecker();

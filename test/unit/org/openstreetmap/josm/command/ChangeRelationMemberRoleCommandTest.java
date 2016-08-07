@@ -144,7 +144,7 @@ public class ChangeRelationMemberRoleCommandTest {
      * Unit test of methods {@link ChangeRelationMemberRoleCommand#equals} and {@link ChangeRelationMemberRoleCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(ChangeRelationMemberRoleCommand.class).usingGetClass()
             .withPrefabValues(Relation.class,
                 new Relation(1), new Relation(2))

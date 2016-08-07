@@ -129,7 +129,7 @@ public class LatLonTest {
      * Unit test of methods {@link LatLon#equals} and {@link LatLon#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(LatLon.class).usingGetClass()
             .withPrefabValues(DecimalFormat.class, new DecimalFormat("00.0"), new DecimalFormat("00.000"))
             .verify();
