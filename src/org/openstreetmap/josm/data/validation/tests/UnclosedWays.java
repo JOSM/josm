@@ -37,7 +37,7 @@ public class UnclosedWays extends Test {
      * A check performed by UnclosedWays test.
      * @since 6390
      */
-    private class UnclosedWaysCheck {
+    private static class UnclosedWaysCheck {
         /** The unique numeric code for this check */
         public final int code;
         /** The OSM key checked */
@@ -89,16 +89,17 @@ public class UnclosedWays extends Test {
         /**
          * Returns the test error of the given way, if any.
          * @param w The way to check
+         * @param test parent test
          * @return The test error if the way is erroneous, {@code null} otherwise
          */
-        public final TestError getTestError(Way w) {
+        public final TestError getTestError(Way w, UnclosedWays test) {
             String value = w.get(key);
             if (isValueErroneous(value)) {
                 // CHECKSTYLE.OFF: SingleSpaceSeparator
                 String  type = engMessage.contains("{0}") ? tr(engMessage, tr(value)) : tr(engMessage);
                 String etype = engMessage.contains("{0}") ? MessageFormat.format(engMessage, value) : engMessage;
                 // CHECKSTYLE.ON: SingleSpaceSeparator
-                return new TestError(UnclosedWays.this, Severity.WARNING, tr("Unclosed way"),
+                return new TestError(test, Severity.WARNING, tr("Unclosed way"),
                         type, etype, code, Arrays.asList(w),
                         // The important parts of an unclosed way are the first and
                         // the last node which should be connected, therefore we highlight them
@@ -116,7 +117,7 @@ public class UnclosedWays extends Test {
      * A check performed by UnclosedWays test where the key is treated as boolean.
      * @since 6390
      */
-    private final class UnclosedWaysBooleanCheck extends UnclosedWaysCheck {
+    private static final class UnclosedWaysBooleanCheck extends UnclosedWaysCheck {
 
         /**
          * Constructs a new {@code UnclosedWaysBooleanCheck}.
@@ -136,7 +137,7 @@ public class UnclosedWays extends Test {
         }
     }
 
-    private final UnclosedWaysCheck[] checks = {
+    private static final UnclosedWaysCheck[] checks = {
         // CHECKSTYLE.OFF: SingleSpaceSeparator
         new UnclosedWaysCheck(1101, "natural",   marktr("natural type {0}"),
                 new HashSet<>(Arrays.asList("cave", "coastline", "cliff", "tree_row", "ridge", "valley", "arete", "gorge"))),
@@ -182,7 +183,7 @@ public class UnclosedWays extends Test {
         }
 
         for (UnclosedWaysCheck c : checks) {
-            TestError error = c.getTestError(w);
+            TestError error = c.getTestError(w, this);
             if (error != null) {
                 errors.add(error);
                 return;

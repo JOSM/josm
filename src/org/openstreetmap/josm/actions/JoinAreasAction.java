@@ -1007,7 +1007,7 @@ public class JoinAreasAction extends JosmAction {
      * @param boundaries list of joined boundaries to search in
      * @return outer ways
      */
-    private List<AssembledMultipolygon> findPolygons(Collection<AssembledPolygon> boundaries) {
+    private static List<AssembledMultipolygon> findPolygons(Collection<AssembledPolygon> boundaries) {
 
         List<PolygonLevel> list = findOuterWaysImpl(0, boundaries);
         List<AssembledMultipolygon> result = new ArrayList<>();

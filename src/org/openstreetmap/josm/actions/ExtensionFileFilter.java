@@ -20,6 +20,14 @@ import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileExporter;
 import org.openstreetmap.josm.io.FileImporter;
+import org.openstreetmap.josm.io.GpxImporter;
+import org.openstreetmap.josm.io.JpgImporter;
+import org.openstreetmap.josm.io.NMEAImporter;
+import org.openstreetmap.josm.io.NoteImporter;
+import org.openstreetmap.josm.io.OsmChangeImporter;
+import org.openstreetmap.josm.io.OsmImporter;
+import org.openstreetmap.josm.io.WMSLayerImporter;
+import org.openstreetmap.josm.io.session.SessionImporter;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -50,15 +58,15 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
         importers = new ArrayList<>();
 
         final List<Class<? extends FileImporter>> importerNames = Arrays.asList(
-                org.openstreetmap.josm.io.OsmImporter.class,
-                org.openstreetmap.josm.io.OsmChangeImporter.class,
-                org.openstreetmap.josm.io.GpxImporter.class,
-                org.openstreetmap.josm.io.NMEAImporter.class,
-                org.openstreetmap.josm.io.NoteImporter.class,
-                org.openstreetmap.josm.io.JpgImporter.class,
-                org.openstreetmap.josm.io.WMSLayerImporter.class,
-                org.openstreetmap.josm.io.AllFormatsImporter.class,
-                org.openstreetmap.josm.io.session.SessionImporter.class
+                OsmImporter.class,
+                OsmChangeImporter.class,
+                GpxImporter.class,
+                NMEAImporter.class,
+                NoteImporter.class,
+                JpgImporter.class,
+                WMSLayerImporter.class,
+                AllFormatsImporter.class,
+                SessionImporter.class
         );
 
         for (final Class<? extends FileImporter> importerClass : importerNames) {

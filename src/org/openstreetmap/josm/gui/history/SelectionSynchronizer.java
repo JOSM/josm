@@ -12,7 +12,7 @@ import javax.swing.event.ListSelectionListener;
 public class SelectionSynchronizer implements ListSelectionListener {
 
     private final Set<ListSelectionModel> participants;
-    private boolean preventRecursion = false;
+    private boolean preventRecursion;
 
     /**
      * Constructs a new {@code SelectionSynchronizer}.

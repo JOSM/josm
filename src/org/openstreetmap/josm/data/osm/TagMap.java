@@ -279,7 +279,7 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("TagMap[");
         boolean first = true;
-        for (java.util.Map.Entry<String, String> e : entrySet()) {
+        for (Map.Entry<String, String> e : entrySet()) {
             if (!first) {
                 stringBuilder.append(',');
             }

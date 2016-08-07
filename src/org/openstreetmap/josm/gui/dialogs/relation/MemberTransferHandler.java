@@ -57,7 +57,7 @@ public class MemberTransferHandler extends TransferHandler {
         return importDataAt(support, destination, insertRow);
     }
 
-    private int computeInsertionRow(TransferSupport support, MemberTable destination) {
+    private static int computeInsertionRow(TransferSupport support, MemberTable destination) {
         final int insertRow;
         if (support.isDrop()) {
             insertRow = ((JTable.DropLocation) support.getDropLocation()).getRow();

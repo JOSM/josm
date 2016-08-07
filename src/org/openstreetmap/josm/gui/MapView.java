@@ -266,11 +266,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     /**
      * This class is an adapter for the old layer change interface.
-     * <p>
-     * New implementations should use {@link org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener}
      * @author Michael Zangl
      * @since 10271
+     * @deprecated New implementations should use {@link org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener}
      */
+    @Deprecated
     protected static class EditLayerChangeAdapter implements ActiveLayerChangeListener {
 
         private final EditLayerChangeListener wrapped;
@@ -325,7 +325,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * @since 10474
      */
     private static class WarningLayerPainter implements LayerPainter {
-        boolean warningPrinted = false;
+        boolean warningPrinted;
         private final Layer layer;
 
         WarningLayerPainter(Layer layer) {
