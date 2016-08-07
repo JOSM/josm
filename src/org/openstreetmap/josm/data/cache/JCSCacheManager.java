@@ -199,7 +199,7 @@ public final class JCSCacheManager {
 
     private static IDiskCacheAttributes getDiskCacheAttributes(int maxDiskObjects, String cachePath, String cacheName) {
         IDiskCacheAttributes ret;
-        removeStaleFiles(cachePath + File.separator + cacheName, (USE_BLOCK_CACHE.get() ? "_INDEX_v2" : "_BLOCK_v2"));
+        removeStaleFiles(cachePath + File.separator + cacheName, USE_BLOCK_CACHE.get() ? "_INDEX_v2" : "_BLOCK_v2");
         cacheName = cacheName + (USE_BLOCK_CACHE.get() ? "_BLOCK_v2" : "_INDEX_v2");
 
         if (USE_BLOCK_CACHE.get()) {

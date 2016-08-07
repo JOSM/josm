@@ -596,7 +596,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     private static String getKeyDescription(String key, TagCollection normalizedTags) {
         String values = normalizedTags.getValues(key)
                 .stream()
-                .map(x -> ((x == null || x.isEmpty()) ? tr("<i>missing</i>") : x))
+                .map(x -> (x == null || x.isEmpty()) ? tr("<i>missing</i>") : x)
                 .collect(Collectors.joining(tr(", ")));
         return tr("{0} ({1})", key, values);
     }
