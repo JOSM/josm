@@ -210,11 +210,6 @@ public abstract class Main {
     public MainMenu menu;
 
     /**
-     * The data validation handler.
-     */
-    public OsmValidator validator;
-
-    /**
      * The file watcher service.
      */
     public static final FileWatcher fileWatcher = new FileWatcher();
@@ -640,7 +635,7 @@ public abstract class Main {
 
             @Override
             public void initialize() {
-                validator = new OsmValidator();
+                OsmValidator.initialize();
             }
         });
 

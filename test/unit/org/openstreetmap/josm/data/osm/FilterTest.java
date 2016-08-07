@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,7 +19,6 @@ import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 
 /**
@@ -37,7 +35,7 @@ public class FilterTest {
     }
 
     @Test
-    public void basic() throws ParseError {
+    public void testBasic() throws ParseError {
         DataSet ds = new DataSet();
         Node n1 = new Node(LatLon.ZERO);
         n1.put("amenity", "parking");
@@ -65,7 +63,7 @@ public class FilterTest {
     }
 
     @Test
-    public void filter() throws ParseError, IllegalDataException, IOException {
+    public void testFilter() throws Exception {
         for (int i : new int[] {1, 2, 3, 11, 12, 13, 14, 15}) {
             DataSet ds;
             try (InputStream is = new FileInputStream("data_nodist/filterTests.osm")) {

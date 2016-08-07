@@ -270,7 +270,7 @@ public class MultiFetchServerObjectReaderTest {
     }
 
     @Test
-    public void multiGetWithNonExistingNode() throws OsmTransferException {
+    public void testMultiGetWithNonExistingNode() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i = 0; i < 10; i++) {

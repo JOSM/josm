@@ -1247,13 +1247,15 @@ public final class Utils {
      * @since 10294
      */
     public static boolean isValidUrl(String url) {
-        try {
-            new URL(url);
-            return true;
-        } catch (MalformedURLException | NullPointerException e) {
-            Main.trace(e);
-            return false;
+        if (url != null) {
+            try {
+                new URL(url);
+                return true;
+            } catch (MalformedURLException e) {
+                Main.trace(e);
+            }
         }
+        return false;
     }
 
     /**

@@ -53,7 +53,7 @@ public class PrefEntryTest {
      * Unit test of methods {@link PrefEntry#equals} and {@link PrefEntry#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(PrefEntry.class).usingGetClass()
             .withIgnoredFields("value", "defaultValue", "isDefault", "changed")
             .verify();

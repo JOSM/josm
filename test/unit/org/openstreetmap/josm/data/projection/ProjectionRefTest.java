@@ -277,7 +277,7 @@ public class ProjectionRefTest {
     }
 
     @Test
-    public void test() throws IOException {
+    public void testProjections() throws IOException {
         StringBuilder fail = new StringBuilder();
         Set<String> allCodes = new HashSet<>(Projections.getAllProjectionCodes());
         Collection<RefEntry> refs = readData();

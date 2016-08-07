@@ -34,7 +34,7 @@ public class NameMismatchTest {
      * Test "A name is missing, even though name:* exists."
      */
     @Test
-    public void test0() {
+    public void testCase0() {
         final List<TestError> errors = test("node name:de=Europa");
         assertEquals(1, errors.size());
         assertEquals("A name is missing, even though name:* exists.", errors.get(0).getMessage());
@@ -44,7 +44,7 @@ public class NameMismatchTest {
      * Test "Missing name:*={0}. Add tag with correct language key."
      */
     @Test
-    public void test1() {
+    public void testCase1() {
         final List<TestError> errors = test("node name=Europe name:de=Europa");
         assertEquals(1, errors.size());
         assertEquals("Missing name:*=Europe. Add tag with correct language key.", errors.get(0).getDescription());
@@ -54,7 +54,7 @@ public class NameMismatchTest {
      * Test no error
      */
     @Test
-    public void test2() {
+    public void testCase2() {
         final List<TestError> errors = test("node name=Europe name:de=Europa name:en=Europe");
         assertEquals(0, errors.size());
     }
@@ -63,7 +63,7 @@ public class NameMismatchTest {
      * Various other tests
      */
     @Test
-    public void test3() {
+    public void testCase3() {
         List<TestError> errors;
         errors = test("node \"name\"=\"Italia - Italien - Italy\"");
         assertEquals(0, errors.size());

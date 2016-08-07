@@ -55,7 +55,7 @@ public class KeyValuePerformanceTest {
      */
     @Test
     @SuppressFBWarnings(value = "DM_STRING_CTOR", justification = "test Strings that are interned and those that are not")
-    public void measureStringEqualsIntern() {
+    public void testMeasureStringEqualsIntern() {
         String str1Interned = "string1";
         String str1InternedB = "string1";
         String str1 = new String(str1Interned);

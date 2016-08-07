@@ -62,7 +62,7 @@ public class PropertiesMergeModelTest {
     }
 
     @Test
-    public void populate() {
+    public void testPopulate() {
         DataSet d1 = new DataSet();
         DataSet d2 = new DataSet();
         Node n1 = new Node(1);
@@ -85,7 +85,7 @@ public class PropertiesMergeModelTest {
     }
 
     @Test
-    public void decidingAboutCoords() {
+    public void testDecidingAboutCoords() {
         DataSet d1 = new DataSet();
         DataSet d2 = new DataSet();
 

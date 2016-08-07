@@ -44,7 +44,7 @@ public final class AlignInLineActionTest {
      * itself.
      */
     @Test
-    public void nodesOpenWay() {
+    public void testNodesOpenWay() {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
@@ -83,7 +83,7 @@ public final class AlignInLineActionTest {
      * distant nodes.
      */
     @Test
-    public void nodesClosedWay() {
+    public void testNodesClosedWay() {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
@@ -123,7 +123,7 @@ public final class AlignInLineActionTest {
      * distant nodes.
      */
     @Test
-    public void nodesOpenWays() {
+    public void testNodesOpenWays() {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 

@@ -30,7 +30,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * test query and get methods on a node withouth keys
      */
     @Test
-    public void emptyNode() {
+    public void testEmptyNode() {
         Node n = new Node();
         testKeysSize(n, 0);
         testGetKey(n, "nosuchkey", null);
@@ -44,7 +44,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * Adds a tag to an empty node and test the query and get methods.
      */
     @Test
-    public void put() {
+    public void testPut() {
         Node n = new Node();
         n.put("akey", "avalue");
         testKeysSize(n, 1);
@@ -56,7 +56,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * Adds two tags to an empty node and test the query and get methods.
      */
     @Test
-    public void put2() {
+    public void testPut2() {
         Node n = new Node();
         n.put("key.1", "value.1");
         n.put("key.2", "value.2");
@@ -74,7 +74,7 @@ public class OsmPrimitiveKeyHandlingTest {
      */
     @Test
     @SuppressFBWarnings(value = "DM_STRING_CTOR", justification = "test that equals is used and not ==")
-    public void remove() {
+    public void testRemove() {
         Node n = new Node();
         n.put("key.1", "value.1");
         n.put(new String("key.2"), new String("value.2")); // Test that equals is used and not ==
@@ -106,7 +106,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * Removes all tags from a node.
      */
     @Test
-    public void removeAll() {
+    public void testRemoveAll() {
         Node n = new Node();
 
         n.put("key.1", "value.1");
@@ -121,7 +121,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * in different orders.
      */
     @Test
-    public void hasEqualSemanticAttributes() {
+    public void testHasEqualSemanticAttributes() {
         Node n1 = new Node(1);
         n1.setCoor(LatLon.ZERO);
         n1.put("key.1", "value.1");
@@ -139,7 +139,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * Test hasEqualSemanticAttributes on two nodes with different tags.
      */
     @Test
-    public void hasEqualSemanticAttributes_2() {
+    public void testHasEqualSemanticAttributes_2() {
         Node n1 = new Node(1);
         n1.setCoor(LatLon.ZERO);
         n1.put("key.1", "value.1");

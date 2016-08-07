@@ -56,7 +56,7 @@ public class NoteTest {
      * Unit test of methods {@link Note#equals} and {@link Note#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(Note.class).usingGetClass()
             .withIgnoredFields("latLon", "createdAt", "closedAt", "state", "comments")
             .suppress(Warning.NONFINAL_FIELDS)

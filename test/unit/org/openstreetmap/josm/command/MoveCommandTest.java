@@ -258,7 +258,7 @@ public class MoveCommandTest {
      * Unit test of methods {@link MoveCommand#equals} and {@link MoveCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(MoveCommand.class).usingGetClass()
             .withPrefabValues(LatLon.class,
                 LatLon.ZERO, new LatLon(45, 45))

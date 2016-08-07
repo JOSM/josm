@@ -29,7 +29,7 @@ public class TransformNodesCommandTest {
      * Unit test of methods {@link TransformNodesCommand#equals} and {@link TransformNodesCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(TransformNodesCommand.class).usingGetClass()
             .withPrefabValues(LatLon.class,
                 LatLon.ZERO, new LatLon(45, 45))

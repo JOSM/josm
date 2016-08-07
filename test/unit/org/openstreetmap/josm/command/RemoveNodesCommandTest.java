@@ -121,7 +121,7 @@ public class RemoveNodesCommandTest {
      * Unit test of methods {@link RemoveNodesCommand#equals} and {@link RemoveNodesCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(RemoveNodesCommand.class).usingGetClass()
             .withPrefabValues(Way.class,
                 new Way(1), new Way(2))

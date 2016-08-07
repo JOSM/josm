@@ -61,7 +61,7 @@ public class OsmReaderPerformanceTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void test() throws Exception {
+    public void testPlain() throws Exception {
         runTest(".osm-file", true);
     }
 

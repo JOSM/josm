@@ -31,7 +31,7 @@ public class RelationMemberConflictResolverCommandTest {
      * Unit test of methods {@link RelationMemberConflictResolverCommand#equals} and {@link RelationMemberConflictResolverCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(RelationMemberConflictResolverCommand.class).usingGetClass()
             .withPrefabValues(Relation.class,
                     new Relation(1), new Relation(2))

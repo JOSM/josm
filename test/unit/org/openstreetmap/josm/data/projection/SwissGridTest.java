@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 public class SwissGridTest {
-    public static final String SWISS_EPSG_CODE = "EPSG:21781";
+    private static final String SWISS_EPSG_CODE = "EPSG:21781";
     private boolean debug = false;
 
     /**
@@ -55,10 +55,10 @@ public class SwissGridTest {
         }
     }
 
-    public static final double EPSILON_APPROX = 1.5;
-    public static final double EPSILON_ACCURATE = 0.05;
+    private static final double EPSILON_APPROX = 1.5;
+    private static final double EPSILON_ACCURATE = 0.05;
 
-    public void projReferenceTest(final double epsilon) {
+    private void projReferenceTest(final double epsilon) {
         Projection swiss = Projections.getProjectionByCode("EPSG:21781"); // Swiss grid
         StringBuilder errs = new StringBuilder();
         for (ProjData pd : data) {
@@ -71,19 +71,19 @@ public class SwissGridTest {
     }
 
     @Test
-    public void projReferenceTestApprox() {
+    public void testProjReferenceTestApprox() {
         projReferenceTest(EPSILON_APPROX);
     }
 
     @Test
     @Ignore("high accuracy of epsilon=" + EPSILON_ACCURATE + " is not met")
-    public void projReferenceTestAccurate() {
+    public void testProjReferenceTestAccurate() {
         // TODO make this test pass
         projReferenceTest(EPSILON_ACCURATE);
     }
 
     @Test
-    public void a_latlon2eastNorth_test() {
+    public void testAlatlon2eastNorth() {
         LatLon ll = new LatLon(46.518, 6.567);
         EastNorth en = Main.getProjection().latlon2eastNorth(ll);
         if (debug) {
@@ -126,7 +126,7 @@ public class SwissGridTest {
     }
 
     @Test
-    public void b_eastNorth2latlon_test() {
+    public void testBeastNorth2latlon() {
         EastNorth en = new EastNorth(533111.69, 152227.85);
         LatLon ll = Main.getProjection().eastNorth2latlon(en);
         if (debug) {
@@ -172,7 +172,7 @@ public class SwissGridTest {
      * Send and return should have less than 2mm of difference.
      */
     @Test
-    public void c_sendandreturn_test() {
+    public void testCsendandreturn() {
         EastNorth en = new EastNorth(533111.69, 152227.85);
         LatLon ll = Main.getProjection().eastNorth2latlon(en);
         EastNorth en2 = Main.getProjection().latlon2eastNorth(ll);

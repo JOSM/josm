@@ -145,7 +145,7 @@ public class WindowGeometryTest {
      * Unit test of methods {@link WindowGeometry#equals} and {@link WindowGeometry#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(WindowGeometry.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();

@@ -82,8 +82,8 @@ public class LayerListTransferHandler extends TransferHandler {
         try {
             LayerListModel tableModel = (LayerListModel) ((JTable) support.getComponent()).getModel();
 
-            LayerTransferable.Data layers = ((LayerTransferable.Data) support.getTransferable()
-                    .getTransferData(LayerTransferable.LAYER_DATA));
+            LayerTransferable.Data layers = (LayerTransferable.Data) support.getTransferable()
+                    .getTransferData(LayerTransferable.LAYER_DATA);
 
             int dropLocation;
             if (support.isDrop()) {

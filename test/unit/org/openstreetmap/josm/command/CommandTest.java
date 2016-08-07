@@ -80,7 +80,7 @@ public class CommandTest {
      * Unit test of methods {@link Command#equals} and {@link Command#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(Command.class).usingGetClass()
             .withPrefabValues(DataSet.class,
                 new DataSet(), new DataSet())

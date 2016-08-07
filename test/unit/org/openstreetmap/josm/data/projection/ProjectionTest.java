@@ -23,7 +23,7 @@ public class ProjectionTest {
     String text;
 
     @Test
-    public void projections() {
+    public void testProjections() {
         error = false;
         text = "";
 
@@ -103,7 +103,7 @@ public class ProjectionTest {
     Collection<String> projIds;
 
     @Test
-    public void projs() {
+    public void testProjs() {
         error2 = false;
         text2 = "";
 

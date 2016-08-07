@@ -163,7 +163,7 @@ public class ProjectionRegressionTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void regressionTest() throws IOException {
+    public void testNonRegression() throws IOException {
         List<TestData> allData = readData();
         Set<String> dataCodes = new HashSet<>();
         for (TestData data : allData) {

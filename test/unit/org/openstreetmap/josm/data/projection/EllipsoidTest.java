@@ -18,7 +18,7 @@ public class EllipsoidTest {
      * convert latlon to cartesian coordinates back and forth
      */
     @Test
-    public void latLon2Cart2LatLon() {
+    public void testLatLon2Cart2LatLon() {
         Random r = new Random(System.currentTimeMillis());
         double maxErrLat = 0, maxErrLon = 0;
         Ellipsoid ellips = Ellipsoid.WGS84;

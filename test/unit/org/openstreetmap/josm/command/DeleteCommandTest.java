@@ -375,7 +375,7 @@ public class DeleteCommandTest {
      * Unit test of methods {@link DeleteCommand#equals} and {@link DeleteCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(DeleteCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,
                 new DataSet(), new DataSet())

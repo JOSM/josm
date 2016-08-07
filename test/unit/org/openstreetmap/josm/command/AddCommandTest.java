@@ -135,7 +135,7 @@ public class AddCommandTest {
      * Unit test of methods {@link AddCommand#equals} and {@link AddCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(AddCommand.class).usingGetClass()
             .withPrefabValues(OsmPrimitive.class,
                 new Node(1), new Node(2))

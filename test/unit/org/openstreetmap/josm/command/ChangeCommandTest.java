@@ -151,7 +151,7 @@ public class ChangeCommandTest {
      * Unit test of methods {@link ChangeCommand#equals} and {@link ChangeCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(ChangeCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,
                 new DataSet(), new DataSet())

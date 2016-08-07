@@ -41,7 +41,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void simpleReferrersTest() {
+    public void testSimpleReferrersTest() {
         Node n1 = new Node(LatLon.ZERO);
         Way w1 = new Way();
         w1.addNode(n1);
@@ -51,7 +51,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void addAndRemoveReferrer() {
+    public void testAddAndRemoveReferrer() {
         Node n1 = new Node(LatLon.ZERO);
         Node n2 = new Node(LatLon.ZERO);
         Way w1 = new Way();
@@ -67,7 +67,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void multipleReferrers() {
+    public void testMultipleReferrers() {
         Node n1 = new Node(LatLon.ZERO);
         Way w1 = new Way();
         Way w2 = new Way();
@@ -83,7 +83,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void removeMemberFromRelationReferrerTest() {
+    public void testRemoveMemberFromRelationReferrerTest() {
         Node n1 = new Node(LatLon.ZERO);
         Relation r1 = new Relation();
         r1.addMember(new RelationMember("", n1));
@@ -95,7 +95,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void setRelationMemberReferrerTest() {
+    public void testSetRelationMemberReferrerTest() {
         Node n1 = new Node(LatLon.ZERO);
         Node n2 = new Node(LatLon.ZERO);
         Relation r1 = new Relation();
@@ -112,7 +112,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void removePrimitiveReferrerTest() {
+    public void testRemovePrimitiveReferrerTest() {
         Node n1 = new Node(LatLon.ZERO);
         Way w1 = new Way();
         w1.addNode(n1);
@@ -134,7 +134,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void nodeFromMultipleDatasets() {
+    public void testNodeFromMultipleDatasets() {
         // n has two referrers - w1 and w2. But only w1 is returned because it is in the same dataset as n
         Node n = new Node(LatLon.ZERO);
 
@@ -149,7 +149,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test(expected = DataIntegrityProblemException.class)
-    public void checkMustBeInDatasate() {
+    public void testCheckMustBeInDatasate() {
         Node n = new Node();
         n.getReferrers();
     }

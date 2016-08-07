@@ -25,7 +25,7 @@ public class BBoxTest {
      * Unit test of methods {@link BBox#equals} and {@link BBox#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(BBox.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();

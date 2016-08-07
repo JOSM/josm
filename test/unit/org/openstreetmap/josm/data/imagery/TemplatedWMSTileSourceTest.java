@@ -76,7 +76,7 @@ public class TemplatedWMSTileSourceTest {
      * Test EPSG:4326 - wide bounds
      */
     @Test
-    public void testEPSG4326_widebounds() {
+    public void testEPSG4326widebounds() {
         Main.setProjection(new CustomProjection("+proj=lonlat +datum=WGS84 +axis=neu +bounds=-180,53,180,54"));
         TemplatedWMSTileSource source = getSource();
 
@@ -88,7 +88,7 @@ public class TemplatedWMSTileSourceTest {
      * Test EPSG:4326 - narrow bounds
      */
     @Test
-    public void testEPSG4326_narrowbounds() {
+    public void testEPSG4326narrowbounds() {
         Main.setProjection(new CustomProjection("+proj=lonlat +datum=WGS84 +axis=neu +bounds=18,-90,20,90"));
         TemplatedWMSTileSource source = getSource();
 
@@ -116,7 +116,7 @@ public class TemplatedWMSTileSourceTest {
      * Test EPSG:3006 with bounds
      */
     @Test
-    public void testEPSG3006_withbounds() {
+    public void testEPSG3006withbounds() {
         Main.setProjection(
                 new CustomProjection("+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 "
                         + "+units=m +no_defs +axis=neu +wmssrs=EPSG:3006 +bounds=10.5700,55.2000,24.1800,69.1000 "));
@@ -131,7 +131,7 @@ public class TemplatedWMSTileSourceTest {
      * Test EPSG:3006 without bounds
      */
     @Test
-    public void testEPSG3006_withoutbounds() {
+    public void testEPSG3006withoutbounds() {
         Main.setProjection(
                 new CustomProjection("+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 "
                         + "+units=m +no_defs +axis=neu +wmssrs=EPSG:3006"));

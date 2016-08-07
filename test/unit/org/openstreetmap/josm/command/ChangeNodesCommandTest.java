@@ -123,7 +123,7 @@ public class ChangeNodesCommandTest {
      * Unit test of methods {@link ChangeNodesCommand#equals} and {@link ChangeNodesCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(ChangeNodesCommand.class).usingGetClass()
             .withPrefabValues(Way.class,
                 new Way(1), new Way(2))

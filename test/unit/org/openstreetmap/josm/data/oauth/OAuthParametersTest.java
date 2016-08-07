@@ -57,7 +57,7 @@ public class OAuthParametersTest {
      * Unit test of methods {@link OAuthParameters#equals} and {@link OAuthParameters#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(OAuthParameters.class).usingGetClass().verify();
     }
 }

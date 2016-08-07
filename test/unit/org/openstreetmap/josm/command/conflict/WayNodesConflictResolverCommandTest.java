@@ -31,7 +31,7 @@ public class WayNodesConflictResolverCommandTest {
      * Unit test of methods {@link WayNodesConflictResolverCommand#equals} and {@link WayNodesConflictResolverCommand#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(WayNodesConflictResolverCommand.class).usingGetClass()
             .withPrefabValues(Conflict.class,
                     new Conflict<>(new Node(), new Node()), new Conflict<>(new Way(), new Way()))

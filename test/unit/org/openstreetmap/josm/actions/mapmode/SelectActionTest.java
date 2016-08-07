@@ -85,7 +85,7 @@ public class SelectActionTest {
      */
     @Test
     @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
-    public void test10748() {
+    public void testTicket10748() {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 

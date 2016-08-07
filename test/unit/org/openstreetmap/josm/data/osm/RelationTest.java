@@ -22,12 +22,12 @@ public class RelationTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void createNewRelation() {
+    public void testCreateNewRelation() {
         new Relation(null);
     }
 
     @Test
-    public void equalSemenaticsToNull() {
+    public void testEqualSemanticsToNull() {
         Relation relation = new Relation();
         assertFalse(relation.hasEqualTechnicalAttributes(null));
     }

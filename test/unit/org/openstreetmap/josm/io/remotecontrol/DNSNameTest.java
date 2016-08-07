@@ -38,7 +38,7 @@ public class DNSNameTest {
      * Unit test of methods {@link DNSName#equals} and {@link DNSName#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(DNSName.class).suppress(Warning.NULL_FIELDS).verify();
     }
 }

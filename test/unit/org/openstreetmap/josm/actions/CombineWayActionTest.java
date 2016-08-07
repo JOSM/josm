@@ -61,7 +61,7 @@ public class CombineWayActionTest {
      * Unit test of methods {@link NodePair#equals} and {@link NodePair#hashCode}.
      */
     @Test
-    public void equalsContract() {
+    public void testEqualsContract() {
         EqualsVerifier.forClass(NodePair.class).usingGetClass()
             .withPrefabValues(Node.class, new Node(1), new Node(2))
             .verify();

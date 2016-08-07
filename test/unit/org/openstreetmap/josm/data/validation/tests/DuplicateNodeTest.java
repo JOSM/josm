@@ -28,7 +28,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test.
      */
     @Test
-    public void test() {
+    public void testDuplicateNode() {
         DataSet ds = new DataSet();
 
         Node a = new Node(new LatLon(10.0, 5.0));

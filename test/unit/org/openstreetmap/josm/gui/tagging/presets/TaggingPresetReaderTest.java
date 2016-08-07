@@ -39,7 +39,7 @@ public class TaggingPresetReaderTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void test8954() throws SAXException, IOException {
+    public void testTicket8954() throws SAXException, IOException {
         String presetfile = TestUtils.getRegressionDataFile(8954, "preset.xml");
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll(presetfile, false);
         Assert.assertEquals("Number of preset items", 1, presets.size());
@@ -71,7 +71,7 @@ public class TaggingPresetReaderTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void readDefaulPresets() throws SAXException, IOException {
+    public void testReadDefaulPresets() throws SAXException, IOException {
         String presetfile = "resource://data/defaultpresets.xml";
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll(presetfile, true);
         Assert.assertTrue("Default presets are empty", presets.size() > 0);
