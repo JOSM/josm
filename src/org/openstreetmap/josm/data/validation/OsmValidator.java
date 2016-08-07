@@ -292,7 +292,7 @@ public final class OsmValidator {
      * the original value fixed for EPSG:4326 (10000) using heuristics (that is, test&amp;error
      * until most bugs were discovered while keeping the processing time reasonable)
      */
-    public static final void initializeGridDetail() {
+    public static void initializeGridDetail() {
         String code = Main.getProjection().toCode();
         if (Arrays.asList(ProjectionPreference.wgs84.allCodes()).contains(code)) {
             OsmValidator.griddetail = 10000;
