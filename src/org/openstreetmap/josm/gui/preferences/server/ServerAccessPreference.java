@@ -46,7 +46,7 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
      *
      * @return panel with server preferences tabs
      */
-    protected JPanel buildTabbedServerPreferences() {
+    private JPanel buildTabbedServerPreferences() {
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(getTabPane(), BorderLayout.CENTER);
         return pnl;
@@ -57,7 +57,7 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
      *
      * @return preferences panel for server settings
      */
-    protected JPanel buildContentPanel() {
+    private JPanel buildContentPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
 

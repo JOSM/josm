@@ -685,7 +685,7 @@ public class LayerListDialog extends ToggleDialog {
          * @param layer the layer at this index
          * @see LayerListModelListener#makeVisible(int, Layer)
          */
-        protected void fireMakeVisible(int index, Layer layer) {
+        private void fireMakeVisible(int index, Layer layer) {
             for (LayerListModelListener listener : listeners) {
                 listener.makeVisible(index, layer);
             }
@@ -696,7 +696,7 @@ public class LayerListDialog extends ToggleDialog {
          *
          * @see LayerListModelListener#refresh()
          */
-        protected void fireRefresh() {
+        private void fireRefresh() {
             for (LayerListModelListener listener : listeners) {
                 listener.refresh();
             }
@@ -891,7 +891,7 @@ public class LayerListDialog extends ToggleDialog {
         /**
          * Make sure the first of the selected layers is visible in the views of this model.
          */
-        protected void ensureSelectedIsVisible() {
+        private void ensureSelectedIsVisible() {
             int index = selectionModel.getMinSelectionIndex();
             if (index < 0)
                 return;
@@ -940,7 +940,7 @@ public class LayerListDialog extends ToggleDialog {
          * Ensures that at least one layer is selected in the layer dialog
          *
          */
-        protected void ensureActiveSelected() {
+        private void ensureActiveSelected() {
             List<Layer> layers = getLayers();
             if (layers.isEmpty())
                 return;
@@ -962,20 +962,8 @@ public class LayerListDialog extends ToggleDialog {
          *
          * @return the active layer. null, if no active layer is available
          */
-        protected Layer getActiveLayer() {
+        private Layer getActiveLayer() {
             return getLayerManager().getActiveLayer();
-        }
-
-        /**
-         * Replies the scale layer. null, if no active layer is available.
-         *
-         * @return the scale layer. null, if no active layer is available
-         * @deprecated Deprecated since it is unused in JOSM and does not really belong here. Can be removed soon (August 2016).
-         *             You can directly query MapView.
-         */
-        @Deprecated
-        protected NativeScaleLayer getNativeScaleLayer() {
-            return Main.isDisplayingMapView() ? Main.map.mapView.getNativeScaleLayer() : null;
         }
 
         /* ------------------------------------------------------------------------------ */

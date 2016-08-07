@@ -208,7 +208,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
             buildPanel();
         }
 
-        protected void buildPanel() {
+        private void buildPanel() {
             setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             add(new JLabel(preferenceSetting.getTitle()), GBC.eol().insets(0, 5, 0, 10).anchor(GBC.NORTHWEST));
 

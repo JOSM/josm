@@ -67,7 +67,7 @@ public final class ChangesetCache implements PreferenceChangedListener {
         }
     }
 
-    protected void fireChangesetCacheEvent(final ChangesetCacheEvent e) {
+    private void fireChangesetCacheEvent(final ChangesetCacheEvent e) {
         GuiHelper.runInEDT(() -> {
             for (ChangesetCacheListener l: listeners) {
                 l.changesetCacheUpdated(e);
@@ -75,7 +75,7 @@ public final class ChangesetCache implements PreferenceChangedListener {
         });
     }
 
-    protected void update(Changeset cs, DefaultChangesetCacheEvent e) {
+    private void update(Changeset cs, DefaultChangesetCacheEvent e) {
         if (cs == null) return;
         if (cs.isNew()) return;
         Changeset inCache = cache.get(cs.getId());
@@ -122,7 +122,7 @@ public final class ChangesetCache implements PreferenceChangedListener {
         return new HashSet<>(cache.values());
     }
 
-    protected void remove(int id, DefaultChangesetCacheEvent e) {
+    private void remove(int id, DefaultChangesetCacheEvent e) {
         if (id <= 0) return;
         Changeset cs = cache.get(id);
         if (cs == null) return;

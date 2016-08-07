@@ -115,7 +115,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
     /**
      * builds the GUI
      */
-    protected void build() {
+    private void build() {
         model = new ConflictListModel();
 
         lstConflicts = new JList<>(model);

@@ -170,7 +170,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             errorMessages = new LinkedHashSet<>();
         }
 
-        protected void rememberError(String message) {
+        private void rememberError(String message) {
             this.errorMessages.add(message);
         }
 
@@ -260,7 +260,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             }
         }
 
-        protected String formatErrorMessages() {
+        private String formatErrorMessages() {
             StringBuilder sb = new StringBuilder();
             sb.append("<html>");
             if (errorMessages.size() == 1) {

@@ -108,15 +108,13 @@ public class CloseChangesetAction extends JosmAction {
         }
 
         /**
-         * Fetch the user info from the server. This is necessary if we don't know
-         * the users id yet
+         * Fetch the user info from the server. This is necessary if we don't know the users id yet
          *
          * @return the user info
          * @throws OsmTransferException in case of any communication exception
          */
-        protected UserInfo fetchUserInfo() throws OsmTransferException {
-            OsmServerUserInfoReader reader = new OsmServerUserInfoReader();
-            return reader.fetchUserInfo(getProgressMonitor().createSubTaskMonitor(1, false));
+        private UserInfo fetchUserInfo() throws OsmTransferException {
+            return new OsmServerUserInfoReader().fetchUserInfo(getProgressMonitor().createSubTaskMonitor(1, false));
         }
 
         @Override

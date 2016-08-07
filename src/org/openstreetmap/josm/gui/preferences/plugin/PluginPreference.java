@@ -159,7 +159,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         }
     }
 
-    protected JPanel buildSearchFieldPanel() {
+    private JPanel buildSearchFieldPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         GridBagConstraints gc = new GridBagConstraints();
@@ -180,7 +180,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         return pnl;
     }
 
-    protected JPanel buildActionPanel() {
+    private JPanel buildActionPanel() {
         JPanel pnl = new JPanel(new GridLayout(1, 3));
 
         pnl.add(new JButton(new DownloadAvailablePluginsAction()));
@@ -189,7 +189,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         return pnl;
     }
 
-    protected JPanel buildPluginListPanel() {
+    private JPanel buildPluginListPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(buildSearchFieldPanel(), BorderLayout.NORTH);
         model = new PluginPreferencesModel();
@@ -214,7 +214,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         return pnl;
     }
 
-    protected JTabbedPane buildContentPane() {
+    private JTabbedPane buildContentPane() {
         JTabbedPane pane = getTabPane();
         pnlPluginUpdatePolicy = new PluginUpdatePolicyPanel();
         pane.addTab(tr("Plugins"), buildPluginListPanel());
