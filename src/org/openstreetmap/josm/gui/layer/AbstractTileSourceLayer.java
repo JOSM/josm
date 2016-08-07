@@ -1263,7 +1263,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * This is a rectangular range of tiles.
      */
     private static class TileRange {
-        int minX, maxX, minY, maxY;
+        int minX;
+        int maxX;
+        int minY;
+        int maxY;
         int zoom;
 
         private TileRange() {
