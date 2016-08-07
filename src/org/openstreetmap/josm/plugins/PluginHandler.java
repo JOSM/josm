@@ -974,16 +974,14 @@ public final class PluginHandler {
             monitor.beginTask("");
 
             // try to download the plugin lists
-            //
             ReadRemotePluginInformationTask task1 = new ReadRemotePluginInformationTask(
                     monitor.createSubTaskMonitor(1, false),
                     Main.pref.getOnlinePluginSites(), displayErrMsg
             );
             task1.run();
-            List<PluginInformation> allPlugins = null;
+            List<PluginInformation> allPlugins = task1.getAvailablePlugins();
 
             try {
-                allPlugins = task1.getAvailablePlugins();
                 plugins = buildListOfPluginsToLoad(parent, monitor.createSubTaskMonitor(1, false));
                 // If only some plugins have to be updated, filter the list
                 if (pluginsWanted != null && !pluginsWanted.isEmpty()) {
@@ -1008,11 +1006,12 @@ public final class PluginHandler {
             }
 
             // filter plugins which actually have to be updated
-            //
             Collection<PluginInformation> pluginsToUpdate = new ArrayList<>();
-            for (PluginInformation pi: plugins) {
-                if (pi.isUpdateRequired()) {
-                    pluginsToUpdate.add(pi);
+            if (plugins != null) {
+                for (PluginInformation pi: plugins) {
+                    if (pi.isUpdateRequired()) {
+                        pluginsToUpdate.add(pi);
+                    }
                 }
             }
 
@@ -1029,14 +1028,14 @@ public final class PluginHandler {
                     // Iterate on required plugins, if they need themselves another plugins (i.e A needs B, but B needs C)
                     while (!additionalPlugins.isEmpty()) {
                         // Install the additional plugins to load them later
-                        plugins.addAll(additionalPlugins);
+                        if (plugins != null)
+                            plugins.addAll(additionalPlugins);
                         additionalPlugins = findRequiredPluginsToDownload(additionalPlugins, allPlugins, pluginsToDownload);
                         pluginsToDownload.addAll(additionalPlugins);
                     }
                 }
 
                 // try to update the locally installed plugins
-                //
                 pluginDownloadTask = new PluginDownloadTask(
                         monitor.createSubTaskMonitor(1, false),
                         pluginsToDownload,
@@ -1052,11 +1051,9 @@ public final class PluginHandler {
                 }
 
                 // Update Plugin info for downloaded plugins
-                //
                 refreshLocalUpdatedPluginInfo(pluginDownloadTask.getDownloadedPlugins());
 
                 // notify user if downloading a locally installed plugin failed
-                //
                 if (!pluginDownloadTask.getFailedPlugins().isEmpty()) {
                     alertFailedPluginUpdate(parent, pluginDownloadTask.getFailedPlugins());
                     return plugins;
@@ -1067,7 +1064,6 @@ public final class PluginHandler {
         }
         if (pluginsWanted == null) {
             // if all plugins updated, remember the update because it was successful
-            //
             Main.pref.putInteger("pluginmanager.version", Version.getInstance().getVersion());
             Main.pref.put("pluginmanager.lastupdate", Long.toString(System.currentTimeMillis()));
         }

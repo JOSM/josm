@@ -224,7 +224,9 @@ public final class TaggingPresetReader {
                     tp.group = lastmenu;
                     if (all.contains(tp)) {
                         lastmenuOriginal = tp;
-                        tp = (TaggingPresetMenu) all.stream().filter(tp::equals).findFirst().get();
+                        java.util.Optional<TaggingPreset> val = all.stream().filter(tp::equals).findFirst();
+                        if (val.isPresent())
+                            tp = (TaggingPresetMenu) val.get();
                         lastmenuOriginal.group = null;
                     } else {
                         tp.setDisplayName();
