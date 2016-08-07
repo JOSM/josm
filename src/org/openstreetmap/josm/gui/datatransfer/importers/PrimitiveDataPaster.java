@@ -49,7 +49,7 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
         }
 
         EastNorth center = pasteBuffer.getCenter();
-        EastNorth offset = center == null ? null : pasteAt.subtract(center);
+        EastNorth offset = center == null || pasteAt == null ? new EastNorth(0, 0) : pasteAt.subtract(center);
 
         AddPrimitivesCommand command = createNewPrimitives(pasteBuffer, offset, layer);
 

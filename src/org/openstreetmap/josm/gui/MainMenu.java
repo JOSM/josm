@@ -73,6 +73,7 @@ import org.openstreetmap.josm.actions.OrthogonalizeAction;
 import org.openstreetmap.josm.actions.OrthogonalizeAction.Undo;
 import org.openstreetmap.josm.actions.OverpassDownloadAction;
 import org.openstreetmap.josm.actions.PasteAction;
+import org.openstreetmap.josm.actions.PasteAtSourcePositionAction;
 import org.openstreetmap.josm.actions.PasteTagsAction;
 import org.openstreetmap.josm.actions.PreferenceToggleAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
@@ -194,6 +195,8 @@ public class MainMenu extends JMenuBar {
     public final JosmAction copyCoordinates = new CopyCoordinatesAction();
     /** Edit / Paste */
     public final PasteAction paste = new PasteAction();
+    /** Edit / Paste at source */
+    private final PasteAtSourcePositionAction pasteAtSource = new PasteAtSourcePositionAction();
     /** Edit / Paste Tags */
     public final PasteTagsAction pasteTags = new PasteTagsAction();
     /** Edit / Duplicate */
@@ -679,6 +682,7 @@ public class MainMenu extends JMenuBar {
         add(editMenu, copy);
         add(editMenu, copyCoordinates, true);
         add(editMenu, paste);
+        add(editMenu, pasteAtSource, true);
         add(editMenu, pasteTags);
         add(editMenu, duplicate);
         add(editMenu, delete);

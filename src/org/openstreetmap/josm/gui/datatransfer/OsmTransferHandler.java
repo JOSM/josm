@@ -82,7 +82,7 @@ public class OsmTransferHandler extends TransferHandler {
     /**
      * Paste the current clipboard current at the given position
      * @param editLayer The layer to paste on.
-     * @param mPosition The position to paste at.
+     * @param mPosition The position to paste at. If it is <code>null</code>, the original position will be used.
      */
     public void pasteOn(OsmDataLayer editLayer, EastNorth mPosition) {
         Transferable transferable = ClipboardUtils.getClipboard().getContents(null);
@@ -92,7 +92,7 @@ public class OsmTransferHandler extends TransferHandler {
     /**
      * Paste the given clipboard current at the given position
      * @param editLayer The layer to paste on.
-     * @param mPosition The position to paste at.
+     * @param mPosition The position to paste at. If it is <code>null</code>, the original position will be used.
      * @param transferable The transferable to use.
      */
     public void pasteOn(OsmDataLayer editLayer, EastNorth mPosition, Transferable transferable) {

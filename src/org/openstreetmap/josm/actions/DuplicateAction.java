@@ -9,9 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
 import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -19,7 +17,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * An action that duplicates the given nodes. They are not added to the clipboard.
  */
-public final class DuplicateAction extends JosmAction {
+public final class DuplicateAction extends AbstractPasteAction {
 
     /**
      * Constructs a new {@code DuplicateAction}.
@@ -34,8 +32,7 @@ public final class DuplicateAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         PrimitiveTransferData data = PrimitiveTransferData.getDataWithReferences(getLayerManager().getEditDataSet().getSelected());
-        new OsmTransferHandler().pasteOn(Main.getLayerManager().getEditLayer(),
-                PasteAction.computePastePosition(e, getValue(NAME)), new PrimitiveTransferable(data));
+        doPaste(e, new PrimitiveTransferable(data));
     }
 
     @Override
