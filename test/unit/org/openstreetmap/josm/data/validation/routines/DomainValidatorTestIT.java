@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.IDN;
 import java.net.URL;
@@ -46,6 +47,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -77,7 +79,14 @@ public class DomainValidatorTestIT {
         Set<String> ianaTlds = new HashSet<>(); // keep for comparison with array contents
         DomainValidator dv = DomainValidator.getInstance();
         File txtFile = new File(System.getProperty("java.io.tmpdir"), "tlds-alpha-by-domain.txt");
-        long timestamp = download(txtFile, "http://data.iana.org/TLD/tlds-alpha-by-domain.txt", 0L);
+        long timestamp;
+        try {
+            timestamp = download(txtFile, "http://data.iana.org/TLD/tlds-alpha-by-domain.txt", 0L);
+        } catch (ConnectException e) {
+            Main.error(e);
+            // Try again one more time in case of random network issue
+            timestamp = download(txtFile, "http://data.iana.org/TLD/tlds-alpha-by-domain.txt", 0L);
+        }
         final File htmlFile = new File(System.getProperty("java.io.tmpdir"), "tlds-alpha-by-domain.html");
         // N.B. sometimes the html file may be updated a day or so after the txt file
         // if the txt file contains entries not found in the html file, try again in a day or two
