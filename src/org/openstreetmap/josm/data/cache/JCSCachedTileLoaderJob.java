@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.cache;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.HashSet;
@@ -25,8 +26,6 @@ import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Utils;
-
-import sun.net.www.protocol.http.HttpURLConnection;
 
 /**
  * Generic loader for HTTP based tiles. Uses custom attribute, to check, if entry has expired
