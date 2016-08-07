@@ -1475,6 +1475,9 @@ public class ImageProvider {
      * @return an image from the given SVG data at the desired dimension.
      */
     public static BufferedImage createImageFromSvg(SVGDiagram svg, Dimension dim) {
+        if (Main.isTraceEnabled()) {
+            Main.trace(String.format("createImageFromSvg: %s %s", svg.getXMLBase(), dim));
+        }
         float sourceWidth = svg.getWidth();
         float sourceHeight = svg.getHeight();
         int realWidth = Math.round(GuiSizesHelper.getSizeDpiAdjusted(sourceWidth));
