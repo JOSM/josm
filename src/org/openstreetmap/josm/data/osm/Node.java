@@ -111,7 +111,7 @@ public final class Node extends OsmPrimitive implements INode {
      * @param coor lat/lon
      * @param eastNorth east/north
      */
-    protected void setCoorInternal(LatLon coor, EastNorth eastNorth) {
+    void setCoorInternal(LatLon coor, EastNorth eastNorth) {
         if (coor != null) {
             this.lat = coor.lat();
             this.lon = coor.lon();

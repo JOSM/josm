@@ -683,7 +683,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser {
             repaint();
         }
 
-        protected Point getTopLeftCoordinates() {
+        private Point getTopLeftCoordinates() {
             return new Point(center.x - (getWidth() / 2), center.y - (getHeight() / 2));
         }
 

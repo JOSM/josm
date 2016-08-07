@@ -82,7 +82,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         sliders.add(slider);
     }
 
-    protected void setVisibleFlag(boolean visible) {
+    void setVisibleFlag(boolean visible) {
         for (Layer l : model.getSelectedLayers()) {
             l.setVisible(visible);
         }
@@ -101,7 +101,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         }
     }
 
-    protected void updateValues() {
+    void updateValues() {
         List<Layer> layers = model.getSelectedLayers();
 
         visibilityCheckbox.setEnabled(!layers.isEmpty());

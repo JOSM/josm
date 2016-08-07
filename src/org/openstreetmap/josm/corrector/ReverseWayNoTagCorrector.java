@@ -74,7 +74,7 @@ public final class ReverseWayNoTagCorrector {
         return getDirectionalTags(way).isEmpty();
     }
 
-    protected static boolean confirmReverseWay(Way way, TagCollection tags) {
+    private static boolean confirmReverseWay(Way way, TagCollection tags) {
         String msg = trn(
                 // Singular, if a single tag is impacted
                 "<html>You are going to reverse the way ''{0}'',"

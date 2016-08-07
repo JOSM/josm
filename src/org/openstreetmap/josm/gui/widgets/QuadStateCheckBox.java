@@ -168,7 +168,7 @@ public class QuadStateCheckBox extends JCheckBox {
             }
         }
 
-        protected void setPropertyText(String propertyText) {
+        private void setPropertyText(String propertyText) {
             this.propertyText = propertyText;
         }
 

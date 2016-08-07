@@ -67,7 +67,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         return dialogs.containsKey(id);
     }
 
-    protected void show(long id, HistoryBrowserDialog dialog) {
+    private void show(long id, HistoryBrowserDialog dialog) {
         if (dialogs.values().contains(dialog)) {
             show(id);
         } else {
@@ -77,13 +77,13 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         }
     }
 
-    protected void show(long id) {
+    private void show(long id) {
         if (dialogs.keySet().contains(id)) {
             dialogs.get(id).toFront();
         }
     }
 
-    protected boolean hasDialogWithCloseUpperLeftCorner(Point p) {
+    private boolean hasDialogWithCloseUpperLeftCorner(Point p) {
         for (HistoryBrowserDialog dialog: dialogs.values()) {
             Point corner = dialog.getLocation();
             if (p.x >= corner.x -5 && corner.x + 5 >= p.x
@@ -93,7 +93,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         return false;
     }
 
-    protected void placeOnScreen(HistoryBrowserDialog dialog) {
+    private void placeOnScreen(HistoryBrowserDialog dialog) {
         WindowGeometry geometry = new WindowGeometry(WINDOW_GEOMETRY_PREF, WindowGeometry.centerOnScreen(new Dimension(850, 500)));
         geometry.applySafe(dialog);
         Point p = dialog.getLocation();

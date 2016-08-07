@@ -83,7 +83,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         Main.getLayerManager().addLayerChangeListener(this);
     }
 
-    protected void build() {
+    private void build() {
         JPanel content = new JPanel(new BorderLayout());
 
         content.add(imgDisplay, BorderLayout.CENTER);

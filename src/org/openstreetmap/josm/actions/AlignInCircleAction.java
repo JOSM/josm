@@ -387,7 +387,7 @@ public final class AlignInCircleAction extends JosmAction {
      * @param ways The ways collection to check
      * @return true if all ways can be joined into a polygon
      */
-    protected static boolean checkWaysArePolygon(Collection<Way> ways) {
+    private static boolean checkWaysArePolygon(Collection<Way> ways) {
         // For each way, nodes strictly between first and last should't be reference by an other way
         for (Way way: ways) {
             for (Node node: way.getNodes()) {

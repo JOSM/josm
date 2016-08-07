@@ -85,7 +85,7 @@ public abstract class AbstractTableListEditor<T> extends AbstractListEditor<T> {
             updateEnabledState();
         }
 
-        protected void updateEnabledState() {
+        private void updateEnabledState() {
             setEnabled(entryList.getSelectedIndices().length == 1);
         }
 

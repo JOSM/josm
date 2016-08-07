@@ -150,7 +150,7 @@ public final class TextTagParser {
         }
     }
 
-    protected static String unescape(String k) {
+    static String unescape(String k) {
         if (!(k.startsWith("\"") && k.endsWith("\""))) {
             if (k.contains("=")) {
                 // '=' not in quotes will be treated as an error!

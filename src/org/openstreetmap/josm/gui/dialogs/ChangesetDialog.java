@@ -482,7 +482,7 @@ public class ChangesetDialog extends ToggleDialog {
             // Hide implicit public constructor for utility classes
         }
 
-        protected static void launchChangesetManager(Collection<Integer> toSelect) {
+        private static void launchChangesetManager(Collection<Integer> toSelect) {
             ChangesetCacheManager cm = ChangesetCacheManager.getInstance();
             if (cm.isVisible()) {
                 cm.setExtendedState(Frame.NORMAL);
