@@ -269,8 +269,12 @@ class TagInfoExtract {
                             description: descriptionPrefix + preset.name,
                             key: item.key,
                             value: value,
-                            object_types: preset.types.collect {it == TaggingPresetType.CLOSEDWAY ? "area" : it.toString().toLowerCase()},
                     ]
+                    def otypes = preset.types.collect {
+                        it == TaggingPresetType.CLOSEDWAY ? "area" :
+                            (it == TaggingPresetType.MULTIPOLYGON ? "relation" : it.toString().toLowerCase(Locale.ENGLISH))
+                    }
+                    if (!otypes.isEmpty()) tag += [object_types: otypes]
                     if (addImages && preset.iconName) tag += [icon_url: find_image_url(preset.iconName)]
                     tags += tag
                 }
@@ -352,7 +356,7 @@ class TagInfoExtract {
                 contact_name: "JOSM developer team",
                 contact_email: "josm-dev@openstreetmap.org",
         ]
-        json data_format: 1, data_updated: new Date().format("yyyyMMdd'T'hhmmssZ"), project: project, tags: tags
+        json data_format: 1, data_updated: new Date().format("yyyyMMdd'T'hhmmss'Z'", TimeZone.getTimeZone('UTC')), project: project, tags: tags
 
         if (output_file != null) {
             json.writeTo(output_file)
