@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016080402, Last Updated Fri Aug  5 07:07:01 2016 UTC
+        // Taken from Version 2016080900, Last Updated Tue Aug  9 07:07:02 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -332,7 +332,9 @@ public final class DomainValidator extends AbstractValidator {
         "ally", // ally Ally Financial Inc.
         "alsace", // alsace REGION D ALSACE
         "alstom", // alstom ALSTOM
+        "americanexpress", // americanexpress American Express Travel Related Services Company, Inc.
         "americanfamily", // americanfamily AmFam, Inc.
+        "amex", // amex American Express Travel Related Services Company, Inc.
         "amfam", // amfam AmFam, Inc.
         "amica", // amica Amica Mutual Insurance Company
         "amsterdam", // amsterdam Gemeente Amsterdam
@@ -906,6 +908,8 @@ public final class DomainValidator extends AbstractValidator {
         "maserati", // maserati Fiat Chrysler Automobiles N.V.
         "mattel", // mattel Mattel Sites, Inc.
         "mba", // mba Lone Hollow, LLC
+        "mcd", // mcd McDonald’s Corporation
+        "mcdonalds", // mcdonalds McDonald’s Corporation
         "mckinsey", // mckinsey McKinsey Holdings, Inc.
         "med", // med Medistry LLC
         "media", // media Grand Glen, LLC
@@ -1003,6 +1007,7 @@ public final class DomainValidator extends AbstractValidator {
         "online", // online DotOnline Inc.
         "onyourside", // onyourside Nationwide Mutual Insurance Company
         "ooo", // ooo INFIBEAM INCORPORATION LIMITED
+        "open", // open American Express Travel Related Services Company, Inc.
         "oracle", // oracle Oracle Corporation
         "orange", // orange Orange Brand Services Limited
         "org", // org Public Interest Registry (PIR)
