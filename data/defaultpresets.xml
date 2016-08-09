@@ -226,7 +226,7 @@
     </chunk>
     <chunk id="population_postcode_website">
         <text key="population" text="Population" />
-        <text key="addr:postcode" text="Post code" />
+        <text key="postal_code" text="Postal Code" />
         <text key="website" text="Website" />
     </chunk>
     <chunk id="route_hikebike_optionals">
