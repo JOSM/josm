@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -388,7 +389,7 @@ public abstract class UnconnectedWays extends Test {
             // This needs to be a hash set because the searches
             // overlap a bit and can return duplicate nodes.
             nearbyNodeCache = null;
-            List<LatLon> bounds = this.getBounds(dist);
+            List<LatLon> bounds = this.getBounds(dist * (360.0d / (Ellipsoid.WGS84.a * 2 * Math.PI)));
             List<Node> foundNodes = endnodesHighway.search(new BBox(bounds.get(0), bounds.get(1)));
             foundNodes.addAll(endnodes.search(new BBox(bounds.get(0), bounds.get(1))));
 

@@ -58,8 +58,8 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param message The error message
      * @param description The translated description
      * @param descriptionEn The English description
-     * @param primitives The affected primitives
      * @param code The test error reference code
+     * @param primitives The affected primitives
      * @param highlighted OSM primitives to highlight
      */
     public TestError(Test tester, Severity severity, String message, String description, String descriptionEn,
@@ -79,8 +79,8 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param tester The tester
      * @param severity The severity of this error
      * @param message The error message
-     * @param primitives The affected primitives
      * @param code The test error reference code
+     * @param primitives The affected primitives
      * @param highlighted OSM primitives to highlight
      */
     public TestError(Test tester, Severity severity, String message, int code, Collection<? extends OsmPrimitive> primitives,
@@ -95,8 +95,8 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param message The error message
      * @param description The translated description
      * @param descriptionEn The English description
-     * @param primitives The affected primitives
      * @param code The test error reference code
+     * @param primitives The affected primitives
      */
     public TestError(Test tester, Severity severity, String message, String description, String descriptionEn,
             int code, Collection<? extends OsmPrimitive> primitives) {
@@ -108,8 +108,8 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param tester The tester
      * @param severity The severity of this error
      * @param message The error message
-     * @param primitives The affected primitives
      * @param code The test error reference code
+     * @param primitives The affected primitives
      */
     public TestError(Test tester, Severity severity, String message, int code, Collection<? extends OsmPrimitive> primitives) {
         this(tester, severity, message, null, null, code, primitives, primitives);
@@ -120,8 +120,8 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param tester The tester
      * @param severity The severity of this error
      * @param message The error message
-     * @param primitive The affected primitive
      * @param code The test error reference code
+     * @param primitive The affected primitive
      */
     public TestError(Test tester, Severity severity, String message, int code, OsmPrimitive primitive) {
         this(tester, severity, message, null, null, code, Collections.singletonList(primitive), Collections
@@ -135,8 +135,8 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param message The error message
      * @param description The translated description
      * @param descriptionEn The English description
-     * @param primitive The affected primitive
      * @param code The test error reference code
+     * @param primitive The affected primitive
      */
     public TestError(Test tester, Severity severity, String message, String description, String descriptionEn,
             int code, OsmPrimitive primitive) {
