@@ -363,10 +363,10 @@ public class SplitWayAction extends JosmAction {
         // Special case - one of the selected ways touches (not cross) way that we want to split
         if (selectedNodes.size() == 1) {
             Node n = selectedNodes.get(0);
-            List<Way> referedWays =
+            List<Way> referredWays =
                 OsmPrimitive.getFilteredList(n.getReferrers(), Way.class);
             Way inTheMiddle = null;
-            for (Way w: referedWays) {
+            for (Way w: referredWays) {
                 // Need to look at all nodes see #11184 for a case where node n is
                 // firstNode, lastNode and also in the middle
                 if (selectedWays.contains(w) && w.isInnerNode(n)) {

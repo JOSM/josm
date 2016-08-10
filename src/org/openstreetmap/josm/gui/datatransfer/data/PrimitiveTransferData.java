@@ -35,7 +35,7 @@ public final class PrimitiveTransferData implements Serializable {
 
     private static final class GetReferences implements ReferenceGetter {
         @Override
-        public Collection<? extends OsmPrimitive> getReferedPrimitives(OsmPrimitive primitive) {
+        public Collection<? extends OsmPrimitive> getReferredPrimitives(OsmPrimitive primitive) {
             if (primitive instanceof Way) {
                 return ((Way) primitive).getNodes();
             } else if (primitive instanceof Relation) {
@@ -48,7 +48,7 @@ public final class PrimitiveTransferData implements Serializable {
 
     @FunctionalInterface
     private interface ReferenceGetter {
-        Collection<? extends OsmPrimitive> getReferedPrimitives(OsmPrimitive primitive);
+        Collection<? extends OsmPrimitive> getReferredPrimitives(OsmPrimitive primitive);
     }
 
     private final ArrayList<PrimitiveData> direct;
@@ -69,13 +69,13 @@ public final class PrimitiveTransferData implements Serializable {
         Queue<OsmPrimitive> toCheck = new LinkedList<>();
         for (OsmPrimitive p : visited) {
             direct.add(p.save());
-            toCheck.addAll(referencedGetter.getReferedPrimitives(p));
+            toCheck.addAll(referencedGetter.getReferredPrimitives(p));
         }
         while (!toCheck.isEmpty()) {
             OsmPrimitive p = toCheck.poll();
             if (visited.add(p)) {
                 referenced.add(p.save());
-                toCheck.addAll(referencedGetter.getReferedPrimitives(p));
+                toCheck.addAll(referencedGetter.getReferredPrimitives(p));
             }
         }
     }
