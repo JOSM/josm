@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 public class WayConnectionTypeCalculator {
 
@@ -40,71 +41,94 @@ public class WayConnectionTypeCalculator {
         WayConnectionType lastWct = null;
 
         for (int i = 0; i < members.size(); ++i) {
-            final RelationMember m = members.get(i);
-            if (!m.isWay() || m.getWay() == null || m.getWay().isIncomplete()) {
-                if (i > 0) {
-                    makeLoopIfNeeded(con, i-1);
-                }
-                con.set(i, new WayConnectionType());
-                firstGroupIdx = i;
-                continue;
-            }
-
-            WayConnectionType wct = new WayConnectionType(false);
-            wct.linkPrev = i > 0 && con.get(i-1) != null && con.get(i-1).isValid();
-            wct.direction = NONE;
-
-            if (RelationSortUtils.isOneway(m)) {
-                if (lastWct != null && lastWct.isOnewayTail) {
-                    wct.isOnewayHead = true;
-                }
-                if (lastBackwardWay == UNCONNECTED && lastForwardWay == UNCONNECTED) { //Beginning of new oneway
-                    wct.isOnewayHead = true;
-                    lastForwardWay = i-1;
-                    lastBackwardWay = i-1;
-                    onewayBeginning = true;
-                }
-            }
-
-            if (wct.linkPrev) {
-                if (lastBackwardWay != UNCONNECTED && lastForwardWay != UNCONNECTED) {
-                    determineOnewayConnectionType(con, m, i, wct);
-                    if (!wct.linkPrev) {
-                        firstGroupIdx = i;
-                    }
-                }
-
-                if (!RelationSortUtils.isOneway(m) && lastWct != null) {
-                    wct.direction = determineDirection(i-1, lastWct.direction, i);
-                    wct.linkPrev = wct.direction != NONE;
-                }
-            }
-
-            if (!wct.linkPrev) {
-                wct.direction = determineDirectionOfFirst(i, m);
-                if (RelationSortUtils.isOneway(m)) {
-                    wct.isOnewayLoopForwardPart = true;
-                    lastForwardWay = i;
-                }
-            }
-
-            wct.linkNext = false;
-            if (lastWct != null) {
-                lastWct.linkNext = wct.linkPrev;
-            }
-            con.set(i, wct);
-            lastWct = wct;
-
-            if (!wct.linkPrev) {
-                if (i > 0) {
-                    makeLoopIfNeeded(con, i-1);
-                }
-                firstGroupIdx = i;
+            try {
+                lastWct = updateLinksFor(con, lastWct, i);
+            } catch (RuntimeException e) {
+                int index = i;
+                throw BugReport.intercept(e).put("i", i).put("member", () -> members.get(index)).put("con", con);
             }
         }
         makeLoopIfNeeded(con, members.size()-1);
 
         return con;
+    }
+
+    private WayConnectionType updateLinksFor(final List<WayConnectionType> con, WayConnectionType lastWct, int i) {
+        final RelationMember m = members.get(i);
+        if (isNoHandleableWay(m)) {
+            if (i > 0) {
+                makeLoopIfNeeded(con, i-1);
+            }
+            con.set(i, new WayConnectionType());
+            firstGroupIdx = i;
+        } else {
+            WayConnectionType wct = computeNextWayConnection(con, lastWct, i, m);
+
+            if (!wct.linkPrev) {
+                if (i > 0) {
+                    makeLoopIfNeeded(con, i-1);
+                }
+                firstGroupIdx = i;
+            }
+            lastWct = wct;
+        }
+        return lastWct;
+    }
+
+    private static boolean isNoHandleableWay(final RelationMember m) {
+        return !m.isWay() || m.getWay() == null || m.getWay().isIncomplete();
+    }
+
+    private WayConnectionType computeNextWayConnection(final List<WayConnectionType> con, WayConnectionType lastWct, int i,
+            final RelationMember m) {
+        WayConnectionType wct = new WayConnectionType(false);
+        wct.linkPrev = i > 0 && con.get(i-1) != null && con.get(i-1).isValid();
+        wct.direction = NONE;
+
+        if (RelationSortUtils.isOneway(m)) {
+            handleOneway(lastWct, i, wct);
+        }
+
+        if (wct.linkPrev) {
+            if (lastBackwardWay != UNCONNECTED && lastForwardWay != UNCONNECTED) {
+                determineOnewayConnectionType(con, m, i, wct);
+                if (!wct.linkPrev) {
+                    firstGroupIdx = i;
+                }
+            }
+
+            if (!RelationSortUtils.isOneway(m) && lastWct != null) {
+                wct.direction = determineDirection(i-1, lastWct.direction, i);
+                wct.linkPrev = wct.direction != NONE;
+            }
+        }
+
+        if (!wct.linkPrev) {
+            wct.direction = determineDirectionOfFirst(i, m);
+            if (RelationSortUtils.isOneway(m)) {
+                wct.isOnewayLoopForwardPart = true;
+                lastForwardWay = i;
+            }
+        }
+
+        wct.linkNext = false;
+        if (lastWct != null) {
+            lastWct.linkNext = wct.linkPrev;
+        }
+        con.set(i, wct);
+        return wct;
+    }
+
+    private void handleOneway(WayConnectionType lastWct, int i, WayConnectionType wct) {
+        if (lastWct != null && lastWct.isOnewayTail) {
+            wct.isOnewayHead = true;
+        }
+        if (lastBackwardWay == UNCONNECTED && lastForwardWay == UNCONNECTED) { //Beginning of new oneway
+            wct.isOnewayHead = true;
+            lastForwardWay = i-1;
+            lastBackwardWay = i-1;
+            onewayBeginning = true;
+        }
     }
 
     private int firstGroupIdx;
