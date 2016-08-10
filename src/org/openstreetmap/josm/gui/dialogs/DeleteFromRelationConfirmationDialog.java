@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -35,7 +36,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -69,7 +69,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
     private RelationMemberTableModel model;
     private final HtmlPanel htmlPanel = new HtmlPanel();
     private boolean canceled;
-    private final SideButton btnOK = new SideButton(new OKAction());
+    private final JButton btnOK = new JButton(new OKAction());
 
     protected JPanel buildRelationMemberTablePanel() {
         JTable table = new JTable(model, new RelationMemberTableColumnModel());
@@ -82,8 +82,8 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         JPanel pnl = new JPanel(new FlowLayout());
         pnl.add(btnOK);
         btnOK.setFocusable(true);
-        pnl.add(new SideButton(new CancelAction()));
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Action/Delete#DeleteFromRelations"))));
+        pnl.add(new JButton(new CancelAction()));
+        pnl.add(new JButton(new ContextSensitiveHelpAction(ht("/Action/Delete#DeleteFromRelations"))));
         return pnl;
     }
 
