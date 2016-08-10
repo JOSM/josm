@@ -66,7 +66,7 @@ public class DeleteCommandTest {
     }
 
     /**
-     * A delete should not delete refered objects but should should remove the reference.
+     * A delete should not delete referred objects but should should remove the reference.
      */
     @Test
     public void testDeleteIgnoresReferences() {
@@ -100,7 +100,7 @@ public class DeleteCommandTest {
      * A delete should delete all objects with references to the deleted one
      */
     @Test
-    public void testReferedDelete() {
+    public void testReferredDelete() {
         DeleteCommand.deleteWithReferences(testData.layer, Arrays.asList(testData.existingNode), true).executeCommand();
 
         assertTrue(testData.existingNode.isDeleted());
