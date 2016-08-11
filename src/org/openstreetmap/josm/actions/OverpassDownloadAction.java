@@ -47,6 +47,7 @@ import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.OverpassDownloadReader;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UncheckedParseException;
@@ -154,7 +155,7 @@ public class OverpassDownloadAction extends JosmAction {
             overpassWizard.setToolTipText(tooltip);
             overpassWizard.getEditorComponent().addFocusListener(disableActionsFocusListener);
             final JButton buildQuery = new JButton(tr("Build query"));
-            buildQuery.addActionListener(new AbstractAction() {
+            final Action buildQueryAction = new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     final String overpassWizardText = overpassWizard.getText();
@@ -172,10 +173,12 @@ public class OverpassDownloadAction extends JosmAction {
                         );
                     }
                 }
-            });
+            };
+            buildQuery.addActionListener(buildQueryAction);
             buildQuery.setToolTipText(tooltip);
             pnl.add(buildQuery, GBC.std().insets(5, 5, 5, 5));
             pnl.add(overpassWizard, GBC.eol().fill(GBC.HORIZONTAL));
+            InputMapUtils.addEnterAction(overpassWizard.getEditorComponent(), buildQueryAction);
 
             overpassQuery = new JosmTextArea("", 8, 80);
             overpassQuery.setFont(GuiHelper.getMonospacedFont(overpassQuery));
