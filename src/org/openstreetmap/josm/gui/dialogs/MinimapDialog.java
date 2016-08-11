@@ -11,7 +11,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.bbox.BBoxChooser;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 
@@ -20,21 +19,29 @@ import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
  */
 public class MinimapDialog extends ToggleDialog implements NavigatableComponent.ZoomChangeListener, PropertyChangeListener {
 
-    protected final SlippyMapBBoxChooser slippyMap = new SlippyMapBBoxChooser();
-    protected boolean skipEvents;
+    private SlippyMapBBoxChooser slippyMap;
+    private boolean skipEvents;
 
     /**
      * Constructs a new {@code MinimapDialog}.
      */
     public MinimapDialog() {
         super(tr("Mini map"), "minimap", tr("Displays a small map of the current edit location"), null, 150);
-        createLayout(slippyMap, false, Collections.<SideButton>emptyList());
+    }
+
+    private synchronized void initialize() {
+        if (slippyMap != null) {
+            return;
+        }
+        slippyMap = new SlippyMapBBoxChooser();
+        createLayout(slippyMap, false, Collections.emptyList());
         slippyMap.setSizeButtonVisible(false);
         slippyMap.addPropertyChangeListener(BBoxChooser.BBOX_PROP, this);
     }
 
     @Override
     public void showDialog() {
+        initialize();
         NavigatableComponent.addZoomChangeListener(this);
         super.showDialog();
     }
