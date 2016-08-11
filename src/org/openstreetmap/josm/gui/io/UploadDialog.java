@@ -252,7 +252,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                 }
         );
 
-        setMinimumSize(new Dimension(300, 350));
+        setMinimumSize(new Dimension(600, 350));
 
         Main.pref.addPreferenceChangeListener(this);
     }
