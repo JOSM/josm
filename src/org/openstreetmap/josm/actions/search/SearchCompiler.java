@@ -96,15 +96,18 @@ public class SearchCompiler {
      */
     public static void addMatchFactory(MatchFactory factory) {
         for (String keyword : factory.getKeywords()) {
-            // TODO: check for keyword collisions
+            final MatchFactory existing;
             if (factory instanceof SimpleMatchFactory) {
-                simpleMatchFactoryMap.put(keyword, (SimpleMatchFactory) factory);
+                existing = simpleMatchFactoryMap.put(keyword, (SimpleMatchFactory) factory);
             } else if (factory instanceof UnaryMatchFactory) {
-                unaryMatchFactoryMap.put(keyword, (UnaryMatchFactory) factory);
+                existing = unaryMatchFactoryMap.put(keyword, (UnaryMatchFactory) factory);
             } else if (factory instanceof BinaryMatchFactory) {
-                binaryMatchFactoryMap.put(keyword, (BinaryMatchFactory) factory);
+                existing = binaryMatchFactoryMap.put(keyword, (BinaryMatchFactory) factory);
             } else
                 throw new AssertionError("Unknown match factory");
+            if (existing != null) {
+                Main.warn("SearchCompiler: for key ''{0}'', overriding match factory ''{1}'' with ''{2}''", keyword, existing, factory);
+            }
         }
     }
 
