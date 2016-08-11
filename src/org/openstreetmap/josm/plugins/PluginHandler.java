@@ -66,6 +66,7 @@ import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -985,19 +986,8 @@ public final class PluginHandler {
                 plugins = buildListOfPluginsToLoad(parent, monitor.createSubTaskMonitor(1, false));
                 // If only some plugins have to be updated, filter the list
                 if (pluginsWanted != null && !pluginsWanted.isEmpty()) {
-                    for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
-                        PluginInformation pi = it.next();
-                        boolean found = false;
-                        for (PluginInformation piw : pluginsWanted) {
-                            if (pi.name.equals(piw.name)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            it.remove();
-                        }
-                    }
+                    final Collection<String> pluginsWantedName = Utils.transform(pluginsWanted, piw -> piw.name);
+                    plugins = SubclassFilteredCollection.filter(plugins, pi -> pluginsWantedName.contains(pi.name));
                 }
             } catch (RuntimeException e) {
                 Main.warn(tr("Failed to download plugin information list"));
