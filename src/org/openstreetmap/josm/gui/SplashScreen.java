@@ -215,7 +215,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         @Override
         public void beginTask(String title) {
-            if (title != null) {
+            if (title != null && !title.isEmpty()) {
                 if (Main.isDebugEnabled()) {
                     Main.debug(title);
                 }
@@ -257,7 +257,12 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         @Override
         public ProgressMonitor createSubTaskMonitor(int ticks, boolean internal) {
-            return latestSubtask;
+            if (latestSubtask != null) {
+                return latestSubtask;
+            } else {
+                // subTask has not been called before, such as for plugin update, #11874
+                return this;
+            }
         }
 
         /**
