@@ -5,8 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -46,7 +44,6 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -82,7 +79,6 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
-import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -98,7 +94,6 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
-import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
@@ -1301,45 +1296,6 @@ public abstract class Main {
             warn("I don't know your operating system '"+os+"', so I'm guessing its some kind of *nix.");
             platform = new PlatformHookUnixoid();
         }
-    }
-
-    /**
-     * Checks that JOSM is at least running with Java 8.
-     * @since 7001
-     */
-    public static void checkJavaVersion() {
-        String version = System.getProperty("java.version");
-        if (version != null) {
-            if (version.matches("^(1\\.)?[89].*"))
-                return;
-            if (version.matches("^(1\\.)?[567].*")) {
-                JMultilineLabel ho = new JMultilineLabel("<html>"+
-                        tr("<h2>JOSM requires Java version {0}.</h2>"+
-                                "Detected Java version: {1}.<br>"+
-                                "You can <ul><li>update your Java (JRE) or</li>"+
-                                "<li>use an earlier (Java {2} compatible) version of JOSM.</li></ul>"+
-                                "More Info:", "8", version, "7")+"</html>");
-                JTextArea link = new JTextArea(HelpUtil.getWikiBaseHelpUrl()+"/Help/SystemRequirements");
-                link.setEditable(false);
-                link.setBackground(panel.getBackground());
-                JPanel panel = new JPanel(new GridBagLayout());
-                GridBagConstraints gbc = new GridBagConstraints();
-                gbc.gridwidth = GridBagConstraints.REMAINDER;
-                gbc.anchor = GridBagConstraints.WEST;
-                gbc.weightx = 1.0;
-                panel.add(ho, gbc);
-                panel.add(link, gbc);
-                final String exitStr = tr("Exit JOSM");
-                final String continueStr = tr("Continue, try anyway");
-                int ret = JOptionPane.showOptionDialog(null, panel, tr("Error"), JOptionPane.YES_NO_OPTION,
-                        JOptionPane.ERROR_MESSAGE, null, new String[] {exitStr, continueStr}, exitStr);
-                if (ret == 0) {
-                    System.exit(0);
-                }
-                return;
-            }
-        }
-        error("Could not recognize Java Version: "+version);
     }
 
     /* ----------------------------------------------------------------------------------------- */

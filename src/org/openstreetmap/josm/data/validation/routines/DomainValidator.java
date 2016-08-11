@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016080900, Last Updated Tue Aug  9 07:07:02 2016 UTC
+        // Taken from Version 2016081100, Last Updated Thu Aug 11 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -451,6 +451,7 @@ public final class DomainValidator extends AbstractValidator {
         "canon", // canon Canon Inc.
         "capetown", // capetown ZA Central Registry NPC trading as ZA Central Registry
         "capital", // capital Delta Mill, LLC
+        "capitalone", // capitalone Capital One Financial Corporation
         "car", // car Cars Registry Limited
         "caravan", // caravan Caravan International, Inc.
         "cards", // cards Foggy Hollow, LLC
@@ -571,6 +572,7 @@ public final class DomainValidator extends AbstractValidator {
         "directory", // directory Extra Madison, LLC
         "discount", // discount Holly Hill, LLC
         "discover", // discover Discover Financial Services
+        "dish", // dish Dish DBS Corporation
         "dnp", // dnp Dai Nippon Printing Co., Ltd.
         "docs", // docs Charleston Road Registry Inc.
         "doctor", // doctor Brice Trail, LLC
@@ -751,12 +753,14 @@ public final class DomainValidator extends AbstractValidator {
         "horse", // horse Top Level Domain Holdings Limited
         "host", // host DotHost Inc.
         "hosting", // hosting Uniregistry, Corp.
+        "hot", // hot Amazon Registry Services, Inc.
         "hoteles", // hoteles Travel Reservations SRL
         "hotmail", // hotmail Microsoft Corporation
         "house", // house Sugar Park, LLC
         "how", // how Charleston Road Registry Inc.
         "hsbc", // hsbc HSBC Holdings PLC
         "htc", // htc HTC corporation
+        "hughes", // hughes Hughes Satellite Systems Corporation
         "hyatt", // hyatt Hyatt GTLD, L.L.C.
         "hyundai", // hyundai Hyundai Motor Company
         "ibm", // ibm International Business Machines Corporation
@@ -1028,6 +1032,7 @@ public final class DomainValidator extends AbstractValidator {
         "parts", // parts Sea Goodbye, LLC
         "party", // party Blue Sky Registry Limited
         "passagens", // passagens Travel Reservations SRL
+        "pay", // pay Amazon Registry Services, Inc.
         "pccw", // pccw PCCW Enterprises Limited
         "pet", // pet Afilias plc
         "pfizer", // pfizer Pfizer Inc.
@@ -1150,6 +1155,7 @@ public final class DomainValidator extends AbstractValidator {
         "scor", // scor SCOR SE
         "scot", // scot Dot Scot Registry Limited
         "seat", // seat SEAT, S.A. (Sociedad Unipersonal)
+        "secure", // secure Amazon Registry Services, Inc.
         "security", // security XYZ.COM LLC
         "seek", // seek Seek Limited
         "select", // select iSelect Ltd
@@ -1182,6 +1188,7 @@ public final class DomainValidator extends AbstractValidator {
         "skin", // skin L&#39;Oréal
         "sky", // sky Sky International AG
         "skype", // skype Microsoft Corporation
+        "sling", // sling Hughes Satellite Systems Corporation
         "smart", // smart Smart Communications, Inc. (SMART)
         "smile", // smile Amazon Registry Services, Inc.
         "sncf", // sncf SNCF (Société Nationale des Chemins de fer Francais)
