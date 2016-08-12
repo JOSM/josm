@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,11 +45,11 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
-import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * Dialog displaying list of all executed commands (undo/redo buffer).
@@ -330,10 +331,10 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
      * @param path GUI elements
      * @return collection of affected primitives, onluy usable ones
      */
-    protected static FilteredCollection<? extends OsmPrimitive> getAffectedPrimitives(TreePath path) {
+    protected static Collection<? extends OsmPrimitive> getAffectedPrimitives(TreePath path) {
         PseudoCommand c = ((CommandListMutableTreeNode) path.getLastPathComponent()).getCommand();
         final OsmDataLayer currentLayer = Main.getLayerManager().getEditLayer();
-        return new FilteredCollection<>(
+        return new SubclassFilteredCollection<>(
                 c.getParticipatingPrimitives(),
                 o -> {
                     OsmPrimitive p = currentLayer.data.getPrimitiveById(o);

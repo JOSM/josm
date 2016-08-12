@@ -46,7 +46,6 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
-import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -612,7 +611,7 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
      * @return selected nodes and ways
      */
     public Collection<OsmPrimitive> getSelectedNodesAndWays() {
-        return new FilteredCollection<>(getSelected(), primitive -> primitive instanceof Node || primitive instanceof Way);
+        return new SubclassFilteredCollection<>(getSelected(), primitive -> primitive instanceof Node || primitive instanceof Way);
     }
 
     /**
