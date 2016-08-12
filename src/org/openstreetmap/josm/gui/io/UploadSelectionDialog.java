@@ -19,14 +19,12 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -41,6 +39,7 @@ import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -257,9 +256,7 @@ public class UploadSelectionDialog extends JDialog {
             putValue(Action.SHORT_DESCRIPTION, tr("Cancel uploading"));
             putValue(Action.NAME, tr("Cancel"));
             new ImageProvider("cancel").getResource().attachImageIcon(this);
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-            .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
-            getRootPane().getActionMap().put("ESCAPE", this);
+            InputMapUtils.addEscapeAction(getRootPane(), this);
             setEnabled(true);
         }
 

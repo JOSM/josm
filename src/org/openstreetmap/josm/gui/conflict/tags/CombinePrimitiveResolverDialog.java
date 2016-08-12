@@ -48,6 +48,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -169,6 +170,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         getContentPane().add(pnlButtons, BorderLayout.SOUTH);
         addWindowListener(new AdjustDividerLocationAction());
         HelpUtil.setHelpContext(getRootPane(), ht("/"));
+        InputMapUtils.addEscapeAction(getRootPane(), new CancelAction());
     }
 
     protected JPanel buildTagConflictResolverPanel() {

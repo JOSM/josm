@@ -57,6 +57,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -256,8 +257,7 @@ public class ChangesetCacheManager extends JFrame {
                 model.getSelectionModel()
         );
         tblChangesets.addMouseListener(new MouseEventHandler());
-        tblChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "showDetails");
-        tblChangesets.getActionMap().put("showDetails", new ShowDetailAction(model));
+        InputMapUtils.addEnterAction(tblChangesets, new ShowDetailAction(model));
         model.getSelectionModel().addListSelectionListener(new ChangesetDetailViewSynchronizer(model));
 
         // activate DEL on the table
@@ -290,9 +290,7 @@ public class ChangesetCacheManager extends JFrame {
         HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetManager"));
 
         // make the dialog respond to ESC
-        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancelAndClose");
-        getRootPane().getActionMap().put("cancelAndClose", new CancelAction());
+        InputMapUtils.addEscapeAction(getRootPane(), new CancelAction());
 
         // install a window event handler
         addWindowListener(new WindowEventHandler());

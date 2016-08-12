@@ -29,14 +29,12 @@ import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.WindowConstants;
 import javax.swing.event.TableModelEvent;
@@ -53,6 +51,7 @@ import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -298,9 +297,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             putValue(NAME, tr("Cancel"));
             putValue(SHORT_DESCRIPTION, tr("Close this dialog and resume editing in JOSM"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-            .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
-            getRootPane().getActionMap().put("ESCAPE", this);
+            InputMapUtils.addEscapeAction(getRootPane(), this);
         }
 
         protected void cancelWhenInEditingModel() {

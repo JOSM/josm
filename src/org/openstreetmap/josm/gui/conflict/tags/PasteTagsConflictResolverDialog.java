@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.tagging.TagTableColumnModelBuilder;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class PasteTagsConflictResolverDialog extends JDialog implements PropertyChangeListener {
@@ -103,6 +104,8 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
         gc.weightx = 1.0;
         gc.weighty = 0.0;
         getContentPane().add(buildButtonPanel(), gc);
+        InputMapUtils.addEscapeAction(getRootPane(), new CancelAction());
+
     }
 
     protected JPanel buildButtonPanel() {

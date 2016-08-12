@@ -7,7 +7,6 @@ import java.awt.Component;
 import java.awt.Dialog.ModalityType;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -19,10 +18,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -286,9 +283,7 @@ public final class HelpAwareOptionPane {
                 }
             }
         });
-        dialog.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "close");
-        dialog.getRootPane().getActionMap().put("close", new AbstractAction() {
+        InputMapUtils.addEscapeAction(dialog.getRootPane(), new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 pane.setValue(JOptionPane.CLOSED_OPTION);
@@ -300,14 +295,12 @@ public final class HelpAwareOptionPane {
             for (int i = 0; i < options.length; i++) {
                 final DefaultAction action = new DefaultAction(dialog, pane, i);
                 buttons.get(i).addActionListener(action);
-                buttons.get(i).getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
-                buttons.get(i).getActionMap().put("enter", action);
+                InputMapUtils.addEnterAction(buttons.get(i), action);
             }
         } else {
             final DefaultAction action = new DefaultAction(dialog, pane, 0);
             buttons.get(0).addActionListener(action);
-            buttons.get(0).getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
-            buttons.get(0).getActionMap().put("enter", action);
+            InputMapUtils.addEnterAction(buttons.get(0), action);
         }
 
         dialog.pack();
