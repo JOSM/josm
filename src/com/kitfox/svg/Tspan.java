@@ -230,23 +230,13 @@ public class Tspan extends ShapeElement
         if (font == null)
         {
             font = new FontSystem(fontFamily, fontStyle, fontWeight, (int)fontSize);
-//            addShapeSysFont(addShape, font, fontFamily, fontSize, letterSpacing, cursor);
-//            return;
         }
 
-        FontFace fontFace = font.getFontFace();
-        int ascent = fontFace.getAscent();
-        float fontScale = fontSize / (float) ascent;
-
         AffineTransform xform = new AffineTransform();
-
-        strokeWidthScalar = 1f / fontScale;
 
         float cursorX = (float)cursor.getX();
         float cursorY = (float)cursor.getY();
     
-//        int i = 0;
-
         String drawText = this.text;
         drawText = drawText.trim();
         for (int i = 0; i < drawText.length(); i++)
@@ -266,11 +256,9 @@ public class Tspan extends ShapeElement
             {
                 cursorY += dy[i];
             }
-  //          i++;
             
             xform.setToIdentity();
             xform.setToTranslation(cursorX, cursorY);
-            xform.scale(fontScale, fontScale);
             if (rotate != null)
             {
                 xform.rotate(rotate[i]);
@@ -286,7 +274,7 @@ public class Tspan extends ShapeElement
                 addShape.append(path, false);
             }
 
-            cursorX += fontScale * glyph.getHorizAdvX() + letterSpacing;
+            cursorX += glyph.getHorizAdvX() + letterSpacing;
         }
 
         //Save final draw point so calling method knows where to begin next
