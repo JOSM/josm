@@ -22,12 +22,10 @@ import java.util.Objects;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.SideButton;
@@ -39,6 +37,7 @@ import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class CredentialDialog extends JDialog {
@@ -96,9 +95,7 @@ public class CredentialDialog extends JDialog {
         getContentPane().add(createButtonPanel(), BorderLayout.SOUTH);
 
         addWindowListener(new WindowEventHander());
-        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "escape");
-        getRootPane().getActionMap().put("escape", new CancelAction());
+        InputMapUtils.addEscapeAction(getRootPane(), new CancelAction());
 
         getRootPane().setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     }

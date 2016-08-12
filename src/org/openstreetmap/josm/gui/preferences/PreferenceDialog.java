@@ -11,7 +11,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -19,10 +18,8 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
@@ -31,6 +28,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationLis
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class PreferenceDialog extends JDialog {
@@ -78,8 +76,7 @@ public class PreferenceDialog extends JDialog {
 
         addWindowListener(new WindowEventHandler());
 
-        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancel");
-        getRootPane().getActionMap().put("cancel", new CancelAction());
+        InputMapUtils.addEscapeAction(getRootPane(), new CancelAction());
         HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Action/Preferences"));
     }
 

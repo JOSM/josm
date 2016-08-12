@@ -5,10 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
 import javax.swing.RootPaneContainer;
 
 import org.openstreetmap.josm.Main;
@@ -22,6 +19,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 
 /**
  * Cancel the updates and close the dialog
@@ -46,9 +44,7 @@ public class CancelAction extends SavingAction {
         putValue(NAME, tr("Cancel"));
 
         if (editor instanceof RootPaneContainer) {
-            JRootPane root = ((RootPaneContainer) editor).getRootPane();
-            root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
-            root.getActionMap().put("ESCAPE", this);
+            InputMapUtils.addEscapeAction(((RootPaneContainer) editor).getRootPane(), this);
         }
         setEnabled(true);
     }

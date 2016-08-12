@@ -11,7 +11,6 @@ import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -30,11 +29,9 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
@@ -188,11 +185,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         // -- cancel button
         CancelAction cancelAction = new CancelAction(this);
         pnl.add(new JButton(cancelAction));
-        getRootPane().registerKeyboardAction(
-                cancelAction,
-                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                JComponent.WHEN_IN_FOCUSED_WINDOW
-        );
+        InputMapUtils.addEscapeAction(getRootPane(), cancelAction);
         pnl.add(new JButton(new ContextSensitiveHelpAction(ht("/Dialog/Upload"))));
         HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/Upload"));
         return pnl;

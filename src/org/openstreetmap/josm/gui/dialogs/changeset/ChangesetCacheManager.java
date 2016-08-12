@@ -290,9 +290,7 @@ public class ChangesetCacheManager extends JFrame {
         HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetManager"));
 
         // make the dialog respond to ESC
-        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancelAndClose");
-        getRootPane().getActionMap().put("cancelAndClose", new CancelAction());
+        InputMapUtils.addEscapeAction(getRootPane(), new CancelAction());
 
         // install a window event handler
         addWindowListener(new WindowEventHandler());

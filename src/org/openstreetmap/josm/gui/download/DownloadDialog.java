@@ -189,8 +189,7 @@ public class DownloadDialog extends JDialog {
         InputMapUtils.enableEnter(btnCancel);
 
         // -- cancel on ESC
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancel");
-        getRootPane().getActionMap().put("cancel", actCancel);
+        InputMapUtils.addEscapeAction(getRootPane(), actCancel);
 
         // -- help button
         JButton btnHelp = new JButton(new ContextSensitiveHelpAction(getRootPane().getClientProperty("help").toString()));

@@ -104,4 +104,16 @@ public final class InputMapUtils {
          c.getActionMap().put("spacebar", a);
          c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "spacebar");
     }
+
+    /**
+     * Add an action activated with ESCAPE key on a component or its children.
+     * @param c The Swing component
+     * @param a action activated with ESCAPE key
+     * @see JComponent#WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+     * @since 10791
+     */
+    public static void addEscapeAction(JComponent c, Action a) {
+         c.getActionMap().put("escape", a);
+         c.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "escape");
+    }
 }
