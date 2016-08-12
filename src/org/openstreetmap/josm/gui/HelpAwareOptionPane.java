@@ -300,14 +300,12 @@ public final class HelpAwareOptionPane {
             for (int i = 0; i < options.length; i++) {
                 final DefaultAction action = new DefaultAction(dialog, pane, i);
                 buttons.get(i).addActionListener(action);
-                buttons.get(i).getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
-                buttons.get(i).getActionMap().put("enter", action);
+                InputMapUtils.addEnterAction(buttons.get(i), action);
             }
         } else {
             final DefaultAction action = new DefaultAction(dialog, pane, 0);
             buttons.get(0).addActionListener(action);
-            buttons.get(0).getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
-            buttons.get(0).getActionMap().put("enter", action);
+            InputMapUtils.addEnterAction(buttons.get(0), action);
         }
 
         dialog.pack();

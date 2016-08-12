@@ -57,6 +57,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -256,8 +257,7 @@ public class ChangesetCacheManager extends JFrame {
                 model.getSelectionModel()
         );
         tblChangesets.addMouseListener(new MouseEventHandler());
-        tblChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "showDetails");
-        tblChangesets.getActionMap().put("showDetails", new ShowDetailAction(model));
+        InputMapUtils.addEnterAction(tblChangesets, new ShowDetailAction(model));
         model.getSelectionModel().addListSelectionListener(new ChangesetDetailViewSynchronizer(model));
 
         // activate DEL on the table

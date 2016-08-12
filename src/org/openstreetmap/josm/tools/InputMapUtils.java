@@ -66,18 +66,33 @@ public final class InputMapUtils {
      */
     public static void enableEnter(JButton b) {
          b.setFocusable(true);
-         b.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
-         b.getActionMap().put("enter", b.getAction());
+         addEnterAction(b, b.getAction());
     }
 
     /**
      * Add an action activated with Enter key on a component.
      * @param c The Swing component
      * @param a action activated with Enter key
+     * @see JComponent#WHEN_FOCUSED
      */
     public static void addEnterAction(JComponent c, Action a) {
+        addEnterAction(c, a, JComponent.WHEN_FOCUSED);
+    }
+
+    /**
+     * Add an action activated with Enter key on a component or its children.
+     * @param c The Swing component
+     * @param a action activated with Enter key
+     * @see JComponent#WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+     * @since 10790
+     */
+    public static void addEnterActionWhenAncestor(JComponent c, Action a) {
+         addEnterAction(c, a, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+
+    private static void addEnterAction(JComponent c, Action a, int condition) {
          c.getActionMap().put("enter", a);
-         c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
+         c.getInputMap(condition).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
     }
 
     /**

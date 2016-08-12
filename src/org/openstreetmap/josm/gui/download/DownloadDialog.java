@@ -83,11 +83,6 @@ public class DownloadDialog extends JDialog {
     private final DownloadAction actDownload = new DownloadAction();
     protected final JButton btnDownload = new JButton(actDownload);
 
-    private void makeCheckBoxRespondToEnter(JCheckBox cb) {
-        cb.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "doDownload");
-        cb.getActionMap().put("doDownload", actDownload);
-    }
-
     protected final JPanel buildMainPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
 
@@ -181,10 +176,10 @@ public class DownloadDialog extends JDialog {
         pnl.add(btnDownload);
         InputMapUtils.enableEnter(btnDownload);
 
-        makeCheckBoxRespondToEnter(cbDownloadGpxData);
-        makeCheckBoxRespondToEnter(cbDownloadOsmData);
-        makeCheckBoxRespondToEnter(cbDownloadNotes);
-        makeCheckBoxRespondToEnter(cbNewLayer);
+        InputMapUtils.addEnterActionWhenAncestor(cbDownloadGpxData, actDownload);
+        InputMapUtils.addEnterActionWhenAncestor(cbDownloadOsmData, actDownload);
+        InputMapUtils.addEnterActionWhenAncestor(cbDownloadNotes, actDownload);
+        InputMapUtils.addEnterActionWhenAncestor(cbNewLayer, actDownload);
 
         // -- cancel button
         JButton btnCancel;

@@ -495,12 +495,8 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     private void setupKeyboardShortcuts() {
 
         // ENTER = editAction, open "edit" dialog
-        tagTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "onTableEnter");
-        tagTable.getActionMap().put("onTableEnter", editAction);
-        membershipTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "onTableEnter");
-        membershipTable.getActionMap().put("onTableEnter", editAction);
+        InputMapUtils.addEnterActionWhenAncestor(tagTable, editAction);
+        InputMapUtils.addEnterActionWhenAncestor(membershipTable, editAction);
 
         // INSERT button = addAction, open "add tag" dialog
         tagTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
