@@ -95,11 +95,11 @@ import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.OsmImporter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -424,9 +424,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     @Override public String getToolTipText() {
-        int nodes = new FilteredCollection<>(data.getNodes(), p -> !p.isDeleted()).size();
-        int ways = new FilteredCollection<>(data.getWays(), p -> !p.isDeleted()).size();
-        int rels = new FilteredCollection<>(data.getRelations(), p -> !p.isDeleted()).size();
+        int nodes = new SubclassFilteredCollection<>(data.getNodes(), p -> !p.isDeleted()).size();
+        int ways = new SubclassFilteredCollection<>(data.getWays(), p -> !p.isDeleted()).size();
+        int rels = new SubclassFilteredCollection<>(data.getRelations(), p -> !p.isDeleted()).size();
 
         String tool = trn("{0} node", "{0} nodes", nodes, nodes)+", ";
         tool += trn("{0} way", "{0} ways", ways, ways)+", ";

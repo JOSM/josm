@@ -66,9 +66,9 @@ import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
-import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -506,7 +506,7 @@ public class Preferences {
      */
     public synchronized void save() throws IOException {
         save(getPreferenceFile(),
-                new FilteredCollection<>(settingsMap.entrySet(), NO_DEFAULT_SETTINGS_ENTRY), false);
+                new SubclassFilteredCollection<>(settingsMap.entrySet(), NO_DEFAULT_SETTINGS_ENTRY), false);
     }
 
     public synchronized void saveDefaults() throws IOException {
