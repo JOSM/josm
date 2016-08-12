@@ -75,6 +75,7 @@ abstract public class ShapeElement extends RenderableElement
     public ShapeElement() {
     }
 
+    @Override
     abstract public void render(java.awt.Graphics2D g) throws SVGException;
 
     /*
@@ -84,6 +85,7 @@ abstract public class ShapeElement extends RenderableElement
     }
      */
 
+    @Override
     void pick(Point2D point, boolean boundingBox, List retVec) throws SVGException
     {
 //        StyleAttribute styleAttrib = new StyleAttribute();
@@ -94,6 +96,7 @@ abstract public class ShapeElement extends RenderableElement
         }
     }
 
+    @Override
     void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List retVec) throws SVGException
     {
         StyleAttribute styleAttrib = new StyleAttribute();
@@ -160,7 +163,11 @@ abstract public class ShapeElement extends RenderableElement
                         SVGElement ele = diagram.getUniverse().getElement(uri);
                         if (ele != null)
                         {
-                            fillPaint = ((FillElement)ele).getPaint(bounds, xform);
+                            try {
+                                fillPaint = ((FillElement)ele).getPaint(bounds, xform);
+                            } catch (IllegalArgumentException e) {
+                                throw new SVGException(e);
+                            }
                         }
                     }
                 }

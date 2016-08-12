@@ -3,16 +3,16 @@
  * Copyright (c) 2004, Mark McKay
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or 
+ * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
  * conditions are met:
  *
- *   - Redistributions of source code must retain the above 
+ *   - Redistributions of source code must retain the above
  *     copyright notice, this list of conditions and the following
  *     disclaimer.
  *   - Redistributions in binary form must reproduce the above
  *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials 
+ *     disclaimer in the documentation and/or other materials
  *     provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,8 +26,8 @@
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE. 
- * 
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  * Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
  * projects can be found at http://www.kitfox.com
  *
@@ -35,12 +35,15 @@
  */
 package com.kitfox.svg;
 
-import com.kitfox.svg.xml.StyleAttribute;
-import java.awt.Color;
+import java.awt.MultipleGradientPaint;
 import java.awt.Paint;
+import java.awt.RadialGradientPaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
+
+import com.kitfox.svg.xml.StyleAttribute;
 
 /**
  * @author Mark McKay
@@ -52,8 +55,9 @@ public class RadialGradient extends Gradient
 
     float cx = 0.5f;
     float cy = 0.5f;
-    float fx = 0.5f;
-    float fy = 0.5f;
+    boolean hasFocus = false;
+    float fx = 0f;
+    float fy = 0f;
     float r = 0.5f;
 
     /**
@@ -63,11 +67,13 @@ public class RadialGradient extends Gradient
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
     }
 
+    @Override
     protected void build() throws SVGException
     {
         super.build();
@@ -84,14 +90,17 @@ public class RadialGradient extends Gradient
             cy = sty.getFloatValueWithUnits();
         }
 
+        hasFocus = false;
         if (getPres(sty.setName("fx")))
         {
             fx = sty.getFloatValueWithUnits();
+            hasFocus = true;
         }
 
         if (getPres(sty.setName("fy")))
         {
             fy = sty.getFloatValueWithUnits();
+            hasFocus = true;
         }
 
         if (getPres(sty.setName("r")))
@@ -100,36 +109,37 @@ public class RadialGradient extends Gradient
         }
     }
 
+    @Override
     public Paint getPaint(Rectangle2D bounds, AffineTransform xform)
     {
-        com.kitfox.svg.batik.MultipleGradientPaint.CycleMethodEnum method;
+        MultipleGradientPaint.CycleMethod method;
         switch (spreadMethod)
         {
             default:
             case SM_PAD:
-                method = com.kitfox.svg.batik.MultipleGradientPaint.NO_CYCLE;
+                method = MultipleGradientPaint.CycleMethod.NO_CYCLE;
                 break;
             case SM_REPEAT:
-                method = com.kitfox.svg.batik.MultipleGradientPaint.REPEAT;
+                method = MultipleGradientPaint.CycleMethod.REPEAT;
                 break;
             case SM_REFLECT:
-                method = com.kitfox.svg.batik.MultipleGradientPaint.REFLECT;
+                method = MultipleGradientPaint.CycleMethod.REFLECT;
                 break;
         }
 
         Paint paint;
         Point2D.Float pt1 = new Point2D.Float(cx, cy);
-        Point2D.Float pt2 = new Point2D.Float(fx, fy);
+        Point2D.Float pt2 = hasFocus ? new Point2D.Float(fx, fy) : pt1;
         if (gradientUnits == GU_USER_SPACE_ON_USE)
         {
-            paint = new com.kitfox.svg.batik.RadialGradientPaint(
+            paint = new RadialGradientPaint(
                 pt1,
                 r,
                 pt2,
                 getStopFractions(),
                 getStopColors(),
                 method,
-                com.kitfox.svg.batik.MultipleGradientPaint.SRGB,
+                MultipleGradientPaint.ColorSpaceType.SRGB,
                 gradientTransform);
         } else
         {
@@ -139,14 +149,14 @@ public class RadialGradient extends Gradient
 
             viewXform.concatenate(gradientTransform);
 
-            paint = new com.kitfox.svg.batik.RadialGradientPaint(
+            paint = new RadialGradientPaint(
                 pt1,
                 r,
                 pt2,
                 getStopFractions(),
                 getStopColors(),
                 method,
-                com.kitfox.svg.batik.MultipleGradientPaint.SRGB,
+                MultipleGradientPaint.ColorSpaceType.SRGB,
                 viewXform);
         }
 
@@ -160,6 +170,7 @@ public class RadialGradient extends Gradient
      * @return - true if this node has changed state as a result of the time
      * update
      */
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
 //        if (trackManager.getNumTracks() == 0) return false;

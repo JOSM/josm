@@ -36,18 +36,31 @@
 
 package com.kitfox.svg.app.beans;
 
-import com.kitfox.svg.*;
-import java.awt.*;
-import java.awt.geom.*;
-import java.beans.*;
-import java.net.*;
-import javax.swing.*;
+import com.kitfox.svg.SVGCache;
+import com.kitfox.svg.SVGDiagram;
+import com.kitfox.svg.SVGException;
+import com.kitfox.svg.SVGUniverse;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.net.URI;
+import javax.swing.ImageIcon;
+
 
 /**
  *
  * @author kitfox
  */
-public class SVGIcon implements Icon
+public class SVGIcon extends ImageIcon
 {
     public static final long serialVersionUID = 1;
 
@@ -93,6 +106,13 @@ public class SVGIcon implements Icon
         changes.removePropertyChangeListener(p);
     }
     
+    public Image getImage()
+    {
+        BufferedImage bi = new BufferedImage(getIconWidth(), getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+        paintIcon(null, bi.getGraphics(), 0, 0);
+        return bi;
+    }
+
     /**
      * @return height of this icon
      */

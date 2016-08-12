@@ -37,6 +37,8 @@ package com.kitfox.svg;
 
 import com.kitfox.svg.xml.StyleAttribute;
 import java.awt.Color;
+import java.awt.LinearGradientPaint;
+import java.awt.MultipleGradientPaint;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -96,18 +98,18 @@ public class LinearGradient extends Gradient
 
     public Paint getPaint(Rectangle2D bounds, AffineTransform xform)
     {
-        com.kitfox.svg.batik.MultipleGradientPaint.CycleMethodEnum method;
+        MultipleGradientPaint.CycleMethod method;
         switch (spreadMethod)
         {
             default:
             case SM_PAD:
-                method = com.kitfox.svg.batik.MultipleGradientPaint.NO_CYCLE;
+                method = MultipleGradientPaint.CycleMethod.NO_CYCLE;
                 break;
             case SM_REPEAT:
-                method = com.kitfox.svg.batik.MultipleGradientPaint.REPEAT;
+                method = MultipleGradientPaint.CycleMethod.REPEAT;
                 break;
             case SM_REFLECT:
-                method = com.kitfox.svg.batik.MultipleGradientPaint.REFLECT;
+                method = MultipleGradientPaint.CycleMethod.REFLECT;
                 break;
         }
 
@@ -120,13 +122,13 @@ public class LinearGradient extends Gradient
             paint = colors.length > 0 ? colors[0] : Color.black;
         } else if (gradientUnits == GU_USER_SPACE_ON_USE)
         {
-            paint = new com.kitfox.svg.batik.LinearGradientPaint(
+            paint = new LinearGradientPaint(
                 pt1,
                 pt2,
                 getStopFractions(),
                 getStopColors(),
                 method,
-                com.kitfox.svg.batik.MultipleGradientPaint.SRGB,
+                MultipleGradientPaint.ColorSpaceType.SRGB,
                 gradientTransform == null
                 ? new AffineTransform()
                 : gradientTransform);
@@ -145,13 +147,13 @@ public class LinearGradient extends Gradient
                 viewXform.concatenate(gradientTransform);
             }
 
-            paint = new com.kitfox.svg.batik.LinearGradientPaint(
+            paint = new LinearGradientPaint(
                 pt1,
                 pt2,
                 getStopFractions(),
                 getStopColors(),
                 method,
-                com.kitfox.svg.batik.MultipleGradientPaint.SRGB,
+                MultipleGradientPaint.ColorSpaceType.SRGB,
                 viewXform);
         }
 

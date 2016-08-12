@@ -36,11 +36,9 @@
 package com.kitfox.svg;
 
 import com.kitfox.svg.util.FontSystem;
-import com.kitfox.svg.util.TextBuilder;
 import com.kitfox.svg.xml.StyleAttribute;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
@@ -50,7 +48,6 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//import org.apache.batik.ext.awt.geom.ExtendedGeneralPath;
 /**
  * @author Mark McKay
  * @author <a href="mailto:mark@kitfox.com">Mark McKay</a>
@@ -264,71 +261,28 @@ public class Text extends ShapeElement
 
     protected void buildText() throws SVGException
     {
-
         //Get font
-        Font font = diagram.getUniverse().getFont(fontFamily);
-        if (font == null)
+        String[] families = fontFamily.split(",");
+        Font font = null;
+        for (int i = 0; i < families.length; ++i)
         {
-//            System.err.println("Could not load font");
-
-            font = new FontSystem(fontFamily, fontStyle, fontWeight, (int)fontSize);
-//            java.awt.Font sysFont = new java.awt.Font(fontFamily, style | weight, (int)fontSize);
-//            buildSysFont(sysFont);
-//            return;
+            font = diagram.getUniverse().getFont(fontFamily);
+            if (font != null)
+            {
+                break;
+            }
         }
 
-//        font = new java.awt.Font(font.getFamily(), style | weight, font.getSize());
+        if (font == null)
+        {
+            font = new FontSystem(fontFamily, fontStyle, fontWeight, (int)fontSize);
+        }
 
-//        Area textArea = new Area();
         GeneralPath textPath = new GeneralPath();
         textShape = textPath;
 
         float cursorX = x, cursorY = y;
 
-        FontFace fontFace = font.getFontFace();
-        //int unitsPerEm = fontFace.getUnitsPerEm();
-        int ascent = fontFace.getAscent();
-        float fontScale = fontSize / (float) ascent;
-
-//        AffineTransform oldXform = g.getTransform();
-//        TextBuilder builder = new TextBuilder();
-//        
-//        for (Iterator it = content.iterator(); it.hasNext();)
-//        {
-//            Object obj = it.next();
-//
-//            if (obj instanceof String)
-//            {
-//                String text = (String) obj;
-//                if (text != null)
-//                {
-//                    text = text.trim();
-//                }
-//                
-//                for (int i = 0; i < text.length(); i++)
-//                {
-//                    String unicode = text.substring(i, i + 1);
-//                    MissingGlyph glyph = font.getGlyph(unicode);
-//                    
-//                    builder.appendGlyph(glyph);
-//                }
-//            }
-//            else if (obj instanceof Tspan)
-//            {
-//                Tspan tspan = (Tspan)obj;
-//                tspan.buildGlyphs(builder);
-//            }
-//        }
-//
-//        builder.formatGlyphs();
-        
-        
-
-                
-                
-        
-        
-        
         AffineTransform xform = new AffineTransform();
 
         for (Iterator it = content.iterator(); it.hasNext();)
@@ -343,14 +297,10 @@ public class Text extends ShapeElement
                     text = text.trim();
                 }
 
-                strokeWidthScalar = 1f / fontScale;
-
                 for (int i = 0; i < text.length(); i++)
                 {
                     xform.setToIdentity();
                     xform.setToTranslation(cursorX, cursorY);
-                    xform.scale(fontScale, fontScale);
-//                    g.transform(xform);
 
                     String unicode = text.substring(i, i + 1);
                     MissingGlyph glyph = font.getGlyph(unicode);
@@ -361,11 +311,8 @@ public class Text extends ShapeElement
                         path = xform.createTransformedShape(path);
                         textPath.append(path, false);
                     }
-//                    else glyph.render(g);
 
-                    cursorX += fontScale * glyph.getHorizAdvX();
-
-//                    g.setTransform(oldXform);
+                    cursorX += glyph.getHorizAdvX();
                 }
 
                 strokeWidthScalar = 1f;
