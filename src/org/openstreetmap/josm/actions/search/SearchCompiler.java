@@ -1279,7 +1279,7 @@ public class SearchCompiler {
     private static class Incomplete extends Match {
         @Override
         public boolean match(OsmPrimitive osm) {
-            return osm.isIncomplete();
+            return osm.isIncomplete() || (osm instanceof Relation && ((Relation) osm).hasIncompleteMembers());
         }
 
         @Override
