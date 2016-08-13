@@ -996,8 +996,10 @@ public final class Geometry {
             for (int i = 1; i <= numSegments; i++) {
                 final Node node = nodes.get(i == numSegments ? 0 : i);
                 final EastNorth p2 = projection == null ? node.getEastNorth() : projection.latlon2eastNorth(node.getCoor());
-                area += p1.east() * p2.north() - p2.east() * p1.north();
-                perimeter += p1.distance(p2);
+                if (p1 != null && p2 != null) {
+                    area += p1.east() * p2.north() - p2.east() * p1.north();
+                    perimeter += p1.distance(p2);
+                }
                 p1 = p2;
             }
         }
