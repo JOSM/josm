@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -331,7 +332,7 @@ public class MergeNodesAction extends JosmAction {
             //
             if (!targetNode.equals(targetLocationNode)) {
                 LatLon targetLocationCoor = targetLocationNode.getCoor();
-                if (!targetNode.getCoor().equals(targetLocationCoor)) {
+                if (!Objects.equals(targetNode.getCoor(), targetLocationCoor)) {
                     Node newTargetNode = new Node(targetNode);
                     newTargetNode.setCoor(targetLocationCoor);
                     cmds.add(new ChangeCommand(targetNode, newTargetNode));
