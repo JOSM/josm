@@ -615,7 +615,7 @@ public class SearchCompiler {
                     this.valuePattern = Pattern.compile(value, searchFlags);
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException | StringIndexOutOfBoundsException e) {
                     throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
                 }
                 this.key = key;

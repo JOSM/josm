@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -74,7 +75,8 @@ public class LayerListPopup extends JPopupMenu {
 
         List<Action> actions;
         if (selectedLayers.size() == 1) {
-            actions = Arrays.asList(selectedLayers.get(0).getMenuEntries());
+            Action[] entries = selectedLayers.get(0).getMenuEntries();
+            actions = entries != null ? Arrays.asList(entries) : Collections.emptyList();
         } else {
             // Very simple algorithm - first selected layer has actions order as in getMenuEntries, actions from other layers go to the end
             actions = new ArrayList<>();
