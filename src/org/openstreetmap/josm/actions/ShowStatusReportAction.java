@@ -220,7 +220,9 @@ public final class ShowStatusReportAction extends JosmAction {
         val = paramReplace(val, userDataDir, userDataDirAlt);
         val = paramReplace(val, userCacheDir, userCacheDirAlt);
         val = paramReplace(val, userHomeDir, userHomeDirAlt);
-        val = paramReplace(val, userName, userNameAlt);
+        if (userName.length() >= 3) {
+            val = paramReplace(val, userName, userNameAlt);
+        }
         return val;
     }
 
