@@ -320,6 +320,14 @@
   fixAdd: "leaf_cycle=deciduous";
 }
 
+node[type=palm],
+way[type=palm] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "leaf_type";
+  suggestAlternative: "trees";
+  suggestAlternative: "species";
+}
+
 *[natural=land] {
   throwWarning: tr("{0} is deprecated. Please use instead a multipolygon.", "{0.tag}");
   assertMatch: "way natural=land";
