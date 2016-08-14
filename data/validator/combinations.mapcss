@@ -292,8 +292,7 @@ way[highway][natural],
 }
 
 /* #6932 */
-*[natural=water][leisure=swimming_pool],
-*[natural=water][amenity=swimming_pool] {
+*[natural=water][leisure=swimming_pool] {
   throwWarning: tr("natural water used for swimming pool");
   fixRemove: "natural";
 }
