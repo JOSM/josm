@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="15"
+   viewBox="0 0 16 15"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="boatyard.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="44.8"
+     inkscape:cx="9.7846687"
+     inkscape:cy="8.6364843"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4136" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1037.3622)">
+    <rect
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.20000005;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="rect4148"
+       width="16"
+       height="15"
+       x="0"
+       y="1037.3623" />
+    <g
+       id="Layer_2"
+       transform="matrix(0,0.05028433,0.04204333,0,-2.5686007,1028.5531)"
+       style="fill:#000000">
+      <path
+         d="m 230.667,88 5,42 20,6.333 18,-11 -6.333,-43 c 0,0 36.667,11 39.667,37.333 0,0 3.999,23 -10.334,34 l -10.999,10 c 0,0 -14,10.667 -10.667,34 l 0,204 -0.333,7.667 c 0,0 1,9 -9,9.333 l -19,0 c 0,0 -10,1.667 -11.667,-12.333 l 0,-220.334 c 0,0 1.333,-12.333 -8.333,-18.333 l -12.333,-10 c 0,0 -21.333,-16.334 -7.333,-45.667 -0.001,0 4.999,-13.999 23.665,-23.999 z"
+         id="path68800"
+         inkscape:connector-curvature="0"
+         style="fill:#000000" />
+    </g>
+    <path
+       d="m 14.744728,1049.6684 0.01563,-1.3279 -1.092296,0.017 0.329492,-0.9938 -2.391848,-0.029 0.411169,-0.984 -3.2572074,0 0.2658846,-0.9889 -3.0423737,-0.022 -0.4691449,1.3093 -1.5408468,0 -0.5702689,0.6974 -2.3403059,0 c 1.1993656,2.242 1.937388,2.999 2.960654,4.0986 4.2184181,0 5.976734,0 9.775956,-0.017 0.714666,-0.511 0.819894,-1.2805 0.945506,-1.7638 z"
+       id="path10"
+       style="fill:#000000;fill-rule:evenodd;stroke:none"
+       sodipodi:nodetypes="ccccccccccccccccc"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

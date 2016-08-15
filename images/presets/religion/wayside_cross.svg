@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -8,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="100"
-   height="130"
+   width="10"
+   height="16"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
+   inkscape:version="0.91 r13725"
    version="1.0"
-   sodipodi:docname="wayside_cross.svg"
+   sodipodi:docname="wayside_cross2.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    inkscape:export-filename="C:\Dokumente und Einstellungen\ulfl\Eigene Dateien\osm\svn.map-icons\svg\religion\wayside_cross.png"
    inkscape:export-xdpi="11.076923"
@@ -36,16 +37,27 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35"
-     inkscape:cx="-537.14286"
-     inkscape:cy="520"
+     inkscape:zoom="12.902778"
+     inkscape:cx="-16.035609"
+     inkscape:cy="16.658079"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="false"
+     showgrid="true"
      inkscape:window-width="1400"
      inkscape:window-height="964"
      inkscape:window-x="-4"
-     inkscape:window-y="-4" />
+     inkscape:window-y="-4"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4137"
+       originx="0"
+       originy="-1.9087982e-005" />
+  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -55,10 +67,11 @@
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <cc:license
-           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:title></dc:title>
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
@@ -72,28 +85,27 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-325,-438.79074)">
+     transform="translate(-325,-552.79071)">
     <rect
-       style="fill:#999999;fill-opacity:1;stroke:none;stroke-width:12.27957249000000000;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#999999;fill-opacity:1;stroke:none;stroke-width:12.27957249;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect2385"
-       width="80.577568"
-       height="17.720427"
-       x="336.85406"
-       y="476.3591" />
+       width="10"
+       height="2.0000186"
+       x="325"
+       y="556.79071" />
     <rect
        style="fill:#999999;fill-opacity:1;stroke:none;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect2387"
-       width="20"
-       height="111.42857"
-       x="367.14288"
-       y="452.36218" />
+       width="1.9999183"
+       height="13.999911"
+       x="329"
+       y="553.79071" />
     <rect
        style="fill:#666666;fill-opacity:1;stroke:none;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect3151"
-       width="45.714287"
-       height="28.571428"
-       x="28.571428"
-       y="112.85714"
-       transform="translate(325,438.79074)" />
+       width="6"
+       height="2.0000186"
+       x="327"
+       y="566.79071" />
   </g>
 </svg>

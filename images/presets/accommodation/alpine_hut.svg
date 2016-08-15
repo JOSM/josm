@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.91 r13725"
+   version="1.0"
+   sodipodi:docname="alpine_hut.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/home/rudolf/Downloads/mapicons2/Alpine_hut_blue_pic_p32.png"
+   inkscape:export-xdpi="44.986801"
+   inkscape:export-ydpi="44.986801">
+  <title
+     id="title3319">Map icon for baisc_hut</title>
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:title>Map icon for baisc_hut</dc:title>
+        <dc:date>2012-04-05</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Rudolf</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:window-height="988"
+     inkscape:window-width="1680"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     showgrid="true"
+     inkscape:snap-global="true"
+     inkscape:zoom="22.627417"
+     inkscape:cx="7.481838"
+     inkscape:cy="3.6637309"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     width="16px">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2383"
+       visible="true"
+       enabled="true"
+       empspacing="2"
+       snapvisiblegridlinesonly="true"
+       originx="-8.0001414"
+       originy="-7.999979" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective2461"
+       inkscape:persp3d-origin="10 : 6.6666667 : 1"
+       inkscape:vp_z="20 : 10 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 10 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2466"
+       inkscape:persp3d-origin="400 : 200 : 1"
+       inkscape:vp_z="800 : 300 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 300 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <path
+     style="fill:none;stroke:#0092da;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 7.9998586,0.99999965 0.99985861,8 2.9998586,7.999652 l 0,7.000348 10.0000004,0 0,-7 2,0 z"
+     id="rect3055"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccccccc" />
+  <path
+     inkscape:connector-curvature="0"
+     id="path3501"
+     d="m 8.7046586,6.189 c 0.4562,0 0.825,-0.3711 0.825,-0.8281 0,-0.4562 -0.3688,-0.825 -0.825,-0.825 -0.4562,0 -0.8273,0.3688 -0.8273,0.825 0,0.457 0.3711,0.8281 0.8273,0.8281 z"
+     style="fill:#0092da;fill-opacity:1" />
+  <path
+     inkscape:connector-curvature="0"
+     id="path3503"
+     d="m 7.3085586,6.3257 c 0.032,-0.1273 -0.0484,-0.2539 -0.1734,-0.2859 l -0.6883,-0.1656 c -0.1289,-0.0297 -0.2562,0.0461 -0.2852,0.1727 l -0.5788,2.3953 c -0.032,0.1273 0.0461,0.2539 0.1734,0.2859 l 0.6906,0.1656 c 0.125,0.032 0.2539,-0.0461 0.2836,-0.1734 l 0.5781,-2.3946 z"
+     style="fill:#0092da;fill-opacity:1" />
+  <path
+     inkscape:connector-curvature="0"
+     id="path3507"
+     d="m 5.8734586,14.3507 c -0.0078,0.0391 -0.0102,0.0781 -0.0102,0.1172 0,0.3219 0.2594,0.5805 0.5812,0.5805 0.2641,0 0.4859,-0.1758 0.557,-0.4148 l 0.9984,-4.1336 0.9516,4.1094 c 0.0609,0.2539 0.2906,0.4391 0.5609,0.4391 0.3227,0 0.5812004,-0.2586 0.5812004,-0.5805 0,-0.0445 -0.0047,-0.0859 -0.0125,-0.1273 L 8.7757586,8.882 l 0.1094,-0.4812 0.0859,0.3781 c 0.0781,0.2469 0.3023,0.2711 0.3023,0.2711 l 1.3453004,0.3422 c 0.0266,0.0047 0.0539,0.007 0.0805,0.007 0.2195,0 0.3977,-0.1758 0.3977,-0.3953 0,-0.1883 -0.1289,-0.3469 -0.3047,-0.3883 l -1.1648004,-0.293 -0.3195,-1.2992 c -0.1516,-0.725 -0.8445,-0.7078 -0.8445,-0.7078 -0.6734,-0.0172 -0.8422,0.6914 -0.8422,0.6914 l -1.7477,7.3437 z"
+     style="fill:#0092da;fill-opacity:1" />
+</svg>
