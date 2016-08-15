@@ -21,14 +21,6 @@ public class BugReportExceptionHandlerTest {
     }
 
     /**
-     * Unit test for {@link BugReportExceptionHandler.BugReporterThread#askForBugReport} method.
-     */
-    @Test
-    public void testAskForBugReport() {
-        BugReportExceptionHandler.BugReporterThread.askForBugReport(new Exception("testAskForBugReport"));
-    }
-
-    /**
      * Unit test for {@link BugReportExceptionHandler#handleException} method.
      */
     @Test
