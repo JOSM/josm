@@ -8027,7 +8027,7 @@
             <reference ref="name_brand_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Do-It-Yourself Store -->
-        <item name="Hardware" icon="presets/shop/hardware.svgf" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Hardware" icon="presets/shop/hardware.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hardware"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=hardware"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=hardware"
