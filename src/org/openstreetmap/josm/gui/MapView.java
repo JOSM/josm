@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -147,9 +148,17 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      */
     private class LayerInvalidatedListener implements PaintableInvalidationListener {
         private boolean ignoreRepaint;
+
+        private final Set<MapViewPaintable> invalidatedLayers = Collections.newSetFromMap(new IdentityHashMap<MapViewPaintable, Boolean>());
+
         @Override
         public void paintableInvalidated(PaintableInvalidationEvent event) {
+            invalidate(event.getLayer());
+        }
+
+        public synchronized void invalidate(MapViewPaintable mapViewPaintable) {
             ignoreRepaint = true;
+            invalidatedLayers.add(mapViewPaintable);
             repaint();
         }
 
@@ -157,7 +166,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
          * Temporary until all {@link MapViewPaintable}s support this.
          * @param p The paintable.
          */
-        public void addTo(MapViewPaintable p) {
+        public synchronized void addTo(MapViewPaintable p) {
             if (p instanceof AbstractMapViewPaintable) {
                 ((AbstractMapViewPaintable) p).addInvalidationListener(this);
             }
@@ -167,10 +176,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
          * Temporary until all {@link MapViewPaintable}s support this.
          * @param p The paintable.
          */
-        public void removeFrom(MapViewPaintable p) {
+        public synchronized void removeFrom(MapViewPaintable p) {
             if (p instanceof AbstractMapViewPaintable) {
                 ((AbstractMapViewPaintable) p).removeInvalidationListener(this);
             }
+            invalidatedLayers.remove(p);
         }
 
         /**
@@ -182,6 +192,17 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 Thread.dumpStack();
             }
             ignoreRepaint = false;
+        }
+
+        /**
+         * Retrieves a set of all layers that have been marked as invalid since the last call to this method.
+         * @return The layers
+         */
+        protected synchronized Set<MapViewPaintable> collectInvalidatedLayers() {
+            Set<MapViewPaintable> layers = Collections.newSetFromMap(new IdentityHashMap<MapViewPaintable, Boolean>());
+            layers.addAll(invalidatedLayers);
+            invalidatedLayers.clear();
+            return layers;
         }
     }
 
@@ -503,7 +524,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     private transient BufferedImage offscreenBuffer;
     // Layers that wasn't changed since last paint
     private final transient List<Layer> nonChangedLayers = new ArrayList<>();
-    private transient Layer changedLayer;
     private int lastViewID;
     private boolean paintPreferencesChanged = true;
     private Rectangle lastClipBounds = new Rectangle();
@@ -841,8 +861,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         List<Layer> visibleLayers = layerManager.getVisibleLayersInZOrder();
 
         int nonChangedLayersCount = 0;
+        Set<MapViewPaintable> invalidated = invalidatedListener.collectInvalidatedLayers();
         for (Layer l: visibleLayers) {
-            if (l.isChanged() || l == changedLayer) {
+            if (l.isChanged() || invalidated.contains(l)) {
                 break;
             } else {
                 nonChangedLayersCount++;
@@ -899,7 +920,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
 
         nonChangedLayers.clear();
-        changedLayer = null;
         for (int i = 0; i < nonChangedLayersCount; i++) {
             nonChangedLayers.add(visibleLayers.get(i));
         }
@@ -1204,8 +1224,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 evt.getPropertyName().equals(Layer.FILTER_STATE_PROP)) {
             Layer l = (Layer) evt.getSource();
             if (l.isVisible()) {
-                changedLayer = l;
-                repaint();
+                invalidatedListener.invalidate(l);
             }
         }
     }
