@@ -3,7 +3,6 @@ package org.openstreetmap.josm.command;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -217,10 +216,10 @@ public class AddPrimitivesCommandTest {
         assertEquals(3, layer1.data.allPrimitives().size());
         assertEquals(2, layer1.data.getNodes().size());
         assertEquals(1, layer1.data.getWays().size());
-        assertEquals(0, layer1.data.allModifiedPrimitives().size());
+        assertEquals(3, layer1.data.allModifiedPrimitives().size());
         for (OsmPrimitive n : layer1.data.allPrimitives()) {
             assertEquals("test", n.get("test"));
-            assertFalse(n.isModified());
+            assertTrue(n.isModified());
         }
 
         for (Node n : layer1.data.getNodes()) {
