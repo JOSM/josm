@@ -88,7 +88,7 @@ public class PrimitiveTransferable implements Transferable {
 
     protected String getStringData() {
         final StringBuilder sb = new StringBuilder();
-        for (PrimitiveData primitive : primitives.getAll()) {
+        for (PrimitiveData primitive : primitives.getDirectlyAdded()) {
             if (sb.length() > 0) {
                 sb.append("\n");
             }
