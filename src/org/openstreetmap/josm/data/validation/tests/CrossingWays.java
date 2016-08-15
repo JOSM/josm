@@ -7,11 +7,9 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -40,8 +38,6 @@ public abstract class CrossingWays extends Test {
 
     /** All way segments, grouped by cells */
     private final Map<Point2D, List<WaySegment>> cellSegments = new HashMap<>(1000);
-    /** The already detected errors */
-    private final Set<WaySegment> errorSegments = new HashSet<>();
     /** The already detected ways in error */
     private final Map<List<Way>, List<WaySegment>> seenWays = new HashMap<>(50);
 
@@ -188,7 +184,6 @@ public abstract class CrossingWays extends Test {
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         cellSegments.clear();
-        errorSegments.clear();
         seenWays.clear();
     }
 
@@ -196,7 +191,6 @@ public abstract class CrossingWays extends Test {
     public void endTest() {
         super.endTest();
         cellSegments.clear();
-        errorSegments.clear();
         seenWays.clear();
     }
 
@@ -241,9 +235,7 @@ public abstract class CrossingWays extends Test {
                     List<Way> prims;
                     List<WaySegment> highlight;
 
-                    if ((errorSegments.contains(es1) && errorSegments.contains(es2))
-                            || !es1.intersects(es2)
-                            || ignoreWaySegmentCombination(es1.way, es2.way)) {
+                    if (!es1.intersects(es2) || ignoreWaySegmentCombination(es1.way, es2.way)) {
                         continue;
                     }
 
@@ -278,7 +270,7 @@ public abstract class CrossingWays extends Test {
      * @param n2 The second EastNorth
      * @return A list with all the cells the segment crosses
      */
-    public List<List<WaySegment>> getSegments(EastNorth n1, EastNorth n2) {
+    private List<List<WaySegment>> getSegments(EastNorth n1, EastNorth n2) {
 
         List<List<WaySegment>> cells = new ArrayList<>();
         for (Point2D cell : ValUtil.getSegmentCells(n1, n2, OsmValidator.griddetail)) {
