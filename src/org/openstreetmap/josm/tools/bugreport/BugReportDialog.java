@@ -16,16 +16,22 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.gui.preferences.plugin.PluginPreference;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
+import org.openstreetmap.josm.plugins.PluginDownloadTask;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.bugreport.BugReportQueue.SuppressionMode;
 
 /**
  * This is a dialog that can be used to display a bug report.
@@ -40,7 +46,8 @@ public class BugReportDialog extends JDialog {
     private final JPanel content = new JPanel(new GridBagLayout());
     private final BugReport report;
     private final DebugTextDisplay textPanel;
-    private JCheckBox cbSuppress;
+    private JCheckBox cbSuppressSingle;
+    private JCheckBox cbSuppressAll;
 
     /**
      * Create a new dialog.
@@ -55,7 +62,7 @@ public class BugReportDialog extends JDialog {
         addMessageSection();
 
         addUpToDateSection();
-        // TODO: Notify user about plugin updates
+        // TODO: Notify user about plugin updates, then remove that notification that is displayed before this dialog is displayed.
 
         addCreateTicketSection();
 
@@ -145,12 +152,15 @@ public class BugReportDialog extends JDialog {
 
     private void addIgnoreButton() {
         JPanel panel = new JPanel(new GridBagLayout());
-        cbSuppress = new JCheckBox(tr("Suppress further error dialogs for this session."));
-        cbSuppress.setVisible(false);
-        panel.add(cbSuppress, GBC.std().fill(GBC.HORIZONTAL));
+        cbSuppressSingle = new JCheckBox(tr("Suppress this error for this session."));
+        cbSuppressSingle.setVisible(false);
+        panel.add(cbSuppressSingle, GBC.std(0, 0).fill(GBC.HORIZONTAL));
+        cbSuppressAll = new JCheckBox(tr("Suppress further error dialogs for this session."));
+        cbSuppressAll.setVisible(false);
+        panel.add(cbSuppressAll, GBC.std(0, 1).fill(GBC.HORIZONTAL));
         JButton ignore = new JButton(tr("Ignore this error."));
         ignore.addActionListener(e -> closeDialog());
-        panel.add(ignore, GBC.eol());
+        panel.add(ignore, GBC.std(1, 0).span(1, 2).anchor(GBC.CENTER));
         content.add(panel, GBC.eol().fill(GBC.HORIZONTAL).insets(20));
     }
 
@@ -159,7 +169,17 @@ public class BugReportDialog extends JDialog {
      * @param showSuppress <code>true</code> to show the suppress errors checkbox.
      */
     public void setShowSuppress(boolean showSuppress) {
-        cbSuppress.setVisible(showSuppress);
+        cbSuppressSingle.setVisible(showSuppress);
+        pack();
+    }
+
+    /**
+     * Shows or hides the suppress all errors button
+     * @param showSuppress <code>true</code> to show the suppress errors checkbox.
+     * @since 10819
+     */
+    public void setShowSuppressAll(boolean showSuppress) {
+        cbSuppressAll.setVisible(showSuppress);
         pack();
     }
 
@@ -167,8 +187,14 @@ public class BugReportDialog extends JDialog {
      * Check if the checkbox to suppress further errors was selected
      * @return <code>true</code> if the user wishes to suppress errors.
      */
-    public boolean shouldSuppressFurtherErrors() {
-        return cbSuppress.isSelected();
+    public SuppressionMode shouldSuppressFurtherErrors() {
+        if (cbSuppressAll.isSelected()) {
+            return SuppressionMode.ALL;
+        } else if (cbSuppressSingle.isSelected()) {
+            return SuppressionMode.SAME;
+        } else {
+            return SuppressionMode.NONE;
+        }
     }
 
     private void closeDialog() {
@@ -197,5 +223,43 @@ public class BugReportDialog extends JDialog {
             BugReport.intercept(e).put("current", current).warn();
         }
         return null;
+    }
+
+    /**
+     * Show the bug report for a given exception
+     * @param e The exception to display
+     * @param exceptionCounter A counter of how many exceptions have already been worked on
+     * @return The new suppression status
+     * @since 10819
+     */
+    public static SuppressionMode showFor(ReportedException e, int exceptionCounter) {
+        if (e.isOutOfMemory()) {
+            // do not translate the string, as translation may raise an exception
+            JOptionPane.showMessageDialog(Main.parent, "JOSM is out of memory. " +
+                    "Strange things may happen.\nPlease restart JOSM with the -Xmx###M option,\n" +
+                    "where ### is the number of MB assigned to JOSM (e.g. 256).\n" +
+                    "Currently, " + Runtime.getRuntime().maxMemory()/1024/1024 + " MB are available to JOSM.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                    );
+            return SuppressionMode.NONE;
+        } else {
+            return GuiHelper.runInEDTAndWaitAndReturn(() -> {
+                PluginDownloadTask downloadTask = PluginHandler.updateOrdisablePluginAfterException(e);
+                if (downloadTask != null) {
+                    // Ask for restart to install new plugin
+                    PluginPreference.notifyDownloadResults(
+                            Main.parent, downloadTask, !downloadTask.getDownloadedPlugins().isEmpty());
+                    return SuppressionMode.NONE;
+                }
+
+                BugReport report = new BugReport(e);
+                BugReportDialog dialog = new BugReportDialog(report);
+                dialog.setShowSuppress(exceptionCounter > 0);
+                dialog.setShowSuppressAll(exceptionCounter > 1);
+                dialog.setVisible(true);
+                return dialog.shouldSuppressFurtherErrors();
+            });
+        }
     }
 }
