@@ -5303,7 +5303,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=waste_basket" />
             <key key="amenity" value="waste_basket" />
         </item> <!-- Waste Basket/Trash Can -->
-        <item name="Waste Disposal/Dumpster" icon="presets/service/recycling/waste_disposal.png" type="node" preset_name_label="true">
+        <item name="Waste Disposal/Dumpster" icon="presets/service/recycling/waste_disposal.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=waste_disposal"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=waste_disposal"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=waste_disposal"
@@ -6497,7 +6497,7 @@
             <text key="ref" text="Reference" />
             <text key="ele" text="Elevation" />
         </item> <!-- Survey Point -->
-        <item name="Surveillance Camera" icon="presets/service/surveillance.png" type="node,closedway" preset_name_label="true">
+        <item name="Surveillance Camera" icon="presets/service/surveillance.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=surveillance"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=surveillance"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=surveillance"
@@ -7097,7 +7097,7 @@
             <key key="historic" value="battlefield" />
             <text key="name" text="Name" />
         </item> <!-- Battlefield -->
-        <item name="Palaeontological Site" icon="presets/sightseeing/palaeontological_site.png" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Palaeontological Site" icon="presets/sightseeing/palaeontological_site.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:geological=palaeontological_site"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:geological=palaeontological_site"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:geological=palaeontological_site"
