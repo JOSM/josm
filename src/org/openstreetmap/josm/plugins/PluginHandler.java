@@ -861,7 +861,7 @@ public final class PluginHandler {
             monitor = NullProgressMonitor.INSTANCE;
         }
         try {
-            monitor.beginTask(tr("Determine plugins to load..."));
+            monitor.beginTask(tr("Determining plugins to load..."));
             Set<String> plugins = new HashSet<>(Main.pref.getCollection("plugins", new LinkedList<String>()));
             if (Main.isDebugEnabled()) {
                 Main.debug("Plugins list initialized to " + plugins);
