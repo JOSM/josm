@@ -2481,7 +2481,7 @@ node[amenity=recycling][recycling_type=centre] {
     icon-image: "presets/service/recycling/recycling_centre.svg";
 }
 node[amenity=waste_basket] {
-    icon-image: "presets/service/recycling/trash-bin.svg";
+    icon-image: "presets/service/recycling/waste_basket.svg";
     set icon_z17;
 }
 node[amenity=waste_disposal] {

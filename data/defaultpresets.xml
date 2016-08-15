@@ -5292,7 +5292,7 @@
             </checkgroup>
             <reference ref="link_contact_address_payment" />
         </item> <!-- Recycling Centre-->
-        <item name="Waste Basket/Trash Can" icon="presets/service/recycling/trash-bin.svg" type="node" preset_name_label="true">
+        <item name="Waste Basket/Trash Can" icon="presets/service/recycling/waste_basket.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=waste_basket"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=waste_basket"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:amenity=waste_basket"
