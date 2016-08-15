@@ -16,29 +16,34 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -57,6 +62,7 @@ import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
 import org.openstreetmap.josm.plugins.ReadRemotePluginInformationTask;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Preference settings for plugins.
@@ -181,11 +187,12 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
     }
 
     private JPanel buildActionPanel() {
-        JPanel pnl = new JPanel(new GridLayout(1, 3));
+        JPanel pnl = new JPanel(new GridLayout(1, 4));
 
         pnl.add(new JButton(new DownloadAvailablePluginsAction()));
         pnl.add(new JButton(new UpdateSelectedPluginsAction()));
-        pnl.add(new JButton(new ConfigureSitesAction()));
+        ExpertToggleAction.addVisibilitySwitcher(pnl.add(new JButton(new SelectByListAction())));
+        ExpertToggleAction.addVisibilitySwitcher(pnl.add(new JButton(new ConfigureSitesAction())));
         return pnl;
     }
 
@@ -457,6 +464,78 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         @Override
         public void actionPerformed(ActionEvent e) {
             configureSites();
+        }
+    }
+
+    /**
+     * The action for selecting the plugins given by a text file compatible to JOSM bug report.
+     * @author Michael Zangl
+     */
+    class SelectByListAction extends AbstractAction {
+        SelectByListAction() {
+            putValue(NAME, tr("Load from list..."));
+            putValue(SHORT_DESCRIPTION, tr("Load plugins from a list of plugins"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JTextArea textField = new JTextArea(10, 0);
+            JCheckBox deleteNotInList = new JCheckBox(tr("Disable all other plugins"));
+
+            JLabel helpLabel = new JLabel("<html>" + Utils.join("<br/>", Arrays.asList(
+                    tr("Enter a list of plugins you want to download."),
+                    tr("You should add one plugin id per line, version information is ignored."),
+                    tr("You can copy+paste the list of a status report here."))) + "</html>");
+
+            if (JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(GuiHelper.getFrameForComponent(getTabPane()),
+                    new Object[] {helpLabel, new JScrollPane(textField), deleteNotInList},
+                    tr("Load plugins from list"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)) {
+                activatePlugins(textField, deleteNotInList.isSelected());
+            }
+        }
+
+        private void activatePlugins(JTextArea textField, boolean deleteNotInList) {
+            String[] lines = textField.getText().split("\n");
+            List<String> toActivate = new ArrayList<>();
+            List<String> notFound = new ArrayList<>();
+            Pattern regex = Pattern.compile("^[-+\\s]*|\\s[\\(\\)\\d\\s]*");
+            for (String line : lines) {
+                String name = regex.matcher(line).replaceAll("");
+                if (name.isEmpty()) {
+                    continue;
+                }
+                PluginInformation plugin = model.getPluginInformation(name);
+                if (plugin == null) {
+                    notFound.add(name);
+                } else {
+                    toActivate.add(name);
+                }
+            }
+
+            if (notFound.isEmpty() || confirmIgnoreNotFound(notFound)) {
+                activatePlugins(toActivate, deleteNotInList);
+            }
+        }
+
+        private void activatePlugins(List<String> toActivate, boolean deleteNotInList) {
+            if (deleteNotInList) {
+                for (String name : model.getSelectedPluginNames()) {
+                    if (!toActivate.contains(name)) {
+                        model.setPluginSelected(name, false);
+                    }
+                }
+            }
+            for (String name : toActivate) {
+                model.setPluginSelected(name, true);
+            }
+            pnlPluginPreferences.refreshView();
+        }
+
+        private boolean confirmIgnoreNotFound(List<String> notFound) {
+            String list = "<ul><li>" + Utils.join("</li><li>", notFound) + "</li></ul>";
+            String message = "<html>" + tr("The following plugins were not found. Continue anyway?") + list + "</html>";
+            return JOptionPane.showConfirmDialog(GuiHelper.getFrameForComponent(getTabPane()),
+                    message) == JOptionPane.OK_OPTION;
         }
     }
 
