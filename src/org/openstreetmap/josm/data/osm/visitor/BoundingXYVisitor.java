@@ -53,8 +53,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
      */
     public void visit(Bounds b) {
         if (b != null) {
-            visit(b.getMin());
-            visit(b.getMax());
+            b.visitEdge(Main.getProjection(), this::visit);
         }
     }
 
