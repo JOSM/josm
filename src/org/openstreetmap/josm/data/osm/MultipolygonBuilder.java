@@ -13,12 +13,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -161,6 +164,23 @@ public class MultipolygonBuilder {
         public JoinedPolygonCreationException(String message) {
             super(message);
         }
+    }
+
+    /**
+     * Joins the given {@code multipolygon} to a pair of outer and inner multipolygon rings.
+     *
+     * @param multipolygon the multipolygon to join.
+     * @return a pair of outer and inner multipolygon rings.
+     * @throws JoinedPolygonCreationException if the creation fails.
+     */
+    public static Pair<List<JoinedPolygon>, List<JoinedPolygon>> joinWays(Relation multipolygon) throws JoinedPolygonCreationException {
+        CheckParameterUtil.ensureThat(multipolygon.isMultipolygon(), "multipolygon.isMultipolygon");
+        final Map<String, Set<Way>> members = multipolygon.getMembers().stream()
+                .filter(RelationMember::isWay)
+                .collect(Collectors.groupingBy(RelationMember::getRole, Collectors.mapping(RelationMember::getWay, Collectors.toSet())));
+        final List<JoinedPolygon> outerRings = joinWays(members.getOrDefault("outer", Collections.emptySet()));
+        final List<JoinedPolygon> innerRings = joinWays(members.getOrDefault("inner", Collections.emptySet()));
+        return Pair.create(outerRings, innerRings);
     }
 
     /**

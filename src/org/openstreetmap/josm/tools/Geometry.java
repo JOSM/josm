@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,12 +24,11 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
+import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePositionComparator;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
@@ -862,23 +860,6 @@ public final class Geometry {
         return new EastNorth(xC, yC);
     }
 
-    public static class MultiPolygonMembers {
-        public final Set<Way> outers = new HashSet<>();
-        public final Set<Way> inners = new HashSet<>();
-
-        public MultiPolygonMembers(Relation multiPolygon) {
-            for (RelationMember m : multiPolygon.getMembers()) {
-                if (m.getType().equals(OsmPrimitiveType.WAY)) {
-                    if ("outer".equals(m.getRole())) {
-                        outers.add(m.getWay());
-                    } else if ("inner".equals(m.getRole())) {
-                        inners.add(m.getWay());
-                    }
-                }
-            }
-        }
-    }
-
     /**
      * Tests if the {@code node} is inside the multipolygon {@code multiPolygon}. The nullable argument
      * {@code isOuterWayAMatch} allows to decide if the immediate {@code outer} way of the multipolygon is a match.
@@ -903,27 +884,23 @@ public final class Geometry {
      */
     public static boolean isPolygonInsideMultiPolygon(List<Node> nodes, Relation multiPolygon, Predicate<Way> isOuterWayAMatch) {
         // Extract outer/inner members from multipolygon
-        final MultiPolygonMembers mpm = new MultiPolygonMembers(multiPolygon);
-        // Construct complete rings for the inner/outer members
-        final List<MultipolygonBuilder.JoinedPolygon> outerRings;
-        final List<MultipolygonBuilder.JoinedPolygon> innerRings;
+        final Pair<List<JoinedPolygon>, List<JoinedPolygon>> outerInner;
         try {
-            outerRings = MultipolygonBuilder.joinWays(mpm.outers);
-            innerRings = MultipolygonBuilder.joinWays(mpm.inners);
+            outerInner = MultipolygonBuilder.joinWays(multiPolygon);
         } catch (MultipolygonBuilder.JoinedPolygonCreationException ex) {
             Main.trace(ex);
             Main.debug("Invalid multipolygon " + multiPolygon);
             return false;
         }
         // Test if object is inside an outer member
-        for (MultipolygonBuilder.JoinedPolygon out : outerRings) {
+        for (JoinedPolygon out : outerInner.a) {
             if (nodes.size() == 1
                     ? nodeInsidePolygon(nodes.get(0), out.getNodes())
                     : EnumSet.of(PolygonIntersection.FIRST_INSIDE_SECOND, PolygonIntersection.CROSSING).contains(
                             polygonIntersection(nodes, out.getNodes()))) {
                 boolean insideInner = false;
                 // If inside an outer, check it is not inside an inner
-                for (MultipolygonBuilder.JoinedPolygon in : innerRings) {
+                for (JoinedPolygon in : outerInner.b) {
                     if (polygonIntersection(in.getNodes(), out.getNodes()) == PolygonIntersection.FIRST_INSIDE_SECOND
                             && (nodes.size() == 1
                             ? nodeInsidePolygon(nodes.get(0), in.getNodes())
