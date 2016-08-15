@@ -62,8 +62,7 @@ public class LayerTransferable implements Transferable {
     /**
      * Data flavor for {@link Layer}s which are wrapped in {@link Data}.
      */
-    public static final DataFlavor LAYER_DATA = new DataFlavor(
-            DataFlavor.javaJVMLocalObjectMimeType + ";class=" + Data.class.getName(), "Layers");
+    public static final DataFlavor LAYER_DATA = ClipboardUtils.newDataFlavor(Data.class, "Layers");
 
     private final Data data;
 

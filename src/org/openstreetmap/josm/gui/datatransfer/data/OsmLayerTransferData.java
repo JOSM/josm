@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.datatransfer.LayerTransferable;
 import org.openstreetmap.josm.gui.layer.LayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -22,8 +23,7 @@ public class OsmLayerTransferData extends LayerTransferData {
      * @see LayerTransferData#FLAVOR
      * @see #FLAVORS
      */
-    public static final DataFlavor OSM_FLAVOR = new DataFlavor(
-            DataFlavor.javaJVMLocalObjectMimeType + ";class=" + LayerTransferData.class.getName(), "Layer");
+    public static final DataFlavor OSM_FLAVOR = ClipboardUtils.newDataFlavor(OsmLayerTransferData.class, "Layer");
 
     /**
      * The flavors that are supported by this data type.
