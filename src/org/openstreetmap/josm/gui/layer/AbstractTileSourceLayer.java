@@ -50,6 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 
 import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
@@ -136,7 +137,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * Initial zoom lvl is set to bestZoom
      */
     public int currentZoomLevel;
-    private boolean needRedraw;
 
     private final AttributionSupport attribution = new AttributionSupport();
     private final TileHolder clickedTileHolder = new TileHolder();
@@ -157,6 +157,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     protected TileCache tileCache; // initialized together with tileSource
     protected T tileSource;
     protected TileLoader tileLoader;
+
+    /**
+     * A timer that is used to delay invalidation events if required.
+     */
+    private final Timer invalidateLaterTimer = new Timer(100, e -> this.invalidate());
 
     private final MouseAdapter adapter = new MouseAdapter() {
         @Override
@@ -263,10 +268,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             tile.setImage(null);
         }
         tile.setLoaded(success);
-        needRedraw = true;
-        if (Main.map != null) {
-            Main.map.repaint(100);
-        }
+        invalidateLater();
         if (Main.isDebugEnabled()) {
             Main.debug("tileLoadingFinished() tile: " + tile + " success: " + success);
         }
@@ -296,14 +298,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * @see #invalidate() To trigger a repaint of all places where the layer is displayed.
      */
     protected void redraw() {
-        needRedraw = true;
-        if (isVisible()) Main.map.repaint();
-    }
-
-    @Override
-    public void invalidate() {
-        needRedraw = true;
-        super.invalidate();
+        invalidate();
     }
 
     /**
@@ -1029,12 +1024,28 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     @Override
     public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
         boolean done = (infoflags & (ERROR | FRAMEBITS | ALLBITS)) != 0;
-        needRedraw = true;
         if (Main.isDebugEnabled()) {
             Main.debug("imageUpdate() done: " + done + " calling repaint");
         }
-        Main.map.repaint(done ? 0 : 100);
+
+        if (done) {
+            invalidate();
+        } else {
+            invalidateLater();
+        }
         return !done;
+    }
+
+    /**
+     * Invalidate the layer at a time in the future so taht the user still sees the interface responsive.
+     */
+    private void invalidateLater() {
+        GuiHelper.runInEDT(() -> {
+            if (!invalidateLaterTimer.isRunning()) {
+                invalidateLaterTimer.setRepeats(false);
+                invalidateLaterTimer.start();
+            }
+        });
     }
 
     private boolean imageLoaded(Image i) {
@@ -1752,7 +1763,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     @Override
     public boolean isChanged() {
-        return needRedraw;
+        // we use #invalidate()
+        return false;
     }
 
     /**
@@ -1897,8 +1909,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         private void doPaint(MapViewGraphics graphics) {
             ProjectionBounds pb = graphics.getClipBounds().getProjectionBounds();
-
-            needRedraw = false; // TEMPORARY
 
             drawInViewArea(graphics.getDefaultGraphics(), graphics.getMapView(), pb);
         }
