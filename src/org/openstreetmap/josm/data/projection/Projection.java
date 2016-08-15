@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * The conversion from east/north to the screen coordinates is simply a scale
  * factor and x/y offset.
  */
-public interface Projection {
+public interface Projection extends Projecting {
     /**
      * The default scale factor in east/north units per pixel
      * ({@link org.openstreetmap.josm.gui.NavigatableComponent#getState})).
@@ -21,14 +21,6 @@ public interface Projection {
      * @return the scale factor
      */
     double getDefaultZoomInPPD();
-
-    /**
-     * Convert from lat/lon to easting/northing.
-     *
-     * @param ll the geographical point to convert (in WGS84 lat/lon)
-     * @return the corresponding east/north coordinates
-     */
-    EastNorth latlon2eastNorth(LatLon ll);
 
     /**
      * Convert from easting/norting to lat/lon.

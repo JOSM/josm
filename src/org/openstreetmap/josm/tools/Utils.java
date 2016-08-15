@@ -1551,4 +1551,22 @@ public final class Utils {
             });
         }
     }
+
+    /**
+     * Clamp a value to the given range
+     * @param val The value
+     * @param min minimum value
+     * @param max maximum value
+     * @return the value
+     * @since 10805
+     */
+    public static double clamp(double val, double min, double max) {
+        if (val < min) {
+            return min;
+        } else if (val > max) {
+            return max;
+        } else {
+            return val;
+        }
+    }
 }

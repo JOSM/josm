@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -27,7 +28,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  */
 public final class MapViewState {
 
-    private final Projection projection;
+    private final Projecting projecting;
 
     private final int viewWidth;
     private final int viewHeight;
@@ -50,8 +51,8 @@ public final class MapViewState {
      * @param scale The scale to use
      * @param topLeft The top left corner in east/north space.
      */
-    private MapViewState(Projection projection, int viewWidth, int viewHeight, double scale, EastNorth topLeft) {
-        this.projection = projection;
+    private MapViewState(Projecting projection, int viewWidth, int viewHeight, double scale, EastNorth topLeft) {
+        this.projecting = projection;
         this.scale = scale;
         this.topLeft = topLeft;
 
@@ -62,7 +63,7 @@ public final class MapViewState {
     }
 
     private MapViewState(EastNorth topLeft, MapViewState mapViewState) {
-        this.projection = mapViewState.projection;
+        this.projecting = mapViewState.projecting;
         this.scale = mapViewState.scale;
         this.topLeft = topLeft;
 
@@ -73,7 +74,7 @@ public final class MapViewState {
     }
 
     private MapViewState(double scale, MapViewState mapViewState) {
-        this.projection = mapViewState.projection;
+        this.projecting = mapViewState.projecting;
         this.scale = scale;
         this.topLeft = mapViewState.topLeft;
 
@@ -84,7 +85,7 @@ public final class MapViewState {
     }
 
     private MapViewState(JComponent position, MapViewState mapViewState) {
-        this.projection = mapViewState.projection;
+        this.projecting = mapViewState.projecting;
         this.scale = mapViewState.scale;
         this.topLeft = mapViewState.topLeft;
 
@@ -105,8 +106,8 @@ public final class MapViewState {
         }
     }
 
-    private MapViewState(Projection projection, MapViewState mapViewState) {
-        this.projection = projection;
+    private MapViewState(Projecting projecting, MapViewState mapViewState) {
+        this.projecting = projecting;
         this.scale = mapViewState.scale;
         this.topLeft = mapViewState.topLeft;
 
@@ -200,7 +201,7 @@ public final class MapViewState {
      * @return The projection.
      */
     public Projection getProjection() {
-        return projection;
+        return projecting.getBaseProjection();
     }
 
     /**
@@ -268,7 +269,7 @@ public final class MapViewState {
      * @since 10486
      */
     public MapViewState usingProjection(Projection projection) {
-        if (projection.equals(this.projection)) {
+        if (projection.equals(this.projecting)) {
             return this;
         } else {
             return new MapViewState(projection, this);
@@ -357,9 +358,19 @@ public final class MapViewState {
         /**
          * Gets the current position in LatLon coordinates according to the current projection.
          * @return The positon as LatLon.
+         * @see #getLatLonClamped()
          */
         public LatLon getLatLon() {
-            return projection.eastNorth2latlon(getEastNorth());
+            return projecting.getBaseProjection().eastNorth2latlon(getEastNorth());
+        }
+
+        /**
+         * Gets the latlon coordinate clamped to the current world area.
+         * @return The lat/lon coordinate
+         * @since 10805
+         */
+        public LatLon getLatLonClamped() {
+            return projecting.eastNorth2latlonClamped(getEastNorth());
         }
 
         /**
@@ -473,7 +484,8 @@ public final class MapViewState {
          * @since 10458
          */
         public Bounds getLatLonBoundsBox() {
-            return projection.getLatLonBoundsBox(getProjectionBounds());
+            // TODO @michael2402: Use hillclimb.
+            return projecting.getBaseProjection().getLatLonBoundsBox(getProjectionBounds());
         }
 
         /**

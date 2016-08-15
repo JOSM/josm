@@ -230,7 +230,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     protected void initTileSource(T tileSource) {
-        coordinateConverter = new TileCoordinateConverter(Main.map.mapView, getDisplaySettings());
+        coordinateConverter = new TileCoordinateConverter(Main.map.mapView, tileSource, getDisplaySettings());
         attribution.initialize(tileSource);
 
         currentZoomLevel = getBestZoom();
@@ -367,17 +367,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * @return average number of screen pixels per tile pixel
      */
     private double getScaleFactor(int zoom) {
-        if (!Main.isDisplayingMapView()) return 1;
-        MapView mv = Main.map.mapView;
-        LatLon topLeft = mv.getLatLon(0, 0);
-        LatLon botRight = mv.getLatLon(mv.getWidth(), mv.getHeight());
-        TileXY t1 = tileSource.latLonToTileXY(topLeft.toCoordinate(), zoom);
-        TileXY t2 = tileSource.latLonToTileXY(botRight.toCoordinate(), zoom);
-
-        int screenPixels = mv.getWidth()*mv.getHeight();
-        double tilePixels = Math.abs((t2.getY()-t1.getY())*(t2.getX()-t1.getX())*tileSource.getTileSize()*tileSource.getTileSize());
-        if (screenPixels == 0 || tilePixels == 0) return 1;
-        return screenPixels/tilePixels;
+        if (coordinateConverter != null) {
+            return coordinateConverter.getScaleFactor(zoom);
+        } else {
+            return 1;
+        }
     }
 
     protected int getBestZoom() {
@@ -1245,7 +1239,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     private LatLon getShiftedLatLon(EastNorth en) {
-        return Main.getProjection().eastNorth2latlon(en.add(-getDisplaySettings().getDx(), -getDisplaySettings().getDy()));
+        return coordinateConverter.getProjecting().eastNorth2latlonClamped(en);
     }
 
     private ICoordinate getShiftedCoord(EastNorth en) {
@@ -1519,10 +1513,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds bounds) {
-        ProjectionBounds pb = mv.getState().getViewArea().getProjectionBounds();
+        // old and unused.
+    }
 
-        needRedraw = false;
-
+    private void drawInViewArea(Graphics2D g, MapView mv, ProjectionBounds pb) {
         int zoom = currentZoomLevel;
         if (getDisplaySettings().isAutoZoom()) {
             zoom = getBestZoom();
@@ -1897,8 +1891,16 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         public void paint(MapViewGraphics graphics) {
             allocateCacheMemory();
             if (memory != null) {
-                super.paint(graphics);
+                doPaint(graphics);
             }
+        }
+
+        private void doPaint(MapViewGraphics graphics) {
+            ProjectionBounds pb = graphics.getClipBounds().getProjectionBounds();
+
+            needRedraw = false; // TEMPORARY
+
+            drawInViewArea(graphics.getDefaultGraphics(), graphics.getMapView(), pb);
         }
 
         private void allocateCacheMemory() {
