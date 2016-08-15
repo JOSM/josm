@@ -37,7 +37,9 @@ public final class OverpassTurboQueryWizard {
     }
 
     private OverpassTurboQueryWizard() {
-
+        if (engine == null) {
+            throw new IllegalStateException("Failed to retrieve JavaScript engine");
+        }
         try (CachedFile file = new CachedFile("resource://data/overpass-wizard.js");
              Reader reader = file.getContentReader()) {
             engine.eval("var console = {error: " + Main.class.getCanonicalName() + ".warn};");
