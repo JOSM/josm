@@ -147,4 +147,20 @@ public final class ClipboardUtils {
             }
         });
     }
+
+    /**
+     * Returns a new {@link DataFlavor} for the given class and human-readable name.
+     * @param c class
+     * @param humanPresentableName the human-readable string used to identify this flavor
+     * @return a new {@link DataFlavor} for the given class and human-readable name
+     * @since 10801
+     */
+    public static DataFlavor newDataFlavor(Class<?> c, String humanPresentableName) {
+        try {
+            return new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + c.getName(),
+                    humanPresentableName, c.getClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 }
