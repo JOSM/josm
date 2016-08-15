@@ -1440,7 +1440,7 @@ node[man_made=reservoir_covered] {
     set icon_z17;
 }
 node[man_made=surveillance] {
-    icon-image: "presets/service/surveillance.png";
+    icon-image: "presets/service/surveillance.svg";
     set icon_z17;
 }
 node[man_made=survey_point] {
@@ -2485,7 +2485,7 @@ node[amenity=waste_basket] {
     set icon_z17;
 }
 node[amenity=waste_disposal] {
-    icon-image: "presets/service/recycling/waste_disposal.png";
+    icon-image: "presets/service/recycling/waste_disposal.svg";
     set icon_z17;
 }
 node[amenity=sanitary_dump_station] {
@@ -3123,8 +3123,7 @@ node[historic=battlefield] {
     set icon_z17;
 }
 node[geological=palaeontological_site] {
-    icon-image: "presets/sightseeing/palaeontological_site.png";
-    icon-width: 16;
+    icon-image: "presets/sightseeing/palaeontological_site.svg";
     set icon_z17;
 }
 node[historic=wayside_cross] {
