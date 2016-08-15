@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016081100, Last Updated Thu Aug 11 07:07:01 2016 UTC
+        // Taken from Version 2016081500, Last Updated Mon Aug 15 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -351,6 +351,7 @@ public final class DomainValidator extends AbstractValidator {
         "army", // army United TLD Holdco Ltd.
         "art", // art UK Creative Ideas Limited
         "arte", // arte Association Relative à la Télévision Européenne G.E.I.E.
+        "asda", // asda Wal-Mart Stores, Inc.
         "asia", // asia DotAsia Organisation Ltd.
         "associates", // associates Baxter Hill, LLC
         "athleta", // athleta The Gap, Inc.
@@ -728,6 +729,7 @@ public final class DomainValidator extends AbstractValidator {
         "hamburg", // hamburg Hamburg Top-Level-Domain GmbH
         "hangout", // hangout Charleston Road Registry Inc.
         "haus", // haus United TLD Holdco, LTD.
+        "hbo", // hbo HBO Registry Services, Inc.
         "hdfcbank", // hdfcbank HDFC Bank Limited
         "health", // health DotHealth, LLC
         "healthcare", // healthcare Silver Glen, LLC

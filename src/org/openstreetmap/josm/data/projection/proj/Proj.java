@@ -90,4 +90,14 @@ public interface Proj {
      * @return true, if it is geographic
      */
     boolean isGeographic();
+
+    /**
+     * Checks wether the result of projecting a lon coordinate only has a linear relation to the east coordinate and
+     * is not related to lat/north at all.
+     * @return <code>true</code> if lon has a linear relationship to east only.
+     * @since 10805
+     */
+    default boolean lonIsLinearToEast() {
+        return false;
+    }
 }

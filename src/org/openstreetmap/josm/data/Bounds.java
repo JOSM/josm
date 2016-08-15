@@ -7,9 +7,11 @@ import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -398,12 +400,16 @@ public class Bounds {
      * @return the bounding box to Rectangle2D.Double
      */
     public Rectangle2D.Double asRect() {
-        double w = maxLon-minLon + (crosses180thMeridian() ? 360.0 : 0.0);
+        double w = getWidth();
         return new Rectangle2D.Double(minLon, minLat, w, maxLat-minLat);
     }
 
+    private double getWidth() {
+        return maxLon-minLon + (crosses180thMeridian() ? 360.0 : 0.0);
+    }
+
     public double getArea() {
-        double w = maxLon-minLon + (crosses180thMeridian() ? 360.0 : 0.0);
+        double w = getWidth();
         return w * (maxLat - minLat);
     }
 
@@ -439,6 +445,33 @@ public class Bounds {
         maxLat = LatLon.toIntervalLat(maxLat);
         minLon = LatLon.toIntervalLon(minLon);
         maxLon = LatLon.toIntervalLon(maxLon);
+    }
+
+    /**
+     * Visit points along the edge of this bounds instance.
+     * @param projection The projection that should be used to determine how often the edge should be split along a given corner.
+     * @param visitor A function to call for the points on the edge.
+     * @since 10806
+     */
+    public void visitEdge(Projection projection, Consumer<LatLon> visitor) {
+        double width = getWidth();
+        double height = maxLat - minLat;
+        //TODO: Use projection to see if there is any need for doing this along each axis.
+        int splitX = Math.max((int) width / 10, 10);
+        int splitY = Math.max((int) height / 10, 10);
+
+        for (int step = 0; step < splitX; step++) {
+            visitor.accept(new LatLon(minLat, minLon + width * step / splitX));
+        }
+        for (int step = 0; step < splitY; step++) {
+            visitor.accept(new LatLon(minLat + height * step / splitY, maxLon));
+        }
+        for (int step = 0; step < splitX; step++) {
+            visitor.accept(new LatLon(maxLat, maxLon - width * step / splitX));
+        }
+        for (int step = 0; step < splitY; step++) {
+            visitor.accept(new LatLon(maxLat - height * step / splitY, minLon));
+        }
     }
 
     @Override

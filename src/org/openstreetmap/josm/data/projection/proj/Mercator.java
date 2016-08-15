@@ -119,4 +119,9 @@ public class Mercator extends AbstractProj implements IScaleFactorProvider {
     public double getScaleFactor() {
         return scaleFactor;
     }
+
+    @Override
+    public boolean lonIsLinearToEast() {
+        return true;
+    }
 }

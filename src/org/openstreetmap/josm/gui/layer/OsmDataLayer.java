@@ -12,11 +12,11 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -51,6 +51,7 @@ import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -81,6 +82,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.io.AbstractIOTask;
@@ -110,6 +112,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @since 17
  */
 public class OsmDataLayer extends AbstractModifiableLayer implements Listener, SelectionChangedListener {
+    private static final int HATCHED_SIZE = 15;
     /** Property used to know if this layer has to be saved on disk */
     public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
     /** Property used to know if this layer has to be uploaded */
@@ -303,9 +306,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     private final ConflictCollection conflicts;
 
     /**
-     * a paint texture for non-downloaded area
+     * a texture for non-downloaded area
      */
-    private static volatile TexturePaint hatched;
+    private static volatile BufferedImage hatched;
 
     static {
         createHatchTexture();
@@ -331,17 +334,16 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * Initialize the hatch pattern used to paint the non-downloaded area
      */
     public static void createHatchTexture() {
-        BufferedImage bi = new BufferedImage(15, 15, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bi = new BufferedImage(HATCHED_SIZE, HATCHED_SIZE, BufferedImage.TYPE_INT_ARGB);
         Graphics2D big = bi.createGraphics();
         big.setColor(getBackgroundColor());
         Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
         big.setComposite(comp);
-        big.fillRect(0, 0, 15, 15);
+        big.fillRect(0, 0, HATCHED_SIZE, HATCHED_SIZE);
         big.setColor(getOutsideColor());
         big.drawLine(-1, 6, 6, -1);
         big.drawLine(4, 16, 16, 4);
-        Rectangle r = new Rectangle(0, 0, 15, 15);
-        hatched = new TexturePaint(bi, r);
+        hatched = bi;
     }
 
     /**
@@ -407,14 +409,14 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                 if (bounds.isCollapsed()) {
                     continue;
                 }
-                Point p1 = mv.getPoint(bounds.getMin());
-                Point p2 = mv.getPoint(bounds.getMax());
-                Rectangle r = new Rectangle(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y), Math.abs(p2.x-p1.x), Math.abs(p2.y-p1.y));
-                a.subtract(new Area(r));
+                a.subtract(mv.getState().getArea(bounds));
             }
 
             // paint remainder
-            g.setPaint(hatched);
+            MapViewPoint anchor = mv.getState().getPointFor(new EastNorth(0, 0));
+            Rectangle2D anchorRect = new Rectangle2D.Double(anchor.getInView().getX() % HATCHED_SIZE,
+                    anchor.getInView().getY() % HATCHED_SIZE, HATCHED_SIZE, HATCHED_SIZE);
+            g.setPaint(new TexturePaint(hatched, anchorRect));
             g.fill(a);
         }
 

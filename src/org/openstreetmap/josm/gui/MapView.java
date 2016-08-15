@@ -17,7 +17,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Area;
-import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -45,7 +44,6 @@ import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
@@ -973,41 +971,12 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     private void drawWorldBorders(Graphics2D tempG) {
         tempG.setColor(Color.WHITE);
         Bounds b = getProjection().getWorldBoundsLatLon();
-        double lat = b.getMinLat();
-        double lon = b.getMinLon();
-
-        Point p = getPoint(b.getMin());
-
-        GeneralPath path = new GeneralPath();
-
-        double d = 1.0;
-        path.moveTo(p.x, p.y);
-        double max = b.getMax().lat();
-        for (; lat <= max; lat += d) {
-            p = getPoint(new LatLon(lat >= max ? max : lat, lon));
-            path.lineTo(p.x, p.y);
-        }
-        lat = max; max = b.getMax().lon();
-        for (; lon <= max; lon += d) {
-            p = getPoint(new LatLon(lat, lon >= max ? max : lon));
-            path.lineTo(p.x, p.y);
-        }
-        lon = max; max = b.getMinLat();
-        for (; lat >= max; lat -= d) {
-            p = getPoint(new LatLon(lat <= max ? max : lat, lon));
-            path.lineTo(p.x, p.y);
-        }
-        lat = max; max = b.getMinLon();
-        for (; lon >= max; lon -= d) {
-            p = getPoint(new LatLon(lat, lon <= max ? max : lon));
-            path.lineTo(p.x, p.y);
-        }
 
         int w = getWidth();
         int h = getHeight();
 
         // Work around OpenJDK having problems when drawing out of bounds
-        final Area border = new Area(path);
+        final Area border = getState().getArea(b);
         // Make the viewport 1px larger in every direction to prevent an
         // additional 1px border when zooming in
         final Area viewport = new Area(new Rectangle(-1, -1, w + 2, h + 2));
