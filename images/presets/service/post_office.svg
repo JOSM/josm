@@ -17,16 +17,6 @@
    inkscape:version="0.91 r13725"
    sodipodi:docname="post_office.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
-  <defs
-     id="defs3263">
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 290 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="580 : 290 : 1"
-       inkscape:persp3d-origin="290 : 193.33333 : 1"
-       id="perspective3265" />
-  </defs>
   <metadata
      id="metadata2975">
     <rdf:RDF>
@@ -108,7 +98,7 @@
        y="2" />
   </g>
   <path
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:NPSPICT3;-inkscape-font-specification:NPSPICT3;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="m 2.892698,4.432354 3.0875517,3.0934688 -3.0875517,3.0784892 0,-6.171958 z M 12.498103,3.8523395 8.6949924,7.6297547 C 8.5059363,7.8182558 8.2672598,7.9125064 7.9789848,7.9125064 c -0.2983128,0 -0.5469942,-0.099211 -0.7460553,-0.2977315 l -3.7735224,-3.7624354 9.0386959,0 z M 13.09486,10.604312 10.007308,7.5258228 13.09486,4.432354 l 0,6.171958 z M 3.4443941,11.184337 6.5469587,8.1058482 6.6812443,8.2397288 c 0.3580694,0.3470536 0.7906569,0.520575 1.2977405,0.520575 0.5070727,0 0.9346522,-0.1735214 1.2827276,-0.520575 l 0.1342746,-0.1338806 3.102116,3.0784888 -9.0537089,0 z m -1.3869653,0.832818 11.9027372,0 0,-9.0126129 -11.9027372,0 0,9.0126129 z"
      id="flowRoot3192"
      inkscape:connector-curvature="0" />
