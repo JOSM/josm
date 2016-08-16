@@ -34,9 +34,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
@@ -957,6 +962,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return new Tile(tileSource, x, y, zoom);
     }
 
+    private Tile getOrCreateTile(TilePosition tilePosition) {
+        return getOrCreateTile(tilePosition.getX(), tilePosition.getY(), tilePosition.getZoom());
+    }
+
     private Tile getOrCreateTile(int x, int y, int zoom) {
         Tile tile = getTile(x, y, zoom);
         if (tile == null) {
@@ -968,6 +977,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             tile.loadPlaceholderFromCache(tileCache);
         }
         return tile;
+    }
+
+    private Tile getTile(TilePosition tilePosition) {
+        return getTile(tilePosition.getX(), tilePosition.getY(), tilePosition.getZoom());
     }
 
     /**
@@ -1126,6 +1139,25 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
+    private List<Tile> paintTileImages(Graphics g, TileSet ts) {
+        Object paintMutex = new Object();
+        List<TilePosition> missed = Collections.synchronizedList(new ArrayList<>());
+        ts.visitTiles(tile -> {
+            Image img = getLoadedTileImage(tile);
+            if (img == null) {
+                missed.add(new TilePosition(tile));
+            }
+            img = applyImageProcessors((BufferedImage) img);
+            Rectangle2D sourceRect = coordinateConverter.getRectangleForTile(tile);
+            synchronized (paintMutex) {
+                //cannot paint in parallel
+                drawImageInside(g, img, sourceRect, null);
+            }
+        }, missed::add);
+
+        return missed.stream().map(this::getOrCreateTile).collect(Collectors.toList());
+    }
+
     // This function is called for several zoom levels, not just
     // the current one.  It should not trigger any tiles to be
     // downloaded.  It should also avoid polluting the tile cache
@@ -1137,10 +1169,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     // border is null and we draw the entire tile set.
     private List<Tile> paintTileImages(Graphics g, TileSet ts, int zoom, Tile border) {
         if (zoom <= 0) return Collections.emptyList();
-        Rectangle2D borderRect = null;
-        if (border != null) {
-            borderRect = coordinateConverter.getRectangleForTile(border);
-        }
+        Rectangle2D borderRect = coordinateConverter.getRectangleForTile(border);
         List<Tile> missedTiles = new LinkedList<>();
         // The callers of this code *require* that we return any tiles
         // that we do not draw in missedTiles.  ts.allExistingTiles() by
@@ -1294,6 +1323,67 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             int ySpan = maxY - minY + 1;
             return xSpan * ySpan;
         }
+
+        /**
+         * Gets a stream of all tile positions in this set
+         * @return A stream of all positions
+         */
+        public Stream<TilePosition> tilePositions() {
+            if (zoom == 0) {
+                return Stream.empty();
+            } else {
+                return IntStream.rangeClosed(minX, maxX).mapToObj(
+                        x -> IntStream.rangeClosed(minY, maxY).mapToObj(y -> new TilePosition(x, y, zoom))
+                        ).flatMap(Function.identity());
+            }
+        }
+    }
+
+    /**
+     * The position of a single tile.
+     * @author Michael Zangl
+     * @since xxx
+     */
+    private static class TilePosition {
+        private final int x;
+        private final int y;
+        private final int zoom;
+        TilePosition(int x, int y, int zoom) {
+            super();
+            this.x = x;
+            this.y = y;
+            this.zoom = zoom;
+        }
+
+        TilePosition(Tile tile) {
+            this(tile.getXtile(), tile.getYtile(), tile.getZoom());
+        }
+
+        /**
+         * @return the x position
+         */
+        public int getX() {
+            return x;
+        }
+
+        /**
+         * @return the y position
+         */
+        public int getY() {
+            return y;
+        }
+
+        /**
+         * @return the zoom
+         */
+        public int getZoom() {
+            return zoom;
+        }
+
+        @Override
+        public String toString() {
+            return "TilePosition [x=" + x + ", y=" + y + ", zoom=" + zoom + "]";
+        }
     }
 
     private class TileSet extends TileRange {
@@ -1307,7 +1397,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          * null tile set
          */
         private TileSet() {
-            return;
+            // default
         }
 
         protected void sanitize() {
@@ -1337,46 +1427,33 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             return tileCache == null || size() > tileCache.getCacheSize();
         }
 
-        /*
-         * Get all tiles represented by this TileSet that are
-         * already in the tileCache.
+        /**
+         * Get all tiles represented by this TileSet that are already in the tileCache.
          */
         private List<Tile> allExistingTiles() {
-            return this.findAllTiles(false);
+            return allTiles(p -> getTile(p));
         }
 
         private List<Tile> allTilesCreate() {
-            return this.findAllTiles(true);
+            return allTiles(p -> getOrCreateTile(p));
         }
 
-        private List<Tile> findAllTiles(boolean create) {
-            // Tileset is either empty or too large
-            if (zoom == 0 || this.insane())
-                return Collections.emptyList();
-            List<Tile> ret = new ArrayList<>();
-            for (int x = minX; x <= maxX; x++) {
-                for (int y = minY; y <= maxY; y++) {
-                    Tile t;
-                    if (create) {
-                        t = getOrCreateTile(x, y, zoom);
-                    } else {
-                        t = getTile(x, y, zoom);
-                    }
-                    if (t != null) {
-                        ret.add(t);
-                    }
-                }
+        private List<Tile> allTiles(Function<TilePosition, Tile> mapper) {
+            return tilePositions().map(mapper).filter(Objects::nonNull).collect(Collectors.toList());
+        }
+
+        @Override
+        public Stream<TilePosition> tilePositions() {
+            if (this.insane()) {
+                // Tileset is either empty or too large
+                return Stream.empty();
+            } else {
+                return super.tilePositions();
             }
-            return ret;
         }
 
         private List<Tile> allLoadedTiles() {
-            List<Tile> ret = new ArrayList<>();
-            for (Tile t : this.allExistingTiles()) {
-                if (t.isLoaded())
-                    ret.add(t);
-            }
-            return ret;
+            return allExistingTiles().stream().filter(Tile::isLoaded).collect(Collectors.toList());
         }
 
         /**
@@ -1385,18 +1462,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         private Comparator<Tile> getTileDistanceComparator() {
             final int centerX = (int) Math.ceil((minX + maxX) / 2d);
             final int centerY = (int) Math.ceil((minY + maxY) / 2d);
-            return new Comparator<Tile>() {
-                private int getDistance(Tile t) {
-                    return Math.abs(t.getXtile() - centerX) + Math.abs(t.getYtile() - centerY);
-                }
-
-                @Override
-                public int compare(Tile o1, Tile o2) {
-                    int distance1 = getDistance(o1);
-                    int distance2 = getDistance(o2);
-                    return Integer.compare(distance1, distance2);
-                }
-            };
+            return Comparator.comparingInt(t -> Math.abs(t.getXtile() - centerX) + Math.abs(t.getYtile() - centerY));
         }
 
         private void loadAllTiles(boolean force) {
@@ -1416,6 +1482,26 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 if (t.hasError()) {
                     tileLoader.createTileLoaderJob(t).submit(force);
                 }
+            }
+        }
+
+        /**
+         * Call the given paint method for all tiles in this tile set.
+         * <p>
+         * Uses a parallel stream.
+         * @param visitor A visitor to call for each tile.
+         * @param missed a consumer to call for each missed tile.
+         */
+        public void visitTiles(Consumer<Tile> visitor, Consumer<TilePosition> missed) {
+            tilePositions().parallel().forEach(tp -> visitTilePosition(visitor, tp, missed));
+        }
+
+        private void visitTilePosition(Consumer<Tile> visitor, TilePosition tp, Consumer<TilePosition> missed) {
+            Tile tile = getTile(tp);
+            if (tile == null) {
+                missed.accept(tp);
+            } else {
+                visitor.accept(tile);
             }
         }
 
@@ -1591,7 +1677,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         g.setColor(Color.DARK_GRAY);
 
-        List<Tile> missedTiles = this.paintTileImages(g, ts, displayZoomLevel, null);
+        List<Tile> missedTiles = this.paintTileImages(g, ts);
         int[] otherZooms = {-1, 1, -2, 2, -3, -4, -5};
         for (int zoomOffset : otherZooms) {
             if (!getDisplaySettings().isAutoZoom()) {
