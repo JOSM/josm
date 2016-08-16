@@ -3144,7 +3144,7 @@
             </optional>
         </item> <!-- Public Bicycle Repair Station -->
     </group> <!-- Bicycle -->
-    <group name="Public Transport" icon="presets/transport/bus_old.svg">
+    <group name="Public Transport" icon="presets/transport/bus.svg">
         <item name="Public Transport Route (Rail)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Public_Transport#Route" />
             <space />
@@ -4148,6 +4148,15 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Water Park -->
+        <item name="Beach Resort" icon="presets/leisure/beach_resort.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=beach_resort" />
+            <space />
+            <key key="leisure" value="beach_resort" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="fee_interval" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Beach Resort -->
         <item name="Swimming Pool" icon="presets/sport/swimming.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=swimming_pool"
                   ca.href="http://wiki.openstreetmap.org/wiki/Ca:Tag:leisure=swimming_pool"

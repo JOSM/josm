@@ -60,90 +60,16 @@
        type="xygrid"
        id="grid4147" />
   </sodipodi:namedview>
-  <defs
-     id="defs4">
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 290 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="580 : 290 : 1"
-       inkscape:persp3d-origin="290 : 193.33333 : 1"
-       id="perspective2441" />
-    <inkscape:perspective
-       id="perspective3452"
-       inkscape:persp3d-origin="30 : 20 : 1"
-       inkscape:vp_z="60 : 30 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 30 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <symbol
-       viewBox="244.5 110 489 219.9"
-       id="symbol-university">
-      <path
-         id="path4460"
-         d="m 79,43 57,119 c 0,0 21,-96 104,-96 83,0 124,106 124,106 L 407,39 489,22 0,17 79,43 Z"
-         inkscape:connector-curvature="0" />
-      <path
-         id="path4462"
-         d="M 94,176 73,215"
-         inkscape:connector-curvature="0"
-         style="fill:none;stroke:#000000;stroke-width:20" />
-      <path
-         id="path4464"
-         d="M 300,19 C 300,29.5 277.4,38 249.5,38 221.6,38 199,29.5 199,19 199,8.5 221.6,0 249.5,0 277.4,0 300,8.5 300,19 Z"
-         inkscape:connector-curvature="0" />
-      <path
-         id="path4466"
-         d="M 112,216 96,178 64,88 C 64,88 55,80 60,53 65,26 76,29 76,29"
-         ill="none"
-         inkscape:connector-curvature="0"
-         style="stroke:#000000;stroke-width:20" />
-    </symbol>
-    <inkscape:perspective
-       id="perspective4471"
-       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
-       inkscape:vp_z="744.09448 : 526.18109 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 526.18109 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective4668"
-       inkscape:persp3d-origin="6 : 4 : 1"
-       inkscape:vp_z="12 : 6 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 6 : 1"
-       sodipodi:type="inkscape:persp3d" />
-  </defs>
-  <g
-     id="layer3"
-     inkscape:label="Layout"
-     style="display:none;stroke:#757575;stroke-opacity:1"
-     transform="matrix(48.14969,0,0,48.14969,-536.27327,-599.24675)">
-    <rect
-       style="display:inline;fill:none;stroke:#757575;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4134"
-       width="10"
-       height="10"
-       x="1"
-       y="1" />
-    <rect
-       style="display:inline;fill:none;stroke:#757575;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4136"
-       width="8"
-       height="8"
-       x="2"
-       y="2" />
-  </g>
   <path
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:NPSPICT3;-inkscape-font-specification:NPSPICT3;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#cb7842;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     style="fill:#cb7842;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="m 8.0256981,9.0650255 c 0.1066,-0.93342 -0.59998,-1.8638298 -2.11974,-1.9435898 l -2.8804316,0 c -1.51977,0.0798 -2.23306996,1.0101698 -2.13988996,1.9435898 z"
      id="path4152" />
   <path
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:NPSPICT3;-inkscape-font-specification:NPSPICT3;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#cb7842;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     style="fill:#cb7842;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="m 0.90258933,12.068739 c -0.0932,0.93302 0.62011997,1.924531 2.13988997,1.991261 l 2.8804316,0 c 1.51976,-0.0667 2.22634,-1.058241 2.11974,-1.991261 z"
      id="path4150" />
   <path
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:NPSPICT3;-inkscape-font-specification:NPSPICT3;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#6e1f00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     style="fill:#6e1f00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="m 8.3299442,9.9039051 -7.6500142,0 c -0.18637,1e-5 -0.34628,0.0666 -0.47974,0.1998899 C 0.06673,10.237065 0,10.390365 0,10.563695 c 0,0.2002 0.0667,0.36357 0.20019,0.49011 0.13346,0.12655 0.29337,0.18982 0.47974,0.18982 l 7.6500142,0 c 0.18676,0 0.34677,-0.0633 0.48004,-0.18982 0.13325,-0.12654 0.19988,-0.28991 0.19989,-0.49011 -10e-6,-0.17333 -0.0666,-0.32663 -0.19989,-0.4599 -0.13327,-0.1332499 -0.29328,-0.1998799 -0.48004,-0.1998899 z"
      id="flowRoot3192" />
   <path
@@ -151,9 +77,9 @@
      inkscape:connector-curvature="0"
      id="path4146"
      d="m 14.900682,0 -1.587616,3.74022 1.239622,0 1.447612,-3.56017 z"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:NPSPICT3;-inkscape-font-specification:NPSPICT3;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+     style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
   <path
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:NPSPICT3;-inkscape-font-specification:NPSPICT3;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#a2afc1;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     style="fill:#a2afc1;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="m 8.92025,3.74022 1.30004,10.31978 4.41954,0 1.32018,-10.31978 z"
      id="path4154"
      inkscape:connector-curvature="0"

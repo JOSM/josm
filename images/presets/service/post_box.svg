@@ -15,18 +15,10 @@
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="post_box.svg"
+   sodipodi:docname="post_box2.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
-     id="defs3263">
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 290 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="580 : 290 : 1"
-       inkscape:persp3d-origin="290 : 193.33333 : 1"
-       id="perspective3265" />
-  </defs>
+     id="defs3263" />
   <metadata
      id="metadata2975">
     <rdf:RDF>
@@ -64,8 +56,8 @@
      pagecolor="#ffffff"
      id="base"
      inkscape:zoom="0.65172414"
-     inkscape:cx="-243.09475"
-     inkscape:cy="247.30583"
+     inkscape:cx="-504.70851"
+     inkscape:cy="245.77144"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:current-layer="svg2"
@@ -103,7 +95,7 @@
        y="2" />
   </g>
   <path
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:NPSPICT3;-inkscape-font-specification:NPSPICT3;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      d="m 26.092697,44.73442 96.450613,96.91985 -96.450613,96.45059 0,-193.37044 z M 326.15176,26.56194 207.34817,144.91052 c -5.90607,5.90595 -13.3618,8.85885 -22.36722,8.85872 -9.3187,1.3e-4 -17.08725,-3.10919 -23.30568,-9.32798 L 43.795947,26.56194 l 282.355813,0 z m 18.64172,211.54292 -96.45061,-96.45059 96.45061,-96.91985 0,193.37044 z m -301.466783,18.17247 96.919843,-96.4506 4.19475,4.19474 c 11.18576,10.87326 24.69897,16.30983 40.53966,16.30972 15.84023,1.1e-4 29.19704,-5.43646 40.07045,-16.30972 l 4.19473,-4.19474 96.90563,96.4506 -282.825063,0 z M 0,282.37004 l 371.82467,0 L 371.82467,0 0,0 0,282.37004 Z"
      id="flowRoot3192"
      inkscape:connector-curvature="0" />

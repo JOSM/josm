@@ -16,10 +16,7 @@
    inkscape:version="0.91 r13725"
    version="1.0"
    sodipodi:docname="shelter_public_transport_brown2.svg"
-   inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="/home/rudolf/Downloads/mapicons2/Shelter_picnic_brown_p16.png"
-   inkscape:export-xdpi="44.985714"
-   inkscape:export-ydpi="44.985714">
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <title
      id="title3212">Map icon for shelter</title>
   <metadata
@@ -100,30 +97,6 @@
        originx="-11.0045"
        originy="-7.9858603" />
   </sodipodi:namedview>
-  <defs
-     id="defs4">
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 526.18109 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="744.09448 : 526.18109 : 1"
-       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
-       id="perspective10" />
-    <inkscape:perspective
-       id="perspective2461"
-       inkscape:persp3d-origin="10 : 6.6666667 : 1"
-       inkscape:vp_z="20 : 10 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 10 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective2466"
-       inkscape:persp3d-origin="400 : 200 : 1"
-       inkscape:vp_z="800 : 300 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 300 : 1"
-       sodipodi:type="inkscape:persp3d" />
-  </defs>
   <path
      style="fill:none;stroke:#734a08;stroke-width:2.00000024;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="m 1.0000001,15 0,-13.9999999 7.9999998,0"
@@ -141,12 +114,12 @@
            inkscape:connector-curvature="0"
            id="path3992"
            d="m 15.995596,11.102306 c 0.552265,2e-5 1.029299,-0.200867 1.431102,-0.60266 0.401743,-0.401752 0.602629,-0.8787864 0.602661,-1.4311028 -3.2e-5,-0.5767852 -0.200918,-1.0597554 -0.602661,-1.4489128 -0.401803,-0.38911 -0.878837,-0.583677 -1.431102,-0.583701 -0.552324,2.4e-5 -1.029166,0.194591 -1.430529,0.583701 -0.401418,0.3891574 -0.602112,0.8721276 -0.602086,1.4489128 -2.6e-5,0.5523164 0.200668,1.0293508 0.602086,1.4311028 0.401363,0.401793 0.878205,0.60268 1.430529,0.60266 l 0,0 z"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:NPSPICT3;-inkscape-font-specification:NPSPICT3;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#734a08;fill-opacity:1;stroke:none" />
+           style="fill:#734a08;fill-opacity:1;stroke:none" />
         <path
            inkscape:connector-curvature="0"
            id="flowRoot3192"
            d="m 18.669362,11.515954 -5.384301,0 c -0.727738,1.8e-5 -1.348973,0.257399 -1.863709,0.772139 -0.514784,0.514779 -0.772164,1.148654 -0.772141,1.901627 l 0,6.249512 c -2.3e-5,0.602862 0.276124,0.904288 0.828443,0.904278 0.526991,1e-5 0.7905,-0.301416 0.790525,-0.904278 l 0,-6.098991 0.978964,0 0,16.566552 c -2.7e-5,0.75299 0.376469,1.129485 1.129485,1.129486 0.752962,-10e-7 1.129457,-0.376496 1.129485,-1.129486 l 0,-9.601201 0.978965,0 0,9.601201 c -3e-5,0.75299 0.376465,1.129485 1.129485,1.129486 0.778237,-10e-7 1.167371,-0.376496 1.167403,-1.129486 l 0,-16.566552 0.941046,0 0,6.098991 c -3.2e-5,0.627375 0.263476,0.941056 0.790525,0.941047 0.527749,9e-6 0.79164,-0.313672 0.791674,-0.941047 l 0,-6.212744 c -3.4e-5,-0.727694 -0.244775,-1.361377 -0.734223,-1.901051 -0.489515,-0.539636 -1.123389,-0.809465 -1.901626,-0.809483 l 0,0 z"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:NPSPICT3;-inkscape-font-specification:NPSPICT3;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#734a08;fill-opacity:1;stroke:none" />
+           style="fill:#734a08;fill-opacity:1;stroke:none" />
       </g>
     </g>
   </g>
