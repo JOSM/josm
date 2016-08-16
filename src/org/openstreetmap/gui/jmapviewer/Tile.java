@@ -228,7 +228,7 @@ public class Tile {
     }
 
     /**
-     * @return tile indexes as TileXY object
+     * @return tile indexes of the top left corner as TileXY object
      */
     public TileXY getTileXY() {
         return new TileXY(xtile, ytile);
