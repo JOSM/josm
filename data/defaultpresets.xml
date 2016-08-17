@@ -1694,7 +1694,7 @@
                 <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- Fence -->
-        <item name="Guard Rail" type="way,closedway" preset_name_label="true">
+        <item name="Guard Rail" icon="presets/barrier/guard_rail.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=guard_rail"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:barrier=guard_rail"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=guard_rail" />
@@ -1737,7 +1737,7 @@
             <key key="barrier" value="retaining_wall" />
             <reference ref="optional_height" />
         </item> <!-- Retaining Wall -->
-        <item name="Jersey Barrier" type="node,way,closedway" preset_name_label="true">
+        <item name="Jersey Barrier" icon="presets/barrier/jersey_barrier.svg"  type="node,way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=jersey_barrier" />
             <key key="barrier" value="jersey_barrier" />
             <combo key="material" text="Material" values="concrete,plastic" />
@@ -5375,7 +5375,7 @@
                 <list_entry value="basic_hut" icon="presets/accommodation/basic_hut.svg" />
                 <list_entry value="lean_to" icon="presets/accommodation/shelter_lean_to.svg" />
                 <list_entry value="picnic_shelter" icon="presets/accommodation/shelter_picnic.svg" />
-                <list_entry value="public_transport" icon="prespresets/accommodation/shelter_public_transport.svg" />
+                <list_entry value="public_transport" icon="presets/accommodation/shelter_public_transport.svg" />
                 <list_entry value="weather_shelter" icon="presets/accommodation/shelter.svg" />
                 <list_entry value="wildlife_hide" icon="presets/accommodation/shelter.svg" />
             </combo>
@@ -6310,7 +6310,7 @@
             <key key="man_made" value="embankment" />
         </item> <!-- Embankment -->
         <separator/>
-        <item name="Pipeline" icon="presets/misc/route.svg" type="way" preset_name_label="true">
+        <item name="Pipeline" icon="presets/landmark/pipeline.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pipeline"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=pipeline"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=pipeline"
@@ -8597,7 +8597,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Roofer -->
-    <item name="Beekeeper" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Beekeeper" icon="presets/craft/beekeeper.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=beekeeper" />
         <space />
         <key key="craft" value="beekeeper" />
