@@ -163,8 +163,6 @@ public class PluginListPanel extends VerticallyScrollablePanel {
         }
         revalidate();
         repaint();
-        if (visibleRect != null && visibleRect.width > 0 && visibleRect.height > 0) {
-            SwingUtilities.invokeLater(() -> scrollRectToVisible(visibleRect));
-        }
+        SwingUtilities.invokeLater(() -> scrollRectToVisible(visibleRect));
     }
 }
