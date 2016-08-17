@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 /**
  * The definition of a symbol that should be rendered at the node position.
- * @since 10826 Extracted from {@link NodeElement}
+ * @since 10827 Extracted from {@link NodeElement}
  */
 public class Symbol {
     private final SymbolShape symbolShape;

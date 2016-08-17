@@ -81,7 +81,7 @@ public class JosmUpdatePanel extends JPanel {
 
     private void displayOutOfDate(int testedVersion) {
         testedVersionField
-                .setText(tr("JOSM is out of date. The current version is {0}. Try updateing JOSM.", testedVersion));
+                .setText(tr("JOSM is out of date. The current version is {0}. Try updating JOSM.", testedVersion));
         showUpdateButton();
     }
 

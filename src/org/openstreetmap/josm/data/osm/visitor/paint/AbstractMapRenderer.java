@@ -97,7 +97,7 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param p2 Second point of the way segment.
      * @param orderNumber The number of the segment in the way.
      * @param clr The color to use for drawing the text.
-     * @since 10826
+     * @since 10827
      */
     protected void drawOrderNumber(MapViewPoint p1, MapViewPoint p2, int orderNumber, Color clr) {
         if (isSegmentVisible(p1, p2) && isLargeSegment(p1, p2, segmentNumberSpace)) {
@@ -193,7 +193,7 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param p2 Second point of the way segment.
      * @param space The free space to check against.
      * @return <code>true</code> if segment is larger than required space
-     * @since 10826
+     * @since 10827
      */
     public static boolean isLargeSegment(MapViewPoint p1, MapViewPoint p2, int space) {
         return p1.oneNormInView(p2) > space;
@@ -205,7 +205,7 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param p1 First point of the way segment.
      * @param p2 Second point of the way segment.
      * @return <code>true</code> if segment may be visible.
-     * @since 10826
+     * @since 10827
      */
     protected boolean isSegmentVisible(MapViewPoint p1, MapViewPoint p2) {
         MapViewRectangle view = mapState.getViewArea();
@@ -218,7 +218,7 @@ public abstract class AbstractMapRenderer implements Rendering {
      *
      * @param path The path to append drawing to.
      * @param w The ways to draw node for.
-     * @since 10826
+     * @since 10827
      */
     public void visitVirtual(Path2D path, Way w) {
         Iterator<Node> it = w.getNodes().iterator();

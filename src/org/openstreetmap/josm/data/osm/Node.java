@@ -101,7 +101,7 @@ public final class Node extends OsmPrimitive implements INode {
      * The result of the last conversion is cached. The cache object is used as cache key.
      * @param projection The projection to use.
      * @return The projected east/north coordinates
-     * @since 10826
+     * @since 10827
      */
     public EastNorth getEastNorth(Projection projection) {
         if (!isLatLonKnown()) return null;

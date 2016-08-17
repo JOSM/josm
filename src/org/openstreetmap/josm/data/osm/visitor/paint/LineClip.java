@@ -23,7 +23,7 @@ public class LineClip {
      * @param p1 start point of the clipped line
      * @param p2 end point of the clipped line
      * @param clipBounds Clip bounds
-     * @since 10826
+     * @since 10827
      */
     public LineClip(Point2D p1, Point2D p2, Rectangle2D clipBounds) {
         this.p1 = p1;
@@ -45,7 +45,7 @@ public class LineClip {
 
     /**
      * @return start point of the clipped line
-     * @since 10826
+     * @since 10827
      */
     public Point2D getP1() {
         return p1;
@@ -53,7 +53,7 @@ public class LineClip {
 
     /**
      * @return end point of the clipped line
-     * @since 10826
+     * @since 10827
      */
     public Point2D getP2() {
         return p2;
