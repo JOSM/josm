@@ -54,9 +54,9 @@ public abstract class AbstractOAuthConsumer implements OAuthConsumer {
 
     // these are the params which will be passed to the message signer
     private HttpParameters requestParameters;
-    
+
     private boolean sendEmptyTokens;
-    
+
     final private Random random = new Random(System.nanoTime());
 
     public AbstractOAuthConsumer(String consumerKey, String consumerSecret) {
@@ -66,19 +66,23 @@ public abstract class AbstractOAuthConsumer implements OAuthConsumer {
         setSigningStrategy(new AuthorizationHeaderSigningStrategy());
     }
 
+    @Override
     public void setMessageSigner(OAuthMessageSigner messageSigner) {
         this.messageSigner = messageSigner;
         messageSigner.setConsumerSecret(consumerSecret);
     }
 
+    @Override
     public void setSigningStrategy(SigningStrategy signingStrategy) {
         this.signingStrategy = signingStrategy;
     }
 
+    @Override
     public void setAdditionalParameters(HttpParameters additionalParameters) {
         this.additionalParameters = additionalParameters;
     }
 
+    @Override
     public synchronized HttpRequest sign(HttpRequest request) throws OAuthMessageSignerException,
             OAuthExpectationFailedException, OAuthCommunicationException {
         if (consumerKey == null) {
@@ -115,11 +119,13 @@ public abstract class AbstractOAuthConsumer implements OAuthConsumer {
         return request;
     }
 
+    @Override
     public synchronized HttpRequest sign(Object request) throws OAuthMessageSignerException,
             OAuthExpectationFailedException, OAuthCommunicationException {
         return sign(wrap(request));
     }
 
+    @Override
     public synchronized String sign(String url) throws OAuthMessageSignerException,
             OAuthExpectationFailedException, OAuthCommunicationException {
         HttpRequest request = new UrlStringRequestAdapter(url);
@@ -146,23 +152,28 @@ public abstract class AbstractOAuthConsumer implements OAuthConsumer {
      */
     protected abstract HttpRequest wrap(Object request);
 
+    @Override
     public void setTokenWithSecret(String token, String tokenSecret) {
         this.token = token;
         messageSigner.setTokenSecret(tokenSecret);
     }
 
+    @Override
     public String getToken() {
         return token;
     }
 
+    @Override
     public String getTokenSecret() {
         return messageSigner.getTokenSecret();
     }
 
+    @Override
     public String getConsumerKey() {
         return this.consumerKey;
     }
 
+    @Override
     public String getConsumerSecret() {
         return this.consumerSecret;
     }
@@ -206,10 +217,12 @@ public abstract class AbstractOAuthConsumer implements OAuthConsumer {
         }
     }
 
+    @Override
     public HttpParameters getRequestParameters() {
         return requestParameters;
     }
 
+    @Override
     public void setSendEmptyTokens(boolean enable) {
         this.sendEmptyTokens = enable;
     }

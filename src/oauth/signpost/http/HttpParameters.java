@@ -29,19 +29,19 @@ import oauth.signpost.OAuth;
 /**
  * A multi-map of HTTP request parameters. Each key references a
  * {@link SortedSet} of parameters collected from the request during message
- * signing. Parameter values are sorted as per {@linkplain http
- * ://oauth.net/core/1.0a/#anchor13}. Every key/value pair will be
- * percent-encoded upon insertion. This class has special semantics tailored to
- * being useful for message signing; it's not a general purpose collection class
- * to handle request parameters.
- * 
+ * signing. Parameter values are sorted as per {@linkplain http://oauth.net/core/1.0a/#anchor13}.
+ * Every key/value pair will be percent-encoded upon insertion.
+ * This class has special semantics tailored to being useful for message signing;
+ * it's not a general purpose collection class to handle request parameters.
+ *
  * @author Matthias Kaeppler
  */
 @SuppressWarnings("serial")
 public class HttpParameters implements Map<String, SortedSet<String>>, Serializable {
 
-    private TreeMap<String, SortedSet<String>> wrappedMap = new TreeMap<String, SortedSet<String>>();
+    private TreeMap<String, SortedSet<String>> wrappedMap = new TreeMap<>();
 
+    @Override
     public SortedSet<String> put(String key, SortedSet<String> value) {
         return wrappedMap.put(key, value);
     }
@@ -61,7 +61,7 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
     /**
      * Convenience method to add a single value for the parameter specified by
      * 'key'.
-     * 
+     *
      * @param key
      *        the parameter name
      * @param value
@@ -75,7 +75,7 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
     /**
      * Convenience method to add a single value for the parameter specified by
      * 'key'.
-     * 
+     *
      * @param key
      *        the parameter name
      * @param value
@@ -90,7 +90,7 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
          key = percentEncode ? OAuth.percentEncode(key) : key;
          SortedSet<String> values = wrappedMap.get(key);
          if (values == null) {
-             values = new TreeSet<String>();
+             values = new TreeSet<>();
              wrappedMap.put( key, values);
          }
          if (value != null) {
@@ -104,7 +104,7 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
     /**
      * Convenience method to allow for storing null values. {@link #put} doesn't
      * allow null values, because that would be ambiguous.
-     * 
+     *
      * @param key
      *        the parameter name
      * @param nullString
@@ -115,6 +115,7 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
         return put(key, nullString);
     }
 
+    @Override
     public void putAll(Map<? extends String, ? extends SortedSet<String>> m) {
         wrappedMap.putAll(m);
     }
@@ -137,7 +138,7 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
 
     /**
      * Convenience method to merge a Map<String, List<String>>.
-     * 
+     *
      * @param m
      *        the map
      */
@@ -145,20 +146,21 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
         for (String key : m.keySet()) {
             SortedSet<String> vals = get(key);
             if (vals == null) {
-                vals = new TreeSet<String>();
+                vals = new TreeSet<>();
                 put(key, vals);
             }
             vals.addAll(m.get(key));
         }
     }
 
+    @Override
     public SortedSet<String> get(Object key) {
         return wrappedMap.get(key);
     }
 
     /**
      * Convenience method for {@link #getFirst(key, false)}.
-     * 
+     *
      * @param key
      *        the parameter name (must be percent encoded if it contains unsafe
      *        characters!)
@@ -175,7 +177,7 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
      * {@link OAuth#percentEncode(String)}, otherwise the lookup will fail
      * (that's because upon storing values in this map, keys get
      * percent-encoded).
-     * 
+     *
      * @param key
      *        the parameter name (must be percent encoded if it contains unsafe
      *        characters!)
@@ -195,7 +197,7 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
     /**
      * Concatenates all values for the given key to a list of key/value pairs
      * suitable for use in a URL query string.
-     * 
+     *
      * @param key
      *        the parameter name
      * @return the query string
@@ -207,7 +209,7 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
     /**
      * Concatenates all values for the given key to a list of key/value pairs
      * suitable for use in a URL query string.
-     * 
+     *
      * @param key
      *        the parameter name
      * @param percentEncode
@@ -236,7 +238,7 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
         }
         return sb.toString();
     }
-    
+
     public String getAsHeaderElement(String key) {
         String value = getFirst(key);
         if (value == null) {
@@ -245,10 +247,12 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
         return key + "=\"" + value + "\"";
     }
 
+    @Override
     public boolean containsKey(Object key) {
         return wrappedMap.containsKey(key);
     }
 
+    @Override
     public boolean containsValue(Object value) {
         for (Set<String> values : wrappedMap.values()) {
             if (values.contains(value)) {
@@ -258,6 +262,7 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
         return false;
     }
 
+    @Override
     public int size() {
         int count = 0;
         for (String key : wrappedMap.keySet()) {
@@ -266,26 +271,32 @@ public class HttpParameters implements Map<String, SortedSet<String>>, Serializa
         return count;
     }
 
+    @Override
     public boolean isEmpty() {
         return wrappedMap.isEmpty();
     }
 
+    @Override
     public void clear() {
         wrappedMap.clear();
     }
 
+    @Override
     public SortedSet<String> remove(Object key) {
         return wrappedMap.remove(key);
     }
 
+    @Override
     public Set<String> keySet() {
         return wrappedMap.keySet();
     }
 
+    @Override
     public Collection<SortedSet<String>> values() {
         return wrappedMap.values();
     }
 
+    @Override
     public Set<Entry<String, SortedSet<String>>> entrySet() {
         return wrappedMap.entrySet();
     }

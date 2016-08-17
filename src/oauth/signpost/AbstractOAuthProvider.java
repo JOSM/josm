@@ -58,6 +58,7 @@ public abstract class AbstractOAuthProvider implements OAuthProvider {
         this.defaultHeaders = new HashMap<String, String>();
     }
 
+    @Override
     public synchronized String retrieveRequestToken(OAuthConsumer consumer, String callbackUrl,
             String... customOAuthParams) throws OAuthMessageSignerException,
             OAuthNotAuthorizedException, OAuthExpectationFailedException,
@@ -89,6 +90,7 @@ public abstract class AbstractOAuthProvider implements OAuthProvider {
         }
     }
 
+    @Override
     public synchronized void retrieveAccessToken(OAuthConsumer consumer, String oauthVerifier,
             String... customOAuthParams) throws OAuthMessageSignerException,
             OAuthNotAuthorizedException, OAuthExpectationFailedException,
@@ -290,6 +292,7 @@ public abstract class AbstractOAuthProvider implements OAuthProvider {
         // NOP
     }
 
+    @Override
     public HttpParameters getResponseParameters() {
         return responseParameters;
     }
@@ -307,42 +310,52 @@ public abstract class AbstractOAuthProvider implements OAuthProvider {
         return responseParameters.getFirst(key);
     }
 
+    @Override
     public void setResponseParameters(HttpParameters parameters) {
         this.responseParameters = parameters;
     }
 
+    @Override
     public void setOAuth10a(boolean isOAuth10aProvider) {
         this.isOAuth10a = isOAuth10aProvider;
     }
 
+    @Override
     public boolean isOAuth10a() {
         return isOAuth10a;
     }
 
+    @Override
     public String getRequestTokenEndpointUrl() {
         return this.requestTokenEndpointUrl;
     }
 
+    @Override
     public String getAccessTokenEndpointUrl() {
         return this.accessTokenEndpointUrl;
     }
 
+    @Override
     public String getAuthorizationWebsiteUrl() {
         return this.authorizationWebsiteUrl;
     }
 
+    @Override
     public void setRequestHeader(String header, String value) {
         defaultHeaders.put(header, value);
     }
 
+    @Override
     public Map<String, String> getRequestHeaders() {
         return defaultHeaders;
     }
 
+    @Override
     public void setListener(OAuthProviderListener listener) {
         this.listener = listener;
     }
 
+    @Override
     public void removeListener(OAuthProviderListener listener) {
         this.listener = null;
     }
