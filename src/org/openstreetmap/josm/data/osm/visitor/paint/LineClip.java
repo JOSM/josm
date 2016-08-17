@@ -6,24 +6,26 @@ import static java.awt.geom.Rectangle2D.OUT_LEFT;
 import static java.awt.geom.Rectangle2D.OUT_RIGHT;
 import static java.awt.geom.Rectangle2D.OUT_TOP;
 
-import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Computes the part of a line that is visible in a given rectangle.
  * Using int leads to overflow, so we need long int.
  */
 public class LineClip {
-    private Point p1, p2;
-    private final Rectangle clipBounds;
+    private Point2D p1, p2;
+    private final Rectangle2D clipBounds;
 
     /**
      * Constructs a new {@code LineClip}.
      * @param p1 start point of the clipped line
      * @param p2 end point of the clipped line
      * @param clipBounds Clip bounds
+     * @since 10826
      */
-    public LineClip(Point p1, Point p2, Rectangle clipBounds) {
+    public LineClip(Point2D p1, Point2D p2, Rectangle2D clipBounds) {
         this.p1 = p1;
         this.p2 = p2;
         this.clipBounds = clipBounds;
@@ -37,22 +39,23 @@ public class LineClip {
         if (clipBounds == null) {
             return false;
         }
-        return cohenSutherland(p1.x, p1.y, p2.x, p2.y, clipBounds.x, clipBounds.y,
-                (long) clipBounds.x + clipBounds.width,
-                (long) clipBounds.y + clipBounds.height);
+        return cohenSutherland(p1.getX(), p1.getY(), p2.getX(), p2.getY(), clipBounds.getMinX(), clipBounds.getMinY(),
+                clipBounds.getMaxX(), clipBounds.getMaxY());
     }
 
     /**
      * @return start point of the clipped line
+     * @since 10826
      */
-    public Point getP1() {
+    public Point2D getP1() {
         return p1;
     }
 
     /**
      * @return end point of the clipped line
+     * @since 10826
      */
-    public Point getP2() {
+    public Point2D getP2() {
         return p2;
     }
 
@@ -69,7 +72,7 @@ public class LineClip {
      * @param ymax maximal Y coordinate
      * @return true, if line is visible in the given clip region
      */
-    private boolean cohenSutherland(long x1, long y1, long x2, long y2, long xmin, long ymin, long xmax, long ymax) {
+    private boolean cohenSutherland(double x1, double y1, double x2, double y2, double xmin, double ymin, double xmax, double ymax) {
         int outcode0, outcode1, outcodeOut;
         boolean accept = false;
         boolean done = false;
@@ -84,8 +87,8 @@ public class LineClip {
             } else if ((outcode0 & outcode1) > 0) {
                 done = true;
             } else {
-                long x = 0;
-                long y = 0;
+                double x = 0;
+                double y = 0;
                 outcodeOut = outcode0 != 0 ? outcode0 : outcode1;
                 if ((outcodeOut & OUT_TOP) != 0) {
                     x = x1 + (x2 - x1) * (ymax - y1)/(y2 - y1);
@@ -114,8 +117,8 @@ public class LineClip {
         while (!done);
 
         if (accept) {
-            p1 = new Point((int) x1, (int) y1);
-            p2 = new Point((int) x2, (int) y2);
+            p1 = new Point2D.Double(x1, y1);
+            p2 = new Point2D.Double(x2, y2);
             return true;
         }
         return false;
@@ -132,16 +135,17 @@ public class LineClip {
      * @param ymax maximal Y coordinate
      * @return outcode
      */
-    private static int computeOutCode(long x, long y, long xmin, long ymin, long xmax, long ymax) {
+    private static int computeOutCode(double x, double y, double xmin, double ymin, double xmax, double ymax) {
         int code = 0;
-        if (y > ymax) {
+        // ignore rounding errors.
+        if (y > ymax + 1e-10) {
             code |= OUT_TOP;
-        } else if (y < ymin) {
+        } else if (y < ymin - 1e-10) {
             code |= OUT_BOTTOM;
         }
-        if (x > xmax) {
+        if (x > xmax + 1e-10) {
             code |= OUT_RIGHT;
-        } else if (x < xmin) {
+        } else if (x < xmin - 1e-10) {
             code |= OUT_LEFT;
         }
         return code;

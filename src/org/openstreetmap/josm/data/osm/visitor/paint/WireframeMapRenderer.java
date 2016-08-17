@@ -4,11 +4,13 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +27,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
 /**
@@ -74,7 +77,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     /** Color cache to draw subsequent segments of same color as one <code>Path</code>. */
     protected Color currentColor;
     /** Path store to draw subsequent segments of same color as one <code>Path</code>. */
-    protected GeneralPath currentPath = new GeneralPath();
+    protected MapPath2D currentPath = new MapPath2D();
     /**
       * <code>DataSet</code> passed to the @{link render} function to overcome the argument
       * limitations of @{link Visitor} interface. Only valid until end of rendering call.
@@ -82,11 +85,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     private DataSet ds;
 
     /** Helper variable for {@link #drawSegment} */
-    private static final double PHI = Math.toRadians(20);
-    /** Helper variable for {@link #drawSegment} */
-    private static final double cosPHI = Math.cos(PHI);
-    /** Helper variable for {@link #drawSegment} */
-    private static final double sinPHI = Math.sin(PHI);
+    private static final ArrowPaintHelper ARROW_PAINT_HELPER = new ArrowPaintHelper(Math.toRadians(20), 10);
 
     /** Helper variable for {@link #visit(Relation)} */
     private final Stroke relatedWayStroke = new BasicStroke(
@@ -116,7 +115,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         taggedColor = PaintColors.TAGGED.get();
         connectionColor = PaintColors.CONNECTION.get();
 
-        if (taggedColor != nodeColor) {
+        if (!taggedColor.equals(nodeColor)) {
             taggedConnectionColor = taggedColor;
         } else {
             taggedConnectionColor = connectionColor;
@@ -209,7 +208,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         // in most of the cases there won't be more than one segment. Since the wireframe
         // renderer does not feature any transparency there should be no visual difference.
         for (final WaySegment wseg : data.getHighlightedWaySegments()) {
-            drawSegment(nc.getPoint(wseg.getFirstNode()), nc.getPoint(wseg.getSecondNode()), highlightColor, false);
+            drawSegment(mapState.getPointFor(wseg.getFirstNode()), mapState.getPointFor(wseg.getSecondNode()), highlightColor, false);
         }
         displaySegments();
     }
@@ -314,9 +313,9 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
 
         Iterator<Node> it = w.getNodes().iterator();
         if (it.hasNext()) {
-            Point lastP = nc.getPoint(it.next());
+            MapViewPoint lastP = mapState.getPointFor(it.next());
             for (int orderNumber = 1; it.hasNext(); orderNumber++) {
-                Point p = nc.getPoint(it.next());
+                MapViewPoint p = mapState.getPointFor(it.next());
                 drawSegment(lastP, p, wayColor,
                         showOnlyHeadArrowOnly ? !it.hasNext() : showThisDirectionArrow);
                 if (showOrderNumber && !isInactiveMode) {
@@ -353,13 +352,11 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
             }
 
             if (m.isNode()) {
-                Point p = nc.getPoint(m.getNode());
-                if (p.x < 0 || p.y < 0
-                        || p.x > nc.getWidth() || p.y > nc.getHeight()) {
-                    continue;
+                MapViewPoint p = mapState.getPointFor(m.getNode());
+                if (p.isInView()) {
+                    g.draw(new Ellipse2D.Double(p.getInViewX()-4, p.getInViewY()-4, 9, 9));
                 }
 
-                g.drawOval(p.x-4, p.y-4, 9, 9);
             } else if (m.isWay()) {
                 GeneralPath path = new GeneralPath();
 
@@ -368,12 +365,12 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
                     if (!n.isDrawable()) {
                         continue;
                     }
-                    Point p = nc.getPoint(n);
+                    MapViewPoint p = mapState.getPointFor(n);
                     if (first) {
-                        path.moveTo(p.x, p.y);
+                        path.moveTo(p.getInViewX(), p.getInViewY());
                         first = false;
                     } else {
-                        path.lineTo(p.x, p.y);
+                        path.lineTo(p.getInViewX(), p.getInViewY());
                     }
                 }
 
@@ -392,18 +389,16 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     @Override
     public void drawNode(Node n, Color color, int size, boolean fill) {
         if (size > 1) {
-            int radius = size / 2;
-            Point p = nc.getPoint(n);
-            if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth())
-                    || (p.y > nc.getHeight()))
+            MapViewPoint p = mapState.getPointFor(n);
+            if (!p.isInView())
                 return;
+            int radius = size / 2;
+            Double shape = new Rectangle2D.Double(p.getInViewX() - radius, p.getInViewY() - radius, size, size);
             g.setColor(color);
             if (fill) {
-                g.fillRect(p.x - radius, p.y - radius, size, size);
-                g.drawRect(p.x - radius, p.y - radius, size, size);
-            } else {
-                g.drawRect(p.x - radius, p.y - radius, size, size);
+                g.fill(shape);
             }
+            g.draw(shape);
         }
     }
 
@@ -411,29 +406,19 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
      * Draw a line with the given color.
      *
      * @param path The path to append this segment.
-     * @param p1 First point of the way segment.
-     * @param p2 Second point of the way segment.
+     * @param mv1 First point of the way segment.
+     * @param mv2 Second point of the way segment.
      * @param showDirection <code>true</code> if segment direction should be indicated
+     * @since 10826
      */
-    protected void drawSegment(GeneralPath path, Point p1, Point p2, boolean showDirection) {
+    protected void drawSegment(MapPath2D path, MapViewPoint mv1, MapViewPoint mv2, boolean showDirection) {
         Rectangle bounds = g.getClipBounds();
         bounds.grow(100, 100);                  // avoid arrow heads at the border
-        LineClip clip = new LineClip(p1, p2, bounds);
-        if (clip.execute()) {
-            p1 = clip.getP1();
-            p2 = clip.getP2();
-            path.moveTo(p1.x, p1.y);
-            path.lineTo(p2.x, p2.y);
-
+        if (mv1.rectTo(mv2).isInView()) {
+            path.moveTo(mv1);
+            path.lineTo(mv2);
             if (showDirection) {
-                final double l = 10. / p1.distance(p2);
-
-                final double sx = l * (p1.x - p2.x);
-                final double sy = l * (p1.y - p2.y);
-
-                path.lineTo(p2.x + (double) Math.round(cosPHI * sx - sinPHI * sy), p2.y + (double) Math.round(sinPHI * sx + cosPHI * sy));
-                path.moveTo(p2.x + (double) Math.round(cosPHI * sx + sinPHI * sy), p2.y + (double) Math.round(-sinPHI * sx + cosPHI * sy));
-                path.lineTo(p2.x, p2.y);
+                ARROW_PAINT_HELPER.paintArrowAt(path, mv2, mv1);
             }
         }
     }
@@ -445,9 +430,10 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
      * @param p2 Second point of the way segment.
      * @param col The color to use for drawing line.
      * @param showDirection <code>true</code> if segment direction should be indicated.
+     * @since 10826
      */
-    protected void drawSegment(Point p1, Point p2, Color col, boolean showDirection) {
-        if (col != currentColor) {
+    protected void drawSegment(MapViewPoint p1, MapViewPoint p2, Color col, boolean showDirection) {
+        if (!col.equals(currentColor)) {
             displaySegments(col);
         }
         drawSegment(currentPath, p1, p2, showDirection);
@@ -469,7 +455,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         if (currentPath != null) {
             g.setColor(currentColor);
             g.draw(currentPath);
-            currentPath = new GeneralPath();
+            currentPath = new MapPath2D();
             currentColor = newColor;
         }
     }

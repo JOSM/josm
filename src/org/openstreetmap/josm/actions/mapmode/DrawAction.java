@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,10 +49,13 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.visitor.paint.ArrowPaintHelper;
+import org.openstreetmap.josm.data.osm.visitor.paint.MapPath2D;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
@@ -74,7 +76,8 @@ import org.openstreetmap.josm.tools.Utils;
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, KeyPressReleaseListener, ModifierListener {
 
     private static final Color ORANGE_TRANSPARENT = new Color(Color.ORANGE.getRed(), Color.ORANGE.getGreen(), Color.ORANGE.getBlue(), 128);
-    private static final double PHI = Math.toRadians(90);
+
+    private static final ArrowPaintHelper START_WAY_INDICATOR = new ArrowPaintHelper(Math.toRadians(90), 8);
 
     private final Cursor cursorJoinNode;
     private final Cursor cursorJoinWay;
@@ -1138,19 +1141,16 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             g2.setStroke(rubberLineStroke);
         } else if (!snapHelper.drawConstructionGeometry)
             return;
-        GeneralPath b = new GeneralPath();
-        Point p1 = mv.getPoint(getCurrentBaseNode());
-        Point p2 = mv.getPoint(currentMouseEastNorth);
+        MapPath2D b = new MapPath2D();
+        MapViewPoint p1 = mv.getState().getPointFor(getCurrentBaseNode());
+        MapViewPoint p2 = mv.getState().getPointFor(currentMouseEastNorth);
 
-        double t = Math.atan2((double) p2.y - p1.y, (double) p2.x - p1.x) + Math.PI;
-
-        b.moveTo(p1.x, p1.y);
-        b.lineTo(p2.x, p2.y);
+        b.moveTo(p1);
+        b.lineTo(p2);
 
         // if alt key is held ("start new way"), draw a little perpendicular line
         if (alt) {
-            b.moveTo((int) (p1.x + 8*Math.cos(t+PHI)), (int) (p1.y + 8*Math.sin(t+PHI)));
-            b.lineTo((int) (p1.x + 8*Math.cos(t-PHI)), (int) (p1.y + 8*Math.sin(t-PHI)));
+            START_WAY_INDICATOR.paintArrowAt(b, p1, p2);
         }
 
         g2.draw(b);
@@ -1473,56 +1473,51 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         public void drawIfNeeded(Graphics2D g2, MapView mv) {
             if (!snapOn || !active)
                 return;
-            Point p1 = mv.getPoint(getCurrentBaseNode());
-            Point p2 = mv.getPoint(dir2);
-            Point p3 = mv.getPoint(projected);
-            GeneralPath b;
+            MapViewPoint p1 = mv.getState().getPointFor(getCurrentBaseNode());
+            MapViewPoint p2 = mv.getState().getPointFor(dir2);
+            MapViewPoint p3 = mv.getState().getPointFor(projected);
             if (drawConstructionGeometry) {
                 g2.setColor(snapHelperColor);
                 g2.setStroke(helperStroke);
 
-                b = new GeneralPath();
+                MapPath2D b = new MapPath2D();
+                b.moveTo(p2);
                 if (absoluteFix) {
-                    b.moveTo(p2.x, p2.y);
-                    b.lineTo(2d*p1.x-p2.x, 2d*p1.y-p2.y); // bi-directional line
+                    b.lineTo(2d*p1.getInViewX()-p2.getInViewX(), 2d*p1.getInViewY()-p2.getInViewY()); // bi-directional line
                 } else {
-                    b.moveTo(p2.x, p2.y);
-                    b.lineTo(p3.x, p3.y);
+                    b.lineTo(p3);
                 }
                 g2.draw(b);
             }
             if (projectionSource != null) {
                 g2.setColor(snapHelperColor);
                 g2.setStroke(helperStroke);
-                b = new GeneralPath();
-                b.moveTo(p3.x, p3.y);
-                Point pp = mv.getPoint(projectionSource);
-                b.lineTo(pp.x, pp.y);
+                MapPath2D b = new MapPath2D();
+                b.moveTo(p3);
+                b.lineTo(mv.getState().getPointFor(projectionSource));
                 g2.draw(b);
             }
 
             if (customBaseHeading >= 0) {
                 g2.setColor(highlightColor);
                 g2.setStroke(highlightStroke);
-                b = new GeneralPath();
-                Point pp1 = mv.getPoint(segmentPoint1);
-                Point pp2 = mv.getPoint(segmentPoint2);
-                b.moveTo(pp1.x, pp1.y);
-                b.lineTo(pp2.x, pp2.y);
+                MapPath2D b = new MapPath2D();
+                b.moveTo(mv.getState().getPointFor(segmentPoint1));
+                b.lineTo(mv.getState().getPointFor(segmentPoint2));
                 g2.draw(b);
             }
 
             g2.setColor(rubberLineColor);
             g2.setStroke(normalStroke);
-            b = new GeneralPath();
-            b.moveTo(p1.x, p1.y);
-            b.lineTo(p3.x, p3.y);
+            MapPath2D b = new MapPath2D();
+            b.moveTo(p1);
+            b.lineTo(p3);
             g2.draw(b);
 
-            g2.drawString(labelText, p3.x-5, p3.y+20);
+            g2.drawString(labelText, (int) p3.getInViewX()-5, (int) p3.getInViewY()+20);
             if (showProjectedPoint) {
                 g2.setStroke(normalStroke);
-                g2.drawOval(p3.x-5, p3.y-5, 10, 10); // projected point
+                g2.drawOval((int) p3.getInViewX()-5, (int) p3.getInViewY()-5, 10, 10); // projected point
             }
 
             g2.setColor(snapHelperColor);

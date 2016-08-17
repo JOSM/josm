@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.Main;
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.StyleElementList;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvider;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.SimpleBoxProvider;
+import org.openstreetmap.josm.gui.mappaint.styleelement.Symbol.SymbolShape;
 import org.openstreetmap.josm.gui.util.RotationAngle;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
@@ -32,53 +34,10 @@ import org.openstreetmap.josm.tools.Utils;
 public class NodeElement extends StyleElement {
     public final MapImage mapImage;
     public final RotationAngle mapImageAngle;
+    /**
+     * The symbol that should be used for drawing this node.
+     */
     public final Symbol symbol;
-
-    public enum SymbolShape { SQUARE, CIRCLE, TRIANGLE, PENTAGON, HEXAGON, HEPTAGON, OCTAGON, NONAGON, DECAGON }
-
-    public static class Symbol {
-        public SymbolShape symbol;
-        public int size;
-        public Stroke stroke;
-        public Color strokeColor;
-        public Color fillColor;
-
-        public Symbol(SymbolShape symbol, int size, Stroke stroke, Color strokeColor, Color fillColor) {
-            if (stroke != null && strokeColor == null)
-                throw new IllegalArgumentException("Stroke given without color");
-            if (stroke == null && fillColor == null)
-                throw new IllegalArgumentException("Either a stroke or a fill color must be given");
-            this.symbol = symbol;
-            this.size = size;
-            this.stroke = stroke;
-            this.strokeColor = strokeColor;
-            this.fillColor = fillColor;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null || getClass() != obj.getClass())
-                return false;
-            final Symbol other = (Symbol) obj;
-            return symbol == other.symbol &&
-                    size == other.size &&
-                    Objects.equals(stroke, other.stroke) &&
-                    Objects.equals(strokeColor, other.strokeColor) &&
-                    Objects.equals(fillColor, other.fillColor);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(symbol, size, stroke, strokeColor, fillColor);
-        }
-
-        @Override
-        public String toString() {
-            return "symbol=" + symbol + " size=" + size +
-                    (stroke != null ? " stroke=" + stroke + " strokeColor=" + strokeColor : "") +
-                    (fillColor != null ? " fillColor=" + fillColor : "");
-        }
-    }
 
     private static final String[] ICON_KEYS = {ICON_IMAGE, ICON_WIDTH, ICON_HEIGHT, ICON_OPACITY, ICON_OFFSET_X, ICON_OFFSET_Y};
 
@@ -193,33 +152,16 @@ public class NodeElement extends StyleElement {
 
     private static Symbol createSymbol(Environment env) {
         Cascade c = env.mc.getCascade(env.layer);
-        Cascade cDef = env.mc.getCascade("default");
 
-        SymbolShape shape;
         Keyword shapeKW = c.get("symbol-shape", null, Keyword.class);
         if (shapeKW == null)
             return null;
-        if ("square".equals(shapeKW.val)) {
-            shape = SymbolShape.SQUARE;
-        } else if ("circle".equals(shapeKW.val)) {
-            shape = SymbolShape.CIRCLE;
-        } else if ("triangle".equals(shapeKW.val)) {
-            shape = SymbolShape.TRIANGLE;
-        } else if ("pentagon".equals(shapeKW.val)) {
-            shape = SymbolShape.PENTAGON;
-        } else if ("hexagon".equals(shapeKW.val)) {
-            shape = SymbolShape.HEXAGON;
-        } else if ("heptagon".equals(shapeKW.val)) {
-            shape = SymbolShape.HEPTAGON;
-        } else if ("octagon".equals(shapeKW.val)) {
-            shape = SymbolShape.OCTAGON;
-        } else if ("nonagon".equals(shapeKW.val)) {
-            shape = SymbolShape.NONAGON;
-        } else if ("decagon".equals(shapeKW.val)) {
-            shape = SymbolShape.DECAGON;
-        } else
+        Optional<SymbolShape> shape = SymbolShape.forName(shapeKW.val);
+        if (!shape.isPresent()) {
             return null;
+        }
 
+        Cascade cDef = env.mc.getCascade("default");
         Float sizeOnDefault = cDef.get("symbol-size", null, Float.class);
         if (sizeOnDefault != null && sizeOnDefault <= 0) {
             sizeOnDefault = null;
@@ -267,7 +209,7 @@ public class NodeElement extends StyleElement {
             }
         }
 
-        return new Symbol(shape, Math.round(size), stroke, strokeColor, fillColor);
+        return new Symbol(shape.get(), Math.round(size), stroke, strokeColor, fillColor);
     }
 
     @Override
@@ -279,27 +221,7 @@ public class NodeElement extends StyleElement {
                 painter.drawNodeIcon(n, mapImage, painter.isInactiveMode() || n.isDisabled(), selected, member,
                         mapImageAngle == null ? 0.0 : mapImageAngle.getRotationAngle(primitive));
             } else if (symbol != null) {
-                Color fillColor = symbol.fillColor;
-                if (fillColor != null) {
-                    if (painter.isInactiveMode() || n.isDisabled()) {
-                        fillColor = settings.getInactiveColor();
-                    } else if (defaultSelectedHandling && selected) {
-                        fillColor = settings.getSelectedColor(fillColor.getAlpha());
-                    } else if (member) {
-                        fillColor = settings.getRelationSelectedColor(fillColor.getAlpha());
-                    }
-                }
-                Color strokeColor = symbol.strokeColor;
-                if (strokeColor != null) {
-                    if (painter.isInactiveMode() || n.isDisabled()) {
-                        strokeColor = settings.getInactiveColor();
-                    } else if (defaultSelectedHandling && selected) {
-                        strokeColor = settings.getSelectedColor(strokeColor.getAlpha());
-                    } else if (member) {
-                        strokeColor = settings.getRelationSelectedColor(strokeColor.getAlpha());
-                    }
-                }
-                painter.drawNodeSymbol(n, symbol, fillColor, strokeColor);
+                paintWithSymbol(settings, painter, selected, member, n);
             } else {
                 Color color;
                 boolean isConnection = n.isConnectionNode();
@@ -341,6 +263,31 @@ public class NodeElement extends StyleElement {
         } else if (primitive instanceof Relation && mapImage != null) {
             painter.drawRestriction((Relation) primitive, mapImage, painter.isInactiveMode() || primitive.isDisabled());
         }
+    }
+
+    private void paintWithSymbol(MapPaintSettings settings, StyledMapRenderer painter, boolean selected, boolean member,
+            Node n) {
+        Color fillColor = symbol.fillColor;
+        if (fillColor != null) {
+            if (painter.isInactiveMode() || n.isDisabled()) {
+                fillColor = settings.getInactiveColor();
+            } else if (defaultSelectedHandling && selected) {
+                fillColor = settings.getSelectedColor(fillColor.getAlpha());
+            } else if (member) {
+                fillColor = settings.getRelationSelectedColor(fillColor.getAlpha());
+            }
+        }
+        Color strokeColor = symbol.strokeColor;
+        if (strokeColor != null) {
+            if (painter.isInactiveMode() || n.isDisabled()) {
+                strokeColor = settings.getInactiveColor();
+            } else if (defaultSelectedHandling && selected) {
+                strokeColor = settings.getSelectedColor(strokeColor.getAlpha());
+            } else if (member) {
+                strokeColor = settings.getRelationSelectedColor(strokeColor.getAlpha());
+            }
+        }
+        painter.drawNodeSymbol(n, symbol, fillColor, strokeColor);
     }
 
     public BoxProvider getBoxProvider() {

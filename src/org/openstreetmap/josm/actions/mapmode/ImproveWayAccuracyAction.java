@@ -12,7 +12,6 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -35,9 +34,11 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.visitor.paint.MapPath2D;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -238,7 +239,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
             List<Node> nodes = targetWay.getNodes();
 
-            GeneralPath b = new GeneralPath();
+            MapPath2D b = new MapPath2D();
             Point p0 = mv.getPoint(nodes.get(0));
             Point pn;
             b.moveTo(p0.x, p0.y);
@@ -296,7 +297,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
 
             // Drawing preview lines
-            GeneralPath b = new GeneralPath();
+            MapPath2D b = new MapPath2D();
             if (alt && !ctrl) {
                 // In delete mode
                 if (p1 != null && p2 != null) {
@@ -332,7 +333,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
         }
     }
 
-    protected void drawIntersectingWayHelperLines(MapView mv, GeneralPath b) {
+    protected void drawIntersectingWayHelperLines(MapView mv, MapPath2D b) {
         for (final OsmPrimitive referrer : candidateNode.getReferrers()) {
             if (!(referrer instanceof Way) || targetWay.equals(referrer)) {
                 continue;
@@ -343,14 +344,14 @@ public class ImproveWayAccuracyAction extends MapMode implements
                     continue;
                 }
                 if (i > 0) {
-                    final Point p = mv.getPoint(nodes.get(i - 1));
+                    final MapViewPoint p = mv.getState().getPointFor(nodes.get(i - 1));
                     b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p.x, p.y);
+                    b.lineTo(p);
                 }
                 if (i < nodes.size() - 1) {
-                    final Point p = mv.getPoint(nodes.get(i + 1));
+                    final MapViewPoint p = mv.getState().getPointFor(nodes.get(i + 1));
                     b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p.x, p.y);
+                    b.lineTo(p);
                 }
             }
         }

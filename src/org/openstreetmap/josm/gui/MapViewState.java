@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui;
 
 import java.awt.Container;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
@@ -18,6 +17,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
@@ -29,6 +29,30 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * @since 10343
  */
 public final class MapViewState {
+
+    /**
+     * A flag indicating that the point is outside to the top of the map view.
+     * @since 10826
+     */
+    public static final int OUTSIDE_TOP = 1;
+
+    /**
+     * A flag indicating that the point is outside to the bottom of the map view.
+     * @since 10826
+     */
+    public static final int OUTSIDE_BOTTOM = 2;
+
+    /**
+     * A flag indicating that the point is outside to the left of the map view.
+     * @since 10826
+     */
+    public static final int OUTSIDE_LEFT = 3;
+
+    /**
+     * A flag indicating that the point is outside to the right of the map view.
+     * @since 10826
+     */
+    public static final int OUTSIDE_RIGHT = 4;
 
     private final Projecting projecting;
 
@@ -157,6 +181,17 @@ public final class MapViewState {
     }
 
     /**
+     * Gets the {@link MapViewPoint} for the given node. This is faster than {@link #getPointFor(LatLon)} because it uses the node east/north
+     * cache.
+     * @param node The node
+     * @return The position of that node.
+     * @since 10826
+     */
+    public MapViewPoint getPointFor(Node node) {
+        return getPointFor(node.getEastNorth(getProjection()));
+    }
+
+    /**
      * Gets a rectangle representing the whole view area.
      * @return The rectangle.
      */
@@ -168,9 +203,9 @@ public final class MapViewState {
      * Gets a rectangle of the view as map view area.
      * @param rectangle The rectangle to get.
      * @return The view area.
-     * @since 10458
+     * @since 10826
      */
-    public MapViewRectangle getViewArea(Rectangle rectangle) {
+    public MapViewRectangle getViewArea(Rectangle2D rectangle) {
         return getForView(rectangle.getMinX(), rectangle.getMinY()).rectTo(getForView(rectangle.getMaxX(), rectangle.getMaxY()));
     }
 
@@ -330,9 +365,19 @@ public final class MapViewState {
             return new Point2D.Double(getInViewX(), getInViewY());
         }
 
-        protected abstract double getInViewX();
+        /**
+         * Get the x coordinate in view space without creating an intermediate object.
+         * @return The x coordinate
+         * @since 10826
+         */
+        public abstract double getInViewX();
 
-        protected abstract double getInViewY();
+        /**
+         * Get the y coordinate in view space without creating an intermediate object.
+         * @return The y coordinate
+         * @since 10826
+         */
+        public abstract double getInViewY();
 
         /**
          * Convert this point to window coordinates.
@@ -398,6 +443,76 @@ public final class MapViewState {
         public MapViewPoint add(EastNorth en) {
             return new MapViewEastNorthPoint(getEastNorth().add(en));
         }
+
+        /**
+         * Check if this point is inside the view bounds.
+         *
+         * This is the case iff <code>getOutsideRectangleFlags(getViewArea())</code> returns no flags
+         * @return true if it is.
+         * @since 10826
+         */
+        public boolean isInView() {
+            return inRange(getInViewX(), 0, getViewWidth()) && inRange(getInViewY(), 0, getViewHeight());
+        }
+
+        private boolean inRange(double val, int min, double max) {
+            return val >= min && val < max;
+        }
+
+        /**
+         * Gets the direction in which this point is outside of the given view rectangle.
+         * @param rect The rectangle to check agains.
+         * @return The direction in which it is outside of the view, as OUTSIDE_... flags.
+         * @since 10826
+         */
+        public int getOutsideRectangleFlags(MapViewRectangle rect) {
+            Rectangle2D bounds = rect.getInView();
+            int flags = 0;
+            if (getInViewX() < bounds.getMinX()) {
+                flags |= OUTSIDE_LEFT;
+            } else if (getInViewX() > bounds.getMaxX()) {
+                flags |= OUTSIDE_RIGHT;
+            }
+            if (getInViewY() < bounds.getMinY()) {
+                flags |= OUTSIDE_TOP;
+            } else if (getInViewY() > bounds.getMaxY()) {
+                flags |= OUTSIDE_BOTTOM;
+            }
+
+            return flags;
+        }
+
+        /**
+         * Gets the sum of the x/y view distances between the points. |x1 - x2| + |y1 - y2|
+         * @param p2 The other point
+         * @return The norm
+         * @since 10826
+         */
+        public double oneNormInView(MapViewPoint p2) {
+            return Math.abs(getInViewX() - p2.getInViewX()) + Math.abs(getInViewY()) - p2.getInViewY();
+        }
+
+        /**
+         * Gets the squared distance between this point and an other point.
+         * @param p2 The other point
+         * @return The squared distance.
+         * @since 10826
+         */
+        public double distanceToInViewSq(MapViewPoint p2) {
+            double dx = getInViewX() - p2.getInViewX();
+            double dy = getInViewY() - p2.getInViewY();
+            return dx * dx + dy * dy;
+        }
+
+        /**
+         * Gets the distance between this point and an other point.
+         * @param p2 The other point
+         * @return The distance.
+         * @since 10826
+         */
+        public double distanceToInView(MapViewPoint p2) {
+            return Math.sqrt(distanceToInViewSq(p2));
+        }
     }
 
     private class MapViewViewPoint extends MapViewPoint {
@@ -410,12 +525,12 @@ public final class MapViewState {
         }
 
         @Override
-        protected double getInViewX() {
+        public double getInViewX() {
             return x;
         }
 
         @Override
-        protected double getInViewY() {
+        public double getInViewY() {
             return y;
         }
 
@@ -434,12 +549,12 @@ public final class MapViewState {
         }
 
         @Override
-        protected double getInViewX() {
+        public double getInViewX() {
             return (eastNorth.east() - topLeft.east()) / scale;
         }
 
         @Override
-        protected double getInViewY() {
+        public double getInViewY() {
             return (topLeft.north() - eastNorth.north()) / scale;
         }
 
@@ -515,6 +630,15 @@ public final class MapViewState {
             double x2 = p2.getInViewX();
             double y2 = p2.getInViewY();
             return new Rectangle2D.Double(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
+        }
+
+        /**
+         * Check if the rectangle intersects the map view area.
+         * @return <code>true</code> if it intersects.
+         * @since 10826
+         */
+        public boolean isInView() {
+            return getInView().intersects(getViewArea().getInView());
         }
     }
 

@@ -3,9 +3,9 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
 import org.openstreetmap.josm.Main;
@@ -14,6 +14,9 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.gui.MapViewState;
+import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
+import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -27,6 +30,11 @@ public abstract class AbstractMapRenderer implements Rendering {
     protected Graphics2D g;
     /** the map viewport - provides projection and hit detection functionality */
     protected NavigatableComponent nc;
+
+    /**
+     * The {@link MapViewState} to use to convert between coordinates.
+     */
+    protected final MapViewState mapState;
 
     /** if true, the paint visitor shall render OSM objects such that they
      * look inactive. Example: rendering of data in an inactive layer using light gray as color only. */
@@ -67,6 +75,7 @@ public abstract class AbstractMapRenderer implements Rendering {
         CheckParameterUtil.ensureParameterNotNull(nc);
         this.g = g;
         this.nc = nc;
+        this.mapState = nc.getState();
         this.isInactiveMode = isInactiveMode;
     }
 
@@ -88,22 +97,25 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param p2 Second point of the way segment.
      * @param orderNumber The number of the segment in the way.
      * @param clr The color to use for drawing the text.
+     * @since 10826
      */
-    protected void drawOrderNumber(Point p1, Point p2, int orderNumber, Color clr) {
+    protected void drawOrderNumber(MapViewPoint p1, MapViewPoint p2, int orderNumber, Color clr) {
         if (isSegmentVisible(p1, p2) && isLargeSegment(p1, p2, segmentNumberSpace)) {
             String on = Integer.toString(orderNumber);
             int strlen = on.length();
-            int x = (p1.x+p2.x)/2 - 4*strlen;
-            int y = (p1.y+p2.y)/2 + 4;
+            double centerX = (p1.getInViewX()+p2.getInViewX())/2;
+            double centerY = (p1.getInViewY()+p2.getInViewY())/2;
+            double x = centerX - 4*strlen;
+            double y = centerY + 4;
 
             if (virtualNodeSize != 0 && isLargeSegment(p1, p2, virtualNodeSpace)) {
-                y = (p1.y+p2.y)/2 - virtualNodeSize - 3;
+                y = centerY - virtualNodeSize - 3;
             }
 
             g.setColor(backgroundColor);
-            g.fillRect(x-1, y-12, 8*strlen+1, 14);
+            g.fill(new Rectangle2D.Double(x-1, y-12, 8*strlen+1, 14));
             g.setColor(clr);
-            g.drawString(on, x, y);
+            g.drawString(on, (int) x, (int) y);
         }
     }
 
@@ -181,11 +193,10 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param p2 Second point of the way segment.
      * @param space The free space to check against.
      * @return <code>true</code> if segment is larger than required space
+     * @since 10826
      */
-    public static boolean isLargeSegment(Point2D p1, Point2D p2, int space) {
-        double xd = Math.abs(p1.getX()-p2.getX());
-        double yd = Math.abs(p1.getY()-p2.getY());
-        return xd + yd > space;
+    public static boolean isLargeSegment(MapViewPoint p1, MapViewPoint p2, int space) {
+        return p1.oneNormInView(p2) > space;
     }
 
     /**
@@ -193,14 +204,13 @@ public abstract class AbstractMapRenderer implements Rendering {
      *
      * @param p1 First point of the way segment.
      * @param p2 Second point of the way segment.
-     * @return <code>true</code> if segment is visible.
+     * @return <code>true</code> if segment may be visible.
+     * @since 10826
      */
-    protected boolean isSegmentVisible(Point p1, Point p2) {
-        if ((p1.x < 0) && (p2.x < 0)) return false;
-        if ((p1.y < 0) && (p2.y < 0)) return false;
-        if ((p1.x > nc.getWidth()) && (p2.x > nc.getWidth())) return false;
-        if ((p1.y > nc.getHeight()) && (p2.y > nc.getHeight())) return false;
-        return true;
+    protected boolean isSegmentVisible(MapViewPoint p1, MapViewPoint p2) {
+        MapViewRectangle view = mapState.getViewArea();
+        // not outside in the same direction
+        return (p1.getOutsideRectangleFlags(view) & p2.getOutsideRectangleFlags(view)) == 0;
     }
 
     /**
@@ -208,20 +218,21 @@ public abstract class AbstractMapRenderer implements Rendering {
      *
      * @param path The path to append drawing to.
      * @param w The ways to draw node for.
+     * @since 10826
      */
-    public void visitVirtual(GeneralPath path, Way w) {
+    public void visitVirtual(Path2D path, Way w) {
         Iterator<Node> it = w.getNodes().iterator();
         if (it.hasNext()) {
-            Point lastP = nc.getPoint(it.next());
+            MapViewPoint lastP = mapState.getPointFor(it.next());
             while (it.hasNext()) {
-                Point p = nc.getPoint(it.next());
+                MapViewPoint p = mapState.getPointFor(it.next());
                 if (isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace)) {
-                    int x = (p.x+lastP.x)/2;
-                    int y = (p.y+lastP.y)/2;
-                    path.moveTo((double) x-virtualNodeSize, y);
-                    path.lineTo((double) x+virtualNodeSize, y);
-                    path.moveTo(x, (double) y-virtualNodeSize);
-                    path.lineTo(x, (double) y+virtualNodeSize);
+                    double x = (p.getInViewX()+lastP.getInViewX())/2;
+                    double y = (p.getInViewY()+lastP.getInViewY())/2;
+                    path.moveTo(x-virtualNodeSize, y);
+                    path.lineTo(x+virtualNodeSize, y);
+                    path.moveTo(x, y-virtualNodeSize);
+                    path.lineTo(x, y+virtualNodeSize);
                 }
                 lastP = p;
             }
