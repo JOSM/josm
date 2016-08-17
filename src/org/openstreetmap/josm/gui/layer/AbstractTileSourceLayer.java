@@ -1146,6 +1146,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             Image img = getLoadedTileImage(tile);
             if (img == null) {
                 missed.add(new TilePosition(tile));
+                return;
             }
             img = applyImageProcessors((BufferedImage) img);
             Rectangle2D sourceRect = coordinateConverter.getRectangleForTile(tile);
