@@ -1,12 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.preferences;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * A property containing a {@code Boolean} value.
  */
-public class BooleanProperty extends AbstractProperty<Boolean> {
+public class BooleanProperty extends AbstractToStringProperty<Boolean> {
 
     /**
      * Constructs a new {@code BooleanProperty}.
@@ -15,18 +13,27 @@ public class BooleanProperty extends AbstractProperty<Boolean> {
      */
     public BooleanProperty(String key, boolean defaultValue) {
         super(key, defaultValue);
-        if (Main.pref != null) {
-            get();
-        }
     }
 
     @Override
     public Boolean get() {
-        return Main.pref.getBoolean(getKey(), defaultValue);
+        // Removing this implementation breaks binary compatibility
+        return super.get();
     }
 
     @Override
     public boolean put(Boolean value) {
-        return Main.pref.put(getKey(), value);
+        // Removing this implementation breaks binary compatibility
+        return super.put(value);
+    }
+
+    @Override
+    protected Boolean fromString(String string) {
+        return Boolean.valueOf(string);
+    }
+
+    @Override
+    protected String toString(Boolean t) {
+        return t.toString();
     }
 }

@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
@@ -73,6 +74,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     public AudioMarker syncAudioMarker;
 
     private static final Color DEFAULT_COLOR = Color.magenta;
+    private static final ColorProperty COLOR_PROPERTY = new ColorProperty(marktr("gps marker"), DEFAULT_COLOR);
 
     /**
      * Constructs a new {@code MarkerLayer}.
@@ -194,19 +196,19 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     }
 
     @Override
-    public Color getColor(boolean ignoreCustom) {
-        return Main.pref.getColor(marktr("gps marker"), "layer "+getName(), DEFAULT_COLOR);
+    protected ColorProperty getBaseColorProperty() {
+        return COLOR_PROPERTY;
     }
 
     /* for preferences */
     public static Color getGenericColor() {
-        return Main.pref.getColor(marktr("gps marker"), DEFAULT_COLOR);
+        return COLOR_PROPERTY.get();
     }
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds box) {
         boolean showTextOrIcon = isTextOrIconShown();
-        g.setColor(getColor(true));
+        g.setColor(getColorProperty().get());
 
         if (mousePressed) {
             boolean mousePressedTmp = mousePressed;

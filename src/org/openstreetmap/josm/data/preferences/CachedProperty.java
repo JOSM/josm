@@ -13,7 +13,7 @@ public abstract class CachedProperty<T> extends AbstractProperty<T> implements P
 
     protected CachedProperty(String key, String defaultValueAsString) {
         super(key, null);
-        Main.pref.addPreferenceChangeListener(this);
+        Main.pref.addKeyPreferenceChangeListener(key, this);
         this.defaultValueAsString = defaultValueAsString;
         updateValue();
     }
@@ -60,7 +60,7 @@ public abstract class CachedProperty<T> extends AbstractProperty<T> implements P
     }
 
     public String getAsString() {
-        return Main.pref.get(getKey(), getDefaultValueAsString());
+        return getPreferences().get(getKey(), getDefaultValueAsString());
     }
 
     @Override

@@ -256,7 +256,7 @@ public class ColorPreference implements SubPreferenceSetting {
      * Add all missing color entries.
      */
     private static void fixColorPrefixes() {
-        PaintColors.getColors();
+        PaintColors.values();
         ConflictColors.getColors();
         Severity.getColors();
         MarkerLayer.getGenericColor();

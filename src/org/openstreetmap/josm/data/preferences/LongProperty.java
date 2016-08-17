@@ -1,14 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.preferences;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * A property containing an {@code Long} value.
  * @since 10087
  *
  */
-public class LongProperty extends AbstractProperty<Long> {
+public class LongProperty extends AbstractToStringProperty<Long> {
 
     /**
      * Constructs a new {@code LongProperty}
@@ -17,19 +15,31 @@ public class LongProperty extends AbstractProperty<Long> {
      */
     public LongProperty(String key, long defaultValue) {
         super(key, defaultValue);
-        if (Main.pref != null) {
-            get();
-        }
     }
 
     @Override
     public Long get() {
-        return Main.pref.getLong(getKey(), getDefaultValue());
+        // Removing this implementation breaks binary compatibility
+        return super.get();
     }
 
     @Override
     public boolean put(Long value) {
-        return Main.pref.putLong(getKey(), value);
+        // Removing this implementation breaks binary compatibility
+        return super.put(value);
     }
 
+    @Override
+    protected Long fromString(String string) {
+        try {
+            return Long.valueOf(string);
+        } catch (NumberFormatException e) {
+            throw new InvalidPreferenceValueException(e);
+        }
+    }
+
+    @Override
+    protected String toString(Long t) {
+        return t.toString();
+    }
 }

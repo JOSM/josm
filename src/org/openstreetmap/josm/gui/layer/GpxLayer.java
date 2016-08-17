@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.File;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -88,7 +88,7 @@ public class GpxLayer extends Layer {
     public GpxLayer(GpxData d, String name, boolean isLocal) {
         super(d.getString(GpxConstants.META_NAME));
         data = d;
-        drawHelper = new GpxDrawHelper(data);
+        drawHelper = new GpxDrawHelper(data, getColorProperty());
         SystemOfMeasurement.addSoMChangeListener(drawHelper);
         ensureTrackVisibilityLength();
         setName(name);
@@ -96,8 +96,8 @@ public class GpxLayer extends Layer {
     }
 
     @Override
-    public Color getColor(boolean ignoreCustom) {
-        return drawHelper.getColor(getName(), ignoreCustom);
+    protected ColorProperty getBaseColorProperty() {
+        return GpxDrawHelper.DEFAULT_COLOR;
     }
 
     /**

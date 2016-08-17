@@ -24,11 +24,11 @@ public class CollectionProperty extends AbstractProperty<Collection<String>> {
 
     @Override
     public Collection<String> get() {
-        return Main.pref.getCollection(getKey(), getDefaultValue());
+        return getPreferences().getCollection(getKey(), getDefaultValue());
     }
 
     @Override
     public boolean put(Collection<String> value) {
-        return Main.pref.putCollection(getKey(), value);
+        return getPreferences().putCollection(getKey(), value);
     }
 }

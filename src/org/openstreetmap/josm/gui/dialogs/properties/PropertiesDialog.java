@@ -63,7 +63,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.Node;
@@ -225,6 +225,12 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     private final JLabel selectSth = new JLabel("<html><p>"
             + tr("Select objects for which to change tags.") + "</p></html>");
 
+    private final PreferenceChangedListener preferenceListener = e -> {
+                if (Main.getLayerManager().getEditDataSet() != null) {
+                    // Re-load data when display preference change
+                    updateSelection();
+                }};
+
     private final transient TaggingPresetHandler presetHandler = new TaggingPresetHandler() {
         @Override
         public void updateTags(List<Tag> tags) {
@@ -297,7 +303,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
 
         editHelper.loadTagsIfNeeded();
 
-        Main.pref.addPreferenceChangeListener(this);
+        Main.pref.addKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
     }
 
     private void buildTagsTable() {
@@ -601,7 +607,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     @Override
     public void destroy() {
         super.destroy();
-        Main.pref.removePreferenceChangeListener(this);
+        Main.pref.removeKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
         Container parent = pluginHook.getParent();
         if (parent != null) {
             parent.remove(pluginHook);
@@ -1387,15 +1393,6 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         ss.text = s.toString();
         ss.caseSensitive = true;
         return ss;
-    }
-
-    @Override
-    public void preferenceChanged(PreferenceChangeEvent e) {
-        super.preferenceChanged(e);
-        if ("display.discardable-keys".equals(e.getKey()) && Main.getLayerManager().getEditDataSet() != null) {
-            // Re-load data when display preference change
-            updateSelection();
-        }
     }
 
     /**

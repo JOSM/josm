@@ -7,7 +7,7 @@ import org.openstreetmap.josm.Main;
  * A property containing an {@code Integer} value.
  * @since 3246
  */
-public class IntegerProperty extends AbstractProperty<Integer> {
+public class IntegerProperty extends AbstractToStringProperty<Integer> {
 
     /**
      * Constructs a new {@code IntegerProperty}.
@@ -23,12 +23,28 @@ public class IntegerProperty extends AbstractProperty<Integer> {
 
     @Override
     public Integer get() {
-        return Main.pref.getInteger(getKey(), getDefaultValue());
+        // Removing this implementation breaks binary compatibility
+        return super.get();
     }
 
     @Override
     public boolean put(Integer value) {
-        return Main.pref.putInteger(getKey(), value);
+        // Removing this implementation breaks binary compatibility
+        return super.put(value);
+    }
+
+    @Override
+    protected Integer fromString(String string) {
+        try {
+            return Integer.valueOf(string);
+        } catch (NumberFormatException e) {
+            throw new InvalidPreferenceValueException(e);
+        }
+    }
+
+    @Override
+    protected String toString(Integer t) {
+        return t.toString();
     }
 
     /**
