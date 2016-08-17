@@ -229,7 +229,8 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                 if (Main.getLayerManager().getEditDataSet() != null) {
                     // Re-load data when display preference change
                     updateSelection();
-                }};
+                }
+            };
 
     private final transient TaggingPresetHandler presetHandler = new TaggingPresetHandler() {
         @Override

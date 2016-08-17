@@ -41,6 +41,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.WireframeMapRenderer;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -1191,10 +1192,10 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
                     wnp.a = w.getNode(ws.lowerIndex);
                     wnp.b = w.getNode(ws.lowerIndex + 1);
-                    Point2D p1 = mv.getPoint2D(wnp.a);
-                    Point2D p2 = mv.getPoint2D(wnp.b);
+                    MapViewPoint p1 = mv.getState().getPointFor(wnp.a);
+                    MapViewPoint p2 = mv.getState().getPointFor(wnp.b);
                     if (WireframeMapRenderer.isLargeSegment(p1, p2, virtualSpace)) {
-                        Point2D pc = new Point2D.Double((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
+                        Point2D pc = new Point2D.Double((p1.getInViewX() + p2.getInViewX()) / 2, (p1.getInViewY() + p2.getInViewY()) / 2);
                         if (p.distanceSq(pc) < virtualSnapDistSq2) {
                             // Check that only segments on top of each other get added to the
                             // virtual ways list. Otherwise ways that coincidentally have their
