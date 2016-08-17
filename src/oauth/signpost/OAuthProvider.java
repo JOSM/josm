@@ -13,8 +13,6 @@ package oauth.signpost;
 import java.io.Serializable;
 import java.util.Map;
 
-import oauth.signpost.basic.DefaultOAuthConsumer;
-import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
@@ -34,7 +32,7 @@ import oauth.signpost.http.HttpParameters;
  * it with the URLs the service provider exposes for requesting tokens and
  * resource authorization, e.g.:
  * </p>
- * 
+ *
  * <pre>
  * OAuthProvider provider = new DefaultOAuthProvider(&quot;http://twitter.com/oauth/request_token&quot;,
  *         &quot;http://twitter.com/oauth/access_token&quot;, &quot;http://twitter.com/oauth/authorize&quot;);
@@ -48,11 +46,11 @@ import oauth.signpost.http.HttpParameters;
  * a consumer instance and a callback URL:
  * </p>
  * <p>
- * 
+ *
  * <pre>
  * String url = provider.retrieveRequestToken(consumer, &quot;http://www.example.com/callback&quot;);
  * </pre>
- * 
+ *
  * </p>
  * <p>
  * That url must be opened in a Web browser, where the user can grant access to
@@ -63,11 +61,11 @@ import oauth.signpost.http.HttpParameters;
  * That token must now be exchanged for an access token, as such:
  * </p>
  * <p>
- * 
+ *
  * <pre>
  * provider.retrieveAccessToken(consumer, nullOrVerifierCode);
  * </pre>
- * 
+ *
  * </p>
  * <p>
  * where nullOrVerifierCode is either null if your provided a callback URL in
@@ -77,9 +75,7 @@ import oauth.signpost.http.HttpParameters;
  * <p>
  * The consumer used during token handshakes is now ready for signing.
  * </p>
- * 
- * @see DefaultOAuthProvider
- * @see DefaultOAuthConsumer
+ *
  * @see OAuthProviderListener
  */
 public interface OAuthProvider extends Serializable {
@@ -94,7 +90,7 @@ public interface OAuthProvider extends Serializable {
      * <b>Post-conditions:</b> the given {@link OAuthConsumer} will have an
      * unauthorized request token and token secret set.
      * </p>
-     * 
+     *
      * @param consumer
      *        the {@link OAuthConsumer} that should be used to sign the request
      * @param callbackUrl
@@ -142,7 +138,7 @@ public interface OAuthProvider extends Serializable {
      * <b>Post-conditions:</b> the given {@link OAuthConsumer} will have an
      * access token and token secret set.
      * </p>
-     * 
+     *
      * @param consumer
      *        the {@link OAuthConsumer} that should be used to sign the request
      * @param oauthVerifier
@@ -186,7 +182,7 @@ public interface OAuthProvider extends Serializable {
      * Subclasses must use this setter to preserve any non-OAuth query
      * parameters contained in the server response. It's the caller's
      * responsibility that any OAuth parameters be removed beforehand.
-     * 
+     *
      * @param parameters
      *        the map of query parameters served by the service provider in the
      *        token response
@@ -197,7 +193,7 @@ public interface OAuthProvider extends Serializable {
      * Use this method to set custom HTTP headers to be used for the requests
      * which are sent to retrieve tokens. @deprecated THIS METHOD HAS BEEN
      * DEPRECATED. Use {@link OAuthProviderListener} to customize requests.
-     * 
+     *
      * @param header
      *        The header name (e.g. 'WWW-Authenticate')
      * @param value

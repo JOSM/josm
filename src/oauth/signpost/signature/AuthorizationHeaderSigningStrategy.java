@@ -8,13 +8,14 @@ import oauth.signpost.http.HttpRequest;
 
 /**
  * Writes to the HTTP Authorization header field.
- * 
+ *
  * @author Matthias Kaeppler
  */
 public class AuthorizationHeaderSigningStrategy implements SigningStrategy {
 
     private static final long serialVersionUID = 1L;
 
+    @Override
     public String writeSignature(String signature, HttpRequest request,
             HttpParameters requestParameters) {
         StringBuilder sb = new StringBuilder();

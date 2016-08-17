@@ -24,7 +24,6 @@ import oauth.signpost.http.HttpRequest;
 import oauth.signpost.signature.AuthorizationHeaderSigningStrategy;
 import oauth.signpost.signature.HmacSha1MessageSigner;
 import oauth.signpost.signature.OAuthMessageSigner;
-import oauth.signpost.signature.PlainTextMessageSigner;
 import oauth.signpost.signature.QueryStringSigningStrategy;
 import oauth.signpost.signature.SigningStrategy;
 
@@ -37,22 +36,22 @@ import oauth.signpost.signature.SigningStrategy;
  * <p>
  * HTTP messages are signed as follows:
  * <p>
- * 
+ *
  * <pre>
  * // exchange the arguments with the actual token/secret pair
  * OAuthConsumer consumer = new DefaultOAuthConsumer(&quot;1234&quot;, &quot;5678&quot;);
- * 
+ *
  * URL url = new URL(&quot;http://example.com/protected.xml&quot;);
  * HttpURLConnection request = (HttpURLConnection) url.openConnection();
- * 
+ *
  * consumer.sign(request);
- * 
+ *
  * request.connect();
  * </pre>
- * 
+ *
  * </p>
  * </p>
- * 
+ *
  * @author Matthias Kaeppler
  */
 public interface OAuthConsumer extends Serializable {
@@ -60,11 +59,10 @@ public interface OAuthConsumer extends Serializable {
     /**
      * Sets the message signer that should be used to generate the OAuth
      * signature.
-     * 
+     *
      * @param messageSigner
      *        the signer
      * @see HmacSha1MessageSigner
-     * @see PlainTextMessageSigner
      */
     public void setMessageSigner(OAuthMessageSigner messageSigner);
 
@@ -78,7 +76,7 @@ public interface OAuthConsumer extends Serializable {
      * expected to already be percent encoded -- they will be simply merged
      * as-is. <b>BE CAREFUL WITH THIS METHOD! Your service provider may decide
      * to ignore any non-standard OAuth params when computing the signature.</b>
-     * 
+     *
      * @param additionalParameters
      *        the parameters
      */
@@ -87,7 +85,7 @@ public interface OAuthConsumer extends Serializable {
     /**
      * Defines which strategy should be used to write a signature to an HTTP
      * request.
-     * 
+     *
      * @param signingStrategy
      *        the strategy
      * @see AuthorizationHeaderSigningStrategy
@@ -101,7 +99,7 @@ public interface OAuthConsumer extends Serializable {
      * sent, even if blank. If you're seeing 401s during calls to
      * {@link OAuthProvider#retrieveRequestToken}, try setting this to true.
      * </p>
-     * 
+     *
      * @param enable
      *        true or false
      */
@@ -111,7 +109,7 @@ public interface OAuthConsumer extends Serializable {
      * Signs the given HTTP request by writing an OAuth signature (and other
      * required OAuth parameters) to it. Where these parameters are written
      * depends on the current {@link SigningStrategy}.
-     * 
+     *
      * @param request
      *        the request to sign
      * @return the request object passed as an argument
@@ -131,7 +129,7 @@ public interface OAuthConsumer extends Serializable {
      * This method accepts HTTP library specific request objects; the consumer
      * implementation must ensure that only those request types are passed which
      * it supports.
-     * 
+     *
      * @param request
      *        the request to sign
      * @return the request object passed as an argument
@@ -151,7 +149,7 @@ public interface OAuthConsumer extends Serializable {
      * resources, i.e. when your application does not have access to the actual
      * request that is being sent.
      * </p>
-     * 
+     *
      * @param url
      *        the input URL. May have query parameters.
      * @return the input URL, with all necessary OAuth parameters attached as a
@@ -165,7 +163,7 @@ public interface OAuthConsumer extends Serializable {
 
     /**
      * Sets the OAuth token and token secret used for message signing.
-     * 
+     *
      * @param token
      *        the token
      * @param tokenSecret
@@ -188,7 +186,7 @@ public interface OAuthConsumer extends Serializable {
      * because the request didn't contain them beforehand. In other words, this
      * is the exact set of parameters that were used for creating the message
      * signature.
-     * 
+     *
      * @return the request parameters used for message signing
      */
     public HttpParameters getRequestParameters();
