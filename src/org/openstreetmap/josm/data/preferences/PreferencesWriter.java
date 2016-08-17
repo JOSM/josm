@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
@@ -37,6 +38,15 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
      * @param settings preferences settings to write
      */
     public void write(Collection<Map.Entry<String, Setting<?>>> settings) {
+        write(settings.stream());
+    }
+
+    /**
+     * Write preferences.
+     *
+     * @param settings preferences settings to write as stream.
+     */
+    public void write(Stream<Map.Entry<String, Setting<?>>> settings) {
         out.write(String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>%n"));
         String rootElement = defaults ? "preferences-defaults" : "preferences";
         out.write(String.format("<%s xmlns='%s/preferences-1.0'", rootElement, Main.getXMLBase()));
@@ -44,10 +54,10 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
             out.write(" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'");
         }
         out.write(String.format(" version='%d'>%n", Version.getInstance().getVersion()));
-        for (Map.Entry<String, Setting<?>> e : settings) {
+        settings.forEachOrdered(e -> {
             setKey(e.getKey());
             e.getValue().visit(this);
-        }
+        });
         out.write(String.format("</%s>%n", rootElement));
     }
 

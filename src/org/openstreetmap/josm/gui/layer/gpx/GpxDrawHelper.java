@@ -24,6 +24,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.preferences.AbstractProperty;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.ColorScale;
 
@@ -32,6 +34,13 @@ import org.openstreetmap.josm.tools.ColorScale;
  * @since 7319
  */
 public class GpxDrawHelper implements SoMChangeListener {
+
+    /**
+     * The color that is used for drawing GPX points.
+     * @since 10824
+     */
+    public static final ColorProperty DEFAULT_COLOR = new ColorProperty(marktr("gps point"), Color.magenta);
+
     private final GpxData data;
 
     // draw lines between points belonging to different segments
@@ -83,8 +92,6 @@ public class GpxDrawHelper implements SoMChangeListener {
     /** Opacity for hdop points **/
     private int hdopAlpha;
 
-    private static final Color DEFAULT_COLOR = Color.magenta;
-
     // lookup array to draw arrows without doing any math
     private static final int ll0 = 9;
     private static final int sl4 = 5;
@@ -133,8 +140,10 @@ public class GpxDrawHelper implements SoMChangeListener {
     /**
      * Constructs a new {@code GpxDrawHelper}.
      * @param gpxData GPX data
+     * @param abstractProperty The color to draw with
+     * @since 10824
      */
-    public GpxDrawHelper(GpxData gpxData) {
+    public GpxDrawHelper(GpxData gpxData, AbstractProperty<Color> abstractProperty) {
         data = gpxData;
         setupColors();
     }
@@ -150,8 +159,11 @@ public class GpxDrawHelper implements SoMChangeListener {
      * @return the color or null if the color is not constant
      */
     public Color getColor(String layerName, boolean ignoreCustom) {
-        Color c = Main.pref.getColor(marktr("gps point"), specName(layerName), DEFAULT_COLOR);
-        return ignoreCustom || getColorMode(layerName) == ColorMode.NONE ? c : null;
+        if (ignoreCustom || getColorMode(layerName) == ColorMode.NONE) {
+            return DEFAULT_COLOR.getChildColor(specName(layerName)).get();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -173,7 +185,7 @@ public class GpxDrawHelper implements SoMChangeListener {
      * @return the color
      **/
     public static Color getGenericColor() {
-        return Main.pref.getColor(marktr("gps point"), DEFAULT_COLOR);
+        return DEFAULT_COLOR.get();
     }
 
     /**

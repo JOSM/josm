@@ -73,13 +73,13 @@ public class GpxLayerTest {
         GpxLayer layer = new GpxLayer(new GpxData(), "foo", false);
         assertEquals("foo", layer.getName());
         assertFalse(layer.isLocalFile());
-        assertEquals(Color.MAGENTA, layer.getColor(false));
+        assertEquals(Color.MAGENTA, layer.getColorProperty().get());
         assertEquals("<html>0 tracks, 0 routes, 0 waypoints<br>Length: < 0.01 m<br></html>", layer.getToolTipText());
 
         GpxLayer layer2 = new GpxLayer(new GpxData(), "bar", true);
         assertEquals("bar", layer2.getName());
         assertTrue(layer2.isLocalFile());
-        assertEquals(Color.MAGENTA, layer2.getColor(true));
+        assertEquals(Color.MAGENTA, layer2.getColorProperty().get());
         assertEquals("<html>0 tracks, 0 routes, 0 waypoints<br>Length: < 0.01 m<br></html>", layer2.getToolTipText());
 
         assertFalse(layer.isChanged());

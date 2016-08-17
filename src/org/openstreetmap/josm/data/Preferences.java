@@ -36,10 +36,10 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -54,9 +54,13 @@ import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.DoubleProperty;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ListListSetting;
 import org.openstreetmap.josm.data.preferences.ListSetting;
+import org.openstreetmap.josm.data.preferences.LongProperty;
 import org.openstreetmap.josm.data.preferences.MapListSetting;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
@@ -67,8 +71,8 @@ import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -214,6 +218,13 @@ public class Preferences {
         }
     }
 
+    /**
+     * Old color interface
+     * <p>
+     * To be removed: end of 2016
+     * @deprecated Use a {@link ColorProperty} instead.
+     */
+    @Deprecated
     public interface ColorKey {
         String getColorName();
 
@@ -222,7 +233,9 @@ public class Preferences {
         Color getDefaultValue();
     }
 
-    private final CopyOnWriteArrayList<PreferenceChangedListener> listeners = new CopyOnWriteArrayList<>();
+    private final ListenerList<PreferenceChangedListener> listeners = ListenerList.create();
+
+    private final HashMap<String, ListenerList<PreferenceChangedListener>> keyListeners = new HashMap<>();
 
     /**
      * Adds a new preferences listener.
@@ -230,7 +243,7 @@ public class Preferences {
      */
     public void addPreferenceChangeListener(PreferenceChangedListener listener) {
         if (listener != null) {
-            listeners.addIfAbsent(listener);
+            listeners.addListener(listener);
         }
     }
 
@@ -239,13 +252,58 @@ public class Preferences {
      * @param listener The listener to remove
      */
     public void removePreferenceChangeListener(PreferenceChangedListener listener) {
-        listeners.remove(listener);
+        listeners.removeListener(listener);
+    }
+
+    /**
+     * Adds a listener that only listens to changes in one preference
+     * @param key The preference key to listen to
+     * @param listener The listener to add.
+     * @since 10824
+     */
+    public void addKeyPreferenceChangeListener(String key, PreferenceChangedListener listener) {
+        listenersForKey(key).addListener(listener);
+    }
+
+    /**
+     * Adds a weak listener that only listens to changes in one preference
+     * @param key The preference key to listen to
+     * @param listener The listener to add.
+     * @since 10824
+     */
+    public void addWeakKeyPreferenceChangeListener(String key, PreferenceChangedListener listener) {
+        listenersForKey(key).addWeakListener(listener);
+    }
+
+    private ListenerList<PreferenceChangedListener> listenersForKey(String key) {
+        ListenerList<PreferenceChangedListener> keyListener = keyListeners.get(key);
+        if (keyListener == null) {
+            keyListener = ListenerList.create();
+            keyListeners.put(key, keyListener);
+        }
+        return keyListener;
+    }
+
+    /**
+     * Removes a listener that only listens to changes in one preference
+     * @param key The preference key to listen to
+     * @param listener The listener to add.
+     */
+    public void removeKeyPreferenceChangeListener(String key, PreferenceChangedListener listener) {
+        ListenerList<PreferenceChangedListener> keyListener = keyListeners.get(key);
+        if (keyListener == null) {
+            throw new IllegalArgumentException("There are no listeners registered for " + key);
+        }
+        keyListener.removeListener(listener);
     }
 
     protected void firePreferenceChanged(String key, Setting<?> oldValue, Setting<?> newValue) {
-        PreferenceChangeEvent evt = new DefaultPreferenceChangeEvent(key, oldValue, newValue);
-        for (PreferenceChangedListener l : listeners) {
-            l.preferenceChanged(evt);
+        final PreferenceChangeEvent evt = new DefaultPreferenceChangeEvent(key, oldValue, newValue);
+        listeners.fireEvent(listener -> listener.preferenceChanged(evt));
+
+        ListenerList<PreferenceChangedListener> forKey = keyListeners.get(key);
+        if (forKey != null) {
+            forKey.fireEvent(listener -> listener.preferenceChanged(evt));
         }
     }
 
@@ -478,24 +536,49 @@ public class Preferences {
      * @return {@code true}, if something has changed (i.e. value is different than before)
      */
     public boolean put(final String key, String value) {
-        if (value != null && value.isEmpty()) {
-            value = null;
-        }
-        return putSetting(key, value == null ? null : new StringSetting(value));
+        return putSetting(key, value == null || value.isEmpty() ? null : new StringSetting(value));
     }
 
+    /**
+     * Set a boolean value for a certain setting.
+     * @param key the unique identifier for the setting
+     * @param value The new value
+     * @return {@code true}, if something has changed (i.e. value is different than before)
+     * @see BooleanProperty
+     */
     public boolean put(final String key, final boolean value) {
         return put(key, Boolean.toString(value));
     }
 
+    /**
+     * Set a boolean value for a certain setting.
+     * @param key the unique identifier for the setting
+     * @param value The new value
+     * @return {@code true}, if something has changed (i.e. value is different than before)
+     * @see IntegerProperty
+     */
     public boolean putInteger(final String key, final Integer value) {
         return put(key, Integer.toString(value));
     }
 
+    /**
+     * Set a boolean value for a certain setting.
+     * @param key the unique identifier for the setting
+     * @param value The new value
+     * @return {@code true}, if something has changed (i.e. value is different than before)
+     * @see DoubleProperty
+     */
     public boolean putDouble(final String key, final Double value) {
         return put(key, Double.toString(value));
     }
 
+    /**
+     * Set a boolean value for a certain setting.
+     * @param key the unique identifier for the setting
+     * @param value The new value
+     * @return {@code true}, if something has changed (i.e. value is different than before)
+     * @see LongProperty
+     */
     public boolean putLong(final String key, final Long value) {
         return put(key, Long.toString(value));
     }
@@ -505,16 +588,14 @@ public class Preferences {
      * @throws IOException if any I/O error occurs
      */
     public synchronized void save() throws IOException {
-        save(getPreferenceFile(),
-                new SubclassFilteredCollection<>(settingsMap.entrySet(), NO_DEFAULT_SETTINGS_ENTRY), false);
+        save(getPreferenceFile(), settingsMap.entrySet().stream().filter(NO_DEFAULT_SETTINGS_ENTRY), false);
     }
 
     public synchronized void saveDefaults() throws IOException {
-        save(getDefaultsCacheFile(), defaultsMap.entrySet(), true);
+        save(getDefaultsCacheFile(), defaultsMap.entrySet().stream(), true);
     }
 
-    protected void save(File prefFile, Collection<Entry<String, Setting<?>>> settings, boolean defaults) throws IOException {
-
+    protected void save(File prefFile, Stream<Entry<String, Setting<?>>> settings, boolean defaults) throws IOException {
         if (!defaults) {
             /* currently unused, but may help to fix configuration issues in future */
             putInteger("josm.version", Version.getInstance().getVersion());
@@ -718,11 +799,15 @@ public class Preferences {
 
     /**
      * Convenience method for accessing colour preferences.
+     * <p>
+     * To be removed: end of 2016
      *
      * @param colName name of the colour
      * @param def default value
      * @return a Color object for the configured colour, or the default value if none configured.
+     * @deprecated Use a {@link ColorProperty} instead.
      */
+    @Deprecated
     public synchronized Color getColor(String colName, Color def) {
         return getColor(colName, null, def);
     }
@@ -742,26 +827,32 @@ public class Preferences {
 
     /**
      * Returns the color for the given key.
+     * <p>
+     * To be removed: end of 2016
      * @param key The color key
      * @return the color
+     * @deprecated Use a {@link ColorProperty} instead.
      */
+    @Deprecated
     public Color getColor(ColorKey key) {
         return getColor(key.getColorName(), key.getSpecialName(), key.getDefaultValue());
     }
 
     /**
      * Convenience method for accessing colour preferences.
-     *
+     * <p>
+     * To be removed: end of 2016
      * @param colName name of the colour
      * @param specName name of the special colour settings
      * @param def default value
      * @return a Color object for the configured colour, or the default value if none configured.
+     * @deprecated Use a {@link ColorProperty} instead.
+     * You can replace this by: <code>new ColorProperty(colName, def).getChildColor(specName)</code>
      */
+    @Deprecated
     public synchronized Color getColor(String colName, String specName, Color def) {
         String colKey = ColorProperty.getColorKey(colName);
-        if (!colKey.equals(colName)) {
-            colornames.put(colKey, colName);
-        }
+        registerColor(colKey, colName);
         String colStr = specName != null ? get("color."+specName) : "";
         if (colStr.isEmpty()) {
             colStr = get("color." + colKey, ColorHelper.color2html(def, true));
@@ -770,6 +861,18 @@ public class Preferences {
             return ColorHelper.html2color(colStr);
         } else {
             return def;
+        }
+    }
+
+    /**
+     * Registers a color name conversion for the global color registry.
+     * @param colKey The key
+     * @param colName The name of the color.
+     * @since 10824
+     */
+    public void registerColor(String colKey, String colName) {
+        if (!colKey.equals(colName)) {
+            colornames.put(colKey, colName);
         }
     }
 

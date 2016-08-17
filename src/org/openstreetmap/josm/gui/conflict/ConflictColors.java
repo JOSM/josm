@@ -5,14 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.Color;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences.ColorKey;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 
 /**
  * Conflict color constants.
  * @since 4162
  */
-public enum ConflictColors implements ColorKey {
+public enum ConflictColors {
 
     /** Conflict background: no conflict */
     BGCOLOR_NO_CONFLICT(marktr("Conflict background: no conflict"), new Color(234, 234, 234)),
@@ -82,27 +81,10 @@ public enum ConflictColors implements ColorKey {
     /** Conflict foreground: remove member */
     FGCOLOR_MEMBER_REMOVE(marktr("Conflict foreground: remove member"), Color.black);
 
-    private final String name;
-    private final Color defaultColor;
+    private final ColorProperty property;
 
     ConflictColors(String name, Color defaultColor) {
-        this.name = name;
-        this.defaultColor = defaultColor;
-    }
-
-    @Override
-    public String getColorName() {
-        return name;
-    }
-
-    @Override
-    public Color getDefaultValue() {
-        return defaultColor;
-    }
-
-    @Override
-    public String getSpecialName() {
-        return null;
+        property = new ColorProperty(name, defaultColor);
     }
 
     /**
@@ -110,7 +92,7 @@ public enum ConflictColors implements ColorKey {
      * @return the color
      */
     public Color get() {
-        return Main.pref.getColor(this);
+        return property.get();
     }
 
     /**

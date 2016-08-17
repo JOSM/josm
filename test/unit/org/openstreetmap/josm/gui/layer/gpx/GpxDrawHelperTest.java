@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.layer.gpx;
 
 import static org.junit.Assert.assertEquals;
 
+import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.xml.sax.SAXException;
@@ -124,7 +126,7 @@ public class GpxDrawHelperTest {
      */
     static List<String> calculateColors(String fileName, String layerName, int n) throws IOException, SAXException {
         final GpxData data = GpxReaderTest.parseGpxData(fileName);
-        final GpxDrawHelper gdh = new GpxDrawHelper(data);
+        final GpxDrawHelper gdh = new GpxDrawHelper(data, new ColorProperty("x", Color.MAGENTA));
         gdh.readPreferences(layerName);
         gdh.calculateColors();
         final Iterator<WayPoint> wayPointIterator = data.tracks.iterator().next().getSegments().iterator().next().getWayPoints().iterator();

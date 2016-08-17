@@ -313,6 +313,18 @@ public class MainApplication extends Main {
             I18n.set(args.get(Option.LANGUAGE).iterator().next());
         }
 
+        if (args.containsKey(Option.TRACE)) {
+            // Enable JOSM debug level
+            logLevel = 5;
+            // Enable debug in OAuth signpost via system preference, but only at trace level
+            Utils.updateSystemProperty("debug", "true");
+            Main.info(tr("Enabled detailed debug level (trace)"));
+        } else if (args.containsKey(Option.DEBUG)) {
+            // Enable JOSM debug level
+            logLevel = 4;
+            Main.info(tr("Printing debugging messages to console"));
+        }
+
         initApplicationPreferences();
 
         Policy.setPolicy(new Policy() {
@@ -344,24 +356,10 @@ public class MainApplication extends Main {
             System.exit(0);
         }
 
-        if (args.containsKey(Option.DEBUG) || args.containsKey(Option.TRACE)) {
-            // Enable JOSM debug level
-            logLevel = 4;
-            Main.info(tr("Printing debugging messages to console"));
-        }
-
         boolean skipLoadingPlugins = false;
         if (args.containsKey(Option.SKIP_PLUGINS)) {
             skipLoadingPlugins = true;
             Main.info(tr("Plugin loading skipped"));
-        }
-
-        if (args.containsKey(Option.TRACE)) {
-            // Enable JOSM debug level
-            logLevel = 5;
-            // Enable debug in OAuth signpost via system preference, but only at trace level
-            Utils.updateSystemProperty("debug", "true");
-            Main.info(tr("Enabled detailed debug level (trace)"));
         }
 
         Main.pref.init(args.containsKey(Option.RESET_PREFERENCES));

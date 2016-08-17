@@ -41,7 +41,7 @@ public class MarkerLayerTest {
         MarkerLayer layer = new MarkerLayer(new GpxData(), "foo", null, null);
 
         assertEquals("foo", layer.getName());
-        assertEquals(Color.magenta, layer.getColor(false));
+        assertEquals(Color.magenta, layer.getColorProperty().get());
         assertNotNull(layer.getIcon());
         assertEquals("0 markers", layer.getToolTipText());
         assertEquals("<html>foo consists of 0 markers</html>", layer.getInfoComponent());
@@ -58,7 +58,7 @@ public class MarkerLayerTest {
         layer = new MarkerLayer(gpx, "bar", null, null);
 
         assertEquals("bar", layer.getName());
-        assertEquals(Color.magenta, layer.getColor(false));
+        assertEquals(Color.magenta, layer.getColorProperty().get());
         assertNotNull(layer.getIcon());
         assertEquals("3 markers", layer.getToolTipText());
         assertEquals("<html>bar consists of 3 markers</html>", layer.getInfoComponent());

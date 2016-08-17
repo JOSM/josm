@@ -25,6 +25,9 @@ import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.preferences.AbstractProperty;
+import org.openstreetmap.josm.data.preferences.AbstractProperty.ValueChangeListener;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.tools.Destroyable;
@@ -145,6 +148,8 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      */
     private File associatedFile;
 
+    private final ValueChangeListener<Object> invalidateListener = change -> invalidate();
+
     /**
      * Create the layer and fill in the necessary components.
      * @param name Layer name
@@ -181,9 +186,49 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      *      is used. When this is true, then even for custom coloring the base
      *      color is returned - mainly for layer internal use.
      * @return layer color
+     * @deprecated Use the new {@link #getColorProperty()}. To be removed end of 2016.
      */
+    @Deprecated
     public Color getColor(boolean ignoreCustom) {
         return null;
+    }
+
+    /**
+     * Gets the color property to use for this layer.
+     * @return The color property.
+     * @since 10824
+     */
+    public AbstractProperty<Color> getColorProperty() {
+        ColorProperty base = getBaseColorProperty();
+        if (base != null) {
+            // cannot cache this - name may change.
+            return base.getChildColor("layer " + getName());
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the color property that stores the default color for this layer.
+     * @return The property or <code>null</code> if this layer is not colored.
+     * @since 10824
+     */
+    protected ColorProperty getBaseColorProperty() {
+        return null;
+    }
+
+    private void addColorPropertyListener() {
+        AbstractProperty<Color> colorProperty = getColorProperty();
+        if (colorProperty != null) {
+            colorProperty.addWeakListener(invalidateListener);
+        }
+    }
+
+    private void removeColorPropertyListener() {
+        AbstractProperty<Color> colorProperty = getColorProperty();
+        if (colorProperty != null) {
+            colorProperty.removeListener(invalidateListener);
+        }
     }
 
     /**
@@ -264,14 +309,22 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      * @param name the name. If null, the name is set to the empty string.
      */
     public final void setName(String name) {
+        if (this.name != null) {
+            removeColorPropertyListener();
+        }
         if (name == null) {
             name = "";
         }
+
         String oldValue = this.name;
         this.name = name;
         if (!this.name.equals(oldValue)) {
             propertyChangeSupport.firePropertyChange(NAME_PROP, oldValue, this.name);
         }
+
+        // re-add listener
+        addColorPropertyListener();
+        invalidate();
     }
 
     /**

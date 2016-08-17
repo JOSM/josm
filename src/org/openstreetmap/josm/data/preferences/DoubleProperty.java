@@ -1,13 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.preferences;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * A property containing an {@code Double} value.
  * @since 3246
  */
-public class DoubleProperty extends AbstractProperty<Double> {
+public class DoubleProperty extends AbstractToStringProperty<Double> {
 
     /**
      * Constructs a new {@code DoubleProperty}.
@@ -20,12 +18,28 @@ public class DoubleProperty extends AbstractProperty<Double> {
 
     @Override
     public Double get() {
-        return Main.pref.getDouble(getKey(), getDefaultValue());
+        // Removing this implementation breaks binary compatibility
+        return super.get();
     }
 
     @Override
     public boolean put(Double value) {
-        return Main.pref.putDouble(getKey(), value);
+        // Removing this implementation breaks binary compatibility
+        return super.put(value);
+    }
+
+    @Override
+    protected Double fromString(String string) {
+        try {
+            return Double.valueOf(string);
+        } catch (NumberFormatException e) {
+            throw new InvalidPreferenceValueException(e);
+        }
+    }
+
+    @Override
+    protected String toString(Double t) {
+        return t.toString();
     }
 
     /**
