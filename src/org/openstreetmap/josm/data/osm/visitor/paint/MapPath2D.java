@@ -8,7 +8,7 @@ import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 /**
  * An extension of {@link Path2D} with special methods for map positions.
  * @author Michael Zangl
- * @since 10826
+ * @since 10827
  */
 public class MapPath2D extends Path2D.Double {
     /**

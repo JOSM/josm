@@ -106,7 +106,7 @@ public interface Projection extends Projecting {
     /**
      * Gets the object used as cache identifier when caching results of this projection.
      * @return The object to use as cache key
-     * @since 10826
+     * @since 10827
      */
     default Object getCacheKey() {
         return this;

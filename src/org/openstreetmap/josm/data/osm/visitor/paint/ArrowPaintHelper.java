@@ -7,7 +7,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * This class helps with painting arrows with fixed length along a path.
  * @author Michael Zangl
- * @since 10826
+ * @since 10827
  */
 public class ArrowPaintHelper {
     private final double sin;

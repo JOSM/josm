@@ -409,7 +409,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
      * @param mv1 First point of the way segment.
      * @param mv2 Second point of the way segment.
      * @param showDirection <code>true</code> if segment direction should be indicated
-     * @since 10826
+     * @since 10827
      */
     protected void drawSegment(MapPath2D path, MapViewPoint mv1, MapViewPoint mv2, boolean showDirection) {
         Rectangle bounds = g.getClipBounds();
@@ -430,7 +430,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
      * @param p2 Second point of the way segment.
      * @param col The color to use for drawing line.
      * @param showDirection <code>true</code> if segment direction should be indicated.
-     * @since 10826
+     * @since 10827
      */
     protected void drawSegment(MapViewPoint p1, MapViewPoint p2, Color col, boolean showDirection) {
         if (!col.equals(currentColor)) {
