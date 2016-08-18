@@ -32,6 +32,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.Border;
@@ -378,6 +379,21 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             dialogsPanel.add(dlg);
         }
         return button;
+    }
+
+    /**
+     * Call this to remove existing toggle dialog from the left button-list
+     * @param dlg The toggle dialog. It must be already in the list.
+     * @since 10851
+     */
+    public void removeToggleDialog(final ToggleDialog dlg) {
+        final JToggleButton button = dlg.getButton();
+        if (button != null) {
+            allDialogButtons.remove(button);
+            toolBarToggle.remove(button);
+        }
+        dialogsPanel.remove(dlg);
+        allDialogs.remove(dlg);
     }
 
     public void addMapMode(IconToggleButton b) {
