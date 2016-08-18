@@ -4,14 +4,12 @@ package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A simple class to keep a list of user names.
@@ -134,7 +132,7 @@ public final class User {
     }
 
     /** the user name */
-    private final Set<String> names = new HashSet<>();
+    private final LinkedHashSet<String> names = new LinkedHashSet<>();
     /** the user id */
     private final long uid;
 
@@ -142,9 +140,12 @@ public final class User {
      * Replies the user name
      *
      * @return the user name. Never <code>null</code>, but may be the empty string
+     * @see #getByName(String)
+     * @see #createOsmUser(long, String)
+     * @see #createLocalUser(String)
      */
     public String getName() {
-        return Utils.join("/", names);
+        return names.isEmpty() ? "" : names.iterator().next();
     }
 
     /**
@@ -163,6 +164,23 @@ public final class User {
      */
     public void addName(String name) {
         names.add(name);
+    }
+
+    /**
+     * Sets the preferred user name, i.e., the one that will be returned when calling {@link #getName()}.
+     *
+     * Rationale: A user can change its name multiple times and after reading various (outdated w.r.t. user name)
+     * data files it is unclear which is the up-to-date user name.
+     * @param name the preferred user name to set
+     */
+    public void setPreferredName(String name) {
+        if (names.size() == 1 && names.contains(name)) {
+            return;
+        }
+        final Collection<String> allNames = new LinkedHashSet<>(names);
+        names.clear();
+        names.add(name);
+        names.addAll(allNames);
     }
 
     /**
