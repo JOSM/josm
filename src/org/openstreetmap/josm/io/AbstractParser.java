@@ -116,6 +116,7 @@ public abstract class AbstractParser extends DefaultHandler {
         if (userStr != null) {
             if (uid != null) {
                 user = User.createOsmUser(uid, userStr);
+                user.setPreferredName(userStr);
             } else {
                 user = User.createLocalUser(userStr);
             }
