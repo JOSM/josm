@@ -20,7 +20,7 @@ public class ShiftedProjecting implements Projecting {
     /**
      * Create a new {@link ShiftedProjecting}
      * @param base The base to use
-     * @param offset The offset to move base. Subtracted when converting lat/lon->east/north.
+     * @param offset The offset to move base. Subtracted when converting lat/lon-&gt;east/north.
      */
     public ShiftedProjecting(Projecting base, EastNorth offset) {
         this.base = base;

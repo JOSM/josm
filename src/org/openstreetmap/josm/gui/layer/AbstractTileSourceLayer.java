@@ -1430,6 +1430,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         /**
          * Get all tiles represented by this TileSet that are already in the tileCache.
+         * @return all tiles represented by this TileSet that are already in the tileCache
          */
         private List<Tile> allExistingTiles() {
             return allTiles(p -> getTile(p));
