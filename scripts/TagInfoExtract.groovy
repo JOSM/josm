@@ -31,7 +31,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource
-import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValueCondition
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement

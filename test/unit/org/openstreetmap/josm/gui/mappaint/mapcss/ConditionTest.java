@@ -12,9 +12,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Op;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.SimpleKeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.ToTagConvertable;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValueCondition;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -53,7 +53,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueEq() {
-        Condition op = Condition.createKeyValueCondition("k1", "v1", Op.EQ, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("k1", "v1", Op.EQ, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
         assertTrue(op.applies(genEnv(node2)));
@@ -71,7 +71,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueEqAsKey() {
-        Condition op = Condition.createKeyValueCondition("k1", "k2", Op.EQ, Context.PRIMITIVE, true);
+        Condition op = ConditionFactory.createKeyValueCondition("k1", "k2", Op.EQ, Context.PRIMITIVE, true);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
         assertFalse(op.applies(genEnv(node2)));
@@ -87,7 +87,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueNeq() {
-        Condition op = Condition.createKeyValueCondition("k1", "v1", Op.NEQ, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("k1", "v1", Op.NEQ, Context.PRIMITIVE, false);
         assertTrue(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));
         assertFalse(op.applies(genEnv(node2)));
@@ -100,7 +100,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueGreatherEq() {
-        Condition op = Condition.createKeyValueCondition("f1", "0.2", Op.GREATER_OR_EQUAL, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("f1", "0.2", Op.GREATER_OR_EQUAL, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
         assertTrue(op.applies(genEnv(node2)));
@@ -113,7 +113,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueGreather() {
-        Condition op = Condition.createKeyValueCondition("f1", "0.2", Op.GREATER, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("f1", "0.2", Op.GREATER, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));
         assertTrue(op.applies(genEnv(node2)));
@@ -126,7 +126,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueLessEq() {
-        Condition op = Condition.createKeyValueCondition("f1", "0.2", Op.LESS_OR_EQUAL, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("f1", "0.2", Op.LESS_OR_EQUAL, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
         assertFalse(op.applies(genEnv(node2)));
@@ -139,7 +139,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueLess() {
-        Condition op = Condition.createKeyValueCondition("f1", "0.2", Op.LESS, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("f1", "0.2", Op.LESS, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));
         assertFalse(op.applies(genEnv(node2)));
@@ -152,7 +152,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueRegex() {
-        Condition op = Condition.createKeyValueCondition("r1", "(ab){2}", Op.REGEX, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("r1", "(ab){2}", Op.REGEX, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
         assertFalse(op.applies(genEnv(node2)));
@@ -165,7 +165,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueNregex() {
-        Condition op = Condition.createKeyValueCondition("r1", "(ab){2}", Op.NREGEX, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("r1", "(ab){2}", Op.NREGEX, Context.PRIMITIVE, false);
         assertTrue(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));
         assertTrue(op.applies(genEnv(node2)));
@@ -178,7 +178,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueOneOf() {
-        Condition op = Condition.createKeyValueCondition("one", "a", Op.ONE_OF, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("one", "a", Op.ONE_OF, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
         assertTrue(op.applies(genEnv(node2)));
@@ -191,7 +191,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueBeginsWith() {
-        Condition op = Condition.createKeyValueCondition("c1", "xy", Op.BEGINS_WITH, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("c1", "xy", Op.BEGINS_WITH, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
         assertTrue(op.applies(genEnv(node2)));
@@ -204,7 +204,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueEndsWith() {
-        Condition op = Condition.createKeyValueCondition("c1", "xy", Op.ENDS_WITH, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("c1", "xy", Op.ENDS_WITH, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));
         assertTrue(op.applies(genEnv(node2)));
@@ -217,7 +217,7 @@ public class ConditionTest {
      */
     @Test
     public void testKeyValueContains() {
-        Condition op = Condition.createKeyValueCondition("c1", "xy", Op.CONTAINS, Context.PRIMITIVE, false);
+        Condition op = ConditionFactory.createKeyValueCondition("c1", "xy", Op.CONTAINS, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
         assertTrue(op.applies(genEnv(node2)));
@@ -226,18 +226,18 @@ public class ConditionTest {
     }
 
     /**
-     * Test of {@link Condition#createRegexpKeyRegexpValueCondition(String, String, Op)}
+     * Test of {@link ConditionFactory#createRegexpKeyRegexpValueCondition(String, String, Op)}
      */
     @Test
     public void testRegexpKeyValueRegexpCondition() {
-        Condition op = Condition.createRegexpKeyRegexpValueCondition("^k", "\\da", Op.REGEX);
+        Condition op = ConditionFactory.createRegexpKeyRegexpValueCondition("^k", "\\da", Op.REGEX);
         assertFalse(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));
         assertTrue(op.applies(genEnv(node2)));
         assertFalse(op.applies(genEnv(node3)));
         assertTrue(op.applies(genEnv(node4)));
 
-        Condition notOp = Condition.createRegexpKeyRegexpValueCondition("^k", "\\da", Op.NREGEX);
+        Condition notOp = ConditionFactory.createRegexpKeyRegexpValueCondition("^k", "\\da", Op.NREGEX);
         assertTrue(notOp.applies(genEnv(node0)));
         assertTrue(notOp.applies(genEnv(node1)));
         assertFalse(notOp.applies(genEnv(node2)));

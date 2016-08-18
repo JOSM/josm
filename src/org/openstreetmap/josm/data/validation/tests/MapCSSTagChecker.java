@@ -47,7 +47,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.ClassCondition;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.ClassCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
