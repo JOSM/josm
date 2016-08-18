@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016081500, Last Updated Mon Aug 15 07:07:01 2016 UTC
+        // Taken from Version 2016081700, Last Updated Wed Aug 17 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -320,6 +320,7 @@ public final class DomainValidator extends AbstractValidator {
         "agakhan", // agakhan Fondation Aga Khan (Aga Khan Foundation)
         "agency", // agency Steel Falls, LLC
         "aig", // aig American International Group, Inc.
+        "aigo", // aigo aigo Digital Technology Co,Ltd.
         "airbus", // airbus Airbus S.A.S.
         "airforce", // airforce United TLD Holdco Ltd.
         "airtel", // airtel Bharti Airtel Limited
@@ -730,6 +731,7 @@ public final class DomainValidator extends AbstractValidator {
         "hangout", // hangout Charleston Road Registry Inc.
         "haus", // haus United TLD Holdco, LTD.
         "hbo", // hbo HBO Registry Services, Inc.
+        "hdfc", // hdfc HOUSING DEVELOPMENT FINANCE CORPORATION LIMITED
         "hdfcbank", // hdfcbank HDFC Bank Limited
         "health", // health DotHealth, LLC
         "healthcare", // healthcare Silver Glen, LLC
@@ -1378,6 +1380,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--30rr7y", // 慈善 Excellent First Limited
         "xn--3bst00m", // 集团 Eagle Horizon Limited
         "xn--3ds443g", // 在线 TLD REGISTRY LIMITED
+        "xn--3oq18vl8pn36a", // 大众汽车 Volkswagen (China) Investment Co., Ltd.
         "xn--3pxu8k", // 点看 VeriSign Sarl
         "xn--42c2d9a", // คอม VeriSign Sarl
         "xn--45q11c", // 八卦 Zodiac Scorpio Limited
