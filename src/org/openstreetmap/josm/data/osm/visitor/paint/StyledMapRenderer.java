@@ -891,9 +891,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         double x = p.getInViewX();
         double y = p.getInViewY();
-        temporaryGraphics.translate(-x, -y);
+        temporaryGraphics.translate(x, y);
         temporaryGraphics.rotate(theta);
-        temporaryGraphics.drawImage(img.getImage(disabled), w/2 + img.offsetX, h/2 + img.offsetY, nc);
+        int drawX = -w/2 + img.offsetX;
+        int drawY = -h/2 + img.offsetY;
+        temporaryGraphics.drawImage(img.getImage(disabled), drawX, drawY, nc);
         if (selected || member) {
             Color color;
             if (disabled) {
@@ -903,8 +905,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             } else {
                 color = relationSelectedColor;
             }
-            g.setColor(color);
-            g.draw(new Rectangle2D.Double(x - w/2 + img.offsetX - 2, y - h/2 + img.offsetY - 2, w + 4, h + 4));
+            temporaryGraphics.setColor(color);
+            temporaryGraphics.draw(new Rectangle2D.Double(drawX - 2, drawY - 2, w + 4, h + 4));
         }
     }
 
