@@ -504,27 +504,27 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * @deprecated looses precision, may overflow (depends on p and current scale)
+     * looses precision, may overflow (depends on p and current scale)
+     * @see #getPoint2D(EastNorth)
      */
-    @Deprecated
     public Point getPoint(EastNorth p) {
         Point2D d = getPoint2D(p);
         return new Point((int) d.getX(), (int) d.getY());
     }
 
     /**
-     * @deprecated looses precision, may overflow (depends on p and current scale)
+     * looses precision, may overflow (depends on p and current scale)
+     * @see #getPoint2D(LatLon)
      */
-    @Deprecated
     public Point getPoint(LatLon latlon) {
         Point2D d = getPoint2D(latlon);
         return new Point((int) d.getX(), (int) d.getY());
     }
 
     /**
-     * @deprecated looses precision, may overflow (depends on p and current scale)
+     * looses precision, may overflow (depends on p and current scale)
+     * @see #getPoint2D(Node)
      */
-    @Deprecated
     public Point getPoint(Node n) {
         Point2D d = getPoint2D(n);
         return new Point((int) d.getX(), (int) d.getY());
