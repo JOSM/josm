@@ -49,7 +49,6 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
-import org.openstreetmap.josm.gui.tagging.presets.items.Label;
 import org.openstreetmap.josm.gui.tagging.presets.items.Link;
 import org.openstreetmap.josm.gui.tagging.presets.items.Optional;
 import org.openstreetmap.josm.gui.tagging.presets.items.PresetLink;
@@ -173,12 +172,22 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     }
 
     /**
-     * Returns the preset icon.
+     * Returns the preset icon (16px).
      * @return The preset icon, or {@code null} if none defined
      * @since 6403
      */
     public final ImageIcon getIcon() {
-        Object icon = getValue(Action.SMALL_ICON);
+        return getIcon(Action.SMALL_ICON);
+    }
+
+    /**
+     * Returns the preset icon (16 or 24px).
+     * @param key Key determining icon size: {@code Action.SMALL_ICON} for 16x, {@code Action.LARGE_ICON_KEY} for 24px
+     * @return The preset icon, or {@code null} if none defined
+     * @since 10849
+     */
+    public final ImageIcon getIcon(String key) {
+        Object icon = getValue(key);
         if (icon instanceof ImageIcon) {
             return (ImageIcon) icon;
         }
@@ -288,11 +297,15 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             label.setToolTipText("<html>" + tr("This preset also sets: {0}", Utils.joinAsHtmlUnorderedList(directlyAppliedTags)));
             pp.add(label);
         }
-        if (pp.getComponentCount() > 0) {
-            p.add(pp, GBC.eol());
+        final int count = pp.getComponentCount();
+        if (preset_name_label) {
+            p.add(new JLabel(getIcon(Action.LARGE_ICON_KEY)), GBC.std(0, 0).span(1, count > 0 ? 2 : 1).insets(0, 0, 5, 0));
+        }
+        if (count > 0) {
+            p.add(pp, GBC.std(1, 0).span(GBC.REMAINDER));
         }
         if (preset_name_label) {
-            Label.addLabel(p, getIcon(), getName());
+            p.add(new JLabel(getName()), GBC.std(1, count > 0 ? 1 : 0).insets(5, 0, 0, 0).span(GBC.REMAINDER).fill(GBC.HORIZONTAL));
         }
 
         boolean presetInitiallyMatches = !selected.isEmpty() && selected.stream().allMatch(this);
@@ -330,7 +343,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         // "Add toolbar button"
         JToggleButton tb = new JToggleButton(new ToolbarButtonAction());
         tb.setFocusable(false);
-        p.add(tb, GBC.std(0, 0).anchor(GBC.LINE_END));
+        p.add(tb, GBC.std(1, 0).anchor(GBC.LINE_END));
         return p;
     }
 
@@ -401,12 +414,21 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     }
 
     private static class PresetDialog extends ExtendedDialog {
+
+        /**
+         * Constructs a new {@code PresetDialog}.
+         * @param content the content that will be displayed in this dialog
+         * @param title the text that will be shown in the window titlebar
+         * @param icon the image to be displayed as the icon for this window
+         * @param disableApply whether to disable "Apply" button
+         * @param showNewRelation whether to display "New relation" button
+         */
         PresetDialog(Component content, String title, ImageIcon icon, boolean disableApply, boolean showNewRelation) {
             super(Main.parent, title,
                     showNewRelation ?
-                            new String[] {tr("Apply Preset"), tr("New relation"), tr("Cancel")} :
-                                new String[] {tr("Apply Preset"), tr("Cancel")},
-                                true);
+                            (new String[] {tr("Apply Preset"), tr("New relation"), tr("Cancel")}) :
+                            (new String[] {tr("Apply Preset"), tr("Cancel")}),
+                    true);
             if (icon != null)
                 setIconImage(icon.getImage());
             contentInsets = new Insets(10, 5, 0, 5);
@@ -426,14 +448,18 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                 d.width = 350;
                 setSize(d);
             }
-            showDialog();
+            super.showDialog();
         }
     }
 
+    /**
+     * Shows the preset dialog.
+     * @param sel selection
+     * @param showNewRelation whether to display "New relation" button
+     * @return the user choice after the dialog has been closed
+     */
     public int showDialog(Collection<OsmPrimitive> sel, boolean showNewRelation) {
         PresetPanel p = createPanel(sel);
-        if (p == null)
-            return DIALOG_ANSWER_CANCEL;
 
         int answer = 1;
         boolean canCreateRelation = types == null || types.contains(TaggingPresetType.RELATION);
