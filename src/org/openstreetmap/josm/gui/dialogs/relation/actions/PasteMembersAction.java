@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.TransferHandler.TransferSupport;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
@@ -32,7 +33,11 @@ public class PasteMembersAction extends AddFromSelectionAction implements Flavor
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        new MemberTransferHandler().importData(getSupport());
+        try {
+            new MemberTransferHandler().importData(getSupport());
+        } catch (IllegalStateException ex) {
+            Main.error(ex);
+        }
     }
 
     private TransferSupport getSupport() {
@@ -41,7 +46,11 @@ public class PasteMembersAction extends AddFromSelectionAction implements Flavor
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(new MemberTransferHandler().canImport(getSupport()));
+        try {
+            setEnabled(new MemberTransferHandler().canImport(getSupport()));
+        } catch (IllegalStateException ex) {
+            Main.error(ex);
+        }
     }
 
     @Override
