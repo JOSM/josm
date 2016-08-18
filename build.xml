@@ -519,6 +519,20 @@ Build-Date: ${build.tstamp}
         -dontnote
         </proguard>
     </target>
+    <!-- Proguard does not support Java 9 : http://sourceforge.net/p/proguard/bugs/551/ -->
+    <target name="dist-optimized-report" depends="dist-optimized" unless="isJava9">
+        <!-- generate difference report between optimized jar and normal one -->
+        <exec executable="perl" dir="${basedir}">
+            <arg value="tools/japicc/japi-compliance-checker.pl"/>
+            <arg value="--lib=JOSM"/>
+            <arg value="--keep-internal"/>
+            <arg value="--v1=${version.entry.commit.revision}"/>
+            <arg value="--v2=${version.entry.commit.revision}-optimized"/>
+            <arg value="--report-path=${dist.dir}/compat_report.html"/>
+            <arg value="${dist.dir}/josm-custom.jar"/>
+            <arg value="${dist.dir}/josm-custom-optimized.jar"/>
+        </exec>
+    </target>
     <target name="check-plugins" depends="dist-optimized">
         <echo message="Check of plugins binary compatibility (needs ant 1.8)"/>
         <local name="dir"/>
