@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.Relation
 import org.openstreetmap.josm.data.osm.RelationMember
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType
 
 class KeyConditionTest {
 
@@ -46,27 +47,27 @@ class KeyConditionTest {
     public void create() {
 
         // ["a label"]
-        Condition c = Condition.createKeyCondition("a key", false, Condition.KeyMatchType.FALSE, Context.PRIMITIVE)
+        Condition c = ConditionFactory.createKeyCondition("a key", false, KeyMatchType.FALSE, Context.PRIMITIVE)
         // ["a label"?]
-        c = Condition.createKeyCondition("a key", false, Condition.KeyMatchType.TRUE, Context.PRIMITIVE)
+        c = ConditionFactory.createKeyCondition("a key", false, KeyMatchType.TRUE, Context.PRIMITIVE)
         // [!"a label"]
-        c = Condition.createKeyCondition("a key", true, Condition.KeyMatchType.FALSE, Context.PRIMITIVE)
+        c = ConditionFactory.createKeyCondition("a key", true, KeyMatchType.FALSE, Context.PRIMITIVE)
         // [!"a label"?]
-        c = Condition.createKeyCondition("a key", true, Condition.KeyMatchType.TRUE, Context.PRIMITIVE)
+        c = ConditionFactory.createKeyCondition("a key", true, KeyMatchType.TRUE, Context.PRIMITIVE)
 
         // ["a label"]
-        c = Condition.createKeyCondition("a key", false, null, Context.LINK)
+        c = ConditionFactory.createKeyCondition("a key", false, null, Context.LINK)
         // [!"a label"]
-        c = Condition.createKeyCondition("a key", true, null, Context.LINK)
+        c = ConditionFactory.createKeyCondition("a key", true, null, Context.LINK)
 
         shouldFail(MapCSSException) {
             // ["a label"?]
-           c = Condition.createKeyCondition("a key", false, Condition.KeyMatchType.TRUE, Context.LINK)
+           c = ConditionFactory.createKeyCondition("a key", false, KeyMatchType.TRUE, Context.LINK)
         }
 
         shouldFail(MapCSSException) {
             // [!"a label"?]
-            c = Condition.createKeyCondition("a key", true, Condition.KeyMatchType.TRUE, Context.LINK)
+            c = ConditionFactory.createKeyCondition("a key", true, KeyMatchType.TRUE, Context.LINK)
         }
     }
 
@@ -78,10 +79,10 @@ class KeyConditionTest {
 
         Environment e = new Environment(n).withParent(r).withIndex(0, r.membersCount).withLinkContext()
 
-        Condition cond = Condition.createKeyCondition("my_role", false, null, Context.LINK)
+        Condition cond = ConditionFactory.createKeyCondition("my_role", false, null, Context.LINK)
         assert cond.applies(e)
 
-        cond = Condition.createKeyCondition("my_role", true, null, Context.LINK)
+        cond = ConditionFactory.createKeyCondition("my_role", true, null, Context.LINK)
         assert !cond.applies(e)
     }
 
@@ -93,10 +94,10 @@ class KeyConditionTest {
 
         Environment e = new Environment(n).withParent(r).withIndex(0, r.membersCount).withLinkContext()
 
-        Condition cond = Condition.createKeyCondition("another_role", false, null, Context.LINK)
+        Condition cond = ConditionFactory.createKeyCondition("another_role", false, null, Context.LINK)
         assert !cond.applies(e)
 
-        cond = Condition.createKeyCondition("another_role", true, null, Context.LINK)
+        cond = ConditionFactory.createKeyCondition("another_role", true, null, Context.LINK)
         assert cond.applies(e)
     }
 }

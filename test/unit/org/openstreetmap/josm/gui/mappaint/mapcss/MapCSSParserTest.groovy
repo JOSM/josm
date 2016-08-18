@@ -13,6 +13,13 @@ import org.openstreetmap.josm.data.osm.OsmUtils
 import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.gui.mappaint.Environment
 import org.openstreetmap.josm.gui.mappaint.MultiCascade
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.ClassCondition
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyCondition
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyValueCondition
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.PseudoClassCondition
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValueCondition
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser
 import org.openstreetmap.josm.tools.ColorHelper
 
@@ -49,10 +56,10 @@ class MapCSSParserTest {
     @Test
     public void testClassCondition() throws Exception {
         def conditions = ((Selector.GeneralSelector) getParser("way[name=X].highway:closed").selector()).conds
-        assert conditions.get(0) instanceof Condition.SimpleKeyValueCondition
+        assert conditions.get(0) instanceof SimpleKeyValueCondition
         assert conditions.get(0).applies(getEnvironment("name", "X"))
-        assert conditions.get(1) instanceof Condition.ClassCondition
-        assert conditions.get(2) instanceof Condition.PseudoClassCondition
+        assert conditions.get(1) instanceof ClassCondition
+        assert conditions.get(2) instanceof PseudoClassCondition
         assert !conditions.get(2).applies(getEnvironment("name", "X"))
     }
 
@@ -92,8 +99,8 @@ class MapCSSParserTest {
 
     @Test
     public void testEqualCondition() throws Exception {
-        def condition = (Condition.SimpleKeyValueCondition) getParser("[surface=paved]").condition(Condition.Context.PRIMITIVE)
-        assert condition instanceof Condition.SimpleKeyValueCondition
+        def condition = (SimpleKeyValueCondition) getParser("[surface=paved]").condition(Condition.Context.PRIMITIVE)
+        assert condition instanceof SimpleKeyValueCondition
         assert "surface".equals(condition.k)
         assert "paved".equals(condition.v)
         assert condition.applies(getEnvironment("surface", "paved"))
@@ -102,23 +109,23 @@ class MapCSSParserTest {
 
     @Test
     public void testNotEqualCondition() throws Exception {
-        def condition = (Condition.KeyValueCondition) getParser("[surface!=paved]").condition(Condition.Context.PRIMITIVE)
-        assert Condition.Op.NEQ.equals(condition.op)
+        def condition = (KeyValueCondition) getParser("[surface!=paved]").condition(Condition.Context.PRIMITIVE)
+        assert Op.NEQ.equals(condition.op)
         assert !condition.applies(getEnvironment("surface", "paved"))
         assert condition.applies(getEnvironment("surface", "unpaved"))
     }
 
     @Test
     public void testRegexCondition() throws Exception {
-        def condition = (Condition.KeyValueCondition) getParser("[surface=~/paved|unpaved/]").condition(Condition.Context.PRIMITIVE)
-        assert Condition.Op.REGEX.equals(condition.op)
+        def condition = (KeyValueCondition) getParser("[surface=~/paved|unpaved/]").condition(Condition.Context.PRIMITIVE)
+        assert Op.REGEX.equals(condition.op)
         assert condition.applies(getEnvironment("surface", "unpaved"))
         assert !condition.applies(getEnvironment("surface", "grass"))
     }
 
     @Test
     public void testRegexConditionParenthesis() throws Exception {
-        def condition = (Condition.KeyValueCondition) getParser("[name =~ /^\\(foo\\)/]").condition(Condition.Context.PRIMITIVE)
+        def condition = (KeyValueCondition) getParser("[name =~ /^\\(foo\\)/]").condition(Condition.Context.PRIMITIVE)
         assert condition.applies(getEnvironment("name", "(foo)"))
         assert !condition.applies(getEnvironment("name", "foo"))
         assert !condition.applies(getEnvironment("name", "((foo))"))
@@ -126,21 +133,21 @@ class MapCSSParserTest {
 
     @Test
     public void testNegatedRegexCondition() throws Exception {
-        def condition = (Condition.KeyValueCondition) getParser("[surface!~/paved|unpaved/]").condition(Condition.Context.PRIMITIVE)
-        assert Condition.Op.NREGEX.equals(condition.op)
+        def condition = (KeyValueCondition) getParser("[surface!~/paved|unpaved/]").condition(Condition.Context.PRIMITIVE)
+        assert Op.NREGEX.equals(condition.op)
         assert !condition.applies(getEnvironment("surface", "unpaved"))
         assert condition.applies(getEnvironment("surface", "grass"))
     }
 
     @Test
     public void testBeginsEndsWithCondition() throws Exception {
-        def condition = (Condition.KeyValueCondition) getParser('[foo ^= bar]').condition(Condition.Context.PRIMITIVE)
-        assert Condition.Op.BEGINS_WITH.equals(condition.op)
+        def condition = (KeyValueCondition) getParser('[foo ^= bar]').condition(Condition.Context.PRIMITIVE)
+        assert Op.BEGINS_WITH.equals(condition.op)
         assert condition.applies(getEnvironment("foo", "bar123"))
         assert !condition.applies(getEnvironment("foo", "123bar"))
         assert !condition.applies(getEnvironment("foo", "123bar123"))
-        condition = (Condition.KeyValueCondition) getParser('[foo $= bar]').condition(Condition.Context.PRIMITIVE)
-        assert Condition.Op.ENDS_WITH.equals(condition.op)
+        condition = (KeyValueCondition) getParser('[foo $= bar]').condition(Condition.Context.PRIMITIVE)
+        assert Op.ENDS_WITH.equals(condition.op)
         assert !condition.applies(getEnvironment("foo", "bar123"))
         assert condition.applies(getEnvironment("foo", "123bar"))
         assert !condition.applies(getEnvironment("foo", "123bar123"))
@@ -157,22 +164,22 @@ class MapCSSParserTest {
 
     @Test
     public void testStandardKeyCondition() throws Exception {
-        def c1 = (Condition.KeyCondition) getParser("[ highway ]").condition(Condition.Context.PRIMITIVE)
-        assert Condition.KeyMatchType.EQ.equals(c1.matchType)
+        def c1 = (KeyCondition) getParser("[ highway ]").condition(Condition.Context.PRIMITIVE)
+        assert KeyMatchType.EQ.equals(c1.matchType)
         assert c1.applies(getEnvironment("highway", "unclassified"))
         assert !c1.applies(getEnvironment("railway", "rail"))
-        def c2 = (Condition.KeyCondition) getParser("[\"/slash/\"]").condition(Condition.Context.PRIMITIVE)
-        assert Condition.KeyMatchType.EQ.equals(c2.matchType)
+        def c2 = (KeyCondition) getParser("[\"/slash/\"]").condition(Condition.Context.PRIMITIVE)
+        assert KeyMatchType.EQ.equals(c2.matchType)
         assert c2.applies(getEnvironment("/slash/", "yes"))
         assert !c2.applies(getEnvironment("\"slash\"", "no"))
     }
 
     @Test
     public void testYesNoKeyCondition() throws Exception {
-        def c1 = (Condition.KeyCondition) getParser("[oneway?]").condition(Condition.Context.PRIMITIVE)
-        def c2 = (Condition.KeyCondition) getParser("[oneway?!]").condition(Condition.Context.PRIMITIVE)
-        def c3 = (Condition.KeyCondition) getParser("[!oneway?]").condition(Condition.Context.PRIMITIVE)
-        def c4 = (Condition.KeyCondition) getParser("[!oneway?!]").condition(Condition.Context.PRIMITIVE)
+        def c1 = (KeyCondition) getParser("[oneway?]").condition(Condition.Context.PRIMITIVE)
+        def c2 = (KeyCondition) getParser("[oneway?!]").condition(Condition.Context.PRIMITIVE)
+        def c3 = (KeyCondition) getParser("[!oneway?]").condition(Condition.Context.PRIMITIVE)
+        def c4 = (KeyCondition) getParser("[!oneway?!]").condition(Condition.Context.PRIMITIVE)
         def yes = getEnvironment("oneway", "yes")
         def no = getEnvironment("oneway", "no")
         def none = getEnvironment("no-oneway", "foo")
@@ -192,8 +199,8 @@ class MapCSSParserTest {
 
     @Test
     public void testRegexKeyCondition() throws Exception {
-        def c1 = (Condition.KeyCondition) getParser("[/.*:(backward|forward)\$/]").condition(Condition.Context.PRIMITIVE)
-        assert Condition.KeyMatchType.REGEX.equals(c1.matchType)
+        def c1 = (KeyCondition) getParser("[/.*:(backward|forward)\$/]").condition(Condition.Context.PRIMITIVE)
+        assert KeyMatchType.REGEX.equals(c1.matchType)
         assert !c1.applies(getEnvironment("lanes", "3"))
         assert c1.applies(getEnvironment("lanes:forward", "3"))
         assert c1.applies(getEnvironment("lanes:backward", "3"))
@@ -213,14 +220,14 @@ class MapCSSParserTest {
 
     @Test
     public void testKeyKeyCondition() throws Exception {
-        def c1 = (Condition.KeyValueCondition) getParser("[foo = *bar]").condition(Condition.Context.PRIMITIVE)
+        def c1 = (KeyValueCondition) getParser("[foo = *bar]").condition(Condition.Context.PRIMITIVE)
         def w1 = new Way()
         w1.put("foo", "123")
         w1.put("bar", "456")
         assert !c1.applies(new Environment(w1))
         w1.put("bar", "123")
         assert c1.applies(new Environment(w1))
-        def c2 = (Condition.KeyValueCondition) getParser("[foo =~ */bar/]").condition(Condition.Context.PRIMITIVE)
+        def c2 = (KeyValueCondition) getParser("[foo =~ */bar/]").condition(Condition.Context.PRIMITIVE)
         def w2 = new Way(w1)
         w2.put("bar", "[0-9]{3}")
         assert c2.applies(new Environment(w2))

@@ -21,6 +21,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory.NullExpression;
@@ -743,7 +746,7 @@ Condition condition(Context context) :
         LOOKAHEAD( simple_key_value_condition(context) s() <RSQUARE> )
             c=simple_key_value_condition(context) s() <RSQUARE> { return c; }
         |
-            e=expression() <RSQUARE> { return Condition.createExpressionCondition(e, context); }
+            e=expression() <RSQUARE> { return ConditionFactory.createExpressionCondition(e, context); }
     )
 }
 
@@ -761,19 +764,19 @@ String tag_key() :
 Condition simple_key_condition(Context context) :
 {
     boolean not = false;
-    Condition.KeyMatchType matchType = null;;
+    KeyMatchType matchType = null;;
     String key;
 }
 {
     ( <EXCLAMATION> { not = true; } )?
     (
-        { matchType = Condition.KeyMatchType.REGEX; } key = regex()
+        { matchType = KeyMatchType.REGEX; } key = regex()
     |
         key = tag_key()
     )
-    ( LOOKAHEAD(2) <QUESTION> <EXCLAMATION> { matchType = Condition.KeyMatchType.FALSE; } )?
-    (              <QUESTION>               { matchType = Condition.KeyMatchType.TRUE;  } )?
-    { return Condition.createKeyCondition(key, not, matchType, context); }
+    ( LOOKAHEAD(2) <QUESTION> <EXCLAMATION> { matchType = KeyMatchType.FALSE; } )?
+    (              <QUESTION>               { matchType = KeyMatchType.TRUE;  } )?
+    { return ConditionFactory.createKeyCondition(key, not, matchType, context); }
 }
 
 Condition simple_key_value_condition(Context context) :
@@ -782,39 +785,39 @@ Condition simple_key_value_condition(Context context) :
     String val;
     float f;
     int i;
-    Condition.KeyMatchType matchType = null;;
-    Condition.Op op;
+    KeyMatchType matchType = null;;
+    Op op;
     boolean considerValAsKey = false;
 }
 {
     (
-        key = regex() s() { matchType = Condition.KeyMatchType.REGEX; }
+        key = regex() s() { matchType = KeyMatchType.REGEX; }
     |
         key=tag_key() s()
     )
     (
         LOOKAHEAD(3)
             (
-                    <EQUAL> <TILDE> { op=Condition.Op.REGEX; }
+                    <EQUAL> <TILDE> { op=Op.REGEX; }
                 |
-                    <EXCLAMATION> <TILDE> { op=Condition.Op.NREGEX; }
+                    <EXCLAMATION> <TILDE> { op=Op.NREGEX; }
             )
             s()
             ( <STAR> { considerValAsKey=true; } )?
             val=regex()
         |
             (
-                    <EXCLAMATION> <EQUAL> { op=Condition.Op.NEQ; }
+                    <EXCLAMATION> <EQUAL> { op=Op.NEQ; }
                 |
-                    <EQUAL> { op=Condition.Op.EQ; }
+                    <EQUAL> { op=Op.EQ; }
                 |
-                    <TILDE> <EQUAL> { op=Condition.Op.ONE_OF; }
+                    <TILDE> <EQUAL> { op=Op.ONE_OF; }
                 |
-                    <CARET> <EQUAL> { op=Condition.Op.BEGINS_WITH; }
+                    <CARET> <EQUAL> { op=Op.BEGINS_WITH; }
                 |
-                    <DOLLAR> <EQUAL> { op=Condition.Op.ENDS_WITH; }
+                    <DOLLAR> <EQUAL> { op=Op.ENDS_WITH; }
                 |
-                    <STAR> <EQUAL> { op=Condition.Op.CONTAINS; }
+                    <STAR> <EQUAL> { op=Op.CONTAINS; }
             )
             s()
             ( <STAR> { considerValAsKey=true; } )?
@@ -828,20 +831,20 @@ Condition simple_key_value_condition(Context context) :
             )
         |
             (
-                    <GREATER_EQUAL> { op=Condition.Op.GREATER_OR_EQUAL; }
+                    <GREATER_EQUAL> { op=Op.GREATER_OR_EQUAL; }
                 |
-                    <GREATER> { op=Condition.Op.GREATER; }
+                    <GREATER> { op=Op.GREATER; }
                 |
-                    <LESS_EQUAL> { op=Condition.Op.LESS_OR_EQUAL; }
+                    <LESS_EQUAL> { op=Op.LESS_OR_EQUAL; }
                 |
-                    <LESS> { op=Condition.Op.LESS; }
+                    <LESS> { op=Op.LESS; }
             )
             s()
             f=float_() { val=Float.toString(f); }
     )
-    { return Condition.KeyMatchType.REGEX == matchType
-            ? Condition.createRegexpKeyRegexpValueCondition(key, val, op)
-            : Condition.createKeyValueCondition(key, val, op, context, considerValAsKey); }
+    { return KeyMatchType.REGEX == matchType
+            ? ConditionFactory.createRegexpKeyRegexpValueCondition(key, val, op)
+            : ConditionFactory.createKeyValueCondition(key, val, op, context, considerValAsKey); }
 }
 
 Condition class_or_pseudoclass(Context context) :
@@ -859,8 +862,8 @@ Condition class_or_pseudoclass(Context context) :
     )
     s=ident()
     { return pseudo
-        ? Condition.createPseudoClassCondition(s, not, context)
-        : Condition.createClassCondition(s, not, context); }
+        ? ConditionFactory.createPseudoClassCondition(s, not, context)
+        : ConditionFactory.createClassCondition(s, not, context); }
 }
 
 Subpart subpart() :

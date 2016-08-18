@@ -42,8 +42,8 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Factory to generate Expressions.
- *
+ * Factory to generate {@link Expression}s.
+ * <p>
  * See {@link #createFunctionExpression}.
  */
 public final class ExpressionFactory {

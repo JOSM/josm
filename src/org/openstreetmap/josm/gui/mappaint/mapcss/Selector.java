@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Range;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.OpenEndPseudoClassCondition;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
@@ -376,7 +377,7 @@ public interface Selector {
                 }
             } else if (ChildOrParentSelectorType.CHILD.equals(type)
                     && link.conds != null && !link.conds.isEmpty()
-                    && link.conds.get(0) instanceof Condition.OpenEndPseudoClassCondition) {
+                    && link.conds.get(0) instanceof OpenEndPseudoClassCondition) {
                 if (e.osm instanceof Node) {
                     e.osm.visitReferrers(new MultipolygonOpenEndFinder(e));
                     return e.parent != null;

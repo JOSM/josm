@@ -5,7 +5,7 @@ import java.util.EnumSet;
 
 import org.junit.Test;
 import org.openstreetmap.josm.PerformanceTestUtils;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Op;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op;
 
 /**
  * Performance test of MapCSS Condition objects.
