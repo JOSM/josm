@@ -218,21 +218,6 @@ public class Preferences {
         }
     }
 
-    /**
-     * Old color interface
-     * <p>
-     * To be removed: end of 2016
-     * @deprecated Use a {@link ColorProperty} instead.
-     */
-    @Deprecated
-    public interface ColorKey {
-        String getColorName();
-
-        String getSpecialName();
-
-        Color getDefaultValue();
-    }
-
     private final ListenerList<PreferenceChangedListener> listeners = ListenerList.create();
 
     private final HashMap<String, ListenerList<PreferenceChangedListener>> keyListeners = new HashMap<>();
@@ -823,19 +808,6 @@ public class Preferences {
             return tr("Layer: {0}", tr(I18n.escape(m.group(1))));
         }
         return tr(I18n.escape(colornames.containsKey(o) ? colornames.get(o) : o));
-    }
-
-    /**
-     * Returns the color for the given key.
-     * <p>
-     * To be removed: end of 2016
-     * @param key The color key
-     * @return the color
-     * @deprecated Use a {@link ColorProperty} instead.
-     */
-    @Deprecated
-    public Color getColor(ColorKey key) {
-        return getColor(key.getColorName(), key.getSpecialName(), key.getDefaultValue());
     }
 
     /**
