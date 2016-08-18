@@ -363,12 +363,9 @@ Build-Date: ${build.tstamp}
         <delete dir="${test.dir}/report"/>
         <delete file="${test.dir}/jacoco.exec" />
         <delete file="${test.dir}/jacocoIT.exec" />
-        <delete file="${test.dir}/config/unit-josm.home/preferences.xml" />
-        <delete file="${test.dir}/config/functional-josm.home/preferences.xml" />
-        <delete file="${test.dir}/config/performance-josm.home/preferences.xml" />
-        <delete dir="${test.dir}/config/unit-josm.home/cache" failonerror="false"/>
-        <delete dir="${test.dir}/config/functional-josm.home/cache" failonerror="false"/>
-        <delete dir="${test.dir}/config/performance-josm.home/cache" failonerror="false"/>
+        <delete file="${test.dir}/config/unit-josm.home" failonerror="false"/>
+        <delete file="${test.dir}/config/functional-josm.home" failonerror="false"/>
+        <delete file="${test.dir}/config/performance-josm.home" failonerror="false"/>
     </target>
     <macrodef name="call-groovyc">
         <attribute name="testfamily"/>
@@ -737,7 +734,7 @@ Build-Date: ${build.tstamp}
     <!--
       ** Compile build script for generating projection list.
     -->
-    <target name="epsg-compile">
+    <target name="epsg-compile" depends="init-properties">
         <property name="proj-classpath" location="${build.dir}"/>
         <mkdir dir="${proj-build.dir}"/>
         <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true"

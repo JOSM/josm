@@ -100,6 +100,10 @@ public class JOSMFixture {
 
         Main.logLevel = 3;
         Main.pref.init(false);
+        String url = Main.pref.get("osm-server.url");
+        if (url == null || url.isEmpty() || isProductionApiUrl(url)) {
+            Main.pref.put("osm-server.url", "http://api06.dev.openstreetmap.org/api");
+        }
         I18n.set(Main.pref.get("language", "en"));
 
         try {
@@ -112,10 +116,8 @@ public class JOSMFixture {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
 
         // make sure we don't upload to or test against production
-        //
-        String url = OsmApi.getOsmApi().getBaseUrl().toLowerCase(Locale.ENGLISH).trim();
-        if (url.startsWith("http://www.openstreetmap.org") || url.startsWith("http://api.openstreetmap.org")
-            || url.startsWith("https://www.openstreetmap.org") || url.startsWith("https://api.openstreetmap.org")) {
+        url = OsmApi.getOsmApi().getBaseUrl().toLowerCase(Locale.ENGLISH).trim();
+        if (isProductionApiUrl(url)) {
             fail(MessageFormat.format("configured server url ''{0}'' seems to be a productive url, aborting.", url));
         }
 
@@ -127,6 +129,11 @@ public class JOSMFixture {
                 }
             });
         }
+    }
+
+    private static boolean isProductionApiUrl(String url) {
+        return url.startsWith("http://www.openstreetmap.org") || url.startsWith("http://api.openstreetmap.org")
+            || url.startsWith("https://www.openstreetmap.org") || url.startsWith("https://api.openstreetmap.org");
     }
 
     private void setupGUI() {
