@@ -200,7 +200,7 @@ public class Symbol {
          * @return The shape as optional
          */
         public static Optional<SymbolShape> forName(String val) {
-            return Stream.of(values()).filter(val::equals).findAny();
+            return Stream.of(values()).filter(shape -> val.equals(shape.name)).findAny();
         }
     }
 }
