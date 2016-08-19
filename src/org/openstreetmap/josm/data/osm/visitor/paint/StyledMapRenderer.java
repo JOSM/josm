@@ -702,8 +702,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Font defaultFont = g.getFont();
         g.setFont(text.font);
 
-        int x = (int) (p.getInViewX() + text.xOffset);
-        int y = (int) (p.getInViewY() + text.yOffset);
+        int x = (int) (Math.round(p.getInViewX()) + text.xOffset);
+        int y = (int) (Math.round(p.getInViewY()) + text.yOffset);
         /**
          *
          *       left-above __center-above___ right-above
@@ -889,8 +889,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             temporaryGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         }
 
-        double x = p.getInViewX();
-        double y = p.getInViewY();
+        double x = Math.round(p.getInViewX());
+        double y = Math.round(p.getInViewY());
         temporaryGraphics.translate(x, y);
         temporaryGraphics.rotate(theta);
         int drawX = -w/2 + img.offsetX;
