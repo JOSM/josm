@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016081800, Last Updated Thu Aug 18 07:07:01 2016 UTC
+        // Taken from Version 2016081900, Last Updated Fri Aug 19 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -690,6 +690,7 @@ public final class DomainValidator extends AbstractValidator {
         "gea", // gea GEA Group Aktiengesellschaft
         "gent", // gent COMBELL GROUP NV/SA
         "genting", // genting Resorts World Inc. Pte. Ltd.
+        "george", // george Wal-Mart Stores, Inc.
         "ggee", // ggee GMO Internet, Inc.
         "gift", // gift Uniregistry, Corp.
         "gifts", // gifts Goose Sky, LLC
@@ -964,6 +965,7 @@ public final class DomainValidator extends AbstractValidator {
         "museum", // museum Museum Domain Management Association
         "mutual", // mutual Northwestern Mutual MU TLD Registry, LLC
         "mutuelle", // mutuelle Fédération Nationale de la Mutualité Française
+        "nab", // nab National Australia Bank Limited
         "nadex", // nadex Nadex Domains, Inc
         "nagoya", // nagoya GMO Registry, Inc.
         "name", // name VeriSign Information Services, Inc.
@@ -1135,6 +1137,7 @@ public final class DomainValidator extends AbstractValidator {
         "sakura", // sakura SAKURA Internet Inc.
         "sale", // sale United TLD Holdco, Ltd
         "salon", // salon Outer Orchard, LLC
+        "samsclub", // samsclub Wal-Mart Stores, Inc.
         "samsung", // samsung SAMSUNG SDS CO., LTD
         "sandvik", // sandvik Sandvik AB
         "sandvikcoromant", // sandvikcoromant Sandvik AB
@@ -1302,6 +1305,7 @@ public final class DomainValidator extends AbstractValidator {
         "tunes", // tunes Amazon Registry Services, Inc.
         "tushu", // tushu Amazon Registry Services, Inc.
         "tvs", // tvs T V SUNDRAM IYENGAR  &amp; SONS PRIVATE LIMITED
+        "ubank", // ubank National Australia Bank Limited
         "ubs", // ubs UBS AG
         "uconnect", // uconnect FCA US LLC.
         "unicom", // unicom China United Network Communications Corporation Limited
@@ -1339,6 +1343,7 @@ public final class DomainValidator extends AbstractValidator {
         "voyage", // voyage Ruby House, LLC
         "vuelos", // vuelos Travel Reservations SRL
         "wales", // wales Nominet UK
+        "walmart", // walmart Wal-Mart Stores, Inc.
         "walter", // walter Sandvik AB
         "wang", // wang Zodiac Registry Limited
         "wanggou", // wanggou Amazon Registry Services, Inc.
