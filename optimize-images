@@ -1,6 +1,6 @@
 #!/bin/sh
 
 for x in $(find images/ -name "*.png"); do
-	echo "Processing ${x}"
-	optipng -o7 -quiet "${x}"
+    echo "Processing ${x}"
+    optipng -o7 -quiet "${x}"
 done
