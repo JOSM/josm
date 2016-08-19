@@ -52,6 +52,7 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.ArrowPaintHelper;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPath2D;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
@@ -245,8 +246,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     @Override
     protected void readPreferences() {
-        rubberLineColor = Main.pref.getColor(marktr("helper line"), null);
-        if (rubberLineColor == null) rubberLineColor = PaintColors.SELECTED.get();
+        rubberLineColor = new ColorProperty(marktr("helper line"), (Color) null).get();
+        if (rubberLineColor == null)
+            rubberLineColor = PaintColors.SELECTED.get();
 
         rubberLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.stroke.helper-line", "3"));
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
@@ -1455,9 +1457,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             useRepeatedShortcut = Main.pref.getBoolean("draw.anglesnap.toggleOnRepeatedA", true);
 
             normalStroke = rubberLineStroke;
-            snapHelperColor = Main.pref.getColor(marktr("draw angle snap"), Color.ORANGE);
+            snapHelperColor = new ColorProperty(marktr("draw angle snap"), Color.ORANGE).get();
 
-            highlightColor = Main.pref.getColor(marktr("draw angle snap highlight"), ORANGE_TRANSPARENT);
+            highlightColor = new ColorProperty(marktr("draw angle snap highlight"), ORANGE_TRANSPARENT).get();
             highlightStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.anglesnap.stroke.highlight", "10"));
             helperStroke = GuiHelper.getCustomizedStroke(Main.pref.get("draw.anglesnap.stroke.helper", "1 4"));
         }

@@ -28,7 +28,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.ListListSetting;
 import org.openstreetmap.josm.data.preferences.ListSetting;
 import org.openstreetmap.josm.data.preferences.MapListSetting;
@@ -335,12 +335,12 @@ public class PreferencesTable extends JTable {
 
     static final class SettingCellRenderer extends DefaultTableCellRenderer {
         private final Color backgroundColor = UIManager.getColor("Table.background");
-        private final Color changedColor = Main.pref.getColor(
+        private final Color changedColor = new ColorProperty(
                          marktr("Advanced Background: Changed"),
-                         new Color(200, 255, 200));
-        private final Color nonDefaultColor = Main.pref.getColor(
+                         new Color(200, 255, 200)).get();
+        private final Color nonDefaultColor = new ColorProperty(
                             marktr("Advanced Background: NonDefault"),
-                            new Color(255, 255, 200));
+                            new Color(255, 255, 200)).get();
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

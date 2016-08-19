@@ -7,16 +7,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 
 /** The error severity */
 public enum Severity {
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     /** Error messages */
-    ERROR(tr("Errors"), /* ICON(data/) */"error",       Main.pref.getColor(marktr("validation error"), Color.RED)),
+    ERROR(tr("Errors"), /* ICON(data/) */"error",       new ColorProperty(marktr("validation error"), Color.RED).get()),
     /** Warning messages */
-    WARNING(tr("Warnings"), /* ICON(data/) */"warning", Main.pref.getColor(marktr("validation warning"), Color.YELLOW)),
+    WARNING(tr("Warnings"), /* ICON(data/) */"warning", new ColorProperty(marktr("validation warning"), Color.YELLOW).get()),
     /** Other messages */
-    OTHER(tr("Other"), /* ICON(data/) */"other",        Main.pref.getColor(marktr("validation other"), Color.CYAN));
+    OTHER(tr("Other"), /* ICON(data/) */"other",        new ColorProperty(marktr("validation other"), Color.CYAN).get());
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /** Description of the severity code */

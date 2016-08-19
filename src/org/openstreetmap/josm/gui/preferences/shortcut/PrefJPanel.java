@@ -45,6 +45,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -157,6 +158,13 @@ public class PrefJPanel extends JPanel {
 
     private class ShortcutTableCellRenderer extends DefaultTableCellRenderer {
 
+        private final transient ColorProperty SHORTCUT_BACKGROUND_USER_COLOR = new ColorProperty(
+                marktr("Shortcut Background: User"),
+                new Color(200, 255, 200));
+        private final transient ColorProperty SHORTCUT_BACKGROUND_MODIFIED_COLOR = new ColorProperty(
+                marktr("Shortcut Background: Modified"),
+                new Color(255, 255, 200));
+
         private final boolean name;
 
         ShortcutTableCellRenderer(boolean name) {
@@ -174,13 +182,9 @@ public class PrefJPanel extends JPanel {
                 table, name ? sc.getLongText() : sc.getKeyText(), isSelected, hasFocus, row, column);
             GuiHelper.setBackgroundReadable(label, UIManager.getColor("Table.background"));
             if (sc.isAssignedUser()) {
-                GuiHelper.setBackgroundReadable(label, Main.pref.getColor(
-                        marktr("Shortcut Background: User"),
-                        new Color(200, 255, 200)));
+                GuiHelper.setBackgroundReadable(label, SHORTCUT_BACKGROUND_USER_COLOR.get());
             } else if (!sc.isAssignedDefault()) {
-                GuiHelper.setBackgroundReadable(label, Main.pref.getColor(
-                        marktr("Shortcut Background: Modified"),
-                        new Color(255, 255, 200)));
+                GuiHelper.setBackgroundReadable(label, SHORTCUT_BACKGROUND_MODIFIED_COLOR.get());
             }
             return label;
         }

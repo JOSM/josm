@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
@@ -154,8 +155,9 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
 
         helpLineStroke = GuiHelper.getCustomizedStroke(getStringPref("stroke.hepler-line", "1"));
         refLineStroke = GuiHelper.getCustomizedStroke(getStringPref("stroke.ref-line", "1 2 2"));
-        mainColor = Main.pref.getColor(marktr("make parallel helper line"), null);
-        if (mainColor == null) mainColor = PaintColors.SELECTED.get();
+        mainColor = new ColorProperty(marktr("make parallel helper line"), (Color) null).get();
+        if (mainColor == null)
+            mainColor = PaintColors.SELECTED.get();
 
         //// Needed to update the mouse cursor if modifiers are changed when the mouse is motionless
         Main.map.keyDetector.addModifierListener(this);

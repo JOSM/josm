@@ -5,6 +5,7 @@ import java.awt.Color
 
 import org.openstreetmap.josm.JOSMFixture
 import org.openstreetmap.josm.Main
+import org.openstreetmap.josm.data.preferences.ColorProperty
 
 class PreferencesTest extends GroovyTestCase {
     @Override
@@ -17,13 +18,13 @@ class PreferencesTest extends GroovyTestCase {
     }
 
     void testColorAlpha() {
-        assert Main.pref.getColor("foo", new Color(0x12345678, true)).alpha == 0x12
+        assert new ColorProperty("foo", new Color(0x12345678, true)).get().alpha == 0x12
         assert Main.pref.putColor("bar", new Color(0x12345678, true))
-        assert Main.pref.getColor("bar", null).alpha == 0x12
+        assert new ColorProperty("bar", null).get().alpha == 0x12
     }
 
     void testColorNameAlpha() {
-        assert Main.pref.getColor("foo", "bar", new Color(0x12345678, true)).alpha == 0x12
+        assert new ColorProperty("foo", "bar", new Color(0x12345678, true)).get().alpha == 0x12
         assert Main.pref.getDefaultColor("foo") == new Color(0x34, 0x56, 0x78, 0x12)
         assert Main.pref.getDefaultColor("foo").alpha == 0x12
     }
