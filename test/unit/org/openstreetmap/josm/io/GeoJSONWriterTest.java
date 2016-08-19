@@ -4,6 +4,8 @@ package org.openstreetmap.josm.io;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileInputStream;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
@@ -12,9 +14,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
-
-import java.io.FileInputStream;
 
 /**
  * Unit tests of {@link GeoJSONWriter} class.
@@ -40,16 +39,10 @@ public class GeoJSONWriterTest {
         final DataSet ds = new DataSet();
         ds.addPrimitive(node);
         final OsmDataLayer layer = new OsmDataLayer(ds, "foo", null);
-        final GeoJSONWriter writer = new GeoJSONWriter(layer, ProjectionPreference.wgs84.getProjection());
+        final GeoJSONWriter writer = new GeoJSONWriter(layer);
         assertEquals(("" +
                 "{\n" +
                 "    'type':'FeatureCollection',\n" +
-                "    'crs':{\n" +
-                "        'type':'name',\n" +
-                "        'properties':{\n" +
-                "            'name':'EPSG:4326'\n" +
-                "        }\n" +
-                "    },\n" +
                 "    'generator':'JOSM',\n" +
                 "    'features':[\n" +
                 "        {\n" +
@@ -72,13 +65,14 @@ public class GeoJSONWriterTest {
 
     /**
      * Unit test for multipolygon
+     * @throws Exception if an error occurs
      */
     @Test
     public void testMultipolygon() throws Exception {
         try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "multipolygon.osm")) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             final OsmDataLayer layer = new OsmDataLayer(ds, "foo", null);
-            final GeoJSONWriter writer = new GeoJSONWriter(layer, ProjectionPreference.wgs84.getProjection());
+            final GeoJSONWriter writer = new GeoJSONWriter(layer);
             assertTrue(writer.write().contains("MultiPolygon"));
         }
     }

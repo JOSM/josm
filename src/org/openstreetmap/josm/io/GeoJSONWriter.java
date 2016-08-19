@@ -31,10 +31,13 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
  * Writes OSM data as a GeoJSON string, using JSR 353: Java API for JSON Processing (JSON-P).
+ * <p>
+ * See <a href="https://tools.ietf.org/html/rfc7946">RFC7946: The GeoJSON Format</a>
  */
 public class GeoJSONWriter {
 
@@ -45,11 +48,11 @@ public class GeoJSONWriter {
     /**
      * Constructs a new {@code GeoJSONWriter}.
      * @param layer The OSM data layer to save
-     * @param projection The projection to use for coordinates
+     * @since 10852
      */
-    public GeoJSONWriter(OsmDataLayer layer, Projection projection) {
+    public GeoJSONWriter(OsmDataLayer layer) {
         this.layer = layer;
-        this.projection = projection;
+        this.projection = ProjectionPreference.wgs84.getProjection();
     }
 
     /**
@@ -73,8 +76,6 @@ public class GeoJSONWriter {
         try (JsonWriter writer = Json.createWriterFactory(config).createWriter(stringWriter)) {
             JsonObjectBuilder object = Json.createObjectBuilder()
                     .add("type", "FeatureCollection")
-                    .add("crs", Json.createObjectBuilder().add("type", "name").add(
-                            "properties", Json.createObjectBuilder().add("name", projection.toCode())))
                     .add("generator", "JOSM");
             appendLayerBounds(layer.data, object);
             appendLayerFeatures(layer.data, object);
