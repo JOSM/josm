@@ -76,6 +76,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -134,6 +135,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             DEFAULT_RECENT_RELATIONS_NUMBER);
     public static final StringProperty PROPERTY_SAVE_EXTENSION = new StringProperty("save.extension.osm", "osm");
 
+    private static final ColorProperty PROPERTY_BACKGROUND_COLOR = new ColorProperty(marktr("background"), Color.BLACK);
+    private static final ColorProperty PROPERTY_OUTSIDE_COLOR = new ColorProperty(marktr("outside downloaded area"), Color.YELLOW);
 
     /** List of recent relations */
     private final Map<Relation, Void> recentRelations = new LinkedHashMap<Relation, Void>(PROPERTY_RECENT_RELATIONS_NUMBER.get()+1, 1.1f, true) {
@@ -319,7 +322,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * @return background color for downloaded areas. Black by default
      */
     public static Color getBackgroundColor() {
-        return Main.pref != null ? Main.pref.getColor(marktr("background"), Color.BLACK) : Color.BLACK;
+        return PROPERTY_BACKGROUND_COLOR.get();
     }
 
     /**
@@ -327,7 +330,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * @return background color for non-downloaded areas. Yellow by default
      */
     public static Color getOutsideColor() {
-        return Main.pref != null ? Main.pref.getColor(marktr("outside downloaded area"), Color.YELLOW) : Color.YELLOW;
+        return PROPERTY_OUTSIDE_COLOR.get();
     }
 
     /**

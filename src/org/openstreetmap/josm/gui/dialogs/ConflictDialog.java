@@ -52,6 +52,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -74,6 +75,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 86
  */
 public final class ConflictDialog extends ToggleDialog implements ActiveLayerChangeListener, IConflictListener, SelectionChangedListener {
+
+    private static final ColorProperty CONFLICT_COLOR = new ColorProperty(marktr("conflict"), Color.GRAY);
+    private static final ColorProperty BACKGROUND_COLOR = new ColorProperty(marktr("background"), Color.BLACK);
 
     /** the collection of conflicts displayed by this conflict dialog */
     private transient ConflictCollection conflicts;
@@ -109,7 +113,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      * @since 1221
      */
     public static Color getColor() {
-        return Main.pref.getColor(marktr("conflict"), Color.gray);
+        return CONFLICT_COLOR.get();
     }
 
     /**
@@ -258,7 +262,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      */
     public void paintConflicts(final Graphics g, final NavigatableComponent nc) {
         Color preferencesColor = getColor();
-        if (preferencesColor.equals(Main.pref.getColor(marktr("background"), Color.black)))
+        if (preferencesColor.equals(BACKGROUND_COLOR.get()))
             return;
         g.setColor(preferencesColor);
         Visitor conflictPainter = new ConflictPainter(nc, g);

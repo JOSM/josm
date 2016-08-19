@@ -55,6 +55,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.Shape;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
@@ -238,6 +239,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
          */
         private static class ImageryURLTableCellRenderer extends DefaultTableCellRenderer {
 
+            private static final ColorProperty IMAGERY_BACKGROUND_COLOR = new ColorProperty(
+                    marktr("Imagery Background: Default"),
+                    new Color(200, 255, 200));
+
             private final transient List<ImageryInfo> layers;
 
             ImageryURLTableCellRenderer(List<ImageryInfo> layers) {
@@ -254,9 +259,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     String t = value.toString();
                     for (ImageryInfo l : layers) {
                         if (l.getExtendedUrl().equals(t)) {
-                            GuiHelper.setBackgroundReadable(label, Main.pref.getColor(
-                                    marktr("Imagery Background: Default"),
-                                    new Color(200, 255, 200)));
+                            GuiHelper.setBackgroundReadable(label, IMAGERY_BACKGROUND_COLOR.get());
                             break;
                         }
                     }

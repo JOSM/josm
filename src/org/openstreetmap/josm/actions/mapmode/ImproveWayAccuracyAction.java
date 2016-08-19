@@ -36,6 +36,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPath2D;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
@@ -151,8 +152,9 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
     @Override
     protected void readPreferences() {
-        guideColor = Main.pref.getColor(marktr("improve way accuracy helper line"), null);
-        if (guideColor == null) guideColor = PaintColors.HIGHLIGHT.get();
+        guideColor = new ColorProperty(marktr("improve way accuracy helper line"), (Color) null).get();
+        if (guideColor == null)
+            guideColor = PaintColors.HIGHLIGHT.get();
 
         selectTargetWayStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.select-target", "2"));
         moveNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.move-node", "1 6"));
