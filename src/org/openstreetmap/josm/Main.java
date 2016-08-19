@@ -514,12 +514,6 @@ public abstract class Main {
     public static volatile PlatformHook platform;
 
     /**
-     * Whether or not the java vm is openjdk
-     * We use this to work around openjdk bugs
-     */
-    public static boolean isOpenjdk;
-
-    /**
      * Initializes {@code Main.pref} in normal application context.
      * @since 6471
      */
@@ -582,7 +576,6 @@ public abstract class Main {
      * @since 10340
      */
     public void initialize() {
-        isOpenjdk = System.getProperty("java.vm.name").toUpperCase(Locale.ENGLISH).indexOf("OPENJDK") != -1;
         fileWatcher.start();
 
         new InitializationTask(tr("Executing platform startup hook")) {
