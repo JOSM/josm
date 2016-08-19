@@ -375,11 +375,11 @@
   <!-- Link chunks -->
   <chunk id="link_contact_address">
     <preset_link preset_name="Contact (Common Schema)" />
-    <preset_link preset_name="Addresses" />
+    <preset_link preset_name="Address" />
   </chunk>
   <chunk id="link_contact_address_payment">
     <preset_link preset_name="Contact (Common Schema)" />
-    <preset_link preset_name="Addresses" />
+    <preset_link preset_name="Address" />
     <preset_link preset_name="Payment Methods" />
   </chunk>
   <chunk id="public_transport_route_optionals">
@@ -6080,7 +6080,7 @@
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
                 <text key="height" text="Height (meters)" />
             </optional>
-            <preset_link preset_name="Addresses" />
+            <preset_link preset_name="Address" />
         </item> <!-- Building -->
         <item name="Residential Building" icon="presets/landmark/building.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:building"
@@ -6103,7 +6103,7 @@
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
                 <text key="height" text="Height (meters)" />
             </optional>
-            <preset_link preset_name="Addresses" />
+            <preset_link preset_name="Address" />
         </item> <!-- Residential Building -->
         <item name="Building part" icon="presets/landmark/building.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:building:part"
@@ -9677,7 +9677,7 @@
                 <text key="short_name" text="Common name abbreviation" match="key" />
             </optional>
         </item> <!-- Name -->
-        <item name="Addresses" icon="presets/misc/housenumber.svg" type="node,way,closedway,relation,multipolygon" preset_name_label="true">
+        <item name="Address" icon="presets/misc/housenumber.svg" type="node,way,closedway,relation,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:addr"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:addr"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:addr"
@@ -9712,7 +9712,7 @@
                 <!--  US States as defined in ISO 3166-2 -->
                 <combo key="addr:state" text="State" text_context="addr:" values="AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,DC,AS,GU,MP,PR,UM,VI" use_last_as_default="force" match="key" />
             </optional>
-        </item> <!-- Addresses -->
+        </item> <!-- Address -->
         <item name="Address Interpolation" icon="presets/misc/interpolation.svg" type="way" preset_name_label="true">
            <link href="http://wiki.openstreetmap.org/wiki/Key:addr"
                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:addr"
