@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -139,6 +139,10 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_TILE_OFFSETS                      = 0x0144;
     public static final int TAG_TILE_BYTE_COUNTS                  = 0x0145;
 
+    /**
+     * Tag is a pointer to one or more sub-IFDs.
+     + Seems to be used exclusively by raw formats, referencing one or two IFDs.
+     */
     public static final int TAG_SUB_IFD_OFFSET                    = 0x014a;
 
     public static final int TAG_TRANSFER_RANGE                    = 0x0156;
@@ -149,6 +153,8 @@ public abstract class ExifDirectoryBase extends Directory
     public static final int TAG_YCBCR_SUBSAMPLING                 = 0x0212;
     public static final int TAG_YCBCR_POSITIONING                 = 0x0213;
     public static final int TAG_REFERENCE_BLACK_WHITE             = 0x0214;
+    public static final int TAG_STRIP_ROW_COUNTS                  = 0x022f;
+    public static final int TAG_APPLICATION_NOTES                 = 0x02bc;
 
     public static final int TAG_RELATED_IMAGE_FILE_FORMAT         = 0x1000;
     public static final int TAG_RELATED_IMAGE_WIDTH               = 0x1001;
@@ -259,14 +265,13 @@ public abstract class ExifDirectoryBase extends Directory
      */
     public static final int TAG_METERING_MODE                     = 0x9207;
 
-    public static final int TAG_LIGHT_SOURCE                      = 0x9208; // TODO duplicate tag
     /**
      * White balance (aka light source). '0' means unknown, '1' daylight,
      * '2' fluorescent, '3' tungsten, '10' flash, '17' standard light A,
      * '18' standard light B, '19' standard light C, '20' D55, '21' D65,
      * '22' D75, '255' other.
      */
-    public static final int TAG_WHITE_BALANCE                     = 0x9208; // TODO duplicate tag
+    public static final int TAG_WHITE_BALANCE                     = 0x9208;
     /**
      * 0x0  = 0000000 = No Flash
      * 0x1  = 0000001 = Fired
@@ -599,8 +604,8 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_SAMPLES_PER_PIXEL, "Samples Per Pixel");
         map.put(TAG_ROWS_PER_STRIP, "Rows Per Strip");
         map.put(TAG_STRIP_BYTE_COUNTS, "Strip Byte Counts");
-        map.put(TAG_MIN_SAMPLE_VALUE, "Minimum sample value");
-        map.put(TAG_MAX_SAMPLE_VALUE, "Maximum sample value");
+        map.put(TAG_MIN_SAMPLE_VALUE, "Minimum Sample Value");
+        map.put(TAG_MAX_SAMPLE_VALUE, "Maximum Sample Value");
         map.put(TAG_X_RESOLUTION, "X Resolution");
         map.put(TAG_Y_RESOLUTION, "Y Resolution");
         map.put(TAG_PLANAR_CONFIGURATION, "Planar Configuration");
@@ -626,6 +631,8 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_YCBCR_SUBSAMPLING, "YCbCr Sub-Sampling");
         map.put(TAG_YCBCR_POSITIONING, "YCbCr Positioning");
         map.put(TAG_REFERENCE_BLACK_WHITE, "Reference Black/White");
+        map.put(TAG_STRIP_ROW_COUNTS, "Strip Row Counts");
+        map.put(TAG_APPLICATION_NOTES, "Application Notes");
         map.put(TAG_RELATED_IMAGE_FILE_FORMAT, "Related Image File Format");
         map.put(TAG_RELATED_IMAGE_WIDTH, "Related Image Width");
         map.put(TAG_RELATED_IMAGE_HEIGHT, "Related Image Height");
@@ -662,7 +669,6 @@ public abstract class ExifDirectoryBase extends Directory
         map.put(TAG_MAX_APERTURE, "Max Aperture Value");
         map.put(TAG_SUBJECT_DISTANCE, "Subject Distance");
         map.put(TAG_METERING_MODE, "Metering Mode");
-        map.put(TAG_LIGHT_SOURCE, "Light Source");
         map.put(TAG_WHITE_BALANCE, "White Balance");
         map.put(TAG_FLASH, "Flash");
         map.put(TAG_FOCAL_LENGTH, "Focal Length");

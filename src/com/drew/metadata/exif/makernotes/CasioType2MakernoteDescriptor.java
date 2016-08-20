@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -239,9 +239,7 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor<CasioType2Maker
     public String getFocalLengthDescription()
     {
         Double value = _directory.getDoubleObject(TAG_FOCAL_LENGTH);
-        if (value == null)
-            return null;
-        return Double.toString(value / 10d) + " mm";
+        return value == null ? null : getFocalLengthDescription(value / 10d);
     }
 
     @Nullable

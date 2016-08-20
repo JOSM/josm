@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@
 
 package com.drew.metadata.exif;
 
-import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
-import com.drew.metadata.MetadataException;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.MetadataException;
 
 /**
  * One of several Exif directories.  Otherwise known as IFD1, this directory holds information about an embedded thumbnail image.
@@ -45,38 +45,6 @@ public class ExifThumbnailDirectory extends ExifDirectoryBase
      */
     public static final int TAG_THUMBNAIL_LENGTH = 0x0202;
 
-    /**
-     * Shows compression method for Thumbnail.
-     * 1 = Uncompressed
-     * 2 = CCITT 1D
-     * 3 = T4/Group 3 Fax
-     * 4 = T6/Group 4 Fax
-     * 5 = LZW
-     * 6 = JPEG (old-style)
-     * 7 = JPEG
-     * 8 = Adobe Deflate
-     * 9 = JBIG B&amp;W
-     * 10 = JBIG Color
-     * 32766 = Next
-     * 32771 = CCIRLEW
-     * 32773 = PackBits
-     * 32809 = Thunderscan
-     * 32895 = IT8CTPAD
-     * 32896 = IT8LW
-     * 32897 = IT8MP
-     * 32898 = IT8BL
-     * 32908 = PixarFilm
-     * 32909 = PixarLog
-     * 32946 = Deflate
-     * 32947 = DCS
-     * 34661 = JBIG
-     * 34676 = SGILog
-     * 34677 = SGILog24
-     * 34712 = JPEG 2000
-     * 34713 = Nikon NEF Compressed
-     */
-    public static final int TAG_THUMBNAIL_COMPRESSION = 0x0103;
-
     @NotNull
     protected static final HashMap<Integer, String> _tagNameMap = new HashMap<Integer, String>();
 
@@ -84,7 +52,6 @@ public class ExifThumbnailDirectory extends ExifDirectoryBase
     {
         addExifTagNames(_tagNameMap);
 
-        _tagNameMap.put(TAG_THUMBNAIL_COMPRESSION, "Thumbnail Compression");
         _tagNameMap.put(TAG_THUMBNAIL_OFFSET, "Thumbnail Offset");
         _tagNameMap.put(TAG_THUMBNAIL_LENGTH, "Thumbnail Length");
     }

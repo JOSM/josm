@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -23,14 +23,16 @@ package com.drew.metadata;
 import com.drew.lang.Rational;
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
-import com.drew.lang.annotations.SuppressWarnings;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Abstract base class for all directory implementations, having methods for getting and setting tag values of various
@@ -40,6 +42,8 @@ import java.util.*;
  */
 public abstract class Directory
 {
+    private static final DecimalFormat _floatFormat = new DecimalFormat("0.###");
+
     /** Map of values hashed by type identifiers. */
     @NotNull
     protected final Map<Integer, Object> _tagMap = new HashMap<Integer, Object>();
@@ -57,6 +61,9 @@ public abstract class Directory
 
     /** The descriptor used to interpret tag values. */
     protected TagDescriptor _descriptor;
+
+    @Nullable
+    private Directory _parent;
 
 // ABSTRACT METHODS
 
@@ -170,6 +177,17 @@ public abstract class Directory
     public int getErrorCount()
     {
         return _errorList.size();
+    }
+
+    @Nullable
+    public Directory getParent()
+    {
+        return _parent;
+    }
+
+    public void setParent(@NotNull Directory parent)
+    {
+        _parent = parent;
     }
 
 // TAG SETTERS
@@ -700,7 +718,6 @@ public abstract class Directory
 
     /** Returns the specified tag's value as a boolean.  If the tag is not set or cannot be converted, <code>null</code> is returned. */
     @Nullable
-    @SuppressWarnings(value = "NP_BOOLEAN_RETURN_NULL", justification = "keep API interface consistent")
     public Boolean getBooleanObject(int tagType)
     {
         Object o = getObject(tagType);
@@ -724,12 +741,12 @@ public abstract class Directory
      * Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned.
      * <p>
      * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
-     * the current {@link TimeZone}.  If the {@link TimeZone} is known, call the overload that accepts one as an argument.
+     * the GMT {@link TimeZone}.  If the {@link TimeZone} is known, call the overload that accepts one as an argument.
      */
     @Nullable
     public java.util.Date getDate(int tagType)
     {
-        return getDate(tagType, null);
+        return getDate(tagType, null, null);
     }
 
     /**
@@ -737,21 +754,41 @@ public abstract class Directory
      * <p>
      * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
      * the {@link TimeZone} represented by the {@code timeZone} parameter (if it is non-null).  Note that this parameter
-     * is only considered if the underlying value is a string and parsing occurs, otherwise it has no effect.
+     * is only considered if the underlying value is a string and it has no time zone information, otherwise it has no effect.
      */
     @Nullable
     public java.util.Date getDate(int tagType, @Nullable TimeZone timeZone)
     {
-        Object o = getObject(tagType);
+        return getDate(tagType, null, timeZone);
+    }
 
-        if (o == null)
-            return null;
+    /**
+     * Returns the specified tag's value as a java.util.Date.  If the value is unset or cannot be converted, <code>null</code> is returned.
+     * <p>
+     * If the underlying value is a {@link String}, then attempts will be made to parse the string as though it is in
+     * the {@link TimeZone} represented by the {@code timeZone} parameter (if it is non-null).  Note that this parameter
+     * is only considered if the underlying value is a string and it has no time zone information, otherwise it has no effect.
+     * In addition, the {@code subsecond} parameter, which specifies the number of digits after the decimal point in the seconds,
+     * is set to the returned Date. This parameter is only considered if the underlying value is a string and is has
+     * no subsecond information, otherwise it has no effect.
+     *
+     * @param tagType the tag identifier
+     * @param subsecond the subsecond value for the Date
+     * @param timeZone the time zone to use
+     * @return a Date representing the time value
+     */
+    @Nullable
+    public java.util.Date getDate(int tagType, @Nullable String subsecond, @Nullable TimeZone timeZone)
+    {
+        Object o = getObject(tagType);
 
         if (o instanceof java.util.Date)
             return (java.util.Date)o;
 
+        java.util.Date date = null;
+
         if (o instanceof String) {
-            // This seems to cover all known Exif date strings
+            // This seems to cover all known Exif and Xmp date strings
             // Note that "    :  :     :  :  " is a valid date string according to the Exif spec (which means 'unknown date'): http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/datetimeoriginal.html
             String datePatterns[] = {
                     "yyyy:MM:dd HH:mm:ss",
@@ -759,8 +796,30 @@ public abstract class Directory
                     "yyyy-MM-dd HH:mm:ss",
                     "yyyy-MM-dd HH:mm",
                     "yyyy.MM.dd HH:mm:ss",
-                    "yyyy.MM.dd HH:mm" };
+                    "yyyy.MM.dd HH:mm",
+                    "yyyy-MM-dd'T'HH:mm:ss",
+                    "yyyy-MM-dd'T'HH:mm",
+                    "yyyy-MM-dd",
+                    "yyyy-MM",
+                    "yyyy" };
             String dateString = (String)o;
+
+            // if the date string has subsecond information, it supersedes the subsecond parameter
+            Pattern subsecondPattern = Pattern.compile("(\\d\\d:\\d\\d:\\d\\d)(\\.\\d+)");
+            Matcher subsecondMatcher = subsecondPattern.matcher(dateString);
+            if (subsecondMatcher.find()) {
+                subsecond = subsecondMatcher.group(2).substring(1);
+                dateString = subsecondMatcher.replaceAll("$1");
+            }
+
+            // if the date string has time zone information, it supersedes the timeZone parameter
+            Pattern timeZonePattern = Pattern.compile("(Z|[+-]\\d\\d:\\d\\d)$");
+            Matcher timeZoneMatcher = timeZonePattern.matcher(dateString);
+            if (timeZoneMatcher.find()) {
+                timeZone = TimeZone.getTimeZone("GMT" + timeZoneMatcher.group().replaceAll("Z", ""));
+                dateString = timeZoneMatcher.replaceAll("");
+            }
+
             for (String datePattern : datePatterns) {
                 try {
                     DateFormat parser = new SimpleDateFormat(datePattern);
@@ -769,13 +828,32 @@ public abstract class Directory
                     else
                         parser.setTimeZone(TimeZone.getTimeZone("GMT")); // don't interpret zone time
 
-                    return parser.parse(dateString);
+                    date = parser.parse(dateString);
+                    break;
                 } catch (ParseException ex) {
                     // simply try the next pattern
                 }
             }
         }
-        return null;
+
+        if (date == null)
+            return null;
+
+        if (subsecond == null)
+            return date;
+
+        try {
+            int millisecond = (int) (Double.parseDouble("." + subsecond) * 1000);
+            if (millisecond >= 0 && millisecond < 1000) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                calendar.set(Calendar.MILLISECOND, millisecond);
+                return calendar.getTime();
+            }
+            return date;
+        } catch (NumberFormatException e) {
+            return date;
+        }
     }
 
     /** Returns the specified tag's value as a Rational.  If the value is unset or cannot be converted, <code>null</code> is returned. */
@@ -834,36 +912,64 @@ public abstract class Directory
             // handle arrays of objects and primitives
             int arrayLength = Array.getLength(o);
             final Class<?> componentType = o.getClass().getComponentType();
-            boolean isObjectArray = Object.class.isAssignableFrom(componentType);
-            boolean isFloatArray = componentType.getName().equals("float");
-            boolean isDoubleArray = componentType.getName().equals("double");
-            boolean isIntArray = componentType.getName().equals("int");
-            boolean isLongArray = componentType.getName().equals("long");
-            boolean isByteArray = componentType.getName().equals("byte");
-            boolean isShortArray = componentType.getName().equals("short");
+
             StringBuilder string = new StringBuilder();
-            for (int i = 0; i < arrayLength; i++) {
-                if (i != 0)
-                    string.append(' ');
-                if (isObjectArray)
+
+            if (Object.class.isAssignableFrom(componentType)) {
+                // object array
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
                     string.append(Array.get(o, i).toString());
-                else if (isIntArray)
+                }
+            } else if (componentType.getName().equals("int")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
                     string.append(Array.getInt(o, i));
-                else if (isShortArray)
+                }
+            } else if (componentType.getName().equals("short")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
                     string.append(Array.getShort(o, i));
-                else if (isLongArray)
+                }
+            } else if (componentType.getName().equals("long")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
                     string.append(Array.getLong(o, i));
-                else if (isFloatArray)
-                    string.append(Array.getFloat(o, i));
-                else if (isDoubleArray)
-                    string.append(Array.getDouble(o, i));
-                else if (isByteArray)
-                    string.append(Array.getByte(o, i));
-                else
-                    addError("Unexpected array component type: " + componentType.getName());
+                }
+            } else if (componentType.getName().equals("float")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
+                    string.append(_floatFormat.format(Array.getFloat(o, i)));
+                }
+            } else if (componentType.getName().equals("double")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
+                    string.append(_floatFormat.format(Array.getDouble(o, i)));
+                }
+            } else if (componentType.getName().equals("byte")) {
+                for (int i = 0; i < arrayLength; i++) {
+                    if (i != 0)
+                        string.append(' ');
+                    string.append(Array.getByte(o, i) & 0xff);
+                }
+            } else {
+                addError("Unexpected array component type: " + componentType.getName());
             }
+
             return string.toString();
         }
+
+        if (o instanceof Double)
+            return _floatFormat.format(((Double)o).doubleValue());
+
+        if (o instanceof Float)
+            return _floatFormat.format(((Float)o).floatValue());
 
         // Note that several cameras leave trailing spaces (Olympus, Nikon) but this library is intended to show
         // the actual data within the file.  It is not inconceivable that whitespace may be significant here, so we
