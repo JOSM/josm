@@ -156,25 +156,26 @@ There are some third party libraries which are directly included in the source c
     -> http://svn.openstreetmap.org/applications/viewer/jmapviewer/
 * Apache commons compress: Support for bzip2 compression when opening files
     src/org/apache/commons/compress/compressors (svn external)
-    -> http://svn.apache.org/repos/asf/commons/proper/compress/trunk/src/main/java/org/apache/commons/compress/compressors
+    -> https://github.com/apache/commons-compress
 * Apache commons validator: Improved validator routines
     src/org/openstreetmap/josm/data/validation/routines
     -> http://commons.apache.org/proper/commons-validator
 * SVG Salamander: Support for SVG image format
     src/com/kitfox/svg
-    -> https://svgsalamander.java.net/
+    -> https://github.com/blackears/svgSalamander
 * Metadata Extractor: Read EXIF Metadata of photos
     src/com/drew
-    -> https://www.drewnoakes.com/code/exif/
+    -> https://github.com/drewnoakes/metadata-extractor
 * Signpost: OAuth library
     src/oauth, src/com/google
-    -> https://code.google.com/p/oauth-signpost/
+    -> https://github.com/mttkay/signpost
 * GNU getopt Java port: Command line argument processing library
     src/gnu/getopt
-    -> http://www.urbanophile.com/arenn/hacking/download.html
+    -> https://github.com/arenn/java-getopt
 * MultiSplitPane: Small lib for GUI layout management
     src/org/openstreetmap/josm/gui/MultiSplitLayout.java, MultiSplitPane.java
     -> http://today.java.net/pub/a/today/2006/03/23/multi-split-pane.html
+    -> https://community.oracle.com/docs/DOC-983539
 * swinghelper: Class CheckThreadViolationRepaintManager to find classpath violations
     src/org/jdesktop/swinghelper/debug/CheckThreadViolationRepaintManager.java
     -> https://java.net/projects/swinghelper

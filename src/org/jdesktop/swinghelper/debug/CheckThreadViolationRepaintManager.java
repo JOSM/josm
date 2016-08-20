@@ -72,7 +72,7 @@ public class CheckThreadViolationRepaintManager extends RepaintManager {
                 if (repaint && st.getClassName().startsWith("javax.swing.") &&
                         // for details see
                         // https://swinghelper.dev.java.net/issues/show_bug.cgi?id=1
-                        !st.getClassName().startsWith("javax.swing.SwingWorker")) {
+                         !st.getClassName().startsWith("javax.swing.SwingWorker")) {
                     fromSwing = true;
                 }
                 if (repaint && "imageUpdate".equals(st.getMethodName())) {
@@ -82,17 +82,24 @@ public class CheckThreadViolationRepaintManager extends RepaintManager {
                     repaint = true;
                     fromSwing = false;
                 }
+                if ("read".equals(st.getMethodName()) && "javax.swing.JEditorPane".equals(st.getClassName())) {
+                    // Swing reads html from a background thread
+                    return;
+                }
             }
-            if (imageUpdate)
+            if (imageUpdate) {
                 //assuming it is java.awt.image.ImageObserver.imageUpdate(...)
                 //image was asynchronously updated, that's ok
                 return;
-            if (repaint && !fromSwing)
+            }
+            if (repaint && !fromSwing) {
                 //no problems here, since repaint() is thread safe
                 return;
+            }
             //ignore the last processed component
-            if (lastComponent != null && c == lastComponent.get())
+            if (lastComponent != null && c == lastComponent.get()) {
                 return;
+            }
             lastComponent = new WeakReference<>(c);
             violationFound(c, stackTrace);
         }
