@@ -2173,6 +2173,7 @@
             <space />
             <key key="landuse" value="basin" />
             <text key="name" text="Name" />
+            <combo key="basin" text="Type" values="retention,infiltration,detention" />
         </item> <!-- Basin -->
         <item name="Reservoir" icon="presets/landuse/reservoir.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=reservoir"
@@ -2184,6 +2185,7 @@
             <space />
             <key key="landuse" value="reservoir" />
             <text key="name" text="Name" />
+            <combo key="reservoir_type" text="Type" values="evaporator,sewage,tailings,water_storage" />
         </item> <!-- Reservoir -->
         <item name="Covered Reservoir" icon="presets/landmark/reservoir_covered.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=reservoir_covered"
@@ -2211,7 +2213,7 @@
             <space />
             <key key="natural" value="water" />
             <text key="name" text="Name" />
-            <combo key="water" text="Water Body" values="canal,lake,lagoon,oxbow,pond,reservoir,river" match="key" values_searchable="true" />
+            <combo key="water" text="Water Body" values="canal,lake,lagoon,oxbow,pond,reservoir,river,lock,wastewater" match="key" values_searchable="true" />
             <check key="salt" text="Salt Water" disable_off="true" />
             <check key="intermittent" text="Is the water body intermittent (disappears seasonally)?" disable_off="true" />
             <check key="tidal" text="In the tidal range" disable_off="true" />
