@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -38,8 +38,10 @@ import com.drew.metadata.file.FileMetadataReader;
 //import com.drew.metadata.icc.IccReader;
 import com.drew.metadata.iptc.IptcReader;
 //import com.drew.metadata.jfif.JfifReader;
+//import com.drew.metadata.jfxx.JfxxReader;
 import com.drew.metadata.jpeg.JpegCommentReader;
 import com.drew.metadata.jpeg.JpegReader;
+//import com.drew.metadata.photoshop.DuckyReader;
 //import com.drew.metadata.photoshop.PhotoshopReader;
 //import com.drew.metadata.xmp.XmpReader;
 
@@ -54,10 +56,12 @@ public class JpegMetadataReader
             new JpegReader(),
             new JpegCommentReader(),
             //new JfifReader(),
+            //new JfxxReader(),
             new ExifReader(),
             //new XmpReader(),
             //new IccReader(),
             //new PhotoshopReader(),
+            //new DuckyReader(),
             new IptcReader()//,
             //new AdobeJpegReader()
     );

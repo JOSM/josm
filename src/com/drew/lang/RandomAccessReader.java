@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public abstract class RandomAccessReader
      *
      * @param index The index from which to read the byte
      * @return The read byte value
-     * @throws IllegalArgumentException <code>index</code> or <code>count</code> are negative
+     * @throws IllegalArgumentException <code>index</code> is negative
      * @throws BufferBoundsException if the requested byte is beyond the end of the underlying data source
      * @throws IOException if the byte is unable to be read
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@
 
 package com.drew.lang;
 
-import com.drew.lang.annotations.NotNull;
-
 import java.io.IOException;
+
+import com.drew.lang.annotations.NotNull;
 
 /**
  * Provides methods to read specific values from a byte array, with a consistent, checked exception structure for
@@ -39,8 +39,6 @@ public class ByteArrayReader extends RandomAccessReader
     @NotNull
     private final byte[] _buffer;
 
-    @SuppressWarnings({ "ConstantConditions" })
-    @com.drew.lang.annotations.SuppressWarnings(value = "EI_EXPOSE_REP2", justification = "Design intent")
     public ByteArrayReader(@NotNull byte[] buffer)
     {
         if (buffer == null)
@@ -73,7 +71,7 @@ public class ByteArrayReader extends RandomAccessReader
     {
         return bytesRequested >= 0
             && index >= 0
-            && (long)index + (long)bytesRequested - 1L < (long)_buffer.length;
+            && (long)index + (long)bytesRequested - 1L < _buffer.length;
     }
 
     @Override

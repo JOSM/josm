@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
  */
 package com.drew.metadata.jpeg;
 
-import com.drew.lang.annotations.Nullable;
+import com.drew.lang.annotations.NotNull;
 
 import java.io.Serializable;
 
@@ -54,7 +54,7 @@ public class JpegComponent implements Serializable
      * Returns the component name (one of: Y, Cb, Cr, I, or Q)
      * @return the component name
      */
-    @Nullable
+    @NotNull
     public String getComponentName()
     {
         switch (_componentId)
@@ -69,8 +69,9 @@ public class JpegComponent implements Serializable
                 return "I";
             case 5:
                 return "Q";
+            default:
+                return String.format("Unknown (%s)", _componentId);
         }
-        return null;
     }
 
     public int getQuantizationTableNumber()
@@ -80,11 +81,11 @@ public class JpegComponent implements Serializable
 
     public int getHorizontalSamplingFactor()
     {
-        return _samplingFactorByte & 0x0F;
+        return (_samplingFactorByte>>4) & 0x0F;
     }
 
     public int getVerticalSamplingFactor()
     {
-        return (_samplingFactorByte>>4) & 0x0F;
+        return _samplingFactorByte & 0x0F;
     }
 }

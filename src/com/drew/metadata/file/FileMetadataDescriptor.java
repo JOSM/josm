@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.TagDescriptor;
 
+import static com.drew.metadata.file.FileMetadataDirectory.*;
+
 /**
  * @author Drew Noakes https://drewnoakes.com
  */
@@ -39,7 +41,7 @@ public class FileMetadataDescriptor extends TagDescriptor<FileMetadataDirectory>
     public String getDescription(int tagType)
     {
         switch (tagType) {
-            case FileMetadataDirectory.TAG_FILE_SIZE:
+            case TAG_FILE_SIZE:
                 return getFileSizeDescription();
             default:
                 return super.getDescription(tagType);
@@ -49,7 +51,7 @@ public class FileMetadataDescriptor extends TagDescriptor<FileMetadataDirectory>
     @Nullable
     private String getFileSizeDescription()
     {
-        Long size = _directory.getLongObject(FileMetadataDirectory.TAG_FILE_SIZE);
+        Long size = _directory.getLongObject(TAG_FILE_SIZE);
 
         if (size == null)
             return null;

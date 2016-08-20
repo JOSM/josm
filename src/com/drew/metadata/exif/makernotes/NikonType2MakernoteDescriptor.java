@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -305,7 +305,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     private String getEVDescription(int tagType)
     {
         int[] values = _directory.getIntArray(tagType);
-        if (values == null)
+        if (values == null || values.length < 2)
             return null;
         if (values.length < 3 || values[2] == 0)
             return null;
@@ -328,14 +328,7 @@ public class NikonType2MakernoteDescriptor extends TagDescriptor<NikonType2Maker
     @Nullable
     public String getLensDescription()
     {
-        Rational[] values = _directory.getRationalArray(TAG_LENS);
-
-        return values == null
-            ? null
-            : values.length < 4
-                ? _directory.getString(TAG_LENS)
-                : String.format("%d-%dmm f/%.1f-%.1f", values[0].intValue(), values[1].intValue(), values[2].floatValue(), values[3].floatValue());
-
+        return getLensSpecificationDescription(TAG_LENS);
     }
 
     @Nullable

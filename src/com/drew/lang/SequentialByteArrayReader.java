@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ public class SequentialByteArrayReader extends SequentialReader
         this(bytes, 0);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public SequentialByteArrayReader(@NotNull byte[] bytes, int baseIndex)
     {
         if (bytes == null)

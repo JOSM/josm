@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.SequentialByteArrayReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.makernotes.*;
@@ -46,10 +47,13 @@ public class ExifTiffHandler extends DirectoryTiffHandler
 {
     private final boolean _storeThumbnailBytes;
 
-    public ExifTiffHandler(@NotNull Metadata metadata, boolean storeThumbnailBytes)
+    public ExifTiffHandler(@NotNull Metadata metadata, boolean storeThumbnailBytes, @Nullable Directory parentDirectory)
     {
         super(metadata, ExifIFD0Directory.class);
         _storeThumbnailBytes = storeThumbnailBytes;
+
+        if (parentDirectory != null)
+            _currentDirectory.setParent(parentDirectory);
     }
 
     public void setTiffMarker(int marker) throws TiffProcessingException
@@ -64,17 +68,42 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         }
     }
 
-    public boolean isTagIfdPointer(int tagType)
+    public boolean tryEnterSubIfd(int tagId)
     {
-        if (tagType == ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET && _currentDirectory instanceof ExifIFD0Directory) {
+        if (tagId == ExifDirectoryBase.TAG_SUB_IFD_OFFSET) {
             pushDirectory(ExifSubIFDDirectory.class);
             return true;
-        } else if (tagType == ExifIFD0Directory.TAG_GPS_INFO_OFFSET && _currentDirectory instanceof ExifIFD0Directory) {
-            pushDirectory(GpsDirectory.class);
-            return true;
-        } else if (tagType == ExifSubIFDDirectory.TAG_INTEROP_OFFSET && _currentDirectory instanceof ExifSubIFDDirectory) {
-            pushDirectory(ExifInteropDirectory.class);
-            return true;
+        }
+
+        if (_currentDirectory instanceof ExifIFD0Directory) {
+            if (tagId == ExifIFD0Directory.TAG_EXIF_SUB_IFD_OFFSET) {
+                pushDirectory(ExifSubIFDDirectory.class);
+                return true;
+            }
+
+            if (tagId == ExifIFD0Directory.TAG_GPS_INFO_OFFSET) {
+                pushDirectory(GpsDirectory.class);
+                return true;
+            }
+        }
+
+        if (_currentDirectory instanceof ExifSubIFDDirectory) {
+            if (tagId == ExifSubIFDDirectory.TAG_INTEROP_OFFSET) {
+                pushDirectory(ExifInteropDirectory.class);
+                return true;
+            }
+        }
+
+        if (_currentDirectory instanceof OlympusMakernoteDirectory) {
+            if (tagId == OlympusMakernoteDirectory.TAG_EQUIPMENT) {
+                pushDirectory(OlympusEquipmentMakernoteDirectory.class);
+                return true;
+            }
+
+            if (tagId == OlympusMakernoteDirectory.TAG_CAMERA_SETTINGS) {
+                pushDirectory(OlympusCameraSettingsMakernoteDirectory.class);
+                return true;
+            }
         }
 
         return false;
@@ -97,6 +126,15 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         return false;
     }
 
+    @Nullable
+    public Long tryCustomProcessFormat(final int tagId, final int formatCode, final long componentCount)
+    {
+        if (formatCode == 13)
+            return componentCount * 4;
+
+        return null;
+    }
+
     public boolean customProcessTag(final int tagOffset,
                                     final @NotNull Set<Integer> processedIfdOffsets,
                                     final int tiffHeaderOffset,
@@ -114,7 +152,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
             // NOTE Adobe sets type 4 for IPTC instead of 7
             if (reader.getInt8(tagOffset) == 0x1c) {
                 final byte[] iptcBytes = reader.getBytes(tagOffset, byteCount);
-                new IptcReader().extract(new SequentialByteArrayReader(iptcBytes), _metadata, iptcBytes.length);
+                new IptcReader().extract(new SequentialByteArrayReader(iptcBytes), _metadata, iptcBytes.length, _currentDirectory);
                 return true;
             }
             return false;
@@ -128,7 +166,7 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         if (_storeThumbnailBytes) {
             // after the extraction process, if we have the correct tags, we may be able to store thumbnail information
             ExifThumbnailDirectory thumbnailDirectory = _metadata.getFirstDirectoryOfType(ExifThumbnailDirectory.class);
-            if (thumbnailDirectory != null && thumbnailDirectory.containsTag(ExifThumbnailDirectory.TAG_THUMBNAIL_COMPRESSION)) {
+            if (thumbnailDirectory != null && thumbnailDirectory.containsTag(ExifThumbnailDirectory.TAG_COMPRESSION)) {
                 Integer offset = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_OFFSET);
                 Integer length = thumbnailDirectory.getInteger(ExifThumbnailDirectory.TAG_THUMBNAIL_LENGTH);
                 if (offset != null && length != null) {
@@ -163,15 +201,22 @@ public class ExifTiffHandler extends DirectoryTiffHandler
         final String firstSixChars = reader.getString(makernoteOffset, 6);
         final String firstSevenChars = reader.getString(makernoteOffset, 7);
         final String firstEightChars = reader.getString(makernoteOffset, 8);
+        final String firstTenChars = reader.getString(makernoteOffset, 10);
         final String firstTwelveChars = reader.getString(makernoteOffset, 12);
 
         boolean byteOrderBefore = reader.isMotorolaByteOrder();
 
-        if ("OLYMP".equals(firstFiveChars) || "EPSON".equals(firstFiveChars) || "AGFA".equals(firstFourChars)) {
+        if ("OLYMP\0".equals(firstSixChars) || "EPSON".equals(firstFiveChars) || "AGFA".equals(firstFourChars)) {
             // Olympus Makernote
             // Epson and Agfa use Olympus makernote standard: http://www.ozhiker.com/electronics/pjmt/jpeg_info/
             pushDirectory(OlympusMakernoteDirectory.class);
             TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 8, tiffHeaderOffset);
+        } else if ("OLYMPUS\0II".equals(firstTenChars)) {
+            // Olympus Makernote (alternate)
+            // Note that data is relative to the beginning of the makernote
+            // http://exiv2.org/makernote.html
+            pushDirectory(OlympusMakernoteDirectory.class);
+            TiffReader.processIfd(this, reader, processedIfdOffsets, makernoteOffset + 12, makernoteOffset);
         } else if (cameraMake != null && cameraMake.toUpperCase().startsWith("MINOLTA")) {
             // Cases seen with the model starting with MINOLTA in capitals seem to have a valid Olympus makernote
             // area that commences immediately.

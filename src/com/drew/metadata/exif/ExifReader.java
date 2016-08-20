@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 Drew Noakes
+ * Copyright 2002-2016 Drew Noakes
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,10 +27,12 @@ import com.drew.imaging.tiff.TiffReader;
 import com.drew.lang.ByteArrayReader;
 import com.drew.lang.RandomAccessReader;
 import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Decodes Exif binary data, populating a {@link Metadata} object with tag values in {@link ExifSubIFDDirectory},
@@ -59,7 +61,7 @@ public class ExifReader implements JpegSegmentMetadataReader
     @NotNull
     public Iterable<JpegSegmentType> getSegmentTypes()
     {
-        return Arrays.asList(JpegSegmentType.APP1);
+        return Collections.singletonList(JpegSegmentType.APP1);
     }
 
     public void readJpegSegments(@NotNull final Iterable<byte[]> segments, @NotNull final Metadata metadata, @NotNull final JpegSegmentType segmentType)
@@ -83,11 +85,17 @@ public class ExifReader implements JpegSegmentMetadataReader
     /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
     public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset)
     {
+        extract(reader, metadata, readerOffset, null);
+    }
+
+    /** Reads TIFF formatted Exif data a specified offset within a {@link RandomAccessReader}. */
+    public void extract(@NotNull final RandomAccessReader reader, @NotNull final Metadata metadata, int readerOffset, @Nullable Directory parentDirectory)
+    {
         try {
             // Read the TIFF-formatted Exif data
             new TiffReader().processTiff(
                 reader,
-                new ExifTiffHandler(metadata, _storeThumbnailBytes),
+                new ExifTiffHandler(metadata, _storeThumbnailBytes, parentDirectory),
                 readerOffset
             );
         } catch (TiffProcessingException e) {
