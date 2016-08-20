@@ -192,6 +192,12 @@ public class RelationListDialog extends ToggleDialog
         updateActionsRelationLists();
     }
 
+    @Override
+    public void destroy() {
+        model.clear();
+        super.destroy();
+    }
+
     public void enableRecentRelations() {
         recentRelationsAction.enableArrow();
     }
@@ -391,6 +397,13 @@ public class RelationListDialog extends ToggleDialog
 
         RelationListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
+        }
+
+        public void clear() {
+            relations.clear();
+            if (filteredRelations != null)
+                filteredRelations.clear();
+            filter = null;
         }
 
         public void sort() {
