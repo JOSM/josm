@@ -54,7 +54,7 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(id).append(Arrays.toString(keys)).append(getFlagsAsString());
+        builder.append(id).append(' ').append(Arrays.toString(keys)).append(' ').append(getFlagsAsString());
         return builder.toString();
     }
 

@@ -16,6 +16,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
+import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 
 /**
  * Test {@link MapViewState}
@@ -147,6 +148,62 @@ public class MapViewStateTest {
             assertEquals("x", should.getInViewX(), result.getX(), 0.01);
             assertEquals("y", should.getInViewY(), result.getY(), 0.01);
         }
+    }
+
+    /**
+     * Test {@link MapViewState#OUTSIDE_BOTTOM} and similar constants.
+     */
+    @Test
+    public void testOutsideFlags() {
+        assertEquals(1, Integer.bitCount(MapViewState.OUTSIDE_BOTTOM));
+        assertEquals(1, Integer.bitCount(MapViewState.OUTSIDE_TOP));
+        assertEquals(1, Integer.bitCount(MapViewState.OUTSIDE_LEFT));
+        assertEquals(1, Integer.bitCount(MapViewState.OUTSIDE_RIGHT));
+        assertEquals(4, Integer.bitCount(MapViewState.OUTSIDE_BOTTOM | MapViewState.OUTSIDE_TOP
+                | MapViewState.OUTSIDE_LEFT | MapViewState.OUTSIDE_RIGHT));
+    }
+
+    /**
+     * Test {@link MapViewPoint#getOutsideRectangleFlags(MapViewRectangle)}
+     */
+    @Test
+    public void testPointGetOutsideRectangleFlags() {
+        MapViewRectangle rect = state.getForView(0, 0).rectTo(state.getForView(10, 10));
+        assertEquals(0, state.getForView(1, 1).getOutsideRectangleFlags(rect));
+        assertEquals(0, state.getForView(1, 5).getOutsideRectangleFlags(rect));
+        assertEquals(0, state.getForView(9, 1).getOutsideRectangleFlags(rect));
+        assertEquals(0, state.getForView(10 - 1e-10, 1e-10).getOutsideRectangleFlags(rect));
+        assertEquals(0, state.getForView(10 - 1e-10, 10 - 1e-10).getOutsideRectangleFlags(rect));
+
+
+        assertEquals(MapViewState.OUTSIDE_TOP, state.getForView(1, -11).getOutsideRectangleFlags(rect));
+        assertEquals(MapViewState.OUTSIDE_TOP, state.getForView(1, -1e20).getOutsideRectangleFlags(rect));
+
+        assertEquals(MapViewState.OUTSIDE_BOTTOM, state.getForView(1, 11).getOutsideRectangleFlags(rect));
+        assertEquals(MapViewState.OUTSIDE_BOTTOM, state.getForView(1, 1e20).getOutsideRectangleFlags(rect));
+
+        assertEquals(MapViewState.OUTSIDE_LEFT, state.getForView(-11, 1).getOutsideRectangleFlags(rect));
+        assertEquals(MapViewState.OUTSIDE_LEFT, state.getForView(-1e20, 1).getOutsideRectangleFlags(rect));
+        assertEquals(MapViewState.OUTSIDE_RIGHT, state.getForView(11, 1).getOutsideRectangleFlags(rect));
+        assertEquals(MapViewState.OUTSIDE_RIGHT, state.getForView(1e20, 1).getOutsideRectangleFlags(rect));
+
+        assertEquals(MapViewState.OUTSIDE_RIGHT | MapViewState.OUTSIDE_TOP, state.getForView(11, -11).getOutsideRectangleFlags(rect));
+        assertEquals(MapViewState.OUTSIDE_RIGHT | MapViewState.OUTSIDE_BOTTOM, state.getForView(11, 11).getOutsideRectangleFlags(rect));
+        assertEquals(MapViewState.OUTSIDE_LEFT | MapViewState.OUTSIDE_TOP, state.getForView(-11, -11).getOutsideRectangleFlags(rect));
+        assertEquals(MapViewState.OUTSIDE_LEFT | MapViewState.OUTSIDE_BOTTOM, state.getForView(-11, 11).getOutsideRectangleFlags(rect));
+    }
+
+    /**
+     * Test {@link MapViewPoint#oneNormInView(MapViewPoint)}
+     */
+    @Test
+    public void testPointOneNormInView() {
+        MapViewPoint p = state.getForView(5, 15);
+        assertEquals(0, p.oneNormInView(p), 1e-10);
+        assertEquals(6, p.oneNormInView(state.getForView(-1, 15)), 1e-10);
+        assertEquals(5, p.oneNormInView(state.getForView(5, 20)), 1e-10);
+        assertEquals(22, p.oneNormInView(state.getForView(-1, -1)), 1e-10);
+        assertEquals(40, p.oneNormInView(state.getForView(30, 30)), 1e-10);
     }
 
     /**

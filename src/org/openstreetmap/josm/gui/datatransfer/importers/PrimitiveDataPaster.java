@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * This transfer support allows us to transfer primitives. This is the default paste action when primitives were copied.
@@ -66,13 +67,17 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
 
         // Update references in copied buffer
         for (PrimitiveData data : bufferCopy) {
-            if (data instanceof NodeData) {
-                NodeData nodeData = (NodeData) data;
-                nodeData.setEastNorth(nodeData.getEastNorth().add(offset));
-            } else if (data instanceof WayData) {
-                updateNodes(newIds.get(OsmPrimitiveType.NODE), data);
-            } else if (data instanceof RelationData) {
-                updateMembers(newIds, data);
+            try {
+                if (data instanceof NodeData) {
+                    NodeData nodeData = (NodeData) data;
+                    nodeData.setEastNorth(nodeData.getEastNorth().add(offset));
+                } else if (data instanceof WayData) {
+                    updateNodes(newIds.get(OsmPrimitiveType.NODE), data);
+                } else if (data instanceof RelationData) {
+                    updateMembers(newIds, data);
+                }
+            } catch (RuntimeException e) {
+                throw BugReport.intercept(e).put("data", data);
             }
         }
         return new AddPrimitivesCommand(bufferCopy, toSelect, layer);
@@ -86,7 +91,7 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
         newIds.put(OsmPrimitiveType.RELATION, new HashMap<Long, Long>());
 
         for (PrimitiveData data : pasteBuffer.getAll()) {
-            if (data.isIncomplete()) {
+            if (data.isIncomplete() || !data.isVisible()) {
                 continue;
             }
             PrimitiveData copy = data.makeCopy();
