@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.projection;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.openstreetmap.josm.data.projection.proj.Mercator;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Custom projection.
@@ -62,6 +64,8 @@ public class CustomProjection extends AbstractProjection {
     protected Bounds bounds;
     private double metersPerUnitWMTS;
     private String axis = "enu"; // default axis orientation is East, North, Up
+
+    private static final List<String> LON_LAT_VALUES = Arrays.asList("longlat", "latlon", "latlong");
 
     /**
      * Proj4-like projection parameters. See <a href="https://trac.osgeo.org/proj/wiki/GenParms">reference</a>.
@@ -154,6 +158,8 @@ public class CustomProjection extends AbstractProjection {
             for (Param p : Param.values()) {
                 paramsByKey.put(p.key, p);
             }
+            // alias
+            paramsByKey.put("k", Param.k_0);
         }
 
         Param(String key, boolean hasValue) {
@@ -162,15 +168,22 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
-    private enum Polarity { NORTH, SOUTH }
+    private enum Polarity {
+        NORTH(LatLon.NORTH_POLE),
+        SOUTH(LatLon.SOUTH_POLE);
+
+        private final LatLon latlon;
+
+        Polarity(LatLon latlon) {
+            this.latlon = latlon;
+        }
+
+        private LatLon getLatLon() {
+            return latlon;
+        }
+    }
 
     private EnumMap<Polarity, EastNorth> polesEN;
-    private EnumMap<Polarity, LatLon> polesLL;
-    {
-        polesLL = new EnumMap<>(Polarity.class);
-        polesLL.put(Polarity.NORTH, LatLon.NORTH_POLE);
-        polesLL.put(Polarity.SOUTH, LatLon.SOUTH_POLE);
-    }
 
     /**
      * Constructs a new empty {@code CustomProjection}.
@@ -208,7 +221,7 @@ public class CustomProjection extends AbstractProjection {
             try {
                 update(null);
             } catch (ProjectionConfigurationException ex1) {
-                throw new RuntimeException(ex1);
+                throw BugReport.intercept(ex1).put("name", name).put("code", code).put("pref", pref);
             }
         }
     }
@@ -239,9 +252,9 @@ public class CustomProjection extends AbstractProjection {
             // "utm" is a shortcut for a set of parameters
             if ("utm".equals(parameters.get(Param.proj.key))) {
                 String zoneStr = parameters.get(Param.zone.key);
-                Integer zone;
                 if (zoneStr == null)
                     throw new ProjectionConfigurationException(tr("UTM projection (''+proj=utm'') requires ''+zone=...'' parameter."));
+                Integer zone;
                 try {
                     zone = Integer.valueOf(zoneStr);
                 } catch (NumberFormatException e) {
@@ -331,42 +344,38 @@ public class CustomProjection extends AbstractProjection {
      */
     public static Map<String, String> parseParameterList(String pref, boolean ignoreUnknownParameter) throws ProjectionConfigurationException {
         Map<String, String> parameters = new HashMap<>();
-        String[] parts = Utils.WHITE_SPACES_PATTERN.split(pref.trim());
         if (pref.trim().isEmpty()) {
-            parts = new String[0];
+            return parameters;
         }
+
+        Pattern keyPattern = Pattern.compile("\\+(?<key>[a-zA-Z0-9_]+)(=(?<value>.*))?");
+        String[] parts = Utils.WHITE_SPACES_PATTERN.split(pref.trim());
         for (String part : parts) {
-            if (part.isEmpty() || part.charAt(0) != '+')
-                throw new ProjectionConfigurationException(tr("Parameter must begin with a ''+'' character (found ''{0}'')", part));
-            Matcher m = Pattern.compile("\\+([a-zA-Z0-9_]+)(=(.*))?").matcher(part);
+            Matcher m = keyPattern.matcher(part);
             if (m.matches()) {
-                String key = m.group(1);
-                // alias
-                if ("k".equals(key)) {
-                    key = Param.k_0.key;
+                String key = m.group("key");
+                String value = m.group("value");
+                // some aliases
+                if (key.equals(Param.proj.key) && LON_LAT_VALUES.contains(value)) {
+                    value = "lonlat";
                 }
-                String value = null;
-                if (m.groupCount() >= 3) {
-                    value = m.group(3);
-                    // some aliases
-                    if (key.equals(Param.proj.key)) {
-                        if ("longlat".equals(value) || "latlon".equals(value) || "latlong".equals(value)) {
-                            value = "lonlat";
-                        }
-                    }
-                }
-                if (!Param.paramsByKey.containsKey(key)) {
+                Param param = Param.paramsByKey.get(key);
+                if (param == null) {
                     if (!ignoreUnknownParameter)
                         throw new ProjectionConfigurationException(tr("Unknown parameter: ''{0}''.", key));
                 } else {
-                    if (Param.paramsByKey.get(key).hasValue && value == null)
+                    if (param.hasValue && value == null)
                         throw new ProjectionConfigurationException(tr("Value expected for parameter ''{0}''.", key));
-                    if (!Param.paramsByKey.get(key).hasValue && value != null)
+                    if (!param.hasValue && value != null)
                         throw new ProjectionConfigurationException(tr("No value expected for parameter ''{0}''.", key));
+                    key = param.key; // To be really sure, we might have an alias.
                 }
                 parameters.put(key, value);
-            } else
+            } else if (!part.startsWith("+")) {
+                throw new ProjectionConfigurationException(tr("Parameter must begin with a ''+'' character (found ''{0}'')", part));
+            } else {
                 throw new ProjectionConfigurationException(tr("Unexpected parameter format (''{0}'')", part));
+            }
         }
         return parameters;
     }
@@ -400,6 +409,12 @@ public class CustomProjection extends AbstractProjection {
         return parameters;
     }
 
+    /**
+     * Gets the ellipsoid
+     * @param parameters The parameters to get the value from
+     * @return The Ellipsoid as specified with the parameters
+     * @throws ProjectionConfigurationException in case of invalid parameters
+     */
     public Ellipsoid parseEllipsoid(Map<String, String> parameters) throws ProjectionConfigurationException {
         String code = parameters.get(Param.ellps.key);
         if (code != null) {
@@ -439,6 +454,13 @@ public class CustomProjection extends AbstractProjection {
         return null;
     }
 
+    /**
+     * Gets the datum
+     * @param parameters The parameters to get the value from
+     * @param ellps The ellisoid that was previously computed
+     * @return The Datum as specified with the parameters
+     * @throws ProjectionConfigurationException in case of invalid parameters
+     */
     public Datum parseDatum(Map<String, String> parameters, Ellipsoid ellps) throws ProjectionConfigurationException {
         String datumId = parameters.get(Param.datum.key);
         if (datumId != null) {
@@ -518,6 +540,13 @@ public class CustomProjection extends AbstractProjection {
                     towgs84Param.get(6));
     }
 
+    /**
+     * Gets a projection using the given ellipsoid
+     * @param parameters Additional parameters
+     * @param ellps The {@link Ellipsoid}
+     * @return The projection
+     * @throws ProjectionConfigurationException in case of invalid parameters
+     */
     public Proj parseProjection(Map<String, String> parameters, Ellipsoid ellps) throws ProjectionConfigurationException {
         String id = parameters.get(Param.proj.key);
         if (id == null) throw new ProjectionConfigurationException(tr("Projection required (+proj=*)"));
@@ -577,6 +606,13 @@ public class CustomProjection extends AbstractProjection {
         return proj;
     }
 
+    /**
+     * Converts a string to a bounds object
+     * @param boundsStr The string as comma separated list of angles.
+     * @return The bounds.
+     * @throws ProjectionConfigurationException in case of invalid parameter
+     * @see {@link CustomProjection#parseAngle(String, String)}
+     */
     public static Bounds parseBounds(String boundsStr) throws ProjectionConfigurationException {
         String[] numStr = boundsStr.split(",");
         if (numStr.length != 4)
@@ -606,65 +642,44 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
+    /**
+     * Convert an angle string to a double value
+     * @param angleStr The string. e.g. -1.1 or 50d 10' 3"
+     * @param parameterName Only for error message.
+     * @return The angle value, in degrees.
+     * @throws ProjectionConfigurationException in case of invalid parameter
+     */
     public static double parseAngle(String angleStr, String parameterName) throws ProjectionConfigurationException {
-        String s = angleStr;
-        double value = 0;
-        boolean neg = false;
-        Matcher m = Pattern.compile("^-").matcher(s);
-        if (m.find()) {
-            neg = true;
-            s = s.substring(m.end());
-        }
         final String floatPattern = "(\\d+(\\.\\d*)?)";
-        boolean dms = false;
-        double deg = 0.0, min = 0.0, sec = 0.0;
-        // degrees
-        m = Pattern.compile("^"+floatPattern+"d").matcher(s);
-        if (m.find()) {
-            s = s.substring(m.end());
-            deg = Double.parseDouble(m.group(1));
-            dms = true;
-        }
-        // minutes
-        m = Pattern.compile("^"+floatPattern+"'").matcher(s);
-        if (m.find()) {
-            s = s.substring(m.end());
-            min = Double.parseDouble(m.group(1));
-            dms = true;
-        }
-        // seconds
-        m = Pattern.compile("^"+floatPattern+"\"").matcher(s);
-        if (m.find()) {
-            s = s.substring(m.end());
-            sec = Double.parseDouble(m.group(1));
-            dms = true;
-        }
-        // plain number (in degrees)
-        if (dms) {
-            value = deg + (min/60.0) + (sec/3600.0);
-        } else {
-            m = Pattern.compile("^"+floatPattern).matcher(s);
-            if (m.find()) {
-                s = s.substring(m.end());
-                value += Double.parseDouble(m.group(1));
-            }
-        }
-        m = Pattern.compile("^(N|E)", Pattern.CASE_INSENSITIVE).matcher(s);
-        if (m.find()) {
-            s = s.substring(m.end());
-        } else {
-            m = Pattern.compile("^(S|W)", Pattern.CASE_INSENSITIVE).matcher(s);
-            if (m.find()) {
-                s = s.substring(m.end());
-                neg = !neg;
-            }
-        }
-        if (neg) {
-            value = -value;
-        }
-        if (!s.isEmpty()) {
+        // pattern does all error handling.
+        Matcher in = Pattern.compile("^(?<neg1>-)?"
+                + "(?=\\d)(?:(?<single>" + floatPattern + ")|"
+                + "((?<degree>" + floatPattern + ")d)?"
+                + "((?<minutes>" + floatPattern + ")\')?"
+                + "((?<seconds>" + floatPattern + ")\")?)"
+                + "(?:[NE]|(?<neg2>[SW]))?$").matcher(angleStr);
+
+        if (!in.find()) {
             throw new ProjectionConfigurationException(
                     tr("Unable to parse value ''{1}'' of parameter ''{0}'' as coordinate value.", parameterName, angleStr));
+        }
+
+        double value = 0;
+        if (in.group("single") != null) {
+            value += Double.parseDouble(in.group("single"));
+        }
+        if (in.group("degree") != null) {
+            value += Double.parseDouble(in.group("degree"));
+        }
+        if (in.group("minutes") != null) {
+            value += Double.parseDouble(in.group("minutes")) / 60;
+        }
+        if (in.group("seconds") != null) {
+            value += Double.parseDouble(in.group("seconds")) / 3600;
+        }
+
+        if (in.group("neg1") != null ^ in.group("neg2") != null) {
+            value = -value;
         }
         return value;
     }
@@ -683,27 +698,39 @@ public class CustomProjection extends AbstractProjection {
 
     @Override
     public String toCode() {
-        return code != null ? code : "proj:" + (pref == null ? "ERROR" : pref);
+        if (code != null) {
+            return code;
+        } else if (pref != null) {
+            return "proj:" + pref;
+        } else {
+            return "proj:ERROR";
+        }
     }
 
     @Override
     public String getCacheDirectoryName() {
-        return cacheDir != null ? cacheDir : "proj-"+Utils.md5Hex(pref == null ? "" : pref).substring(0, 4);
+        if (cacheDir != null) {
+            return cacheDir;
+        } else {
+            return "proj-" + Utils.md5Hex(pref == null ? "" : pref).substring(0, 4);
+        }
     }
 
     @Override
     public Bounds getWorldBoundsLatLon() {
-        if (bounds != null) return bounds;
-        Bounds ab = proj.getAlgorithmBounds();
-        if (ab != null) {
-            double minlon = Math.max(ab.getMinLon() + lon0 + pm, -180);
-            double maxlon = Math.min(ab.getMaxLon() + lon0 + pm, 180);
-            return new Bounds(ab.getMinLat(), minlon, ab.getMaxLat(), maxlon, false);
-        } else {
-            return new Bounds(
-                new LatLon(-90.0, -180.0),
-                new LatLon(90.0, 180.0));
+        if (bounds == null) {
+            Bounds ab = proj.getAlgorithmBounds();
+            if (ab != null) {
+                double minlon = Math.max(ab.getMinLon() + lon0 + pm, -180);
+                double maxlon = Math.min(ab.getMaxLon() + lon0 + pm, 180);
+                bounds = new Bounds(ab.getMinLat(), minlon, ab.getMaxLat(), maxlon, false);
+            } else {
+                bounds = new Bounds(
+                    new LatLon(-90.0, -180.0),
+                    new LatLon(90.0, 180.0));
+            }
         }
+        return bounds;
     }
 
     @Override
@@ -804,7 +831,7 @@ public class CustomProjection extends AbstractProjection {
             polesEN = new EnumMap<>(Polarity.class);
             for (Polarity p : Polarity.values()) {
                 polesEN.put(p, null);
-                LatLon ll = polesLL.get(p);
+                LatLon ll = p.getLatLon();
                 try {
                     EastNorth enPole = latlon2eastNorth(ll);
                     if (enPole.isValid()) {
@@ -852,7 +879,7 @@ public class CustomProjection extends AbstractProjection {
         for (Polarity p : Polarity.values()) {
             EastNorth pole = getPole(p);
             if (pole != null && r.contains(pole)) {
-                result.extend(polesLL.get(p));
+                result.extend(p.getLatLon());
             }
         }
         return result;
