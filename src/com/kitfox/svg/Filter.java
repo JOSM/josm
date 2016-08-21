@@ -75,20 +75,6 @@ public class Filter extends SVGElement
         return TAG_NAME;
     }
 
-    /**
-     * Called after the start element but before the end element to indicate
-     * each child tag that has been processed
-     */
-    public void loaderAddChild(SVGLoaderHelper helper, SVGElement child) throws SVGElementException
-    {
-        super.loaderAddChild(helper, child);
-
-        if (child instanceof FilterEffects)
-        {
-            filterEffects.add(child);
-        }
-    }
-
     protected void build() throws SVGException
     {
         super.build();
