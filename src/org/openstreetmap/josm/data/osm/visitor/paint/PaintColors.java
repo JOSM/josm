@@ -60,10 +60,18 @@ public enum PaintColors {
         this.defaultColor = defaultColor;
     }
 
+    /**
+     * Gets the default value for this color.
+     * @return The default value
+     */
     public Color getDefaultValue() {
         return property.getDefaultValue();
     }
 
+    /**
+     * Get the given color
+     * @return The color
+     */
     public Color get() {
         return property.get();
     }

@@ -13,22 +13,34 @@ import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.visitor.paint.MapPath2D;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.preferences.AbstractToStringProperty;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.DoubleProperty;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
@@ -37,6 +49,7 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.ModifierListener;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -80,6 +93,34 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class ParallelWayAction extends MapMode implements ModifierListener, MapViewPaintable {
 
+    private static final StringProperty HELPER_LINE_STROKE = new StringProperty(prefKey("stroke.hepler-line"), "1");
+    private static final StringProperty REF_LINE_STROKE = new StringProperty(prefKey("stroke.ref-line"), "1 2 2");
+
+    // @formatter:off
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
+    private static final CachingProperty<Double> SNAP_THRESHOLD         = new DoubleProperty(prefKey("snap-threshold-percent"), 0.70).cached();
+    private static final CachingProperty<Boolean> SNAP_DEFAULT          = new BooleanProperty(prefKey("snap-default"),      true).cached();
+    private static final CachingProperty<Boolean> COPY_TAGS_DEFAULT     = new BooleanProperty(prefKey("copy-tags-default"), true).cached();
+    private static final CachingProperty<Integer> INITIAL_MOVE_DELAY    = new IntegerProperty(prefKey("initial-move-delay"), 200).cached();
+    private static final CachingProperty<Double> SNAP_DISTANCE_METRIC   = new DoubleProperty(prefKey("snap-distance-metric"), 0.5).cached();
+    private static final CachingProperty<Double> SNAP_DISTANCE_IMPERIAL = new DoubleProperty(prefKey("snap-distance-imperial"), 1).cached();
+    private static final CachingProperty<Double> SNAP_DISTANCE_CHINESE  = new DoubleProperty(prefKey("snap-distance-chinese"), 1).cached();
+    private static final CachingProperty<Double> SNAP_DISTANCE_NAUTICAL = new DoubleProperty(prefKey("snap-distance-nautical"), 0.1).cached();
+    private static final CachingProperty<Color> MAIN_COLOR = new ColorProperty(marktr("make parallel helper line"), (Color) null).cached();
+
+    private static final CachingProperty<Map<Modifier, Boolean>> SNAP_MODIFIER_COMBO
+            = new KeyboardModifiersProperty(prefKey("snap-modifier-combo"),             "?sC").cached();
+    private static final CachingProperty<Map<Modifier, Boolean>> COPY_TAGS_MODIFIER_COMBO
+            = new KeyboardModifiersProperty(prefKey("copy-tags-modifier-combo"),        "As?").cached();
+    private static final CachingProperty<Map<Modifier, Boolean>> ADD_TO_SELECTION_MODIFIER_COMBO
+            = new KeyboardModifiersProperty(prefKey("add-to-selection-modifier-combo"), "aSc").cached();
+    private static final CachingProperty<Map<Modifier, Boolean>> TOGGLE_SELECTED_MODIFIER_COMBO
+            = new KeyboardModifiersProperty(prefKey("toggle-selection-modifier-combo"), "asC").cached();
+    private static final CachingProperty<Map<Modifier, Boolean>> SET_SELECTED_MODIFIER_COMBO
+            = new KeyboardModifiersProperty(prefKey("set-selection-modifier-combo"),    "asc").cached();
+    // CHECKSTYLE.ON: SingleSpaceSeparator
+    // @formatter:on
+
     private enum Mode {
         DRAGGING, NORMAL
     }
@@ -88,24 +129,8 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     // See updateModeLocalPreferences for defaults
     private Mode mode;
     private boolean copyTags;
-    private boolean copyTagsDefault;
 
     private boolean snap;
-    private boolean snapDefault;
-
-    private double snapThreshold;
-    private double snapDistanceMetric;
-    private double snapDistanceImperial;
-    private double snapDistanceChinese;
-    private double snapDistanceNautical;
-
-    private transient ModifiersSpec snapModifierCombo;
-    private transient ModifiersSpec copyTagsModifierCombo;
-    private transient ModifiersSpec addToSelectionModifierCombo;
-    private transient ModifiersSpec toggleSelectedModifierCombo;
-    private transient ModifiersSpec setSelectedModifierCombo;
-
-    private int initialMoveDelay;
 
     private final MapView mv;
 
@@ -123,7 +148,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
 
     private transient Stroke helpLineStroke;
     private transient Stroke refLineStroke;
-    private Color mainColor;
 
     /**
      * Constructs a new {@code ParallelWayAction}.
@@ -136,8 +160,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             mapFrame, ImageProvider.getCursor("normal", "parallel"));
         putValue("help", ht("/Action/Parallel"));
         mv = mapFrame.mapView;
-        updateModeLocalPreferences();
-        Main.pref.addPreferenceChangeListener(this);
     }
 
     @Override
@@ -145,7 +167,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         // super.enterMode() updates the status line and cursor so we need our state to be set correctly
         setMode(Mode.NORMAL);
         pWays = null;
-        updateAllPreferences(); // All default values should've been set now
 
         super.enterMode();
 
@@ -153,11 +174,8 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         mv.addMouseMotionListener(this);
         mv.addTemporaryLayer(this);
 
-        helpLineStroke = GuiHelper.getCustomizedStroke(getStringPref("stroke.hepler-line", "1"));
-        refLineStroke = GuiHelper.getCustomizedStroke(getStringPref("stroke.ref-line", "1 2 2"));
-        mainColor = new ColorProperty(marktr("make parallel helper line"), (Color) null).get();
-        if (mainColor == null)
-            mainColor = PaintColors.SELECTED.get();
+        helpLineStroke = GuiHelper.getCustomizedStroke(HELPER_LINE_STROKE.get());
+        refLineStroke = GuiHelper.getCustomizedStroke(REF_LINE_STROKE.get());
 
         //// Needed to update the mouse cursor if modifiers are changed when the mouse is motionless
         Main.map.keyDetector.addModifierListener(this);
@@ -199,32 +217,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         return ""; // impossible ..
     }
 
-    // Separated due to "race condition" between default values
-    private void updateAllPreferences() {
-        updateModeLocalPreferences();
-    }
-
-    private void updateModeLocalPreferences() {
-        // @formatter:off
-        // CHECKSTYLE.OFF: SingleSpaceSeparator
-        snapThreshold        = Main.pref.getDouble(prefKey("snap-threshold-percent"), 0.70);
-        snapDefault          = Main.pref.getBoolean(prefKey("snap-default"),      true);
-        copyTagsDefault      = Main.pref.getBoolean(prefKey("copy-tags-default"), true);
-        initialMoveDelay     = Main.pref.getInteger(prefKey("initial-move-delay"), 200);
-        snapDistanceMetric   = Main.pref.getDouble(prefKey("snap-distance-metric"), 0.5);
-        snapDistanceImperial = Main.pref.getDouble(prefKey("snap-distance-imperial"), 1);
-        snapDistanceChinese  = Main.pref.getDouble(prefKey("snap-distance-chinese"), 1);
-        snapDistanceNautical = Main.pref.getDouble(prefKey("snap-distance-nautical"), 0.1);
-
-        snapModifierCombo           = new ModifiersSpec(getStringPref("snap-modifier-combo",             "?sC"));
-        copyTagsModifierCombo       = new ModifiersSpec(getStringPref("copy-tags-modifier-combo",        "As?"));
-        addToSelectionModifierCombo = new ModifiersSpec(getStringPref("add-to-selection-modifier-combo", "aSc"));
-        toggleSelectedModifierCombo = new ModifiersSpec(getStringPref("toggle-selection-modifier-combo", "asC"));
-        setSelectedModifierCombo    = new ModifiersSpec(getStringPref("set-selection-modifier-combo",    "asc"));
-        // CHECKSTYLE.ON: SingleSpaceSeparator
-        // @formatter:on
-    }
-
     @Override
     public boolean layerIsSupported(Layer layer) {
         return layer instanceof OsmDataLayer;
@@ -252,11 +244,11 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         Cursor newCursor = null;
         switch (mode) {
         case NORMAL:
-            if (matchesCurrentModifiers(setSelectedModifierCombo)) {
+            if (matchesCurrentModifiers(SET_SELECTED_MODIFIER_COMBO)) {
                 newCursor = ImageProvider.getCursor("normal", "parallel");
-            } else if (matchesCurrentModifiers(addToSelectionModifierCombo)) {
+            } else if (matchesCurrentModifiers(ADD_TO_SELECTION_MODIFIER_COMBO)) {
                 newCursor = ImageProvider.getCursor("normal", "parallel_add");
-            } else if (matchesCurrentModifiers(toggleSelectedModifierCombo)) {
+            } else if (matchesCurrentModifiers(TOGGLE_SELECTED_MODIFIER_COMBO)) {
                 newCursor = ImageProvider.getCursor("normal", "parallel_remove");
             }
             break;
@@ -324,24 +316,24 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             // use point from press or click event? (or are these always the same)
             Way nearestWay = mv.getNearestWay(e.getPoint(), OsmPrimitive::isSelectable);
             if (nearestWay == null) {
-                if (matchesCurrentModifiers(setSelectedModifierCombo)) {
+                if (matchesCurrentModifiers(SET_SELECTED_MODIFIER_COMBO)) {
                     clearSourceWays();
                 }
                 resetMouseTrackingState();
                 return;
             }
             boolean isSelected = nearestWay.isSelected();
-            if (matchesCurrentModifiers(addToSelectionModifierCombo)) {
+            if (matchesCurrentModifiers(ADD_TO_SELECTION_MODIFIER_COMBO)) {
                 if (!isSelected) {
                     addSourceWay(nearestWay);
                 }
-            } else if (matchesCurrentModifiers(toggleSelectedModifierCombo)) {
+            } else if (matchesCurrentModifiers(TOGGLE_SELECTED_MODIFIER_COMBO)) {
                 if (isSelected) {
                     removeSourceWay(nearestWay);
                 } else {
                     addSourceWay(nearestWay);
                 }
-            } else if (matchesCurrentModifiers(setSelectedModifierCombo)) {
+            } else if (matchesCurrentModifiers(SET_SELECTED_MODIFIER_COMBO)) {
                 clearSourceWays();
                 addSourceWay(nearestWay);
             } // else -> invalid modifier combination
@@ -379,7 +371,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             updateCursor();
         }
 
-        if ((System.currentTimeMillis() - mousePressedTime) < initialMoveDelay)
+        if ((System.currentTimeMillis() - mousePressedTime) < INITIAL_MOVE_DELAY.get())
             return;
         // Assuming this event only is emitted when the mouse has moved
         // Setting this after the check above means we tolerate clicks with some movement
@@ -408,8 +400,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         double realD = mv.getProjection().eastNorth2latlon(enp).greatCircleDistance(mv.getProjection().eastNorth2latlon(nearestPointOnRefLine));
         double snappedRealD = realD;
 
-        // TODO: abuse of isToTheRightSideOfLine function.
-        boolean toTheRight = Geometry.isToTheRightSideOfLine(referenceSegment.getFirstNode(),
+        boolean toTheRight = Geometry.angleIsClockwise(
                 referenceSegment.getFirstNode(), referenceSegment.getSecondNode(), new Node(enp));
 
         if (snap) {
@@ -418,13 +409,13 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             double snapDistance;
             SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
             if (som.equals(SystemOfMeasurement.CHINESE)) {
-                snapDistance = snapDistanceChinese * SystemOfMeasurement.CHINESE.aValue;
+                snapDistance = SNAP_DISTANCE_CHINESE.get() * SystemOfMeasurement.CHINESE.aValue;
             } else if (som.equals(SystemOfMeasurement.IMPERIAL)) {
-                snapDistance = snapDistanceImperial * SystemOfMeasurement.IMPERIAL.aValue;
+                snapDistance = SNAP_DISTANCE_IMPERIAL.get() * SystemOfMeasurement.IMPERIAL.aValue;
             } else if (som.equals(SystemOfMeasurement.NAUTICAL_MILE)) {
-                snapDistance = snapDistanceNautical * SystemOfMeasurement.NAUTICAL_MILE.aValue;
+                snapDistance = SNAP_DISTANCE_NAUTICAL.get() * SystemOfMeasurement.NAUTICAL_MILE.aValue;
             } else {
-                snapDistance = snapDistanceMetric; // Metric system by default
+                snapDistance = SNAP_DISTANCE_METRIC.get(); // Metric system by default
             }
             double closestWholeUnit;
             double modulo = realD % snapDistance;
@@ -433,7 +424,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             } else {
                 closestWholeUnit = realD + (snapDistance-modulo);
             }
-            if (Math.abs(closestWholeUnit - realD) < (snapThreshold * snapDistance)) {
+            if (Math.abs(closestWholeUnit - realD) < (SNAP_THRESHOLD.get() * snapDistance)) {
                 snappedRealD = closestWholeUnit;
             } else {
                 snappedRealD = closestWholeUnit + Math.signum(realD - closestWholeUnit) * snapDistance;
@@ -452,43 +443,62 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         mv.repaint();
     }
 
-    private boolean matchesCurrentModifiers(ModifiersSpec spec) {
-        return spec.matchWithKnown(alt, shift, ctrl);
+    private boolean matchesCurrentModifiers(CachingProperty<Map<Modifier, Boolean>> spec) {
+        return matchesCurrentModifiers(spec.get());
+    }
+
+    private boolean matchesCurrentModifiers(Map<Modifier, Boolean> spec) {
+        EnumSet<Modifier> modifiers = EnumSet.noneOf(Modifier.class);
+        if (ctrl) {
+            modifiers.add(Modifier.CTRL);
+        }
+        if (alt) {
+            modifiers.add(Modifier.ALT);
+        }
+        if (shift) {
+            modifiers.add(Modifier.SHIFT);
+        }
+        return spec.entrySet().stream().allMatch(entry -> modifiers.contains(entry.getKey()) == entry.getValue().booleanValue());
     }
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds bbox) {
         if (mode == Mode.DRAGGING) {
-            // sanity checks
-            if (mv == null)
-                return;
+            CheckParameterUtil.ensureParameterNotNull(mv, "mv");
+
+            Color mainColor = MAIN_COLOR.get();
+            if (mainColor == null) {
+                mainColor = PaintColors.SELECTED.get();
+            }
 
             // FIXME: should clip the line (gets insanely slow when zoomed in on a very long line
             g.setStroke(refLineStroke);
             g.setColor(mainColor);
-            Point p1 = mv.getPoint(referenceSegment.getFirstNode().getEastNorth());
-            Point p2 = mv.getPoint(referenceSegment.getSecondNode().getEastNorth());
-            g.drawLine(p1.x, p1.y, p2.x, p2.y);
+            MapPath2D line = new MapPath2D();
+            line.moveTo(mv.getState().getPointFor(referenceSegment.getFirstNode()));
+            line.lineTo(mv.getState().getPointFor(referenceSegment.getSecondNode()));
+            g.draw(line);
 
             g.setStroke(helpLineStroke);
             g.setColor(mainColor);
-            p1 = mv.getPoint(helperLineStart);
-            p2 = mv.getPoint(helperLineEnd);
-            g.drawLine(p1.x, p1.y, p2.x, p2.y);
+            line = new MapPath2D();
+            line.moveTo(mv.getState().getPointFor(helperLineStart));
+            line.lineTo(mv.getState().getPointFor(helperLineEnd));
+            g.draw(line);
         }
     }
 
     private boolean isModifiersValidForDragMode() {
-        return (!alt && !shift && !ctrl) || matchesCurrentModifiers(snapModifierCombo)
-                || matchesCurrentModifiers(copyTagsModifierCombo);
+        return (!alt && !shift && !ctrl) || matchesCurrentModifiers(SNAP_MODIFIER_COMBO)
+                || matchesCurrentModifiers(COPY_TAGS_MODIFIER_COMBO);
     }
 
     private void updateFlagsOnlyChangeableOnPress() {
-        copyTags = copyTagsDefault != matchesCurrentModifiers(copyTagsModifierCombo);
+        copyTags = COPY_TAGS_DEFAULT.get().booleanValue() != matchesCurrentModifiers(COPY_TAGS_MODIFIER_COMBO);
     }
 
     private void updateFlagsChangeableAlways() {
-        snap = snapDefault != matchesCurrentModifiers(snapModifierCombo);
+        snap = SNAP_DEFAULT.get().booleanValue() != matchesCurrentModifiers(SNAP_MODIFIER_COMBO);
     }
 
     // We keep the source ways and the selection in sync so the user can see the source way's tags
@@ -563,20 +573,77 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         return "edit.make-parallel-way-action." + subKey;
     }
 
-    private static String getStringPref(String subKey, String def) {
-        return Main.pref.get(prefKey(subKey), def);
-    }
+    /**
+     * A property that holds the keyboard modifiers.
+     * @author Michael Zangl
+     * @since 10869
+     */
+    private static class KeyboardModifiersProperty extends AbstractToStringProperty<Map<Modifier, Boolean>> {
 
-    @Override
-    public void preferenceChanged(PreferenceChangeEvent e) {
-        if (e.getKey().startsWith(prefKey(""))) {
-            updateAllPreferences();
+        KeyboardModifiersProperty(String key, String defaultValue) {
+            super(key, createFromString(defaultValue));
+        }
+
+        KeyboardModifiersProperty(String key, Map<Modifier, Boolean> defaultValue) {
+            super(key, defaultValue);
+        }
+
+        @Override
+        protected String toString(Map<Modifier, Boolean> t) {
+            StringBuilder sb = new StringBuilder();
+            for (Modifier mod : Modifier.values()) {
+                Boolean val = t.get(mod);
+                if (val == null) {
+                    sb.append('?');
+                } else if (val) {
+                    sb.append(Character.toUpperCase(mod.shortChar));
+                } else {
+                    sb.append(mod.shortChar);
+                }
+            }
+            return sb.toString();
+        }
+
+        @Override
+        protected Map<Modifier, Boolean> fromString(String string) {
+            return createFromString(string);
+        }
+
+        private static Map<Modifier, Boolean> createFromString(String string) {
+            Map<Modifier, Boolean> ret = new EnumMap<>(Modifier.class);
+            for (char c : string.toCharArray()) {
+                if (c == '?') {
+                    continue;
+                }
+                Optional<Modifier> mod = Modifier.findWithShortCode(c);
+                if (mod.isPresent()) {
+                    ret.put(mod.get(), Character.isUpperCase(c));
+                } else {
+                    Main.debug("Ignoring unknown modifier {0}", c);
+                }
+            }
+            return Collections.unmodifiableMap(ret);
         }
     }
 
-    @Override
-    public void destroy() {
-        super.destroy();
-        Main.pref.removePreferenceChangeListener(this);
+    private enum Modifier {
+        CTRL('c'),
+        ALT('a'),
+        SHIFT('s');
+
+        private final char shortChar;
+
+        Modifier(char shortChar) {
+            this.shortChar = Character.toLowerCase(shortChar);
+        }
+
+        /**
+         * Find the modifier with the given short code
+         * @param charCode The short code
+         * @return The modifier
+         */
+        public static Optional<Modifier> findWithShortCode(int charCode) {
+            return Stream.of(values()).filter(m -> m.shortChar == Character.toLowerCase(charCode)).findAny();
+        }
     }
 }
