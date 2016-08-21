@@ -130,34 +130,6 @@ public class SVGUniverse implements Serializable
     }
 
     /**
-     * Returns the current animation time in milliseconds.
-     */
-    public double getCurTime()
-    {
-        return curTime;
-    }
-
-    public void setCurTime(double curTime)
-    {
-        double oldTime = this.curTime;
-        this.curTime = curTime;
-        changes.firePropertyChange("curTime", new Double(oldTime), new Double(curTime));
-    }
-
-    /**
-     * Updates all time influenced style and presentation attributes in all SVG
-     * documents in this universe.
-     */
-    public void updateTime() throws SVGException
-    {
-        for (Iterator it = loadedDocs.values().iterator(); it.hasNext();)
-        {
-            SVGDiagram dia = (SVGDiagram) it.next();
-            dia.updateTime(curTime);
-        }
-    }
-
-    /**
      * Called by the Font element to let the universe know that a font has been
      * loaded and is available.
      */
