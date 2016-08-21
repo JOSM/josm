@@ -37,12 +37,9 @@
 package com.kitfox.svg.xml;
 
 import com.kitfox.svg.SVGConst;
-import org.w3c.dom.*;
 import java.awt.*;
-import java.net.*;
 import java.util.*;
 import java.util.regex.*;
-import java.lang.reflect.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,48 +57,8 @@ public class XMLParseUtil
     {
     }
 
-    /**
-     * Scans the tag's children and returns the first text element found
-     */
-    public static String getTagText(Element ele)
-    {
-        NodeList nl = ele.getChildNodes();
-        int size = nl.getLength();
-
-        Node node = null;
-        int i = 0;
-        for (; i < size; i++)
-        {
-            node = nl.item(i);
-            if (node instanceof Text) break;
-        }
-        if (i == size || node == null) return null;
-
-        return ((Text)node).getData();
-    }
-
-    /**
-     * Returns the first node that is a direct child of root with the coresponding
-     * name.  Does not search children of children.
-     */
-    public static Element getFirstChild(Element root, String name)
-    {
-        NodeList nl = root.getChildNodes();
-        int size = nl.getLength();
-        for (int i = 0; i < size; i++)
-        {
-            Node node = nl.item(i);
-            if (!(node instanceof Element)) continue;
-            Element ele = (Element)node;
-            if (ele.getTagName().equals(name)) return ele;
-        }
-
-        return null;
-    }
-
     public static String[] parseStringList(String list)
     {
-//        final Pattern patWs = Pattern.compile("\\s+");
         final Matcher matchWs = Pattern.compile("[^\\s]+").matcher("");
         matchWs.reset(list);
 
@@ -115,12 +72,6 @@ public class XMLParseUtil
         return (String[])matchList.toArray(retArr);
     }
 
-    public static boolean isDouble(String val)
-    {
-        fpMatch.reset(val);
-        return fpMatch.matches();
-    }
-    
     public static double parseDouble(String val)
     {
         /*
@@ -232,21 +183,6 @@ public class XMLParseUtil
         return retArr;
     }
 
-    public static float parseFloat(String val)
-    {
-        /*
-        if (val == null) return 0f;
-
-        float retVal = 0f;
-        try
-        { retVal = Float.parseFloat(val); }
-        catch (Exception e)
-        {}
-        return retVal;
-         */
-        return findFloat(val);
-    }
-
     /**
      * Searches the given string for the first floating point number it contains,
      * parses and returns it.
@@ -297,18 +233,6 @@ public class XMLParseUtil
         return retArr;
     }
 
-    public static int parseInt(String val)
-    {
-        if (val == null) return 0;
-
-        int retVal = 0;
-        try
-        { retVal = Integer.parseInt(val); }
-        catch (Exception e)
-        {}
-        return retVal;
-    }
-
     /**
      * Searches the given string for the first integer point number it contains,
      * parses and returns it.
@@ -321,7 +245,6 @@ public class XMLParseUtil
         if (!intMatch.find()) return 0;
 
         val = intMatch.group();
-        //System.err.println("Parsing " + val);
 
         int retVal = 0;
         try
@@ -354,34 +277,7 @@ public class XMLParseUtil
 
         return retArr;
     }
-/*
-    public static int parseHex(String val)
-    {
-        int retVal = 0;
-        
-        for (int i = 0; i < val.length(); i++)
-        {
-            retVal <<= 4;
-            
-            char ch = val.charAt(i);
-            if (ch >= '0' && ch <= '9')
-            {
-                retVal |= ch - '0';
-            }
-            else if (ch >= 'a' && ch <= 'z')
-            {
-                retVal |= ch - 'a' + 10;
-            }
-            else if (ch >= 'A' && ch <= 'Z')
-            {
-                retVal |= ch - 'A' + 10;
-            }
-            else throw new RuntimeException();
-        }
-        
-        return retVal;
-    }
-*/
+
     /**
      * The input string represents a ratio.  Can either be specified as a
      * double number on the range of [0.0 1.0] or as a percentage [0% 100%]
@@ -402,400 +298,6 @@ public class XMLParseUtil
         if (val == null) return null;
 
         return new NumberWithUnits(val);
-    }
-/*
-    public static Color parseColor(String val)
-    {
-        Color retVal = null;
-
-        if (val.charAt(0) == '#')
-        {
-            String hexStrn = val.substring(1);
-            
-            if (hexStrn.length() == 3)
-            {
-                hexStrn = "" + hexStrn.charAt(0) + hexStrn.charAt(0) + hexStrn.charAt(1) + hexStrn.charAt(1) + hexStrn.charAt(2) + hexStrn.charAt(2);
-            }
-            int hexVal = parseHex(hexStrn);
-
-            retVal = new Color(hexVal);
-        }
-        else
-        {
-            final Matcher rgbMatch = Pattern.compile("rgb\\((\\d+),(\\d+),(\\d+)\\)", Pattern.CASE_INSENSITIVE).matcher("");
-
-            rgbMatch.reset(val);
-            if (rgbMatch.matches())
-            {
-                int r = Integer.parseInt(rgbMatch.group(1));
-                int g = Integer.parseInt(rgbMatch.group(2));
-                int b = Integer.parseInt(rgbMatch.group(3));
-                retVal = new Color(r, g, b);
-            }
-            else
-            {
-                Color lookupCol = ColorTable.instance().lookupColor(val);
-                if (lookupCol != null) retVal = lookupCol;
-            }
-        }
-
-        return retVal;
-    }
-*/
-    /**
-     * Parses the given attribute of this tag and returns it as a String.
-     */
-    public static String getAttribString(Element ele, String name)
-    {
-        return ele.getAttribute(name);
-    }
-
-    /**
-     * Parses the given attribute of this tag and returns it as an int.
-     */
-    public static int getAttribInt(Element ele, String name)
-    {
-        String sval = ele.getAttribute(name);
-        int val = 0;
-        try { val = Integer.parseInt(sval); } catch (Exception e) {}
-
-        return val;
-    }
-
-    /**
-     * Parses the given attribute of this tag as a hexadecimal encoded string and
-     * returns it as an int
-     */
-    public static int getAttribIntHex(Element ele, String name)
-    {
-        String sval = ele.getAttribute(name);
-        int val = 0;
-        try { val = Integer.parseInt(sval, 16); } catch (Exception e) {}
-
-        return val;
-    }
-
-    /**
-     * Parses the given attribute of this tag and returns it as a float
-     */
-    public static float getAttribFloat(Element ele, String name)
-    {
-        String sval = ele.getAttribute(name);
-        float val = 0.0f;
-        try { val = Float.parseFloat(sval); } catch (Exception e) {}
-
-        return val;
-    }
-
-    /**
-     * Parses the given attribute of this tag and returns it as a double.
-     */
-    public static double getAttribDouble(Element ele, String name)
-    {
-        String sval = ele.getAttribute(name);
-        double val = 0.0;
-        try { val = Double.parseDouble(sval); } catch (Exception e) {}
-
-        return val;
-    }
-
-    /**
-     * Parses the given attribute of this tag and returns it as a boolean.
-     * Essentially compares the lower case textual value to the string "true"
-     */
-    public static boolean getAttribBoolean(Element ele, String name)
-    {
-        String sval = ele.getAttribute(name);
-
-        return sval.toLowerCase().equals("true");
-    }
-
-    public static URL getAttribURL(Element ele, String name, URL docRoot)
-    {
-        String sval = ele.getAttribute(name);
-
-        URL url;
-        try
-        {
-            return new URL(docRoot, sval);
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
-    }
-
-    /**
-     * Returns the first ReadableXMLElement with the given name
-     */
-    public static ReadableXMLElement getElement(Class classType, Element root, String name, URL docRoot)
-    {
-        if (root == null) return null;
-
-        //Do not process if not a LoadableObject
-        if (!ReadableXMLElement.class.isAssignableFrom(classType))
-        {
-            return null;
-        }
-
-        NodeList nl = root.getChildNodes();
-        int size = nl.getLength();
-        for (int i = 0; i < size; i++)
-        {
-            Node node = nl.item(i);
-            if (!(node instanceof Element)) continue;
-            Element ele = (Element)node;
-            if (!ele.getTagName().equals(name)) continue;
-
-            ReadableXMLElement newObj = null;
-            try
-            {
-                newObj = (ReadableXMLElement)classType.newInstance();
-            }
-            catch (Exception e)
-            {
-                Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING, null, e);
-                continue;
-            }
-            newObj.read(ele, docRoot);
-
-            if (newObj == null) continue;
-
-            return newObj;
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns a HashMap of nodes that are children of root.  All nodes will
-     * be of class classType and have a tag name of 'name'.  'key' is
-     * an attribute of tag 'name' who's string value will be used as the key
-     * in the HashMap
-     */
-    public static HashMap getElementHashMap(Class classType, Element root, String name, String key, URL docRoot)
-    {
-        if (root == null) return null;
-
-        //Do not process if not a LoadableObject
-        if (!ReadableXMLElement.class.isAssignableFrom(classType))
-        {
-            return null;
-        }
-
-        HashMap retMap = new HashMap();
-
-        NodeList nl = root.getChildNodes();
-        int size = nl.getLength();
-        for (int i = 0; i < size; i++)
-        {
-            Node node = nl.item(i);
-            if (!(node instanceof Element)) continue;
-            Element ele = (Element)node;
-            if (!ele.getTagName().equals(name)) continue;
-
-            ReadableXMLElement newObj = null;
-            try 
-            {
-                newObj = (ReadableXMLElement)classType.newInstance();
-            }
-            catch (Exception e)
-            {
-                Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING, null, e);
-                continue;
-            }
-            newObj.read(ele, docRoot);
-
-            if (newObj == null) continue;
-
-            String keyVal = getAttribString(ele, key);
-            retMap.put(keyVal, newObj);
-        }
-
-        return retMap;
-    }
-
-    public static HashSet getElementHashSet(Class classType, Element root, String name, URL docRoot)
-    {
-        if (root == null) return null;
-
-        //Do not process if not a LoadableObject
-        if (!ReadableXMLElement.class.isAssignableFrom(classType))
-        {
-            return null;
-        }
-
-        HashSet retSet = new HashSet();
-
-        NodeList nl = root.getChildNodes();
-        int size = nl.getLength();
-        for (int i = 0; i < size; i++)
-        {
-            Node node = nl.item(i);
-            if (!(node instanceof Element)) continue;
-            Element ele = (Element)node;
-            if (!ele.getTagName().equals(name)) continue;
-
-            ReadableXMLElement newObj = null;
-            try 
-            {
-                newObj = (ReadableXMLElement)classType.newInstance();
-            }
-            catch (Exception e)
-            {
-                Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING, null, e);
-                continue;
-            }
-            newObj.read(ele, docRoot);
-
-            if (newObj == null)
-            {
-                continue;
-            }
-
-            retSet.add(newObj);
-        }
-
-        return retSet;
-    }
-
-
-    public static LinkedList getElementLinkedList(Class classType, Element root, String name, URL docRoot)
-    {
-        if (root == null) return null;
-
-        //Do not process if not a LoadableObject
-        if (!ReadableXMLElement.class.isAssignableFrom(classType))
-        {
-            return null;
-        }
-
-        NodeList nl = root.getChildNodes();
-        LinkedList elementCache = new LinkedList();
-        int size = nl.getLength();
-        for (int i = 0; i < size; i++)
-        {
-            Node node = nl.item(i);
-            if (!(node instanceof Element)) continue;
-            Element ele = (Element)node;
-            if (!ele.getTagName().equals(name)) continue;
-
-            ReadableXMLElement newObj = null;
-            try 
-            { 
-                newObj = (ReadableXMLElement)classType.newInstance();
-            }
-            catch (Exception e)
-            {
-                Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING, null, e);
-                continue;
-            }
-            newObj.read(ele, docRoot);
-
-            elementCache.addLast(newObj);
-        }
-
-        return elementCache;
-    }
-
-    public static Object[] getElementArray(Class classType, Element root, String name, URL docRoot)
-    {
-        if (root == null) return null;
-
-        //Do not process if not a LoadableObject
-        if (!ReadableXMLElement.class.isAssignableFrom(classType))
-        {
-            return null;
-        }
-
-        LinkedList elementCache = getElementLinkedList(classType, root, name, docRoot);
-
-        Object[] retArr = (Object[])Array.newInstance(classType, elementCache.size());
-        return elementCache.toArray(retArr);
-    }
-
-    /**
-     * Takes a number of tags of name 'name' that are children of 'root', and
-     * looks for attributes of 'attrib' on them.  Converts attributes to an
-     * int and returns in an array.
-     */
-    public static int[] getElementArrayInt(Element root, String name, String attrib)
-    {
-        if (root == null) return null;
-
-        NodeList nl = root.getChildNodes();
-        LinkedList elementCache = new LinkedList();
-        int size = nl.getLength();
-
-        for (int i = 0; i < size; i++)
-        {
-            Node node = nl.item(i);
-            if (!(node instanceof Element)) continue;
-            Element ele = (Element)node;
-            if (!ele.getTagName().equals(name)) continue;
-
-            String valS = ele.getAttribute(attrib);
-            int eleVal = 0;
-            try { eleVal = Integer.parseInt(valS); }
-            catch (Exception e) {}
-
-            elementCache.addLast(new Integer(eleVal));
-        }
-
-        int[] retArr = new int[elementCache.size()];
-        Iterator it = elementCache.iterator();
-        int idx = 0;
-        while (it.hasNext())
-        {
-            retArr[idx++] = ((Integer)it.next()).intValue();
-        }
-
-        return retArr;
-    }
-
-    /**
-     * Takes a number of tags of name 'name' that are children of 'root', and
-     * looks for attributes of 'attrib' on them.  Converts attributes to an
-     * int and returns in an array.
-     */
-    public static String[] getElementArrayString(Element root, String name, String attrib)
-    {
-        if (root == null) return null;
-
-        NodeList nl = root.getChildNodes();
-        LinkedList elementCache = new LinkedList();
-        int size = nl.getLength();
-
-        for (int i = 0; i < size; i++)
-        {
-            Node node = nl.item(i);
-            if (!(node instanceof Element)) continue;
-            Element ele = (Element)node;
-            if (!ele.getTagName().equals(name)) continue;
-
-            String valS = ele.getAttribute(attrib);
-
-            elementCache.addLast(valS);
-        }
-
-        String[] retArr = new String[elementCache.size()];
-        Iterator it = elementCache.iterator();
-        int idx = 0;
-        while (it.hasNext())
-        {
-            retArr[idx++] = (String)it.next();
-        }
-
-        return retArr;
-    }
-
-    /**
-     * Takes a CSS style string and retursn a hash of them.
-     * @param styleString - A CSS formatted string of styles.  Eg,
-     *     "font-size:12;fill:#d32c27;fill-rule:evenodd;stroke-width:1pt;"
-     */
-    public static HashMap parseStyle(String styleString) {
-        return parseStyle(styleString, new HashMap());
     }
 
     /**
