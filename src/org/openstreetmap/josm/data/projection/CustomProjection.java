@@ -611,7 +611,7 @@ public class CustomProjection extends AbstractProjection {
      * @param boundsStr The string as comma separated list of angles.
      * @return The bounds.
      * @throws ProjectionConfigurationException in case of invalid parameter
-     * @see {@link CustomProjection#parseAngle(String, String)}
+     * @see CustomProjection#parseAngle(String, String)
      */
     public static Bounds parseBounds(String boundsStr) throws ProjectionConfigurationException {
         String[] numStr = boundsStr.split(",");
