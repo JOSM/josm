@@ -32,7 +32,6 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPath2D;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.preferences.AbstractToStringProperty;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -44,6 +43,7 @@ import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -467,16 +467,16 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             // FIXME: should clip the line (gets insanely slow when zoomed in on a very long line
             g.setStroke(REF_LINE_STROKE.get());
             g.setColor(mainColor);
-            MapPath2D line = new MapPath2D();
-            line.moveTo(mv.getState().getPointFor(referenceSegment.getFirstNode()));
-            line.lineTo(mv.getState().getPointFor(referenceSegment.getSecondNode()));
+            MapViewPath line = new MapViewPath(mv);
+            line.moveTo(referenceSegment.getFirstNode());
+            line.lineTo(referenceSegment.getSecondNode());
             g.draw(line);
 
             g.setStroke(HELPER_LINE_STROKE.get());
             g.setColor(mainColor);
-            line = new MapPath2D();
-            line.moveTo(mv.getState().getPointFor(helperLineStart));
-            line.lineTo(mv.getState().getPointFor(helperLineEnd));
+            line = new MapViewPath(mv);
+            line.moveTo(helperLineStart);
+            line.lineTo(helperLineEnd);
             g.draw(line);
         }
     }

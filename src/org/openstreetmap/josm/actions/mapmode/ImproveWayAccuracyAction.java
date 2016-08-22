@@ -5,11 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -34,16 +34,18 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPath2D;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
+import org.openstreetmap.josm.gui.draw.MapViewPath;
+import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
@@ -55,8 +57,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class ImproveWayAccuracyAction extends MapMode implements
         SelectionChangedListener, ModifierListener {
 
-    enum State {
-        selecting, improving
+    private enum State {
+        SELECTING, IMPROVING
     }
 
     private State state;
@@ -72,21 +74,28 @@ public class ImproveWayAccuracyAction extends MapMode implements
     private Point mousePos;
     private boolean dragging;
 
-    private final Cursor cursorSelect;
-    private final Cursor cursorSelectHover;
-    private final Cursor cursorImprove;
-    private final Cursor cursorImproveAdd;
-    private final Cursor cursorImproveDelete;
-    private final Cursor cursorImproveAddLock;
-    private final Cursor cursorImproveLock;
+    private final Cursor cursorSelect = ImageProvider.getCursor("normal", "mode");
+    private final Cursor cursorSelectHover = ImageProvider.getCursor("hand", "mode");
+    private final Cursor cursorImprove = ImageProvider.getCursor("crosshair", null);
+    private final Cursor cursorImproveAdd = ImageProvider.getCursor("crosshair", "addnode");
+    private final Cursor cursorImproveDelete = ImageProvider.getCursor("crosshair", "delete_node");
+    private final Cursor cursorImproveAddLock = ImageProvider.getCursor("crosshair", "add_node_lock");
+    private final Cursor cursorImproveLock = ImageProvider.getCursor("crosshair", "lock");
 
     private Color guideColor;
-    private transient Stroke selectTargetWayStroke;
-    private transient Stroke moveNodeStroke;
-    private transient Stroke moveNodeIntersectingStroke;
-    private transient Stroke addNodeStroke;
-    private transient Stroke deleteNodeStroke;
-    private int dotSize;
+
+    private static final CachingProperty<BasicStroke> SELECT_TARGET_WAY_STROKE
+            = new StrokeProperty("improvewayaccuracy.stroke.select-target", "2").cached();
+    private static final CachingProperty<BasicStroke> MOVE_NODE_STROKE
+            = new StrokeProperty("improvewayaccuracy.stroke.move-node", "1 6").cached();
+    private static final CachingProperty<BasicStroke> MOVE_NODE_INTERSECTING_STROKE
+            = new StrokeProperty("improvewayaccuracy.stroke.move-node-intersecting", "1 2 6").cached();
+    private static final CachingProperty<BasicStroke> ADD_NODE_STROKE
+            = new StrokeProperty("improvewayaccuracy.stroke.add-node", "1").cached();
+    private static final CachingProperty<BasicStroke> DELETE_NODE_STROKE
+            = new StrokeProperty("improvewayaccuracy.stroke.delete-node", "1").cached();
+    private static final CachingProperty<Integer> DOT_SIZE
+            = new IntegerProperty("improvewayaccuracy.dot-size", 6).cached();
 
     private boolean selectionChangedBlocked;
 
@@ -110,14 +119,6 @@ public class ImproveWayAccuracyAction extends MapMode implements
                 tr("Mode: {0}", tr("Improve Way Accuracy")),
                 KeyEvent.VK_W, Shortcut.DIRECT), mapFrame, Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
-        cursorSelect = ImageProvider.getCursor("normal", "mode");
-        cursorSelectHover = ImageProvider.getCursor("hand", "mode");
-        cursorImprove = ImageProvider.getCursor("crosshair", null);
-        cursorImproveAdd = ImageProvider.getCursor("crosshair", "addnode");
-        cursorImproveDelete = ImageProvider.getCursor("crosshair", "delete_node");
-        cursorImproveAddLock = ImageProvider.getCursor("crosshair",
-                "add_node_lock");
-        cursorImproveLock = ImageProvider.getCursor("crosshair", "lock");
         readPreferences();
     }
 
@@ -155,13 +156,6 @@ public class ImproveWayAccuracyAction extends MapMode implements
         guideColor = new ColorProperty(marktr("improve way accuracy helper line"), (Color) null).get();
         if (guideColor == null)
             guideColor = PaintColors.HIGHLIGHT.get();
-
-        selectTargetWayStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.select-target", "2"));
-        moveNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.move-node", "1 6"));
-        moveNodeIntersectingStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.move-node-intersecting", "1 2 6"));
-        addNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.add-node", "1"));
-        deleteNodeStroke = GuiHelper.getCustomizedStroke(Main.pref.get("improvewayaccuracy.stroke.delete-node", "1"));
-        dotSize = Main.pref.getInteger("improvewayaccuracy.dot-size", 6);
     }
 
     @Override
@@ -189,7 +183,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
     @Override
     public String getModeHelpText() {
-        if (state == State.selecting) {
+        if (state == State.SELECTING) {
             if (targetWay != null) {
                 return tr("Click on the way to start improving its shape.");
             } else {
@@ -233,109 +227,97 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
         g.setColor(guideColor);
 
-        if (state == State.selecting && targetWay != null) {
+        if (state == State.SELECTING && targetWay != null) {
             // Highlighting the targetWay in Selecting state
             // Non-native highlighting is used, because sometimes highlighted
             // segments are covered with others, which is bad.
-            g.setStroke(selectTargetWayStroke);
+            g.setStroke(SELECT_TARGET_WAY_STROKE.get());
 
             List<Node> nodes = targetWay.getNodes();
 
-            MapPath2D b = new MapPath2D();
-            Point p0 = mv.getPoint(nodes.get(0));
-            Point pn;
-            b.moveTo(p0.x, p0.y);
+            g.draw(new MapViewPath(mv).append(nodes, false));
 
-            for (Node n : nodes) {
-                pn = mv.getPoint(n);
-                b.lineTo(pn.x, pn.y);
-            }
-            if (targetWay.isClosed()) {
-                b.lineTo(p0.x, p0.y);
-            }
-
-            g.draw(b);
-
-        } else if (state == State.improving) {
+        } else if (state == State.IMPROVING) {
             // Drawing preview lines and highlighting the node
             // that is going to be moved.
             // Non-native highlighting is used here as well.
 
             // Finding endpoints
-            Point p1 = null, p2 = null;
+            Node p1 = null;
+            Node p2 = null;
             if (ctrl && candidateSegment != null) {
-                g.setStroke(addNodeStroke);
-                p1 = mv.getPoint(candidateSegment.getFirstNode());
-                p2 = mv.getPoint(candidateSegment.getSecondNode());
+                g.setStroke(ADD_NODE_STROKE.get());
+                p1 = candidateSegment.getFirstNode();
+                p2 = candidateSegment.getSecondNode();
             } else if (!alt && !ctrl && candidateNode != null) {
-                g.setStroke(moveNodeStroke);
+                g.setStroke(MOVE_NODE_STROKE.get());
                 List<Pair<Node, Node>> wpps = targetWay.getNodePairs(false);
                 for (Pair<Node, Node> wpp : wpps) {
                     if (wpp.a == candidateNode) {
-                        p1 = mv.getPoint(wpp.b);
+                        p1 = wpp.b;
                     }
                     if (wpp.b == candidateNode) {
-                        p2 = mv.getPoint(wpp.a);
+                        p2 = wpp.a;
                     }
                     if (p1 != null && p2 != null) {
                         break;
                     }
                 }
             } else if (alt && !ctrl && candidateNode != null) {
-                g.setStroke(deleteNodeStroke);
+                g.setStroke(DELETE_NODE_STROKE.get());
                 List<Node> nodes = targetWay.getNodes();
                 int index = nodes.indexOf(candidateNode);
 
                 // Only draw line if node is not first and/or last
                 if (index != 0 && index != (nodes.size() - 1)) {
-                    p1 = mv.getPoint(nodes.get(index - 1));
-                    p2 = mv.getPoint(nodes.get(index + 1));
+                    p1 = nodes.get(index - 1);
+                    p2 = nodes.get(index + 1);
                 } else if (targetWay.isClosed()) {
-                    p1 = mv.getPoint(targetWay.getNode(1));
-                    p2 = mv.getPoint(targetWay.getNode(nodes.size() - 2));
+                    p1 = targetWay.getNode(1);
+                    p2 = targetWay.getNode(nodes.size() - 2);
                 }
                 // TODO: indicate what part that will be deleted? (for end nodes)
             }
 
 
             // Drawing preview lines
-            MapPath2D b = new MapPath2D();
+            MapViewPath b = new MapViewPath(mv);
             if (alt && !ctrl) {
                 // In delete mode
                 if (p1 != null && p2 != null) {
-                    b.moveTo(p1.x, p1.y);
-                    b.lineTo(p2.x, p2.y);
+                    b.moveTo(p1);
+                    b.lineTo(p2);
                 }
             } else {
                 // In add or move mode
                 if (p1 != null) {
                     b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p1.x, p1.y);
+                    b.lineTo(p1);
                 }
                 if (p2 != null) {
                     b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p2.x, p2.y);
+                    b.lineTo(p2);
                 }
             }
             g.draw(b);
 
             // Highlighting candidateNode
             if (candidateNode != null) {
-                p1 = mv.getPoint(candidateNode);
-                g.fillRect(p1.x - dotSize/2, p1.y - dotSize/2, dotSize, dotSize);
+                p1 = candidateNode;
+                g.fill(new MapViewPath(mv).shapeAround(p1, SymbolShape.SQUARE, DOT_SIZE.get()));
             }
 
             if (!alt && !ctrl && candidateNode != null) {
                 b.reset();
                 drawIntersectingWayHelperLines(mv, b);
-                g.setStroke(moveNodeIntersectingStroke);
+                g.setStroke(MOVE_NODE_INTERSECTING_STROKE.get());
                 g.draw(b);
             }
 
         }
     }
 
-    protected void drawIntersectingWayHelperLines(MapView mv, MapPath2D b) {
+    protected void drawIntersectingWayHelperLines(MapView mv, MapViewPath b) {
         for (final OsmPrimitive referrer : candidateNode.getReferrers()) {
             if (!(referrer instanceof Way) || targetWay.equals(referrer)) {
                 continue;
@@ -346,14 +328,12 @@ public class ImproveWayAccuracyAction extends MapMode implements
                     continue;
                 }
                 if (i > 0) {
-                    final MapViewPoint p = mv.getState().getPointFor(nodes.get(i - 1));
                     b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p);
+                    b.lineTo(nodes.get(i - 1));
                 }
                 if (i < nodes.size() - 1) {
-                    final MapViewPoint p = mv.getState().getPointFor(nodes.get(i + 1));
                     b.moveTo(mousePos.x, mousePos.y);
-                    b.lineTo(p);
+                    b.lineTo(nodes.get(i + 1));
                 }
             }
         }
@@ -413,12 +393,12 @@ public class ImproveWayAccuracyAction extends MapMode implements
         updateKeyModifiers(e);
         mousePos = e.getPoint();
 
-        if (state == State.selecting) {
+        if (state == State.SELECTING) {
             if (targetWay != null) {
                 getLayerManager().getEditDataSet().setSelected(targetWay.getPrimitiveId());
                 updateStateByCurrentSelection();
             }
-        } else if (state == State.improving && mousePos != null) {
+        } else if (state == State.IMPROVING && mousePos != null) {
             // Checking if the new coordinate is outside of the world
             if (mv.getLatLon(mousePos.x, mousePos.y).isOutSideWorld()) {
                 JOptionPane.showMessageDialog(Main.parent,
@@ -552,10 +532,10 @@ public class ImproveWayAccuracyAction extends MapMode implements
             return;
         }
 
-        if (state == State.selecting) {
+        if (state == State.SELECTING) {
             mv.setNewCursor(targetWay == null ? cursorSelect
                     : cursorSelectHover, this);
-        } else if (state == State.improving) {
+        } else if (state == State.IMPROVING) {
             if (alt && !ctrl) {
                 mv.setNewCursor(cursorImproveDelete, this);
             } else if (shift || dragging) {
@@ -577,7 +557,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
      * candidateSegment
      */
     public void updateCursorDependentObjectsIfNeeded() {
-        if (state == State.improving && (shift || dragging)
+        if (state == State.IMPROVING && (shift || dragging)
                 && !(candidateNode == null && candidateSegment == null)) {
             return;
         }
@@ -588,9 +568,9 @@ public class ImproveWayAccuracyAction extends MapMode implements
             return;
         }
 
-        if (state == State.selecting) {
+        if (state == State.SELECTING) {
             targetWay = ImproveWayAccuracyHelper.findWay(mv, mousePos);
-        } else if (state == State.improving) {
+        } else if (state == State.IMPROVING) {
             if (ctrl && !alt) {
                 candidateSegment = ImproveWayAccuracyHelper.findCandidateSegment(mv,
                         targetWay, mousePos);
@@ -607,7 +587,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
      * Switches to Selecting state
      */
     public void startSelecting() {
-        state = State.selecting;
+        state = State.SELECTING;
 
         targetWay = null;
 
@@ -621,7 +601,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
      * @param targetWay Way that is going to be improved
      */
     public void startImproving(Way targetWay) {
-        state = State.improving;
+        state = State.IMPROVING;
 
         DataSet ds = getLayerManager().getEditDataSet();
         Collection<OsmPrimitive> currentSelection = ds.getSelected();

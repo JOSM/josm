@@ -9,6 +9,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 
 import javax.swing.JComponent;
 
@@ -28,7 +29,9 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * @author Michael Zangl
  * @since 10343
  */
-public final class MapViewState {
+public final class MapViewState implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * A flag indicating that the point is outside to the top of the map view.
@@ -54,7 +57,7 @@ public final class MapViewState {
      */
     public static final int OUTSIDE_RIGHT = 8;
 
-    private final Projecting projecting;
+    private final transient Projecting projecting;
 
     private final int viewWidth;
     private final int viewHeight;
