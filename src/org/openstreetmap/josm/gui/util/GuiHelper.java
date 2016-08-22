@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.util;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -49,6 +48,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -299,45 +299,10 @@ public final class GuiHelper {
      * Return s new BasicStroke object with given thickness and style
      * @param code = 3.5 -&gt; thickness=3.5px; 3.5 10 5 -&gt; thickness=3.5px, dashed: 10px filled + 5px empty
      * @return stroke for drawing
+     * @see StrokeProperty
      */
     public static Stroke getCustomizedStroke(String code) {
-        String[] s = code.trim().split("[^\\.0-9]+");
-
-        if (s.length == 0) return new BasicStroke();
-        float w;
-        try {
-            w = Float.parseFloat(s[0]);
-        } catch (NumberFormatException ex) {
-            w = 1.0f;
-        }
-        if (s.length > 1) {
-            float[] dash = new float[s.length-1];
-            float sumAbs = 0;
-            try {
-                for (int i = 0; i < s.length-1; i++) {
-                   dash[i] = Float.parseFloat(s[i+1]);
-                   sumAbs += Math.abs(dash[i]);
-                }
-            } catch (NumberFormatException ex) {
-                Main.error("Error in stroke preference format: "+code);
-                dash = new float[]{5.0f};
-            }
-            if (sumAbs < 1e-1) {
-                Main.error("Error in stroke dash format (all zeros): "+code);
-                return new BasicStroke(w);
-            }
-            // dashed stroke
-            return new BasicStroke(w, BasicStroke.CAP_BUTT,
-                    BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
-        } else {
-            if (w > 1) {
-                // thick stroke
-                return new BasicStroke(w, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-            } else {
-                // thin stroke
-                return new BasicStroke(w);
-            }
-        }
+        return StrokeProperty.getFromString(code);
     }
 
     /**

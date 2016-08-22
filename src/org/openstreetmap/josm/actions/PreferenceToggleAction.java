@@ -6,36 +6,37 @@ import javax.swing.JCheckBoxMenuItem;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 
 public class PreferenceToggleAction extends JosmAction implements PreferenceChangedListener {
 
     private final JCheckBoxMenuItem checkbox;
-    private final String prefKey;
-    private final boolean prefDefault;
+    private final BooleanProperty pref;
 
     public PreferenceToggleAction(String name, String tooltip, String prefKey, boolean prefDefault) {
         super(name, null, tooltip, null, false);
         putValue("toolbar", "toggle-" + prefKey);
-        this.prefKey = prefKey;
-        this.prefDefault = prefDefault;
-        this.checkbox = new JCheckBoxMenuItem(this);
-        this.checkbox.setSelected(Main.pref.getBoolean(prefKey, prefDefault));
-        Main.pref.addPreferenceChangeListener(this);
+        this.pref = new BooleanProperty(prefKey, prefDefault);
+        checkbox = new JCheckBoxMenuItem(this);
+        checkbox.setSelected(pref.get());
+        Main.pref.addWeakKeyPreferenceChangeListener(prefKey, this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Main.pref.put(prefKey, checkbox.isSelected());
+        pref.put(checkbox.isSelected());
     }
 
+    /**
+     * Get the checkbox that can be used for this action. It can only be used at one place.
+     * @return The checkbox.
+     */
     public JCheckBoxMenuItem getCheckbox() {
         return checkbox;
     }
 
     @Override
     public void preferenceChanged(Preferences.PreferenceChangeEvent e) {
-        if (prefKey.equals(e.getKey())) {
-            checkbox.setSelected(Main.pref.getBoolean(prefKey, prefDefault));
-        }
+        checkbox.setSelected(pref.get());
     }
 }
