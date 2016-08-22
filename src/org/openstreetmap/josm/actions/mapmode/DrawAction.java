@@ -51,7 +51,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.paint.ArrowPaintHelper;
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPath2D;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.preferences.AbstractToStringProperty;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -65,6 +64,9 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.draw.MapPath2D;
+import org.openstreetmap.josm.gui.draw.MapViewPath;
+import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -1508,7 +1510,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 g2.setColor(SNAP_HELPER_COLOR.get());
                 g2.setStroke(HELPER_STROKE.get());
 
-                MapPath2D b = new MapPath2D();
+                MapViewPath b = new MapViewPath(mv);
                 b.moveTo(p2);
                 if (absoluteFix) {
                     b.lineTo(p2.interpolate(p1, 2)); // bi-directional line
@@ -1520,24 +1522,24 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             if (projectionSource != null) {
                 g2.setColor(SNAP_HELPER_COLOR.get());
                 g2.setStroke(HELPER_STROKE.get());
-                MapPath2D b = new MapPath2D();
+                MapViewPath b = new MapViewPath(mv);
                 b.moveTo(p3);
-                b.lineTo(mv.getPointFor(projectionSource));
+                b.lineTo(projectionSource);
                 g2.draw(b);
             }
 
             if (customBaseHeading >= 0) {
                 g2.setColor(HIGHLIGHT_COLOR.get());
                 g2.setStroke(HIGHLIGHT_STROKE.get());
-                MapPath2D b = new MapPath2D();
-                b.moveTo(mv.getPointFor(segmentPoint1));
-                b.lineTo(mv.getPointFor(segmentPoint2));
+                MapViewPath b = new MapViewPath(mv);
+                b.moveTo(segmentPoint1);
+                b.lineTo(segmentPoint2);
                 g2.draw(b);
             }
 
             g2.setColor(RUBBER_LINE_COLOR.get());
             g2.setStroke(RUBBER_LINE_STROKE.get());
-            MapPath2D b = new MapPath2D();
+            MapViewPath b = new MapViewPath(mv);
             b.moveTo(p1);
             b.lineTo(p3);
             g2.draw(b);
@@ -1545,7 +1547,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             g2.drawString(labelText, (int) p3.getInViewX()-5, (int) p3.getInViewY()+20);
             if (SHOW_PROJECTED_POINT.get()) {
                 g2.setStroke(RUBBER_LINE_STROKE.get());
-                g2.drawOval((int) p3.getInViewX()-5, (int) p3.getInViewY()-5, 10, 10); // projected point
+                g2.draw(new MapViewPath(mv).shapeAround(p3, SymbolShape.CIRCLE, 10)); // projected point
             }
 
             g2.setColor(SNAP_HELPER_COLOR.get());
@@ -1553,7 +1555,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         /**
-         *  If mouse position is close to line at 15-30-45-... angle, remembers this direction
+         * If mouse position is close to line at 15-30-45-... angle, remembers this direction
          * @param currentEN Current position
          * @param baseHeading The heading
          * @param curHeading The current mouse heading

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
+import org.openstreetmap.josm.gui.draw.MapPath2D;
 import org.openstreetmap.josm.tools.Utils;
 
 /**

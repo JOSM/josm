@@ -20,7 +20,6 @@ import java.awt.font.GlyphVector;
 import java.awt.font.LineMetrics;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -62,6 +61,8 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.Poly
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.draw.MapPath2D;
+import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.StyleElementList;
@@ -1391,19 +1392,17 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         // only highlight the segment if the way itself is not highlighted
         if (!way.isHighlighted() && highlightWaySegments != null) {
-            GeneralPath highlightSegs = null;
+            MapViewPath highlightSegs = null;
             for (WaySegment ws : highlightWaySegments) {
                 if (ws.way != way || ws.lowerIndex < offset) {
                     continue;
                 }
                 if (highlightSegs == null) {
-                    highlightSegs = new GeneralPath();
+                    highlightSegs = new MapViewPath(mapState);
                 }
 
-                Point2D p1 = mapState.getPointFor(ws.getFirstNode()).getInView();
-                Point2D p2 = mapState.getPointFor(ws.getSecondNode()).getInView();
-                highlightSegs.moveTo(p1.getX(), p1.getY());
-                highlightSegs.lineTo(p2.getX(), p2.getY());
+                highlightSegs.moveTo(ws.getFirstNode());
+                highlightSegs.lineTo(ws.getSecondNode());
             }
 
             drawPathHighlight(highlightSegs, line);

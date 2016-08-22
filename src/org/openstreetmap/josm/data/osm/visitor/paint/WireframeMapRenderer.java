@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.draw.MapPath2D;
 
 /**
  * A map renderer that paints a simple scheme of every primitive it visits to a
