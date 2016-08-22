@@ -16,6 +16,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.HostLimitQueue;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -42,7 +43,6 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
      */
     public static final IntegerProperty HOST_LIMIT = new IntegerProperty("imagery.tms.tmsloader.maxjobsperhost", 6);
 
-
     /**
      * separate from JCS thread pool for TMS loader, so we can have different thread pools for default JCS
      * and for TMS imagery
@@ -63,6 +63,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
      */
     public TMSCachedTileLoader(TileLoaderListener listener, ICacheAccess<String, BufferedImageCacheEntry> cache,
             int connectTimeout, int readTimeout, Map<String, String> headers) throws IOException {
+        CheckParameterUtil.ensureParameterNotNull(cache, "cache");
         this.cache = cache;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
