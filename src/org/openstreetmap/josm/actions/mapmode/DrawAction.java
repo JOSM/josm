@@ -93,7 +93,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     // derives its information from this list as well.
     private transient Set<OsmPrimitive> oldHighlights = new HashSet<>();
     // new highlights contains a list of primitives that should be highlighted
-    // but haven’t been so far. The idea is to compare old and new and only
+    // but haven't been so far. The idea is to compare old and new and only
     // repaint if there are changes.
     private transient Set<OsmPrimitive> newHighlights = new HashSet<>();
     private boolean drawHelperLine;
@@ -929,7 +929,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         snapHelper.noSnapNow();
         boolean repaintIssued = removeHighlighting();
         // force repaint in case snapHelper needs one. If removeHighlighting
-        // caused one already, don’t do it again.
+        // caused one already, don't do it again.
         if (!repaintIssued) {
             editLayer.invalidate();
         }
