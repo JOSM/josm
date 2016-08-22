@@ -24,6 +24,7 @@ import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -108,7 +109,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             int connectTimeout, int readTimeout,
             Map<String, String> headers,
             ThreadPoolExecutor downloadJobExecutor) {
-
+        CheckParameterUtil.ensureParameterNotNull(cache, "cache");
         this.cache = cache;
         this.now = System.currentTimeMillis();
         this.connectTimeout = connectTimeout;
