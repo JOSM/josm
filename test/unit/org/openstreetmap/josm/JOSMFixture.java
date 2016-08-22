@@ -90,7 +90,7 @@ public class JOSMFixture {
         }
         System.setProperty("josm.home", josmHome);
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-        Main.initApplicationPreferences();
+        Main.pref.resetToInitialState();
         Main.pref.enableSaveOnPut(false);
         I18n.init();
         // initialize the plaform hook, and

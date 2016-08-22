@@ -19,25 +19,25 @@ import javax.json.spi.JsonProvider;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Tests the {@link HttpClient} using the webservice <a href="https://httpbin.org/">https://httpbin.org/</a>.
  */
 public class HttpClientTest {
 
-    private ProgressMonitor progress;
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createFunctionalTestFixture().init();
-    }
+    private ProgressMonitor progress;
 
     @Before
     public void setUp() {
@@ -172,7 +172,6 @@ public class HttpClientTest {
      */
     @Test
     public void testOpenUrlGzip() throws IOException {
-        Main.initApplicationPreferences();
         final URL url = new URL("https://www.openstreetmap.org/trace/1613906/data");
         try (BufferedReader x = HttpClient.create(url).connect().uncompress(true).getContentReader()) {
             Assert.assertTrue(x.readLine().startsWith("<?xml version="));
@@ -185,7 +184,6 @@ public class HttpClientTest {
      */
     @Test
     public void testOpenUrlBzip() throws IOException {
-        Main.initApplicationPreferences();
         final URL url = new URL("https://www.openstreetmap.org/trace/785544/data");
         try (BufferedReader x = HttpClient.create(url).connect().uncompress(true).getContentReader()) {
             Assert.assertTrue(x.readLine().startsWith("<?xml version="));
@@ -198,7 +196,6 @@ public class HttpClientTest {
      */
     @Test
     public void testTicket9660() throws IOException {
-        Main.initApplicationPreferences();
         final URL url = new URL("http://www.openstreetmap.org/trace/1350010/data");
         try (BufferedReader x = HttpClient.create(url).connect()
                 .uncompress(true).uncompressAccordingToContentDisposition(true).getContentReader()) {

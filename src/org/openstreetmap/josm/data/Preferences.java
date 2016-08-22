@@ -778,6 +778,25 @@ public class Preferences {
         }
     }
 
+    /**
+     * Resets the preferences to their initial state. This resets all values and file associations.
+     * The default values and listeners are not removed.
+     * <p>
+     * It is meant to be called before {@link #init(boolean)}
+     * @since 10876
+     */
+    public void resetToInitialState() {
+        resetToDefault();
+        preferencesDir = null;
+        cacheDir = null;
+        userdataDir = null;
+        saveOnPut = true;
+        initSuccessful = false;
+    }
+
+    /**
+     * Reset all values stored in this map to the default values. This clears the preferences.
+     */
     public final void resetToDefault() {
         settingsMap.clear();
     }

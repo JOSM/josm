@@ -16,7 +16,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -31,20 +30,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests for class {@link SelectAction}.
  */
 public class SelectActionTest {
-
-    /**
-     * Override some configuration variables without change in preferences.xml
-     */
-    static class PreferencesMock extends Preferences {
-        @Override
-        public synchronized int getInteger(String key, int def) {
-            if ("edit.initial-move-delay".equals(key)) {
-                return 0;
-            } else {
-                return super.getInteger(key, def);
-            }
-        }
-    }
 
     boolean nodesMerged;
 
@@ -103,7 +88,7 @@ public class SelectActionTest {
         dataSet.addSelected(n2);
         dataSet.addSelected(w);
 
-        Main.pref = new PreferencesMock();
+        Main.pref.put("edit.initial-move-delay", "0");
         Main.getLayerManager().addLayer(layer);
         try {
             SelectAction action = new SelectActionMock(Main.map, dataSet, layer);

@@ -200,7 +200,7 @@ public class JOSMTestRules implements TestRule {
 
         // Add preferences
         if (usePreferences) {
-            Main.initApplicationPreferences();
+            Main.pref.resetToInitialState();
             Main.pref.enableSaveOnPut(false);
             // No pref init -> that would only create the preferences file.
             // We force the use of a wrong API server, just in case anyone attempts an upload
@@ -246,7 +246,7 @@ public class JOSMTestRules implements TestRule {
     private void cleanUpFromJosmFixture() {
         MemoryManagerTest.resetState(true);
         Main.getLayerManager().resetState();
-        Main.pref = null;
+        Main.pref.resetToInitialState();
         Main.platform = null;
         System.gc();
     }
@@ -267,7 +267,7 @@ public class JOSMTestRules implements TestRule {
         MemoryManagerTest.resetState(allowMemoryManagerLeaks);
 
         // TODO: Remove global listeners and other global state.
-        Main.pref = null;
+        Main.pref.resetToInitialState();;
         Main.platform = null;
         // Parts of JOSM uses weak references - destroy them.
         System.gc();
