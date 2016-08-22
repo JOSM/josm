@@ -128,7 +128,7 @@ class TagInfoExtract {
             def image = c.get("icon-image")
             if (image) {
                 if (image instanceof IconReference) {
-                    if (image.iconName != "misc/deprecated.png")
+                    if (image.iconName != "misc/deprecated.svg")
                         return find_image_url(image.iconName)
                 }
             }
