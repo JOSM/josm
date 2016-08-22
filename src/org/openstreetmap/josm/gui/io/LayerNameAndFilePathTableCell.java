@@ -174,7 +174,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     }
 
     /**
-     * Makes the given path fit lblFilename, appends ellipsis on the left if it doesn’t fit.
+     * Makes the given path fit lblFilename, appends ellipsis on the left if it doesn't fit.
      * Idea: /home/user/josm → …/user/josm → …/josm; and take the first one that fits
      * @param t complete path
      * @return shorter path

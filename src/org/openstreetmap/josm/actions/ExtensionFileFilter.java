@@ -203,10 +203,10 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
 
     /**
      * Updates the {@link AllFormatsImporter} that is contained in the importers list. If
-     * you do not use the importers variable directly, you don’t need to call this.
+     * you do not use the importers variable directly, you don't need to call this.
      * <p>
      * Updating the AllFormatsImporter is required when plugins add new importers that
-     * support new file extensions. The old AllFormatsImporter doesn’t include the new
+     * support new file extensions. The old AllFormatsImporter doesn't include the new
      * extensions and thus will not display these files.
      *
      * @since 5131
