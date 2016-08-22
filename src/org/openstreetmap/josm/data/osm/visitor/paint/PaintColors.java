@@ -33,6 +33,7 @@ public enum PaintColors {
 
     private final String name;
     private final Color defaultColor;
+    private final ColorProperty baseProperty;
     private final CachingProperty<Color> property;
 
     private static volatile Color backgroundColorCache;
@@ -55,7 +56,8 @@ public enum PaintColors {
     }
 
     PaintColors(String name, Color defaultColor) {
-        property = new ColorProperty(name, defaultColor).cached();
+        baseProperty = new ColorProperty(name, defaultColor);
+        property = baseProperty.cached();
         this.name = name;
         this.defaultColor = defaultColor;
     }
@@ -94,5 +96,14 @@ public enum PaintColors {
         } else {
             return backgroundColorCache;
         }
+    }
+
+    /**
+     * Get the color property
+     * @return The property that is used to access the color.
+     * @since 10874
+     */
+    public ColorProperty getProperty() {
+        return baseProperty;
     }
 }

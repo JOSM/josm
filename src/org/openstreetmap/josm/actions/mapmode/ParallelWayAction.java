@@ -5,11 +5,11 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -40,14 +40,13 @@ import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
@@ -93,8 +92,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class ParallelWayAction extends MapMode implements ModifierListener, MapViewPaintable {
 
-    private static final StringProperty HELPER_LINE_STROKE = new StringProperty(prefKey("stroke.hepler-line"), "1");
-    private static final StringProperty REF_LINE_STROKE = new StringProperty(prefKey("stroke.ref-line"), "1 2 2");
+    private static final CachingProperty<BasicStroke> HELPER_LINE_STROKE = new StrokeProperty(prefKey("stroke.hepler-line"), "1").cached();
+    private static final CachingProperty<BasicStroke> REF_LINE_STROKE = new StrokeProperty(prefKey("stroke.ref-line"), "2 2 3").cached();
 
     // @formatter:off
     // CHECKSTYLE.OFF: SingleSpaceSeparator
@@ -146,9 +145,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     private EastNorth helperLineStart;
     private EastNorth helperLineEnd;
 
-    private transient Stroke helpLineStroke;
-    private transient Stroke refLineStroke;
-
     /**
      * Constructs a new {@code ParallelWayAction}.
      * @param mapFrame Map frame
@@ -173,9 +169,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         mv.addMouseListener(this);
         mv.addMouseMotionListener(this);
         mv.addTemporaryLayer(this);
-
-        helpLineStroke = GuiHelper.getCustomizedStroke(HELPER_LINE_STROKE.get());
-        refLineStroke = GuiHelper.getCustomizedStroke(REF_LINE_STROKE.get());
 
         //// Needed to update the mouse cursor if modifiers are changed when the mouse is motionless
         Main.map.keyDetector.addModifierListener(this);
@@ -472,14 +465,14 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             }
 
             // FIXME: should clip the line (gets insanely slow when zoomed in on a very long line
-            g.setStroke(refLineStroke);
+            g.setStroke(REF_LINE_STROKE.get());
             g.setColor(mainColor);
             MapPath2D line = new MapPath2D();
             line.moveTo(mv.getState().getPointFor(referenceSegment.getFirstNode()));
             line.lineTo(mv.getState().getPointFor(referenceSegment.getSecondNode()));
             g.draw(line);
 
-            g.setStroke(helpLineStroke);
+            g.setStroke(HELPER_LINE_STROKE.get());
             g.setColor(mainColor);
             line = new MapPath2D();
             line.moveTo(mv.getState().getPointFor(helperLineStart));

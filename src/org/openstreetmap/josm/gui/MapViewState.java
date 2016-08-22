@@ -522,6 +522,17 @@ public final class MapViewState {
         public double distanceToInView(MapViewPoint p2) {
             return Math.sqrt(distanceToInViewSq(p2));
         }
+
+        /**
+         * Do a linear interpolation to the other point
+         * @param p1 The other point
+         * @param i The interpolation factor. 0 is at the current point, 1 at the other point.
+         * @return The new point
+         * @since 10874
+         */
+        public MapViewPoint interpolate(MapViewPoint p1, int i) {
+            return new MapViewViewPoint((1 - i) * getInViewX() + i * p1.getInViewX(), (1 - i) * getInViewY() + i * p1.getInViewY());
+        }
     }
 
     private class MapViewViewPoint extends MapViewPoint {
