@@ -167,7 +167,7 @@ public abstract class Main {
     /**
      * Global application preferences
      */
-    public static Preferences pref;
+    public static final Preferences pref = new Preferences();
 
     /**
      * The MapFrame. Use {@link Main#setMapFrame} to set or clear it.
@@ -512,14 +512,6 @@ public abstract class Main {
      * to the JOSM team for inclusion.
      */
     public static volatile PlatformHook platform;
-
-    /**
-     * Initializes {@code Main.pref} in normal application context.
-     * @since 6471
-     */
-    public static void initApplicationPreferences() {
-        Main.pref = new Preferences();
-    }
 
     /**
      * Set or clear (if passed <code>null</code>) the map.

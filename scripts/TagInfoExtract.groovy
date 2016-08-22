@@ -370,7 +370,6 @@ class TagInfoExtract {
      * Initialize the script.
      */
     def init() {
-        Main.initApplicationPreferences()
         Main.determinePlatformHook()
         Main.pref.enableSaveOnPut(false)
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"))

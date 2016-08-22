@@ -325,8 +325,6 @@ public class MainApplication extends Main {
             Main.info(tr("Printing debugging messages to console"));
         }
 
-        initApplicationPreferences();
-
         Policy.setPolicy(new Policy() {
             // Permissions for plug-ins loaded when josm is started via webstart
             private PermissionCollection pc;

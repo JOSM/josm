@@ -7,16 +7,18 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link RelationSorter} class.
@@ -24,14 +26,26 @@ import org.openstreetmap.josm.io.OsmReader;
 public class RelationSorterTest {
 
     private final RelationSorter sorter = new RelationSorter();
-    private static DataSet testDataset;
+    private DataSet testDataset;
 
-    @BeforeClass
-    public static void loadData() throws IllegalDataException, IOException {
-        Main.initApplicationPreferences();
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        try (InputStream fis = new FileInputStream("data_nodist/relation_sort.osm")) {
-            testDataset = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+    /**
+     * Use Mercator projection
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
+
+    /**
+     * Load the test data set
+     * @throws IllegalDataException if an error was found while parsing the data
+     * @throws IOException in case of I/O error
+     */
+    @Before
+    public void loadData() throws IllegalDataException, IOException {
+        if (testDataset == null) {
+            try (InputStream fis = new FileInputStream("data_nodist/relation_sort.osm")) {
+                testDataset = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+            }
         }
     }
 
