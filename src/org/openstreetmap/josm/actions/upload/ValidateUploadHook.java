@@ -60,8 +60,7 @@ public class ValidateUploadHook implements UploadHook {
             test.startTest(null);
             test.visit(selection);
             test.endTest();
-            if (ValidatorPreference.PREF_OTHER.get() &&
-                Main.pref.getBoolean(ValidatorPreference.PREF_OTHER_UPLOAD, false)) {
+            if (ValidatorPreference.PREF_OTHER.get() && ValidatorPreference.PREF_OTHER_UPLOAD.get()) {
                 errors.addAll(test.getErrors());
             } else {
                 for (TestError e : test.getErrors()) {
@@ -82,7 +81,7 @@ public class ValidateUploadHook implements UploadHook {
         if (errors.isEmpty())
             return true;
 
-        if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
+        if (ValidatorPreference.PREF_USE_IGNORE.get()) {
             int nume = 0;
             for (TestError error : errors) {
                 List<String> s = new ArrayList<>();

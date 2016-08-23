@@ -10,13 +10,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
@@ -35,7 +35,7 @@ import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Destroyable;
-import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.ListenerList;
 
 /**
  * A panel that displays the error tree. The selection manager
@@ -72,8 +72,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      */
     private transient Set<? extends OsmPrimitive> filter;
 
-    /** a counter to check if tree has been rebuild */
-    private int updateCount;
+    private final ListenerList<Runnable> invalidationListeners = ListenerList.create();
 
     /**
      * Constructor
@@ -134,13 +133,13 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             valTreeModel.setRoot(new DefaultMutableTreeNode());
         }
         super.setVisible(v);
+        invalidationListeners.fireEvent(Runnable::run);
     }
 
     /**
      * Builds the errors tree
      */
     public void buildTree() {
-        updateCount++;
         final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
         if (errors == null || errors.isEmpty()) {
@@ -171,56 +170,21 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             }
         }
 
-        Map<Severity, MultiMap<String, TestError>> errorTree = new EnumMap<>(Severity.class);
-        Map<Severity, HashMap<String, MultiMap<String, TestError>>> errorTreeDeep = new EnumMap<>(Severity.class);
-        for (Severity s : Severity.values()) {
-            errorTree.put(s, new MultiMap<String, TestError>(20));
-            errorTreeDeep.put(s, new HashMap<String, MultiMap<String, TestError>>());
+        Predicate<TestError> filterToUse = e -> !e.isIgnored();
+        if (!ValidatorPreference.PREF_OTHER.get()) {
+            filterToUse = filterToUse.and(e -> e.getSeverity() != Severity.OTHER);
         }
-
-        final Boolean other = ValidatorPreference.PREF_OTHER.get();
-        for (TestError e : errors) {
-            if (e.isIgnored()) {
-                continue;
-            }
-            Severity s = e.getSeverity();
-            if (!other && s == Severity.OTHER) {
-                continue;
-            }
-            String d = e.getDescription();
-            String m = e.getMessage();
-            if (filter != null) {
-                boolean found = false;
-                for (OsmPrimitive p : e.getPrimitives()) {
-                    if (filter.contains(p)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    continue;
-                }
-            }
-            if (d != null) {
-                MultiMap<String, TestError> b = errorTreeDeep.get(s).get(m);
-                if (b == null) {
-                    b = new MultiMap<>(20);
-                    errorTreeDeep.get(s).put(m, b);
-                }
-                b.put(d, e);
-            } else {
-                errorTree.get(s).put(m, e);
-            }
+        if (filter != null) {
+            filterToUse = filterToUse.and(e -> e.getPrimitives().stream().anyMatch(filter::contains));
         }
+        Map<Severity, Map<String, Map<String, List<TestError>>>> errorTreeDeep
+            = errors.stream().filter(filterToUse).collect(
+                    Collectors.groupingBy(e -> e.getSeverity(), () -> new EnumMap<>(Severity.class),
+                            Collectors.groupingBy(e -> e.getDescription() == null ? "" : e.getDescription(),
+                                    Collectors.groupingBy(e -> e.getMessage()))));
 
         List<TreePath> expandedPaths = new ArrayList<>();
-        for (Severity s : Severity.values()) {
-            MultiMap<String, TestError> severityErrors = errorTree.get(s);
-            Map<String, MultiMap<String, TestError>> severityErrorsDeep = errorTreeDeep.get(s);
-            if (severityErrors.isEmpty() && severityErrorsDeep.isEmpty()) {
-                continue;
-            }
-
+        errorTreeDeep.forEach((s, severityErrorsDeep) -> {
             // Severity node
             DefaultMutableTreeNode severityNode = new GroupTreeNode(s);
             rootNode.add(severityNode);
@@ -229,43 +193,46 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                 expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode}));
             }
 
-            for (Entry<String, Set<TestError>> msgErrors : severityErrors.entrySet()) {
-                // Message node
-                Set<TestError> errs = msgErrors.getValue();
-                String msg = tr("{0} ({1})", msgErrors.getKey(), errs.size());
-                DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
-                severityNode.add(messageNode);
+            Map<String, List<TestError>> severityErrors = severityErrorsDeep.get("");
+            if (severityErrors != null) {
+                for (Entry<String, List<TestError>> msgErrors : severityErrors.entrySet()) {
+                    // Message node
+                    List<TestError> errs = msgErrors.getValue();
+                    String msg = tr("{0} ({1})", msgErrors.getKey(), errs.size());
+                    DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
+                    severityNode.add(messageNode);
 
-                if (oldSelectedRows.contains(msgErrors.getKey())) {
-                    expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, messageNode}));
-                }
+                    if (oldSelectedRows.contains(msgErrors.getKey())) {
+                        expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, messageNode}));
+                    }
 
-                for (TestError error : errs) {
-                    // Error node
-                    DefaultMutableTreeNode errorNode = new DefaultMutableTreeNode(error);
-                    messageNode.add(errorNode);
+                    errs.stream().map(DefaultMutableTreeNode::new).forEach(messageNode::add);
                 }
             }
-            for (Entry<String, MultiMap<String, TestError>> bag : severityErrorsDeep.entrySet()) {
+
+            severityErrorsDeep.forEach((description, errorlist) -> {
+                if (description.isEmpty()) {
+                    return;
+                }
                 // Group node
-                MultiMap<String, TestError> errorlist = bag.getValue();
-                DefaultMutableTreeNode groupNode = null;
+                DefaultMutableTreeNode groupNode;
                 if (errorlist.size() > 1) {
-                    groupNode = new GroupTreeNode(bag.getKey());
+                    groupNode = new GroupTreeNode(description);
                     severityNode.add(groupNode);
-                    if (oldSelectedRows.contains(bag.getKey())) {
+                    if (oldSelectedRows.contains(description)) {
                         expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, groupNode}));
                     }
+                } else {
+                    groupNode = null;
                 }
 
-                for (Entry<String, Set<TestError>> msgErrors : errorlist.entrySet()) {
+                errorlist.forEach((message, errs) -> {
                     // Message node
-                    Set<TestError> errs = msgErrors.getValue();
                     String msg;
                     if (groupNode != null) {
-                        msg = tr("{0} ({1})", msgErrors.getKey(), errs.size());
+                        msg = tr("{0} ({1})", message, errs.size());
                     } else {
-                        msg = tr("{0} - {1} ({2})", msgErrors.getKey(), bag.getKey(), errs.size());
+                        msg = tr("{0} - {1} ({2})", message, description, errs.size());
                     }
                     DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
                     if (groupNode != null) {
@@ -274,7 +241,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                         severityNode.add(messageNode);
                     }
 
-                    if (oldSelectedRows.contains(msgErrors.getKey())) {
+                    if (oldSelectedRows.contains(message)) {
                         if (groupNode != null) {
                             expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, groupNode, messageNode}));
                         } else {
@@ -282,19 +249,34 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                         }
                     }
 
-                    for (TestError error : errs) {
-                        // Error node
-                        DefaultMutableTreeNode errorNode = new DefaultMutableTreeNode(error);
-                        messageNode.add(errorNode);
-                    }
-                }
-            }
-        }
+                    errs.stream().map(DefaultMutableTreeNode::new).forEach(messageNode::add);
+                });
+            });
+        });
 
         valTreeModel.setRoot(rootNode);
         for (TreePath path : expandedPaths) {
             this.expandPath(path);
         }
+
+        invalidationListeners.fireEvent(Runnable::run);
+    }
+
+    /**
+     * Add a new invalidation listener
+     * @param listener The listener
+     */
+    public void addInvalidationListener(Runnable listener) {
+        invalidationListeners.addListener(listener);
+    }
+
+    /**
+     * Remove an invalidation listener
+     * @param listener The listener
+     * @since 10880
+     */
+    public void removeInvalidationListener(Runnable listener) {
+        invalidationListeners.removeListener(listener);
     }
 
     /**
@@ -423,14 +405,6 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
      */
     public DefaultMutableTreeNode getRoot() {
         return (DefaultMutableTreeNode) valTreeModel.getRoot();
-    }
-
-    /**
-     * Returns a value to check if tree has been rebuild
-     * @return the current counter
-     */
-    public int getUpdateCount() {
-        return updateCount;
     }
 
     private void clearErrors() {

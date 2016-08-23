@@ -182,7 +182,7 @@ public final class OsmValidator {
 
     private static void loadIgnoredErrors() {
         ignoredErrors.clear();
-        if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
+        if (ValidatorPreference.PREF_USE_IGNORE.get()) {
             Path path = Paths.get(getValidatorDir()).resolve("ignorederrors");
             if (Files.exists(path)) {
                 try {
@@ -216,7 +216,7 @@ public final class OsmValidator {
     }
 
     public static synchronized void initializeErrorLayer() {
-        if (!Main.pref.getBoolean(ValidatorPreference.PREF_LAYER, true))
+        if (!ValidatorPreference.PREF_LAYER.get())
             return;
         if (errorLayer == null) {
             errorLayer = new ValidatorLayer();

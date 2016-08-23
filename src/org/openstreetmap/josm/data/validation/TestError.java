@@ -268,6 +268,10 @@ public class TestError implements Comparable<TestError>, DataSetListener {
         return tester;
     }
 
+    /**
+     * Set the tester that raised the error.
+     * @param tester te tester
+     */
     public void setTester(Test tester) {
         this.tester = tester;
     }

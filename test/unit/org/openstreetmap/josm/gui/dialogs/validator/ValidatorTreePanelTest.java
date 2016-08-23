@@ -43,7 +43,6 @@ public class ValidatorTreePanelTest {
                 new TestError(null, Severity.ERROR, "err", 0, new Node(1)),
                 new TestError(null, Severity.WARNING, "warn", 0, new Node(2)))));
         assertNotNull(vtp);
-        assertEquals(1, vtp.getUpdateCount());
         assertEquals(2, vtp.getErrors().size());
         vtp.setVisible(true);
         vtp.setVisible(false);
