@@ -8,13 +8,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import javax.swing.TransferHandler;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.datatransfer.importers.AbstractOsmDataPaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.FilePaster;
+import org.openstreetmap.josm.gui.datatransfer.importers.OsmLinkPaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.PrimitiveDataPaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.PrimitiveTagTransferPaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.TagTransferPaster;
@@ -26,42 +25,16 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * @author Michael Zangl
  * @since 10604
  */
-public class OsmTransferHandler extends TransferHandler {
+public class OsmTransferHandler extends AbstractStackTransferHandler {
 
     private static final Collection<AbstractOsmDataPaster> SUPPORTED = Arrays.asList(
             new FilePaster(), new PrimitiveDataPaster(),
             new PrimitiveTagTransferPaster(),
-            new TagTransferPaster(), new TextTagPaster());
+            new TagTransferPaster(), new OsmLinkPaster(), new TextTagPaster());
 
     @Override
-    public boolean canImport(TransferSupport support) {
-        // import everything for now, only support copy.
-        for (AbstractOsmDataPaster df : SUPPORTED) {
-            if (df.supports(support)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean importData(TransferSupport support) {
-        return importData(support, Main.getLayerManager().getEditLayer(), null);
-    }
-
-    private boolean importData(TransferSupport support, OsmDataLayer layer, EastNorth center) {
-        for (AbstractOsmDataPaster df : SUPPORTED) {
-            if (df.supports(support)) {
-                try {
-                    if (df.importData(support, layer, center)) {
-                        return true;
-                    }
-                } catch (UnsupportedFlavorException | IOException e) {
-                    Main.warn(e);
-                }
-            }
-        }
-        return super.importData(support);
+    protected Collection<AbstractOsmDataPaster> getSupportedPasters() {
+        return SUPPORTED;
     }
 
     private boolean importTags(TransferSupport support, Collection<? extends OsmPrimitive> primitives) {

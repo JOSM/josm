@@ -23,7 +23,7 @@ import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
-import org.openstreetmap.josm.gui.datatransfer.FileTransferHandler;
+import org.openstreetmap.josm.gui.datatransfer.OpenTransferHandler;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferenceListener;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
@@ -132,7 +132,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
 
         getMOTD();
 
-        setTransferHandler(new FileTransferHandler());
+        setTransferHandler(new OpenTransferHandler());
     }
 
     private void getMOTD() {
