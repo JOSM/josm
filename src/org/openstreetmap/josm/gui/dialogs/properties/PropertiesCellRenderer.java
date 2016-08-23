@@ -16,11 +16,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.CachingProperty;
+import org.openstreetmap.josm.data.preferences.ColorProperty;
 
 /**
  * Cell renderer of tags table.
@@ -28,20 +31,32 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  */
 public class PropertiesCellRenderer extends DefaultTableCellRenderer {
 
+    private static final CachingProperty<Color> SELECTED_FG
+            = new ColorProperty(marktr("Discardable key: selection Foreground"), Color.GRAY).cached();
+    private static final CachingProperty<Color> SELECTED_BG;
+    private static final CachingProperty<Color> NORMAL_FG
+            = new ColorProperty(marktr("Discardable key: foreground"), Color.GRAY).cached();
+    private static final CachingProperty<Color> NORMAL_BG;
+    private static final CachingProperty<Boolean> DISCARDABLE
+            = new BooleanProperty("display.discardable-keys", false).cached();
+
+    static {
+        UIDefaults defaults = UIManager.getDefaults();
+        SELECTED_BG = new ColorProperty(marktr("Discardable key: selection Background"),
+                defaults.getColor("Table.selectionBackground")).cached();
+        NORMAL_BG = new ColorProperty(marktr("Discardable key: background"),
+                defaults.getColor("Table.background")).cached();
+    }
+
     private final Collection<TableCellRenderer> customRenderer = new CopyOnWriteArrayList<>();
 
     private static void setColors(Component c, String key, boolean isSelected) {
-        UIDefaults defaults = javax.swing.UIManager.getDefaults();
+
         if (OsmPrimitive.getDiscardableKeys().contains(key)) {
-            if (isSelected) {
-                c.setForeground(Main.pref.getColor(marktr("Discardable key: selection Foreground"), Color.GRAY));
-                c.setBackground(Main.pref.getColor(marktr("Discardable key: selection Background"),
-                        defaults.getColor("Table.selectionBackground")));
-            } else {
-                c.setForeground(Main.pref.getColor(marktr("Discardable key: foreground"), Color.GRAY));
-                c.setBackground(Main.pref.getColor(marktr("Discardable key: background"), defaults.getColor("Table.background")));
-            }
+            c.setForeground((isSelected ? SELECTED_FG : NORMAL_FG).get());
+            c.setBackground((isSelected ? SELECTED_BG : NORMAL_BG).get());
         } else {
+            UIDefaults defaults = UIManager.getDefaults();
             c.setForeground(defaults.getColor("Table."+(isSelected ? "selectionF" : "f")+"oreground"));
             c.setBackground(defaults.getColor("Table."+(isSelected ? "selectionB" : "b")+"ackground"));
         }
@@ -55,9 +70,9 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                 return component;
             }
         }
-        Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
         if (value == null)
             return this;
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
         if (c instanceof JLabel) {
             String str = null;
             if (value instanceof String) {
@@ -76,12 +91,10 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                     }
                     StringBuilder sb = new StringBuilder("<");
                     if (otherCount == 1) {
-                        for (Map.Entry<?, ?> entry : v.entrySet()) { // Find the non-blank value in the map
-                            if (!Objects.equals(entry.getKey(), "")) {
-                                /* I18n: properties display partial string joined with comma, frst is count, second is value */
-                                sb.append(tr("{0} ''{1}''", entry.getValue().toString(), entry.getKey()));
-                            }
-                        }
+                        // Find the non-blank value in the map
+                        v.entrySet().stream().filter(entry -> !Objects.equals(entry.getKey(), ""))
+                                /* I18n: properties display partial string joined with comma, first is count, second is value */
+                            .findAny().ifPresent(entry -> sb.append(tr("{0} ''{1}''", entry.getValue().toString(), entry.getKey())));
                     } else {
                         /* I18n: properties display partial string joined with comma */
                         sb.append(trn("{0} different", "{0} different", otherCount, otherCount));
@@ -101,7 +114,7 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
             }
             ((JLabel) c).putClientProperty("html.disable", Boolean.TRUE); // Fix #8730
             ((JLabel) c).setText(str);
-            if (Main.pref.getBoolean("display.discardable-keys", false)) {
+            if (DISCARDABLE.get()) {
                 String key = null;
                 if (column == 0) {
                     key = str;
