@@ -105,7 +105,7 @@ public class InspectPrimitiveDialogTest {
                 "> skipping \"Potlatch 2\" (not active)\n" +
                 "\n" +
                 "List of generated Styles:\n" +
-                " * NodeElemStyle{z_idx=[4.95/0.0/0.0]  symbol=[symbol=SQUARE size=6 stroke=java.awt.BasicStroke strokeColor=java.awt.Color[r=255,g=0,b=0] fillColor=java.awt.Color[r=255,g=0,b=0]]}\n" +
+                " * NodeElemStyle{z_idx=[4.95/0.0/0.0]  symbol=[symbolShape=SQUARE size=6 stroke=java.awt.BasicStroke strokeColor=java.awt.Color[r=255,g=0,b=0] fillColor=java.awt.Color[r=255,g=0,b=0]]}\n" +
                 "\n" +
                 "\n";
         // CHECKSTYLE.ON: LineLength
