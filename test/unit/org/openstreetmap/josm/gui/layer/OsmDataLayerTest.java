@@ -219,16 +219,6 @@ public class OsmDataLayerTest {
     }
 
     /**
-     * Unit test of {@link OsmDataLayer#isChanged}.
-     */
-    @Test
-    public void testIsChanged() {
-        DataSet ds = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
-        assertTrue(layer.isChanged());
-    }
-
-    /**
      * Unit test of {@link OsmDataLayer#isModified}.
      */
     @Test

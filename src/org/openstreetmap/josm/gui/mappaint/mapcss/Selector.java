@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.IntFunction;
+import java.util.function.IntSupplier;
 import java.util.regex.PatternSyntaxException;
 
 import org.openstreetmap.josm.Main;
@@ -141,50 +143,38 @@ public interface Selector {
                 throw new AssertionError();
             }
 
-            @Override
-            public void visit(Way w) {
-                /*
-                 * If e.parent is already set to the first matching referrer. We skip any following
-                 * referrer injected into the visitor.
-                 */
+            private <T extends OsmPrimitive> void doVisit(T parent, IntSupplier counter, IntFunction<OsmPrimitive> getter) {
+                // If e.parent is already set to the first matching referrer.
+                // We skip any following referrer injected into the visitor.
                 if (e.parent != null) return;
 
-                if (!left.matches(e.withPrimitive(w)))
+                if (!left.matches(e.withPrimitive(parent)))
                     return;
-                for (int i = 0; i < w.getNodesCount(); i++) {
-                    Node n = w.getNode(i);
-                    if (n.equals(e.osm)) {
-                        if (link.matches(e.withParentAndIndexAndLinkContext(w, i, w.getNodesCount()))) {
-                            e.parent = w;
-                            e.index = i;
-                            e.count = w.getNodesCount();
-                            return;
-                        }
+                int count = counter.getAsInt();
+                if (link.conds == null) {
+                    // index is not needed, we can avoid the sequential search below
+                    e.parent = parent;
+                    e.count = count;
+                    return;
+                }
+                for (int i = 0; i < count; i++) {
+                    if (getter.apply(i).equals(e.osm) && link.matches(e.withParentAndIndexAndLinkContext(parent, i, count))) {
+                        e.parent = parent;
+                        e.index = i;
+                        e.count = count;
+                        return;
                     }
                 }
             }
 
             @Override
-            public void visit(Relation r) {
-                /*
-                 * If e.parent is already set to the first matching referrer. We skip any following
-                 * referrer injected into the visitor.
-                 */
-                if (e.parent != null) return;
+            public void visit(Way w) {
+                doVisit(w, w::getNodesCount, w::getNode);
+            }
 
-                if (!left.matches(e.withPrimitive(r)))
-                    return;
-                for (int i = 0; i < r.getMembersCount(); i++) {
-                    RelationMember m = r.getMember(i);
-                    if (m.getMember().equals(e.osm)) {
-                        if (link.matches(e.withParentAndIndexAndLinkContext(r, i, r.getMembersCount()))) {
-                            e.parent = r;
-                            e.index = i;
-                            e.count = r.getMembersCount();
-                            return;
-                        }
-                    }
-                }
+            @Override
+            public void visit(Relation r) {
+                doVisit(r, r::getMembersCount, i -> r.getMember(i).getMember());
             }
         }
 
