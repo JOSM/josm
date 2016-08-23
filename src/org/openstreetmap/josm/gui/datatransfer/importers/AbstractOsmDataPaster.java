@@ -56,7 +56,7 @@ public abstract class AbstractOsmDataPaster {
     /**
      * Attempts to import the given transfer data.
      * @param support The transfer support to import from.
-     * @param layer The layer to paste at.
+     * @param layer The layer to paste at. May be null.
      * @param pasteAt The position to paste at.
      * @return <code>true</code> if the import was successful.
      * @throws UnsupportedFlavorException if the requested data flavor is not supported
