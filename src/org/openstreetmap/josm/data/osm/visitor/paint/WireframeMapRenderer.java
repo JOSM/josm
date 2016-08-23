@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
+import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.draw.MapPath2D;
 
@@ -91,6 +92,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     /** Helper variable for {@link #visit(Relation)} */
     private final Stroke relatedWayStroke = new BasicStroke(
             4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
+    private MapViewRectangle viewClip;
 
     /**
      * Creates an wireframe render
@@ -145,17 +147,13 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
-    /**
-     * Renders the dataset for display.
-     *
-     * @param data <code>DataSet</code> to display
-     * @param virtual <code>true</code> if virtual nodes are used
-     * @param bounds display boundaries
-     */
     @Override
     public void render(DataSet data, boolean virtual, Bounds bounds) {
         BBox bbox = bounds.toBBox();
         this.ds = data;
+        Rectangle clip = g.getClipBounds();
+        clip.grow(50, 50);
+        viewClip = mapState.getViewArea(clip);
         getSettings(virtual);
 
         for (final Relation rel : data.searchRelations(bbox)) {
@@ -315,14 +313,19 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         Iterator<Node> it = w.getNodes().iterator();
         if (it.hasNext()) {
             MapViewPoint lastP = mapState.getPointFor(it.next());
+            int lastPOutside = lastP.getOutsideRectangleFlags(viewClip);
             for (int orderNumber = 1; it.hasNext(); orderNumber++) {
                 MapViewPoint p = mapState.getPointFor(it.next());
-                drawSegment(lastP, p, wayColor,
-                        showOnlyHeadArrowOnly ? !it.hasNext() : showThisDirectionArrow);
-                if (showOrderNumber && !isInactiveMode) {
-                    drawOrderNumber(lastP, p, orderNumber, g.getColor());
+                int pOutside = p.getOutsideRectangleFlags(viewClip);
+                if ((pOutside & lastPOutside) == 0) {
+                    drawSegment(lastP, p, wayColor,
+                            showOnlyHeadArrowOnly ? !it.hasNext() : showThisDirectionArrow);
+                    if (showOrderNumber && !isInactiveMode) {
+                        drawOrderNumber(lastP, p, orderNumber, g.getColor());
+                    }
                 }
                 lastP = p;
+                lastPOutside = pOutside;
             }
         }
     }
@@ -413,14 +416,10 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
      * @since 10827
      */
     protected void drawSegment(MapPath2D path, MapViewPoint mv1, MapViewPoint mv2, boolean showDirection) {
-        Rectangle bounds = g.getClipBounds();
-        bounds.grow(100, 100);                  // avoid arrow heads at the border
-        if (mv1.rectTo(mv2).isInView()) {
-            path.moveTo(mv1);
-            path.lineTo(mv2);
-            if (showDirection) {
-                ARROW_PAINT_HELPER.paintArrowAt(path, mv2, mv1);
-            }
+        path.moveTo(mv1);
+        path.lineTo(mv2);
+        if (showDirection) {
+            ARROW_PAINT_HELPER.paintArrowAt(path, mv2, mv1);
         }
     }
 
