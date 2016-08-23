@@ -122,7 +122,11 @@ public final class BugReport implements Serializable {
         StringWriter stringWriter = new StringWriter();
         PrintWriter out = new PrintWriter(stringWriter);
         if (isIncludeStatusReport()) {
-            out.println(ShowStatusReportAction.getReportHeader());
+            try {
+                out.println(ShowStatusReportAction.getReportHeader());
+            } catch (RuntimeException e) {
+                out.println("Could not generate status report: " + e.getMessage());
+            }
         }
         if (isIncludeData()) {
             exception.printReportDataTo(out);
