@@ -4,7 +4,9 @@ package org.openstreetmap.josm.tools.bugreport;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 import org.openstreetmap.josm.Main;
 
@@ -22,6 +24,7 @@ public class BugReportQueue {
     private ArrayList<ReportedException> suppressFor = new ArrayList<>();
     private Thread displayThread;
     private final BiFunction<ReportedException, Integer, SuppressionMode> bugReportHandler = getBestHandler();
+    private final CopyOnWriteArrayList<Predicate<ReportedException>> handlers = new CopyOnWriteArrayList<>();
     private int displayedErrors;
 
     private boolean inReportDialog;
@@ -96,6 +99,10 @@ public class BugReportQueue {
     }
 
     private SuppressionMode displayFor(ReportedException e) {
+        if (handlers.stream().anyMatch(p -> p.test(e))) {
+            Main.trace("Intercepted by handler.");
+            return SuppressionMode.NONE;
+        }
         return bugReportHandler.apply(e, getDisplayedErrors());
     }
 
@@ -122,6 +129,20 @@ public class BugReportQueue {
         }
     }
 
+    /**
+     * Allows you to peek or even intersect the bug reports.
+     * @param handler The handler. It can return false to stop all further handling of the exception.
+     * @since 10886
+     */
+    public void addBugReportHandler(Predicate<ReportedException> handler) {
+        handlers.add(handler);
+    }
+
+    /**
+     * Gets the global bug report queue
+     * @return The queue
+     * @since 10886
+     */
     public static BugReportQueue getInstance() {
         return INSTANCE;
     }
