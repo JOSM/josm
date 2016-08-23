@@ -57,11 +57,11 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
         JPanel testPanel = new VerticallyScrollablePanel(new GridBagLayout());
         testPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        prefUseIgnore = new JCheckBox(tr("Use ignore list."), Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true));
+        prefUseIgnore = new JCheckBox(tr("Use ignore list."), ValidatorPreference.PREF_USE_IGNORE.get());
         prefUseIgnore.setToolTipText(tr("Use the ignore list to suppress warnings."));
         testPanel.add(prefUseIgnore, GBC.eol());
 
-        prefUseLayer = new JCheckBox(tr("Use error layer."), Main.pref.getBoolean(ValidatorPreference.PREF_LAYER, true));
+        prefUseLayer = new JCheckBox(tr("Use error layer."), ValidatorPreference.PREF_LAYER.get());
         prefUseLayer.setToolTipText(tr("Use the error layer to display problematic elements."));
         testPanel.add(prefUseLayer, GBC.eol());
 
@@ -70,7 +70,7 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
         testPanel.add(prefOther, GBC.eol());
 
         prefOtherUpload = new JCheckBox(tr("Show informational level on upload."),
-                Main.pref.getBoolean(ValidatorPreference.PREF_OTHER_UPLOAD, false));
+                ValidatorPreference.PREF_OTHER_UPLOAD.get());
         prefOtherUpload.setToolTipText(tr("Show the informational tests in the upload check windows."));
         testPanel.add(prefOtherUpload, GBC.eol());
 
@@ -116,10 +116,10 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
 
         Main.pref.putCollection(ValidatorPreference.PREF_SKIP_TESTS, tests);
         Main.pref.putCollection(ValidatorPreference.PREF_SKIP_TESTS_BEFORE_UPLOAD, testsBeforeUpload);
-        Main.pref.put(ValidatorPreference.PREF_USE_IGNORE, prefUseIgnore.isSelected());
+        ValidatorPreference.PREF_USE_IGNORE.put(prefUseIgnore.isSelected());
         ValidatorPreference.PREF_OTHER.put(prefOther.isSelected());
-        Main.pref.put(ValidatorPreference.PREF_OTHER_UPLOAD, prefOtherUpload.isSelected());
-        Main.pref.put(ValidatorPreference.PREF_LAYER, prefUseLayer.isSelected());
+        ValidatorPreference.PREF_OTHER_UPLOAD.put(prefOtherUpload.isSelected());
+        ValidatorPreference.PREF_LAYER.put(prefUseLayer.isSelected());
         return false;
     }
 

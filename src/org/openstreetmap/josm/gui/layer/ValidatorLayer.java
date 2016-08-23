@@ -40,8 +40,7 @@ import org.openstreetmap.josm.tools.MultiMap;
  * @since 10386 (new LayerChangeListener interface)
  */
 public class ValidatorLayer extends Layer implements LayerChangeListener {
-
-    private int updateCount = -1;
+    private final Runnable invalidator = this::invalidate;
 
     /**
      * Constructs a new Validator layer
@@ -49,6 +48,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     public ValidatorLayer() {
         super(tr("Validation errors"));
         Main.getLayerManager().addLayerChangeListener(this);
+        Main.map.validatorDialog.tree.addInvalidationListener(invalidator);
     }
 
     /**
@@ -67,7 +67,6 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     @SuppressWarnings("unchecked")
     @Override
     public void paint(final Graphics2D g, final MapView mv, Bounds bounds) {
-        updateCount = Main.map.validatorDialog.tree.getUpdateCount();
         DefaultMutableTreeNode root = Main.map.validatorDialog.tree.getRoot();
         if (root == null || root.getChildCount() == 0)
             return;
@@ -123,11 +122,6 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     }
 
     @Override
-    public boolean isChanged() {
-        return updateCount != Main.map.validatorDialog.tree.getUpdateCount();
-    }
-
-    @Override
     public void visitBoundingBox(BoundingXYVisitor v) {
         // Do nothing
     }
@@ -167,7 +161,6 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
         if (e.getRemovedLayer() instanceof OsmDataLayer && e.getSource().getLayersOfType(OsmDataLayer.class).size() <= 1) {
             e.scheduleRemoval(Collections.singleton(this));
         } else if (e.getRemovedLayer() == this) {
-            Main.getLayerManager().removeLayerChangeListener(this);
             OsmValidator.errorLayer = null;
         }
     }
@@ -175,5 +168,12 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     @Override
     public LayerPositionStrategy getDefaultLayerPosition() {
         return LayerPositionStrategy.IN_FRONT;
+    }
+
+    @Override
+    public void destroy() {
+        Main.map.validatorDialog.tree.removeInvalidationListener(invalidator);
+        Main.getLayerManager().removeLayerChangeListener(this);
+        super.destroy();
     }
 }

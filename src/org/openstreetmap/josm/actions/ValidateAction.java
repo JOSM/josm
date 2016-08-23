@@ -168,7 +168,7 @@ public class ValidateAction extends JosmAction {
                 errors.addAll(test.getErrors());
             }
             tests = null;
-            if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
+            if (ValidatorPreference.PREF_USE_IGNORE.get()) {
                 getProgressMonitor().subTask(tr("Updating ignored errors ..."));
                 for (TestError error : errors) {
                     if (canceled) return;

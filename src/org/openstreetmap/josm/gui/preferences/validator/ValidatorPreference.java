@@ -39,19 +39,19 @@ public final class ValidatorPreference extends DefaultTabPreferenceSetting {
     public static final String PREFIX = "validator";
 
     /** The preferences key for error layer */
-    public static final String PREF_LAYER = PREFIX + ".layer";
+    public static final BooleanProperty PREF_LAYER = new BooleanProperty(PREFIX + ".layer", true);
 
     /** The preferences key for enabled tests */
     public static final String PREF_SKIP_TESTS = PREFIX + ".skip";
 
     /** The preferences key for enabled tests */
-    public static final String PREF_USE_IGNORE = PREFIX + ".ignore";
+    public static final BooleanProperty PREF_USE_IGNORE = new BooleanProperty(PREFIX + ".ignore", true);
 
     /** The preferences key for enabled tests before upload*/
     public static final String PREF_SKIP_TESTS_BEFORE_UPLOAD = PREFIX + ".skipBeforeUpload";
 
     /** The preferences key for ignored severity other on upload */
-    public static final String PREF_OTHER_UPLOAD = PREFIX + ".otherUpload";
+    public static final BooleanProperty PREF_OTHER_UPLOAD = new BooleanProperty(PREFIX + ".otherUpload", false);
 
     /** The preferences for ignored severity other */
     public static final BooleanProperty PREF_OTHER = new BooleanProperty(PREFIX + ".other", false);
