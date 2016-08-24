@@ -44,7 +44,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
     @Override
     public Component getListCellRendererComponent(JList<? extends OsmPrimitive> list, OsmPrimitive value, int index,
             boolean isSelected, boolean cellHasFocus) {
-        Component def = defaultListCellRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        Component def = defaultListCellRenderer.getListCellRendererComponent(list, null, index, isSelected, cellHasFocus);
         return renderer(def, value, list.getModel().getSize() > 1000);
     }
 
