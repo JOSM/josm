@@ -27,9 +27,6 @@ class JosmUserIdentityManagerTest {
         // created ?
         assert im != null
 
-        // registered as listener ?
-        assert Main.pref.@listeners.contains(im)
-
         JosmUserIdentityManager im2 = JosmUserIdentityManager.getInstance()
 
         // only one instance
@@ -244,9 +241,6 @@ class JosmUserIdentityManagerTest {
     public void apiUrlChanged() {
         JosmUserIdentityManager im = JosmUserIdentityManager.getInstance()
 
-        // make sure im is a preference change listener
-        Main.pref.addPreferenceChangeListener im
-
         // reset it
         im.@userName = null
         im.@userInfo = null
@@ -288,9 +282,6 @@ class JosmUserIdentityManagerTest {
     @Test
     public void userNameChanged() {
         JosmUserIdentityManager im = JosmUserIdentityManager.getInstance()
-
-        // make sure im is a preference change listener
-        Main.pref.addPreferenceChangeListener im
 
         // reset it
         im.@userName = null
