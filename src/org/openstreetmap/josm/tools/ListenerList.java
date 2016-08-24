@@ -149,9 +149,9 @@ public class ListenerList<T> {
         for (Iterator<WeakListener<T>> iterator = weakListeners.iterator(); iterator.hasNext();) {
             WeakListener<T> weakLink = iterator.next();
             T l = weakLink.listener.get();
-            if (l == null) {
-                iterator.remove();
-            } else {
+            if (l != null) {
+                // cleanup during add() should be enough to not cause memory leaks
+                // therefore, we ignore null listeners.
                 eventFirerer.fire(l);
             }
         }

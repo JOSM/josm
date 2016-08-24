@@ -95,6 +95,9 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
             }
         } catch (IllegalStateException e) {
             Main.debug(e);
+        } catch (NullPointerException e) {
+            // JDK-6322854: On Linux/X11, NPE can happen for unknown reasons, on all versions of Java
+            Main.error(e);
         }
         return false;
     }
