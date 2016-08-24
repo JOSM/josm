@@ -1160,26 +1160,27 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
     public void endUpdate() {
         if (updateCount > 0) {
             updateCount--;
+            List<AbstractDatasetChangedEvent> eventsToFire = Collections.emptyList();
             if (updateCount == 0) {
-                List<AbstractDatasetChangedEvent> eventsCopy = new ArrayList<>(cachedEvents);
+                eventsToFire = new ArrayList<>(cachedEvents);
                 cachedEvents.clear();
-                lock.writeLock().unlock();
+            }
 
-                if (!eventsCopy.isEmpty()) {
-                    lock.readLock().lock();
-                    try {
-                        if (eventsCopy.size() < MAX_SINGLE_EVENTS) {
-                            for (AbstractDatasetChangedEvent event: eventsCopy) {
-                                fireEventToListeners(event);
-                            }
-                        } else if (eventsCopy.size() == MAX_EVENTS) {
-                            fireEventToListeners(new DataChangedEvent(this));
-                        } else {
-                            fireEventToListeners(new DataChangedEvent(this, eventsCopy));
+            if (!eventsToFire.isEmpty()) {
+                lock.readLock().lock();
+                lock.writeLock().unlock();
+                try {
+                    if (eventsToFire.size() < MAX_SINGLE_EVENTS) {
+                        for (AbstractDatasetChangedEvent event: eventsToFire) {
+                            fireEventToListeners(event);
                         }
-                    } finally {
-                        lock.readLock().unlock();
+                    } else if (eventsToFire.size() == MAX_EVENTS) {
+                        fireEventToListeners(new DataChangedEvent(this));
+                    } else {
+                        fireEventToListeners(new DataChangedEvent(this, eventsToFire));
                     }
+                } finally {
+                    lock.readLock().unlock();
                 }
             } else {
                 lock.writeLock().unlock();
