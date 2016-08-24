@@ -36,6 +36,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -63,34 +64,31 @@ class NotificationManager {
     private NotificationPanel currentNotificationPanel;
     private final Queue<Notification> queue;
 
-    private static int pauseTime = Main.pref.getInteger("notification-default-pause-time-ms", 300); // milliseconds
-    static int defaultNotificationTime = Main.pref.getInteger("notification-default-time-ms", 5000); // milliseconds
+    private static IntegerProperty pauseTime = new IntegerProperty("notification-default-pause-time-ms", 300); // milliseconds
 
     private long displayTimeStart;
     private long elapsedTime;
 
-    private static NotificationManager INSTANCE;
+    private static NotificationManager instance;
 
     private static final Color PANEL_SEMITRANSPARENT = new Color(224, 236, 249, 230);
     private static final Color PANEL_OPAQUE = new Color(224, 236, 249);
 
-    public static synchronized NotificationManager getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new NotificationManager();
-        }
-        return INSTANCE;
-    }
-
     NotificationManager() {
         queue = new LinkedList<>();
-        hideTimer = new Timer(defaultNotificationTime, new HideEvent());
+        hideTimer = new Timer(Notification.TIME_DEFAULT, e -> this.stopHideTimer());
         hideTimer.setRepeats(false);
-        pauseTimer = new Timer(pauseTime, new PauseFinishedEvent());
+        pauseTimer = new Timer(pauseTime.get(), new PauseFinishedEvent());
         pauseTimer.setRepeats(false);
         unfreezeDelayTimer = new Timer(10, new UnfreezeEvent());
         unfreezeDelayTimer.setRepeats(false);
     }
 
+    /**
+     * Show the given notification
+     * @param note The note to show.
+     * @see Notification#show()
+     */
     public void showNotification(Notification note) {
         synchronized (queue) {
             queue.add(note);
@@ -104,7 +102,7 @@ class NotificationManager {
         currentNotification = queue.poll();
         if (currentNotification == null) return;
 
-        currentNotificationPanel = new NotificationPanel(currentNotification);
+        currentNotificationPanel = new NotificationPanel(currentNotification, new FreezeMouseListener(), e -> this.stopHideTimer());
         currentNotificationPanel.validate();
 
         int margin = 5;
@@ -146,21 +144,17 @@ class NotificationManager {
         hideTimer.restart();
     }
 
-    private class HideEvent implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            hideTimer.stop();
-            if (currentNotificationPanel != null) {
-                currentNotificationPanel.setVisible(false);
-                JFrame parent = (JFrame) Main.parent;
-                if (parent != null) {
-                    parent.getLayeredPane().remove(currentNotificationPanel);
-                }
-                currentNotificationPanel = null;
+    private void stopHideTimer() {
+        hideTimer.stop();
+        if (currentNotificationPanel != null) {
+            currentNotificationPanel.setVisible(false);
+            JFrame parent = (JFrame) Main.parent;
+            if (parent != null) {
+                parent.getLayeredPane().remove(currentNotificationPanel);
             }
-            pauseTimer.restart();
+            currentNotificationPanel = null;
         }
+        pauseTimer.restart();
     }
 
     private class PauseFinishedEvent implements ActionListener {
@@ -186,21 +180,23 @@ class NotificationManager {
         }
     }
 
-    private class NotificationPanel extends JPanel {
+    private static class NotificationPanel extends JPanel {
 
         private JPanel innerPanel;
 
-        NotificationPanel(Notification note) {
+        NotificationPanel(Notification note, MouseListener freeze, ActionListener hideListener) {
             setVisible(false);
-            build(note);
+            build(note, freeze, hideListener);
         }
 
         public void setNotificationBackground(Color c) {
             innerPanel.setBackground(c);
         }
 
-        private void build(final Notification note) {
-            JButton btnClose = new JButton(new HideAction());
+        private void build(final Notification note, MouseListener freeze, ActionListener hideListener) {
+            JButton btnClose = new JButton();
+            btnClose.addActionListener(hideListener);
+            btnClose.setIcon(ImageProvider.get("misc", "grey_x"));
             btnClose.setPreferredSize(new Dimension(50, 50));
             btnClose.setMargin(new Insets(0, 0, 1, 1));
             btnClose.setContentAreaFilled(false);
@@ -294,11 +290,10 @@ class NotificationManager {
              * of a second, background color is switched twice), so there is
              * a tiny delay before the timer really resumes.
              */
-            MouseListener freeze = new FreezeMouseListener();
             addMouseListenerToAllChildComponents(this, freeze);
         }
 
-        private void addMouseListenerToAllChildComponents(Component comp, MouseListener listener) {
+        private static void addMouseListenerToAllChildComponents(Component comp, MouseListener listener) {
             comp.addMouseListener(listener);
             if (comp instanceof Container) {
                 for (Component c: ((Container) comp).getComponents()) {
@@ -306,36 +301,24 @@ class NotificationManager {
                 }
             }
         }
+    }
 
-        class HideAction extends AbstractAction {
-
-            HideAction() {
-                putValue(SMALL_ICON, ImageProvider.get("misc", "grey_x"));
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new HideEvent().actionPerformed(null);
+    class FreezeMouseListener extends MouseAdapter {
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            if (unfreezeDelayTimer.isRunning()) {
+                unfreezeDelayTimer.stop();
+            } else {
+                hideTimer.stop();
+                elapsedTime += System.currentTimeMillis() - displayTimeStart;
+                currentNotificationPanel.setNotificationBackground(PANEL_OPAQUE);
+                currentNotificationPanel.repaint();
             }
         }
 
-        class FreezeMouseListener extends MouseAdapter {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                if (unfreezeDelayTimer.isRunning()) {
-                    unfreezeDelayTimer.stop();
-                } else {
-                    hideTimer.stop();
-                    elapsedTime += System.currentTimeMillis() - displayTimeStart;
-                    currentNotificationPanel.setNotificationBackground(PANEL_OPAQUE);
-                    currentNotificationPanel.repaint();
-                }
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                unfreezeDelayTimer.restart();
-            }
+        @Override
+        public void mouseExited(MouseEvent e) {
+            unfreezeDelayTimer.restart();
         }
     }
 
@@ -369,5 +352,12 @@ class NotificationManager {
             g.draw(rect);
             super.paintComponent(graphics);
         }
+    }
+
+    public static synchronized NotificationManager getInstance() {
+        if (instance == null) {
+            instance = new NotificationManager();
+        }
+        return instance;
     }
 }

@@ -31,6 +31,9 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
  */
 public class Notification {
 
+    /**
+     * Default width of a notification
+     */
     public static final int DEFAULT_CONTENT_WIDTH = 350;
 
     // some standard duration values (in milliseconds)
@@ -58,7 +61,7 @@ public class Notification {
     public static final int TIME_VERY_LONG = Main.pref.getInteger("notification-time-very_long-ms", 20000);
 
     private Component content;
-    private int duration;
+    private int duration = Notification.TIME_DEFAULT;
     private Icon icon;
     private String helpTopic;
 
@@ -66,7 +69,7 @@ public class Notification {
      * Constructs a new {@code Notification} without content.
      */
     public Notification() {
-        duration = NotificationManager.defaultNotificationTime;
+        // nothing to do.
     }
 
     /**
@@ -169,18 +172,34 @@ public class Notification {
         return this;
     }
 
+    /**
+     * Gets the content component to use.
+     * @return The content
+     */
     public Component getContent() {
         return content;
     }
 
+    /**
+     * Gets the time the notification should be displayed
+     * @return The time to display the notification
+     */
     public int getDuration() {
         return duration;
     }
 
+    /**
+     * Gets the icon that should be displayed next to the notification
+     * @return The icon to display
+     */
     public Icon getIcon() {
         return icon;
     }
 
+    /**
+     * Gets the help topic for this notification
+     * @return The help topic
+     */
     public String getHelpTopic() {
         return helpTopic;
     }
