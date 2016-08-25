@@ -107,20 +107,6 @@ public class ImageProvider {
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /**
-     * Position of an overlay icon
-     */
-    public enum OverlayPosition {
-        /** North west */
-        NORTHWEST,
-        /** North east */
-        NORTHEAST,
-        /** South west */
-        SOUTHWEST,
-        /** South east */
-        SOUTHEAST
-    }
-
-    /**
      * Supported image types
      */
     public enum ImageType {
