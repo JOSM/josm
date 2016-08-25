@@ -34,10 +34,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 import javax.swing.Action;
 import javax.swing.InputMap;
@@ -73,12 +69,13 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.GettingStarted;
-import org.openstreetmap.josm.gui.MainApplication.Option;
 import org.openstreetmap.josm.gui.MainFrame;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
+import org.openstreetmap.josm.gui.ProgramArguments;
+import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -103,6 +100,7 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHook;
@@ -218,15 +216,14 @@ public abstract class Main {
 
     protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
 
-    // First lines of last 5 error and warning messages, used for bug reports
-    private static final List<String> ERRORS_AND_WARNINGS = Collections.<String>synchronizedList(new ArrayList<String>());
-
     private static final Set<OnlineResource> OFFLINE_RESOURCES = EnumSet.noneOf(OnlineResource.class);
 
     /**
      * Logging level (5 = trace, 4 = debug, 3 = info, 2 = warn, 1 = error, 0 = none).
      * @since 6248
+     * @deprecated Use {@link Logging} class.
      */
+    @Deprecated
     public static int logLevel = 3;
 
     /**
@@ -235,27 +232,13 @@ public abstract class Main {
      */
     protected static final MainPanel mainPanel = new MainPanel(getLayerManager());
 
-    private static void rememberWarnErrorMsg(String msg) {
-        // Only remember first line of message
-        int idx = msg.indexOf('\n');
-        if (idx > 0) {
-            ERRORS_AND_WARNINGS.add(msg.substring(0, idx));
-        } else {
-            ERRORS_AND_WARNINGS.add(msg);
-        }
-        // Only keep 10 lines to avoid memory leak
-        while (ERRORS_AND_WARNINGS.size() > 10) {
-            ERRORS_AND_WARNINGS.remove(0);
-        }
-    }
-
     /**
      * Replies the first lines of last 5 error and warning messages, used for bug reports
      * @return the first lines of last 5 error and warning messages
      * @since 7420
      */
     public static final Collection<String> getLastErrorAndWarnings() {
-        return Collections.unmodifiableList(ERRORS_AND_WARNINGS);
+        return Logging.getLastErrorAndWarnings();
     }
 
     /**
@@ -263,7 +246,7 @@ public abstract class Main {
      * @since 8959
      */
     public static void clearLastErrorAndWarnings() {
-        ERRORS_AND_WARNINGS.clear();
+        Logging.clearLastErrorAndWarnings();
     }
 
     /**
@@ -272,12 +255,7 @@ public abstract class Main {
      * @since 6248
      */
     public static void error(String msg) {
-        if (logLevel < 1)
-            return;
-        if (msg != null && !msg.isEmpty()) {
-            System.err.println(tr("ERROR: {0}", msg));
-            rememberWarnErrorMsg("E: "+msg);
-        }
+        Logging.error(msg);
     }
 
     /**
@@ -285,12 +263,7 @@ public abstract class Main {
      * @param msg The message to print.
      */
     public static void warn(String msg) {
-        if (logLevel < 2)
-            return;
-        if (msg != null && !msg.isEmpty()) {
-            System.err.println(tr("WARNING: {0}", msg));
-            rememberWarnErrorMsg("W: "+msg);
-        }
+        Logging.warn(msg);
     }
 
     /**
@@ -298,11 +271,7 @@ public abstract class Main {
      * @param msg The message to print.
      */
     public static void info(String msg) {
-        if (logLevel < 3)
-            return;
-        if (msg != null && !msg.isEmpty()) {
-            System.out.println(tr("INFO: {0}", msg));
-        }
+        Logging.info(msg);
     }
 
     /**
@@ -310,11 +279,7 @@ public abstract class Main {
      * @param msg The message to print.
      */
     public static void debug(String msg) {
-        if (logLevel < 4)
-            return;
-        if (msg != null && !msg.isEmpty()) {
-            System.out.println(tr("DEBUG: {0}", msg));
-        }
+        Logging.debug(msg);
     }
 
     /**
@@ -322,12 +287,7 @@ public abstract class Main {
      * @param msg The message to print.
      */
     public static void trace(String msg) {
-        if (logLevel < 5)
-            return;
-        if (msg != null && !msg.isEmpty()) {
-            System.out.print("TRACE: ");
-            System.out.println(msg);
-        }
+        Logging.trace(msg);
     }
 
     /**
@@ -337,7 +297,7 @@ public abstract class Main {
      * @since 6852
      */
     public static boolean isDebugEnabled() {
-        return logLevel >= 4;
+        return Logging.isLoggingEnabled(Logging.LEVEL_DEBUG);
     }
 
     /**
@@ -347,7 +307,7 @@ public abstract class Main {
      * @since 6852
      */
     public static boolean isTraceEnabled() {
-        return logLevel >= 5;
+        return Logging.isLoggingEnabled(Logging.LEVEL_TRACE);
     }
 
     /**
@@ -358,7 +318,7 @@ public abstract class Main {
      * @since 6248
      */
     public static void error(String msg, Object... objects) {
-        error(MessageFormat.format(msg, objects));
+        Logging.error(msg, objects);
     }
 
     /**
@@ -368,7 +328,7 @@ public abstract class Main {
      * @param objects The objects to insert into format string.
      */
     public static void warn(String msg, Object... objects) {
-        warn(MessageFormat.format(msg, objects));
+        Logging.warn(msg, objects);
     }
 
     /**
@@ -378,7 +338,7 @@ public abstract class Main {
      * @param objects The objects to insert into format string.
      */
     public static void info(String msg, Object... objects) {
-        info(MessageFormat.format(msg, objects));
+        Logging.info(msg, objects);
     }
 
     /**
@@ -388,7 +348,7 @@ public abstract class Main {
      * @param objects The objects to insert into format string.
      */
     public static void debug(String msg, Object... objects) {
-        debug(MessageFormat.format(msg, objects));
+        Logging.debug(msg, objects);
     }
 
     /**
@@ -398,7 +358,7 @@ public abstract class Main {
      * @param objects The objects to insert into format string.
      */
     public static void trace(String msg, Object... objects) {
-        trace(MessageFormat.format(msg, objects));
+        Logging.trace(msg, objects);
     }
 
     /**
@@ -407,7 +367,7 @@ public abstract class Main {
      * @since 6248
      */
     public static void error(Throwable t) {
-        error(t, true);
+        Logging.logWithStackTrace(Logging.LEVEL_ERROR, t);
     }
 
     /**
@@ -416,7 +376,7 @@ public abstract class Main {
      * @since 6248
      */
     public static void warn(Throwable t) {
-        warn(t, true);
+        Logging.logWithStackTrace(Logging.LEVEL_WARN, t);
     }
 
     /**
@@ -425,7 +385,7 @@ public abstract class Main {
      * @since 10420
      */
     public static void debug(Throwable t) {
-        debug(getErrorMessage(t));
+        Logging.log(Logging.LEVEL_DEBUG, t);
     }
 
     /**
@@ -434,7 +394,7 @@ public abstract class Main {
      * @since 10420
      */
     public static void trace(Throwable t) {
-        trace(getErrorMessage(t));
+        Logging.log(Logging.LEVEL_TRACE, t);
     }
 
     /**
@@ -444,9 +404,10 @@ public abstract class Main {
      * @since 6642
      */
     public static void error(Throwable t, boolean stackTrace) {
-        error(getErrorMessage(t));
         if (stackTrace) {
-            t.printStackTrace();
+            Logging.log(Logging.LEVEL_ERROR, t);
+        } else {
+            Logging.logWithStackTrace(Logging.LEVEL_ERROR, t);
         }
     }
 
@@ -457,7 +418,7 @@ public abstract class Main {
      * @since 10420
      */
     public static void error(Throwable t, String message) {
-        warn(message + ' ' + getErrorMessage(t));
+        Logging.log(Logging.LEVEL_ERROR, message, t);
     }
 
     /**
@@ -467,9 +428,10 @@ public abstract class Main {
      * @since 6642
      */
     public static void warn(Throwable t, boolean stackTrace) {
-        warn(getErrorMessage(t));
         if (stackTrace) {
-            t.printStackTrace();
+            Logging.log(Logging.LEVEL_WARN, t);
+        } else {
+            Logging.logWithStackTrace(Logging.LEVEL_WARN, t);
         }
     }
 
@@ -480,7 +442,7 @@ public abstract class Main {
      * @since 10420
      */
     public static void warn(Throwable t, String message) {
-        warn(message + ' ' + getErrorMessage(t));
+        Logging.log(Logging.LEVEL_WARN, message, t);
     }
 
     /**
@@ -492,17 +454,9 @@ public abstract class Main {
     public static String getErrorMessage(Throwable t) {
         if (t == null) {
             return null;
+        } else {
+            return Logging.getErrorMessage(t);
         }
-        StringBuilder sb = new StringBuilder(t.getClass().getName());
-        String msg = t.getMessage();
-        if (msg != null) {
-            sb.append(": ").append(msg.trim());
-        }
-        Throwable cause = t.getCause();
-        if (cause != null && !cause.equals(t)) {
-            sb.append(". ").append(tr("Cause: ")).append(getErrorMessage(cause));
-        }
-        return sb.toString();
     }
 
     /**
@@ -570,20 +524,9 @@ public abstract class Main {
     public void initialize() {
         fileWatcher.start();
 
-        new InitializationTask(tr("Executing platform startup hook")) {
-            @Override
-            public void initialize() {
-                platform.startupHook();
-            }
-        }.call();
+        new InitializationTask(tr("Executing platform startup hook"), platform::startupHook).call();
 
-        new InitializationTask(tr("Building main menu")) {
-
-            @Override
-            public void initialize() {
-                initializeMainWindow();
-            }
-        }.call();
+        new InitializationTask(tr("Building main menu"), this::initializeMainWindow).call();
 
         undoRedo.addCommandQueueListener(redoUndoListener);
 
@@ -596,10 +539,7 @@ public abstract class Main {
         // contains several initialization tasks to be executed (in parallel) by a ExecutorService
         List<Callable<Void>> tasks = new ArrayList<>();
 
-        tasks.add(new InitializationTask(tr("Initializing OSM API")) {
-
-            @Override
-            public void initialize() {
+        tasks.add(new InitializationTask(tr("Initializing OSM API"), () -> {
                 // We try to establish an API connection early, so that any API
                 // capabilities are already known to the editor instance. However
                 // if it goes wrong that's not critical at this stage.
@@ -608,43 +548,18 @@ public abstract class Main {
                 } catch (OsmTransferCanceledException | OsmApiInitializationException e) {
                     Main.warn(getErrorMessage(Utils.getRootCause(e)));
                 }
-            }
-        });
+            }));
 
-        tasks.add(new InitializationTask(tr("Initializing validator")) {
+        tasks.add(new InitializationTask(tr("Initializing validator"), OsmValidator::initialize));
 
-            @Override
-            public void initialize() {
-                OsmValidator.initialize();
-            }
-        });
+        tasks.add(new InitializationTask(tr("Initializing presets"), TaggingPresets::initialize));
 
-        tasks.add(new InitializationTask(tr("Initializing presets")) {
+        tasks.add(new InitializationTask(tr("Initializing map styles"), MapPaintPreference::initialize));
 
-            @Override
-            public void initialize() {
-                TaggingPresets.initialize();
-            }
-        });
-
-        tasks.add(new InitializationTask(tr("Initializing map styles")) {
-
-            @Override
-            public void initialize() {
-                MapPaintPreference.initialize();
-            }
-        });
-
-        tasks.add(new InitializationTask(tr("Loading imagery preferences")) {
-
-            @Override
-            public void initialize() {
-                ImageryPreference.initialize();
-            }
-        });
+        tasks.add(new InitializationTask(tr("Loading imagery preferences"), ImageryPreference::initialize));
 
         try {
-            final ExecutorService service = Executors.newFixedThreadPool(
+            ExecutorService service = Executors.newFixedThreadPool(
                     Runtime.getRuntime().availableProcessors(), Utils.newThreadFactory("main-init-%d", Thread.NORM_PRIORITY));
             for (Future<Void> i : service.invokeAll(tasks)) {
                 i.get();
@@ -657,51 +572,13 @@ public abstract class Main {
         // hooks for the jmapviewer component
         FeatureAdapter.registerBrowserAdapter(OpenBrowser::displayUrl);
         FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
-        FeatureAdapter.registerLoggingAdapter(name -> {
-                Logger logger = Logger.getAnonymousLogger();
-                logger.setUseParentHandlers(false);
-                logger.setLevel(Level.ALL);
-                if (logger.getHandlers().length == 0) {
-                    logger.addHandler(new Handler() {
-                        @Override
-                        public void publish(LogRecord record) {
-                            String msg = MessageFormat.format(record.getMessage(), record.getParameters());
-                            if (record.getLevel().intValue() >= Level.SEVERE.intValue()) {
-                                Main.error(msg);
-                            } else if (record.getLevel().intValue() >= Level.WARNING.intValue()) {
-                                Main.warn(msg);
-                            } else if (record.getLevel().intValue() >= Level.INFO.intValue()) {
-                                Main.info(msg);
-                            } else if (record.getLevel().intValue() >= Level.FINE.intValue()) {
-                                Main.debug(msg);
-                            } else {
-                                Main.trace(msg);
-                            }
-                        }
+        FeatureAdapter.registerLoggingAdapter(name -> Logging.getLogger());
 
-                        @Override
-                        public void flush() {
-                            // Do nothing
-                        }
-
-                        @Override
-                        public void close() {
-                            // Do nothing
-                        }
-                    });
-                }
-                return logger;
-            });
-
-        new InitializationTask(tr("Updating user interface")) {
-
-            @Override
-            public void initialize() {
-                toolbar.refreshToolbarControl();
-                toolbar.control.updateUI();
-                contentPanePrivate.updateUI();
-            }
-        }.call();
+        new InitializationTask(tr("Updating user interface"), () -> {
+            toolbar.refreshToolbarControl();
+            toolbar.control.updateUI();
+            contentPanePrivate.updateUI();
+        }).call();
     }
 
     /**
@@ -712,15 +589,15 @@ public abstract class Main {
         // can be implementd by subclasses
     }
 
-    private abstract static class InitializationTask implements Callable<Void> {
+    private static class InitializationTask implements Callable<Void> {
 
         private final String name;
+        private Runnable task;
 
-        protected InitializationTask(String name) {
+        protected InitializationTask(String name, Runnable task) {
             this.name = name;
+            this.task = task;
         }
-
-        public abstract void initialize();
 
         @Override
         public Void call() {
@@ -728,7 +605,7 @@ public abstract class Main {
             if (initListener != null) {
                 status = initListener.updateStatus(name);
             }
-            initialize();
+            task.run();
             if (initListener != null) {
                 initListener.finish(status);
             }
@@ -950,7 +827,7 @@ public abstract class Main {
      * Should be called before the main constructor to setup some parameter stuff
      * @param args The parsed argument list.
      */
-    public static void preConstructorInit(Map<Option, Collection<String>> args) {
+    public static void preConstructorInit(ProgramArguments args) {
         ProjectionPreference.setProjection();
 
         String defaultlaf = platform.getDefaultStyle();
@@ -1017,25 +894,19 @@ public abstract class Main {
         }
     }
 
-    protected static void postConstructorProcessCmdLine(Map<Option, Collection<String>> args) {
-        if (args.containsKey(Option.DOWNLOAD)) {
-            List<File> fileList = new ArrayList<>();
-            for (String s : args.get(Option.DOWNLOAD)) {
-                DownloadParamType.paramType(s).download(s, fileList);
-            }
-            if (!fileList.isEmpty()) {
-                OpenFileAction.openFiles(fileList, true);
-            }
+    protected static void postConstructorProcessCmdLine(ProgramArguments args) {
+        List<File> fileList = new ArrayList<>();
+        for (String s : args.get(Option.DOWNLOAD)) {
+            DownloadParamType.paramType(s).download(s, fileList);
         }
-        if (args.containsKey(Option.DOWNLOADGPS)) {
-            for (String s : args.get(Option.DOWNLOADGPS)) {
-                DownloadParamType.paramType(s).downloadGps(s);
-            }
+        if (!fileList.isEmpty()) {
+            OpenFileAction.openFiles(fileList, true);
         }
-        if (args.containsKey(Option.SELECTION)) {
-            for (String s : args.get(Option.SELECTION)) {
-                SearchAction.search(s, SearchAction.SearchMode.add);
-            }
+        for (String s : args.get(Option.DOWNLOADGPS)) {
+            DownloadParamType.paramType(s).downloadGps(s);
+        }
+        for (String s : args.get(Option.SELECTION)) {
+            SearchAction.search(s, SearchAction.SearchMode.add);
         }
     }
 
@@ -1488,10 +1359,8 @@ public abstract class Main {
         public static void setup() {
             if (!windowSwitchListeners.isEmpty()) {
                 for (Window w : Window.getWindows()) {
-                    if (w.isShowing()) {
-                        if (!Arrays.asList(w.getWindowListeners()).contains(getInstance())) {
-                            w.addWindowListener(getInstance());
-                        }
+                    if (w.isShowing() && !Arrays.asList(w.getWindowListeners()).contains(getInstance())) {
+                        w.addWindowListener(getInstance());
                     }
                 }
             }

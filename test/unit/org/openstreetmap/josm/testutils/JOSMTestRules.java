@@ -19,6 +19,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManagerTest;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -181,7 +182,7 @@ public class JOSMTestRules implements TestRule {
         // All tests use the same timezone.
         TimeZone.setDefault(DateUtils.UTC);
         // Set log level to info
-        Main.logLevel = 3;
+        Logging.setLogLevel(Logging.LEVEL_INFO);
 
         // Set up i18n
         if (i18n != null) {
