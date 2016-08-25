@@ -1848,6 +1848,7 @@ area[shop=tobacco],
 area[shop=clothes],
 area[shop=computer],
 area[shop=confectionery],
+area[shop=pastry],
 area[shop=copyshop],
 area[shop=curtain],
 area[shop=cycle_repair],
@@ -1997,6 +1998,10 @@ node[shop=computer] {
 }
 node[shop=confectionery] {
     icon-image: "presets/shop/groceries/confectionery.svg";
+    set icon_z17;
+}
+node[shop=pastry] {
+    icon-image: "presets/shop/groceries/pastry.svg";
     set icon_z17;
 }
 node[shop=copyshop] {
