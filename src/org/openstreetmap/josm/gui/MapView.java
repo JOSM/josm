@@ -1277,6 +1277,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             temporaryLayers.clear();
         }
         nonChangedLayersBuffer = null;
+        offscreenBuffer = null;
     }
 
     /**
