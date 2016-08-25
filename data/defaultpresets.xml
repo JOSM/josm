@@ -7301,7 +7301,14 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Deli (Fine Food) -->
-        <item name="Candy Store" icon="presets/shop/groceries/confectionery.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Pastry" icon="presets/shop/groceries/pastry.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=pastry" />
+            <space />
+            <key key="shop" value="pastry" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Pastry -->
+        <item name="Confectionery" icon="presets/shop/groceries/confectionery.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=confectionery"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=confectionery"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=confectionery"
@@ -7315,7 +7322,7 @@
             <key key="shop" value="confectionery" />
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
-        </item> <!-- Candy Store -->
+        </item> <!-- Confectionery -->
         <item name="Tea" icon="presets/shop/groceries/tea.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=tea"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=tea"
