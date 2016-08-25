@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 
@@ -184,16 +185,34 @@ public final class BugReport implements Serializable {
      * @return The method name.
      */
     public static String getCallingMethod(int offset) {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         String className = BugReport.class.getName();
+        String methodName = "getCallingMethod";
+        StackTraceElement found = getCallingMethod(offset, className, methodName::equals);
+        if (found != null) {
+            return found.getClassName().replaceFirst(".*\\.", "") + '#' + found.getMethodName();
+        } else {
+            return "?";
+        }
+    }
+
+    /**
+     * Find the method that called the given method on the current stack trace.
+     * @param offset
+     *           How many methods to look back in the stack trace. 1 gives the method calling this method, 0 gives you getCallingMethod().
+     * @param className The name of the class to search for
+     * @param methodName The name of the method to search for
+     * @return The class and method name or null if it is unknown.
+     */
+    public static StackTraceElement getCallingMethod(int offset, String className, Predicate<String> methodName) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         for (int i = 0; i < stackTrace.length - offset; i++) {
             StackTraceElement element = stackTrace[i];
-            if (className.equals(element.getClassName()) && "getCallingMethod".equals(element.getMethodName())) {
+            if (className.equals(element.getClassName()) && methodName.test(element.getMethodName())) {
                 StackTraceElement toReturn = stackTrace[i + offset];
-                return toReturn.getClassName().replaceFirst(".*\\.", "") + '#' + toReturn.getMethodName();
+                return toReturn;
             }
         }
-        return "?";
+        return null;
     }
 
     /**

@@ -24,15 +24,14 @@ import java.security.PermissionCollection;
 import java.security.Permissions;
 import java.security.Policy;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 
 import javax.swing.JOptionPane;
 import javax.swing.RepaintManager;
@@ -45,6 +44,7 @@ import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
@@ -62,14 +62,13 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.FontsManager;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
-
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
 
 /**
  * Main window class application.
@@ -170,128 +169,6 @@ public class MainApplication extends Main {
     }
 
     /**
-     * JOSM command line options.
-     * @see <a href="https://josm.openstreetmap.de/wiki/Help/CommandLineOptions">Help/CommandLineOptions</a>
-     * @since 5279
-     */
-    public enum Option {
-        /** --help|-h                                  Show this help */
-        HELP(false),
-        /** --version                                  Displays the JOSM version and exits */
-        VERSION(false),
-        /** --debug                                    Print debugging messages to console */
-        DEBUG(false),
-        /** --trace                                    Print detailed debugging messages to console */
-        TRACE(false),
-        /** --language=&lt;language&gt;                Set the language */
-        LANGUAGE(true),
-        /** --reset-preferences                        Reset the preferences to default */
-        RESET_PREFERENCES(false),
-        /** --load-preferences=&lt;url-to-xml&gt;      Changes preferences according to the XML file */
-        LOAD_PREFERENCES(true),
-        /** --set=&lt;key&gt;=&lt;value&gt;            Set preference key to value */
-        SET(true),
-        /** --geometry=widthxheight(+|-)x(+|-)y        Standard unix geometry argument */
-        GEOMETRY(true),
-        /** --no-maximize                              Do not launch in maximized mode */
-        NO_MAXIMIZE(false),
-        /** --maximize                                 Launch in maximized mode */
-        MAXIMIZE(false),
-        /** --download=minlat,minlon,maxlat,maxlon     Download the bounding box <br>
-         *  --download=&lt;URL&gt;                     Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) <br>
-         *  --download=&lt;filename&gt;                Open a file (any file type that can be opened with File/Open) */
-        DOWNLOAD(true),
-        /** --downloadgps=minlat,minlon,maxlat,maxlon  Download the bounding box as raw GPS <br>
-         *  --downloadgps=&lt;URL&gt;                  Download the location at the URL (with lat=x&amp;lon=y&amp;zoom=z) as raw GPS */
-        DOWNLOADGPS(true),
-        /** --selection=&lt;searchstring&gt;           Select with the given search */
-        SELECTION(true),
-        /** --offline=&lt;osm_api|josm_website|all&gt; Disable access to the given resource(s), delimited by comma */
-        OFFLINE(true),
-        /** --skip-plugins */
-        SKIP_PLUGINS(false);
-
-        private final String name;
-        private final boolean requiresArg;
-
-        Option(boolean requiresArgument) {
-            this.name = name().toLowerCase(Locale.ENGLISH).replace('_', '-');
-            this.requiresArg = requiresArgument;
-        }
-
-        /**
-         * Replies the option name
-         * @return The option name, in lowercase
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * Determines if this option requires an argument.
-         * @return {@code true} if this option requires an argument, {@code false} otherwise
-         */
-        public boolean requiresArgument() {
-            return requiresArg;
-        }
-    }
-
-    /**
-     * Builds the command-line argument map.
-     * @param args command-line arguments array
-     * @return command-line argument map
-     */
-    public static Map<Option, Collection<String>> buildCommandLineArgumentMap(String ... args) {
-
-        List<LongOpt> los = new ArrayList<>();
-        for (Option o : Option.values()) {
-            los.add(new LongOpt(o.getName(), o.requiresArgument() ? LongOpt.REQUIRED_ARGUMENT : LongOpt.NO_ARGUMENT, null, 0));
-        }
-
-        Getopt g = new Getopt("JOSM", args, "hv", los.toArray(new LongOpt[los.size()]));
-
-        Map<Option, Collection<String>> argMap = new EnumMap<>(Option.class);
-
-        int c;
-        while ((c = g.getopt()) != -1) {
-            Option opt;
-            switch (c) {
-                case 'h':
-                    opt = Option.HELP;
-                    break;
-                case 'v':
-                    opt = Option.VERSION;
-                    break;
-                case 0:
-                    opt = Option.values()[g.getLongind()];
-                    break;
-                default:
-                    opt = null;
-            }
-            if (opt != null) {
-                Collection<String> values = argMap.get(opt);
-                if (values == null) {
-                    values = new ArrayList<>();
-                    argMap.put(opt, values);
-                }
-                values.add(g.getOptarg());
-            } else
-                throw new IllegalArgumentException("Invalid option: "+c);
-        }
-        // positional arguments are a shortcut for the --download ... option
-        for (int i = g.getOptind(); i < args.length; ++i) {
-            Collection<String> values = argMap.get(Option.DOWNLOAD);
-            if (values == null) {
-                values = new ArrayList<>();
-                argMap.put(Option.DOWNLOAD, values);
-            }
-            values.add(args[i]);
-        }
-
-        return argMap;
-    }
-
-    /**
      * Main application Startup
      * @param argArray Command-line arguments
      */
@@ -299,31 +176,20 @@ public class MainApplication extends Main {
         I18n.init();
 
         // construct argument table
-        Map<Option, Collection<String>> args = null;
+        ProgramArguments args = null;
         try {
-            args = buildCommandLineArgumentMap(argArray);
+            args = new ProgramArguments(argArray);
         } catch (IllegalArgumentException e) {
             System.exit(1);
             return;
         }
 
-        final boolean languageGiven = args.containsKey(Option.LANGUAGE);
+        Level logLevel = args.getLogLevel();
+        Logging.setLogLevel(logLevel);
+        Main.info(tr("Log level is at ", logLevel));
 
-        if (languageGiven) {
-            I18n.set(args.get(Option.LANGUAGE).iterator().next());
-        }
-
-        if (args.containsKey(Option.TRACE)) {
-            // Enable JOSM debug level
-            logLevel = 5;
-            // Enable debug in OAuth signpost via system preference, but only at trace level
-            Utils.updateSystemProperty("debug", "true");
-            Main.info(tr("Enabled detailed debug level (trace)"));
-        } else if (args.containsKey(Option.DEBUG)) {
-            // Enable JOSM debug level
-            logLevel = 4;
-            Main.info(tr("Printing debugging messages to console"));
-        }
+        Optional<String> language = args.getSingle(Option.LANGUAGE);
+        I18n.set(language.orElse(null));
 
         Policy.setPolicy(new Policy() {
             // Permissions for plug-ins loaded when josm is started via webstart
@@ -349,27 +215,30 @@ public class MainApplication extends Main {
 
         Main.COMMAND_LINE_ARGS.addAll(Arrays.asList(argArray));
 
-        if (args.containsKey(Option.VERSION)) {
+        if (args.showVersion()) {
             System.out.println(Version.getInstance().getAgentString());
+            System.exit(0);
+        } else if (args.showHelp()) {
+            showHelp();
             System.exit(0);
         }
 
-        boolean skipLoadingPlugins = false;
-        if (args.containsKey(Option.SKIP_PLUGINS)) {
-            skipLoadingPlugins = true;
+        boolean skipLoadingPlugins = args.hasOption(Option.SKIP_PLUGINS);
+        if (skipLoadingPlugins) {
             Main.info(tr("Plugin loading skipped"));
         }
 
-        Main.pref.init(args.containsKey(Option.RESET_PREFERENCES));
-
-        if (args.containsKey(Option.SET)) {
-            for (String i : args.get(Option.SET)) {
-                String[] kv = i.split("=", 2);
-                Main.pref.put(kv[0], "null".equals(kv[1]) ? null : kv[1]);
-            }
+        if (Logging.isLoggingEnabled(Logging.LEVEL_TRACE)) {
+            // Enable debug in OAuth signpost via system preference, but only at trace level
+            Utils.updateSystemProperty("debug", "true");
+            Main.info(tr("Enabled detailed debug level (trace)"));
         }
 
-        if (!languageGiven) {
+        Main.pref.init(args.hasOption(Option.RESET_PREFERENCES));
+
+        args.getPreferencesToSet().forEach(Main.pref::put);
+
+        if (!language.isPresent()) {
             I18n.set(Main.pref.get("language", null));
         }
         Main.pref.updateSystemProperties();
@@ -377,7 +246,7 @@ public class MainApplication extends Main {
         checkIPv6();
 
         // asking for help? show help and exit
-        if (args.containsKey(Option.HELP)) {
+        if (args.hasOption(Option.HELP)) {
             showHelp();
             System.exit(0);
         }
@@ -391,19 +260,19 @@ public class MainApplication extends Main {
         I18n.setupLanguageFonts();
 
         WindowGeometry geometry = WindowGeometry.mainWindow("gui.geometry",
-                args.containsKey(Option.GEOMETRY) ? args.get(Option.GEOMETRY).iterator().next() : null,
-                !args.containsKey(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
+                args.getSingle(Option.GEOMETRY).orElse(null),
+                !args.hasOption(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
         final MainFrame mainFrame = new MainFrame(contentPanePrivate, mainPanel, geometry);
         Main.parent = mainFrame;
 
-        if (args.containsKey(Option.LOAD_PREFERENCES)) {
+        if (args.hasOption(Option.LOAD_PREFERENCES)) {
             CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(Main.pref);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
                 info("Reading preferences from " + i);
                 try (InputStream is = HttpClient.create(new URL(i)).connect().getContent()) {
                     config.openAndReadXML(is);
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    throw BugReport.intercept(ex).put("file", i);
                 }
             }
         }
@@ -466,7 +335,7 @@ public class MainApplication extends Main {
         Main.MasterWindowListener.setup();
 
         boolean maximized = Main.pref.getBoolean("gui.maximized", false);
-        if ((!args.containsKey(Option.NO_MAXIMIZE) && maximized) || args.containsKey(Option.MAXIMIZE)) {
+        if ((!args.hasOption(Option.NO_MAXIMIZE) && maximized) || args.hasOption(Option.MAXIMIZE)) {
             mainFrame.setMaximized(true);
         }
         if (main.menu.fullscreenToggleAction != null) {
@@ -524,9 +393,9 @@ public class MainApplication extends Main {
         toolbar.refreshToolbarControl();
     }
 
-    private static void processOffline(Map<Option, Collection<String>> args) {
-        if (args.containsKey(Option.OFFLINE)) {
-            for (String s : args.get(Option.OFFLINE).iterator().next().split(",")) {
+    private static void processOffline(ProgramArguments args) {
+        for (String offlineNames : args.get(Option.OFFLINE)) {
+            for (String s : offlineNames.split(",")) {
                 try {
                     Main.setOffline(OnlineResource.valueOf(s.toUpperCase(Locale.ENGLISH)));
                 } catch (IllegalArgumentException e) {
@@ -536,12 +405,12 @@ public class MainApplication extends Main {
                     return;
                 }
             }
-            Set<OnlineResource> offline = Main.getOfflineResources();
-            if (!offline.isEmpty()) {
-                Main.warn(trn("JOSM is running in offline mode. This resource will not be available: {0}",
-                        "JOSM is running in offline mode. These resources will not be available: {0}",
-                        offline.size(), offline.size() == 1 ? offline.iterator().next() : Arrays.toString(offline.toArray())));
-            }
+        }
+        Set<OnlineResource> offline = Main.getOfflineResources();
+        if (!offline.isEmpty()) {
+            Main.warn(trn("JOSM is running in offline mode. This resource will not be available: {0}",
+                    "JOSM is running in offline mode. These resources will not be available: {0}",
+                    offline.size(), offline.size() == 1 ? offline.iterator().next() : Arrays.toString(offline.toArray())));
         }
     }
 
@@ -596,10 +465,10 @@ public class MainApplication extends Main {
 
     private static class GuiFinalizationWorker implements Runnable {
 
-        private final Map<Option, Collection<String>> args;
+        private final ProgramArguments args;
         private final DefaultProxySelector proxySelector;
 
-        GuiFinalizationWorker(Map<Option, Collection<String>> args, DefaultProxySelector proxySelector) {
+        GuiFinalizationWorker(ProgramArguments args, DefaultProxySelector proxySelector) {
             this.args = args;
             this.proxySelector = proxySelector;
         }
