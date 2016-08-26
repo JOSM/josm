@@ -501,6 +501,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         private QBLevel<T> currentNode;
         private int contentIndex;
         private int iteratedOver;
+        QuadBuckets<T> qb;
 
         final QBLevel<T> nextContentNode(QBLevel<T> q) {
             if (q == null)
@@ -521,6 +522,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 currentNode = nextContentNode(qb.root);
             }
             iteratedOver = 0;
+            this.qb = qb;
         }
 
         @Override
@@ -563,7 +565,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             //    an element
             contentIndex--;
             T object = peek();
-            currentNode.removeContent(object);
+            if (currentNode.removeContent(object))
+                qb.size--;
         }
     }
 

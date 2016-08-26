@@ -185,9 +185,7 @@ public final class BugReport implements Serializable {
      * @return The method name.
      */
     public static String getCallingMethod(int offset) {
-        String className = BugReport.class.getName();
-        String methodName = "getCallingMethod";
-        StackTraceElement found = getCallingMethod(offset, className, methodName::equals);
+        StackTraceElement found = getCallingMethod(offset + 1, BugReport.class.getName(), "getCallingMethod"::equals);
         if (found != null) {
             return found.getClassName().replaceFirst(".*\\.", "") + '#' + found.getMethodName();
         } else {
@@ -198,7 +196,8 @@ public final class BugReport implements Serializable {
     /**
      * Find the method that called the given method on the current stack trace.
      * @param offset
-     *           How many methods to look back in the stack trace. 1 gives the method calling this method, 0 gives you getCallingMethod().
+     *           How many methods to look back in the stack trace.
+     *           1 gives the method calling this method, 0 gives you the method with the given name..
      * @param className The name of the class to search for
      * @param methodName The name of the method to search for
      * @return The class and method name or null if it is unknown.
@@ -208,8 +207,7 @@ public final class BugReport implements Serializable {
         for (int i = 0; i < stackTrace.length - offset; i++) {
             StackTraceElement element = stackTrace[i];
             if (className.equals(element.getClassName()) && methodName.test(element.getMethodName())) {
-                StackTraceElement toReturn = stackTrace[i + offset];
-                return toReturn;
+                return stackTrace[i + offset];
             }
         }
         return null;

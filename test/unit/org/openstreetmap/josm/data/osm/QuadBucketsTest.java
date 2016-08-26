@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -88,5 +89,87 @@ public class QuadBucketsTest {
 
             removeAllTest(ds);
         }
+    }
+
+    /**
+     * Test handling of objects with invalid bbox
+     * @throws Exception
+     */
+    @Test
+    public void testSpecialBBox() throws Exception {
+        QuadBuckets<Node> qbNodes = new QuadBuckets<>();
+        QuadBuckets<Way> qbWays = new QuadBuckets<>();
+        Way w1 = new Way(1);
+        Way w2 = new Way(2);
+        Way w3 = new Way(3);
+        Node n1 = new Node(1);
+        Node n2 = new Node(2); n2.setCoor(new LatLon(10, 20));
+        Node n3 = new Node(3); n2.setCoor(new LatLon(20, 30));
+        w2.setNodes(Arrays.asList(n1));
+        w3.setNodes(Arrays.asList(n1, n2, n3));
+
+        qbNodes.add(n1);
+        qbNodes.add(n2);
+        Assert.assertEquals(2, qbNodes.size());
+        Assert.assertTrue(qbNodes.contains(n1));
+        Assert.assertTrue(qbNodes.contains(n2));
+        Assert.assertFalse(qbNodes.contains(n3));
+        qbNodes.remove(n1);
+        Assert.assertEquals(1, qbNodes.size());
+        Assert.assertFalse(qbNodes.contains(n1));
+        Assert.assertTrue(qbNodes.contains(n2));
+        qbNodes.remove(n2);
+        Assert.assertEquals(0, qbNodes.size());
+        Assert.assertFalse(qbNodes.contains(n1));
+        Assert.assertFalse(qbNodes.contains(n2));
+
+        qbNodes.addAll(Arrays.asList(n1, n2, n3));
+        qbNodes.removeAll(Arrays.asList(n1, n3));
+        Assert.assertEquals(1, qbNodes.size());
+        Assert.assertTrue(qbNodes.contains(n2));
+
+        qbWays.add(w1);
+        qbWays.add(w2);
+        qbWays.add(w3);
+        Assert.assertEquals(3, qbWays.size());
+        Assert.assertTrue(qbWays.contains(w1));
+        Assert.assertTrue(qbWays.contains(w2));
+        Assert.assertTrue(qbWays.contains(w3));
+        qbWays.remove(w1);
+        Assert.assertEquals(2, qbWays.size());
+        Assert.assertFalse(qbWays.contains(w1));
+        Assert.assertTrue(qbWays.contains(w2));
+        Assert.assertTrue(qbWays.contains(w3));
+        qbWays.remove(w2);
+        Assert.assertEquals(1, qbWays.size());
+        Assert.assertFalse(qbWays.contains(w1));
+        Assert.assertFalse(qbWays.contains(w2));
+        Assert.assertTrue(qbWays.contains(w3));
+        qbWays.remove(w3);
+        Assert.assertEquals(0, qbWays.size());
+        Assert.assertFalse(qbWays.contains(w1));
+        Assert.assertFalse(qbWays.contains(w2));
+        Assert.assertFalse(qbWays.contains(w3));
+
+        qbWays.clear();
+        Assert.assertEquals(0, qbWays.size());
+        List<Way> allWays = new ArrayList<>(Arrays.asList(w1, w2, w3));
+        qbWays.addAll(allWays);
+        Assert.assertEquals(3, qbWays.size());
+        int count = 0;
+        for (Way w : qbWays) {
+            Assert.assertTrue(allWays.contains(w));
+            count++;
+        }
+        Assert.assertEquals(3, count);
+        // test remove with iterator
+        Iterator<Way> iter = qbWays.iterator();
+        while (iter.hasNext()) {
+            iter.next();
+            iter.remove();
+            count--;
+            Assert.assertEquals(count, qbWays.size());
+        }
+        Assert.assertEquals(0, qbWays.size());
     }
 }
