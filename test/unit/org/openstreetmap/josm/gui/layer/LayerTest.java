@@ -96,6 +96,19 @@ public class LayerTest {
     public void testSetName() {
         testLayer.setName("Test Layer2");
         assertEquals("Test Layer2", testLayer.getName());
+
+        testLayer = new LayerManagerTest.TestLayer() {
+            @Override
+            public AbstractProperty<Color> getColorProperty() {
+                return new ColorProperty("test", Color.RED);
+            }
+        };
+
+        testLayer.setName("Test Layer2");
+        testLayer.setName(null);
+        assertEquals("", testLayer.getName());
+        testLayer.setName("Test Layer3");
+        assertEquals("Test Layer3", testLayer.getName());
     }
 
     /**
