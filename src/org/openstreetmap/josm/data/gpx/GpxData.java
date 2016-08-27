@@ -481,4 +481,47 @@ public class GpxData extends WithAttributes implements Data {
     public List<Bounds> getDataSourceBounds() {
         return DataSource.getDataSourceBounds(dataSources);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((dataSources == null) ? 0 : dataSources.hashCode());
+        result = prime * result + ((routes == null) ? 0 : routes.hashCode());
+        result = prime * result + ((tracks == null) ? 0 : tracks.hashCode());
+        result = prime * result + ((waypoints == null) ? 0 : waypoints.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GpxData other = (GpxData) obj;
+        if (dataSources == null) {
+            if (other.dataSources != null)
+                return false;
+        } else if (!dataSources.equals(other.dataSources))
+            return false;
+        if (routes == null) {
+            if (other.routes != null)
+                return false;
+        } else if (!routes.equals(other.routes))
+            return false;
+        if (tracks == null) {
+            if (other.tracks != null)
+                return false;
+        } else if (!tracks.equals(other.tracks))
+            return false;
+        if (waypoints == null) {
+            if (other.waypoints != null)
+                return false;
+        } else if (!waypoints.equals(other.waypoints))
+            return false;
+        return true;
+    }
 }

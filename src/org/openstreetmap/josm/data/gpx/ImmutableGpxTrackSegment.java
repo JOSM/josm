@@ -4,17 +4,22 @@ package org.openstreetmap.josm.data.gpx;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.openstreetmap.josm.data.Bounds;
 
 public class ImmutableGpxTrackSegment implements GpxTrackSegment {
 
-    private final Collection<WayPoint> wayPoints;
+    private final List<WayPoint> wayPoints;
     private final Bounds bounds;
     private final double length;
 
+    /**
+     * Constructs a new {@code ImmutableGpxTrackSegment}.
+     * @param wayPoints list of waypoints
+     */
     public ImmutableGpxTrackSegment(Collection<WayPoint> wayPoints) {
-        this.wayPoints = Collections.unmodifiableCollection(new ArrayList<>(wayPoints));
+        this.wayPoints = Collections.unmodifiableList(new ArrayList<>(wayPoints));
         this.bounds = calculateBounds();
         this.length = calculateLength();
     }
@@ -69,4 +74,25 @@ public class ImmutableGpxTrackSegment implements GpxTrackSegment {
         return 0;
     }
 
+    @Override
+    public int hashCode() {
+        return 31 + ((wayPoints == null) ? 0 : wayPoints.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ImmutableGpxTrackSegment other = (ImmutableGpxTrackSegment) obj;
+        if (wayPoints == null) {
+            if (other.wayPoints != null)
+                return false;
+        } else if (!wayPoints.equals(other.wayPoints))
+            return false;
+        return true;
+    }
 }

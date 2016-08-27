@@ -158,4 +158,35 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     public List<String> getTemplateKeys() {
         return new ArrayList<>(attr.keySet());
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        long temp = Double.doubleToLongBits(lat);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(lon);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(time);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        WayPoint other = (WayPoint) obj;
+        if (Double.doubleToLongBits(lat) != Double.doubleToLongBits(other.lat))
+            return false;
+        if (Double.doubleToLongBits(lon) != Double.doubleToLongBits(other.lon))
+            return false;
+        if (Double.doubleToLongBits(time) != Double.doubleToLongBits(other.time))
+            return false;
+        return true;
+    }
 }
