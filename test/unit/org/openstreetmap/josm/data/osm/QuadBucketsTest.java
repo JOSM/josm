@@ -21,6 +21,9 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
 
+/**
+ * Unit tests of {@link QuadBuckets}.
+ */
 public class QuadBucketsTest {
 
     /**
@@ -93,10 +96,9 @@ public class QuadBucketsTest {
 
     /**
      * Test handling of objects with invalid bbox
-     * @throws Exception
      */
     @Test
-    public void testSpecialBBox() throws Exception {
+    public void testSpecialBBox() {
         QuadBuckets<Node> qbNodes = new QuadBuckets<>();
         QuadBuckets<Way> qbWays = new QuadBuckets<>();
         Way w1 = new Way(1);
