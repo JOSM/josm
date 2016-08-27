@@ -29,29 +29,6 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public class NmeaReader {
 
-    /** Handler for the different types that NMEA speaks. */
-    public enum NMEA_TYPE {
-
-        /** RMC = recommended minimum sentence C. */
-        GPRMC("$GPRMC"),
-        /** GPS positions. */
-        GPGGA("$GPGGA"),
-        /** SA = satellites active. */
-        GPGSA("$GPGSA"),
-        /** Course over ground and ground speed */
-        GPVTG("$GPVTG");
-
-        private final String type;
-
-        NMEA_TYPE(String type) {
-            this.type = type;
-        }
-
-        public String getType() {
-            return this.type;
-        }
-    }
-
     // GPVTG
     public enum GPVTG {
         COURSE(1), COURSE_REF(2), // true course

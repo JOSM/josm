@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.Bounds;
  */
 public class ImmutableGpxTrack extends WithAttributes implements GpxTrack {
 
-    private final Collection<GpxTrackSegment> segments;
+    private final List<GpxTrackSegment> segments;
     private final double length;
     private final Bounds bounds;
 
@@ -33,7 +33,7 @@ public class ImmutableGpxTrack extends WithAttributes implements GpxTrack {
             }
         }
         this.attr = Collections.unmodifiableMap(new HashMap<>(attributes));
-        this.segments = Collections.unmodifiableCollection(newSegments);
+        this.segments = Collections.unmodifiableList(newSegments);
         this.length = calculateLength();
         this.bounds = calculateBounds();
     }
@@ -88,5 +88,27 @@ public class ImmutableGpxTrack extends WithAttributes implements GpxTrack {
     @Override
     public int getUpdateCount() {
         return 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * super.hashCode() + ((segments == null) ? 0 : segments.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ImmutableGpxTrack other = (ImmutableGpxTrack) obj;
+        if (segments == null) {
+            if (other.segments != null)
+                return false;
+        } else if (!segments.equals(other.segments))
+            return false;
+        return true;
     }
 }

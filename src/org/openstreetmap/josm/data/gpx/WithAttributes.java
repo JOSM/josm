@@ -89,4 +89,26 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
         Extensions ext = (Extensions) attr.get(META_EXTENSIONS);
         ext.put(key, value);
     }
+
+    @Override
+    public int hashCode() {
+        return 31 + ((attr == null) ? 0 : attr.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        WithAttributes other = (WithAttributes) obj;
+        if (attr == null) {
+            if (other.attr != null)
+                return false;
+        } else if (!attr.equals(other.attr))
+            return false;
+        return true;
+    }
 }
