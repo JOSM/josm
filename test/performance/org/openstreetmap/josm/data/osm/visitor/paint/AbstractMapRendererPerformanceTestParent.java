@@ -71,6 +71,15 @@ public abstract class AbstractMapRendererPerformanceTestParent {
         }
     }
 
+    protected static void clean() throws Exception {
+        g = null;
+        img = null;
+        nc = null;
+        dsRestriction = null;
+        dsMultipolygon = null;
+        dsCity = null;
+    }
+
     protected abstract Rendering buildRenderer();
 
     protected final void test(int iterations, DataSet ds, Bounds bounds) throws Exception {

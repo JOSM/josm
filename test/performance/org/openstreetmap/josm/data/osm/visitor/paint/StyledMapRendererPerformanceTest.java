@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 
@@ -21,6 +22,11 @@ public class StyledMapRendererPerformanceTest extends AbstractMapRendererPerform
         AbstractMapRendererPerformanceTestParent.load();
         // TODO Test should have it's own copy of styles because change in style can influence performance
         MapPaintStyles.readFromPreferences();
+    }
+
+    @AfterClass
+    public static void clean() throws Exception {
+        AbstractMapRendererPerformanceTestParent.clean();
     }
 
     @Override
