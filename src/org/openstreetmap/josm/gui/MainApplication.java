@@ -186,7 +186,7 @@ public class MainApplication extends Main {
 
         Level logLevel = args.getLogLevel();
         Logging.setLogLevel(logLevel);
-        Main.info(tr("Log level is at ", logLevel));
+        Main.info(tr("Log level is at {0} ({1}, {2})", logLevel.getLocalizedName(), logLevel.getName(), logLevel.intValue()));
 
         Optional<String> language = args.getSingle(Option.LANGUAGE);
         I18n.set(language.orElse(null));
