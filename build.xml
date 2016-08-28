@@ -288,7 +288,7 @@ Build-Date: ${build.tstamp}
         </javac>
         <!-- JOSM -->
         <javac compiler="${javac.compiler}" sourcepath="" srcdir="${src.dir}" 
-            excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java"
+            excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/**"
             destdir="build" target="1.8" source="1.8" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerclasspath>
                 <pathelement location="${error_prone_ant.jar}"/>
