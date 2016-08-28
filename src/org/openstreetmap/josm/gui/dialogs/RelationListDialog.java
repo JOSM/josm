@@ -387,7 +387,6 @@ public class RelationListDialog extends ToggleDialog
 
     /**
      * The list model for the list of relations displayed in the relation list dialog.
-     *
      */
     private class RelationListModel extends AbstractListModel<Relation> {
         private final transient List<Relation> relations = new ArrayList<>();
@@ -399,6 +398,9 @@ public class RelationListDialog extends ToggleDialog
             this.selectionModel = selectionModel;
         }
 
+        /**
+         * Clears the model.
+         */
         public void clear() {
             relations.clear();
             if (filteredRelations != null)
@@ -406,6 +408,9 @@ public class RelationListDialog extends ToggleDialog
             filter = null;
         }
 
+        /**
+         * Sorts the model using {@link DefaultNameFormatter} relation comparator.
+         */
         public void sort() {
             relations.sort(DefaultNameFormatter.getInstance().getRelationComparator());
         }

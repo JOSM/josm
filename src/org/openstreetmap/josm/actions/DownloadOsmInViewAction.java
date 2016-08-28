@@ -43,7 +43,7 @@ public final class DownloadOsmInViewAction extends JosmAction {
     }
 
     private static class DownloadOsmInViewTask extends DownloadOsmTask {
-        public Future<?> download(Bounds downloadArea) {
+        Future<?> download(Bounds downloadArea) {
             return download(new DownloadTask(false, new BoundingBoxDownloader(downloadArea), null, false), downloadArea);
         }
     }

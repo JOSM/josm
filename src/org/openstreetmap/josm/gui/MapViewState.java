@@ -263,6 +263,11 @@ public final class MapViewState implements Serializable {
                 topLeft.north() / scale);
     }
 
+    /**
+     * Returns the area for the given bounds.
+     * @param bounds bounds
+     * @return the area for the given bounds
+     */
     public Area getArea(Bounds bounds) {
         Path2D area = new Path2D.Double();
         bounds.visitEdge(getProjection(), latlon -> {
