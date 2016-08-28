@@ -744,7 +744,7 @@ node[highway=rest_area] {
     icon-image: "presets/vehicle/rest_area.svg";
     set icon_z17;
 }
-node[highway=ford], node[ford?] {
+node[ford?] {
     icon-image: "presets/vehicle/ford.svg";
     set icon_z17;
 }
@@ -1840,7 +1840,6 @@ area[shop=beverages],
 area[shop=books],
 area[shop=boutique],
 area[shop=car],
-area[shop=car_dealer],
 area[shop=car_repair],
 area[shop=tyres],
 area[shop=chemist],
@@ -1967,8 +1966,7 @@ node[shop=boutique] {
     icon-image: "presets/shop/boutique.svg";
     set icon_z17;
 }
-node[shop=car],
-node[shop=car_dealer] {
+node[shop=car] {
     icon-image: "presets/shop/vehicle.svg";
     set icon_z17;
 }
