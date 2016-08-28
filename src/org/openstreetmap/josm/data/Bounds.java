@@ -88,12 +88,18 @@ public class Bounds {
         this(min.lat(), min.lon(), max.lat(), max.lon());
     }
 
+    /**
+     * Constructs bounds out of two points.
+     * @param min min lat/lon
+     * @param max max lat/lon
+     * @param roundToOsmPrecision defines if lat/lon will be rounded
+     */
     public Bounds(LatLon min, LatLon max, boolean roundToOsmPrecision) {
         this(min.lat(), min.lon(), max.lat(), max.lon(), roundToOsmPrecision);
     }
 
     /**
-     * Constructs bounds out a single point.
+     * Constructs bounds out a single point. Coords will be rounded.
      * @param b lat/lon
      */
     public Bounds(LatLon b) {
@@ -133,10 +139,25 @@ public class Bounds {
         this.maxLon = this.minLon;
     }
 
+    /**
+     * Constructs bounds out of two points. Coords will be rounded.
+     * @param minlat min lat
+     * @param minlon min lon
+     * @param maxlat max lat
+     * @param maxlon max lon
+     */
     public Bounds(double minlat, double minlon, double maxlat, double maxlon) {
         this(minlat, minlon, maxlat, maxlon, true);
     }
 
+    /**
+     * Constructs bounds out of two points.
+     * @param minlat min lat
+     * @param minlon min lon
+     * @param maxlat max lat
+     * @param maxlon max lon
+     * @param roundToOsmPrecision defines if lat/lon will be rounded
+     */
     public Bounds(double minlat, double minlon, double maxlat, double maxlon, boolean roundToOsmPrecision) {
         if (roundToOsmPrecision) {
             this.minLat = LatLon.roundToOsmPrecision(minlat);
@@ -151,10 +172,21 @@ public class Bounds {
         }
     }
 
+    /**
+     * Constructs bounds out of two points. Coords will be rounded.
+     * @param coords exactly 4 values: min lat, min lon, max lat, max lon
+     * @throws IllegalArgumentException if coords does not contain 4 double values
+     */
     public Bounds(double ... coords) {
         this(coords, true);
     }
 
+    /**
+     * Constructs bounds out of two points.
+     * @param coords exactly 4 values: min lat, min lon, max lat, max lon
+     * @param roundToOsmPrecision defines if lat/lon will be rounded
+     * @throws IllegalArgumentException if coords does not contain 4 double values
+     */
     public Bounds(double[] coords, boolean roundToOsmPrecision) {
         CheckParameterUtil.ensureParameterNotNull(coords, "coords");
         if (coords.length != 4)
@@ -231,6 +263,10 @@ public class Bounds {
         this(other.minLat, other.minLon, other.maxLat, other.maxLon);
     }
 
+    /**
+     * Creates new {@code Bounds} from a rectangle.
+     * @param rect The rectangle
+     */
     public Bounds(Rectangle2D rect) {
         this(rect.getMinY(), rect.getMinX(), rect.getMaxY(), rect.getMaxX());
     }

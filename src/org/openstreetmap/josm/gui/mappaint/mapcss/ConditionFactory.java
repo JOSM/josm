@@ -331,6 +331,13 @@ public final class ConditionFactory {
 
         final Pattern pattern;
 
+        /**
+         * Constructs a new {@code KeyValueRegexpCondition}.
+         * @param k key
+         * @param v value
+         * @param op operation
+         * @param considerValAsKey must be false
+         */
         public KeyValueRegexpCondition(String k, String v, Op op, boolean considerValAsKey) {
             super(k, v, op, considerValAsKey);
             CheckParameterUtil.ensureThat(!considerValAsKey, "considerValAsKey is not supported");
@@ -360,7 +367,7 @@ public final class ConditionFactory {
      */
     public static class RegexpKeyValueRegexpCondition extends KeyValueRegexpCondition {
 
-        public final Pattern keyPattern;
+        final Pattern keyPattern;
 
         /**
          * Create a condition in which the key and the value need to match a given regexp
@@ -385,9 +392,14 @@ public final class ConditionFactory {
     }
 
     public static class RoleCondition implements Condition {
-        public final String role;
-        public final Op op;
+        final String role;
+        final Op op;
 
+        /**
+         * Constructs a new {@code RoleCondition}.
+         * @param role role
+         * @param op operation
+         */
         public RoleCondition(String role, Op op) {
             this.role = role;
             this.op = op;
@@ -402,9 +414,14 @@ public final class ConditionFactory {
     }
 
     public static class IndexCondition implements Condition {
-        public final String index;
-        public final Op op;
+        final String index;
+        final Op op;
 
+        /**
+         * Constructs a new {@code IndexCondition}.
+         * @param index index
+         * @param op operation
+         */
         public IndexCondition(String index, Op op) {
             this.index = index;
             this.op = op;
@@ -547,7 +564,7 @@ public final class ConditionFactory {
     public static class ClassCondition implements Condition {
 
         public final String id;
-        public final boolean not;
+        final boolean not;
 
         public ClassCondition(String id, boolean not) {
             this.id = id;
@@ -739,8 +756,8 @@ public final class ConditionFactory {
 
     public static class PseudoClassCondition implements Condition {
 
-        public final Method method;
-        public final boolean not;
+        final Method method;
+        final boolean not;
 
         protected PseudoClassCondition(Method method, boolean not) {
             this.method = method;
@@ -809,7 +826,7 @@ public final class ConditionFactory {
      */
     public static class ExpressionCondition implements Condition {
 
-        private final Expression e;
+        final Expression e;
 
         /**
          * Constructs a new {@code ExpressionFactory}
