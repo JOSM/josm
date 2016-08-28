@@ -890,3 +890,17 @@ area[landuse=pond] {
   fixAdd: "water=pond";
   fixRemove: "landuse";
 }
+
+*[shop=souvenir],
+*[shop=souvenirs],
+*[shop=souveniers] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=gift";
+  fixAdd: "shop=gift";
+}
+
+*[vending=animal_food] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "vending=animal_feed";
+  fixAdd: "vending=animal_feed";
+}
