@@ -130,12 +130,13 @@ public class LatLon extends Coordinate {
         return isValidLat(lat()) && isValidLon(lon());
     }
 
+    /**
+     * Clamp the lat value to be inside the world.
+     * @param value The value
+     * @return The value clamped to the world.
+     */
     public static double toIntervalLat(double value) {
-        if (value < -90)
-            return -90;
-        if (value > 90)
-            return 90;
-        return value;
+        return Utils.clamp(value, -90, 90);
     }
 
     /**
@@ -418,13 +419,24 @@ public class LatLon extends Coordinate {
         ));
     }
 
+    /**
+     * Interpolate between this and a other latlon
+     * @param ll2 The other lat/lon object
+     * @param proportion The proportion to interpolate
+     * @return a new latlon at this position if proportion is 0, at the other position it proportion is 1 and lineary interpolated otherwise.
+     */
     public LatLon interpolate(LatLon ll2, double proportion) {
         return new LatLon(this.lat() + proportion * (ll2.lat() - this.lat()),
                 this.lon() + proportion * (ll2.lon() - this.lon()));
     }
 
+    /**
+     * Get the center between two lat/lon points
+     * @param ll2 The other {@link LatLon}
+     * @return The center at the average coordinates of the two points. Does not take the 180° meridian into account.
+     */
     public LatLon getCenter(LatLon ll2) {
-        return new LatLon((this.lat() + ll2.lat())/2.0, (this.lon() + ll2.lon())/2.0);
+        return interpolate(ll2, .5);
     }
 
     /**
