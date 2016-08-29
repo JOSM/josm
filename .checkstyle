@@ -18,11 +18,11 @@
     <filter-data value="src/org/jdesktop"/>
     <filter-data value="src/org/openstreetmap/gui"/>
     <filter-data value="src/org/openstreetmap/josm/gui/mappaint/mapcss/parsergen"/>
-    <filter-data value="src/org/w3"/>
+    <filter-data value=".svn"/>
     <filter-data value="data"/>
     <filter-data value="images"/>
-    <filter-data value="styles"/>
     <filter-data value="resources"/>
+    <filter-data value="styles"/>
     <filter-data value="scripts"/>
   </filter>
 </fileset-config>
