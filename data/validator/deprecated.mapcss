@@ -14,11 +14,15 @@
   fixAdd: "fence_type=wood";
 }
   
-*[highway=ford] {
+node[highway=ford] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "ford=yes";
   fixRemove: "highway";
   fixAdd: "ford=yes";
+}
+way[highway=ford] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "highway=* + ford=yes";
 }
   
 *[class] {
