@@ -81,8 +81,9 @@ public class EastNorth extends Coordinate {
      * @return The new {@link EastNorth} position.
      */
     public EastNorth interpolate(EastNorth en2, double proportion) {
-        return new EastNorth(this.x + proportion * (en2.x - this.x),
-                this.y + proportion * (en2.y - this.y));
+        // this is an alternate form of this.x + proportion * (en2.x - this.x) that is slightly faster
+        return new EastNorth((1 - proportion) * this.x + proportion * en2.x,
+                (1 - proportion) * this.y + proportion * en2.y);
     }
 
     /**
@@ -91,7 +92,8 @@ public class EastNorth extends Coordinate {
      * @return The center between this and the other instance.
      */
     public EastNorth getCenter(EastNorth en2) {
-        return new EastNorth((this.x + en2.x)/2.0, (this.y + en2.y)/2.0);
+        // The JIT will inline this for us, it is as fast as the normal /2 approach
+        return interpolate(en2, .5);
     }
 
     /**

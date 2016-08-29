@@ -164,4 +164,44 @@ public class LatLonTest {
         assertEquals("5942074.0724311", c.latToString(CoordinateFormat.EAST_NORTH));
         assertEquals("2115070.3250722", c.lonToString(CoordinateFormat.EAST_NORTH));
     }
+
+    /**
+     * Test {@link LatLon#interpolate(LatLon, double)}
+     * @since 10915
+     */
+    @Test
+    public void testInterpolate() {
+        LatLon ll1 = new LatLon(0, 0);
+        LatLon ll2 = new LatLon(30, 60);
+        LatLon ll3 = new LatLon(-70, -40);
+        // lat:
+        assertEquals(15, ll1.interpolate(ll2, 0.5).lat(), 1e-10);
+        assertEquals(0, ll1.interpolate(ll2, 0).lat(), 1e-10);
+        assertEquals(30, ll1.interpolate(ll2, 1).lat(), 1e-10);
+        assertEquals(0, ll3.interpolate(ll2, .7).lat(), 1e-10);
+        // lon
+        assertEquals(30, ll1.interpolate(ll2, 0.5).lon(), 1e-10);
+        assertEquals(0, ll1.interpolate(ll2, 0).lon(), 1e-10);
+        assertEquals(60, ll1.interpolate(ll2, 1).lon(), 1e-10);
+        assertEquals(0, ll3.interpolate(ll2, .4).lon(), 1e-10);
+    }
+
+    /**
+     * Test {@link LatLon#getCenter(LatLon)}
+     * @since 10915
+     */
+    @Test
+    public void testGetCenter() {
+        LatLon ll1 = new LatLon(0, 0);
+        LatLon ll2 = new LatLon(30, 60);
+        LatLon ll3 = new LatLon(-70, -40);
+
+        assertEquals(15, ll1.getCenter(ll2).lat(), 1e-10);
+        assertEquals(15, ll2.getCenter(ll1).lat(), 1e-10);
+        assertEquals(-20, ll3.getCenter(ll2).lat(), 1e-10);
+
+        assertEquals(30, ll1.getCenter(ll2).lon(), 1e-10);
+        assertEquals(30, ll2.getCenter(ll1).lon(), 1e-10);
+        assertEquals(10, ll3.getCenter(ll2).lon(), 1e-10);
+    }
 }

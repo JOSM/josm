@@ -426,8 +426,9 @@ public class LatLon extends Coordinate {
      * @return a new latlon at this position if proportion is 0, at the other position it proportion is 1 and lineary interpolated otherwise.
      */
     public LatLon interpolate(LatLon ll2, double proportion) {
-        return new LatLon(this.lat() + proportion * (ll2.lat() - this.lat()),
-                this.lon() + proportion * (ll2.lon() - this.lon()));
+        // this is an alternate form of this.lat() + proportion * (ll2.lat() - this.lat()) that is slightly faster
+        return new LatLon((1 - proportion) * this.lat() + proportion * ll2.lat(),
+                (1 - proportion) * this.lon() + proportion * ll2.lon());
     }
 
     /**
@@ -436,6 +437,7 @@ public class LatLon extends Coordinate {
      * @return The center at the average coordinates of the two points. Does not take the 180° meridian into account.
      */
     public LatLon getCenter(LatLon ll2) {
+        // The JIT will inline this for us, it is as fast as the normal /2 approach
         return interpolate(ll2, .5);
     }
 
