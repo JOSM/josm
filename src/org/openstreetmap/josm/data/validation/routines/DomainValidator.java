@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016082600, Last Updated Fri Aug 26 07:07:01 2016 UTC
+        // Taken from Version 2016083001, Last Updated Wed Aug 31 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -597,6 +597,7 @@ public final class DomainValidator extends AbstractValidator {
         "dvag", // dvag Deutsche Vermögensberatung Aktiengesellschaft DVAG
         "earth", // earth Interlink Co., Ltd.
         "eat", // eat Charleston Road Registry Inc.
+        "eco", // eco Big Room Inc.
         "edeka", // edeka EDEKA Verband kaufmännischer Genossenschaften e.V.
         "edu", // edu EDUCAUSE
         "education", // education Brice Way, LLC
@@ -1316,6 +1317,7 @@ public final class DomainValidator extends AbstractValidator {
         "ups", // ups UPS Market Driver, Inc.
         "vacations", // vacations Atomic Tigers, LLC
         "vana", // vana Lifestyle Domain Holdings, Inc.
+        "vanguard", // vanguard The Vanguard Group, Inc.
         "vegas", // vegas Dot Vegas, Inc.
         "ventures", // ventures Binky Lake, LLC
         "verisign", // verisign VeriSign, Inc.
