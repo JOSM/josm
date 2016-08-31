@@ -20,7 +20,7 @@ public class ColorProperty extends AbstractToStringProperty<Color> {
      * @param defaultValue The default value as HTML string
      */
     public ColorProperty(String colName, String defaultValue) {
-        this(colName, ColorHelper.html2color(defaultValue));
+        this(colName, defaultValue == null ? null : ColorHelper.html2color(defaultValue));
     }
 
     /**
