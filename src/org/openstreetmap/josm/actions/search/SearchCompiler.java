@@ -1451,7 +1451,7 @@ public class SearchCompiler {
             else if (osm instanceof Node) {
                 LatLon coordinate = ((Node) osm).getCoor();
                 Collection<Bounds> allBounds = getBounds(osm);
-                return allBounds != null && allBounds.stream().anyMatch(bounds -> bounds.contains(coordinate));
+                return coordinate != null && allBounds != null && allBounds.stream().anyMatch(bounds -> bounds.contains(coordinate));
             } else if (osm instanceof Way) {
                 Collection<Node> nodes = ((Way) osm).getNodes();
                 return all ? nodes.stream().allMatch(this) : nodes.stream().anyMatch(this);
