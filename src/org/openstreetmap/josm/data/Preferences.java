@@ -846,7 +846,7 @@ public class Preferences {
         registerColor(colKey, colName);
         String colStr = specName != null ? get("color."+specName) : "";
         if (colStr.isEmpty()) {
-            colStr = get("color." + colKey, ColorHelper.color2html(def, true));
+            colStr = get(colKey, ColorHelper.color2html(def, true));
         }
         if (colStr != null && !colStr.isEmpty()) {
             return ColorHelper.html2color(colStr);
