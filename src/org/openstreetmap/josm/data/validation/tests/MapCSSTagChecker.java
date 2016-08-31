@@ -798,6 +798,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 if (Main.isDebugEnabled()) {
                     Main.debug("- Errors: "+pErrors);
                 }
+                @SuppressWarnings({"EqualsBetweenInconvertibleTypes", "EqualsIncompatibleType"})
                 final boolean isError = pErrors.stream().anyMatch(e -> e.getTester().equals(check.rule));
                 if (isError != i.getValue()) {
                     final String error = MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
