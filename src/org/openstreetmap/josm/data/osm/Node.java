@@ -72,6 +72,10 @@ public final class Node extends OsmPrimitive implements INode {
         }
     }
 
+    /**
+     * Returns lat/lon coordinates of this node, or {@code null} unless {@link #isLatLonKnown()}
+     * @return lat/lon coordinates of this node, or {@code null} unless {@link #isLatLonKnown()}
+     */
     @Override
     public LatLon getCoor() {
         if (!isLatLonKnown()) return null;
