@@ -111,6 +111,15 @@ public final class MapPaintStyles {
         public String toString() {
             return "IconReference{" + "iconName='" + iconName + "' source='" + source.getDisplayString() + "'}";
         }
+
+        /**
+         * Determines whether this icon represents a deprecated icon
+         * @return whether this icon represents a deprecated icon
+         * @since 10927
+         */
+        public boolean isDeprecatedIcon() {
+            return DEPRECATED_IMAGE_NAMES.contains(iconName);
+        }
     }
 
     /**

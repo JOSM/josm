@@ -127,9 +127,8 @@ class TagInfoExtract {
             def c = env.mc.getCascade("default")
             def image = c.get("icon-image")
             if (image) {
-                if (image instanceof IconReference) {
-                    if (image.iconName != "misc/deprecated.svg")
-                        return find_image_url(image.iconName)
+                if (image instanceof IconReference && !image.isDeprecatedIcon()) {
+                    return find_image_url(image.iconName)
                 }
             }
         }
