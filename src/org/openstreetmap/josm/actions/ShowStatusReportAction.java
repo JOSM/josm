@@ -5,6 +5,9 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.lang.management.ManagementFactory;
@@ -30,6 +33,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
@@ -90,6 +94,24 @@ public final class ShowStatusReportAction extends JosmAction {
             .append(runtimeVersion != null ? runtimeVersion : System.getProperty("java.version")).append(", ")
             .append(System.getProperty("java.vendor")).append(", ")
             .append(System.getProperty("java.vm.name")).append('\n');
+
+        text.append("Screen: ");
+        for (GraphicsDevice gd: GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+            DisplayMode dm = gd.getDisplayMode();
+            if (dm != null) {
+                text.append(gd.getIDstring());
+                text.append(' ').
+                append(dm.getWidth()).
+                append('x').
+                append(dm.getHeight()).
+                append(", ");
+            }
+        }
+        Dimension maxScreenSize = GuiHelper.getMaximumScreenSize();
+        text.append("\nMaximum Screen Size: ").
+        append((int)maxScreenSize.getWidth()).append('x').
+        append((int)maxScreenSize.getHeight()).append('\n');
+
         if (Main.platform.getClass() == PlatformHookUnixoid.class) {
             // Add Java package details
             String packageDetails = ((PlatformHookUnixoid) Main.platform).getJavaPackageDetails();
