@@ -53,6 +53,10 @@ public final class MapPaintStyles {
     private static final String XML_STYLE_MIME_TYPES =
              "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
 
+    private static final Collection<String> DEPRECATED_IMAGE_NAMES = Arrays.asList(
+            "presets/misc/deprecated.svg",
+            "misc/deprecated.png");
+
     private static ElemStyles styles = new ElemStyles();
 
     /**
@@ -202,7 +206,7 @@ public final class MapPaintStyles {
                     if (style instanceof NodeElement) {
                         MapImage mapImage = ((NodeElement) style).mapImage;
                         if (mapImage != null) {
-                            if (includeDeprecatedIcon || mapImage.name == null || !"misc/deprecated.png".equals(mapImage.name)) {
+                            if (includeDeprecatedIcon || mapImage.name == null || !DEPRECATED_IMAGE_NAMES.contains(mapImage.name)) {
                                 return new ImageIcon(mapImage.getImage(false));
                             } else {
                                 return null; // Deprecated icon found but not wanted
