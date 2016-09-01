@@ -505,6 +505,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * looses precision, may overflow (depends on p and current scale)
+     * @param p east/north
+     * @return point
      * @see #getPoint2D(EastNorth)
      */
     public Point getPoint(EastNorth p) {
@@ -514,6 +516,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * looses precision, may overflow (depends on p and current scale)
+     * @param latlon lat/lon
+     * @return point
      * @see #getPoint2D(LatLon)
      */
     public Point getPoint(LatLon latlon) {
@@ -523,6 +527,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * looses precision, may overflow (depends on p and current scale)
+     * @param n node
+     * @return point
      * @see #getPoint2D(Node)
      */
     public Point getPoint(Node n) {
