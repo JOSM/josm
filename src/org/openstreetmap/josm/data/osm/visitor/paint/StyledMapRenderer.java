@@ -911,6 +911,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * Draw the icon for a given node.
      * @param n The node
      * @param img The icon to draw at the node position
+     * @param disabled {@code} true to render disabled version, {@code false} for the standard version
+     * @param selected {@code} true to render it as selected, {@code false} otherwise
+     * @param member {@code} true to render it as a relation member, {@code false} otherwise
+     * @param theta the angle of rotation in radians
      */
     public void drawNodeIcon(Node n, MapImage img, boolean disabled, boolean selected, boolean member, double theta) {
         MapViewPoint p = mapState.getPointFor(n);
