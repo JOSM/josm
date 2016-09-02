@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
 import java.awt.DisplayMode;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -97,15 +96,14 @@ public final class ShowStatusReportAction extends JosmAction {
 
         text.append("Screen: ");
         if (!GraphicsEnvironment.isHeadless()) {
-            for (GraphicsDevice gd : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
-                DisplayMode dm = gd.getDisplayMode();
-                if (dm != null) {
-                    text.append(gd.getIDstring()).append(' ')
-                        .append(dm.getWidth()).append('x')
-                        .append(dm.getHeight())
-                        .append(", ");
-                }
-            }
+            text.append(Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()).map(gd -> {
+                        StringBuilder b = new StringBuilder(gd.getIDstring());
+                        DisplayMode dm = gd.getDisplayMode();
+                        if (dm != null) {
+                            b.append(' ').append(dm.getWidth()).append('x').append(dm.getHeight());
+                        }
+                        return b.toString();
+                    }).collect(Collectors.joining(", ")));
         }
         Dimension maxScreenSize = GuiHelper.getMaximumScreenSize();
         text.append("\nMaximum Screen Size: ")

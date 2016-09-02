@@ -325,4 +325,9 @@ public abstract class ImageryLayer extends Layer {
         }
         return img;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [info=" + info + ']';
+    }
 }
