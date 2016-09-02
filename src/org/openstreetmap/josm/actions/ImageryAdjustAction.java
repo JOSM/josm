@@ -306,7 +306,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         private void restoreMapModeState() {
             if (Main.map == null)
                 return;
-            if (oldMapMode != null ) {
+            if (oldMapMode != null) {
                 Main.map.selectMapMode(oldMapMode);
                 oldMapMode = null;
             } else {
