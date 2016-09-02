@@ -96,21 +96,21 @@ public final class ShowStatusReportAction extends JosmAction {
             .append(System.getProperty("java.vm.name")).append('\n');
 
         text.append("Screen: ");
-        for (GraphicsDevice gd: GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
-            DisplayMode dm = gd.getDisplayMode();
-            if (dm != null) {
-                text.append(gd.getIDstring());
-                text.append(' ').
-                append(dm.getWidth()).
-                append('x').
-                append(dm.getHeight()).
-                append(", ");
+        if (!GraphicsEnvironment.isHeadless()) {
+            for (GraphicsDevice gd : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+                DisplayMode dm = gd.getDisplayMode();
+                if (dm != null) {
+                    text.append(gd.getIDstring()).append(' ')
+                        .append(dm.getWidth()).append('x')
+                        .append(dm.getHeight())
+                        .append(", ");
+                }
             }
         }
         Dimension maxScreenSize = GuiHelper.getMaximumScreenSize();
-        text.append("\nMaximum Screen Size: ").
-        append((int)maxScreenSize.getWidth()).append('x').
-        append((int)maxScreenSize.getHeight()).append('\n');
+        text.append("\nMaximum Screen Size: ")
+            .append((int) maxScreenSize.getWidth()).append('x')
+            .append((int) maxScreenSize.getHeight()).append('\n');
 
         if (Main.platform.getClass() == PlatformHookUnixoid.class) {
             // Add Java package details
