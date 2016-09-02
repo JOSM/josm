@@ -56,6 +56,7 @@ import org.openstreetmap.josm.io.MessageNotifier;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
+import org.openstreetmap.josm.io.protocols.data.Handler;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -258,6 +259,8 @@ public class MainApplication extends Main {
         FontsManager.initialize();
 
         I18n.setupLanguageFonts();
+
+        Handler.install();
 
         WindowGeometry geometry = WindowGeometry.mainWindow("gui.geometry",
                 args.getSingle(Option.GEOMETRY).orElse(null),

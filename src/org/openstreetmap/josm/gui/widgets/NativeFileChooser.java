@@ -11,6 +11,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * File chooser based on the AWT's {@link FileDialog} implementation,
@@ -134,7 +135,7 @@ public class NativeFileChooser extends AbstractFileChooser {
     public int showOpenDialog(Component parent) {
         boolean appleProperty = Main.isPlatformOsx() && selectionMode == JFileChooser.DIRECTORIES_ONLY;
         if (appleProperty) {
-            System.setProperty("apple.awt.fileDialogForDirectories", "true");
+            Utils.updateSystemProperty("apple.awt.fileDialogForDirectories", "true");
         }
         try {
             fileDialog.setLocale(locale);
@@ -143,7 +144,7 @@ public class NativeFileChooser extends AbstractFileChooser {
             return fileDialog.getFile() == null ? JFileChooser.CANCEL_OPTION : JFileChooser.APPROVE_OPTION;
         } finally {
             if (appleProperty) {
-                System.setProperty("apple.awt.fileDialogForDirectories", "false");
+                Utils.updateSystemProperty("apple.awt.fileDialogForDirectories", "false");
             }
         }
     }
