@@ -31,11 +31,12 @@ public class Handler extends URLStreamHandler {
 
         String protocolHandlers = System.getProperty("java.protocol.handler.pkgs", "");
         if (!protocolHandlers.contains(pkg)) {
-            if (!protocolHandlers.isEmpty()) {
-                protocolHandlers += "|";
+            StringBuilder sb = new StringBuilder(protocolHandlers);
+            if (sb.length() > 0) {
+                sb.append('|');
             }
-            protocolHandlers += pkg;
-            Utils.updateSystemProperty("java.protocol.handler.pkgs", protocolHandlers);
+            sb.append(pkg);
+            Utils.updateSystemProperty("java.protocol.handler.pkgs", sb.toString());
         }
     }
 }

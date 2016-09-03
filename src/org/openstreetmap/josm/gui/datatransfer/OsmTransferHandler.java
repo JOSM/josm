@@ -7,6 +7,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -34,7 +35,7 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
 
     @Override
     protected Collection<AbstractOsmDataPaster> getSupportedPasters() {
-        return SUPPORTED;
+        return Collections.unmodifiableCollection(SUPPORTED);
     }
 
     private boolean importTags(TransferSupport support, Collection<? extends OsmPrimitive> primitives) {
