@@ -173,7 +173,7 @@ public class MultipolygonBuilder {
      * @return a pair of outer and inner multipolygon rings.
      * @throws JoinedPolygonCreationException if the creation fails.
      */
-    public static Pair<List<JoinedPolygon>, List<JoinedPolygon>> joinWays(Relation multipolygon) throws JoinedPolygonCreationException {
+    public static Pair<List<JoinedPolygon>, List<JoinedPolygon>> joinWays(Relation multipolygon) {
         CheckParameterUtil.ensureThat(multipolygon.isMultipolygon(), "multipolygon.isMultipolygon");
         final Map<String, Set<Way>> members = multipolygon.getMembers().stream()
                 .filter(RelationMember::isWay)
