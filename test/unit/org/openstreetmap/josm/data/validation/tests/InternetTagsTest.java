@@ -4,30 +4,30 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.routines.AbstractValidator;
 import org.openstreetmap.josm.data.validation.routines.EmailValidator;
 import org.openstreetmap.josm.data.validation.routines.UrlValidator;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * JUnit Test of "Internet Tags" validation test.
  */
 public class InternetTagsTest {
 
-    private static InternetTags TEST;
+    private static final InternetTags TEST = new InternetTags();
 
     /**
      * Setup test by initializing JOSM preferences and projection.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-        TEST = new InternetTags();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Test of valid URLs.

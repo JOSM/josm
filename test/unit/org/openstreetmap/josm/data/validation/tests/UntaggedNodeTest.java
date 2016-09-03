@@ -7,29 +7,29 @@ import static org.junit.Assert.assertThat;
 
 import java.io.InputStream;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@code UntaggedNode} class.
  */
 public class UntaggedNodeTest {
 
-    private UntaggedNode test;
+    private final UntaggedNode test = new UntaggedNode();
 
     /**
      * Setup test.
      */
-    @Before
-    public void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-        test = new UntaggedNode();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules rules = new JOSMTestRules();
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12436">Bug #12436</a>.
