@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.datatransfer;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.openstreetmap.josm.gui.datatransfer.importers.AbstractOsmDataPaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.FilePaster;
@@ -21,6 +22,6 @@ public class OpenTransferHandler extends AbstractStackTransferHandler {
 
     @Override
     protected Collection<AbstractOsmDataPaster> getSupportedPasters() {
-        return SUPPORTED;
+        return Collections.unmodifiableCollection(SUPPORTED);
     }
 }

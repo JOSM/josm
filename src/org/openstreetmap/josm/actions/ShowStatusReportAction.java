@@ -92,9 +92,8 @@ public final class ShowStatusReportAction extends JosmAction {
             .append(" MB allocated, but free)\nJava version: ")
             .append(runtimeVersion != null ? runtimeVersion : System.getProperty("java.version")).append(", ")
             .append(System.getProperty("java.vendor")).append(", ")
-            .append(System.getProperty("java.vm.name")).append('\n');
-
-        text.append("Screen: ");
+            .append(System.getProperty("java.vm.name"))
+            .append("\nScreen: ");
         if (!GraphicsEnvironment.isHeadless()) {
             text.append(Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()).map(gd -> {
                         StringBuilder b = new StringBuilder(gd.getIDstring());

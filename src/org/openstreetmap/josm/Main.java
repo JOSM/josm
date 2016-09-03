@@ -592,7 +592,7 @@ public abstract class Main {
     private static class InitializationTask implements Callable<Void> {
 
         private final String name;
-        private Runnable task;
+        private final Runnable task;
 
         protected InitializationTask(String name, Runnable task) {
             this.name = name;

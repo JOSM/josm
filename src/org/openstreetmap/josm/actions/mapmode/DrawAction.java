@@ -639,7 +639,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         removeHighlighting();
     }
 
-    private String getTitle(boolean newNode, Node n, Collection<OsmPrimitive> newSelection, List<Way> reuseWays,
+    private static String getTitle(boolean newNode, Node n, Collection<OsmPrimitive> newSelection, List<Way> reuseWays,
             boolean extendedWay) {
         String title;
         if (!extendedWay) {

@@ -105,7 +105,7 @@ public class ListenerList<T> {
 
     protected void failAdd(T listener) {
         throw new IllegalArgumentException(
-                MessageFormat.format("Listener {0} (instance of {1}) was already registered.", listener.toString(),
+                MessageFormat.format("Listener {0} (instance of {1}) was already registered.", listener,
                         listener.getClass().getName()));
     }
 
@@ -127,7 +127,7 @@ public class ListenerList<T> {
     protected void failRemove(T listener) {
         throw new IllegalArgumentException(
                 MessageFormat.format("Listener {0} (instance of {1}) was not registered before or already removed.",
-                        listener.toString(), listener.getClass().getName()));
+                        listener, listener.getClass().getName()));
     }
 
     /**

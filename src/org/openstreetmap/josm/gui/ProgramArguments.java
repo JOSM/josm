@@ -28,7 +28,6 @@ public class ProgramArguments {
     /**
      * JOSM command line options.
      * @see <a href="https://josm.openstreetmap.de/wiki/Help/CommandLineOptions">Help/CommandLineOptions</a>
-     * @since xxx
      */
     public enum Option {
         /** --help|-h                                  Show this help */
@@ -101,10 +100,10 @@ public class ProgramArguments {
     /**
      * Construct the program arguments object
      * @param args The args passed to main.
+     * @since 10936
      */
-    public ProgramArguments(String[] args) {
+    public ProgramArguments(String ... args) {
         Stream.of(Option.values()).forEach(o -> argMap.put(o, new ArrayList<>()));
-
         buildCommandLineArgumentMap(args);
     }
 
@@ -215,7 +214,7 @@ public class ProgramArguments {
         return map;
     }
 
-    private static String getValue(String[] kv) {
+    private static String getValue(String ... kv) {
         if (kv.length < 2) {
             return "";
         } else if ("null".equals(kv[1])) {
