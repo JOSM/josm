@@ -58,7 +58,6 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     private JTable userTable;
     private UserTableModel model;
     private SelectUsersPrimitivesAction selectionUsersPrimitivesAction;
-    private ShowUserInfoAction showUserInfoAction;
 
     /**
      * Constructs a new {@code UserListDialog}.
@@ -94,7 +93,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         // -- info action
         //
-        showUserInfoAction = new ShowUserInfoAction();
+        ShowUserInfoAction showUserInfoAction = new ShowUserInfoAction();
         userTable.getSelectionModel().addListSelectionListener(showUserInfoAction);
 
         createLayout(userTable, true, Arrays.asList(new SideButton[] {

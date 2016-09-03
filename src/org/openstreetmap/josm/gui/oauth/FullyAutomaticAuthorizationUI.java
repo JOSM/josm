@@ -398,7 +398,6 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     class FullyAutomaticAuthorisationTask extends PleaseWaitRunnable {
         private boolean canceled;
-        private OsmOAuthAuthorizationClient authClient;
 
         FullyAutomaticAuthorisationTask(Component parent) {
             super(parent, tr("Authorize JOSM to access the OSM API"), false /* don't ignore exceptions */);
@@ -479,7 +478,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
                 getProgressMonitor().setTicksCount(3);
-                authClient = new OsmOAuthAuthorizationClient(
+                OsmOAuthAuthorizationClient authClient = new OsmOAuthAuthorizationClient(
                         getAdvancedPropertiesPanel().getAdvancedParameters()
                 );
                 OAuthToken requestToken = authClient.getRequestToken(

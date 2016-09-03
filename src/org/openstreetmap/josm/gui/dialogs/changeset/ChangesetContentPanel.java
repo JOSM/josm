@@ -399,21 +399,17 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
     private static class HeaderPanel extends JPanel {
 
-        private JMultilineLabel lblMessage;
         private transient Changeset current;
-
-        protected final void build() {
-            setLayout(new FlowLayout(FlowLayout.LEFT));
-            lblMessage = new JMultilineLabel(
-                    tr("The content of this changeset is not downloaded yet.")
-            );
-            add(lblMessage);
-            add(new JButton(new DownloadAction()));
-
-        }
 
         HeaderPanel() {
             build();
+        }
+
+        protected final void build() {
+            setLayout(new FlowLayout(FlowLayout.LEFT));
+            add(new JMultilineLabel(tr("The content of this changeset is not downloaded yet.")));
+            add(new JButton(new DownloadAction()));
+
         }
 
         public void setChangeset(Changeset cs) {
