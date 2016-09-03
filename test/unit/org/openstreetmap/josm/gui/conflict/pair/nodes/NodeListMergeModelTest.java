@@ -60,19 +60,15 @@ public class NodeListMergeModelTest {
                 assertTrue("expected row " + j + " to be selected", model.isSelectedIndex(j));
                 break;
             }
-            try {
-                int[] rows = (int[]) idx[i];
-                if (rows.length != 2) {
-                    fail("illegal selection range. Either null or not length 2: " + Arrays.toString(rows));
-                }
-                if (rows[0] > rows[1]) {
-                    fail("illegal selection range. lower bound > upper bound ");
-                }
-                for (int j = rows[0]; j <= rows[1]; j++) {
-                    assertTrue("expected row " + j + " to be selected", model.isSelectedIndex(j));
-                }
-            } catch (ClassCastException e) {
-                fail("illegal selection range:" + idx[i]);
+            int[] rows = (int[]) idx[i];
+            if (rows.length != 2) {
+                fail("illegal selection range. Either null or not length 2: " + Arrays.toString(rows));
+            }
+            if (rows[0] > rows[1]) {
+                fail("illegal selection range. lower bound > upper bound ");
+            }
+            for (int j = rows[0]; j <= rows[1]; j++) {
+                assertTrue("expected row " + j + " to be selected", model.isSelectedIndex(j));
             }
         }
     }

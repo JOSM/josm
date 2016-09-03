@@ -27,7 +27,7 @@ public class APIDataSetTest {
     }
 
     @Test
-    public void testOneNewRelationOnly() {
+    public void testOneNewRelationOnly() throws CyclicUploadDependencyException {
         Relation r = new Relation();
         r.put("name", "r1");
         DataSet ds = new DataSet();
@@ -35,11 +35,7 @@ public class APIDataSetTest {
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
-        try {
-            apiDataSet.adjustRelationUploadOrder();
-        } catch (CyclicUploadDependencyException e) {
-            fail("unexpected exception:" + e);
-        }
+        apiDataSet.adjustRelationUploadOrder();
         List<OsmPrimitive> toAdd = apiDataSet.getPrimitivesToAdd();
 
         assertEquals(1, toAdd.size());
@@ -47,7 +43,7 @@ public class APIDataSetTest {
     }
 
     @Test
-    public void testNewParentChildPair() {
+    public void testNewParentChildPair() throws CyclicUploadDependencyException {
         DataSet ds = new DataSet();
         Relation r1 = new Relation();
         ds.addPrimitive(r1);
@@ -61,11 +57,7 @@ public class APIDataSetTest {
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
-        try {
-            apiDataSet.adjustRelationUploadOrder();
-        } catch (CyclicUploadDependencyException e) {
-            fail("unexpected exception:" + e);
-        }
+        apiDataSet.adjustRelationUploadOrder();
         List<OsmPrimitive> toAdd = apiDataSet.getPrimitivesToAdd();
 
         assertEquals(2, toAdd.size());
@@ -74,7 +66,7 @@ public class APIDataSetTest {
     }
 
     @Test
-    public void testOneExistingAndThreNewInAChain() {
+    public void testOneExistingAndThreNewInAChain() throws CyclicUploadDependencyException {
         DataSet ds = new DataSet();
 
         Relation r1 = new Relation();
@@ -99,11 +91,7 @@ public class APIDataSetTest {
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
-        try {
-            apiDataSet.adjustRelationUploadOrder();
-        } catch (CyclicUploadDependencyException e) {
-            fail("unexpected exception:" + e);
-        }
+        apiDataSet.adjustRelationUploadOrder();
         List<OsmPrimitive> toAdd = apiDataSet.getPrimitivesToAdd();
 
         assertEquals(3, toAdd.size());
@@ -117,7 +105,7 @@ public class APIDataSetTest {
     }
 
     @Test
-    public void testOneParentTwoNewChildren() {
+    public void testOneParentTwoNewChildren() throws CyclicUploadDependencyException {
         DataSet ds = new DataSet();
         Relation r1 = new Relation();
         ds.addPrimitive(r1);
@@ -137,11 +125,7 @@ public class APIDataSetTest {
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
-        try {
-            apiDataSet.adjustRelationUploadOrder();
-        } catch (CyclicUploadDependencyException e) {
-            fail("unexpected exception:" + e);
-        }
+        apiDataSet.adjustRelationUploadOrder();
         List<OsmPrimitive> toAdd = apiDataSet.getPrimitivesToAdd();
 
         assertEquals(3, toAdd.size());
@@ -150,7 +134,7 @@ public class APIDataSetTest {
     }
 
     @Test // for ticket #9624
-    public void testDeleteOneParentTwoNewChildren() {
+    public void testDeleteOneParentTwoNewChildren() throws CyclicUploadDependencyException {
         DataSet ds = new DataSet();
         Relation r1 = new Relation(1);
         ds.addPrimitive(r1);
@@ -184,11 +168,7 @@ public class APIDataSetTest {
         apiDataSet.getPrimitivesToDelete().add(r2);
         apiDataSet.getPrimitivesToDelete().add(r3);
         apiDataSet.getPrimitivesToDelete().add(r4);
-        try {
-            apiDataSet.adjustRelationUploadOrder();
-        } catch (CyclicUploadDependencyException e) {
-            fail("unexpected exception:" + e);
-        }
+        apiDataSet.adjustRelationUploadOrder();
         List<OsmPrimitive> toDelete = apiDataSet.getPrimitivesToDelete();
 
         assertEquals(4, toDelete.size());
@@ -197,7 +177,7 @@ public class APIDataSetTest {
     }
 
     @Test // for ticket #9656
-    public void testDeleteWay() {
+    public void testDeleteWay() throws CyclicUploadDependencyException {
         DataSet ds = new DataSet();
         final Way way = new Way(1, 2);
         way.put("highway", "unclassified");
@@ -224,11 +204,7 @@ public class APIDataSetTest {
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
-        try {
-            apiDataSet.adjustRelationUploadOrder();
-        } catch (CyclicUploadDependencyException e) {
-            fail("unexpected exception:" + e);
-        }
+        apiDataSet.adjustRelationUploadOrder();
         List<OsmPrimitive> toDelete = apiDataSet.getPrimitivesToDelete();
 
         assertEquals(4, toDelete.size());

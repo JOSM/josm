@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.io.remotecontrol;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,9 +39,10 @@ public class RemoteControlTest {
 
     /**
      * Starts Remote control before testing requests.
+     * @throws GeneralSecurityException if a security error occurs
      */
     @Before
-    public void setUp() {
+    public void setUp() throws GeneralSecurityException {
         JOSMFixture.createUnitTestFixture().init();
         RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.put(true);
         deleteKeystore();
@@ -69,8 +69,9 @@ public class RemoteControlTest {
      * Disable all HTTPS validation mechanisms as described
      * <a href="http://stackoverflow.com/a/2893932/2257172">here</a> and
      * <a href="http://stackoverflow.com/a/19542614/2257172">here</a>
+     * @throws GeneralSecurityException if a security error occurs
      */
-    public void disableCertificateValidation() {
+    public void disableCertificateValidation() throws GeneralSecurityException {
         // Create a trust manager that does not validate certificate chains
         TrustManager[] trustAllCerts = new TrustManager[] {
             new X509TrustManager() {
@@ -90,13 +91,9 @@ public class RemoteControlTest {
         };
 
         // Install the all-trusting trust manager
-        try {
-            SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, trustAllCerts, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-        } catch (GeneralSecurityException e) {
-            fail(e.getMessage());
-        }
+        SSLContext sc = SSLContext.getInstance("TLS");
+        sc.init(null, trustAllCerts, new SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
         // Create all-trusting host name verifier
         HostnameVerifier allHostsValid = new HostnameVerifier() {
@@ -120,43 +117,37 @@ public class RemoteControlTest {
 
     /**
      * Tests that sending an HTTP request without command results in HTTP 400, with all available commands in error message.
+     * @throws Exception if an error occurs
      */
     @Test
-    public void testHttpListOfCommands() {
+    public void testHttpListOfCommands() throws Exception {
         testListOfCommands(httpBase);
     }
 
     /**
      * Tests that sending an HTTPS request without command results in HTTP 400, with all available commands in error message.
+     * @throws Exception if an error occurs
      */
     @Test
-    public void testHttpsListOfCommands() {
+    public void testHttpsListOfCommands() throws Exception {
         testListOfCommands(httpsBase);
     }
 
-    private void testListOfCommands(String url) {
-        try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.connect();
-            assertEquals(connection.getResponseCode(), HttpURLConnection.HTTP_BAD_REQUEST);
-            try (InputStream is = connection.getErrorStream()) {
-                // TODO this code should be refactored somewhere in Utils as it is used in several JOSM classes
-                StringBuilder responseBody = new StringBuilder();
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                    String s;
-                    while ((s = in.readLine()) != null) {
-                        responseBody.append(s);
-                        responseBody.append("\n");
-                    }
+    private void testListOfCommands(String url) throws IOException, ReflectiveOperationException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.connect();
+        assertEquals(connection.getResponseCode(), HttpURLConnection.HTTP_BAD_REQUEST);
+        try (InputStream is = connection.getErrorStream()) {
+            // TODO this code should be refactored somewhere in Utils as it is used in several JOSM classes
+            StringBuilder responseBody = new StringBuilder();
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String s;
+                while ((s = in.readLine()) != null) {
+                    responseBody.append(s);
+                    responseBody.append("\n");
                 }
-                assert responseBody.toString().contains(RequestProcessor.getUsageAsHtml());
-            } catch (ReflectiveOperationException e) {
-                e.printStackTrace();
-                fail(e.getMessage());
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
+            assert responseBody.toString().contains(RequestProcessor.getUsageAsHtml());
         }
     }
 }

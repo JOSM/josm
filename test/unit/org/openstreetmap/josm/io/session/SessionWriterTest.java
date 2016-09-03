@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.session;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -90,7 +88,7 @@ public class SessionWriterTest {
         ProjectionPreference.setProjection();
     }
 
-    private void testWrite(List<Layer> layers, final boolean zip) {
+    private void testWrite(List<Layer> layers, final boolean zip) throws IOException {
         Map<Layer, SessionLayerExporter> exporters = new HashMap<>();
         if (zip) {
             SessionWriter.registerSessionLayerExporter(OsmDataLayer.class, OsmHeadlessJozExporter.class);
@@ -106,9 +104,6 @@ public class SessionWriterTest {
         File file = new File(System.getProperty("java.io.tmpdir"), getClass().getName()+(zip ? ".joz" : ".jos"));
         try {
             sw.write(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
         } finally {
             if (file.exists()) {
                 Utils.deleteFile(file);
@@ -147,75 +142,84 @@ public class SessionWriterTest {
 
     /**
      * Tests to write an empty .jos file.
+     * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteEmptyJos() {
+    public void testWriteEmptyJos() throws IOException {
         testWrite(Collections.<Layer>emptyList(), false);
     }
 
     /**
      * Tests to write an empty .joz file.
+     * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteEmptyJoz() {
+    public void testWriteEmptyJoz() throws IOException {
         testWrite(Collections.<Layer>emptyList(), true);
     }
 
     /**
      * Tests to write a .jos file containing OSM data.
+     * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteOsmJos() {
+    public void testWriteOsmJos() throws IOException {
         testWrite(Collections.<Layer>singletonList(createOsmLayer()), false);
     }
 
     /**
      * Tests to write a .joz file containing OSM data.
+     * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteOsmJoz() {
+    public void testWriteOsmJoz() throws IOException {
         testWrite(Collections.<Layer>singletonList(createOsmLayer()), true);
     }
 
     /**
      * Tests to write a .jos file containing GPX data.
+     * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteGpxJos() {
+    public void testWriteGpxJos() throws IOException {
         testWrite(Collections.<Layer>singletonList(createGpxLayer()), false);
     }
 
     /**
      * Tests to write a .joz file containing GPX data.
+     * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteGpxJoz() {
+    public void testWriteGpxJoz() throws IOException {
         testWrite(Collections.<Layer>singletonList(createGpxLayer()), true);
     }
 
     /**
      * Tests to write a .joz file containing GPX and marker data.
+     * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteGpxAndMarkerJoz() {
+    public void testWriteGpxAndMarkerJoz() throws IOException {
         GpxLayer gpx = createGpxLayer();
         testWrite(Arrays.asList(gpx, createMarkerLayer(gpx)), true);
     }
 
     /**
      * Tests to write a .joz file containing an imagery layer.
+     * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteImageryLayer() {
+    public void testWriteImageryLayer() throws IOException {
         final Layer layer = createImageryLayer();
         testWrite(Collections.singletonList(layer), true);
     }
 
     /**
      * Tests to write a .joz file containing a note layer.
+     * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteNoteLayer() {
+    public void testWriteNoteLayer() throws IOException {
         final Layer layer = createNoteLayer();
         testWrite(Collections.singletonList(layer), true);
     }

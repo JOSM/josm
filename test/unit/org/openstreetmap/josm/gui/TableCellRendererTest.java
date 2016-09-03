@@ -1,8 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,9 +53,12 @@ public class TableCellRendererTest {
 
     /**
      * Unit test of all table cell renderers against null values.
+     * @throws NoSuchMethodException no default constructor - to fix this, add a default constructor to the class
+     *                               or add the class to the SKIP_TEST list above
+     * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    public void testTableCellRenderer() {
+    public void testTableCellRenderer() throws ReflectiveOperationException {
         Reflections reflections = new Reflections("org.openstreetmap.josm");
         Set<Class<? extends TableCellRenderer>> renderers = reflections.getSubTypesOf(TableCellRenderer.class);
         Assert.assertTrue(renderers.size() >= 10); // if it finds less than 10 classes, something is broken
@@ -66,13 +70,7 @@ public class TableCellRendererTest {
             if (klass.isAnonymousClass()) {
                 continue;
             }
-            TableCellRenderer tcr = createInstance(klass);
-            try {
-                tcr.getTableCellRendererComponent(tbl, null, false, false, 0, 0);
-            } catch (NullPointerException npe) {
-                npe.printStackTrace();
-                Assert.fail("NPE in getTableCellRendererComponent");
-            }
+            assertNotNull(createInstance(klass).getTableCellRendererComponent(tbl, null, false, false, 0, 0));
         }
     }
 
@@ -81,37 +79,23 @@ public class TableCellRendererTest {
      * @param <T> the class or a super-type of the class
      * @param klass the class
      * @return an instance of the class
+     * @throws NoSuchMethodException no default constructor - to fix this, add a default constructor to the class
+     *                               or add the class to the SKIP_TEST list above
+     * @throws ReflectiveOperationException if an error occurs
      */
-    private static <T> T createInstance(Class<? extends T> klass) {
+    private static <T> T createInstance(Class<? extends T> klass) throws ReflectiveOperationException {
         boolean needOuterClass = klass.isMemberClass() && !Modifier.isStatic(klass.getModifiers());
         Constructor<? extends T> c;
-        try {
-            if (needOuterClass) {
-                c = klass.getDeclaredConstructor(klass.getDeclaringClass());
-            } else {
-                c = klass.getDeclaredConstructor();
-            }
-        } catch (NoSuchMethodException ex) {
-            // no default constructor - to fix this, add a default constructor
-            // to the class or add the class to the SKIP_TEST list above
-            Assert.fail("No default constructor - cannot test TableCellRenderer: " + ex);
-            return null;
-        } catch (SecurityException ex) {
-            throw new RuntimeException(ex);
+        if (needOuterClass) {
+            c = klass.getDeclaredConstructor(klass.getDeclaringClass());
+        } else {
+            c = klass.getDeclaredConstructor();
         }
         Utils.setObjectsAccessible(c);
-        T o;
-        try {
-            if (needOuterClass) {
-                Object outerInstance = createInstance(klass.getDeclaringClass());
-                o = c.newInstance(outerInstance);
-            } else {
-                o = c.newInstance();
-            }
-        } catch (InstantiationException | IllegalArgumentException | IllegalAccessException | InvocationTargetException ex) {
-            throw new RuntimeException(ex);
+        if (needOuterClass) {
+            return c.newInstance(createInstance(klass.getDeclaringClass()));
+        } else {
+            return c.newInstance();
         }
-        return o;
     }
-
 }

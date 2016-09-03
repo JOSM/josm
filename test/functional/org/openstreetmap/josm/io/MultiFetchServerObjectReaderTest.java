@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,6 +38,9 @@ import org.openstreetmap.josm.gui.io.UploadStrategy;
 import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
+/**
+ * Unit tests of {@link MultiFetchServerObjectReader}.
+ */
 public class MultiFetchServerObjectReaderTest {
     private static Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
 
@@ -137,8 +139,12 @@ public class MultiFetchServerObjectReaderTest {
         OsmApi.getOsmApi().closeChangeset(cs, NullProgressMonitor.INSTANCE);
     }
 
+    /**
+     * Setup test.
+     * @throws Exception if an error occurs
+     */
     @BeforeClass
-    public static void init() throws OsmTransferException {
+    public static void init() throws Exception {
         logger.info("initializing ...");
         JOSMFixture.createFunctionalTestFixture().init();
 
@@ -176,8 +182,6 @@ public class MultiFetchServerObjectReaderTest {
                 w.writeContent(testDataSet);
                 w.footer();
             }
-        } catch (IOException e) {
-            fail(MessageFormat.format("failed to open file ''{0}'' for writing", dataSetCacheOutputFile.toString()));
         }
     }
 
@@ -199,6 +203,10 @@ public class MultiFetchServerObjectReaderTest {
         }
     }
 
+    /**
+     * Test to multi-get 10 nodes.
+     * @throws OsmTransferException if an error occurs
+     */
     @Test
     public void testMultiGet10Nodes() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
@@ -216,6 +224,10 @@ public class MultiFetchServerObjectReaderTest {
         assertTrue(reader.getMissingPrimitives().isEmpty());
     }
 
+    /**
+     * Test to multi-get 10 ways.
+     * @throws OsmTransferException if an error occurs
+     */
     @Test
     public void testMultiGet10Ways() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
@@ -234,6 +246,10 @@ public class MultiFetchServerObjectReaderTest {
         assertTrue(reader.getMissingPrimitives().isEmpty());
     }
 
+    /**
+     * Test to multi-get 10 relations.
+     * @throws OsmTransferException if an error occurs
+     */
     @Test
     public void testMultiGet10Relations() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
@@ -252,6 +268,10 @@ public class MultiFetchServerObjectReaderTest {
         assertTrue(reader.getMissingPrimitives().isEmpty());
     }
 
+    /**
+     * Test to multi-get 800 nodes.
+     * @throws OsmTransferException if an error occurs
+     */
     @Test
     public void testMultiGet800Nodes() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
@@ -269,6 +289,10 @@ public class MultiFetchServerObjectReaderTest {
         assertTrue(reader.getMissingPrimitives().isEmpty());
     }
 
+    /**
+     * Test to multi-get non-existing node.
+     * @throws OsmTransferException if an error occurs
+     */
     @Test
     public void testMultiGetWithNonExistingNode() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
