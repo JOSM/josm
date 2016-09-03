@@ -5,13 +5,11 @@ import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -21,19 +19,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class MultipolygonBuilderTest {
 
     /**
-     * Global timeout applied to all test methods.
+     * Setup test.
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public Timeout globalTimeout = Timeout.seconds(15);
-
-    /**
-     * Setup test.
-     */
-    @BeforeClass
-    public static void init() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    public JOSMTestRules test = new JOSMTestRules().projection().timeout(15000);
 
     /**
      * Non-regression test for ticket #12060.

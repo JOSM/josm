@@ -14,9 +14,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -25,8 +24,10 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * JUnit Test of Multipolygon validation test.
@@ -38,13 +39,10 @@ public class MultipolygonTestTest {
 
     /**
      * Setup test.
-     * @throws Exception if test cannot be initialized
      */
-    @BeforeClass
-    public static void setUp() throws Exception {
-        JOSMFixture.createUnitTestFixture().init(true);
-        MapPaintStyles.readFromPreferences();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().commands();
 
     private static Way createUnclosedWay(String tags) {
         List<Node> nodes = new ArrayList<>();

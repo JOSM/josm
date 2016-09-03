@@ -3,10 +3,11 @@ package org.openstreetmap.josm.data.coor;
 
 import java.text.DecimalFormat;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
@@ -18,10 +19,9 @@ public class CachedLatLonTest {
     /**
      * Setup test.
      */
-    @Before
-    public void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Unit test of methods {@link CachedLatLon#equals} and {@link CachedLatLon#hashCode}.

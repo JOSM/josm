@@ -10,9 +10,11 @@ import java.util.logging.Logger;
 
 import org.apache.commons.jcs.access.CacheAccess;
 import org.apache.commons.jcs.auxiliary.disk.block.BlockDiskCacheAttributes;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link JCSCacheManager}.
@@ -22,10 +24,9 @@ public class JCSCacheManagerTest {
     /**
      * Setup test.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().platform();
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12054">Bug #12054</a>.

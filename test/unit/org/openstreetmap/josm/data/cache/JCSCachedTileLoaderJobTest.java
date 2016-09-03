@@ -10,10 +10,10 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -70,10 +70,9 @@ public class JCSCachedTileLoaderJobTest {
     /**
      * Setup test.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().platform();
 
     /**
      * Test status codes

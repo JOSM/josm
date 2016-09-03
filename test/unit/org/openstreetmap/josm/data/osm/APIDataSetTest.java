@@ -7,11 +7,13 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.APIDataSet;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link APIDataSet}.
@@ -21,10 +23,9 @@ public class APIDataSetTest {
     /**
      * Setup test.
      */
-    @BeforeClass
-    public static void init() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules();
 
     @Test
     public void testOneNewRelationOnly() throws CyclicUploadDependencyException {
