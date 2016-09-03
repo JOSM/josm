@@ -41,6 +41,13 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public abstract class Command implements PseudoCommand {
 
+    /** IS_OK : operation is okay */
+    public static final int IS_OK = 0;
+    /** IS_OUTSIDE : operation on element outside of download area */
+    public static final int IS_OUTSIDE = 1;
+    /** IS_INCOMPLETE: operation on incomplete target */
+    public static final int IS_INCOMPLETE = 2;
+
     private static final class CloneVisitor extends AbstractVisitor {
         public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<>();
 
@@ -244,6 +251,29 @@ public abstract class Command implements PseudoCommand {
 
     /**
      * Check whether user is about to operate on data outside of the download area.
+     *
+     * @param operation the operation name which is used for setting some preferences
+     * @param primitives the primitives to operate on
+     * @param ignore {@code null} or a primitive to be ignored
+     * @return true, if operating on outlying primitives is OK; false, otherwise
+     */
+    public static int checkOutlyingOrIncompleteOperation(String operation,
+            Collection<? extends OsmPrimitive> primitives,
+            Collection<? extends OsmPrimitive> ignore) {
+        int res = 0;
+        for (OsmPrimitive osm : primitives) {
+            if (osm.isIncomplete()) {
+                res |= IS_INCOMPLETE;
+            } else if (osm.isOutsideDownloadArea()
+                    && (ignore == null || !ignore.contains(osm))) {
+                res |= IS_OUTSIDE;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Check whether user is about to operate on data outside of the download area.
      * Request confirmation if he is.
      *
      * @param operation the operation name which is used for setting some preferences
@@ -258,17 +288,8 @@ public abstract class Command implements PseudoCommand {
             String dialogTitle, String outsideDialogMessage, String incompleteDialogMessage,
             Collection<? extends OsmPrimitive> primitives,
             Collection<? extends OsmPrimitive> ignore) {
-        boolean outside = false;
-        boolean incomplete = false;
-        for (OsmPrimitive osm : primitives) {
-            if (osm.isIncomplete()) {
-                incomplete = true;
-            } else if (osm.isOutsideDownloadArea()
-                    && (ignore == null || !ignore.contains(osm))) {
-                outside = true;
-            }
-        }
-        if (outside) {
+        int checkRes = checkOutlyingOrIncompleteOperation(operation, primitives, ignore);
+        if ((checkRes & IS_OUTSIDE) != 0) {
             JPanel msg = new JPanel(new GridBagLayout());
             msg.add(new JMultilineLabel("<html>" + outsideDialogMessage + "</html>"));
             boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
@@ -282,7 +303,7 @@ public abstract class Command implements PseudoCommand {
             if (!answer)
                 return false;
         }
-        if (incomplete) {
+        if ((checkRes & IS_INCOMPLETE) != 0) {
             JPanel msg = new JPanel(new GridBagLayout());
             msg.add(new JMultilineLabel("<html>" + incompleteDialogMessage + "</html>"));
             boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
