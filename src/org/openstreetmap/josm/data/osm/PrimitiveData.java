@@ -29,14 +29,26 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
         id = OsmPrimitive.generateUniqueId();
     }
 
+    /**
+     * Constructs a new {@code PrimitiveData} from an existing one.
+     * @param data the data to copy
+     */
     public PrimitiveData(PrimitiveData data) {
         cloneFrom(data);
     }
 
+    /**
+     * Sets the primitive identifier.
+     * @param id primitive identifier
+     */
     public void setId(long id) {
         this.id = id;
     }
 
+    /**
+     * Sets the primitive version.
+     * @param version primitive version
+     */
     public void setVersion(int version) {
         this.version = version;
     }
@@ -49,6 +61,10 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
         super.setIncomplete(incomplete);
     }
 
+    /**
+     * Returns a copy of this primitive data.
+     * @return a copy of this primitive data
+     */
     public abstract PrimitiveData makeCopy();
 
     @Override
@@ -81,6 +97,7 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
         oos.writeInt(changesetId);
         oos.writeInt(timestamp);
         oos.writeObject(keys);
+        oos.writeShort(flags);
         oos.defaultWriteObject();
     }
 
@@ -93,6 +110,7 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
         changesetId = ois.readInt();
         timestamp = ois.readInt();
         keys = (String[]) ois.readObject();
+        flags = ois.readShort();
         ois.defaultReadObject();
     }
 }
