@@ -155,6 +155,10 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             invalidate(event.getLayer());
         }
 
+        /**
+         * Invalidate contents and repaint map view
+         * @param mapViewPaintable invalidated layer
+         */
         public synchronized void invalidate(MapViewPaintable mapViewPaintable) {
             ignoreRepaint = true;
             invalidatedLayers.add(mapViewPaintable);
