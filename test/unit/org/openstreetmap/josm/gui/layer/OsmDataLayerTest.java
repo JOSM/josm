@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.layer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -190,10 +191,13 @@ public class OsmDataLayerTest {
     @Test
     public void testGetMenuEntries() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
+        boolean mode = ExpertToggleAction.isExpert();
         ExpertToggleAction.getInstance().actionPerformed(null);
-        assertEquals(13, layer.getMenuEntries().length);
+        assertNotEquals(mode, ExpertToggleAction.isExpert());
+        assertEquals(ExpertToggleAction.isExpert() ? 16 : 13, layer.getMenuEntries().length);
         ExpertToggleAction.getInstance().actionPerformed(null);
-        assertEquals(16, layer.getMenuEntries().length);
+        assertEquals(mode, ExpertToggleAction.isExpert());
+        assertEquals(ExpertToggleAction.isExpert() ? 16 : 13, layer.getMenuEntries().length);
     }
 
     /**
