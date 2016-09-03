@@ -1433,11 +1433,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          * @return all tiles represented by this TileSet that are already in the tileCache
          */
         private List<Tile> allExistingTiles() {
-            return allTiles(p -> getTile(p));
+            return allTiles(AbstractTileSourceLayer.this::getTile);
         }
 
         private List<Tile> allTilesCreate() {
-            return allTiles(p -> getOrCreateTile(p));
+            return allTiles(AbstractTileSourceLayer.this::getOrCreateTile);
         }
 
         private List<Tile> allTiles(Function<TilePosition, Tile> mapper) {

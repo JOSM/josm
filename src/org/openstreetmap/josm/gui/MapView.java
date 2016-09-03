@@ -861,7 +861,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 return;
             }
         } catch (RuntimeException e) {
-            BugReport.intercept(e).put("center", () -> getCenter()).warn();
+            BugReport.intercept(e).put("center", this::getCenter).warn();
             return;
         }
 
