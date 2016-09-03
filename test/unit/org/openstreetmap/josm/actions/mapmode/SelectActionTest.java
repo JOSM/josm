@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions.mapmode;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -34,16 +33,11 @@ public class SelectActionTest {
     boolean nodesMerged;
 
     class SelectActionMock extends SelectAction {
-        SelectActionMock(MapFrame mapFrame, DataSet dataSet, OsmDataLayer layer) {
+        SelectActionMock(MapFrame mapFrame, DataSet dataSet, OsmDataLayer layer) throws ReflectiveOperationException {
             super(mapFrame);
-            try {
-                Field mv = SelectAction.class.getDeclaredField("mv");
-                Utils.setObjectsAccessible(mv);
-                mv.set(this, new MapViewMock());
-            } catch (ReflectiveOperationException e) {
-                e.printStackTrace();
-                fail("Can't setup testing environnement");
-            }
+            Field mv = SelectAction.class.getDeclaredField("mv");
+            Utils.setObjectsAccessible(mv);
+            mv.set(this, new MapViewMock());
         }
 
         @Override
@@ -67,10 +61,11 @@ public class SelectActionTest {
      * Test case: Move a two nodes way near a third node.
      * Resulting way should be attach to the third node.
      * see #10748
+     * @throws ReflectiveOperationException if an error occurs
      */
     @Test
     @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
-    public void testTicket10748() {
+    public void testTicket10748() throws ReflectiveOperationException {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 

@@ -150,9 +150,10 @@ public class OsmServerBackreferenceReaderTest {
      * Setup test.
      * @throws OsmTransferException if something goes wrong
      * @throws CyclicUploadDependencyException if a cyclic dependency is detected
+     * @throws IOException if an I/O error occurs
      */
     @BeforeClass
-    public static void setUpBeforeClass() throws OsmTransferException, CyclicUploadDependencyException {
+    public static void setUpBeforeClass() throws OsmTransferException, CyclicUploadDependencyException, IOException {
         logger.info("initializing ...");
 
         JOSMFixture.createFunctionalTestFixture().init();
@@ -195,8 +196,6 @@ public class OsmServerBackreferenceReaderTest {
                 w.writeContent(testDataSet);
                 w.footer();
             }
-        } catch (IOException e) {
-            fail(MessageFormat.format("failed to open file ''{0}'' for writing", dataSetCacheOutputFile.toString()));
         }
     }
 
@@ -218,6 +217,10 @@ public class OsmServerBackreferenceReaderTest {
         }
     }
 
+    /**
+     * Test reading references for a node.
+     * @throws OsmTransferException if an error occurs
+     */
     @Test
     public void testBackreferenceForNode() throws OsmTransferException {
         Node n = lookupNode(ds, 0);
@@ -271,6 +274,10 @@ public class OsmServerBackreferenceReaderTest {
                 " #relations=" + referers.getRelations().size());
     }
 
+    /**
+     * Test reading full references for a node.
+     * @throws OsmTransferException if an error occurs
+     */
     @Test
     public void testBackreferenceForNodeFull() throws OsmTransferException {
         Node n = lookupNode(ds, 0);
@@ -315,6 +322,10 @@ public class OsmServerBackreferenceReaderTest {
         }
     }
 
+    /**
+     * Test reading references for a way.
+     * @throws OsmTransferException if an error occurs
+     */
     @Test
     public void testBackreferenceForWay() throws OsmTransferException {
         Way w = lookupWay(ds, 1);
@@ -355,6 +366,10 @@ public class OsmServerBackreferenceReaderTest {
         assertFalse(r.isIncomplete());
     }
 
+    /**
+     * Test reading full references for a way.
+     * @throws OsmTransferException if an error occurs
+     */
     @Test
     public void testBackreferenceForWayFull() throws OsmTransferException {
         Way w = lookupWay(ds, 1);
@@ -389,6 +404,10 @@ public class OsmServerBackreferenceReaderTest {
         assertFalse(r.isIncomplete());
     }
 
+    /**
+     * Test reading references for a relation.
+     * @throws OsmTransferException if an error occurs
+     */
     @Test
     public void testBackreferenceForRelation() throws OsmTransferException {
         Relation r = lookupRelation(ds, 1);
@@ -504,6 +523,10 @@ public class OsmServerBackreferenceReaderTest {
         return ret;
     }
 
+    /**
+     * Test reading full references for a relation.
+     * @throws OsmTransferException if an error occurs
+     */
     @Test
     public void testBackreferenceForRelationFull() throws OsmTransferException {
         Relation r = lookupRelation(ds, 1);

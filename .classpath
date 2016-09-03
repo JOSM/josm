@@ -16,6 +16,8 @@
 	<classpathentry kind="lib" path="test/lib/jfcunit.jar"/>
 	<classpathentry kind="lib" path="test/lib/equalsverifier-2.1.5.jar"/>
 	<classpathentry kind="lib" path="test/lib/reflections/reflections-0.9.10.jar"/>
+	<classpathentry kind="lib" path="test/lib/reflections/guava-19.0.jar"/>
+	<classpathentry kind="lib" path="test/lib/reflections/javassist-3.20.0-GA.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_102"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
 	<classpathentry kind="lib" path="test/lib/unitils-core/commons-collections-3.2.jar"/>
