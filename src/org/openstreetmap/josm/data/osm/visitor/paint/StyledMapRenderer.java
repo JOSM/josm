@@ -1358,7 +1358,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private double computePath(double minSegmentLength, Rectangle bounds, List<MapViewPoint> points,
+    private static double computePath(double minSegmentLength, Rectangle bounds, List<MapViewPoint> points,
             List<HalfSegment> longHalfSegment) {
         MapViewPoint lastPoint = points.get(0);
         double pathLength = 0;
@@ -1498,7 +1498,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         displaySegments(path, orientationArrows, onewayArrows, onewayArrowsCasing, color, line, dashes, dashedColor);
     }
 
-    private void appenOnewayPath(boolean onewayReversed, MapViewPoint p1, double nx, double ny, double dist,
+    private static void appenOnewayPath(boolean onewayReversed, MapViewPoint p1, double nx, double ny, double dist,
             double onewaySize, Path2D onewayPath) {
         // scale such that border is 1 px
         final double fac = -(onewayReversed ? -1 : 1) * onewaySize * (1 + sinPHI) / (sinPHI * cosPHI);
