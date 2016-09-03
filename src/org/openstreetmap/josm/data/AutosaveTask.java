@@ -93,7 +93,6 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private final DataSetListenerAdapter datasetAdapter = new DataSetListenerAdapter(this);
     private final Set<DataSet> changedDatasets = new HashSet<>();
     private final List<AutosaveLayerInfo> layersInfo = new ArrayList<>();
-    private Timer timer;
     private final Object layersLock = new Object();
     private final Deque<File> deletedLayers = new LinkedList<>();
 
@@ -131,8 +130,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 }
             }
 
-            timer = new Timer(true);
-            timer.schedule(this, 1000L, PROP_INTERVAL.get() * 1000L);
+            new Timer(true).schedule(this, 1000L, PROP_INTERVAL.get() * 1000L);
             Main.getLayerManager().addLayerChangeListener(this, true);
         }
     }

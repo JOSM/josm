@@ -82,7 +82,6 @@ public class CloseChangesetAction extends JosmAction {
         private OsmServerChangesetReader reader;
         private List<Changeset> changesets;
         private Exception lastException;
-        private UserInfo userInfo;
 
         private DownloadOpenChangesetsTask() {
             super(tr("Downloading open changesets ..."), false /* don't ignore exceptions */);
@@ -120,7 +119,7 @@ public class CloseChangesetAction extends JosmAction {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                userInfo = fetchUserInfo();
+                UserInfo userInfo = fetchUserInfo();
                 if (canceled)
                     return;
                 reader = new OsmServerChangesetReader();

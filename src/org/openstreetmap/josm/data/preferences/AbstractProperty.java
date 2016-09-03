@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 public abstract class AbstractProperty<T> {
 
     private final class PreferenceChangedListenerAdapter implements PreferenceChangedListener {
-        private ValueChangeListener<? super T> listener;
+        private final ValueChangeListener<? super T> listener;
 
         PreferenceChangedListenerAdapter(ValueChangeListener<? super T> listener) {
             this.listener = listener;

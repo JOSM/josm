@@ -85,7 +85,6 @@ public class ChangesetDialog extends ToggleDialog {
     private ReadChangesetsAction readChangesetAction;
     private ShowChangesetInfoAction showChangesetInfoAction;
     private CloseOpenChangesetsAction closeChangesetAction;
-    private LaunchChangesetManagerAction launchChangesetManagerAction;
 
     private ChangesetDialogPopup popupMenu;
 
@@ -205,9 +204,6 @@ public class ChangesetDialog extends ToggleDialog {
         showChangesetInfoAction = new ShowChangesetInfoAction();
         cbInSelectionOnly.addItemListener(showChangesetInfoAction);
 
-        // -- launch changeset manager action
-        launchChangesetManagerAction = new LaunchChangesetManagerAction();
-
         popupMenu = new ChangesetDialogPopup(lstInActiveDataLayer, lstInSelection);
 
         PopupMenuLauncher popupMenuLauncher = new PopupMenuLauncher(popupMenu);
@@ -219,7 +215,7 @@ public class ChangesetDialog extends ToggleDialog {
             new SideButton(readChangesetAction, false),
             new SideButton(closeChangesetAction, false),
             new SideButton(showChangesetInfoAction, false),
-            new SideButton(launchChangesetManagerAction, false)
+            new SideButton(new LaunchChangesetManagerAction(), false)
         }));
     }
 

@@ -155,6 +155,10 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             invalidate(event.getLayer());
         }
 
+        /**
+         * Invalidate contents and repaint map view
+         * @param mapViewPaintable invalidated layer
+         */
         public synchronized void invalidate(MapViewPaintable mapViewPaintable) {
             ignoreRepaint = true;
             invalidatedLayers.add(mapViewPaintable);
@@ -857,7 +861,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 return;
             }
         } catch (RuntimeException e) {
-            BugReport.intercept(e).put("center", () -> getCenter()).warn();
+            BugReport.intercept(e).put("center", this::getCenter).warn();
             return;
         }
 

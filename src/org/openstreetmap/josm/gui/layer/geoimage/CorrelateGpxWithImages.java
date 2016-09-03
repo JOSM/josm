@@ -341,24 +341,18 @@ public class CorrelateGpxWithImages extends AbstractAction {
      *
      */
     private class SetOffsetActionListener implements ActionListener {
-        private JPanel panel;
-        private JLabel lbExifTime;
-        private JosmTextField tfGpsTime;
-        private JosmComboBox<String> cbTimezones;
-        private ImageDisplay imgDisp;
-        private JList<String> imgList;
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
             SimpleDateFormat dateFormat = (SimpleDateFormat) DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
 
-            panel = new JPanel(new BorderLayout());
+            JPanel panel = new JPanel(new BorderLayout());
             panel.add(new JLabel(tr("<html>Take a photo of your GPS receiver while it displays the time.<br>"
                     + "Display that photo here.<br>"
                     + "And then, simply capture the time you read on the photo and select a timezone<hr></html>")),
                     BorderLayout.NORTH);
 
-            imgDisp = new ImageDisplay();
+            ImageDisplay imgDisp = new ImageDisplay();
             imgDisp.setPreferredSize(new Dimension(300, 225));
             panel.add(imgDisp, BorderLayout.CENTER);
 
@@ -372,7 +366,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             gc.anchor = GridBagConstraints.WEST;
             panelTf.add(new JLabel(tr("Photo time (from exif):")), gc);
 
-            lbExifTime = new JLabel();
+            JLabel lbExifTime = new JLabel();
             gc.gridx = 1;
             gc.weightx = 1.0;
             gc.fill = GridBagConstraints.HORIZONTAL;
@@ -387,7 +381,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             gc.anchor = GridBagConstraints.WEST;
             panelTf.add(new JLabel(tr("Gps time (read from the above photo): ")), gc);
 
-            tfGpsTime = new JosmTextField(12);
+            JosmTextField tfGpsTime = new JosmTextField(12);
             tfGpsTime.setEnabled(false);
             tfGpsTime.setMinimumSize(new Dimension(155, tfGpsTime.getMinimumSize().height));
             gc.gridx = 1;
@@ -421,7 +415,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             Collections.sort(vtTimezones);
 
-            cbTimezones = new JosmComboBox<>(vtTimezones.toArray(new String[0]));
+            JosmComboBox<String> cbTimezones = new JosmComboBox<>(vtTimezones.toArray(new String[0]));
 
             String tzId = Main.pref.get("geoimage.timezoneid", "");
             TimeZone defaultTz;
@@ -445,7 +439,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             JPanel panelLst = new JPanel(new BorderLayout());
 
-            imgList = new JList<>(new AbstractListModel<String>() {
+            JList<String> imgList = new JList<>(new AbstractListModel<String>() {
                 @Override
                 public String getElementAt(int i) {
                     return yLayer.data.get(i).getFile().getName();

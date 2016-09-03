@@ -158,20 +158,20 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
     /**
      * Constants used in the transformation.
      */
-    private double b, a, e;
+    private double b, e;
 
     /**
-     * Convenience value equal to {@link #a} / {@link #b}.
+     * Convenience value equal to {@code a} / {@link #b}.
      */
     private double arb;
 
     /**
-     * Convenience value equal to {@link #a}&times;{@link #b}.
+     * Convenience value equal to {@code a}&times;{@link #b}.
      */
     private double ab;
 
     /**
-     * Convenience value equal to {@link #b} / {@link #a}.
+     * Convenience value equal to {@link #b} / {@code a}.
      */
     private double bra;
 
@@ -236,7 +236,7 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
         final double con = 1. - e2 * sinph0 * sinph0;
         double temp = cosph0 * cosph0;
         b = Math.sqrt(1.0 + e2 * (temp * temp) / (1.0 - e2));
-        a = b * com / con;
+        double a = b * com / con;
         final double d = b * com / (cosph0 * Math.sqrt(con));
         double f = d * d - 1.0;
         if (f < 0.0) {

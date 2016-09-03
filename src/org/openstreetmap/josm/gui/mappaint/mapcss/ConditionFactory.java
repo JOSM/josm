@@ -391,6 +391,9 @@ public final class ConditionFactory {
         }
     }
 
+    /**
+     * Role condition.
+     */
     public static class RoleCondition implements Condition {
         final String role;
         final Op op;
@@ -413,6 +416,9 @@ public final class ConditionFactory {
         }
     }
 
+    /**
+     * Index condition.
+     */
     public static class IndexCondition implements Condition {
         final String index;
         final Op op;
@@ -561,11 +567,20 @@ public final class ConditionFactory {
         }
     }
 
+    /**
+     * Class condition.
+     */
     public static class ClassCondition implements Condition {
 
+        /** Class identifier */
         public final String id;
         final boolean not;
 
+        /**
+         * Constructs a new {@code ClassCondition}.
+         * @param id id
+         * @param not negation or not
+         */
         public ClassCondition(String id, boolean not) {
             this.id = id;
             this.not = not;
@@ -754,6 +769,9 @@ public final class ConditionFactory {
         }
     }
 
+    /**
+     * Pseudo class condition.
+     */
     public static class PseudoClassCondition implements Condition {
 
         final Method method;
@@ -810,7 +828,14 @@ public final class ConditionFactory {
         }
     }
 
+    /**
+     * Open end pseudo class condition.
+     */
     public static class OpenEndPseudoClassCondition extends PseudoClassCondition {
+        /**
+         * Constructs a new {@code OpenEndPseudoClassCondition}.
+         * @param not negation or not
+         */
         public OpenEndPseudoClassCondition(boolean not) {
             super(null, not);
         }

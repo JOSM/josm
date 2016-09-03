@@ -34,7 +34,7 @@ public class ListenerList<T> {
 
     private static final class WeakListener<T> {
 
-        private WeakReference<T> listener;
+        private final WeakReference<T> listener;
 
         WeakListener(T listener) {
             this.listener = new WeakReference<>(listener);
@@ -61,7 +61,7 @@ public class ListenerList<T> {
 
         @Override
         public String toString() {
-            return "WeakListener [listener=" + listener + "]";
+            return "WeakListener [listener=" + listener + ']';
         }
     }
 
@@ -164,8 +164,8 @@ public class ListenerList<T> {
      * @param <T> The type of listener contained in this list
      */
     public static class TracingListenerList<T> extends ListenerList<T> {
-        private HashMap<T, StackTraceElement[]> listenersAdded = new HashMap<>();
-        private HashMap<T, StackTraceElement[]> listenersRemoved = new HashMap<>();
+        private final HashMap<T, StackTraceElement[]> listenersAdded = new HashMap<>();
+        private final HashMap<T, StackTraceElement[]> listenersRemoved = new HashMap<>();
 
         protected TracingListenerList() {
             // hidden
