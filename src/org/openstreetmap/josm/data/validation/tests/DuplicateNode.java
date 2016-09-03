@@ -20,7 +20,6 @@ import java.util.Set;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Hash;
 import org.openstreetmap.josm.data.osm.Node;
@@ -407,7 +406,7 @@ public class DuplicateNode extends Test {
                 target = nodes.iterator().next();
             }
 
-            if (DeleteCommand.checkAndConfirmOutlyingDelete(nodes, Collections.singleton(target)))
+            if (Command.checkOutlyingOrIncompleteOperation("delete", nodes, Collections.singleton(target)) == Command.IS_OK)
                 return MergeNodesAction.mergeNodes(Main.getLayerManager().getEditLayer(), nodes, target);
         }
 
