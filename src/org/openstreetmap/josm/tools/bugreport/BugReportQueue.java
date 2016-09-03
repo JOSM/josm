@@ -19,9 +19,9 @@ public class BugReportQueue {
 
     private static final BugReportQueue INSTANCE = new BugReportQueue();
 
-    private LinkedList<ReportedException> reportsToDisplay = new LinkedList<>();
+    private final LinkedList<ReportedException> reportsToDisplay = new LinkedList<>();
     private boolean suppressAllMessages;
-    private ArrayList<ReportedException> suppressFor = new ArrayList<>();
+    private final ArrayList<ReportedException> suppressFor = new ArrayList<>();
     private Thread displayThread;
     private final BiFunction<ReportedException, Integer, SuppressionMode> bugReportHandler = getBestHandler();
     private final CopyOnWriteArrayList<Predicate<ReportedException>> handlers = new CopyOnWriteArrayList<>();

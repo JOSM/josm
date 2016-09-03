@@ -21,7 +21,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     private transient TagCollection tags;
     private List<String> displayedKeys;
-    private Set<String> keysWithConflicts = new HashSet<>();
+    private final Set<String> keysWithConflicts = new HashSet<>();
     private transient Map<String, MultiValueResolutionDecision> decisions;
     private int numConflicts;
     private final PropertyChangeSupport support;

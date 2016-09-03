@@ -24,7 +24,7 @@ public abstract class AbstractToStringProperty<T> extends AbstractProperty<T> {
      * @param <T> The content type
      */
     public static class ChildProperty<T> extends AbstractToStringProperty<T> {
-        private AbstractToStringProperty<T> parent;
+        private final AbstractToStringProperty<T> parent;
 
         ChildProperty(AbstractToStringProperty<T> parent, String key) {
             super(key, null);

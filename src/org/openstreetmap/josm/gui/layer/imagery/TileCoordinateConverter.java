@@ -22,7 +22,7 @@ import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 public class TileCoordinateConverter {
     private MapView mapView;
     private TileSourceDisplaySettings settings;
-    private TileSource tileSource;
+    private final TileSource tileSource;
 
     /**
      * Create a new coordinate converter for the map view.
