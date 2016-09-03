@@ -503,7 +503,7 @@ Build-Date: ${build.tstamp}
         -keep class * extends org.openstreetmap.josm.io.FileImporter
         -keep class * extends org.openstreetmap.josm.io.FileExporter
         -keep class org.openstreetmap.josm.actions.search.SearchCompiler$Never
-        -keep class org.openstreetmap.josm.gui.mappaint.mapcss.Condition$PseudoClasses {
+        -keep class org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory$PseudoClasses {
             static boolean *(org.openstreetmap.josm.gui.mappaint.Environment);
         }
         -keep class org.apache.commons.logging.impl.*
@@ -516,6 +516,12 @@ Build-Date: ${build.tstamp}
         # Keep unused public methods (can be useful for plugins)
         -keepclassmembers class * {
             public protected *;
+        }
+
+        # Keep serialization methods
+        -keepclassmembers class * implements java.io.Serializable {
+            private void writeObject(java.io.ObjectOutputStream);
+            private void readObject(java.io.ObjectInputStream);
         }
 
         # Disable annoying [proguard] Note: the configuration keeps the entry point '...', but not the descriptor class '...'.
