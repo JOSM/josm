@@ -8,10 +8,12 @@ import java.beans.PropertyChangeEvent;
 
 import javax.swing.JPanel;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link UploadAndSaveProgressRenderer} class.
@@ -21,10 +23,9 @@ public class UploadAndSaveProgressRendererTest {
     /**
      * Setup tests
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Unit test of {@link UploadAndSaveProgressRenderer#UploadAndSaveProgressRenderer}.

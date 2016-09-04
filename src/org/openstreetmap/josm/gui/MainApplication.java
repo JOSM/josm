@@ -318,7 +318,7 @@ public class MainApplication extends Main {
         }
 
         monitor.indeterminateSubTask(tr("Setting defaults"));
-        preConstructorInit(args);
+        preConstructorInit();
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));
         final Main main = new MainApplication(mainFrame);

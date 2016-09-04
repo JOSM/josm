@@ -825,9 +825,8 @@ public abstract class Main {
 
     /**
      * Should be called before the main constructor to setup some parameter stuff
-     * @param args The parsed argument list.
      */
-    public static void preConstructorInit(ProgramArguments args) {
+    public static void preConstructorInit() {
         ProjectionPreference.setProjection();
 
         String defaultlaf = platform.getDefaultStyle();

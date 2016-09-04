@@ -26,7 +26,7 @@ public class JCSCacheManagerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform();
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12054">Bug #12054</a>.
