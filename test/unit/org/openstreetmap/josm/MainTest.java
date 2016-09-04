@@ -2,10 +2,13 @@
 package org.openstreetmap.josm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+
+import javax.swing.UIManager;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -65,5 +68,16 @@ public class MainTest {
         assertTrue(warnings.contains("W: java.lang.Exception: exception_warn. Cause: java.lang.Exception: root_cause"));
         assertTrue(warnings.contains("W: Warning message on one line"));
         assertTrue(warnings.contains("W: First line of warning message on several lines"));
+    }
+
+    /**
+     * Unit test of {@link Main#preConstructorInit}.
+     */
+    @Test
+    public void testPreConstructorInit() {
+        Main.preConstructorInit();
+        assertNotNull(Main.getProjection());
+        assertEquals(Main.pref.get("laf", Main.platform.getDefaultStyle()), UIManager.getLookAndFeel().getClass().getCanonicalName());
+        assertNotNull(Main.toolbar);
     }
 }

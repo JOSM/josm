@@ -6,9 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.CancelAction;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.ChangesetDetailViewSynchronizer;
@@ -19,6 +18,9 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.Downlo
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.QueryAction;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.RemoveFromCacheAction;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.ShowDetailAction;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link ChangesetCacheManager} class.
@@ -28,10 +30,9 @@ public class ChangesetCacheManagerTest {
     /**
      * Setup tests
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Unit test of {@link ChangesetCacheManager#destroyInstance}.
