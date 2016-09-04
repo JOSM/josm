@@ -8,9 +8,7 @@ import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
@@ -595,9 +593,8 @@ public class Preferences {
             Utils.copyFile(prefFile, backupFile);
         }
 
-        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(
-                new FileOutputStream(prefFile + "_tmp"), StandardCharsets.UTF_8), false)) {
-            PreferencesWriter writer = new PreferencesWriter(out, false, defaults);
+        try (PreferencesWriter writer = new PreferencesWriter(
+                new PrintWriter(new File(prefFile + "_tmp"), StandardCharsets.UTF_8.name()), false, defaults)) {
             writer.write(settings);
         }
 

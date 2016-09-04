@@ -5,9 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -205,8 +203,7 @@ public final class OsmValidator {
     }
 
     public static void saveIgnoredErrors() {
-        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(
-                new File(getValidatorDir(), "ignorederrors")), StandardCharsets.UTF_8), false)) {
+        try (PrintWriter out = new PrintWriter(new File(getValidatorDir(), "ignorederrors"), StandardCharsets.UTF_8.name())) {
             for (String e : ignoredErrors) {
                 out.println(e);
             }

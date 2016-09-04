@@ -7,11 +7,9 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -235,7 +233,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
         }
         File cacheFile = createSiteCacheFile(pluginDir, site);
         getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));
-        try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), StandardCharsets.UTF_8))) {
+        try (PrintWriter writer = new PrintWriter(cacheFile, StandardCharsets.UTF_8.name())) {
             writer.write(list);
             writer.flush();
         } catch (IOException e) {
