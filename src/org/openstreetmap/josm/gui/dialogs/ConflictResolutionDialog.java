@@ -36,6 +36,8 @@ public class ConflictResolutionDialog extends ExtendedDialog implements Property
 
     private final ApplyResolutionAction applyResolutionAction = new ApplyResolutionAction();
 
+    private boolean isRegistered;
+
     /**
      * Constructs a new {@code ConflictResolutionDialog}.
      * @param parent parent component
@@ -64,14 +66,23 @@ public class ConflictResolutionDialog extends ExtendedDialog implements Property
         registerListeners();
     }
 
-    private void registerListeners() {
-        resolver.addPropertyChangeListener(applyResolutionAction);
-        resolver.registerListeners();
+    private synchronized void registerListeners() {
+        if (!isRegistered) {
+            resolver.addPropertyChangeListener(applyResolutionAction);
+            resolver.registerListeners();
+            isRegistered = true;
+        }
     }
 
-    private void unregisterListeners() {
-        resolver.removePropertyChangeListener(applyResolutionAction);
-        resolver.unregisterListeners();
+    private synchronized void unregisterListeners() {
+        // See #13479 - See https://bugs.openjdk.java.net/browse/JDK-4387314
+        // Owner window keep a list of owned windows, and does not remove the references when the child is disposed.
+        // There's no easy way to remove ourselves from this list, so we must keep track of register state
+        if (isRegistered) {
+            resolver.removePropertyChangeListener(applyResolutionAction);
+            resolver.unregisterListeners();
+            isRegistered = false;
+        }
     }
 
     /**
