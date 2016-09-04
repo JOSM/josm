@@ -221,7 +221,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         Conflict<? extends OsmPrimitive> c = conflicts.get(index);
         ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);
         dialog.getConflictResolver().populate(c);
-        dialog.setVisible(true);
+        dialog.showDialog();
 
         lstConflicts.setSelectedIndex(index);
 
