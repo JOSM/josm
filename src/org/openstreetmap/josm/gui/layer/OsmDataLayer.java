@@ -933,6 +933,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     @Override
     public void destroy() {
+        super.destroy();
         DataSet.removeSelectionListener(this);
     }
 

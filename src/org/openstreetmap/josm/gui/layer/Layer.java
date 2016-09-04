@@ -220,7 +220,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     private void addColorPropertyListener() {
         AbstractProperty<Color> colorProperty = getColorProperty();
         if (colorProperty != null) {
-            colorProperty.addWeakListener(invalidateListener);
+            colorProperty.addListener(invalidateListener);
         }
     }
 
@@ -284,6 +284,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     @Override
     public void destroy() {
         // Override in subclasses if needed
+        removeColorPropertyListener();
     }
 
     public File getAssociatedFile() {
@@ -649,5 +650,10 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
         BoundingXYVisitor v = new BoundingXYVisitor();
         visitBoundingBox(v);
         return v.getBounds();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [name=" + name + ", associatedFile=" + associatedFile + ']';
     }
 }
