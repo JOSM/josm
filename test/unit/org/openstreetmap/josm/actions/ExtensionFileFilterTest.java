@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
 /**
  * Unit tests for class {@link ExtensionFileFilter}.
@@ -42,6 +43,7 @@ public class ExtensionFileFilterTest {
     @Test
     public void testEqualsContract() {
         EqualsVerifier.forClass(ExtensionFileFilter.class).usingGetClass()
+            .suppress(Warning.ANNOTATION) // FIXME: remove it after https://github.com/jqno/equalsverifier/issues/152 is fixed
             .verify();
     }
 }
