@@ -22,6 +22,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
 /**
  * Unit tests for class {@link CombineWayAction}.
@@ -63,6 +64,7 @@ public class CombineWayActionTest {
     @Test
     public void testEqualsContract() {
         EqualsVerifier.forClass(NodePair.class).usingGetClass()
+            .suppress(Warning.ANNOTATION) // FIXME: remove it after https://github.com/jqno/equalsverifier/issues/152 is fixed
             .withPrefabValues(Node.class, new Node(1), new Node(2))
             .verify();
     }
