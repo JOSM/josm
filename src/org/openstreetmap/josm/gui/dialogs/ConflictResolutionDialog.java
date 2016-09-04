@@ -6,43 +6,51 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.WindowConstants;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * This is an extended dialog for resolving conflict between {@link OsmPrimitive}s.
  * @since 1622
  */
-public class ConflictResolutionDialog extends JDialog implements PropertyChangeListener {
+public class ConflictResolutionDialog extends ExtendedDialog implements PropertyChangeListener {
     /** the conflict resolver component */
-    private ConflictResolver resolver;
-    private JLabel titleLabel;
+    private final ConflictResolver resolver = new ConflictResolver();
+    private final JLabel titleLabel = new JLabel("", null, JLabel.CENTER);
 
-    private ApplyResolutionAction applyResolutionAction;
+    private final ApplyResolutionAction applyResolutionAction = new ApplyResolutionAction();
+
+    /**
+     * Constructs a new {@code ConflictResolutionDialog}.
+     * @param parent parent component
+     */
+    public ConflictResolutionDialog(Component parent) {
+        // We define our own actions, but need to give a hint about number of buttons
+        super(parent, tr("Resolve conflicts"), new String[] {null, null, null});
+        setDefaultButton(1);
+        setCancelButton(2);
+        build();
+        pack();
+        if (getInsets().top > 0) {
+            titleLabel.setVisible(false);
+        }
+    }
 
     @Override
     public void removeNotify() {
@@ -54,51 +62,6 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
     public void addNotify() {
         super.addNotify();
         registerListeners();
-    }
-
-    @Override
-    public void setVisible(boolean isVisible) {
-        String geom = getClass().getName() + ".geometry";
-        if (isVisible) {
-            toFront();
-            new WindowGeometry(geom, WindowGeometry.centerInWindow(Main.parent,
-                new Dimension(600, 400))).applySafe(this);
-        } else {
-            if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
-                new WindowGeometry(this).remember(geom);
-            }
-        }
-        super.setVisible(isVisible);
-    }
-
-    private void closeDialog() {
-        setVisible(false);
-        dispose();
-    }
-
-    /**
-     * builds the sub panel with the control buttons
-     *
-     * @return the panel
-     */
-    protected JPanel buildButtonRow() {
-        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
-
-        applyResolutionAction = new ApplyResolutionAction();
-        JButton btn = new JButton(applyResolutionAction);
-        btn.setName("button.apply");
-        pnl.add(btn);
-
-        btn = new JButton(new CancelAction());
-        btn.setName("button.cancel");
-        pnl.add(btn);
-
-        btn = new JButton(new HelpAction());
-        btn.setName("button.help");
-        pnl.add(btn);
-
-        pnl.setBorder(BorderFactory.createLoweredBevelBorder());
-        return pnl;
     }
 
     private void registerListeners() {
@@ -115,34 +78,28 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
      * builds the GUI
      */
     protected void build() {
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        getContentPane().setLayout(new BorderLayout());
+        JPanel p = new JPanel(new BorderLayout());
 
-        titleLabel = new JLabel();
-        titleLabel.setHorizontalAlignment(JLabel.CENTER);
-        getContentPane().add(titleLabel, BorderLayout.NORTH);
+        p.add(titleLabel, BorderLayout.NORTH);
 
         updateTitle();
 
-        resolver = new ConflictResolver();
         resolver.setName("panel.conflictresolver");
-        getContentPane().add(resolver, BorderLayout.CENTER);
-        getContentPane().add(buildButtonRow(), BorderLayout.SOUTH);
+        p.add(resolver, BorderLayout.CENTER);
 
         resolver.addPropertyChangeListener(this);
         HelpUtil.setHelpContext(this.getRootPane(), ht("Dialog/Conflict"));
+
+        setContent(p);
     }
 
-    /**
-     * Constructs a new {@code ConflictResolutionDialog}.
-     * @param parent parent component
-     */
-    public ConflictResolutionDialog(Component parent) {
-        super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
-        build();
-        pack();
-        if (getInsets().top > 0) {
-            titleLabel.setVisible(false);
+    @Override
+    protected Action createButtonAction(int i) {
+        switch (i) {
+            case 0: return applyResolutionAction;
+            case 1: return new CancelAction();
+            case 2: return new HelpAction();
+            default: return super.createButtonAction(i);
         }
     }
 
@@ -166,8 +123,8 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            closeDialog();
+        public void actionPerformed(ActionEvent evt) {
+            buttonAction(2, evt);
         }
     }
 
@@ -183,7 +140,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent evt) {
             HelpBrowser.setUrlForHelpTopic(ht("/Dialog/Conflict"));
         }
     }
@@ -205,7 +162,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         }
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent evt) {
             if (!resolver.isResolvedCompletely()) {
                 Object[] options = {
                         tr("Close anyway"),
@@ -228,15 +185,14 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
                 );
                 switch(ret) {
                 case JOptionPane.YES_OPTION:
-                    closeDialog();
+                    buttonAction(1, evt);
                     break;
                 default:
                     return;
                 }
             }
-            Command cmd = resolver.buildResolveCommand();
-            Main.main.undoRedo.add(cmd);
-            closeDialog();
+            Main.main.undoRedo.add(resolver.buildResolveCommand());
+            buttonAction(1, evt);
         }
 
         @Override

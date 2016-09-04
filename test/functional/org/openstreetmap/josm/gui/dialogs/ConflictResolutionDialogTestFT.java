@@ -31,7 +31,7 @@ public class ConflictResolutionDialogTestFT extends JFrame {
     }
 
     public void showDialog() {
-        dialog.setVisible(true);
+        dialog.showDialog();
     }
 
     /**

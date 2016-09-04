@@ -145,6 +145,14 @@ public class ExtendedDialog extends JDialog {
         this(parent, title, buttonTexts, modal, true);
     }
 
+    /**
+     * Same as above but lets you define if the dialog should be disposed on close.
+     * @param parent The parent element that will be used for position and maximum size
+     * @param title The text that will be shown in the window titlebar
+     * @param buttonTexts String Array of the text that will appear on the buttons. The first button is the default one.
+     * @param modal Set it to {@code true} if you want the dialog to be modal
+     * @param disposeOnClose whether to call {@link #dispose} when closing the dialog
+     */
     public ExtendedDialog(Component parent, String title, String[] buttonTexts, boolean modal, boolean disposeOnClose) {
         super(searchRealParent(parent), title, modal ? ModalityType.DOCUMENT_MODAL : ModalityType.MODELESS);
         this.parent = parent;
@@ -328,15 +336,7 @@ public class ExtendedDialog extends JDialog {
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
 
         for (int i = 0; i < bTexts.length; i++) {
-            final int finalI = i;
-            Action action = new AbstractAction(bTexts[i]) {
-                @Override
-                public void actionPerformed(ActionEvent evt) {
-                    buttonAction(finalI, evt);
-                }
-            };
-
-            button = new JButton(action);
+            button = new JButton(createButtonAction(i));
             if (i == defaultButtonIdx-1) {
                 defaultButton = button;
             }
@@ -429,6 +429,15 @@ public class ExtendedDialog extends JDialog {
 
         setSize(d);
         setLocationRelativeTo(parent);
+    }
+
+    protected Action createButtonAction(final int i) {
+        return new AbstractAction(bTexts[i]) {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                buttonAction(i, evt);
+            }
+        };
     }
 
     /**
