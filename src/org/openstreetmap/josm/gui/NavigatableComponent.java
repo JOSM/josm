@@ -549,24 +549,25 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * Zoom to the given coordinate and scale.
      *
-     * @param newCenter The center x-value (easting) to zoom to.
-     * @param newScale The scale to use.
+     * @param center The center x-value (easting) to zoom to.
+     * @param scale The scale to use.
      * @param initial true if this call initializes the viewport.
      */
-    public void zoomTo(EastNorth newCenter, double newScale, boolean initial) {
+    public void zoomTo(EastNorth center, double scale, boolean initial) {
         Bounds b = getProjection().getWorldBoundsLatLon();
         ProjectionBounds pb = getProjection().getWorldBoundsBoxEastNorth();
+        double newScale = scale;
         int width = getWidth();
         int height = getHeight();
 
         // make sure, the center of the screen is within projection bounds
-        double east = newCenter.east();
-        double north = newCenter.north();
+        double east = center.east();
+        double north = center.north();
         east = Math.max(east, pb.minEast);
         east = Math.min(east, pb.maxEast);
         north = Math.max(north, pb.minNorth);
         north = Math.min(north, pb.maxNorth);
-        newCenter = new EastNorth(east, north);
+        EastNorth newCenter = new EastNorth(east, north);
 
         // don't zoom out too much, the world bounds should be at least
         // half the size of the screen

@@ -802,11 +802,11 @@ public final class ConditionFactory {
         }
 
         protected static Method getMethod(String id) {
-            id = id.replaceAll("-|_", "");
+            String cleanId = id.replaceAll("-|_", "");
             for (Method method : PseudoClasses.class.getDeclaredMethods()) {
                 // for backwards compatibility, consider :sameTags == :same-tags == :same_tags (#11150)
                 final String methodName = method.getName().replaceAll("-|_", "");
-                if (methodName.equalsIgnoreCase(id)) {
+                if (methodName.equalsIgnoreCase(cleanId)) {
                     return method;
                 }
             }
