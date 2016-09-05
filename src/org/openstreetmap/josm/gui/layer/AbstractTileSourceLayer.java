@@ -1546,6 +1546,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         public boolean hasVisibleTiles;
         public boolean hasOverzoomedTiles;
         public boolean hasLoadingTiles;
+        public boolean hasAllLoadedTiles;
     }
 
     private static <S extends AbstractTMSTileSource> TileSetInfo getTileSetInfo(AbstractTileSourceLayer<S>.TileSet ts) {
@@ -1556,6 +1557,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             if ("no-tile".equals(t.getValue("tile-info"))) {
                 result.hasOverzoomedTiles = true;
             }
+            result.hasAllLoadedTiles &= t.isLoaded();
 
             if (t.isLoaded()) {
                 if (!t.hasError()) {
@@ -1669,12 +1671,22 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         // Too many tiles... refuse to download
         if (!ts.tooLarge()) {
-            //Main.debug("size: " + ts.size() + " spanned: " + ts.tilesSpanned());
+            // try to load tiles from desired zoom level, no matter what we will show (for example, tiles from previous zoom level
+            // on zoom in)
             ts.loadAllTiles(false);
         }
 
         if (displayZoomLevel != zoom) {
             ts = dts.getTileSet(displayZoomLevel);
+            if (!dts.getTileSetInfo(displayZoomLevel).hasAllLoadedTiles && displayZoomLevel < zoom) {
+                /*
+                 * if we are showing tiles from lower zoom level, ensure that all tiles are loaded
+                 * as they are few, and should not trash the tile cache
+                 * This is especially needed when dts.getTileSet(zoom).tooLarge() is true and we are
+                 * not loading tiles
+                 */
+                ts.loadAllTiles(false);
+            }
         }
 
         g.setColor(Color.DARK_GRAY);
