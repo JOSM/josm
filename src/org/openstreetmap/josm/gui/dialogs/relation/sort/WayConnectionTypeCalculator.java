@@ -70,7 +70,7 @@ public class WayConnectionTypeCalculator {
                 }
                 firstGroupIdx = i;
             }
-            lastWct = wct;
+            return wct;
         }
         return lastWct;
     }

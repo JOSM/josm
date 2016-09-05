@@ -76,11 +76,12 @@ public class ColorfulImageProcessor implements ImageProcessor {
         }
 
         @Override
-        public BufferedImage filter(BufferedImage src, BufferedImage dest) {
+        public BufferedImage filter(BufferedImage src, BufferedImage dst) {
             if (src.getWidth() == 0 || src.getHeight() == 0) {
                 return src;
             }
 
+            BufferedImage dest = dst;
             if (dest == null) {
                 dest = createCompatibleDestImage(src, null);
             }

@@ -129,11 +129,10 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         }
     }
 
-    protected void scanLocalPluginRepository(ProgressMonitor monitor, File pluginsDirectory) {
+    protected void scanLocalPluginRepository(ProgressMonitor progressMonitor, File pluginsDirectory) {
         if (pluginsDirectory == null)
             return;
-        if (monitor == null)
-            monitor = NullProgressMonitor.INSTANCE;
+        ProgressMonitor monitor = progressMonitor != null ? progressMonitor : NullProgressMonitor.INSTANCE;
         try {
             monitor.beginTask("");
             scanSiteCacheFiles(monitor, pluginsDirectory);

@@ -441,11 +441,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     @Deprecated
     public static void addLayerChangeListener(LayerChangeListener listener, boolean initialFire) {
         if (listener != null) {
-            initialFire = initialFire && (Main.isDisplayingMapView() || fireDeprecatedListenerOnAdd);
+            boolean doInitialFire = initialFire && (Main.isDisplayingMapView() || fireDeprecatedListenerOnAdd);
 
-            LayerChangeAdapter adapter = new LayerChangeAdapter(listener, initialFire);
-            Main.getLayerManager().addLayerChangeListener(adapter, initialFire);
-            if (initialFire) {
+            LayerChangeAdapter adapter = new LayerChangeAdapter(listener, doInitialFire);
+            Main.getLayerManager().addLayerChangeListener(adapter, doInitialFire);
+            if (doInitialFire) {
                 Main.getLayerManager().addAndFireActiveLayerChangeListener(adapter);
             } else {
                 Main.getLayerManager().addActiveLayerChangeListener(adapter);

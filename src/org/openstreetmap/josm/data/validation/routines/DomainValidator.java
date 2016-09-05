@@ -156,19 +156,19 @@ public final class DomainValidator extends AbstractValidator {
         if (domain == null) {
             return false;
         }
-        domain = unicodeToASCII(domain);
+        String asciiDomain = unicodeToASCII(domain);
         // hosts must be equally reachable via punycode and Unicode
         // Unicode is never shorter than punycode, so check punycode
         // if domain did not convert, then it will be caught by ASCII
         // checks in the regexes below
-        if (domain.length() > MAX_DOMAIN_LENGTH) {
+        if (asciiDomain.length() > MAX_DOMAIN_LENGTH) {
             return false;
         }
-        String[] groups = domainRegex.match(domain);
+        String[] groups = domainRegex.match(asciiDomain);
         if (groups != null && groups.length > 0) {
             return isValidTld(groups[0]);
         }
-        return allowLocal && hostnameRegex.isValid(domain);
+        return allowLocal && hostnameRegex.isValid(asciiDomain);
     }
 
     @Override
@@ -182,17 +182,17 @@ public final class DomainValidator extends AbstractValidator {
         if (domain == null) {
             return false;
         }
-        domain = unicodeToASCII(domain);
+        String asciiDomain = unicodeToASCII(domain);
         // hosts must be equally reachable via punycode and Unicode
         // Unicode is never shorter than punycode, so check punycode
         // if domain did not convert, then it will be caught by ASCII
         // checks in the regexes below
-        if (domain.length() > MAX_DOMAIN_LENGTH) {
+        if (asciiDomain.length() > MAX_DOMAIN_LENGTH) {
             return false;
         }
-        String[] groups = domainRegex.match(domain);
+        String[] groups = domainRegex.match(asciiDomain);
         return (groups != null && groups.length > 0)
-                || hostnameRegex.isValid(domain);
+                || hostnameRegex.isValid(asciiDomain);
     }
 
     /**
@@ -203,13 +203,13 @@ public final class DomainValidator extends AbstractValidator {
      * @return true if the parameter is a TLD
      */
     public boolean isValidTld(String tld) {
-        tld = unicodeToASCII(tld);
-        if (allowLocal && isValidLocalTld(tld)) {
+        String asciiTld = unicodeToASCII(tld);
+        if (allowLocal && isValidLocalTld(asciiTld)) {
             return true;
         }
-        return isValidInfrastructureTld(tld)
-                || isValidGenericTld(tld)
-                || isValidCountryCodeTld(tld);
+        return isValidInfrastructureTld(asciiTld)
+                || isValidGenericTld(asciiTld)
+                || isValidCountryCodeTld(asciiTld);
     }
 
     /**

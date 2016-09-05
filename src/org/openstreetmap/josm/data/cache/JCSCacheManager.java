@@ -200,7 +200,7 @@ public final class JCSCacheManager {
     private static IDiskCacheAttributes getDiskCacheAttributes(int maxDiskObjects, String cachePath, String cacheName) {
         IDiskCacheAttributes ret;
         removeStaleFiles(cachePath + File.separator + cacheName, USE_BLOCK_CACHE.get() ? "_INDEX_v2" : "_BLOCK_v2");
-        cacheName = cacheName + (USE_BLOCK_CACHE.get() ? "_BLOCK_v2" : "_INDEX_v2");
+        String newCacheName = cacheName + (USE_BLOCK_CACHE.get() ? "_BLOCK_v2" : "_INDEX_v2");
 
         if (USE_BLOCK_CACHE.get()) {
             BlockDiskCacheAttributes blockAttr = new BlockDiskCacheAttributes();
@@ -210,7 +210,7 @@ public final class JCSCacheManager {
              * If for some mysterious reason, file size is greater than the value set in preferences, just use the whole file. If the user
              * wants to reduce the file size, (s)he may just go to preferences and there it should be handled (by removing old file)
              */
-            File diskCacheFile = new File(cachePath + File.separator + cacheName + ".data");
+            File diskCacheFile = new File(cachePath + File.separator + newCacheName + ".data");
             if (diskCacheFile.exists()) {
                 blockAttr.setMaxKeySize((int) Math.max(maxDiskObjects, diskCacheFile.length()/1024));
             } else {
@@ -230,7 +230,7 @@ public final class JCSCacheManager {
         } else {
             ret.setDiskPath(cachePath);
         }
-        ret.setCacheName(cacheName);
+        ret.setCacheName(newCacheName);
 
         return ret;
     }
