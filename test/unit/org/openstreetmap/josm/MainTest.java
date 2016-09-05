@@ -10,9 +10,10 @@ import java.util.Collection;
 
 import javax.swing.UIManager;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main.DownloadParamType;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -24,10 +25,9 @@ public class MainTest {
     /**
      * Setup test.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().platform();
 
     /**
      * Unit test of {@link DownloadParamType#paramType} method.

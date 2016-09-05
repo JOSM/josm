@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.osm.Way
 import org.openstreetmap.josm.io.OsmReader
 import org.openstreetmap.josm.tools.SubclassFilteredCollection
 
-class CreateMultipolygonActionTest {
+public class CreateMultipolygonActionTest {
 
     @BeforeClass
     public static void setUp() {
