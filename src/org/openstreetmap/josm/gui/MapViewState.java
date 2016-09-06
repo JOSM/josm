@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -79,71 +80,65 @@ public final class MapViewState implements Serializable {
      * @param viewHeight The view height
      * @param scale The scale to use
      * @param topLeft The top left corner in east/north space.
+     * @param topLeftInWindow The top left point in window
+     * @param topLeftOnScreen The top left point on screen
      */
-    private MapViewState(Projecting projection, int viewWidth, int viewHeight, double scale, EastNorth topLeft) {
+    private MapViewState(Projecting projection, int viewWidth, int viewHeight, double scale, EastNorth topLeft,
+            Point topLeftInWindow, Point topLeftOnScreen) {
+        CheckParameterUtil.ensureParameterNotNull(projection, "projection");
+        CheckParameterUtil.ensureParameterNotNull(topLeft, "topLeft");
+        CheckParameterUtil.ensureParameterNotNull(topLeftInWindow, "topLeftInWindow");
+        CheckParameterUtil.ensureParameterNotNull(topLeftOnScreen, "topLeftOnScreen");
+
         this.projecting = projection;
         this.scale = scale;
         this.topLeft = topLeft;
 
         this.viewWidth = viewWidth;
         this.viewHeight = viewHeight;
-        topLeftInWindow = new Point(0, 0);
-        topLeftOnScreen = new Point(0, 0);
+        this.topLeftInWindow = topLeftInWindow;
+        this.topLeftOnScreen = topLeftOnScreen;
     }
 
-    private MapViewState(EastNorth topLeft, MapViewState mapViewState) {
-        this.projecting = mapViewState.projecting;
-        this.scale = mapViewState.scale;
-        this.topLeft = topLeft;
-
-        viewWidth = mapViewState.viewWidth;
-        viewHeight = mapViewState.viewHeight;
-        topLeftInWindow = mapViewState.topLeftInWindow;
-        topLeftOnScreen = mapViewState.topLeftOnScreen;
+    private MapViewState(Projecting projection, int viewWidth, int viewHeight, double scale, EastNorth topLeft) {
+        this(projection, viewWidth, viewHeight, scale, topLeft, new Point(0, 0), new Point(0, 0));
     }
 
-    private MapViewState(double scale, MapViewState mapViewState) {
-        this.projecting = mapViewState.projecting;
-        this.scale = scale;
-        this.topLeft = mapViewState.topLeft;
-
-        viewWidth = mapViewState.viewWidth;
-        viewHeight = mapViewState.viewHeight;
-        topLeftInWindow = mapViewState.topLeftInWindow;
-        topLeftOnScreen = mapViewState.topLeftOnScreen;
+    private MapViewState(EastNorth topLeft, MapViewState mvs) {
+        this(mvs.projecting, mvs.viewWidth, mvs.viewHeight, mvs.scale, topLeft, mvs.topLeftInWindow, mvs.topLeftOnScreen);
     }
 
-    private MapViewState(JComponent position, MapViewState mapViewState) {
-        this.projecting = mapViewState.projecting;
-        this.scale = mapViewState.scale;
-        this.topLeft = mapViewState.topLeft;
+    private MapViewState(double scale, MapViewState mvs) {
+        this(mvs.projecting, mvs.viewWidth, mvs.viewHeight, scale, mvs.topLeft, mvs.topLeftInWindow, mvs.topLeftOnScreen);
+    }
 
-        viewWidth = position.getWidth();
-        viewHeight = position.getHeight();
-        topLeftInWindow = new Point();
-        // better than using swing utils, since this allows us to use the mehtod if no screen is present.
+    private MapViewState(JComponent position, MapViewState mvs) {
+        this(mvs.projecting, position.getWidth(), position.getHeight(), mvs.scale, mvs.topLeft,
+                findTopLeftInWindow(position), findTopLeftOnScreen(position));
+    }
+
+    private MapViewState(Projecting projecting, MapViewState mvs) {
+        this(projecting, mvs.viewWidth, mvs.viewHeight, mvs.scale, mvs.topLeft, mvs.topLeftInWindow, mvs.topLeftOnScreen);
+    }
+
+    private static Point findTopLeftInWindow(JComponent position) {
+        Point result = new Point();
+        // better than using swing utils, since this allows us to use the method if no screen is present.
         Container component = position;
         while (component != null) {
-            topLeftInWindow.x += component.getX();
-            topLeftInWindow.y += component.getY();
+            result.x += component.getX();
+            result.y += component.getY();
             component = component.getParent();
         }
+        return result;
+    }
+
+    private static Point findTopLeftOnScreen(JComponent position) {
         try {
-            topLeftOnScreen = position.getLocationOnScreen();
+            return position.getLocationOnScreen();
         } catch (RuntimeException e) {
             throw BugReport.intercept(e).put("position", position).put("parent", position::getParent);
         }
-    }
-
-    private MapViewState(Projecting projecting, MapViewState mapViewState) {
-        this.projecting = projecting;
-        this.scale = mapViewState.scale;
-        this.topLeft = mapViewState.topLeft;
-
-        viewWidth = mapViewState.viewWidth;
-        viewHeight = mapViewState.viewHeight;
-        topLeftInWindow = mapViewState.topLeftInWindow;
-        topLeftOnScreen = mapViewState.topLeftOnScreen;
     }
 
     /**
@@ -573,6 +568,7 @@ public final class MapViewState implements Serializable {
         private final EastNorth eastNorth;
 
         MapViewEastNorthPoint(EastNorth eastNorth) {
+            CheckParameterUtil.ensureParameterNotNull(eastNorth, "eastNorth");
             this.eastNorth = eastNorth;
         }
 
