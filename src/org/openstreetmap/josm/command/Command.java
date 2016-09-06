@@ -252,12 +252,11 @@ public abstract class Command implements PseudoCommand {
     /**
      * Check whether user is about to operate on data outside of the download area.
      *
-     * @param operation the operation name which is used for setting some preferences
      * @param primitives the primitives to operate on
      * @param ignore {@code null} or a primitive to be ignored
      * @return true, if operating on outlying primitives is OK; false, otherwise
      */
-    public static int checkOutlyingOrIncompleteOperation(String operation,
+    public static int checkOutlyingOrIncompleteOperation(
             Collection<? extends OsmPrimitive> primitives,
             Collection<? extends OsmPrimitive> ignore) {
         int res = 0;
@@ -288,7 +287,7 @@ public abstract class Command implements PseudoCommand {
             String dialogTitle, String outsideDialogMessage, String incompleteDialogMessage,
             Collection<? extends OsmPrimitive> primitives,
             Collection<? extends OsmPrimitive> ignore) {
-        int checkRes = checkOutlyingOrIncompleteOperation(operation, primitives, ignore);
+        int checkRes = checkOutlyingOrIncompleteOperation(primitives, ignore);
         if ((checkRes & IS_OUTSIDE) != 0) {
             JPanel msg = new JPanel(new GridBagLayout());
             msg.add(new JMultilineLabel("<html>" + outsideDialogMessage + "</html>"));

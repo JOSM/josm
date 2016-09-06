@@ -1679,12 +1679,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (displayZoomLevel != zoom) {
             ts = dts.getTileSet(displayZoomLevel);
             if (!dts.getTileSetInfo(displayZoomLevel).hasAllLoadedTiles && displayZoomLevel < zoom) {
-                /*
-                 * if we are showing tiles from lower zoom level, ensure that all tiles are loaded
-                 * as they are few, and should not trash the tile cache
-                 * This is especially needed when dts.getTileSet(zoom).tooLarge() is true and we are
-                 * not loading tiles
-                 */
+                 // if we are showing tiles from lower zoom level, ensure that all tiles are loaded as they are few,
+                 // and should not trash the tile cache
+                 // This is especially needed when dts.getTileSet(zoom).tooLarge() is true and we are not loading tiles
                 ts.loadAllTiles(false);
             }
         }
@@ -1712,12 +1709,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                     continue;
                 }
                 Tile t2 = tempCornerTile(missed);
-                TileSet ts2 = getTileSet(
-                        getShiftedLatLon(tileSource.tileXYToLatLon(missed)),
-                        getShiftedLatLon(tileSource.tileXYToLatLon(t2)),
-                        newzoom);
-                // Instantiating large TileSets is expensive.  If there
-                // are no loaded tiles, don't bother even trying.
+                TileSet ts2 = getTileSet(getShiftedLatLon(tileSource.tileXYToLatLon(missed)),
+                                         getShiftedLatLon(tileSource.tileXYToLatLon(t2)),
+                                         newzoom);
+                // Instantiating large TileSets is expensive. If there are no loaded tiles, don't bother even trying.
                 if (ts2.allLoadedTiles().isEmpty()) {
                     newlyMissedTiles.add(missed);
                     continue;
@@ -1745,7 +1740,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         attribution.paintAttribution(g, mv.getWidth(), mv.getHeight(), getShiftedCoord(min), getShiftedCoord(max),
                 displayZoomLevel, this);
 
-        //g.drawString("currentZoomLevel=" + currentZoomLevel, 120, 120);
         g.setColor(Color.lightGray);
 
         if (ts.insane()) {
@@ -1755,7 +1749,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         } else if (!getDisplaySettings().isAutoZoom() && ts.tooSmall()) {
             myDrawString(g, tr("increase tiles zoom level (change resolution) to see more detail"), 120, 120);
         }
-
         if (noTilesAtZoom) {
             myDrawString(g, tr("No tiles at this zoom level"), 120, 120);
         }
@@ -1766,9 +1759,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             myDrawString(g, tr("Best zoom: {0}", getBestZoom()), 50, 185);
             myDrawString(g, tr("Estimated cache size: {0}", estimateTileCacheSize()), 50, 200);
             if (tileLoader instanceof TMSCachedTileLoader) {
-                TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
                 int offset = 200;
-                for (String part: cachedTileLoader.getStats().split("\n")) {
+                for (String part: ((TMSCachedTileLoader) tileLoader).getStats().split("\n")) {
                     offset += 15;
                     myDrawString(g, tr("Cache stats: {0}", part), 50, offset);
                 }
