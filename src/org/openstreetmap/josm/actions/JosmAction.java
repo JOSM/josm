@@ -22,7 +22,6 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -37,8 +36,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * A JosmAction can register a {@link LayerChangeListener} and a {@link SelectionChangedListener}. Upon
  * a layer change event or a selection change event it invokes {@link #updateEnabledState()}.
  * Subclasses can override {@link #updateEnabledState()} in order to update the {@link #isEnabled()}-state
- * of a JosmAction depending on the {@link #getCurrentDataSet()} and the current layers
- * (see also {@link #getEditLayer()}).
+ * of a JosmAction depending on the {@link #getLayerManager()} state.
  *
  * destroy() from interface Destroyable is called e.g. for MapModes, when the last layer has
  * been removed and so the mapframe will be destroyed. For other JosmActions, destroy() may never
@@ -267,28 +265,6 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      */
     public MainLayerManager getLayerManager() {
         return Main.getLayerManager();
-    }
-
-    /**
-     * Replies the current edit layer
-     *
-     * @return the current edit layer. null, if no edit layer exists
-     * @deprecated Use {@link #getLayerManager()}.getEditLayer() instead. To be removed in end of 2016.
-     */
-    @Deprecated
-    public static OsmDataLayer getEditLayer() {
-        return Main.getLayerManager().getEditLayer();
-    }
-
-    /**
-     * Replies the current dataset.
-     *
-     * @return the current dataset. null, if no current dataset exists
-     * @deprecated Use {@link #getLayerManager()}.getEditDataSet() instead. To be removed in end of 2016.
-     */
-    @Deprecated
-    public static DataSet getCurrentDataSet() {
-        return Main.getLayerManager().getEditDataSet();
     }
 
     protected static void waitFuture(final Future<?> future, final PleaseWaitProgressMonitor monitor) {

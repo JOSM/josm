@@ -68,7 +68,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.validation.OsmValidator;
-import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainFrame;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MainPanel;
@@ -80,7 +79,6 @@ import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
@@ -89,7 +87,6 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
@@ -206,13 +203,6 @@ public abstract class Main {
      * The file watcher service.
      */
     public static final FileWatcher fileWatcher = new FileWatcher();
-
-    /**
-     * The MOTD Layer.
-     * @deprecated Do not access this. It will be removed soon. You should not need to access the GettingStarted panel.
-     */
-    @Deprecated
-    public final GettingStarted gettingStarted = mainPanel.getGettingStarted();
 
     protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
 
@@ -467,33 +457,6 @@ public abstract class Main {
      */
     public static volatile PlatformHook platform;
 
-    /**
-     * Set or clear (if passed <code>null</code>) the map.
-     * <p>
-     * To be removed any time
-     * @param map The map to set {@link Main#map} to. Can be null.
-     * @deprecated This is done automatically by {@link MainPanel}
-     */
-    @Deprecated
-    public final void setMapFrame(final MapFrame map) {
-        Main.warn("setMapFrame call was ignored.");
-    }
-
-    /**
-     * Remove the specified layer from the map. If it is the last layer,
-     * remove the map as well.
-     * <p>
-     * To be removed end of 2016
-     * @param layer The layer to remove
-     * @deprecated You can remove the layer using {@link #getLayerManager()}
-     */
-    @Deprecated
-    public final synchronized void removeLayer(final Layer layer) {
-        if (map != null) {
-            getLayerManager().removeLayer(layer);
-        }
-    }
-
     private static volatile InitStatusListener initListener;
 
     public interface InitStatusListener {
@@ -626,24 +589,6 @@ public abstract class Main {
      * Add a new layer to the map.
      *
      * If no map exists, create one.
-     * <p>
-     * To be removed end of 2016
-     *
-     * @param layer the layer
-     *
-     * @see #addLayer(Layer, ProjectionBounds)
-     * @see #addLayer(Layer, ViewportData)
-     * @deprecated You can add the layer to the layer manager: {@link #getLayerManager()}
-     */
-    @Deprecated
-    public final void addLayer(final Layer layer) {
-        addLayer(layer, (ViewportData) null);
-    }
-
-    /**
-     * Add a new layer to the map.
-     *
-     * If no map exists, create one.
      *
      * @param layer the layer
      * @param bounds the bounds of the layer (target zoom area); can be null, then
@@ -670,60 +615,6 @@ public abstract class Main {
     }
 
     /**
-     * Creates the map frame. Call only in EDT Thread.
-     * <p>
-     * To be removed any time
-     * @param firstLayer The first layer that was added.
-     * @param viewportData The initial viewport. Can be <code>null</code> to be automatically computed.
-     * @deprecated Not supported. MainPanel does this automatically.
-     */
-    @Deprecated
-    public synchronized void createMapFrame(Layer firstLayer, ViewportData viewportData) {
-        GuiHelper.assertCallFromEdt();
-        Main.error("createMapFrame() not supported any more.");
-    }
-
-    /**
-     * Replies <code>true</code> if there is an edit layer
-     * <p>
-     * To be removed end of 2016
-     *
-     * @return <code>true</code> if there is an edit layer
-     * @deprecated You can get the edit layer using the layer manager and then check if it is not null: {@link #getLayerManager()}
-     */
-    @Deprecated
-    public boolean hasEditLayer() {
-        if (getEditLayer() == null) return false;
-        return true;
-    }
-
-    /**
-     * Replies the current edit layer
-     * <p>
-     * To be removed end of 2016
-     *
-     * @return the current edit layer. <code>null</code>, if no current edit layer exists
-     * @deprecated You can get the edit layer using the layer manager: {@link #getLayerManager()}
-     */
-    @Deprecated
-    public OsmDataLayer getEditLayer() {
-        return getLayerManager().getEditLayer();
-    }
-
-    /**
-     * Replies the current data set.
-     * <p>
-     * To be removed end of 2016
-     *
-     * @return the current data set. <code>null</code>, if no current data set exists
-     * @deprecated You can get the data set using the layer manager: {@link #getLayerManager()}
-     */
-    @Deprecated
-    public DataSet getCurrentDataSet() {
-        return getLayerManager().getEditDataSet();
-    }
-
-    /**
      * Replies the current selected primitives, from a end-user point of view.
      * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
      * Indeed, if the user is currently in drawing mode, only the way currently being drawn is returned,
@@ -740,19 +631,6 @@ public abstract class Main {
             if (ds == null) return null;
             return ds.getSelected();
         }
-    }
-
-    /**
-     * Returns the currently active  layer
-     * <p>
-     * To be removed end of 2016
-     *
-     * @return the currently active layer. <code>null</code>, if currently no active layer exists
-     * @deprecated You can get the layer using the layer manager: {@link #getLayerManager()}
-     */
-    @Deprecated
-    public Layer getActiveLayer() {
-        return getLayerManager().getActiveLayer();
     }
 
     protected static final JPanel contentPanePrivate = new JPanel(new BorderLayout());

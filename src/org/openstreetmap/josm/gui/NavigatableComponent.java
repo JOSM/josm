@@ -303,16 +303,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         zoomTo(state.getCenterAtPixel().getEastNorth(), scaleZoomOut());
     }
 
-    /**
-     * Returns current data set. To be removed: end of 2016.
-     * @return current data set
-     * @deprecated Use {@link Main#getLayerManager()}.getEditDataSet() instead.
-     */
-    @Deprecated
-    protected DataSet getCurrentDataSet() {
-        return Main.getLayerManager().getEditDataSet();
-    }
-
     protected void updateLocationState() {
         if (isVisibleOnScreen()) {
             state = state.usingLocation(this);
