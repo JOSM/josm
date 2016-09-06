@@ -93,7 +93,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public final class DataSet implements Data, Cloneable, ProjectionChangeListener {
+public final class DataSet implements Data, ProjectionChangeListener {
 
     /**
      * Maximum number of events that can be fired between beginUpdate/endUpdate to be send as single events (ie without DatasetChangedEvent)
@@ -918,16 +918,6 @@ public final class DataSet implements Data, Cloneable, ProjectionChangeListener 
             }
             fireSelectionChanged();
         }
-    }
-
-    /**
-     * Return a copy of this dataset
-     * @deprecated Use the copy constructor instead. Remove in July 2016
-     */
-    @Deprecated
-    @Override
-    public DataSet clone() {
-        return new DataSet(this);
     }
 
     @Override

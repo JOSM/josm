@@ -181,19 +181,6 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     public abstract Icon getIcon();
 
     /**
-     * Return a Color for this layer. Return null when no color specified.
-     * @param ignoreCustom Custom color should return null, as no default color
-     *      is used. When this is true, then even for custom coloring the base
-     *      color is returned - mainly for layer internal use.
-     * @return layer color
-     * @deprecated Use the new {@link #getColorProperty()}. To be removed end of 2016.
-     */
-    @Deprecated
-    public Color getColor(boolean ignoreCustom) {
-        return null;
-    }
-
-    /**
      * Gets the color property to use for this layer.
      * @return The color property.
      * @since 10824
@@ -615,15 +602,6 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      */
     public File createAndOpenSaveFileChooser() {
         return SaveActionBase.createAndOpenSaveFileChooser(tr("Save Layer"), "lay");
-    }
-
-    /**
-     * @return bytes that the tile will use. Needed for resource management
-     * @deprecated Not used any more.
-     */
-    @Deprecated
-    protected long estimateMemoryUsage() {
-        return 0;
     }
 
     /**

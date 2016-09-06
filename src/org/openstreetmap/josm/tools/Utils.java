@@ -7,8 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.Transferable;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.io.BufferedReader;
@@ -53,7 +51,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -68,7 +65,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -98,39 +94,6 @@ public final class Utils {
 
     private Utils() {
         // Hide default constructor for utils classes
-    }
-
-    /**
-     * Tests whether {@code predicate} applies to at least one element from {@code collection}.
-     * <p>
-     * @param <T> type of items
-     * @param collection the collection
-     * @param predicate the predicate
-     * @return {@code true} if {@code predicate} applies to at least one element from {@code collection}
-     * @deprecated use {@link Stream#anyMatch(Predicate)} instead.
-     */
-    @Deprecated
-    public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
-        for (T item : collection) {
-            if (predicate.test(item)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Tests whether {@code predicate} applies to all elements from {@code collection}.
-     * <p>
-     * @param <T> type of items
-     * @param collection the collection
-     * @param predicate the predicate
-     * @return {@code true} if {@code predicate} applies to all elements from {@code collection}
-     * @deprecated use {@link Stream#allMatch(Predicate)} instead.
-     */
-    @Deprecated
-    public static <T> boolean forAll(Iterable<? extends T> collection, Predicate<? super T> predicate) {
-        return !exists(collection, predicate.negate());
     }
 
     /**
@@ -579,39 +542,6 @@ public final class Utils {
                 return false;
         }
         return true;
-    }
-
-    /**
-     * Copies the string {@code s} to system clipboard.
-     * @param s string to be copied to clipboard.
-     * @return true if succeeded, false otherwise.
-     * @deprecated Use {@link ClipboardUtils#copyString(String)}. To be removed end of 2016.
-     */
-    @Deprecated
-    public static boolean copyToClipboard(String s) {
-        return ClipboardUtils.copyString(s);
-    }
-
-    /**
-     * Extracts clipboard content as {@code Transferable} object.
-     * @param clipboard clipboard from which contents are retrieved
-     * @return clipboard contents if available, {@code null} otherwise.
-     * @since 8429
-     * @deprecated Use {@link ClipboardUtils#getClipboardContent(Clipboard)} instead. To be removed end of 2016.
-     */
-    @Deprecated
-    public static Transferable getTransferableContent(Clipboard clipboard) {
-        return ClipboardUtils.getClipboardContent(clipboard);
-    }
-
-    /**
-     * Extracts clipboard content as string.
-     * @return string clipboard contents if available, {@code null} otherwise.
-     * @deprecated Use {@link ClipboardUtils#getClipboardStringContent()}. To be removed end of 2016
-     */
-    @Deprecated
-    public static String getClipboardContent() {
-        return ClipboardUtils.getClipboardStringContent();
     }
 
     /**

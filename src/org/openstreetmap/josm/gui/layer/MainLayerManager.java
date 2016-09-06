@@ -153,22 +153,6 @@ public class MainLayerManager extends LayerManager {
      * Adds a active/edit layer change listener
      *
      * @param listener the listener.
-     * @param initialFire use {@link #addAndFireActiveLayerChangeListener(ActiveLayerChangeListener)} instead.
-     * @deprecated Do not use the second parameter. To be removed in a few weeks.
-     */
-    @Deprecated
-    public synchronized void addActiveLayerChangeListener(ActiveLayerChangeListener listener, boolean initialFire) {
-        if (initialFire) {
-            addAndFireActiveLayerChangeListener(listener);
-        } else {
-            addActiveLayerChangeListener(listener);
-        }
-    }
-
-    /**
-     * Adds a active/edit layer change listener
-     *
-     * @param listener the listener.
      */
     public synchronized void addActiveLayerChangeListener(ActiveLayerChangeListener listener) {
         if (activeLayerChangeListeners.contains(listener)) {

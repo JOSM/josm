@@ -18,7 +18,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
@@ -195,88 +194,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         }
         return ret;
     }
-
-    /**
-     * A predicate that filters primitives that are usable.
-     * @see OsmPrimitive#isUsable()
-     * @deprecated Use {@code OsmPrimitive::isUsable} instead
-     */
-    @Deprecated
-    public static final Predicate<OsmPrimitive> isUsablePredicate = OsmPrimitive::isUsable;
-
-    /**
-     * A predicate filtering primitives that are selectable.
-     * @deprecated Use {@code OsmPrimitive::isSelectable} instead
-     */
-    @Deprecated
-    public static final Predicate<OsmPrimitive> isSelectablePredicate = OsmPrimitive::isSelectable;
-
-    /**
-     * A predicate filtering primitives that are not deleted.
-     * @deprecated Use {@code p -> !p.isDeleted()} instead
-     */
-    @Deprecated
-    public static final Predicate<OsmPrimitive> nonDeletedPredicate = p -> !p.isDeleted();
-
-    /**
-     * A predicate filtering primitives that are not deleted and not incomplete.
-     * @deprecated use lambda instead
-     */
-    @Deprecated
-    public static final Predicate<OsmPrimitive> nonDeletedCompletePredicate =
-            primitive -> !primitive.isDeleted() && !primitive.isIncomplete();
-
-    /**
-     * A predicate filtering primitives that are not deleted and not incomplete and that are not a relation.
-     * @deprecated use lambda instead
-     */
-    @Deprecated
-    public static final Predicate<OsmPrimitive> nonDeletedPhysicalPredicate =
-            primitive -> !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation);
-
-    /**
-     * A predicate filtering primitives that are modified
-     * @deprecated Use {@code OsmPrimitive::isModified} instead
-     */
-    @Deprecated
-    public static final Predicate<OsmPrimitive> modifiedPredicate = OsmPrimitive::isModified;
-
-    /**
-     * A predicate filtering nodes.
-     * @deprecated Use {@code Node.class::isInstance} instead
-     */
-    @Deprecated
-    public static final Predicate<OsmPrimitive> nodePredicate = Node.class::isInstance;
-
-    /**
-     * A predicate filtering ways.
-     * @deprecated Use {@code Way.class::isInstance} instead
-     */
-    @Deprecated
-    public static final Predicate<OsmPrimitive> wayPredicate = Way.class::isInstance;
-
-    /**
-     * A predicate filtering relations.
-     * @deprecated Use {@code Relation.class::isInstance} instead
-     */
-    @Deprecated
-    public static final Predicate<OsmPrimitive> relationPredicate = Relation.class::isInstance;
-
-    /**
-     * A predicate filtering multipolygon relations.
-     * @deprecated Use {@code OsmPrimitive::isMultipolygon} instead
-     */
-    @Deprecated
-    public static final Predicate<OsmPrimitive> multipolygonPredicate = OsmPrimitive::isMultipolygon;
-
-    /**
-     * This matches all ways that have a direction
-     *
-     * @see #FLAG_HAS_DIRECTIONS
-     * @deprecated use {@code directionKeys::match}
-     */
-    @Deprecated
-    public static final Predicate<Tag> directionalKeyPredicate = directionKeys::match;
 
     /**
      * Creates a new primitive for the given id.

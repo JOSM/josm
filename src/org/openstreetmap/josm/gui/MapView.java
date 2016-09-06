@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,7 +20,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -58,11 +55,11 @@ import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
-import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.MapViewGraphics;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.LayerPainter;
@@ -92,53 +89,6 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
 public class MapView extends NavigatableComponent
 implements PropertyChangeListener, PreferenceChangedListener,
 LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
-    /**
-     * Interface to notify listeners of a layer change.
-     * <p>
-     * To be removed: end of 2016.
-     * @deprecated Use {@link org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener} instead.
-     * @author imi
-     */
-    @Deprecated
-    public interface LayerChangeListener {
-
-        /**
-         * Notifies this listener that the active layer has changed.
-         * @param oldLayer The previous active layer
-         * @param newLayer The new activer layer
-         */
-        void activeLayerChange(Layer oldLayer, Layer newLayer);
-
-        /**
-         * Notifies this listener that a layer has been added.
-         * @param newLayer The new added layer
-         */
-        void layerAdded(Layer newLayer);
-
-        /**
-         * Notifies this listener that a layer has been removed.
-         * @param oldLayer The old removed layer
-         */
-        void layerRemoved(Layer oldLayer);
-    }
-
-    /**
-     * An interface that needs to be implemented in order to listen for changes to the active edit layer.
-     * <p>
-     * To be removed: end of 2016.
-     * @deprecated Use {@link ActiveLayerChangeListener} instead.
-     */
-    @Deprecated
-    @FunctionalInterface
-    public interface EditLayerChangeListener {
-
-        /**
-         * Called after the active edit layer was changed.
-         * @param oldLayer The old edit layer
-         * @param newLayer The current (new) edit layer
-         */
-        void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer);
-    }
 
     /**
      * An invalidation listener that simply calls repaint() for now.
@@ -210,138 +160,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     }
 
     /**
-     * This class is an adapter for the old layer change interface.
-     * @author Michael Zangl
-     * @since 10271
-     * @deprecated New implementations should use {@link org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener}
-     */
-    @Deprecated
-    protected static class LayerChangeAdapter implements ActiveLayerChangeListener, LayerManager.LayerChangeListener {
-
-        private final LayerChangeListener wrapped;
-        private boolean receiveOneInitialFire;
-
-        public LayerChangeAdapter(LayerChangeListener wrapped) {
-            this.wrapped = wrapped;
-        }
-
-        public LayerChangeAdapter(LayerChangeListener wrapped, boolean initialFire) {
-            this(wrapped);
-            this.receiveOneInitialFire = initialFire;
-        }
-
-        @Override
-        public void layerAdded(LayerAddEvent e) {
-            wrapped.layerAdded(e.getAddedLayer());
-        }
-
-        @Override
-        public void layerRemoving(LayerRemoveEvent e) {
-            wrapped.layerRemoved(e.getRemovedLayer());
-        }
-
-        @Override
-        public void layerOrderChanged(LayerOrderChangeEvent e) {
-            // not in old API
-        }
-
-        @Override
-        public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-            Layer oldActive = receiveOneInitialFire ? null : e.getPreviousActiveLayer();
-            Layer newActive = e.getSource().getActiveLayer();
-            if (oldActive != newActive) {
-                wrapped.activeLayerChange(oldActive, newActive);
-            }
-            receiveOneInitialFire = false;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((wrapped == null) ? 0 : wrapped.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            LayerChangeAdapter other = (LayerChangeAdapter) obj;
-            if (wrapped == null) {
-                if (other.wrapped != null)
-                    return false;
-            } else if (!wrapped.equals(other.wrapped))
-                return false;
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "LayerChangeAdapter [wrapped=" + wrapped + ']';
-        }
-    }
-
-    /**
-     * This class is an adapter for the old layer change interface.
-     * @author Michael Zangl
-     * @since 10271
-     * @deprecated New implementations should use {@link org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener}
-     */
-    @Deprecated
-    protected static class EditLayerChangeAdapter implements ActiveLayerChangeListener {
-
-        private final EditLayerChangeListener wrapped;
-
-        public EditLayerChangeAdapter(EditLayerChangeListener wrapped) {
-            this.wrapped = wrapped;
-        }
-
-        @Override
-        public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-            OsmDataLayer oldLayer = e.getPreviousEditLayer();
-            OsmDataLayer newLayer = e.getSource().getEditLayer();
-            if (oldLayer != newLayer) {
-                wrapped.editLayerChanged(oldLayer, newLayer);
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((wrapped == null) ? 0 : wrapped.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            EditLayerChangeAdapter other = (EditLayerChangeAdapter) obj;
-            if (wrapped == null) {
-                if (other.wrapped != null)
-                    return false;
-            } else if (!wrapped.equals(other.wrapped))
-                return false;
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "EditLayerChangeAdapter [wrapped=" + wrapped + ']';
-        }
-    }
-
-    /**
      * A layer painter that issues a warning when being called.
      * @author Michael Zangl
      * @since 10474
@@ -367,128 +185,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             // ignored
         }
     }
-
-    /**
-     * Removes a layer change listener
-     * <p>
-     * To be removed: end of 2016.
-     *
-     * @param listener the listener. Ignored if null or not registered.
-     * @deprecated You should register the listener on {@link Main#getLayerManager()} instead.
-     */
-    @Deprecated
-    public static void removeLayerChangeListener(LayerChangeListener listener) {
-        LayerChangeAdapter adapter = new LayerChangeAdapter(listener);
-        try {
-            Main.getLayerManager().removeLayerChangeListener(adapter);
-        } catch (IllegalArgumentException e) {
-            // Ignored in old implementation
-            Main.debug(e);
-        }
-        try {
-            Main.getLayerManager().removeActiveLayerChangeListener(adapter);
-        } catch (IllegalArgumentException e) {
-            // Ignored in old implementation
-            Main.debug(e);
-        }
-    }
-
-    /**
-     * Removes an edit layer change listener
-     * <p>
-     * To be removed: end of 2016.
-     *
-     * @param listener the listener. Ignored if null or not registered.
-     * @deprecated You should register the listener on {@link Main#getLayerManager()} instead.
-     */
-    @Deprecated
-    public static void removeEditLayerChangeListener(EditLayerChangeListener listener) {
-        try {
-            Main.getLayerManager().removeActiveLayerChangeListener(new EditLayerChangeAdapter(listener));
-        } catch (IllegalArgumentException e) {
-            // Ignored in old implementation
-            Main.debug(e);
-        }
-    }
-
-    /**
-     * Adds a layer change listener
-     * <p>
-     * To be removed: end of 2016.
-     *
-     * @param listener the listener. Ignored if null or already registered.
-     * @deprecated You should register the listener on {@link Main#getLayerManager()} instead.
-     */
-    @Deprecated
-    public static void addLayerChangeListener(LayerChangeListener listener) {
-        if (fireDeprecatedListenerOnAdd) {
-            Main.warn("Plugin seems to be adding listener during mapFrameInitialized(): " + BugReport.getCallingMethod(2)
-            + ". Layer listeners should be set on plugin load.");
-        }
-        addLayerChangeListener(listener, fireDeprecatedListenerOnAdd);
-    }
-
-    /**
-     * Adds a layer change listener
-     * <p>
-     * To be removed: end of 2016.
-     *
-     * @param listener the listener. Ignored if null or already registered.
-     * @param initialFire fire an active-layer-changed-event right after adding
-     * the listener in case there is a layer present (should be)
-     * @deprecated You should register the listener on {@link Main#getLayerManager()} instead.
-     */
-    @Deprecated
-    public static void addLayerChangeListener(LayerChangeListener listener, boolean initialFire) {
-        if (listener != null) {
-            boolean doInitialFire = initialFire && (Main.isDisplayingMapView() || fireDeprecatedListenerOnAdd);
-
-            LayerChangeAdapter adapter = new LayerChangeAdapter(listener, doInitialFire);
-            Main.getLayerManager().addLayerChangeListener(adapter, doInitialFire);
-            if (doInitialFire) {
-                Main.getLayerManager().addAndFireActiveLayerChangeListener(adapter);
-            } else {
-                Main.getLayerManager().addActiveLayerChangeListener(adapter);
-            }
-            adapter.receiveOneInitialFire = false;
-        }
-    }
-
-    /**
-     * Adds an edit layer change listener
-     * <p>
-     * To be removed: end of 2016.
-     *
-     * @param listener the listener. Ignored if null or already registered.
-     * @param initialFire fire an edit-layer-changed-event right after adding
-     * the listener in case there is an edit layer present
-     * @deprecated You should register the listener on {@link Main#getLayerManager()} instead.
-     */
-    @Deprecated
-    public static void addEditLayerChangeListener(EditLayerChangeListener listener, boolean initialFire) {
-        if (listener != null) {
-            boolean doFire = initialFire && Main.isDisplayingMapView() && Main.getLayerManager().getEditLayer() != null;
-            if (doFire) {
-                Main.getLayerManager().addAndFireActiveLayerChangeListener(new EditLayerChangeAdapter(listener));
-            } else {
-                Main.getLayerManager().addActiveLayerChangeListener(new EditLayerChangeAdapter(listener));
-            }
-        }
-    }
-
-    /**
-     * Adds an edit layer change listener
-     * <p>
-     * To be removed: end of 2016.
-     *
-     * @param listener the listener. Ignored if null or already registered.
-     * @deprecated You should register the listener on {@link Main#getLayerManager()} instead.
-     */
-    @Deprecated
-    public static void addEditLayerChangeListener(EditLayerChangeListener listener) {
-        addEditLayerChangeListener(listener, false);
-    }
-
 
     /**
      * Temporary. To be removed as soon as the {@link LayerChangeListener}s are removed.
@@ -631,18 +327,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         oldLoc = getLocationOnScreen();
     }
 
-    /**
-     * Add a layer to the current MapView.
-     * <p>
-     * To be removed: end of 2016.
-     * @param layer The layer to add
-     * @deprecated Use {@link Main#getLayerManager()}.addLayer() instead.
-     */
-    @Deprecated
-    public void addLayer(Layer layer) {
-        layerManager.addLayer(layer);
-    }
-
     @Override
     public void layerAdded(LayerAddEvent e) {
         try {
@@ -674,16 +358,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     }
 
     /**
-     * Returns current data set. To be removed: end of 2016.
-     * @deprecated Use {@link #getLayerManager()}.getEditDataSet() instead.
-     */
-    @Override
-    @Deprecated
-    protected DataSet getCurrentDataSet() {
-        return layerManager.getEditDataSet();
-    }
-
-    /**
      * Replies true if the active data layer (edit layer) is drawable.
      *
      * @return true if the active data layer (edit layer) is drawable, false otherwise
@@ -700,48 +374,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     public boolean isActiveLayerVisible() {
         OsmDataLayer e = layerManager.getEditLayer();
         return e != null && e.isVisible();
-    }
-
-    /**
-     * Determines the next active data layer according to the following rules:
-     * <ul>
-     *   <li>if there is at least one {@link OsmDataLayer} the first one
-     *     becomes active</li>
-     *   <li>otherwise, the top most layer of any type becomes active</li>
-     * </ul>
-     * To be removed: end of 2016.
-     * @param layersList lit of layers
-     *
-     * @return the next active data layer
-     * @deprecated now handled by {@link MainLayerManager}
-     */
-    @Deprecated
-    protected Layer determineNextActiveLayer(List<Layer> layersList) {
-        // First look for data layer
-        for (Layer layer:layersList) {
-            if (layer instanceof OsmDataLayer)
-                return layer;
-        }
-
-        // Then any layer
-        if (!layersList.isEmpty())
-            return layersList.get(0);
-
-        // and then give up
-        return null;
-    }
-
-    /**
-     * Remove the layer from the mapview. If the layer was in the list before,
-     * an LayerChange event is fired.
-     * <p>
-     * To be removed: end of 2016.
-     * @param layer The layer to remove
-     * @deprecated Use {@link Main#getLayerManager()}.removeLayer() instead.
-     */
-    @Deprecated
-    public void removeLayer(Layer layer) {
-        layerManager.removeLayer(layer);
     }
 
     @Override
@@ -796,40 +428,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     public void layerOrderChanged(LayerOrderChangeEvent e) {
         AudioPlayer.reset();
         repaint();
-    }
-
-    /**
-     * Gets the index of the layer in the layer list.
-     * <p>
-     * To be removed: end of 2016.
-     * @param layer The layer to search for.
-     * @return The index in the list.
-     * @throws IllegalArgumentException if that layer does not belong to this view.
-     * @deprecated Access the layer list using {@link Main#getLayerManager()} instead.
-     */
-    @Deprecated
-    public int getLayerPos(Layer layer) {
-        int curLayerPos = layerManager.getLayers().indexOf(layer);
-        if (curLayerPos == -1)
-            throw new IllegalArgumentException(tr("Layer not in list."));
-        return curLayerPos;
-    }
-
-    /**
-     * Creates a list of the visible layers in Z-Order, the layer with the lowest Z-Order
-     * first, layer with the highest Z-Order last.
-     * <p>
-     * The active data layer is pulled above all adjacent data layers.
-     * <p>
-     * To be removed: end of 2016.
-     *
-     * @return a list of the visible in Z-Order, the layer with the lowest Z-Order
-     * first, layer with the highest Z-Order last.
-     * @deprecated Access the layer list using {@link Main#getLayerManager()} instead.
-     */
-    @Deprecated
-    public List<Layer> getVisibleLayersInZOrder() {
-        return layerManager.getVisibleLayersInZOrder();
     }
 
     private void paintLayer(Layer layer, Graphics2D g, Bounds box) {
@@ -1048,97 +646,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         return true;
     }
 
-    /**
-     * Returns all layers. To be removed: end of 2016.
-     *
-     * @return An unmodifiable collection of all layers
-     * @deprecated Use {@link LayerManager#getLayers()} instead.
-     */
-    @Deprecated
-    public Collection<Layer> getAllLayers() {
-        return layerManager.getLayers();
-    }
-
-    /**
-     * Returns all layers as list. To be removed: end of 2016.
-     *
-     * @return An unmodifiable ordered list of all layers
-     * @deprecated Use {@link LayerManager#getLayers()} instead.
-     */
-    @Deprecated
-    public List<Layer> getAllLayersAsList() {
-        return layerManager.getLayers();
-    }
-
-    /**
-     * Replies an unmodifiable list of layers of a certain type. To be removed: end of 2016.
-     *
-     * Example:
-     * <pre>
-     *     List&lt;WMSLayer&gt; wmsLayers = getLayersOfType(WMSLayer.class);
-     * </pre>
-     *
-     * @param <T> layer type
-     *
-     * @param ofType The layer type.
-     * @return an unmodifiable list of layers of a certain type.
-     * @deprecated Use {@link LayerManager#getLayersOfType(Class)} instead.
-     */
-    @Deprecated
-    public <T extends Layer> List<T> getLayersOfType(Class<T> ofType) {
-        return layerManager.getLayersOfType(ofType);
-    }
-
-    /**
-     * Replies the number of layers managed by this map view. To be removed: end of 2016.
-     * <p>
-     *
-     * @return the number of layers managed by this map view
-     * @deprecated Use {@link Main#getLayerManager()}.getLayers().size() instead.
-     */
-    @Deprecated
-    public int getNumLayers() {
-        return getAllLayers().size();
-    }
-
-    /**
-     * Replies true if there is at least one layer in this map view
-     * <p>
-     *
-     * @return true if there is at least one layer in this map view
-     * @deprecated Use !{@link Main#getLayerManager()}.getLayers().isEmpty() instead.
-     */
-    @Deprecated
-    public boolean hasLayers() {
-        return getNumLayers() > 0;
-    }
-
-    /**
-     * Sets the active layer to <code>layer</code>. If <code>layer</code> is an instance
-     * of {@link OsmDataLayer} also sets editLayer to <code>layer</code>.
-     * <p>
-     *
-     * @param layer the layer to be activate; must be one of the layers in the list of layers
-     * @throws IllegalArgumentException if layer is not in the list of layers
-     * @deprecated Use !{@link Main#getLayerManager()}.setActiveLayer() instead.
-     */
-    @Deprecated
-    public void setActiveLayer(Layer layer) {
-        layerManager.setActiveLayer(layer);
-    }
-
-    /**
-     * Replies the currently active layer
-     * <p>
-     *
-     * @return the currently active layer (may be null)
-     * @deprecated Use !{@link Main#getLayerManager()}.getActiveLayer() instead.
-     */
-    @Deprecated
-    public Layer getActiveLayer() {
-        return layerManager.getActiveLayer();
-    }
-
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
         if (Main.map != null) {
@@ -1160,31 +667,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
         AudioPlayer.reset();
         repaint();
-    }
-
-    /**
-     * Replies the current edit layer, if any
-     * <p>
-     *
-     * @return the current edit layer. May be null.
-     * @deprecated Use !{@link Main#getLayerManager()}.getEditLayer() instead. To be made private: end of 2016.
-     */
-    @Deprecated
-    public OsmDataLayer getEditLayer() {
-        return layerManager.getEditLayer();
-    }
-
-    /**
-     * replies true if the list of layers managed by this map view contain layer
-     * <p>
-     *
-     * @param layer the layer
-     * @return true if the list of layers managed by this map view contain layer
-     * @deprecated Use !{@link Main#getLayerManager()}.containsLayer() instead.
-     */
-    @Deprecated
-    public boolean hasLayer(Layer layer) {
-        return layerManager.containsLayer(layer);
     }
 
     /**
@@ -1240,18 +722,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             if (l.isVisible()) {
                 invalidatedListener.invalidate(l);
             }
-        }
-    }
-
-    /**
-     * Sets the title of the JOSM main window, adding a star if there are dirty layers.
-     * @see Main#parent
-     * @deprecated Replaced by {@link MainFrame#refreshTitle()}. The {@link MainFrame} should handle this by itself.
-     */
-    @Deprecated
-    protected void refreshTitle() {
-        if (Main.parent != null) {
-            ((MainFrame) Main.parent).refreshTitle();
         }
     }
 

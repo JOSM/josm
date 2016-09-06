@@ -323,18 +323,6 @@ public class TagCollection implements Iterable<Tag>, Serializable {
     }
 
     /**
-     * Replies true if this tag collection contains at least one tag with key <code>key</code>.
-     *
-     * @param key the key to look up
-     * @return true if this tag collection contains at least one tag with key <code>key</code>; false, otherwise
-     * @deprecated Use {@link #hasTagsFor(String)} instead.
-     */
-    @Deprecated
-    public boolean containsKey(String key) {
-        return generateStreamForKey(key).findAny().isPresent();
-    }
-
-    /**
      * Replies true if this tag collection contains all tags in <code>tags</code>. Replies
      * false, if tags is null.
      *
