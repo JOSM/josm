@@ -406,7 +406,7 @@ public class DuplicateNode extends Test {
                 target = nodes.iterator().next();
             }
 
-            if (Command.checkOutlyingOrIncompleteOperation("delete", nodes, Collections.singleton(target)) == Command.IS_OK)
+            if (Command.checkOutlyingOrIncompleteOperation(nodes, Collections.singleton(target)) == Command.IS_OK)
                 return MergeNodesAction.mergeNodes(Main.getLayerManager().getEditLayer(), nodes, target);
         }
 
