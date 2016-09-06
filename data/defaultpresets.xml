@@ -10176,7 +10176,7 @@
             <key key="type" value="associatedStreet" />
             <text key="name" text="Street name" />
             <roles>
-                <role key="street" text="street" requisite="required" type="way,closedway" member_expression="highway" />
+                <role key="street" text="street" requisite="required" type="way,closedway,multipolygon" member_expression="highway" />
                 <role key="house" text="house" requisite="required" type="node,way,closedway,multipolygon" member_expression="&quot;addr:housenumber&quot; | &quot;addr:interpolation&quot; | &quot;addr:housename&quot;" />
             </roles>
         </item> <!-- Associated Street -->
