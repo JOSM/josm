@@ -1543,10 +1543,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     private static class TileSetInfo {
-        public boolean hasVisibleTiles;
-        public boolean hasOverzoomedTiles;
-        public boolean hasLoadingTiles;
-        public boolean hasAllLoadedTiles;
+        boolean hasVisibleTiles;
+        boolean hasOverzoomedTiles;
+        boolean hasLoadingTiles;
+        boolean hasAllLoadedTiles;
     }
 
     private static <S extends AbstractTMSTileSource> TileSetInfo getTileSetInfo(AbstractTileSourceLayer<S>.TileSet ts) {
@@ -1816,6 +1816,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return actions.toArray(new Action[actions.size()]);
     }
 
+    /**
+     * Returns the contextual menu entries in layer list dialog.
+     * @return the contextual menu entries in layer list dialog
+     */
     public Action[] getLayerListEntries() {
         return new Action[] {
             LayerListDialog.getInstance().createActivateLayerAction(this),
