@@ -35,7 +35,7 @@ public class ImportHandlerTest {
         JOSMFixture.createUnitTestFixture().init(true);
     }
 
-    private static ImportHandler newHandler(String url) {
+    private static ImportHandler newHandler(String url) throws RequestHandlerBadRequestException {
         ImportHandler req = new ImportHandler();
         if (url != null)
             req.setUrl(url);
@@ -44,9 +44,10 @@ public class ImportHandlerTest {
 
     /**
      * Non-regression test for bug #7434.
+     * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket7434() {
+    public void testTicket7434() throws Exception {
         ImportHandler req = newHandler("http://localhost:8111/import?url=http://localhost:8888/relations?relations=19711&mode=recursive");
         assertEquals("http://localhost:8888/relations?relations=19711&mode=recursive", req.args.get("url"));
     }

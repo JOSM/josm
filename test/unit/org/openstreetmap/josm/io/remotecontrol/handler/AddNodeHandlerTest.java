@@ -30,7 +30,7 @@ public class AddNodeHandlerTest {
         JOSMFixture.createUnitTestFixture().init(true);
     }
 
-    private static AddNodeHandler newHandler(String url) {
+    private static AddNodeHandler newHandler(String url) throws RequestHandlerBadRequestException {
         AddNodeHandler req = new AddNodeHandler();
         if (url != null)
             req.setUrl(url);

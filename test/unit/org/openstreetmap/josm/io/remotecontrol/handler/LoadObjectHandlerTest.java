@@ -27,7 +27,7 @@ public class LoadObjectHandlerTest {
         JOSMFixture.createUnitTestFixture().init(true);
     }
 
-    private static LoadObjectHandler newHandler(String url) {
+    private static LoadObjectHandler newHandler(String url) throws RequestHandlerBadRequestException {
         LoadObjectHandler req = new LoadObjectHandler();
         if (url != null)
             req.setUrl(url);
