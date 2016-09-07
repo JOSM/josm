@@ -165,7 +165,7 @@ public abstract class Main {
     public static final Preferences pref = new Preferences();
 
     /**
-     * The MapFrame. Use {@link Main#setMapFrame} to set or clear it.
+     * The MapFrame.
      * <p>
      * There should be no need to access this to access any map data. Use {@link #layerManager} instead.
      *

@@ -55,7 +55,6 @@ import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
@@ -185,15 +184,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             // ignored
         }
     }
-
-    /**
-     * Temporary. To be removed as soon as the {@link LayerChangeListener}s are removed.
-     * <p>
-     * Some plugins add their listeners in {@link Main#setMapFrame(MapFrame)}. This method is now called just after the first layer was added to
-     * the layer manager. So that listener would not receive the addition of the first layer. As long as this field is set, we fake an add call
-     * to that listener when it is added to immitate the old behaviour. You should not access it from anywhere else.
-     */
-    public static boolean fireDeprecatedListenerOnAdd;
 
     public boolean viewportFollowing;
 
