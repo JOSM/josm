@@ -104,6 +104,25 @@ public class RequestHandlerTest {
     }
 
     /**
+     * Test request parameter - case 6
+     * @throws RequestHandlerBadRequestException never
+     */
+    @Test
+    public void testRequestParameter6() throws RequestHandlerBadRequestException {
+        final Map<String, String> expected = new HashMap<>();
+        expected.put("addtags", "wikipedia:de=Weiße_Gasse|maxspeed=5");
+        expected.put("select", "way23071688,way23076176,way23076177,");
+        expected.put("left", "13.739727546842");
+        expected.put("right", "13.740890970188");
+        expected.put("top", "51.049987191025");
+        expected.put("bottom", "51.048466954325");
+        assertEquals(expected, getRequestParameter("http://localhost:8111/load_and_zoom"+
+                "?addtags=wikipedia%3Ade=Wei%C3%9Fe_Gasse%7Cmaxspeed=5"+
+                "&select=way23071688,way23076176,way23076177,"+
+                "&left=13.739727546842&right=13.740890970188&top=51.049987191025&bottom=51.048466954325"));
+    }
+
+    /**
      * Test request parameter - invalid case
      * @throws RequestHandlerBadRequestException always
      */
