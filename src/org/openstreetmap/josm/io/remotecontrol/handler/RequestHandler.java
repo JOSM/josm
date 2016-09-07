@@ -145,12 +145,10 @@ public abstract class RequestHandler {
          * older versions of WMSPlugin.
          */
         PermissionPrefWithDefault permissionPref = getPermissionPref();
-        if (permissionPref != null && permissionPref.pref != null) {
-            if (!Main.pref.getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
-                String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by preferences", myCommand);
-                Main.info(err);
-                throw new RequestHandlerForbiddenException(err);
-            }
+        if (permissionPref != null && permissionPref.pref != null && !Main.pref.getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
+            String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by preferences", myCommand);
+            Main.info(err);
+            throw new RequestHandlerForbiddenException(err);
         }
 
         /* Does the user want to confirm everything?
@@ -178,10 +176,15 @@ public abstract class RequestHandler {
      * Set request URL and parse args.
      *
      * @param url The request URL.
+     * @throws RequestHandlerBadRequestException if request URL is invalid
      */
-    public void setUrl(String url) {
+    public void setUrl(String url) throws RequestHandlerBadRequestException {
         this.request = url;
-        parseArgs();
+        try {
+            parseArgs();
+        } catch (URISyntaxException e) {
+            throw new RequestHandlerBadRequestException(e);
+        }
     }
 
     /**
@@ -189,13 +192,10 @@ public abstract class RequestHandler {
      * The result will be stored in {@code this.args}.
      *
      * Can be overridden by subclass.
+     * @throws URISyntaxException if request URL is invalid
      */
-    protected void parseArgs() {
-        try {
-            this.args = getRequestParameter(new URI(this.request));
-        } catch (URISyntaxException ex) {
-            throw new RuntimeException(ex);
-        }
+    protected void parseArgs() throws URISyntaxException {
+        this.args = getRequestParameter(new URI(this.request));
     }
 
     /**
@@ -310,6 +310,11 @@ public abstract class RequestHandler {
     }
 
     public static class RequestHandlerErrorException extends RequestHandlerException {
+
+        /**
+         * Constructs a new {@code RequestHandlerErrorException}.
+         * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+         */
         public RequestHandlerErrorException(Throwable cause) {
             super(cause);
         }
@@ -317,18 +322,38 @@ public abstract class RequestHandler {
 
     public static class RequestHandlerBadRequestException extends RequestHandlerException {
 
+        /**
+         * Constructs a new {@code RequestHandlerBadRequestException}.
+         * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+         */
         public RequestHandlerBadRequestException(String message) {
             super(message);
         }
 
+        /**
+         * Constructs a new {@code RequestHandlerBadRequestException}.
+         * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+         */
+        public RequestHandlerBadRequestException(Throwable cause) {
+            super(cause);
+        }
+
+        /**
+         * Constructs a new {@code RequestHandlerBadRequestException}.
+         * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+         * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+         */
         public RequestHandlerBadRequestException(String message, Throwable cause) {
             super(message, cause);
         }
     }
 
     public static class RequestHandlerForbiddenException extends RequestHandlerException {
-        private static final long serialVersionUID = 2263904699747115423L;
 
+        /**
+         * Constructs a new {@code RequestHandlerForbiddenException}.
+         * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+         */
         public RequestHandlerForbiddenException(String message) {
             super(message);
         }
@@ -336,7 +361,7 @@ public abstract class RequestHandler {
 
     public abstract static class RawURLParseRequestHandler extends RequestHandler {
         @Override
-        protected void parseArgs() {
+        protected void parseArgs() throws URISyntaxException {
             Map<String, String> args = new HashMap<>();
             if (request.indexOf('?') != -1) {
                 String query = request.substring(request.indexOf('?') + 1);

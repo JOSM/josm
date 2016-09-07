@@ -27,7 +27,7 @@ public class ImageryHandlerTest {
         JOSMFixture.createUnitTestFixture().init(true);
     }
 
-    private static ImageryHandler newHandler(String url) {
+    private static ImageryHandler newHandler(String url) throws RequestHandlerBadRequestException {
         ImageryHandler req = new ImageryHandler();
         if (url != null)
             req.setUrl(url);

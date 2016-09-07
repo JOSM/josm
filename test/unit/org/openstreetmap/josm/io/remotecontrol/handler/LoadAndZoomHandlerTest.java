@@ -27,7 +27,7 @@ public class LoadAndZoomHandlerTest {
         JOSMFixture.createUnitTestFixture().init(true);
     }
 
-    private static LoadAndZoomHandler newHandler(String url) {
+    private static LoadAndZoomHandler newHandler(String url) throws RequestHandlerBadRequestException {
         LoadAndZoomHandler req = new LoadAndZoomHandler();
         if (url != null)
             req.setUrl(url);

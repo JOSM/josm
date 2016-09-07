@@ -30,7 +30,7 @@ public class AddWayHandlerTest {
         JOSMFixture.createUnitTestFixture().init(true);
     }
 
-    private static AddWayHandler newHandler(String url) {
+    private static AddWayHandler newHandler(String url) throws RequestHandlerBadRequestException {
         AddWayHandler req = new AddWayHandler();
         if (url != null)
             req.setUrl(url);
