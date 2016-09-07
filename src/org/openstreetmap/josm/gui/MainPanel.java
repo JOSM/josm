@@ -75,9 +75,7 @@ public class MainPanel extends JPanel {
 
         // Notify map frame listeners, mostly plugins.
         for (MapFrameListener listener : mapFrameListeners) {
-            MapView.fireDeprecatedListenerOnAdd = true;
             listener.mapFrameInitialized(old, map);
-            MapView.fireDeprecatedListenerOnAdd = false;
         }
         if (map == null && Main.currentProgressMonitor != null) {
             Main.currentProgressMonitor.showForegroundDialog();
