@@ -25,7 +25,7 @@ public class ApiUrlTestTaskTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().noTimeout();
+    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(30000);
 
     private static final Component PARENT = new JLabel();
 
