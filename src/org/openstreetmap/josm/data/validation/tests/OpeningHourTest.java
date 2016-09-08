@@ -66,6 +66,7 @@ public class OpeningHourTest extends Test.TagTest {
                         "    return r;" +
                         "  } catch (err) {" +
                         "    return {" +
+                        "      prettifyValue: function() {return null;}," +
                         "      getWarnings: function() {return [];}," +
                         "      getErrors: function() {return [err.toString()]}" +
                         "    };" +
