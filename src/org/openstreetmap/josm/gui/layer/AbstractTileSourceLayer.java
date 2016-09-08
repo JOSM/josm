@@ -1679,9 +1679,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (displayZoomLevel != zoom) {
             ts = dts.getTileSet(displayZoomLevel);
             if (!dts.getTileSetInfo(displayZoomLevel).hasAllLoadedTiles && displayZoomLevel < zoom) {
-                 // if we are showing tiles from lower zoom level, ensure that all tiles are loaded as they are few,
-                 // and should not trash the tile cache
-                 // This is especially needed when dts.getTileSet(zoom).tooLarge() is true and we are not loading tiles
+                // if we are showing tiles from lower zoom level, ensure that all tiles are loaded as they are few,
+                // and should not trash the tile cache
+                // This is especially needed when dts.getTileSet(zoom).tooLarge() is true and we are not loading tiles
                 ts.loadAllTiles(false);
             }
         }

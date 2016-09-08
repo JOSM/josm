@@ -93,7 +93,7 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                     if (otherCount == 1) {
                         // Find the non-blank value in the map
                         v.entrySet().stream().filter(entry -> !Objects.equals(entry.getKey(), ""))
-                                /* I18n: properties display partial string joined with comma, first is count, second is value */
+                            /* I18n: properties display partial string joined with comma, first is count, second is value */
                             .findAny().ifPresent(entry -> sb.append(tr("{0} ''{1}''", entry.getValue().toString(), entry.getKey())));
                     } else {
                         /* I18n: properties display partial string joined with comma */
