@@ -60,7 +60,6 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorTestsPreference
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
-import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -154,9 +153,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                 }
                 // check if plugin dependences can also be loaded
                 Collection<PluginInformation> allPlugins = new HashSet<>(toLoad);
-                for (PluginProxy proxy : PluginHandler.pluginList) {
-                    allPlugins.add(proxy.getPluginInformation());
-                }
+                allPlugins.addAll(PluginHandler.getPlugins());
                 boolean removed;
                 do {
                     removed = false;

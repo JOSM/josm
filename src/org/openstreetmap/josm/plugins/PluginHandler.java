@@ -37,6 +37,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -237,13 +238,12 @@ public final class PluginHandler {
     /**
      * All installed and loaded plugins (resp. their main classes)
      */
-    public static final Collection<PluginProxy> pluginList = new LinkedList<>();
+    protected static final Collection<PluginProxy> pluginList = new LinkedList<>();
 
     /**
      * All exceptions that occured during plugin loading
-     * @since 8938
      */
-    public static final Map<String, Exception> pluginLoadingExceptions = new HashMap<>();
+    protected static final Map<String, Exception> pluginLoadingExceptions = new HashMap<>();
 
     /**
      * Global plugin ClassLoader.
@@ -265,6 +265,15 @@ public final class PluginHandler {
     }
 
     private static PluginDownloadTask pluginDownloadTask;
+
+    /**
+     * Returns the list of currently installed and loaded plugins.
+     * @return the list of currently installed and loaded plugins
+     * @since 10982
+     */
+    public static List<PluginInformation> getPlugins() {
+        return pluginList.stream().map(PluginProxy::getPluginInformation).collect(Collectors.toList());
+    }
 
     public static Collection<ClassLoader> getResourceClassLoaders() {
         return Collections.unmodifiableCollection(sources);
