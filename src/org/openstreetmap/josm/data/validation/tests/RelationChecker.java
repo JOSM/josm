@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -199,11 +200,11 @@ public class RelationChecker extends Test {
      *
      */
     private boolean checkMemberExpressionAndType(RolePreset rolePreset, RelationMember member, Relation n) {
-        TestError possibleMatchError = null;
         if (rolePreset == null || rolePreset.roles == null) {
             // no restrictions on role types
             return true;
         }
+        TestError possibleMatchError = null;
         // iterate through all of the role definition within preset
         // and look for any matching definition
         for (Role r: rolePreset.roles) {
@@ -232,10 +233,13 @@ public class RelationChecker extends Test {
                             possibleMatchError = new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
                                     tr(s, r.memberExpression, rolePreset.name), s, WRONG_TYPE,
                                     member.getMember().isUsable() ? member.getMember() : n);
-
                         }
                     }
                 }
+            } else if (OsmPrimitiveType.RELATION.equals(member.getType()) && !member.getMember().isUsable()
+                    && r.types.contains(TaggingPresetType.MULTIPOLYGON)) {
+                // if relation is incomplete we cannot verify if it's a multipolygon - so we just skip it
+                return true;
             }
         }
 
