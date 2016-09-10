@@ -171,7 +171,7 @@ public class LayerManager {
     private final List<LayerChangeListener> layerChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
-     * Add a layer. The layer will be added at a given psoition.
+     * Add a layer. The layer will be added at a given position.
      * @param layer The layer to add
      */
     public void addLayer(final Layer layer) {

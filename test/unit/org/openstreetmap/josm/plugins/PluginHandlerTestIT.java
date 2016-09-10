@@ -7,17 +7,25 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.plugins.PluginHandler.DynamicURLClassLoader;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -78,7 +86,57 @@ public class PluginHandlerTestIT {
         // Load late plugins
         PluginHandler.loadLatePlugins(null, plugins, null);
 
-        assertTrue(PluginHandler.pluginLoadingExceptions.toString(), PluginHandler.pluginLoadingExceptions.isEmpty());
+        Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
+                .collect(Collectors.toMap(e -> e.getKey(), e -> ExceptionUtils.getRootCause(e.getValue())));
+
+        // Add/remove a data layer twice to test basic plugin good behaviour
+        Map<String, Throwable> layerExceptions = new HashMap<>();
+        List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
+        for (int i = 0; i < 2; i++) {
+            OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Layer "+i, null);
+            try {
+                Main.getLayerManager().addLayer(layer);
+            } catch (Exception | LinkageError t) {
+                Throwable root = ExceptionUtils.getRootCause(t);
+                layerExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
+            }
+            try {
+                Main.getLayerManager().removeLayer(layer);
+            } catch (Exception | LinkageError t) {
+                Throwable root = ExceptionUtils.getRootCause(t);
+                layerExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
+            }
+        }
+
+        MapUtils.debugPrint(System.out, null, loadingExceptions);
+        MapUtils.debugPrint(System.out, null, layerExceptions);
+        String msg = Arrays.toString(loadingExceptions.entrySet().toArray()) + '\n' +
+                     Arrays.toString(layerExceptions.entrySet().toArray());
+        assertTrue(msg, loadingExceptions.isEmpty() && layerExceptions.isEmpty());
+    }
+
+    private static String findFaultyPlugin(Collection<PluginInformation> plugins, Throwable root) {
+        DynamicURLClassLoader cl = PluginHandler.getPluginClassLoader();
+        for (PluginInformation p : plugins) {
+            try {
+                String pluginPackage = cl.loadClass(p.className).getPackage().getName();
+                for (StackTraceElement e : root.getStackTrace()) {
+                    try {
+                        String stackPackage = cl.loadClass(e.getClassName()).getPackage().getName();
+                        if (stackPackage.startsWith(pluginPackage)) {
+                            return p.name;
+                        }
+                    } catch (ClassNotFoundException ex) {
+                        System.err.println(ex.getMessage());
+                        continue;
+                    }
+                }
+            } catch (ClassNotFoundException ex) {
+                System.err.println(ex.getMessage());
+                continue;
+            }
+        }
+        return "<unknown>";
     }
 
     /**
