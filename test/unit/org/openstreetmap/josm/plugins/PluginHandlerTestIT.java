@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.MapUtils;
@@ -22,7 +23,10 @@ import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginHandler.DynamicURLClassLoader;
@@ -89,23 +93,18 @@ public class PluginHandlerTestIT {
         Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
                 .collect(Collectors.toMap(e -> e.getKey(), e -> ExceptionUtils.getRootCause(e.getValue())));
 
-        // Add/remove a data layer twice to test basic plugin good behaviour
+        // Add/remove layers twice to test basic plugin good behaviour
         Map<String, Throwable> layerExceptions = new HashMap<>();
         List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
         for (int i = 0; i < 2; i++) {
             OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Layer "+i, null);
-            try {
-                Main.getLayerManager().addLayer(layer);
-            } catch (Exception | LinkageError t) {
-                Throwable root = ExceptionUtils.getRootCause(t);
-                layerExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
-            }
-            try {
-                Main.getLayerManager().removeLayer(layer);
-            } catch (Exception | LinkageError t) {
-                Throwable root = ExceptionUtils.getRootCause(t);
-                layerExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
-            }
+            testPlugin(Main.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
+            testPlugin(Main.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
+        }
+        for (int i = 0; i < 2; i++) {
+            GpxLayer layer = new GpxLayer(new GpxData());
+            testPlugin(Main.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
+            testPlugin(Main.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
         }
 
         MapUtils.debugPrint(System.out, null, loadingExceptions);
@@ -113,6 +112,17 @@ public class PluginHandlerTestIT {
         String msg = Arrays.toString(loadingExceptions.entrySet().toArray()) + '\n' +
                      Arrays.toString(layerExceptions.entrySet().toArray());
         assertTrue(msg, loadingExceptions.isEmpty() && layerExceptions.isEmpty());
+    }
+
+    void testPlugin(Consumer<Layer> consumer, Layer layer,
+            Map<String, Throwable> layerExceptions, Collection<PluginInformation> loadedPlugins) {
+        try {
+            consumer.accept(layer);
+        } catch (Exception | LinkageError t) {
+            Throwable root = ExceptionUtils.getRootCause(t);
+            root.printStackTrace();
+            layerExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
+        }
     }
 
     private static String findFaultyPlugin(Collection<PluginInformation> plugins, Throwable root) {
