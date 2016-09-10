@@ -238,12 +238,12 @@ public final class PluginHandler {
     /**
      * All installed and loaded plugins (resp. their main classes)
      */
-    protected static final Collection<PluginProxy> pluginList = new LinkedList<>();
+    static final Collection<PluginProxy> pluginList = new LinkedList<>();
 
     /**
      * All exceptions that occured during plugin loading
      */
-    protected static final Map<String, Exception> pluginLoadingExceptions = new HashMap<>();
+    static final Map<String, Exception> pluginLoadingExceptions = new HashMap<>();
 
     /**
      * Global plugin ClassLoader.
