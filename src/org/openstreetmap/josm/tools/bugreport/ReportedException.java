@@ -45,7 +45,6 @@ public class ReportedException extends RuntimeException {
     private final transient Map<Thread, StackTraceElement[]> allStackTraces;
     private final LinkedList<Section> sections = new LinkedList<>();
     private final transient Thread caughtOnThread;
-    private final Throwable exception;
     private String methodWarningFrom;
 
     ReportedException(Throwable exception) {
@@ -54,7 +53,6 @@ public class ReportedException extends RuntimeException {
 
     ReportedException(Throwable exception, Thread caughtOnThread) {
         super(exception);
-        this.exception = exception;
 
         allStackTraces = Thread.getAllStackTraces();
         this.caughtOnThread = caughtOnThread;
@@ -156,7 +154,7 @@ public class ReportedException extends RuntimeException {
             return false;
         }
 
-        return hasSameStackTrace(new CauseTraceIterator(), e.exception);
+        return hasSameStackTrace(new CauseTraceIterator(), e.getCause());
     }
 
     private static boolean hasSameStackTrace(CauseTraceIterator causeTraceIterator, Throwable e2) {
@@ -246,7 +244,7 @@ public class ReportedException extends RuntimeException {
 
     @Override
     public String toString() {
-        return "ReportedException [thread=" + caughtOnThread + ", exception=" + exception
+        return "ReportedException [thread=" + caughtOnThread + ", exception=" + getCause()
                 + ", methodWarningFrom=" + methodWarningFrom + "]";
     }
 
@@ -275,7 +273,7 @@ public class ReportedException extends RuntimeException {
      * @since 10585
      */
     private final class CauseTraceIterator implements Iterator<Throwable> {
-        private Throwable current = exception;
+        private Throwable current = getCause();
         private final Set<Throwable> dejaVu = Collections.newSetFromMap(new IdentityHashMap<Throwable, Boolean>());
 
         @Override
