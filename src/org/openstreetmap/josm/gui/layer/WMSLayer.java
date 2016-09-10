@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,6 +18,7 @@ import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
+import org.openstreetmap.josm.data.imagery.AbstractWMSTileSource;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
@@ -35,7 +35,7 @@ import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
  * fetched this way is tiled and managed to the disc to reduce server load.
  *
  */
-public class WMSLayer extends AbstractCachedTileSourceLayer<TemplatedWMSTileSource> {
+public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSource> {
     private static final String PREFERENCE_PREFIX = "imagery.wms";
     /**
      * Registers all setting properties
@@ -80,10 +80,10 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<TemplatedWMSTileSour
     }
 
     @Override
-    protected TemplatedWMSTileSource getTileSource(ImageryInfo info) {
+    protected AbstractWMSTileSource getTileSource(ImageryInfo info) {
         if (info.getImageryType() == ImageryType.WMS && info.getUrl() != null) {
             TemplatedWMSTileSource.checkUrl(info.getUrl());
-            TemplatedWMSTileSource tileSource = new TemplatedWMSTileSource(info);
+            AbstractWMSTileSource tileSource = new TemplatedWMSTileSource(info);
             info.setAttribution(tileSource);
             return tileSource;
         }
@@ -107,11 +107,6 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<TemplatedWMSTileSour
         public void actionPerformed(ActionEvent ev) {
             ImageryLayerInfo.addLayer(new ImageryInfo(info));
         }
-    }
-
-    @Override
-    protected Map<String, String> getHeaders(TemplatedWMSTileSource tileSource) {
-        return tileSource.getHeaders();
     }
 
     @Override
