@@ -402,7 +402,7 @@ public final class I18n {
         // http://docs.oracle.com/javase/8/docs/technotes/guides/intl/enhancements.8.html#cldr
         // FIXME: This can be removed after we switch to a minimal version of Java that enables CLDR by default
         // or includes all languages we need in the JRE. See http://openjdk.java.net/jeps/252 for Java 9
-        Utils.updateSystemProperty("java.locale.providers", "JRE,CLDR");
+        System.setProperty("java.locale.providers", "JRE,CLDR"); // Don't call Utils.updateSystemProperty to avoid spurious log at startup
 
         //languages.put("ar", PluralMode.MODE_AR);
         languages.put("ast", PluralMode.MODE_NOTONE);

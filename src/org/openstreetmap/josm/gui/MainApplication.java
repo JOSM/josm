@@ -122,7 +122,11 @@ public class MainApplication extends Main {
      */
     public static void showHelp() {
         // TODO: put in a platformHook for system that have no console by default
-        System.out.println(tr("Java OpenStreetMap Editor")+" ["
+        System.out.println(getHelp());
+    }
+
+    static String getHelp() {
+        return tr("Java OpenStreetMap Editor")+" ["
                 +Version.getInstance().getAgentString()+"]\n\n"+
                 tr("usage")+":\n"+
                 "\tjava -jar josm.jar <options>...\n\n"+
@@ -156,17 +160,16 @@ public class MainApplication extends Main {
                 tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
                         "      Java option to specify the maximum size of allocated memory in megabytes")+":\n"+
                         "\t-Xmx...m\n\n"+
-                        tr("examples")+":\n"+
-                        "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
-                        "\tjava -jar josm.jar "+OsmUrlToBounds.getURL(43.2, 11.1, 13)+'\n'+
-                        "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
-                        "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
-                        "\tjava -Djosm.pref=$XDG_CONFIG_HOME -Djosm.userdata=$XDG_DATA_HOME -Djosm.cache=$XDG_CACHE_HOME -jar josm.jar\n"+
-                        "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
-                        "\tjava -Xmx1024m -jar josm.jar\n\n"+
-                        tr("Parameters --download, --downloadgps, and --selection are processed in this order.")+'\n'+
-                        tr("Make sure you load some data if you use --selection.")+'\n'
-                );
+                tr("examples")+":\n"+
+                "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
+                "\tjava -jar josm.jar "+OsmUrlToBounds.getURL(43.2, 11.1, 13)+'\n'+
+                "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
+                "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
+                "\tjava -Djosm.pref=$XDG_CONFIG_HOME -Djosm.userdata=$XDG_DATA_HOME -Djosm.cache=$XDG_CACHE_HOME -jar josm.jar\n"+
+                "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
+                "\tjava -Xmx1024m -jar josm.jar\n\n"+
+                tr("Parameters --download, --downloadgps, and --selection are processed in this order.")+'\n'+
+                tr("Make sure you load some data if you use --selection.")+'\n';
     }
 
     /**
@@ -181,13 +184,16 @@ public class MainApplication extends Main {
         try {
             args = new ProgramArguments(argArray);
         } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
             System.exit(1);
             return;
         }
 
         Level logLevel = args.getLogLevel();
         Logging.setLogLevel(logLevel);
-        Main.info(tr("Log level is at {0} ({1}, {2})", logLevel.getLocalizedName(), logLevel.getName(), logLevel.intValue()));
+        if (!args.showVersion() && !args.showHelp()) {
+            Main.info(tr("Log level is at {0} ({1}, {2})", logLevel.getLocalizedName(), logLevel.getName(), logLevel.intValue()));
+        }
 
         Optional<String> language = args.getSingle(Option.LANGUAGE);
         I18n.set(language.orElse(null));
@@ -214,15 +220,15 @@ public class MainApplication extends Main {
         // call the really early hook before we do anything else
         Main.platform.preStartupHook();
 
-        Main.COMMAND_LINE_ARGS.addAll(Arrays.asList(argArray));
-
         if (args.showVersion()) {
             System.out.println(Version.getInstance().getAgentString());
-            System.exit(0);
+            return;
         } else if (args.showHelp()) {
             showHelp();
-            System.exit(0);
+            return;
         }
+
+        Main.COMMAND_LINE_ARGS.addAll(Arrays.asList(argArray));
 
         boolean skipLoadingPlugins = args.hasOption(Option.SKIP_PLUGINS);
         if (skipLoadingPlugins) {
@@ -245,12 +251,6 @@ public class MainApplication extends Main {
         Main.pref.updateSystemProperties();
 
         checkIPv6();
-
-        // asking for help? show help and exit
-        if (args.hasOption(Option.HELP)) {
-            showHelp();
-            System.exit(0);
-        }
 
         processOffline(args);
 

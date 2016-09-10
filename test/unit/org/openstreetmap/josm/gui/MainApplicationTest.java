@@ -5,6 +5,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -14,6 +17,7 @@ import javax.swing.event.ChangeListener;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginHandlerTestIT;
@@ -32,6 +36,43 @@ public class MainApplicationTest {
     @BeforeClass
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init(true);
+    }
+
+    private void testShow(final String arg, String expected) throws InterruptedException, IOException {
+        PrintStream old = System.out;
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            System.setOut(new PrintStream(baos));
+            Thread t = new Thread() {
+                @Override
+                public void run() {
+                    MainApplication.main(new String[] {arg});
+                }
+            };
+            t.run();
+            t.join();
+            System.out.flush();
+            assertEquals(expected, baos.toString().trim());
+        } finally {
+            System.setOut(old);
+        }
+    }
+
+    /**
+     * Test of {@link MainApplication#main} with argument {@code --version}.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testShowVersion() throws Exception {
+        testShow("--version", Version.getInstance().getAgentString());
+    }
+
+    /**
+     * Test of {@link MainApplication#main} with argument {@code --help}.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testShowHelp() throws Exception {
+        testShow("--help", MainApplication.getHelp().trim());
     }
 
     /**
@@ -71,7 +112,6 @@ public class MainApplicationTest {
     }
 
     private static PluginInformation newPluginInformation(String plugin) throws PluginListParseException {
-        //return new PluginInformation(new File(TestUtils.getTestDataRoot()+File.separator+"plugin"+File.separator+plugin+".jar"));
         return PluginListParser.createInfo(plugin+".jar", "https://svn.openstreetmap.org/applications/editors/josm/dist/"+plugin+".jar",
                 "");
     }
