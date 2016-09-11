@@ -135,6 +135,24 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
     }
 
+    /**
+     * Formats a name for an {@link OsmPrimitive}.
+     *
+     * @param osm the primitive
+     * @return the name
+     * @since 10991
+     */
+    public String format(OsmPrimitive osm) {
+        if (osm instanceof Node) {
+            return format((Node) osm);
+        } else if (osm instanceof Way) {
+            return format((Way) osm);
+        } else if (osm instanceof Relation) {
+            return format((Relation) osm);
+        }
+        return null;
+    }
+
     @Override
     public String format(Node node) {
         StringBuilder name = new StringBuilder();

@@ -7,11 +7,12 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
@@ -20,24 +21,24 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Geometry;
 
 /**
  * Check coastlines for errors
  *
  * @author frsantos
  * @author Teemu Koskinen
+ * @author Gerd Petermann
  */
 public class Coastlines extends Test {
 
     protected static final int UNORDERED_COASTLINE = 901;
     protected static final int REVERSED_COASTLINE = 902;
     protected static final int UNCONNECTED_COASTLINE = 903;
+    protected static final int WRONG_ORDER_COASTLINE = 904;
 
-    private List<Way> coastlines;
-
-    private Area downloadedArea;
+    private List<Way> coastlineWays;
 
     /**
      * Constructor
@@ -48,155 +49,185 @@ public class Coastlines extends Test {
 
     @Override
     public void startTest(ProgressMonitor monitor) {
-
         super.startTest(monitor);
-
-        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
-
-        if (layer != null) {
-            downloadedArea = layer.data.getDataSourceArea();
-        }
-
-        coastlines = new LinkedList<>();
+        coastlineWays = new LinkedList<>();
     }
 
     @Override
     public void endTest() {
-        for (Way c1 : coastlines) {
-            Node head = c1.firstNode();
-            Node tail = c1.lastNode();
+        checkConnections();
+        checkDirection();
+        coastlineWays = null;
+        super.endTest();
+    }
 
-            if (c1.getNodesCount() == 0 || head.equals(tail)) {
-                continue;
+    /**
+     * Check connections between coastline ways.
+     * The nodes of a coastline way have to fullfil these rules:
+     * 1) the first node must be connected to the last node of a coastline way (which might be the same way)
+     * 2) the last node must be connected to the first node of a coastline way (which might be the same way)
+     * 3) all other nodes must not be connected to a coastline way
+     * 4) the number of referencing coastline ways must be 1 or 2
+     * Nodes outside the download area are special cases, we may not know enough about the connected ways.
+     */
+    private void checkConnections() {
+        Area downloadedArea = null;
+        for (Way w : coastlineWays) {
+            if (downloadedArea == null) {
+                downloadedArea = w.getDataSet().getDataSourceArea();
             }
-
-            int headWays = 0;
-            int tailWays = 0;
-            boolean headReversed = false;
-            boolean tailReversed = false;
-            boolean headUnordered = false;
-            boolean tailUnordered = false;
-            Way next = null;
-            Way prev = null;
-
-            for (Way c2 : coastlines) {
-                if (c1 == c2) {
-                    continue;
-                }
-
-                if (c2.containsNode(head)) {
-                    headWays++;
-                    next = c2;
-
-                    if (head.equals(c2.firstNode())) {
-                        headReversed = true;
-                    } else if (!head.equals(c2.lastNode())) {
-                        headUnordered = true;
+            int numNodes = w.getNodesCount();
+            for (int i = 0; i < numNodes; i++) {
+                Node n = w.getNode(i);
+                List<OsmPrimitive> refs = n.getReferrers();
+                Set<Way> connectedWays = new HashSet<>();
+                for (OsmPrimitive p : refs) {
+                    if (p != w && isCoastline(p)) {
+                        connectedWays.add((Way) p);
                     }
                 }
-
-                if (c2.containsNode(tail)) {
-                    tailWays++;
-                    prev = c2;
-
-                    if (tail.equals(c2.lastNode())) {
-                        tailReversed = true;
-                    } else if (!tail.equals(c2.firstNode())) {
-                        tailUnordered = true;
+                if (i == 0) {
+                    if (connectedWays.isEmpty() && n != w.lastNode() && n.getCoor().isIn(downloadedArea)) {
+                        addError(UNCONNECTED_COASTLINE, w, null, n);
                     }
-                }
-            }
-
-            // To avoid false positives on upload (only modified primitives
-            // are visited), we have to check possible connection to ways
-            // that are not in the set of validated primitives.
-            if (headWays == 0) {
-                Collection<OsmPrimitive> refs = head.getReferrers();
-                for (OsmPrimitive ref : refs) {
-                    if (ref != c1 && isCoastline(ref)) {
-                        // ref cannot be in <code>coastlines</code>, otherwise we would
-                        // have picked it up already
-                        headWays++;
-                        next = (Way) ref;
-
-                        if (head.equals(next.firstNode())) {
-                            headReversed = true;
-                        } else if (!head.equals(next.lastNode())) {
-                            headUnordered = true;
-                        }
+                    if (connectedWays.size() == 1 && n != connectedWays.iterator().next().lastNode()) {
+                        checkIfReversed(w, connectedWays.iterator().next(), n);
                     }
-                }
-            }
-            if (tailWays == 0) {
-                Collection<OsmPrimitive> refs = tail.getReferrers();
-                for (OsmPrimitive ref : refs) {
-                    if (ref != c1 && isCoastline(ref)) {
-                        tailWays++;
-                        prev = (Way) ref;
-
-                        if (tail.equals(prev.lastNode())) {
-                            tailReversed = true;
-                        } else if (!tail.equals(prev.firstNode())) {
-                            tailUnordered = true;
-                        }
+                    if (connectedWays.size() == 1 && w.isClosed() && connectedWays.iterator().next().isClosed()) {
+                        addError(UNORDERED_COASTLINE, w, connectedWays, n);
                     }
+                } else if (i == numNodes - 1) {
+                    if (connectedWays.isEmpty() && n != w.firstNode() && n.getCoor().isIn(downloadedArea)) {
+                        addError(UNCONNECTED_COASTLINE, w, null, n);
+                    }
+                    if (connectedWays.size() == 1 && n != connectedWays.iterator().next().firstNode()) {
+                        checkIfReversed(w, connectedWays.iterator().next(), n);
+                    }
+                } else if (!connectedWays.isEmpty()) {
+                    addError(UNORDERED_COASTLINE, w, connectedWays, n);
                 }
-            }
-
-            List<OsmPrimitive> primitives = new ArrayList<>();
-            primitives.add(c1);
-
-            if (headWays == 0 || tailWays == 0) {
-                List<OsmPrimitive> highlight = new ArrayList<>();
-
-                if (headWays == 0 && head.getCoor().isIn(downloadedArea)) {
-                    highlight.add(head);
-                }
-                if (tailWays == 0 && tail.getCoor().isIn(downloadedArea)) {
-                    highlight.add(tail);
-                }
-
-                if (!highlight.isEmpty()) {
-                    errors.add(new TestError(this, Severity.ERROR, tr("Unconnected coastline"),
-                            UNCONNECTED_COASTLINE, primitives, highlight));
-                }
-            }
-
-            boolean unordered = false;
-            boolean reversed = headWays == 1 && headReversed && tailWays == 1 && tailReversed;
-
-            if (headWays > 1 || tailWays > 1) {
-                unordered = true;
-            } else if (headUnordered || tailUnordered) {
-                unordered = true;
-            } else if (reversed && next == prev) {
-                unordered = true;
-            } else if ((headReversed || tailReversed) && headReversed != tailReversed) {
-                unordered = true;
-            }
-
-            if (unordered) {
-                List<OsmPrimitive> highlight = new ArrayList<>();
-
-                if (headWays > 1 || headUnordered || headReversed || reversed) {
-                    highlight.add(head);
-                }
-                if (tailWays > 1 || tailUnordered || tailReversed || reversed) {
-                    highlight.add(tail);
-                }
-
-                errors.add(new TestError(this, Severity.ERROR, tr("Unordered coastline"),
-                        UNORDERED_COASTLINE, primitives, highlight));
-            } else if (reversed) {
-                errors.add(new TestError(this, Severity.ERROR, tr("Reversed coastline"),
-                        REVERSED_COASTLINE, primitives));
             }
         }
+    }
 
-        coastlines = null;
-        downloadedArea = null;
+    /**
+     * Check if two or more coastline ways form a closed clockwise way
+     */
+    private void checkDirection() {
+        HashSet<Way> done = new HashSet<>();
+        for (Way w : coastlineWays) {
+            if (done.contains(w))
+                continue;
+            List<Way> visited = new ArrayList<>();
+            done.add(w);
+            visited.add(w);
+            List<Node> nodes = new ArrayList<>(w.getNodes());
+            Way curr = w;
+            while (nodes.get(0) != nodes.get(nodes.size()-1)) {
+                boolean foundContinuation = false;
+                for (OsmPrimitive p : curr.lastNode().getReferrers()) {
+                    if (p != curr && isCoastline(p)) {
+                        Way other = (Way) p;
+                        if (done.contains(other))
+                            continue;
+                        if (other.firstNode() == curr.lastNode()) {
+                            foundContinuation = true;
+                            curr = other;
+                            done.add(curr);
+                            visited.add(curr);
+                            nodes.remove(nodes.size()-1); // remove duplicate connection node
+                            nodes.addAll(curr.getNodes());
+                            break;
+                        }
+                    }
+                }
+                if (!foundContinuation)
+                    break;
+            }
+            // simple closed ways are reported by WronglyOrderedWays
+            if (visited.size() > 1 && nodes.get(0) == nodes.get(nodes.size()-1) && Geometry.isClockwise(nodes)) {
+                errors.add(new TestError(this, Severity.WARNING, tr("Reversed coastline: land not on left side"),
+                        WRONG_ORDER_COASTLINE, visited));
+            }
+        }
+    }
 
-        super.endTest();
+    /**
+     * Check if a reversed way would fit, if yes, add fixable "reversed" error, "unordered" else
+     * @param w way that might be reversed
+     * @param other other way that is connected to w
+     * @param n1 node at which w and other are connected
+     */
+    private void checkIfReversed(Way w, Way other, Node n1) {
+        boolean headFixedWithReverse = false;
+        boolean tailFixedWithReverse = false;
+        int otherCoastlineWays = 0;
+        Way connectedToFirst = null;
+        for (int i = 0; i < 2; i++) {
+            Node n = (i == 0) ? w.firstNode() : w.lastNode();
+            List<OsmPrimitive> refs = n.getReferrers();
+            for (OsmPrimitive p : refs) {
+                if (p != w && isCoastline(p)) {
+                    Way cw = (Way) p;
+                    if (i == 0 && cw.firstNode() == n) {
+                        headFixedWithReverse = true;
+                        connectedToFirst = cw;
+                    } else if (i == 1 && cw.lastNode() == n) {
+                        if (cw != connectedToFirst)
+                            tailFixedWithReverse = true;
+                    } else
+                        otherCoastlineWays++;
+                }
+            }
+        }
+        if (otherCoastlineWays == 0 && headFixedWithReverse && tailFixedWithReverse)
+            addError(REVERSED_COASTLINE, w, null, null);
+        else
+            addError(UNORDERED_COASTLINE, w, Collections.singletonList(other), n1);
+    }
+
+    /**
+     * Add error if not already done
+     * @param errCode the error code
+     * @param w the way that is in error
+     * @param otherWays collection of other ways in error or null
+     * @param n the node to be highlighted or null
+     */
+    private void addError(int errCode, Way w, Collection<Way> otherWays, Node n) {
+        String msg;
+        switch (errCode) {
+        case UNCONNECTED_COASTLINE:
+            msg = tr("Unconnected coastline");
+            break;
+        case UNORDERED_COASTLINE:
+            msg = tr("Unordered coastline");
+            break;
+        case REVERSED_COASTLINE:
+            msg = tr("Reversed coastline");
+            break;
+        default:
+            msg = tr("invalid coastline"); // should not happen
+        }
+        Set<OsmPrimitive> primitives = new HashSet<>();
+        primitives.add(w);
+        if (otherWays != null)
+            primitives.addAll(otherWays);
+        // check for repeated error
+        for (TestError e : errors) {
+            if (e.getCode() != errCode)
+                continue;
+            if (errCode != REVERSED_COASTLINE && !e.getHighlighted().contains(n))
+                continue;
+            if (e.getPrimitives().size() != primitives.size())
+                continue;
+            if (!e.getPrimitives().containsAll(primitives))
+                continue;
+            return; // we already know this error
+        }
+        if (errCode != REVERSED_COASTLINE)
+            errors.add(new TestError(this, Severity.ERROR, msg, errCode, primitives, Collections.singletonList(n)));
+        else
+            errors.add(new TestError(this, Severity.ERROR, msg, errCode, primitives));
     }
 
     @Override
@@ -205,7 +236,7 @@ public class Coastlines extends Test {
             return;
 
         if (isCoastline(way)) {
-            coastlines.add(way);
+            coastlineWays.add(way);
         }
     }
 
