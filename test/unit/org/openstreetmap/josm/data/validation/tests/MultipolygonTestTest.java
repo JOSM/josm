@@ -4,15 +4,10 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,10 +16,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
-import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -89,38 +81,8 @@ public class MultipolygonTestTest {
      */
     @Test
     public void testMultipolygonFile() throws Exception {
-        try (InputStream is = new FileInputStream("data_nodist/multipolygon.osm")) {
-            for (Relation r : OsmReader.parseDataSet(is, null).getRelations()) {
-                if (r.isMultipolygon()) {
-                    String name = DefaultNameFormatter.getInstance().format(r);
-                    String codes = r.get("josm_error_codes");
-                    if (codes != null) {
-                        List<TestError> errors = new ArrayList<>();
-                        for (org.openstreetmap.josm.data.validation.Test test : Arrays.asList(MULTIPOLYGON_TEST, RELATION_TEST)) {
-                            test.initialize();
-                            test.startTest(null);
-                            test.visit(r);
-                            test.endTest();
-                            errors.addAll(test.getErrors());
-                        }
-                        Set<Integer> expectedCodes = new TreeSet<>();
-                        for (String code : codes.split(",")) {
-                            expectedCodes.add(Integer.parseInt(code));
-                        }
-                        Set<Integer> actualCodes = new TreeSet<>();
-                        for (TestError error : errors) {
-                            Integer code = error.getCode();
-                            assertTrue(name + " does not expect JOSM error code " + code + ": " + error.getDescription(),
-                                    expectedCodes.contains(code));
-                            actualCodes.add(code);
-                        }
-                        assertEquals(name + " " + expectedCodes + " => " + actualCodes,
-                                expectedCodes.size(), actualCodes.size());
-                    } else if (r.hasKey("name") && (r.getName().startsWith("06") || r.getName().startsWith("07"))) {
-                        fail(name + " lacks josm_error_codes tag");
-                    }
-                }
-            }
-        }
+        ValidatorTestUtils.testSampleFile("data_nodist/multipolygon.osm",
+                ds -> ds.getRelations().stream().filter(Relation::isMultipolygon).collect(Collectors.toList()),
+                name -> name.startsWith("06") || name.startsWith("07"), MULTIPOLYGON_TEST, RELATION_TEST);
     }
 }

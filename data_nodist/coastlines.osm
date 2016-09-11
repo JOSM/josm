@@ -1,0 +1,790 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <bounds minlat='-22.95' minlon='-42.5951367' maxlat='-22.93' maxlon='-42.5878312' origin='JOSM' />
+  <node id='-11' action='modify' visible='true' lat='-22.93228268641' lon='-42.59325100232'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-13' action='modify' visible='true' lat='-22.93220124728' lon='-42.59296747156'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-15' action='modify' visible='true' lat='-22.93227880836' lon='-42.59272183847'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-17' action='modify' visible='true' lat='-22.9325114913' lon='-42.59257866948'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-19' action='modify' visible='true' lat='-22.93260585706' lon='-42.59263481418'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-21' action='modify' visible='true' lat='-22.9326368814' lon='-42.59299554391'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-23' action='modify' visible='true' lat='-22.93253863762' lon='-42.59334223747'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-25' action='modify' visible='true' lat='-22.9308985405' lon='-42.59187037746' />
+  <node id='-27' action='modify' visible='true' lat='-22.93081710054' lon='-42.5915868467' />
+  <node id='-29' action='modify' visible='true' lat='-22.9308946624' lon='-42.59134121361' />
+  <node id='-31' action='modify' visible='true' lat='-22.93112734774' lon='-42.59119804461' />
+  <node id='-33' action='modify' visible='true' lat='-22.93122171444' lon='-42.59125418932' />
+  <node id='-35' action='modify' visible='true' lat='-22.93125273911' lon='-42.59161491905' />
+  <node id='-37' action='modify' visible='true' lat='-22.93115449432' lon='-42.59196161261' />
+  <node id='-39' action='modify' visible='true' lat='-22.93437682152' lon='-42.59388858684' />
+  <node id='-41' action='modify' visible='true' lat='-22.93405647565' lon='-42.59357855396' />
+  <node id='-43' action='modify' visible='true' lat='-22.93405647565' lon='-42.59282237623' />
+  <node id='-45' action='modify' visible='true' lat='-22.93453003015' lon='-42.59264089357' />
+  <node id='-47' action='modify' visible='true' lat='-22.93489912293' lon='-42.59262577001' />
+  <node id='-49' action='modify' visible='true' lat='-22.93485733889' lon='-42.59340463308' />
+  <node id='-51' action='modify' visible='true' lat='-22.93392299504' lon='-42.59215803098' />
+  <node id='-53' action='modify' visible='true' lat='-22.93417130306' lon='-42.59193715049' />
+  <node id='-55' action='modify' visible='true' lat='-22.93655746253' lon='-42.59421578323' />
+  <node id='-57' action='modify' visible='true' lat='-22.93613266275' lon='-42.59367685707' />
+  <node id='-59' action='modify' visible='true' lat='-22.93602820357' lon='-42.59291311755' />
+  <node id='-61' action='modify' visible='true' lat='-22.93602820357' lon='-42.5918620305' />
+  <node id='-63' action='modify' visible='true' lat='-22.93698922489' lon='-42.59042529279' />
+  <node id='-65' action='modify' visible='true' lat='-22.93614659062' lon='-42.59114366165' />
+  <node id='-67' action='modify' visible='true' lat='-22.93633461691' lon='-42.59205863671' />
+  <node id='-69' action='modify' visible='true' lat='-22.93765648073' lon='-42.59314422735' />
+  <node id='-71' action='modify' visible='true' lat='-22.93721775257' lon='-42.59208556876' />
+  <node id='-73' action='modify' visible='true' lat='-22.93738488727' lon='-42.59068662705' />
+  <node id='-75' action='modify' visible='true' lat='-22.93786539841' lon='-42.59008924113' />
+  <node id='-77' action='modify' visible='true' lat='-22.93822055771' lon='-42.59129157481' />
+  <node id='-79' action='modify' visible='true' lat='-22.9322620129' lon='-42.59221337032'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-81' action='modify' visible='true' lat='-22.93218057377' lon='-42.59192983956'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-83' action='modify' visible='true' lat='-22.93225813485' lon='-42.59168420647'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-85' action='modify' visible='true' lat='-22.93249081784' lon='-42.59154103748'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-87' action='modify' visible='true' lat='-22.93258518361' lon='-42.59159718218'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-89' action='modify' visible='true' lat='-22.93261620795' lon='-42.59195791191'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-91' action='modify' visible='true' lat='-22.93251796416' lon='-42.59230460547'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-93' action='modify' visible='true' lat='-22.93090875615' lon='-42.59310227407' />
+  <node id='-95' action='modify' visible='true' lat='-22.93116470997' lon='-42.59319350922' />
+  <node id='-97' action='modify' visible='true' lat='-22.93126295473' lon='-42.59284681566' />
+  <node id='-99' action='modify' visible='true' lat='-22.93123193008' lon='-42.59248608593' />
+  <node id='-101' action='modify' visible='true' lat='-22.93113756337' lon='-42.59242994122' />
+  <node id='-103' action='modify' visible='true' lat='-22.93090487805' lon='-42.59257311022' />
+  <node id='-105' action='modify' visible='true' lat='-22.93082731619' lon='-42.59281874331' />
+  <node id='-107' action='modify' visible='true' lat='-22.93261583737' lon='-42.59101907303'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-109' action='modify' visible='true' lat='-22.93251759357' lon='-42.59136576659'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-111' action='modify' visible='true' lat='-22.93226164231' lon='-42.59127453144'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-113' action='modify' visible='true' lat='-22.93218020319' lon='-42.59099100068'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-115' action='modify' visible='true' lat='-22.93225776426' lon='-42.59074536759'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-117' action='modify' visible='true' lat='-22.93249044726' lon='-42.5906021986'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-119' action='modify' visible='true' lat='-22.93258481303' lon='-42.5906583433'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-121' action='modify' visible='true' lat='-22.93025580711' lon='-42.59369056365' />
+  <node id='-123' action='modify' visible='true' lat='-22.93026515875' lon='-42.59085759197' />
+  <node id='-125' action='modify' visible='true' lat='-22.93196512453' lon='-42.59086420786' />
+  <node id='-127' action='modify' visible='true' lat='-22.93195577301' lon='-42.59369717955' />
+  <node id='-129' action='modify' visible='true' lat='-22.93097091507' lon='-42.58900954097' />
+  <node id='-131' action='modify' visible='true' lat='-22.93031798639' lon='-42.58740258288' />
+  <node id='-133' action='modify' visible='true' lat='-22.9315286225' lon='-42.58902726477' />
+  <node id='-135' action='modify' visible='true' lat='-22.93188228944' lon='-42.58779250653' />
+  <node id='-137' action='modify' visible='true' lat='-22.93187684841' lon='-42.58742030668' />
+  <node id='-139' action='modify' visible='true' lat='-22.93617822615' lon='-42.58744883097' />
+  <node id='-141' action='modify' visible='true' lat='-22.93663525678' lon='-42.58854770672' />
+  <node id='-143' action='modify' visible='true' lat='-22.93795193164' lon='-42.5883350211' />
+  <node id='-145' action='modify' visible='true' lat='-22.93795193164' lon='-42.58711798666' />
+  <node id='-147' action='modify' visible='true' lat='-22.93668966509' lon='-42.58731885642' />
+  <node id='-149' action='modify' visible='true' lat='-22.9324334361' lon='-42.59600068174'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-151' action='modify' visible='true' lat='-22.9342254466' lon='-42.59800962863' />
+  <node id='-153' action='modify' visible='true' lat='-22.93390510037' lon='-42.59769959575' />
+  <node id='-155' action='modify' visible='true' lat='-22.93390510037' lon='-42.59694341802' />
+  <node id='-157' action='modify' visible='true' lat='-22.93437865539' lon='-42.59676193536' />
+  <node id='-159' action='modify' visible='true' lat='-22.93474774859' lon='-42.5967468118' />
+  <node id='-161' action='modify' visible='true' lat='-22.9347059645' lon='-42.59752567487' />
+  <node id='-163' action='modify' visible='true' lat='-22.93377161961' lon='-42.59627907277' />
+  <node id='-165' action='modify' visible='true' lat='-22.9340199279' lon='-42.59605819228' />
+  <node id='-167' action='modify' visible='true' lat='-22.93617810233' lon='-42.59954161766' />
+  <node id='-169' action='modify' visible='true' lat='-22.93575330135' lon='-42.59893667547' />
+  <node id='-171' action='modify' visible='true' lat='-22.93564884189' lon='-42.59817293595' />
+  <node id='-173' action='modify' visible='true' lat='-22.93564884189' lon='-42.5971218489' />
+  <node id='-175' action='modify' visible='true' lat='-22.9366098659' lon='-42.59568511119' />
+  <node id='-177' action='modify' visible='true' lat='-22.93576722926' lon='-42.59640348005' />
+  <node id='-179' action='modify' visible='true' lat='-22.93595525609' lon='-42.59731845511' />
+  <node id='-181' action='modify' visible='true' lat='-22.93726192454' lon='-42.598882662' />
+  <node id='-183' action='modify' visible='true' lat='-22.93682319509' lon='-42.59782400341' />
+  <node id='-185' action='modify' visible='true' lat='-22.93699033028' lon='-42.5964250617' />
+  <node id='-187' action='modify' visible='true' lat='-22.93747084282' lon='-42.59582767578' />
+  <node id='-189' action='modify' visible='true' lat='-22.93782600315' lon='-42.59703000946' />
+  <node id='-191' action='modify' visible='true' lat='-22.94034396875' lon='-42.59932184915' />
+  <node id='-193' action='modify' visible='true' lat='-22.93977226185' lon='-42.59979522209' />
+  <node id='-195' action='modify' visible='true' lat='-22.93884391255' lon='-42.59811556712' />
+  <node id='-197' action='modify' visible='true' lat='-22.93886094129' lon='-42.59699566966' />
+  <node id='-199' action='modify' visible='true' lat='-22.93924396283' lon='-42.5963755829' />
+  <node id='-201' action='modify' visible='true' lat='-22.94007267843' lon='-42.59543789073' />
+  <node id='-203' action='modify' visible='true' lat='-22.93211063561' lon='-42.59755570876'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-205' action='modify' visible='true' lat='-22.93202919639' lon='-42.597272178'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-207' action='modify' visible='true' lat='-22.93210675757' lon='-42.59702654491'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-209' action='modify' visible='true' lat='-22.93213130914' lon='-42.59859334076'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-211' action='modify' visible='true' lat='-22.93233944081' lon='-42.59688337592'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-213' action='modify' visible='true' lat='-22.93204986993' lon='-42.59830981'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-215' action='modify' visible='true' lat='-22.93243380668' lon='-42.59693952062'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-217' action='modify' visible='true' lat='-22.93212743109' lon='-42.59806417691'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-219' action='modify' visible='true' lat='-22.93246483106' lon='-42.59730025035'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-221' action='modify' visible='true' lat='-22.9323601143' lon='-42.59792100792'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-223' action='modify' visible='true' lat='-22.93236658716' lon='-42.59764694391'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-225' action='modify' visible='true' lat='-22.93245448015' lon='-42.59797715262'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-227' action='modify' visible='true' lat='-22.93248550452' lon='-42.59833788235'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-229' action='modify' visible='true' lat='-22.93238726065' lon='-42.59868457591'>
+    <tag k='josm_error_codes' v='1001' />
+  </node>
+  <node id='-231' action='modify' visible='true' lat='-22.94125413118' lon='-42.59808265149' />
+  <node id='-233' action='modify' visible='true' lat='-22.93246446048' lon='-42.59636141147'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-235' action='modify' visible='true' lat='-22.93236621657' lon='-42.59670810503'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-237' action='modify' visible='true' lat='-22.93211026502' lon='-42.59661686988'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-239' action='modify' visible='true' lat='-22.93202882581' lon='-42.59633333912'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-241' action='modify' visible='true' lat='-22.93210638697' lon='-42.59608770603'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-243' action='modify' visible='true' lat='-22.93233907023' lon='-42.59594453704'>
+    <tag k='josm_error_codes' v='904' />
+  </node>
+  <node id='-245' action='modify' visible='true' lat='-22.93000020899' lon='-42.59857866731' />
+  <node id='-247' action='modify' visible='true' lat='-22.93065315927' lon='-42.59799037773' />
+  <node id='-249' action='modify' visible='true' lat='-22.93000956066' lon='-42.59574569563' />
+  <node id='-251' action='modify' visible='true' lat='-22.93090911357' lon='-42.59808161288' />
+  <node id='-253' action='modify' visible='true' lat='-22.93170952965' lon='-42.59575231152' />
+  <node id='-255' action='modify' visible='true' lat='-22.93100735852' lon='-42.59773491932' />
+  <node id='-257' action='modify' visible='true' lat='-22.9317001781' lon='-42.59858528321' />
+  <node id='-259' action='modify' visible='true' lat='-22.9306429436' lon='-42.59675848112' />
+  <node id='-261' action='modify' visible='true' lat='-22.9309763338' lon='-42.59737418959' />
+  <node id='-263' action='modify' visible='true' lat='-22.93056150348' lon='-42.59647495036' />
+  <node id='-265' action='modify' visible='true' lat='-22.93088196692' lon='-42.59731804488' />
+  <node id='-267' action='modify' visible='true' lat='-22.93064928117' lon='-42.59746121388' />
+  <node id='-269' action='modify' visible='true' lat='-22.93063906549' lon='-42.59622931727' />
+  <node id='-271' action='modify' visible='true' lat='-22.93087175126' lon='-42.59608614827' />
+  <node id='-273' action='modify' visible='true' lat='-22.93057171916' lon='-42.59770684697' />
+  <node id='-275' action='modify' visible='true' lat='-22.93096611816' lon='-42.59614229298' />
+  <node id='-277' action='modify' visible='true' lat='-22.93099714287' lon='-42.59650302271' />
+  <node id='-279' action='modify' visible='true' lat='-22.93089889791' lon='-42.59684971627' />
+  <node id='-281' action='modify' visible='true' lat='-22.94135559003' lon='-42.59225407414' />
+  <node id='-283' action='modify' visible='true' lat='-22.93934542319' lon='-42.59054700555' />
+  <node id='-285' action='modify' visible='true' lat='-22.94017413817' lon='-42.58960931338' />
+  <node id='-287' action='modify' visible='true' lat='-22.94044542828' lon='-42.59349327181' />
+  <node id='-289' action='modify' visible='true' lat='-22.93987372182' lon='-42.59396664474' />
+  <node id='-291' action='modify' visible='true' lat='-22.93894537321' lon='-42.59228698978' />
+  <node id='-293' action='modify' visible='true' lat='-22.93896240194' lon='-42.59116709231' />
+  <node id='-295' action='modify' visible='true' lat='-22.93300138853' lon='-42.59817225915' />
+  <node id='-297' action='modify' visible='true' lat='-22.93274302673' lon='-42.59849287024' />
+  <node id='-299' action='modify' visible='true' lat='-22.93301984292' lon='-42.59876004615' />
+  <node id='-301' action='modify' visible='true' lat='-22.93333971871' lon='-42.59848619084' />
+  <node id='-303' action='modify' visible='true' lat='-22.93278608706' lon='-42.59793180083' />
+  <node id='-305' action='modify' visible='true' lat='-22.93301369146' lon='-42.59763122793' />
+  <node id='-307' action='modify' visible='true' lat='-22.93330281001' lon='-42.5977180601' />
+  <node id='-309' action='modify' visible='true' lat='-22.93299677493' lon='-42.59698666606' />
+  <node id='-311' action='modify' visible='true' lat='-22.93275686755' lon='-42.5971436319' />
+  <node id='-313' action='modify' visible='true' lat='-22.93299985066' lon='-42.59746424299' />
+  <node id='-315' action='modify' visible='true' lat='-22.93326743916' lon='-42.59729057865' />
+  <node id='-317' action='modify' visible='true' lat='-22.93279992788' lon='-42.59658924189' />
+  <node id='-319' action='modify' visible='true' lat='-22.93321822752' lon='-42.5968597575' />
+  <node id='-321' action='modify' visible='true' lat='-22.93309827408' lon='-42.59653246701' />
+  <node id='-323' action='modify' visible='true' lat='-22.93317362946' lon='-42.59609496646' />
+  <node id='-325' action='modify' visible='true' lat='-22.9329983128' lon='-42.59595469911' />
+  <node id='-327' action='modify' visible='true' lat='-22.93279223854' lon='-42.59614172225' />
+  <node id='-329' action='modify' visible='true' lat='-22.93289373784' lon='-42.59637884087' />
+  <node id='-331' action='modify' visible='true' lat='-22.93283222312' lon='-42.59572425989' />
+  <node id='-333' action='modify' visible='true' lat='-22.93314594789' lon='-42.59581109206' />
+  <node id='-335' action='modify' visible='true' lat='-22.93305367598' lon='-42.59563074832' />
+  <node id='-337' action='modify' visible='true' lat='-22.93301061573' lon='-42.59139768003' />
+  <node id='-339' action='modify' visible='true' lat='-22.93294910106' lon='-42.59074309906' />
+  <node id='-341' action='modify' visible='true' lat='-22.93326282556' lon='-42.59082993123' />
+  <node id='-343' action='modify' visible='true' lat='-22.93317055373' lon='-42.59064958749' />
+  <node id='-345' action='modify' visible='true' lat='-22.93311826632' lon='-42.59319109832' />
+  <node id='-347' action='modify' visible='true' lat='-22.93285990475' lon='-42.59351170941' />
+  <node id='-349' action='modify' visible='true' lat='-22.9331367207' lon='-42.59377888531' />
+  <node id='-351' action='modify' visible='true' lat='-22.93345659622' lon='-42.59350503001' />
+  <node id='-353' action='modify' visible='true' lat='-22.93290296504' lon='-42.59295064' />
+  <node id='-355' action='modify' visible='true' lat='-22.93313056924' lon='-42.5926500671' />
+  <node id='-357' action='modify' visible='true' lat='-22.93341968754' lon='-42.59273689927' />
+  <node id='-359' action='modify' visible='true' lat='-22.93311365273' lon='-42.59200550522' />
+  <node id='-361' action='modify' visible='true' lat='-22.93287374556' lon='-42.59216247107' />
+  <node id='-363' action='modify' visible='true' lat='-22.93311672846' lon='-42.59248308216' />
+  <node id='-365' action='modify' visible='true' lat='-22.93338431672' lon='-42.59230941782' />
+  <node id='-367' action='modify' visible='true' lat='-22.93291680585' lon='-42.59160808106' />
+  <node id='-369' action='modify' visible='true' lat='-22.93333510513' lon='-42.59187859667' />
+  <node id='-371' action='modify' visible='true' lat='-22.9332905071' lon='-42.59111380563' />
+  <node id='-373' action='modify' visible='true' lat='-22.93311519059' lon='-42.59097353828' />
+  <node id='-375' action='modify' visible='true' lat='-22.93321515179' lon='-42.59155130618' />
+  <node id='-377' action='modify' visible='true' lat='-22.93290911651' lon='-42.59116056142' />
+  <way id='-379' action='modify' visible='true'>
+    <nd ref='-11' />
+    <nd ref='-13' />
+    <nd ref='-15' />
+    <nd ref='-17' />
+    <nd ref='-19' />
+    <nd ref='-21' />
+    <nd ref='-23' />
+    <nd ref='-11' />
+    <tag k='josm_error_codes' v='1001' />
+    <tag k='name' v='01- inside - land on left side' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-381' action='modify' visible='true'>
+    <nd ref='-25' />
+    <nd ref='-37' />
+    <nd ref='-35' />
+    <nd ref='-33' />
+    <nd ref='-31' />
+    <nd ref='-29' />
+    <nd ref='-27' />
+    <nd ref='-25' />
+    <tag k='description' v='good' />
+    <tag k='josm_error_codes' v='none' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-383' action='modify' visible='true'>
+    <nd ref='-39' />
+    <nd ref='-49' />
+    <nd ref='-47' />
+    <nd ref='-45' />
+    <nd ref='-43' />
+    <nd ref='-41' />
+    <nd ref='-39' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='01-inside-closed-connected-to-unclosed-in-2-nodes' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-385' action='modify' visible='true'>
+    <nd ref='-47' />
+    <nd ref='-53' />
+    <nd ref='-51' />
+    <nd ref='-43' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='02-inside-closed-connected-to-unclosed-in-2-nodes' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-387' action='modify' visible='true'>
+    <nd ref='-61' />
+    <nd ref='-59' />
+    <nd ref='-57' />
+    <nd ref='-55' />
+    <tag k='josm_error_codes' v='901,903' />
+    <tag k='name' v='inside-left-unconnected' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-389' action='modify' visible='true'>
+    <nd ref='-63' />
+    <nd ref='-65' />
+    <nd ref='-61' />
+    <tag k='josm_error_codes' v='901,903' />
+    <tag k='name' v='inside-right-unconnected' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-391' action='modify' visible='true'>
+    <nd ref='-65' />
+    <nd ref='-67' />
+    <nd ref='-57' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='inside-unclosed-connected-to-unclosed' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-393' action='modify' visible='true'>
+    <nd ref='-69' />
+    <nd ref='-71' />
+    <nd ref='-73' />
+    <nd ref='-75' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='inside-bad-unordered1-2' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-395' action='modify' visible='true'>
+    <nd ref='-69' />
+    <nd ref='-77' />
+    <nd ref='-75' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='inside-bad-unordered2-2' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-397' action='modify' visible='true'>
+    <nd ref='-81' />
+    <nd ref='-83' />
+    <nd ref='-85' />
+    <nd ref='-87' />
+    <nd ref='-89' />
+    <tag k='josm_error_codes' v='904' />
+    <tag k='name' v='badpart2' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-399' action='modify' visible='true'>
+    <nd ref='-97' />
+    <nd ref='-99' />
+    <nd ref='-101' />
+    <nd ref='-103' />
+    <nd ref='-105' />
+    <tag k='description' v='goodpart2' />
+    <tag k='josm_error_codes' v='none' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-401' action='modify' visible='true'>
+    <nd ref='-89' />
+    <nd ref='-91' />
+    <nd ref='-79' />
+    <nd ref='-81' />
+    <tag k='josm_error_codes' v='904' />
+    <tag k='name' v='badpart1' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-403' action='modify' visible='true'>
+    <nd ref='-105' />
+    <nd ref='-93' />
+    <nd ref='-95' />
+    <nd ref='-97' />
+    <tag k='description' v='goodpart1' />
+    <tag k='josm_error_codes' v='none' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-405' action='modify' visible='true'>
+    <nd ref='-107' />
+    <nd ref='-109' />
+    <nd ref='-111' />
+    <nd ref='-113' />
+    <tag k='josm_error_codes' v='904' />
+    <tag k='name' v='badpart1' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-407' action='modify' visible='true'>
+    <nd ref='-113' />
+    <nd ref='-115' />
+    <nd ref='-117' />
+    <nd ref='-119' />
+    <tag k='josm_error_codes' v='904' />
+    <tag k='name' v='badpart2' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-409' action='modify' visible='true'>
+    <nd ref='-119' />
+    <nd ref='-107' />
+    <tag k='josm_error_codes' v='904' />
+    <tag k='name' v='badpart3' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-411' action='modify' visible='true'>
+    <nd ref='-121' />
+    <nd ref='-123' />
+    <nd ref='-125' />
+    <nd ref='-127' />
+    <nd ref='-121' />
+    <tag k='barrier' v='fence' />
+    <tag k='name' v='good' />
+  </way>
+  <way id='-413' action='modify' visible='true'>
+    <nd ref='-137' />
+    <nd ref='-135' />
+    <nd ref='-133' />
+    <nd ref='-129' />
+    <nd ref='-131' />
+    <tag k='josm_error_codes' v='none' />
+    <tag k='name' v='partly outside-okay' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-415' action='modify' visible='true'>
+    <nd ref='-139' />
+    <nd ref='-141' />
+    <nd ref='-143' />
+    <nd ref='-145' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='partly outside' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-417' action='modify' visible='true'>
+    <nd ref='-147' />
+    <nd ref='-145' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='fully outside' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-419' action='modify' visible='true'>
+    <nd ref='-209' />
+    <nd ref='-213' />
+    <nd ref='-217' />
+    <nd ref='-221' />
+    <nd ref='-225' />
+    <nd ref='-227' />
+    <nd ref='-229' />
+    <nd ref='-209' />
+    <tag k='josm_error_codes' v='1001' />
+    <tag k='name' v='01- outside - land on left side' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-421' action='modify' visible='true'>
+    <nd ref='-151' />
+    <nd ref='-161' />
+    <nd ref='-159' />
+    <nd ref='-157' />
+    <nd ref='-155' />
+    <nd ref='-153' />
+    <nd ref='-151' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='01-outside-closed-connected-to-unclosed-in-2-nodes' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-423' action='modify' visible='true'>
+    <nd ref='-159' />
+    <nd ref='-165' />
+    <nd ref='-163' />
+    <nd ref='-155' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='02-outside-closed-connected-to-unclosed-in-2-nodes' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-425' action='modify' visible='true'>
+    <nd ref='-173' />
+    <nd ref='-171' />
+    <nd ref='-169' />
+    <nd ref='-167' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='outside-left-unconnected' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-427' action='modify' visible='true'>
+    <nd ref='-175' />
+    <nd ref='-177' />
+    <nd ref='-173' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='outside-right-unconnected' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-429' action='modify' visible='true'>
+    <nd ref='-177' />
+    <nd ref='-179' />
+    <nd ref='-169' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='outside-unclosed-connected-to-unclosed' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-431' action='modify' visible='true'>
+    <nd ref='-181' />
+    <nd ref='-183' />
+    <nd ref='-185' />
+    <nd ref='-187' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='outside-bad-unordered1-2' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-433' action='modify' visible='true'>
+    <nd ref='-181' />
+    <nd ref='-189' />
+    <nd ref='-187' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='outside-bad-unordered2-2' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-435' action='modify' visible='true'>
+    <nd ref='-191' />
+    <nd ref='-193' />
+    <nd ref='-195' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='outside-left-connected-to-reversed' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-437' action='modify' visible='true'>
+    <nd ref='-197' />
+    <nd ref='-199' />
+    <nd ref='-201' />
+    <nd ref='-231' />
+    <nd ref='-191' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='outside-right--connected-to-reversed' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-439' action='modify' visible='true'>
+    <nd ref='-197' />
+    <nd ref='-195' />
+    <tag k='josm_error_codes' v='902' />
+    <tag k='name' v='outside-reversed-part' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-441' action='modify' visible='true'>
+    <nd ref='-205' />
+    <nd ref='-207' />
+    <nd ref='-211' />
+    <nd ref='-215' />
+    <nd ref='-219' />
+    <tag k='josm_error_codes' v='904' />
+    <tag k='name' v='badpart2' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-443' action='modify' visible='true'>
+    <nd ref='-219' />
+    <nd ref='-223' />
+    <nd ref='-203' />
+    <nd ref='-205' />
+    <tag k='josm_error_codes' v='904' />
+    <tag k='name' v='badpart1' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-445' action='modify' visible='true'>
+    <nd ref='-233' />
+    <nd ref='-235' />
+    <nd ref='-237' />
+    <nd ref='-239' />
+    <tag k='josm_error_codes' v='904' />
+    <tag k='name' v='badpart1' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-447' action='modify' visible='true'>
+    <nd ref='-239' />
+    <nd ref='-241' />
+    <nd ref='-243' />
+    <nd ref='-149' />
+    <tag k='josm_error_codes' v='904' />
+    <tag k='name' v='badpart2' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-449' action='modify' visible='true'>
+    <nd ref='-149' />
+    <nd ref='-233' />
+    <tag k='josm_error_codes' v='904' />
+    <tag k='name' v='badpart3' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-451' action='modify' visible='true'>
+    <nd ref='-259' />
+    <nd ref='-279' />
+    <nd ref='-277' />
+    <nd ref='-275' />
+    <nd ref='-271' />
+    <nd ref='-269' />
+    <nd ref='-263' />
+    <nd ref='-259' />
+    <tag k='description' v='good' />
+    <tag k='josm_error_codes' v='none' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-453' action='modify' visible='true'>
+    <nd ref='-255' />
+    <nd ref='-261' />
+    <nd ref='-265' />
+    <nd ref='-267' />
+    <nd ref='-273' />
+    <tag k='description' v='goodpart2' />
+    <tag k='josm_error_codes' v='none' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-455' action='modify' visible='true'>
+    <nd ref='-273' />
+    <nd ref='-247' />
+    <nd ref='-251' />
+    <nd ref='-255' />
+    <tag k='description' v='goodpart1' />
+    <tag k='josm_error_codes' v='none' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-457' action='modify' visible='true'>
+    <nd ref='-245' />
+    <nd ref='-249' />
+    <nd ref='-253' />
+    <nd ref='-257' />
+    <nd ref='-245' />
+    <tag k='barrier' v='fence' />
+    <tag k='name' v='good' />
+  </way>
+  <way id='-459' action='modify' visible='true'>
+    <nd ref='-287' />
+    <nd ref='-289' />
+    <nd ref='-291' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='inside-left-connected-to-reversed' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-461' action='modify' visible='true'>
+    <nd ref='-293' />
+    <nd ref='-283' />
+    <nd ref='-285' />
+    <nd ref='-281' />
+    <nd ref='-287' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='inside-right--connected-to-reversed' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-463' action='modify' visible='true'>
+    <nd ref='-293' />
+    <nd ref='-291' />
+    <tag k='josm_error_codes' v='902' />
+    <tag k='name' v='inside-reversed-part' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-465' action='modify' visible='true'>
+    <nd ref='-295' />
+    <nd ref='-297' />
+    <nd ref='-299' />
+    <nd ref='-301' />
+    <nd ref='-295' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='01outside--connected at start node' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-467' action='modify' visible='true'>
+    <nd ref='-295' />
+    <nd ref='-307' />
+    <nd ref='-305' />
+    <nd ref='-303' />
+    <nd ref='-295' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='01outside--connected at start node' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-469' action='modify' visible='true'>
+    <nd ref='-309' />
+    <nd ref='-311' />
+    <nd ref='-313' />
+    <nd ref='-315' />
+    <nd ref='-309' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='02outside.-connected at start node' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-471' action='modify' visible='true'>
+    <nd ref='-317' />
+    <nd ref='-309' />
+    <nd ref='-319' />
+    <nd ref='-321' />
+    <nd ref='-317' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='02-outside-connected at 2nd node' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-473' action='modify' visible='true'>
+    <nd ref='-323' />
+    <nd ref='-325' />
+    <nd ref='-327' />
+    <nd ref='-329' />
+    <nd ref='-323' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='03-outside-connected at 2nd node' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-475' action='modify' visible='true'>
+    <nd ref='-331' />
+    <nd ref='-325' />
+    <nd ref='-333' />
+    <nd ref='-335' />
+    <nd ref='-331' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='03-outside-connected at 2nd node' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-477' action='modify' visible='true'>
+    <nd ref='-339' />
+    <nd ref='-373' />
+    <nd ref='-341' />
+    <nd ref='-343' />
+    <nd ref='-339' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='03-inside-connected at 2nd node' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-479' action='modify' visible='true'>
+    <nd ref='-345' />
+    <nd ref='-347' />
+    <nd ref='-349' />
+    <nd ref='-351' />
+    <nd ref='-345' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='01-inside-connected at start node' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-481' action='modify' visible='true'>
+    <nd ref='-345' />
+    <nd ref='-357' />
+    <nd ref='-355' />
+    <nd ref='-353' />
+    <nd ref='-345' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='01-inside-connected at start node' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-483' action='modify' visible='true'>
+    <nd ref='-359' />
+    <nd ref='-361' />
+    <nd ref='-363' />
+    <nd ref='-365' />
+    <nd ref='-359' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='02-inside-connected at start node' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-485' action='modify' visible='true'>
+    <nd ref='-367' />
+    <nd ref='-359' />
+    <nd ref='-369' />
+    <nd ref='-375' />
+    <nd ref='-367' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='02-inside-connected at 2nd node' />
+    <tag k='natural' v='coastline' />
+  </way>
+  <way id='-487' action='modify' visible='true'>
+    <nd ref='-371' />
+    <nd ref='-373' />
+    <nd ref='-377' />
+    <nd ref='-337' />
+    <nd ref='-371' />
+    <tag k='josm_error_codes' v='901' />
+    <tag k='name' v='03-inside-connected at 2nd node' />
+    <tag k='natural' v='coastline' />
+  </way>
+</osm>

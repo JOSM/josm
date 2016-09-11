@@ -19,9 +19,8 @@ import org.openstreetmap.josm.data.projection.Projection;
  * Base class for different WMS tile sources those based on URL templates and those based on WMS endpoints
  * @author Wiktor Niesiobędzki
  * @since 10990
- *
  */
-public class AbstractWMSTileSource extends TMSTileSource {
+public abstract class AbstractWMSTileSource extends TMSTileSource {
 
     private EastNorth anchorPosition;
     private int[] tileXMin;
@@ -31,15 +30,12 @@ public class AbstractWMSTileSource extends TMSTileSource {
     private double[] degreesPerTile;
     private static final float SCALE_DENOMINATOR_ZOOM_LEVEL_1 = 559082264.0287178f;
 
+    /**
+     * Constructs a new {@code AbstractWMSTileSource}.
+     * @param info tile source info
+     */
     public AbstractWMSTileSource(TileSourceInfo info) {
         super(info);
-    }
-
-    /**
-     * Initializes class with current projection in JOSM. This call is needed every time projection changes.
-     */
-    public void initProjection() {
-        initProjection(Main.getProjection());
     }
 
     private void initAnchorPosition(Projection proj) {
@@ -47,6 +43,13 @@ public class AbstractWMSTileSource extends TMSTileSource {
         EastNorth min = proj.latlon2eastNorth(worldBounds.getMin());
         EastNorth max = proj.latlon2eastNorth(worldBounds.getMax());
         this.anchorPosition = new EastNorth(min.east(), max.north());
+    }
+
+    /**
+     * Initializes class with current projection in JOSM. This call is needed every time projection changes.
+     */
+    public void initProjection() {
+        initProjection(Main.getProjection());
     }
 
     /**
@@ -96,19 +99,18 @@ public class AbstractWMSTileSource extends TMSTileSource {
         return Main.getProjection().eastNorth2latlon(getTileEastNorth(x, y, zoom)).toCoordinate();
     }
 
-    @Override
-    public TileXY latLonToTileXY(double lat, double lon, int zoom) {
-        Projection proj = Main.getProjection();
-        EastNorth enPoint = proj.latlon2eastNorth(new LatLon(lat, lon));
-        return eastNorthToTileXY(enPoint, zoom);
-    }
-
     private TileXY eastNorthToTileXY(EastNorth enPoint, int zoom) {
         double scale = getDegreesPerTile(zoom);
         return new TileXY(
                 (enPoint.east() - anchorPosition.east()) / scale,
                 (anchorPosition.north() - enPoint.north()) / scale
                 );
+    }
+
+    @Override
+    public TileXY latLonToTileXY(double lat, double lon, int zoom) {
+        EastNorth enPoint = Main.getProjection().latlon2eastNorth(new LatLon(lat, lon));
+        return eastNorthToTileXY(enPoint, zoom);
     }
 
     @Override
