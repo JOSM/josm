@@ -524,4 +524,16 @@ public class CachedFile implements Closeable {
             activeConnection.disconnect();
         }
     }
+
+    /**
+     * Clears the cached file
+     * @throws IOException
+     * @since 10993
+     */
+    public void clear() throws IOException {
+        File f = getFile();
+        if (f != null && f.exists()) {
+            Utils.deleteFile(f);
+        }
+    }
 }
