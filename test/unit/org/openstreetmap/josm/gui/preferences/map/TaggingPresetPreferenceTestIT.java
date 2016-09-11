@@ -76,7 +76,7 @@ public class TaggingPresetPreferenceTestIT {
                 }
             } catch (SAXException | IllegalArgumentException e) {
                 e.printStackTrace();
-                if (!source.url.contains("yopaseopor/traffic_signs")) {
+                if (!source.url.contains("yopaseopor/")) {
                     // ignore https://raw.githubusercontent.com/yopaseopor/traffic_signs_preset_JOSM cause too much errors
                     allErrors.add(e);
                 }
