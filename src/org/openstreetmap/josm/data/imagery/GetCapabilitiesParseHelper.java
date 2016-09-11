@@ -1,0 +1,212 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.data.imagery;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.openstreetmap.josm.tools.Utils;
+
+/**
+ * Helper class for handling OGC GetCapabilities documents
+ *
+ */
+public class GetCapabilitiesParseHelper {
+    enum TransferMode {
+        KVP("KVP"),
+        REST("RESTful");
+
+        private final String typeString;
+
+        TransferMode(String urlString) {
+            this.typeString = urlString;
+        }
+
+        private String getTypeString() {
+            return typeString;
+        }
+
+        static TransferMode fromString(String s) {
+            for (TransferMode type : TransferMode.values()) {
+                if (type.getTypeString().equals(s)) {
+                    return type;
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * OWS namespace address
+     */
+    public static final String OWS_NS_URL = "http://www.opengis.net/ows/1.1";
+    /**
+     * XML xlink namespace address
+     */
+    public static final String XLINK_NS_URL = "http://www.w3.org/1999/xlink";
+
+    /**
+     * QNames in OWS namespace
+     */
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
+    static final QName QN_OWS_ALLOWED_VALUES      = new QName(OWS_NS_URL, "AllowedValues");
+    static final QName QN_OWS_CONSTRAINT          = new QName(OWS_NS_URL, "Constraint");
+    static final QName QN_OWS_DCP                 = new QName(OWS_NS_URL, "DCP");
+    static final QName QN_OWS_GET                 = new QName(OWS_NS_URL, "Get");
+    static final QName QN_OWS_HTTP                = new QName(OWS_NS_URL, "HTTP");
+    static final QName QN_OWS_IDENTIFIER          = new QName(OWS_NS_URL, "Identifier");
+    static final QName QN_OWS_OPERATION           = new QName(OWS_NS_URL, "Operation");
+    static final QName QN_OWS_OPERATIONS_METADATA = new QName(OWS_NS_URL, "OperationsMetadata");
+    static final QName QN_OWS_SUPPORTED_CRS       = new QName(OWS_NS_URL, "SupportedCRS");
+    static final QName QN_OWS_VALUE               = new QName(OWS_NS_URL, "Value");
+    // CHECKSTYLE.ON: SingleSpaceSeparator
+
+
+    /**
+     * @param in InputStream with pointing to GetCapabilities XML stream
+     * @return safe XMLStreamReader, that is not validating external entities, nor loads DTD's
+     * @throws IOException
+     * @throws XMLStreamException
+     */
+    public static XMLStreamReader getReader(InputStream in) throws IOException, XMLStreamException {
+        XMLInputFactory factory = XMLInputFactory.newFactory();
+        // do not try to load external entities, nor validate the XML
+        factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+        factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
+        factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+        return factory.createXMLStreamReader(in);
+    }
+
+    /**
+     * Moves the reader to the closing tag of current tag.
+     * @param reader XMLStreamReader which should be moved
+     * @throws XMLStreamException when parse exception occurs
+     */
+    public static void moveReaderToEndCurrentTag(XMLStreamReader reader) throws XMLStreamException {
+        int level = 0;
+        QName tag = reader.getName();
+        for (int event = reader.getEventType(); reader.hasNext(); event = reader.next()) {
+            switch (event) {
+            case XMLStreamReader.START_ELEMENT:
+                level += 1;
+                break;
+            case XMLStreamReader.END_ELEMENT:
+                level -= 1;
+                if (level == 0 && tag.equals(reader.getName())) {
+                    return;
+                }
+            }
+            if (level < 0) {
+                throw new IllegalStateException("WMTS Parser error - moveReaderToEndCurrentTag failed to find closing tag");
+            }
+        }
+        throw new IllegalStateException("WMTS Parser error - moveReaderToEndCurrentTag failed to find closing tag");
+    }
+
+    /**
+     * Moves reader to first occurrence of the structure equivalent of Xpath tags[0]/tags[1]../tags[n]. If fails to find
+     * moves the reader to the closing tag of current tag
+     *
+     * @param tags array of tags
+     * @param reader XMLStreamReader which should be moved
+     * @return true if tag was found, false otherwise
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    public static boolean moveReaderToTag(XMLStreamReader reader, QName[] tags) throws XMLStreamException {
+        QName stopTag = reader.getName();
+        int currentLevel = 0;
+        QName searchTag = tags[currentLevel];
+        QName parentTag = null;
+        QName skipTag = null;
+
+        for (int event = 0; //skip current element, so we will not skip it as a whole
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && stopTag.equals(reader.getName()));
+                event = reader.next()) {
+            if (event == XMLStreamReader.END_ELEMENT && skipTag != null && skipTag.equals(reader.getName())) {
+                skipTag = null;
+            }
+            if (skipTag == null) {
+                if (event == XMLStreamReader.START_ELEMENT) {
+                    if (searchTag.equals(reader.getName())) {
+                        currentLevel += 1;
+                        if (currentLevel >= tags.length) {
+                            return true; // found!
+                        }
+                        parentTag = searchTag;
+                        searchTag = tags[currentLevel];
+                    } else {
+                        skipTag = reader.getName();
+                    }
+                }
+
+                if (event == XMLStreamReader.END_ELEMENT && parentTag != null && parentTag.equals(reader.getName())) {
+                    currentLevel -= 1;
+                    searchTag = parentTag;
+                    if (currentLevel >= 0) {
+                        parentTag = tags[currentLevel];
+                    } else {
+                        parentTag = null;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Parses Operation[@name='GetTile']/DCP/HTTP/Get section. Returns when reader is on Get closing tag.
+     * @param reader StAX reader instance
+     * @return TransferMode coded in this section
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    public static TransferMode getTransferMode(XMLStreamReader reader) throws XMLStreamException {
+        QName getQname = QN_OWS_GET;
+
+        Utils.ensure(getQname.equals(reader.getName()), "WMTS Parser state invalid. Expected element %s, got %s",
+                getQname, reader.getName());
+        for (int event = reader.getEventType();
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && getQname.equals(reader.getName()));
+                event = reader.next()) {
+            if (event == XMLStreamReader.START_ELEMENT && QN_OWS_CONSTRAINT.equals(reader.getName())
+             && "GetEncoding".equals(reader.getAttributeValue("", "name"))) {
+                moveReaderToTag(reader, new QName[]{
+                        QN_OWS_ALLOWED_VALUES,
+                        QN_OWS_VALUE
+                });
+                return TransferMode.fromString(reader.getElementText());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param url
+     * @return normalized URL
+     * @throws MalformedURLException
+     * @since 10993
+     */
+    public static String normalizeCapabilitiesUrl(String url) throws MalformedURLException {
+        URL inUrl = new URL(url);
+        URL ret = new URL(inUrl.getProtocol(), inUrl.getHost(), inUrl.getPort(), inUrl.getFile());
+        return ret.toExternalForm();
+    }
+
+    /**
+     *
+     * @param crsIdentifier
+     * @return CRS Identifier as it is used within JOSM (without prefix)
+     */
+    public static String crsToCode(String crsIdentifier) {
+        if (crsIdentifier.startsWith("urn:ogc:def:crs:")) {
+            return crsIdentifier.replaceFirst("urn:ogc:def:crs:([^:]*):.*:(.*)$", "$1:$2");
+        }
+        return crsIdentifier;
+    }
+
+}

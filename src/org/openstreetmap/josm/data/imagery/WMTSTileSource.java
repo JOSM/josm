@@ -8,8 +8,6 @@ import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,7 +28,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -59,6 +56,28 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 8526
  */
 public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTileSource {
+    /**
+     * WMTS namespace address
+     */
+    public static final String WMTS_NS_URL = "http://www.opengis.net/wmts/1.0";
+
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
+    private static final QName QN_CONTENTS            = new QName(WMTSTileSource.WMTS_NS_URL, "Contents");
+    private static final QName QN_FORMAT              = new QName(WMTSTileSource.WMTS_NS_URL, "Format");
+    private static final QName QN_LAYER               = new QName(WMTSTileSource.WMTS_NS_URL, "Layer");
+    private static final QName QN_MATRIX_WIDTH        = new QName(WMTSTileSource.WMTS_NS_URL, "MatrixWidth");
+    private static final QName QN_MATRIX_HEIGHT       = new QName(WMTSTileSource.WMTS_NS_URL, "MatrixHeight");
+    private static final QName QN_RESOURCE_URL        = new QName(WMTSTileSource.WMTS_NS_URL, "ResourceURL");
+    private static final QName QN_SCALE_DENOMINATOR   = new QName(WMTSTileSource.WMTS_NS_URL, "ScaleDenominator");
+    private static final QName QN_STYLE               = new QName(WMTSTileSource.WMTS_NS_URL, "Style");
+    private static final QName QN_TILEMATRIX          = new QName(WMTSTileSource.WMTS_NS_URL, "TileMatrix");
+    private static final QName QN_TILEMATRIXSET       = new QName(WMTSTileSource.WMTS_NS_URL, "TileMatrixSet");
+    private static final QName QN_TILEMATRIX_SET_LINK = new QName(WMTSTileSource.WMTS_NS_URL, "TileMatrixSetLink");
+    private static final QName QN_TILE_WIDTH          = new QName(WMTSTileSource.WMTS_NS_URL, "TileWidth");
+    private static final QName QN_TILE_HEIGHT         = new QName(WMTSTileSource.WMTS_NS_URL, "TileHeight");
+    private static final QName QN_TOPLEFT_CORNER      = new QName(WMTSTileSource.WMTS_NS_URL, "TopLeftCorner");
+    // CHECKSTYLE.ON: SingleSpaceSeparator
+
     private static final String PATTERN_HEADER = "\\{header\\(([^,]+),([^}]+)\\)\\}";
 
     private static final String URL_GET_ENCODING_PARAMS = "SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER={layer}&STYLE={style}&"
@@ -67,10 +86,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     private static final String[] ALL_PATTERNS = {
         PATTERN_HEADER,
     };
-
-    private static final String OWS_NS_URL = "http://www.opengis.net/ows/1.1";
-    private static final String WMTS_NS_URL = "http://www.opengis.net/wmts/1.0";
-    private static final String XLINK_NS_URL = "http://www.w3.org/1999/xlink";
 
     private static class TileMatrix {
         private String identifier;
@@ -138,30 +153,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
 
         Layer() {
-        }
-    }
-
-    private enum TransferMode {
-        KVP("KVP"),
-        REST("RESTful");
-
-        private final String typeString;
-
-        TransferMode(String urlString) {
-            this.typeString = urlString;
-        }
-
-        private String getTypeString() {
-            return typeString;
-        }
-
-        private static TransferMode fromString(String s) {
-            for (TransferMode type : TransferMode.values()) {
-                if (type.getTypeString().equals(s)) {
-                    return type;
-                }
-            }
-            return null;
         }
     }
 
@@ -237,7 +228,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     private Layer currentLayer;
     private TileMatrixSet currentTileMatrixSet;
     private double crsScale;
-    private TransferMode transferMode;
+    private GetCapabilitiesParseHelper.TransferMode transferMode;
 
     private ScaleList nativeScaleList;
 
@@ -249,7 +240,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      */
     public WMTSTileSource(ImageryInfo info) throws IOException {
         super(info);
-        this.baseUrl = normalizeCapabilitiesUrl(handleTemplate(info.getUrl()));
+        this.baseUrl = GetCapabilitiesParseHelper.normalizeCapabilitiesUrl(handleTemplate(info.getUrl()));
         this.layers = getCapabilities();
         if (this.layers.isEmpty())
             throw new IllegalArgumentException(tr("No layers defined by getCapabilities document: {0}", info.getUrl()));
@@ -290,42 +281,40 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * @throws IllegalArgumentException in case of any other error
      */
     private Collection<Layer> getCapabilities() throws IOException {
-        XMLInputFactory factory = XMLInputFactory.newFactory();
-        // do not try to load external entities, nor validate the XML
-        factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
-        factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
-        factory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-
         try (CachedFile cf = new CachedFile(baseUrl); InputStream in = cf.setHttpHeaders(headers).
                 setMaxAge(7 * CachedFile.DAYS).
                 setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince).
                 getInputStream()) {
             byte[] data = Utils.readBytesFromStream(in);
             if (data == null || data.length == 0) {
+                cf.clear();
                 throw new IllegalArgumentException("Could not read data from: " + baseUrl);
             }
-            XMLStreamReader reader = factory.createXMLStreamReader(new ByteArrayInputStream(data));
 
-            Collection<Layer> ret = new ArrayList<>();
-            for (int event = reader.getEventType(); reader.hasNext(); event = reader.next()) {
-                if (event == XMLStreamReader.START_ELEMENT) {
-                    if (new QName(OWS_NS_URL, "OperationsMetadata").equals(reader.getName())) {
-                        parseOperationMetadata(reader);
-                    }
+            try {
+                XMLStreamReader reader = GetCapabilitiesParseHelper.getReader(new ByteArrayInputStream(data));
+                Collection<Layer> ret = new ArrayList<>();
+                for (int event = reader.getEventType(); reader.hasNext(); event = reader.next()) {
+                    if (event == XMLStreamReader.START_ELEMENT) {
+                        if (GetCapabilitiesParseHelper.QN_OWS_OPERATIONS_METADATA.equals(reader.getName())) {
+                            parseOperationMetadata(reader);
+                        }
 
-                    if (new QName(WMTS_NS_URL, "Contents").equals(reader.getName())) {
-                        ret = parseContents(reader);
+                        if (QN_CONTENTS.equals(reader.getName())) {
+                            ret = parseContents(reader);
+                        }
                     }
                 }
+                return ret;
+            } catch (XMLStreamException e) {
+                cf.clear();
+                throw new IllegalArgumentException(e);
             }
-            return ret;
-        } catch (XMLStreamException e) {
-            throw new IllegalArgumentException(e);
         }
     }
 
     /**
-     * Parse Contents tag. Renturns when reader reaches Contents closing tag
+     * Parse Contents tag. Returns when reader reaches Contents closing tag
      *
      * @param reader StAX reader instance
      * @return collection of layers within contents with properly linked TileMatrixSets
@@ -335,13 +324,13 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         Map<String, TileMatrixSet> matrixSetById = new ConcurrentHashMap<>();
         Collection<Layer> layers = new ArrayList<>();
         for (int event = reader.getEventType();
-                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && new QName(WMTS_NS_URL, "Contents").equals(reader.getName()));
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && QN_CONTENTS.equals(reader.getName()));
                 event = reader.next()) {
             if (event == XMLStreamReader.START_ELEMENT) {
-                if (new QName(WMTS_NS_URL, "Layer").equals(reader.getName())) {
+                if (QN_LAYER.equals(reader.getName())) {
                     layers.add(parseLayer(reader));
                 }
-                if (new QName(WMTS_NS_URL, "TileMatrixSet").equals(reader.getName())) {
+                if (QN_TILEMATRIXSET.equals(reader.getName())) {
                     TileMatrixSet entry = parseTileMatrixSet(reader);
                     matrixSetById.put(entry.identifier, entry);
                 }
@@ -371,28 +360,28 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         Stack<QName> tagStack = new Stack<>();
 
         for (int event = reader.getEventType();
-                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && new QName(WMTS_NS_URL, "Layer").equals(reader.getName()));
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && QN_LAYER.equals(reader.getName()));
                 event = reader.next()) {
             if (event == XMLStreamReader.START_ELEMENT) {
                 tagStack.push(reader.getName());
                 if (tagStack.size() == 2) {
-                    if (new QName(WMTS_NS_URL, "Format").equals(reader.getName())) {
+                    if (QN_FORMAT.equals(reader.getName())) {
                         layer.format = reader.getElementText();
-                    } else if (new QName(OWS_NS_URL, "Identifier").equals(reader.getName())) {
+                    } else if (GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER.equals(reader.getName())) {
                         layer.name = reader.getElementText();
-                    } else if (new QName(WMTS_NS_URL, "ResourceURL").equals(reader.getName()) &&
+                    } else if (QN_RESOURCE_URL.equals(reader.getName()) &&
                             "tile".equals(reader.getAttributeValue("", "resourceType"))) {
                         layer.baseUrl = reader.getAttributeValue("", "template");
-                    } else if (new QName(WMTS_NS_URL, "Style").equals(reader.getName()) &&
+                    } else if (QN_STYLE.equals(reader.getName()) &&
                             "true".equals(reader.getAttributeValue("", "isDefault"))) {
-                        if (moveReaderToTag(reader, new QName[] {new QName(OWS_NS_URL, "Identifier")})) {
+                        if (GetCapabilitiesParseHelper.moveReaderToTag(reader, new QName[] {GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER})) {
                             layer.style = reader.getElementText();
                             tagStack.push(reader.getName()); // keep tagStack in sync
                         }
-                    } else if (new QName(WMTS_NS_URL, "TileMatrixSetLink").equals(reader.getName())) {
+                    } else if (QN_TILEMATRIX_SET_LINK.equals(reader.getName())) {
                         layer.tileMatrixSetLinks.add(praseTileMatrixSetLink(reader));
                     } else {
-                        moveReaderToEndCurrentTag(reader);
+                        GetCapabilitiesParseHelper.moveReaderToEndCurrentTag(reader);
                     }
                 }
             }
@@ -412,33 +401,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     /**
-     * Moves the reader to the closing tag of current tag.
-     * @param reader XML stream reader positioned on XMLStreamReader.START_ELEMENT
-     * @throws XMLStreamException when parse exception occurs
-     */
-    private static void moveReaderToEndCurrentTag(XMLStreamReader reader) throws XMLStreamException {
-        int level = 0;
-        QName tag = reader.getName();
-        for (int event = reader.getEventType(); reader.hasNext(); event = reader.next()) {
-            switch (event) {
-            case XMLStreamReader.START_ELEMENT:
-                level += 1;
-                break;
-            case XMLStreamReader.END_ELEMENT:
-                level -= 1;
-                if (level == 0 && tag.equals(reader.getName())) {
-                    return;
-                }
-            }
-            if (level < 0) {
-                throw new IllegalStateException("WMTS Parser error - moveReaderToEndCurrentTag failed to find closing tag");
-            }
-        }
-        throw new IllegalStateException("WMTS Parser error - moveReaderToEndCurrentTag failed to find closing tag");
-
-    }
-
-    /**
      * Gets TileMatrixSetLink value. Returns when reader is on TileMatrixSetLink closing tag
      *
      * @param reader StAX reader instance
@@ -449,9 +411,9 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         String ret = null;
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT &&
-                        new QName(WMTS_NS_URL, "TileMatrixSetLink").equals(reader.getName()));
+                        QN_TILEMATRIX_SET_LINK.equals(reader.getName()));
                 event = reader.next()) {
-            if (event == XMLStreamReader.START_ELEMENT && new QName(WMTS_NS_URL, "TileMatrixSet").equals(reader.getName())) {
+            if (event == XMLStreamReader.START_ELEMENT && QN_TILEMATRIXSET.equals(reader.getName())) {
                 ret = reader.getElementText();
             }
         }
@@ -467,16 +429,16 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     private static TileMatrixSet parseTileMatrixSet(XMLStreamReader reader) throws XMLStreamException {
         TileMatrixSetBuilder matrixSet = new TileMatrixSetBuilder();
         for (int event = reader.getEventType();
-                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && new QName(WMTS_NS_URL, "TileMatrixSet").equals(reader.getName()));
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && QN_TILEMATRIXSET.equals(reader.getName()));
                 event = reader.next()) {
                     if (event == XMLStreamReader.START_ELEMENT) {
-                        if (new QName(OWS_NS_URL, "Identifier").equals(reader.getName())) {
+                        if (GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER.equals(reader.getName())) {
                             matrixSet.identifier = reader.getElementText();
                         }
-                        if (new QName(OWS_NS_URL, "SupportedCRS").equals(reader.getName())) {
-                            matrixSet.crs = crsToCode(reader.getElementText());
+                        if (GetCapabilitiesParseHelper.QN_OWS_SUPPORTED_CRS.equals(reader.getName())) {
+                            matrixSet.crs = GetCapabilitiesParseHelper.crsToCode(reader.getElementText());
                         }
-                        if (new QName(WMTS_NS_URL, "TileMatrix").equals(reader.getName())) {
+                        if (QN_TILEMATRIX.equals(reader.getName())) {
                             matrixSet.tileMatrix.add(parseTileMatrix(reader, matrixSet.crs));
                         }
                     }
@@ -500,16 +462,16 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             matrixProj = Main.getProjection();
         }
         for (int event = reader.getEventType();
-                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && new QName(WMTS_NS_URL, "TileMatrix").equals(reader.getName()));
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && QN_TILEMATRIX.equals(reader.getName()));
                 event = reader.next()) {
             if (event == XMLStreamReader.START_ELEMENT) {
-                if (new QName(OWS_NS_URL, "Identifier").equals(reader.getName())) {
+                if (GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER.equals(reader.getName())) {
                     ret.identifier = reader.getElementText();
                 }
-                if (new QName(WMTS_NS_URL, "ScaleDenominator").equals(reader.getName())) {
+                if (QN_SCALE_DENOMINATOR.equals(reader.getName())) {
                     ret.scaleDenominator = Double.parseDouble(reader.getElementText());
                 }
-                if (new QName(WMTS_NS_URL, "TopLeftCorner").equals(reader.getName())) {
+                if (QN_TOPLEFT_CORNER.equals(reader.getName())) {
                     String[] topLeftCorner = reader.getElementText().split(" ");
                     if (matrixProj.switchXY()) {
                         ret.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[1]), Double.parseDouble(topLeftCorner[0]));
@@ -517,16 +479,16 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                         ret.topLeftCorner = new EastNorth(Double.parseDouble(topLeftCorner[0]), Double.parseDouble(topLeftCorner[1]));
                     }
                 }
-                if (new QName(WMTS_NS_URL, "TileHeight").equals(reader.getName())) {
+                if (QN_TILE_HEIGHT.equals(reader.getName())) {
                     ret.tileHeight = Integer.parseInt(reader.getElementText());
                 }
-                if (new QName(WMTS_NS_URL, "TileWidth").equals(reader.getName())) {
+                if (QN_TILE_WIDTH.equals(reader.getName())) {
                     ret.tileWidth = Integer.parseInt(reader.getElementText());
                 }
-                if (new QName(WMTS_NS_URL, "MatrixHeight").equals(reader.getName())) {
+                if (QN_MATRIX_HEIGHT.equals(reader.getName())) {
                     ret.matrixHeight = Integer.parseInt(reader.getElementText());
                 }
-                if (new QName(WMTS_NS_URL, "MatrixWidth").equals(reader.getName())) {
+                if (QN_MATRIX_WIDTH.equals(reader.getName())) {
                     ret.matrixWidth = Integer.parseInt(reader.getElementText());
                 }
             }
@@ -548,110 +510,21 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     private void parseOperationMetadata(XMLStreamReader reader) throws XMLStreamException {
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT &&
-                        new QName(OWS_NS_URL, "OperationsMetadata").equals(reader.getName()));
+                        GetCapabilitiesParseHelper.QN_OWS_OPERATIONS_METADATA.equals(reader.getName()));
                 event = reader.next()) {
             if (event == XMLStreamReader.START_ELEMENT) {
-                if (new QName(OWS_NS_URL, "Operation").equals(reader.getName()) && "GetTile".equals(reader.getAttributeValue("", "name")) &&
-                        moveReaderToTag(reader, new QName[]{
-                                new QName(OWS_NS_URL, "DCP"),
-                                new QName(OWS_NS_URL, "HTTP"),
-                                new QName(OWS_NS_URL, "Get"),
+                if (GetCapabilitiesParseHelper.QN_OWS_OPERATION.equals(reader.getName()) && "GetTile".equals(reader.getAttributeValue("", "name")) &&
+                        GetCapabilitiesParseHelper.moveReaderToTag(reader, new QName[]{
+                                GetCapabilitiesParseHelper.QN_OWS_DCP,
+                                GetCapabilitiesParseHelper.QN_OWS_HTTP,
+                                GetCapabilitiesParseHelper.QN_OWS_GET,
 
                         })) {
-                    this.baseUrl = reader.getAttributeValue(XLINK_NS_URL, "href");
-                    this.transferMode = getTransferMode(reader);
+                    this.baseUrl = reader.getAttributeValue(GetCapabilitiesParseHelper.XLINK_NS_URL, "href");
+                    this.transferMode = GetCapabilitiesParseHelper.getTransferMode(reader);
                 }
             }
         }
-    }
-
-    /**
-     * Parses Operation[@name='GetTile']/DCP/HTTP/Get section. Returns when reader is on Get closing tag.
-     * @param reader StAX reader instance
-     * @return TransferMode coded in this section
-     * @throws XMLStreamException See {@link XMLStreamReader}
-     */
-    private static TransferMode getTransferMode(XMLStreamReader reader) throws XMLStreamException {
-        QName getQname = new QName(OWS_NS_URL, "Get");
-
-        Utils.ensure(getQname.equals(reader.getName()), "WMTS Parser state invalid. Expected element %s, got %s",
-                getQname, reader.getName());
-        for (int event = reader.getEventType();
-                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && getQname.equals(reader.getName()));
-                event = reader.next()) {
-            if (event == XMLStreamReader.START_ELEMENT && new QName(OWS_NS_URL, "Constraint").equals(reader.getName())
-             && "GetEncoding".equals(reader.getAttributeValue("", "name"))) {
-                moveReaderToTag(reader, new QName[]{
-                        new QName(OWS_NS_URL, "AllowedValues"),
-                        new QName(OWS_NS_URL, "Value")
-                });
-                return TransferMode.fromString(reader.getElementText());
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Moves reader to first occurrence of the structure equivalent of Xpath tags[0]/tags[1]../tags[n]. If fails to find
-     * moves the reader to the closing tag of current tag
-     *
-     * @param reader StAX reader instance
-     * @param tags array of tags
-     * @return true if tag was found, false otherwise
-     * @throws XMLStreamException See {@link XMLStreamReader}
-     */
-    private static boolean moveReaderToTag(XMLStreamReader reader, QName ... tags) throws XMLStreamException {
-        QName stopTag = reader.getName();
-        int currentLevel = 0;
-        QName searchTag = tags[currentLevel];
-        QName parentTag = null;
-        QName skipTag = null;
-
-        for (int event = 0; //skip current element, so we will not skip it as a whole
-                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && stopTag.equals(reader.getName()));
-                event = reader.next()) {
-            if (event == XMLStreamReader.END_ELEMENT && skipTag != null && skipTag.equals(reader.getName())) {
-                skipTag = null;
-            }
-            if (skipTag == null) {
-                if (event == XMLStreamReader.START_ELEMENT) {
-                    if (searchTag.equals(reader.getName())) {
-                        currentLevel += 1;
-                        if (currentLevel >= tags.length) {
-                            return true; // found!
-                        }
-                        parentTag = searchTag;
-                        searchTag = tags[currentLevel];
-                    } else {
-                        skipTag = reader.getName();
-                    }
-                }
-
-                if (event == XMLStreamReader.END_ELEMENT && parentTag != null && parentTag.equals(reader.getName())) {
-                    currentLevel -= 1;
-                    searchTag = parentTag;
-                    if (currentLevel >= 0) {
-                        parentTag = tags[currentLevel];
-                    } else {
-                        parentTag = null;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private static String normalizeCapabilitiesUrl(String url) throws MalformedURLException {
-        URL inUrl = new URL(url);
-        URL ret = new URL(inUrl.getProtocol(), inUrl.getHost(), inUrl.getPort(), inUrl.getFile());
-        return ret.toExternalForm();
-    }
-
-    private static String crsToCode(String crsIdentifier) {
-        if (crsIdentifier.startsWith("urn:ogc:def:crs:")) {
-            return crsIdentifier.replaceFirst("urn:ogc:def:crs:([^:]*):.*:(.*)$", "$1:$2");
-        }
-        return crsIdentifier;
     }
 
     /**
