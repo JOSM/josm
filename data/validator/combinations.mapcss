@@ -399,3 +399,14 @@ area:closed[water][natural!=water][water!=intermittent] { /* water=intermittent 
 way!:closed[water][natural!=water][water!=intermittent] {
   throwWarning: tr("{0} without {1}", "{1.key}", "{2.tag}");
 }
+
+/* see #8519, #11529, limited to motorways and trunks to avoid false positives for streets with lanes for non motorized traffic */
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][turn:lanes              ][tag(lanes)!=eval(count(split("|", tag("turn:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][change:lanes            ][tag(lanes)!=eval(count(split("|", tag("change:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][maxspeed:lanes          ][tag(lanes)!=eval(count(split("|", tag("maxspeed:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][minspeed:lanes          ][tag(lanes)!=eval(count(split("|", tag("minspeed:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:lanes       ][tag(lanes)!=eval(count(split("|", tag("destination:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:ref:lanes   ][tag(lanes)!=eval(count(split("|", tag("destination:ref:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:symbol:lanes][tag(lanes)!=eval(count(split("|", tag("destination:symbol:lanes"))))] {
+    throwWarning: tr("Different number of lanes in the keys {0} and {1}", "{1.key}", "{2.key}");
+}
