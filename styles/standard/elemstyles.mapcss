@@ -4042,7 +4042,10 @@ way[natural=valley] {
     color: natural#002f00;
 }
 area[natural=scree] {
-    fill-color: natural#002f00;
+    fill-color: scree#c3c3c3;
+}
+area[natural=shingle] {
+    fill-color: shingle#c3c3c3;
 }
 area[natural=scrub] {
     fill-color: scrub#007000;
@@ -4141,6 +4144,7 @@ node[natural=tree][leaf_type=broadleaved] {
 }
 node[natural=glacier],
 node[natural=scree],
+node[natural=shingle],
 node[natural=scrub],
 node[natural=fell],
 node[natural=heath],
