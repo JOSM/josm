@@ -279,7 +279,7 @@ public class LayerManager {
      * Gets an unmodifiable list of all layers that are currently in this manager. This list won't update once layers are added or removed.
      * @return The list of layers.
      */
-    public List<Layer> getLayers() {
+    public synchronized List<Layer> getLayers() {
         return Collections.unmodifiableList(new ArrayList<>(layers));
     }
 
@@ -294,7 +294,7 @@ public class LayerManager {
      * @param ofType The layer type.
      * @return an unmodifiable list of layers of a certain type.
      */
-    public <T extends Layer> List<T> getLayersOfType(Class<T> ofType) {
+    public synchronized <T extends Layer> List<T> getLayersOfType(Class<T> ofType) {
         return new ArrayList<>(Utils.filteredCollection(getLayers(), ofType));
     }
 
@@ -417,7 +417,7 @@ public class LayerManager {
      * Reset all layer manager state. This includes removing all layers and then unregistering all listeners
      * @since 10432
      */
-    public void resetState() {
+    public synchronized void resetState() {
         // some layer remove listeners remove other layers.
         while (!getLayers().isEmpty()) {
             removeLayer(getLayers().get(0));
