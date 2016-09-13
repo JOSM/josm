@@ -371,7 +371,7 @@ public class MainLayerManager extends LayerManager {
     }
 
     @Override
-    public void resetState() {
+    public synchronized void resetState() {
         // active and edit layer are unset automatically
         super.resetState();
 
