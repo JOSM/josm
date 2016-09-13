@@ -34,15 +34,16 @@ public class LayerManager {
         /**
          * Notifies this listener that a layer has been added.
          * <p>
-         * Listeners are called in the EDT thread and you can manipulate the layer manager in the current thread.
+         * Listeners are called in the EDT thread.
          * @param e The new added layer event
          */
         void layerAdded(LayerAddEvent e);
 
         /**
-         * Notifies this listener that a layer is about to be removed.
+         * Notifies this listener that a alayer was just removed.
          * <p>
-         * Listeners are called in the EDT thread and you can manipulate the layer manager in the current thread.
+         * Listeners are called in the EDT thread after the layer was removed.
+         * Use {@link LayerRemoveEvent#scheduleRemoval(Collection)} to remove more layers.
          * @param e The layer to be removed (as event)
          */
         void layerRemoving(LayerRemoveEvent e);
@@ -222,9 +223,8 @@ public class LayerManager {
     }
 
     protected Collection<Layer> realRemoveSingleLayer(Layer layerToRemove) {
-        Collection<Layer> newToRemove = fireLayerRemoving(layerToRemove);
         layers.remove(layerToRemove);
-        return newToRemove;
+        return fireLayerRemoving(layerToRemove);
     }
 
     /**
@@ -385,7 +385,7 @@ public class LayerManager {
 
     /**
      * Fire the layer remove event
-     * @param layer The layer to remove
+     * @param layer The layer that was removed
      * @return A list of layers that should be removed afterwards.
      */
     private Collection<Layer> fireLayerRemoving(Layer layer) {
