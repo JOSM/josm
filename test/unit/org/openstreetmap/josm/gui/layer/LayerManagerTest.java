@@ -16,6 +16,7 @@ import java.awt.Graphics2D;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -40,7 +41,6 @@ import org.openstreetmap.josm.tools.bugreport.ReportedException;
  *
  */
 public class LayerManagerTest {
-
     /**
      * This is a layer that can be used in tests. It does not do anything and provides a simple, fake implementation.
      * @author Michael Zangl
@@ -119,9 +119,9 @@ public class LayerManagerTest {
      *
      */
     protected class CapturingLayerChangeListener implements LayerChangeListener {
-        private LayerAddEvent layerAdded;
-        private LayerRemoveEvent layerRemoved;
-        private LayerOrderChangeEvent layerOrderChanged;
+        protected LayerAddEvent layerAdded;
+        protected LayerRemoveEvent layerRemoved;
+        protected LayerOrderChangeEvent layerOrderChanged;
 
         @Override
         public void layerAdded(LayerAddEvent e) {
@@ -145,6 +145,16 @@ public class LayerManagerTest {
             assertNull(layerOrderChanged);
             assertSame(layerManager, e.getSource());
             layerOrderChanged = e;
+        }
+    }
+
+    private final class ResetStateChangeListener extends CapturingLayerChangeListener {
+        int removed = 0;
+
+        @Override
+        public void layerRemoving(LayerRemoveEvent e) {
+            // count only
+            removed++;
         }
     }
 
@@ -470,6 +480,60 @@ public class LayerManagerTest {
         layerManager.removeLayerChangeListener(listener, true);
 
         assertEquals(Arrays.asList(layer1, layer2), fired);
+    }
+
+    /**
+     * Test {@link LayerRemoveEvent#scheduleRemoval(java.util.Collection)}
+     */
+    @Test
+    public void testLayerRemoveScheduleRemoval() {
+        TestLayer layer1 = new TestLayer();
+        TestLayer layer2 = new TestLayer();
+        layerManager.addLayer(layer1);
+        layerManager.addLayer(layer2);
+
+        layerManager.addLayerChangeListener(new LayerChangeListener() {
+            @Override
+            public void layerRemoving(LayerRemoveEvent e) {
+                    if (e.getRemovedLayer() == layer1) {
+                        e.scheduleRemoval(Collections.singleton(layer2));
+                    }
+            }
+
+            @Override
+            public void layerOrderChanged(LayerOrderChangeEvent e) {
+                fail();
+            }
+
+            @Override
+            public void layerAdded(LayerAddEvent e) {
+                fail();
+            }
+        });
+
+        layerManager.removeLayer(layer1);
+        assertEquals(0, layerManager.getLayers().size());
+    }
+
+    /**
+     * Test {@link LayerManager#resetState()}
+     */
+    @Test
+    public void testResetState() {
+        ResetStateChangeListener changeListener = new ResetStateChangeListener();
+        layerManager.addLayer(new TestLayer());
+        layerManager.addLayerChangeListener(changeListener);
+        layerManager.addLayer(new TestLayer());
+        assertEquals(2, layerManager.getLayers().size());
+        assertNotNull(changeListener.layerAdded);
+
+        layerManager.resetState();
+        changeListener.layerAdded = null;
+
+        assertEquals(2, changeListener.removed);
+        assertEquals(0, layerManager.getLayers().size());
+        layerManager.addLayer(new TestLayer());
+        assertNull(changeListener.layerAdded);
     }
 
 }
