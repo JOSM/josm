@@ -20,8 +20,10 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * <p>
  * This manager handles a list of layers with the first layer being the front layer.
  * <h1>Threading</h1>
+ * Synchronization of the layer manager is done by synchronizing all read/write access. All changes are internally done in the EDT thread.
+ *
  * Methods of this manager may be called from any thread in any order.
- * Listeners are called while this layer manager is locked, so they should not block.
+ * Listeners are called while this layer manager is locked, so they should not block on other threads.
  *
  * @author Michael Zangl
  * @since 10273
@@ -34,7 +36,7 @@ public class LayerManager {
         /**
          * Notifies this listener that a layer has been added.
          * <p>
-         * Listeners are called in the EDT thread.
+         * Listeners are called in the EDT thread. You should not do blocking or long-running tasks in this method.
          * @param e The new added layer event
          */
         void layerAdded(LayerAddEvent e);
@@ -44,6 +46,7 @@ public class LayerManager {
          * <p>
          * Listeners are called in the EDT thread after the layer was removed.
          * Use {@link LayerRemoveEvent#scheduleRemoval(Collection)} to remove more layers.
+         * You should not do blocking or long-running tasks in this method.
          * @param e The layer to be removed (as event)
          */
         void layerRemoving(LayerRemoveEvent e);
@@ -51,7 +54,8 @@ public class LayerManager {
         /**
          * Notifies this listener that the order of layers was changed.
          * <p>
-         * Listeners are called in the EDT thread and you can manipulate the layer manager in the current thread.
+         * Listeners are called in the EDT thread.
+         *  You should not do blocking or long-running tasks in this method.
          * @param e The order change event.
          */
         void layerOrderChanged(LayerOrderChangeEvent e);
@@ -417,8 +421,14 @@ public class LayerManager {
      * Reset all layer manager state. This includes removing all layers and then unregistering all listeners
      * @since 10432
      */
-    public synchronized void resetState() {
-        // some layer remove listeners remove other layers.
+    public void resetState() {
+        // we force this on to the EDT Thread to have a clean synchronization
+        // The synchronization lock needs to be held by the EDT.
+        GuiHelper.runInEDTAndWaitWithException(this::realResetState);
+    }
+
+    protected synchronized void realResetState() {
+        // The listeners trigger the removal of other layers
         while (!getLayers().isEmpty()) {
             removeLayer(getLayers().get(0));
         }
