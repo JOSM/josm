@@ -13,6 +13,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.UncheckedParseException;
@@ -66,6 +69,7 @@ public class NameFinder {
         public double lon;
         public int zoom;
         public Bounds bounds;
+        public PrimitiveId osmId;
 
         public Bounds getDownloadArea() {
             return bounds != null ? bounds : OsmUrlToBounds.positionToBounds(lat, lon, zoom);
@@ -126,6 +130,11 @@ public class NameFinder {
                     currentResult.bounds = new Bounds(
                             Double.parseDouble(bbox[0]), Double.parseDouble(bbox[2]),
                             Double.parseDouble(bbox[1]), Double.parseDouble(bbox[3]));
+                    final String osmId = atts.getValue("osm_id");
+                    final String osmType = atts.getValue("osm_type");
+                    if (osmId != null && osmType != null) {
+                        currentResult.osmId = new SimplePrimitiveId(Long.parseLong(osmId), OsmPrimitiveType.from(osmType));
+                    }
                     data.add(currentResult);
                 }
             } catch (NumberFormatException x) {
