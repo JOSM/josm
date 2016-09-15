@@ -3,18 +3,25 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.EnumMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -50,42 +57,48 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         if (overpassQuery.isEmpty())
             return super.getRequestForBbox(lon1, lat1, lon2, lat2);
         else {
-            String realQuery = completeOverpassQuery(overpassQuery);
-            return "interpreter?data=" + Utils.encodeUrl(realQuery)
-                    + "&bbox=" + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2;
+            final String overpassQuery = this.overpassQuery.replace("{{bbox}}", lat1 + "," + lon1 + "," + lat2 + "," + lon2);
+            final String expandedOverpassQuery = expandExtendedQueries(overpassQuery);
+            return "interpreter?data=" + Utils.encodeUrl(expandedOverpassQuery);
         }
     }
 
-    private static String completeOverpassQuery(String query) {
-        int firstColon = query.indexOf(';');
-        if (firstColon == -1) {
-            return "[bbox];" + query;
-        }
-        int bboxPos = query.indexOf("[bbox");
-        if (bboxPos > -1 && bboxPos < firstColon) {
-            return query;
-        }
-
-        int bracketCount = 0;
-        int pos = 0;
-        for (; pos < firstColon; ++pos) {
-            if (query.charAt(pos) == '[')
-                ++bracketCount;
-            else if (query.charAt(pos) == ']')
-                --bracketCount;
-            else if (bracketCount == 0) {
-                if (!Character.isWhitespace(query.charAt(pos)))
-                    break;
+    /**
+     * Evaluates some features of overpass turbo extended query syntax.
+     * See https://wiki.openstreetmap.org/wiki/Overpass_turbo/Extended_Overpass_Turbo_Queries
+     */
+    static String expandExtendedQueries(String query) {
+        final StringBuffer sb = new StringBuffer();
+        final Matcher matcher = Pattern.compile("\\{\\{(geocodeArea):([^}]+)\\}\\}").matcher(query);
+        while (matcher.find()) {
+            try {
+                switch (matcher.group(1)) {
+                    case "geocodeArea":
+                        matcher.appendReplacement(sb, geocodeArea(matcher.group(2)));
+                }
+            } catch (Exception ex) {
+                final String msg = tr("Failed to evaluate {0}", matcher.group());
+                Main.warn(ex, msg);
+                matcher.appendReplacement(sb, "// " + msg + "\n");
             }
         }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
 
-        if (pos < firstColon) {
-            // We start with a statement, not with declarations
-            return "[bbox];" + query;
+    private static String geocodeArea(String area) {
+        // Offsets defined in https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#By_element_id
+        final EnumMap<OsmPrimitiveType, Long> idOffset = new EnumMap<>(OsmPrimitiveType.class);
+        idOffset.put(OsmPrimitiveType.NODE, 0L);
+        idOffset.put(OsmPrimitiveType.WAY, 2400000000L);
+        idOffset.put(OsmPrimitiveType.RELATION, 3600000000L);
+        try {
+            final List<NameFinder.SearchResult> results = NameFinder.queryNominatim(area);
+            final PrimitiveId osmId = results.iterator().next().osmId;
+            return String.format("area(%d)", osmId.getUniqueId() + idOffset.get(osmId.getType()));
+        } catch (IOException ex) {
+            throw new UncheckedParseException(ex);
         }
-
-        // We start with declarations. Add just one more declaration in this case.
-        return "[bbox]" + query;
     }
 
     @Override
@@ -149,7 +162,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         DataSet ds = super.parseOsm(progressMonitor);
 
         // add bounds if necessary (note that Overpass API does not return bounds in the response XML)
-        if (ds != null && ds.dataSources.isEmpty()) {
+        if (ds != null && ds.dataSources.isEmpty() && overpassQuery.contains("{{bbox}}")) {
             if (crosses180th) {
                 Bounds bounds = new Bounds(lat1, lon1, lat2, 180.0);
                 DataSource src = new DataSource(bounds, getBaseUrl());

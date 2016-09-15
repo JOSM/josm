@@ -69,11 +69,7 @@ public final class OverpassTurboQueryWizard {
             if (Boolean.FALSE.equals(result)) {
                 throw new UncheckedParseException();
             }
-            String query = (String) result;
-            if (query != null) {
-                query = query.replace("[bbox:{{bbox}}]", "");
-            }
-            return query;
+            return (String) result;
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException(e);
         } catch (ScriptException e) {

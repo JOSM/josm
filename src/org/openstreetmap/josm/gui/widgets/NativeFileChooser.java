@@ -6,6 +6,8 @@ import java.awt.FileDialog;
 import java.awt.Frame;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -23,6 +25,7 @@ public class NativeFileChooser extends AbstractFileChooser {
     /** The instance of the fileDialog */
     private final FileDialog fileDialog;
     private FileFilter fileFilter;
+    private List<FileFilter> fileFilters = new ArrayList<>();
     private int selectionMode;
 
     /**
@@ -44,6 +47,7 @@ public class NativeFileChooser extends AbstractFileChooser {
         // TODO implement this after Oracle fixes JDK-4811090 / JDK-6192906
         // https://bugs.openjdk.java.net/browse/JDK-4811090 : Extend awt filedialog
         // https://bugs.openjdk.java.net/browse/JDK-6192906 : Add more features to java.awt.FileDialog
+        fileFilters.add(filter);
     }
 
     @Override
@@ -51,7 +55,7 @@ public class NativeFileChooser extends AbstractFileChooser {
         // TODO implement this after Oracle fixes JDK-4811090 / JDK-6192906
         // https://bugs.openjdk.java.net/browse/JDK-4811090 : Extend awt filedialog
         // https://bugs.openjdk.java.net/browse/JDK-6192906 : Add more features to java.awt.FileDialog
-        return new FileFilter[]{};
+        return fileFilters.toArray(new FileFilter[0]);
     }
 
     @Override
