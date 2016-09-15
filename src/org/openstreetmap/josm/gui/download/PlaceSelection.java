@@ -50,17 +50,15 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.io.NameFinder;
+import org.openstreetmap.josm.io.NameFinder.SearchResult;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Utils;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Place selector.
@@ -75,7 +73,7 @@ public class PlaceSelection implements DownloadSelection {
     private JTable tblSearchResults;
     private DownloadDialog parent;
     private static final Server[] SERVERS = new Server[] {
-        new Server("Nominatim", "https://nominatim.openstreetmap.org/search?format=xml&q=", tr("Class Type"), tr("Bounds"))
+        new Server("Nominatim", NameFinder.NOMINATIM_URL, tr("Class Type"), tr("Bounds"))
     };
     private final JosmComboBox<Server> server = new JosmComboBox<>(SERVERS);
 
@@ -174,118 +172,6 @@ public class PlaceSelection implements DownloadSelection {
         tblSearchResults.clearSelection();
     }
 
-    /**
-     * Data storage for search results.
-     */
-    private static class SearchResult {
-        public String name;
-        public String info;
-        public String nearestPlace;
-        public String description;
-        public double lat;
-        public double lon;
-        public int zoom;
-        public Bounds bounds;
-
-        public Bounds getDownloadArea() {
-            return bounds != null ? bounds : OsmUrlToBounds.positionToBounds(lat, lon, zoom);
-        }
-    }
-
-    /**
-     * A very primitive parser for the name finder's output.
-     * Structure of xml described here:  http://wiki.openstreetmap.org/index.php/Name_finder
-     *
-     */
-    private static class NameFinderResultParser extends DefaultHandler {
-        private SearchResult currentResult;
-        private StringBuilder description;
-        private int depth;
-        private final List<SearchResult> data = new LinkedList<>();
-
-        /**
-         * Detect starting elements.
-         *
-         */
-        @Override
-        public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
-        throws SAXException {
-            depth++;
-            try {
-                if ("searchresults".equals(qName)) {
-                    // do nothing
-                } else if ("named".equals(qName) && (depth == 2)) {
-                    currentResult = new PlaceSelection.SearchResult();
-                    currentResult.name = atts.getValue("name");
-                    currentResult.info = atts.getValue("info");
-                    if (currentResult.info != null) {
-                        currentResult.info = tr(currentResult.info);
-                    }
-                    currentResult.lat = Double.parseDouble(atts.getValue("lat"));
-                    currentResult.lon = Double.parseDouble(atts.getValue("lon"));
-                    currentResult.zoom = Integer.parseInt(atts.getValue("zoom"));
-                    data.add(currentResult);
-                } else if ("description".equals(qName) && (depth == 3)) {
-                    description = new StringBuilder();
-                } else if ("named".equals(qName) && (depth == 4)) {
-                    // this is a "named" place in the nearest places list.
-                    String info = atts.getValue("info");
-                    if ("city".equals(info) || "town".equals(info) || "village".equals(info)) {
-                        currentResult.nearestPlace = atts.getValue("name");
-                    }
-                } else if ("place".equals(qName) && atts.getValue("lat") != null) {
-                    currentResult = new PlaceSelection.SearchResult();
-                    currentResult.name = atts.getValue("display_name");
-                    currentResult.description = currentResult.name;
-                    currentResult.info = atts.getValue("class");
-                    if (currentResult.info != null) {
-                        currentResult.info = tr(currentResult.info);
-                    }
-                    currentResult.nearestPlace = tr(atts.getValue("type"));
-                    currentResult.lat = Double.parseDouble(atts.getValue("lat"));
-                    currentResult.lon = Double.parseDouble(atts.getValue("lon"));
-                    String[] bbox = atts.getValue("boundingbox").split(",");
-                    currentResult.bounds = new Bounds(
-                            Double.parseDouble(bbox[0]), Double.parseDouble(bbox[2]),
-                            Double.parseDouble(bbox[1]), Double.parseDouble(bbox[3]));
-                    data.add(currentResult);
-                }
-            } catch (NumberFormatException x) {
-                Main.error(x); // SAXException does not chain correctly
-                throw new SAXException(x.getMessage(), x);
-            } catch (NullPointerException x) {
-                Main.error(x); // SAXException does not chain correctly
-                throw new SAXException(tr("Null pointer exception, possibly some missing tags."), x);
-            }
-        }
-
-        /**
-         * Detect ending elements.
-         */
-        @Override
-        public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-            if ("description".equals(qName) && description != null) {
-                currentResult.description = description.toString();
-                description = null;
-            }
-            depth--;
-        }
-
-        /**
-         * Read characters for description.
-         */
-        @Override
-        public void characters(char[] data, int start, int length) throws SAXException {
-            if (description != null) {
-                description.append(data, start, length);
-            }
-        }
-
-        public List<SearchResult> getResult() {
-            return data;
-        }
-    }
-
     class SearchAction extends AbstractAction implements DocumentListener {
 
         SearchAction() {
@@ -375,10 +261,7 @@ public class PlaceSelection implements DownloadSelection {
                     connection.connect();
                 }
                 try (Reader reader = connection.getResponse().getContentReader()) {
-                    InputSource inputSource = new InputSource(reader);
-                    NameFinderResultParser parser = new NameFinderResultParser();
-                    Utils.parseSafeSAX(inputSource, parser);
-                    this.data = parser.getResult();
+                    data = NameFinder.parseSearchResults(reader);
                 }
             } catch (SAXParseException e) {
                 if (!canceled) {
