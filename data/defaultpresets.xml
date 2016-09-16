@@ -3479,6 +3479,13 @@
                 <text key="ref" text="Reference" />
             </optional>
         </item> <!-- Taxiway -->
+        <item name="Holding Position" icon="presets/transport/airport/holding_position.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=holding_position" />
+            <key key="aeroway" value="holding_position" />
+            <optional>
+                <text key="ref" text="Reference" />
+            </optional>
+        </item> <!-- Holding Position -->
         <item name="Helipad" icon="presets/transport/airport/helipad.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=helipad"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:aeroway=helipad"
