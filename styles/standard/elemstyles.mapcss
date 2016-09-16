@@ -3543,6 +3543,10 @@ node[aeroway=taxiway] {
     icon-image: "presets/misc/deprecated.svg";
     set icon_z17;
 }
+node[aeroway=holding_position] {
+    icon-image: "presets/transport/airport/holding_position.svg";
+    set icon_z17;
+}
 node[aeroway=hangar] {
     icon-image: "presets/transport/airport/hangar.svg";
     set icon_z17;
