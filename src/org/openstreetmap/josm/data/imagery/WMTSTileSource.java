@@ -140,7 +140,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         private TileMatrixSet tileMatrixSet;
         private String baseUrl;
         private String style;
-        public Collection<String> tileMatrixSetLinks = new ArrayList<>();
+        private Collection<String> tileMatrixSetLinks = new ArrayList<>();
 
         Layer(Layer l) {
             if (l != null) {
@@ -265,7 +265,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     private String handleTemplate(String url) {
         Pattern pattern = Pattern.compile(PATTERN_HEADER);
-        StringBuffer output = new StringBuffer(); // NOSONAR
+        StringBuffer output = new StringBuffer();
         Matcher matcher = pattern.matcher(url);
         while (matcher.find()) {
             this.headers.put(matcher.group(1), matcher.group(2));
@@ -512,17 +512,16 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT &&
                         GetCapabilitiesParseHelper.QN_OWS_OPERATIONS_METADATA.equals(reader.getName()));
                 event = reader.next()) {
-            if (event == XMLStreamReader.START_ELEMENT) {
-                if (GetCapabilitiesParseHelper.QN_OWS_OPERATION.equals(reader.getName()) && "GetTile".equals(reader.getAttributeValue("", "name")) &&
-                        GetCapabilitiesParseHelper.moveReaderToTag(reader, new QName[]{
-                                GetCapabilitiesParseHelper.QN_OWS_DCP,
-                                GetCapabilitiesParseHelper.QN_OWS_HTTP,
-                                GetCapabilitiesParseHelper.QN_OWS_GET,
-
-                        })) {
-                    this.baseUrl = reader.getAttributeValue(GetCapabilitiesParseHelper.XLINK_NS_URL, "href");
-                    this.transferMode = GetCapabilitiesParseHelper.getTransferMode(reader);
-                }
+            if (event == XMLStreamReader.START_ELEMENT &&
+                    GetCapabilitiesParseHelper.QN_OWS_OPERATION.equals(reader.getName()) &&
+                    "GetTile".equals(reader.getAttributeValue("", "name")) &&
+                    GetCapabilitiesParseHelper.moveReaderToTag(reader, new QName[] {
+                            GetCapabilitiesParseHelper.QN_OWS_DCP,
+                            GetCapabilitiesParseHelper.QN_OWS_HTTP,
+                            GetCapabilitiesParseHelper.QN_OWS_GET,
+                    })) {
+                this.baseUrl = reader.getAttributeValue(GetCapabilitiesParseHelper.XLINK_NS_URL, "href");
+                this.transferMode = GetCapabilitiesParseHelper.getTransferMode(reader);
             }
         }
     }
@@ -572,9 +571,9 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     public int getTileSize() {
         // no support for non-square tiles (tileHeight != tileWidth)
         // and for different tile sizes at different zoom levels
-        Collection<Layer> layers = getLayers(null, Main.getProjection().toCode());
-        if (!layers.isEmpty()) {
-            return layers.iterator().next().tileMatrixSet.tileMatrix.get(0).tileHeight;
+        Collection<Layer> projLayers = getLayers(null, Main.getProjection().toCode());
+        if (!projLayers.isEmpty()) {
+            return projLayers.iterator().next().tileMatrixSet.tileMatrix.get(0).tileHeight;
         }
         // if no layers is found, fallback to default mercator tile size. Maybe it will work
         Main.warn("WMTS: Could not determine tile size. Using default tile size of: {0}", getDefaultTileSize());
@@ -583,11 +582,11 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     @Override
     public String getTileUrl(int zoom, int tilex, int tiley) {
-        String url;
         if (currentLayer == null) {
             return "";
         }
 
+        String url;
         if (currentLayer.baseUrl != null && transferMode == null) {
             url = currentLayer.baseUrl;
         } else {

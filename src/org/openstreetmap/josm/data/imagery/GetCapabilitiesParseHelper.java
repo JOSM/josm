@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Helper class for handling OGC GetCapabilities documents
  *
  */
-public class GetCapabilitiesParseHelper {
+public final class GetCapabilitiesParseHelper {
     enum TransferMode {
         KVP("KVP"),
         REST("RESTful");
@@ -67,12 +67,15 @@ public class GetCapabilitiesParseHelper {
     static final QName QN_OWS_VALUE               = new QName(OWS_NS_URL, "Value");
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
+    private GetCapabilitiesParseHelper() {
+        // Hide default constructor for utilities classes
+    }
 
     /**
      * @param in InputStream with pointing to GetCapabilities XML stream
      * @return safe XMLStreamReader, that is not validating external entities, nor loads DTD's
-     * @throws IOException
-     * @throws XMLStreamException
+     * @throws IOException if any I/O error occurs
+     * @throws XMLStreamException if any XML stream error occurs
      */
     public static XMLStreamReader getReader(InputStream in) throws IOException, XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newFactory();
@@ -92,11 +95,9 @@ public class GetCapabilitiesParseHelper {
         int level = 0;
         QName tag = reader.getName();
         for (int event = reader.getEventType(); reader.hasNext(); event = reader.next()) {
-            switch (event) {
-            case XMLStreamReader.START_ELEMENT:
+            if (XMLStreamReader.START_ELEMENT == event) {
                 level += 1;
-                break;
-            case XMLStreamReader.END_ELEMENT:
+            } else if (XMLStreamReader.END_ELEMENT == event) {
                 level -= 1;
                 if (level == 0 && tag.equals(reader.getName())) {
                     return;
@@ -186,9 +187,9 @@ public class GetCapabilitiesParseHelper {
     }
 
     /**
-     * @param url
+     * @param url URL
      * @return normalized URL
-     * @throws MalformedURLException
+     * @throws MalformedURLException in case of malformed URL
      * @since 10993
      */
     public static String normalizeCapabilitiesUrl(String url) throws MalformedURLException {
@@ -198,8 +199,8 @@ public class GetCapabilitiesParseHelper {
     }
 
     /**
-     *
-     * @param crsIdentifier
+     * Convert CRS identifier to plain code
+     * @param crsIdentifier CRS identifier
      * @return CRS Identifier as it is used within JOSM (without prefix)
      */
     public static String crsToCode(String crsIdentifier) {
