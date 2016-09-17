@@ -119,7 +119,7 @@ public final class GetCapabilitiesParseHelper {
      * @return true if tag was found, false otherwise
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
-    public static boolean moveReaderToTag(XMLStreamReader reader, QName[] tags) throws XMLStreamException {
+    public static boolean moveReaderToTag(XMLStreamReader reader, QName ... tags) throws XMLStreamException {
         QName stopTag = reader.getName();
         int currentLevel = 0;
         QName searchTag = tags[currentLevel];
