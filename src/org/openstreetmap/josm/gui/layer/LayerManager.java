@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -169,9 +170,10 @@ public class LayerManager {
     }
 
     /**
-     * This is the list of layers we manage.
+     * This is the list of layers we manage. The list is unmodifyable It is only changed in the EDT.
+     * @see LayerManager#updateLayers(Consumer)
      */
-    private final List<Layer> layers = new ArrayList<>();
+    private volatile List<Layer> layers = Collections.emptyList();
 
     private final List<LayerChangeListener> layerChangeListeners = new CopyOnWriteArrayList<>();
 
@@ -227,7 +229,7 @@ public class LayerManager {
     }
 
     protected Collection<Layer> realRemoveSingleLayer(Layer layerToRemove) {
-        layers.remove(layerToRemove);
+        updateLayers(mutableLayers -> mutableLayers.remove(layerToRemove));
         return fireLayerRemoving(layerToRemove);
     }
 
@@ -247,11 +249,14 @@ public class LayerManager {
         checkContainsLayer(layer);
         checkPosition(position);
 
-        int curLayerPos = layers.indexOf(layer);
+        int curLayerPos = getLayers().indexOf(layer);
         if (position == curLayerPos)
             return; // already in place.
-        layers.remove(curLayerPos);
-        insertLayerAt(layer, position);
+        // update needs to be done in one run
+        updateLayers(mutableLayers -> {
+            mutableLayers.remove(curLayerPos);
+            insertLayerAt(mutableLayers, layer, position);
+        });
         fireLayerOrderChanged();
     }
 
@@ -261,6 +266,10 @@ public class LayerManager {
      * @param position The position on which we should add it.
      */
     private void insertLayerAt(Layer layer, int position) {
+        updateLayers(mutableLayers -> insertLayerAt(mutableLayers, layer, position));
+    }
+
+    private static void insertLayerAt(List<Layer> layers, Layer layer, int position) {
         if (position == layers.size()) {
             layers.add(layer);
         } else {
@@ -274,17 +283,28 @@ public class LayerManager {
      * @throws IndexOutOfBoundsException if it is not.
      */
     private void checkPosition(int position) {
-        if (position < 0 || position > layers.size()) {
+        if (position < 0 || position > getLayers().size()) {
             throw new IndexOutOfBoundsException("Position " + position + " out of range.");
         }
+    }
+
+    /**
+     * Update the {@link #layers} field. This method should be used instead of a direct field access.
+     * @param mutator A method that gets the writable list of layers and should modify it.
+     */
+    private void updateLayers(Consumer<List<Layer>> mutator) {
+        GuiHelper.assertCallFromEdt();
+        ArrayList<Layer> newLayers = new ArrayList<>(getLayers());
+        mutator.accept(newLayers);
+        layers = Collections.unmodifiableList(newLayers);
     }
 
     /**
      * Gets an unmodifiable list of all layers that are currently in this manager. This list won't update once layers are added or removed.
      * @return The list of layers.
      */
-    public synchronized List<Layer> getLayers() {
-        return Collections.unmodifiableList(new ArrayList<>(layers));
+    public List<Layer> getLayers() {
+        return layers;
     }
 
     /**
@@ -298,7 +318,7 @@ public class LayerManager {
      * @param ofType The layer type.
      * @return an unmodifiable list of layers of a certain type.
      */
-    public synchronized <T extends Layer> List<T> getLayersOfType(Class<T> ofType) {
+    public <T extends Layer> List<T> getLayersOfType(Class<T> ofType) {
         return new ArrayList<>(Utils.filteredCollection(getLayers(), ofType));
     }
 
@@ -308,8 +328,8 @@ public class LayerManager {
      * @param layer the layer
      * @return true if the list of layers managed by this map view contain layer
      */
-    public synchronized boolean containsLayer(Layer layer) {
-        return layers.contains(layer);
+    public boolean containsLayer(Layer layer) {
+        return getLayers().contains(layer);
     }
 
     protected void checkContainsLayer(Layer layer) {
