@@ -744,15 +744,18 @@ node[highway=rest_area] {
     icon-image: "presets/vehicle/rest_area.svg";
     set icon_z17;
 }
+node[ford=stepping_stones],
 node[ford?] {
     icon-image: "presets/vehicle/ford.svg";
     set icon_z17;
 }
+way[ford=stepping_stones]::core_ford,
 way[ford?]::core_ford {
     z-index: 1;
     width: 2;
     color: water#0000ff;
     dashes: 9,9;
+    dashes-offset: 9;
 }
 area[highway=platform]:closed {
     fill-color: highway_platform#c0c0c0;

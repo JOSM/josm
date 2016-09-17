@@ -963,7 +963,7 @@
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:ford"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:ford"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:ford" />
-            <key key="ford" value="yes" />
+            <combo key="ford" text="Ford" values="yes,stepping_stones" default="yes" values_searchable="true" match="keyvalue!" />
             <optional>
                 <text key="name" text="Name" />
             </optional>
