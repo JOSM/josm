@@ -171,7 +171,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         LayerListWarningMessagePanel(String msg, List<SaveLayerInfo> infos) {
             build();
             lblMessage.setText(msg);
-            lstLayers.setListData(infos.toArray(new SaveLayerInfo[0]));
+            lstLayers.setListData(infos.toArray(new SaveLayerInfo[infos.size()]));
         }
 
         protected void build() {

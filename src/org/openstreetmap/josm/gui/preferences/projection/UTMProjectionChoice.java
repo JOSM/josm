@@ -43,7 +43,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
      * Constructs a new {@code UTMProjectionChoice}.
      */
     public UTMProjectionChoice() {
-        super(tr("UTM"), /* NO-ICON */ "core:utm", cbEntries.toArray(new String[0]), tr("UTM Zone"));
+        super(tr("UTM"), /* NO-ICON */ "core:utm", cbEntries.toArray(new String[cbEntries.size()]), tr("UTM Zone"));
     }
 
     private class UTMPanel extends CBPanel {

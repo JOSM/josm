@@ -162,7 +162,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
         SelectLayerDialog(Collection<Layer> layers) {
             super(Main.parent, tr("Select WMTS layer"), new String[]{tr("Add layers"), tr("Cancel")});
-            this.layers = layers.toArray(new Layer[]{});
+            this.layers = layers.toArray(new Layer[layers.size()]);
             //getLayersTable(layers, Main.getProjection())
             this.list = new JTable(
                     new AbstractTableModel() {

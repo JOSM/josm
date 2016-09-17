@@ -105,7 +105,7 @@ public class Text extends KeyedItem {
             originalValue = usage.getFirst();
         } else {
             // the objects have different values
-            JosmComboBox<String> comboBox = new JosmComboBox<>(usage.values.toArray(new String[0]));
+            JosmComboBox<String> comboBox = new JosmComboBox<>(usage.values.toArray(new String[usage.values.size()]));
             comboBox.setEditable(true);
             comboBox.setEditor(textField);
             comboBox.getEditor().setItem(DIFFERENT);

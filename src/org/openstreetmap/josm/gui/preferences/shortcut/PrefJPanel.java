@@ -224,7 +224,7 @@ public class PrefJPanel extends JPanel {
         cbAlt.setAction(action);
         cbAlt.setText(ALT); // see above for why no tr()
         tfKey.setAction(action);
-        tfKey.setModel(new DefaultComboBoxModel<>(keyList.values().toArray(new String[0])));
+        tfKey.setModel(new DefaultComboBoxModel<>(keyList.values().toArray(new String[keyList.size()])));
         cbMeta.setAction(action);
         cbMeta.setText(META); // see above for why no tr()
 

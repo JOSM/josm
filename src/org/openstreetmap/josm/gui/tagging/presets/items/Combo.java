@@ -48,7 +48,7 @@ public class Combo extends ComboMultiSelect {
             lhm.put("", new PresetListEntry(""));
         }
 
-        combobox = new JosmComboBox<>(lhm.values().toArray(new PresetListEntry[0]));
+        combobox = new JosmComboBox<>(lhm.values().toArray(new PresetListEntry[lhm.size()]));
         component = combobox;
         combobox.setRenderer(getListCellRenderer());
         combobox.setEditable(editable);

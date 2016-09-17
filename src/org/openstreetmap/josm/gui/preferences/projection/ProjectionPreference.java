@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.projection;
 
+import static org.openstreetmap.josm.data.SystemOfMeasurement.ALL_SYSTEMS;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
@@ -270,7 +271,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private static final StringProperty PROP_COORDINATES = new StringProperty("coordinates", null);
     private static final CollectionProperty PROP_SUB_PROJECTION = new CollectionProperty("projection.sub", null);
     public static final StringProperty PROP_SYSTEM_OF_MEASUREMENT = new StringProperty("system_of_measurement", "Metric");
-    private static final String[] unitsValues = (new ArrayList<>(SystemOfMeasurement.ALL_SYSTEMS.keySet())).toArray(new String[0]);
+    private static final String[] unitsValues = ALL_SYSTEMS.keySet().toArray(new String[ALL_SYSTEMS.size()]);
     private static final String[] unitsValuesTr = new String[unitsValues.length];
     static {
         for (int i = 0; i < unitsValues.length; ++i) {
@@ -281,7 +282,8 @@ public class ProjectionPreference implements SubPreferenceSetting {
     /**
      * Combobox with all projections available
      */
-    private final JosmComboBox<ProjectionChoice> projectionCombo = new JosmComboBox<>(projectionChoices.toArray(new ProjectionChoice[0]));
+    private final JosmComboBox<ProjectionChoice> projectionCombo = new JosmComboBox<>(
+            projectionChoices.toArray(new ProjectionChoice[projectionChoices.size()]));
 
     /**
      * Combobox with all coordinate display possibilities

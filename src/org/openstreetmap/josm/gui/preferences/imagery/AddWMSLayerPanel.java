@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -72,7 +73,8 @@ public class AddWMSLayerPanel extends AddImageryPanel {
             try {
                 wms.attemptGetCapabilities(rawUrl.getText());
                 tree.updateTree(wms);
-                formats.setModel(new DefaultComboBoxModel<>(wms.getFormats().toArray(new String[0])));
+                List<String> wmsFormats = wms.getFormats();
+                formats.setModel(new DefaultComboBoxModel<>(wmsFormats.toArray(new String[wmsFormats.size()])));
                 formats.setSelectedItem(wms.getPreferredFormats());
             } catch (MalformedURLException ex1) {
                 Main.error(ex1, false);
