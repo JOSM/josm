@@ -54,13 +54,16 @@ public interface LayerPositionStrategy {
      */
     static LayerPositionStrategy inFrontOfFirst(final Predicate<Layer> what) {
         return manager -> {
-            List<Layer> layers = manager.getLayers();
-            for (int i = 0; i < layers.size(); i++) {
-                if (what.test(layers.get(i))) {
-                    return i;
+            if (manager != null) {
+                List<Layer> layers = manager.getLayers();
+                for (int i = 0; i < layers.size(); i++) {
+                    if (what.test(layers.get(i))) {
+                        return i;
+                    }
                 }
+                return layers.size();
             }
-            return layers.size();
+            return 0;
         };
     }
 
@@ -71,10 +74,12 @@ public interface LayerPositionStrategy {
      */
     static LayerPositionStrategy afterLast(final Predicate<Layer> what) {
         return manager -> {
-            List<Layer> layers = manager.getLayers();
-            for (int i = layers.size() - 1; i >= 0; i--) {
-                if (what.test(layers.get(i))) {
-                    return i + 1;
+            if (manager != null) {
+                List<Layer> layers = manager.getLayers();
+                for (int i = layers.size() - 1; i >= 0; i--) {
+                    if (what.test(layers.get(i))) {
+                        return i + 1;
+                    }
                 }
             }
             return 0;
