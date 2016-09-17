@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,10 +40,22 @@ public final class NameFinder {
     private NameFinder() {
     }
 
+    /**
+     * Performs a Nominatim search.
+     * @param searchExpression Nominatim search expression
+     * @return search results
+     * @throws IOException if any IO error occurs.
+     */
     public static List<SearchResult> queryNominatim(final String searchExpression) throws IOException {
         return query(new URL(NOMINATIM_URL + Utils.encodeUrl(searchExpression)));
     }
 
+    /**
+     * Performs a custom search.
+     * @param url search URL to any Nominatim instance
+     * @return search results
+     * @throws IOException if any IO error occurs.
+     */
     public static List<SearchResult> query(final URL url) throws IOException {
         final HttpClient connection = HttpClient.create(url);
         connection.connect();
@@ -53,6 +66,14 @@ public final class NameFinder {
         }
     }
 
+    /**
+     * Parse search results as returned by Nominatim.
+     * @param reader reader
+     * @return search results
+     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
+     * @throws SAXException for SAX errors.
+     * @throws IOException if any IO error occurs.
+     */
     public static List<SearchResult> parseSearchResults(Reader reader) throws IOException, ParserConfigurationException, SAXException {
         InputSource inputSource = new InputSource(reader);
         NameFinderResultParser parser = new NameFinderResultParser();
@@ -248,7 +269,7 @@ public final class NameFinder {
         }
 
         public List<SearchResult> getResult() {
-            return data;
+            return Collections.unmodifiableList(data);
         }
     }
 }
