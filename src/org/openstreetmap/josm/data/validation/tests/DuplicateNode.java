@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.MultiMap;
 
 /**
@@ -82,6 +83,13 @@ public class DuplicateNode extends Test {
         public int getHashCode(Object k) {
             LatLon coorK = getLatLon(k);
             return coorK == null ? 0 : coorK.hashCode();
+        }
+    }
+
+    private static class DuplicateNodeTestError extends TestError {
+        DuplicateNodeTestError(Test parentTest, Severity severity, String msg, int code, Set<OsmPrimitive> primitives) {
+            super(parentTest, severity, tr("Duplicated nodes"), tr(msg), msg, code, primitives);
+            CheckParameterUtil.ensureThat(!primitives.isEmpty(), "Empty primitives: " + msg);
         }
     }
 
@@ -172,14 +180,14 @@ public class DuplicateNode extends Test {
 
         // check whether we have multiple nodes at the same position with the same tag set
         for (Iterator<Map<String, String>> it = mm.keySet().iterator(); it.hasNext();) {
-            Map<String, String> tagSet = it.next();
-            if (mm.get(tagSet).size() > 1) {
+            Set<OsmPrimitive> primitives = mm.get(it.next());
+            if (primitives.size() > 1) {
 
                 for (String type: TYPES) {
                     typeMap.put(type, Boolean.FALSE);
                 }
 
-                for (OsmPrimitive p : mm.get(tagSet)) {
+                for (OsmPrimitive p : primitives) {
                     if (p.getType() == OsmPrimitiveType.NODE) {
                         Node n = (Node) p;
                         List<OsmPrimitive> lp = n.getReferrers();
@@ -202,132 +210,94 @@ public class DuplicateNode extends Test {
                     }
                 }
 
-                int nbType = 0;
-                for (Entry<String, Boolean> entry: typeMap.entrySet()) {
-                    if (entry.getValue()) {
-                        nbType++;
-                    }
-                }
+                long nbType = typeMap.entrySet().stream().filter(Entry::getValue).count();
 
                 if (nbType > 1) {
-                    String msg = marktr("Mixed type duplicated nodes");
-                    errors.add(new TestError(
+                    errors.add(new DuplicateNodeTestError(
                             parentTest,
                             Severity.WARNING,
-                            tr("Duplicated nodes"),
-                            tr(msg),
-                            msg,
+                            marktr("Mixed type duplicated nodes"),
                             DUPLICATE_NODE_MIXED,
-                            mm.get(tagSet)
+                            primitives
                             ));
                 } else if (typeMap.get("highway")) {
-                    String msg = marktr("Highway duplicated nodes");
-                    errors.add(new TestError(
+                    errors.add(new DuplicateNodeTestError(
                             parentTest,
                             Severity.ERROR,
-                            tr("Duplicated nodes"),
-                            tr(msg),
-                            msg,
+                            marktr("Highway duplicated nodes"),
                             DUPLICATE_NODE_HIGHWAY,
-                            mm.get(tagSet)
+                            primitives
                             ));
                 } else if (typeMap.get("railway")) {
-                    String msg = marktr("Railway duplicated nodes");
-                    errors.add(new TestError(
+                    errors.add(new DuplicateNodeTestError(
                             parentTest,
                             Severity.ERROR,
-                            tr("Duplicated nodes"),
-                            tr(msg),
-                            msg,
+                            marktr("Railway duplicated nodes"),
                             DUPLICATE_NODE_RAILWAY,
-                            mm.get(tagSet)
+                            primitives
                             ));
                 } else if (typeMap.get("waterway")) {
-                    String msg = marktr("Waterway duplicated nodes");
-                    errors.add(new TestError(
+                    errors.add(new DuplicateNodeTestError(
                             parentTest,
                             Severity.ERROR,
-                            tr("Duplicated nodes"),
-                            tr(msg),
-                            msg,
+                            marktr("Waterway duplicated nodes"),
                             DUPLICATE_NODE_WATERWAY,
-                            mm.get(tagSet)
+                            primitives
                             ));
                 } else if (typeMap.get("boundary")) {
-                    String msg = marktr("Boundary duplicated nodes");
-                    errors.add(new TestError(
+                    errors.add(new DuplicateNodeTestError(
                             parentTest,
                             Severity.ERROR,
-                            tr("Duplicated nodes"),
-                            tr(msg),
-                            msg,
+                            marktr("Boundary duplicated nodes"),
                             DUPLICATE_NODE_BOUNDARY,
-                            mm.get(tagSet)
+                            primitives
                             ));
                 } else if (typeMap.get("power")) {
-                    String msg = marktr("Power duplicated nodes");
-                    errors.add(new TestError(
+                    errors.add(new DuplicateNodeTestError(
                             parentTest,
                             Severity.ERROR,
-                            tr("Duplicated nodes"),
-                            tr(msg),
-                            msg,
+                            marktr("Power duplicated nodes"),
                             DUPLICATE_NODE_POWER,
-                            mm.get(tagSet)
+                            primitives
                             ));
                 } else if (typeMap.get("natural")) {
-                    String msg = marktr("Natural duplicated nodes");
-                    errors.add(new TestError(
+                    errors.add(new DuplicateNodeTestError(
                             parentTest,
                             Severity.ERROR,
-                            tr("Duplicated nodes"),
-                            tr(msg),
-                            msg,
+                            marktr("Natural duplicated nodes"),
                             DUPLICATE_NODE_NATURAL,
-                            mm.get(tagSet)
+                            primitives
                             ));
                 } else if (typeMap.get("building")) {
-                    String msg = marktr("Building duplicated nodes");
-                    errors.add(new TestError(
+                    errors.add(new DuplicateNodeTestError(
                             parentTest,
                             Severity.ERROR,
-                            tr("Duplicated nodes"),
-                            tr(msg),
-                            msg,
+                            marktr("Building duplicated nodes"),
                             DUPLICATE_NODE_BUILDING,
-                            mm.get(tagSet)
+                            primitives
                             ));
                 } else if (typeMap.get("landuse")) {
-                    String msg = marktr("Landuse duplicated nodes");
-                    errors.add(new TestError(
+                    errors.add(new DuplicateNodeTestError(
                             parentTest,
                             Severity.ERROR,
-                            tr("Duplicated nodes"),
-                            tr(msg),
-                            msg,
+                            marktr("Landuse duplicated nodes"),
                             DUPLICATE_NODE_LANDUSE,
-                            mm.get(tagSet)
+                            primitives
                             ));
                 } else {
-                    String msg = marktr("Other duplicated nodes");
-                    errors.add(new TestError(
+                    errors.add(new DuplicateNodeTestError(
                             parentTest,
                             Severity.WARNING,
-                            tr("Duplicated nodes"),
-                            tr(msg),
-                            msg,
+                            marktr("Other duplicated nodes"),
                             DUPLICATE_NODE_OTHER,
-                            mm.get(tagSet)
+                            primitives
                             ));
-
                 }
                 it.remove();
             }
         }
 
-        // check whether we have multiple nodes at the same position with
-        // differing tag sets
-        //
+        // check whether we have multiple nodes at the same position with differing tag sets
         if (!mm.isEmpty()) {
             List<OsmPrimitive> duplicates = new ArrayList<>();
             for (Set<OsmPrimitive> l: mm.values()) {
