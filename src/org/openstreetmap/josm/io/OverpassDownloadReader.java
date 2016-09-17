@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,8 +58,8 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         if (overpassQuery.isEmpty())
             return super.getRequestForBbox(lon1, lat1, lon2, lat2);
         else {
-            final String overpassQuery = this.overpassQuery.replace("{{bbox}}", lat1 + "," + lon1 + "," + lat2 + "," + lon2);
-            final String expandedOverpassQuery = expandExtendedQueries(overpassQuery);
+            final String query = this.overpassQuery.replace("{{bbox}}", lat1 + "," + lon1 + "," + lat2 + "," + lon2);
+            final String expandedOverpassQuery = expandExtendedQueries(query);
             return "interpreter?data=" + Utils.encodeUrl(expandedOverpassQuery);
         }
     }
@@ -66,6 +67,8 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
     /**
      * Evaluates some features of overpass turbo extended query syntax.
      * See https://wiki.openstreetmap.org/wiki/Overpass_turbo/Extended_Overpass_Turbo_Queries
+     * @param query unexpanded query
+     * @return expanded query
      */
     static String expandExtendedQueries(String query) {
         final StringBuffer sb = new StringBuffer();
@@ -76,7 +79,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
                     case "geocodeArea":
                         matcher.appendReplacement(sb, geocodeArea(matcher.group(2)));
                 }
-            } catch (Exception ex) {
+            } catch (UncheckedParseException ex) {
                 final String msg = tr("Failed to evaluate {0}", matcher.group());
                 Main.warn(ex, msg);
                 matcher.appendReplacement(sb, "// " + msg + "\n");
@@ -90,13 +93,13 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         // Offsets defined in https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#By_element_id
         final EnumMap<OsmPrimitiveType, Long> idOffset = new EnumMap<>(OsmPrimitiveType.class);
         idOffset.put(OsmPrimitiveType.NODE, 0L);
-        idOffset.put(OsmPrimitiveType.WAY, 2400000000L);
-        idOffset.put(OsmPrimitiveType.RELATION, 3600000000L);
+        idOffset.put(OsmPrimitiveType.WAY, 2_400_000_000L);
+        idOffset.put(OsmPrimitiveType.RELATION, 3_600_000_000L);
         try {
             final List<NameFinder.SearchResult> results = NameFinder.queryNominatim(area);
-            final PrimitiveId osmId = results.iterator().next().osmId;
+            final PrimitiveId osmId = results.iterator().next().getOsmId();
             return String.format("area(%d)", osmId.getUniqueId() + idOffset.get(osmId.getType()));
-        } catch (IOException ex) {
+        } catch (IOException | NoSuchElementException ex) {
             throw new UncheckedParseException(ex);
         }
     }
@@ -143,12 +146,10 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         return new OsmReader() {
             @Override
             protected void parseUnknown(boolean printWarning) throws XMLStreamException {
-                if ("remark".equals(parser.getLocalName())) {
-                    if (parser.getEventType() == XMLStreamConstants.START_ELEMENT) {
-                        final String text = parser.getElementText();
-                        if (text.contains("runtime error")) {
-                            throw new XMLStreamException(text);
-                        }
+                if ("remark".equals(parser.getLocalName()) && parser.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                    final String text = parser.getElementText();
+                    if (text.contains("runtime error")) {
+                        throw new XMLStreamException(text);
                     }
                 }
                 super.parseUnknown(printWarning);

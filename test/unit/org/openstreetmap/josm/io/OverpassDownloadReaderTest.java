@@ -3,7 +3,6 @@ package org.openstreetmap.josm.io;
 
 import static org.junit.Assert.assertEquals;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.Bounds;
@@ -11,6 +10,8 @@ import org.openstreetmap.josm.gui.preferences.server.OverpassServerPreference;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.Utils;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link OverpassDownloadReader} class.
@@ -75,5 +76,4 @@ public class OverpassDownloadReaderTest {
         final String query = OverpassDownloadReader.expandExtendedQueries("{{geocodeArea:foo-bar-baz-does-not-exist}}");
         assertEquals("// Failed to evaluate {{geocodeArea:foo-bar-baz-does-not-exist}}\n", query);
     }
-
 }

@@ -29,8 +29,11 @@ import org.xml.sax.helpers.DefaultHandler;
  * Search for names and related items.
  * @since 11002
  */
-public class NameFinder {
+public final class NameFinder {
 
+    /**
+     * Nominatim URL.
+     */
     public static final String NOMINATIM_URL = "https://nominatim.openstreetmap.org/search?format=xml&q=";
 
     private NameFinder() {
@@ -61,16 +64,92 @@ public class NameFinder {
      * Data storage for search results.
      */
     public static class SearchResult {
-        public String name;
-        public String info;
-        public String nearestPlace;
-        public String description;
-        public double lat;
-        public double lon;
-        public int zoom;
-        public Bounds bounds;
-        public PrimitiveId osmId;
+        private String name;
+        private String info;
+        private String nearestPlace;
+        private String description;
+        private double lat;
+        private double lon;
+        private int zoom;
+        private Bounds bounds;
+        private PrimitiveId osmId;
 
+        /**
+         * Returns the name.
+         * @return the name
+         */
+        public final String getName() {
+            return name;
+        }
+
+        /**
+         * Returns the info.
+         * @return the info
+         */
+        public final String getInfo() {
+            return info;
+        }
+
+        /**
+         * Returns the nearest place.
+         * @return the nearest place
+         */
+        public final String getNearestPlace() {
+            return nearestPlace;
+        }
+
+        /**
+         * Returns the description.
+         * @return the description
+         */
+        public final String getDescription() {
+            return description;
+        }
+
+        /**
+         * Returns the latitude.
+         * @return the latitude
+         */
+        public final double getLat() {
+            return lat;
+        }
+
+        /**
+         * Returns the longitude.
+         * @return the longitude
+         */
+        public final double getLon() {
+            return lon;
+        }
+
+        /**
+         * Returns the zoom.
+         * @return the zoom
+         */
+        public final int getZoom() {
+            return zoom;
+        }
+
+        /**
+         * Returns the bounds.
+         * @return the bounds
+         */
+        public final Bounds getBounds() {
+            return bounds;
+        }
+
+        /**
+         * Returns the OSM id.
+         * @return the OSM id
+         */
+        public final PrimitiveId getOsmId() {
+            return osmId;
+        }
+
+        /**
+         * Returns the download area.
+         * @return the download area
+         */
         public Bounds getDownloadArea() {
             return bounds != null ? bounds : OsmUrlToBounds.positionToBounds(lat, lon, zoom);
         }

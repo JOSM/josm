@@ -444,24 +444,24 @@ public class PlaceSelection implements DownloadSelection {
             SearchResult sr = (SearchResult) value;
             switch(column) {
             case 0:
-                setText(sr.name);
+                setText(sr.getName());
                 break;
             case 1:
-                setText(sr.info);
+                setText(sr.getInfo());
                 break;
             case 2:
-                setText(sr.nearestPlace);
+                setText(sr.getNearestPlace());
                 break;
             case 3:
-                if (sr.bounds != null) {
-                    setText(sr.bounds.toShortString(new DecimalFormat("0.000")));
+                if (sr.getBounds() != null) {
+                    setText(sr.getBounds().toShortString(new DecimalFormat("0.000")));
                 } else {
-                    setText(sr.zoom != 0 ? Integer.toString(sr.zoom) : tr("unknown"));
+                    setText(sr.getZoom() != 0 ? Integer.toString(sr.getZoom()) : tr("unknown"));
                 }
                 break;
             default: // Do nothing
             }
-            setToolTipText(lineWrapDescription(sr.description));
+            setToolTipText(lineWrapDescription(sr.getDescription()));
             return this;
         }
     }

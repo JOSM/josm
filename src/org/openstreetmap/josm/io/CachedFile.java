@@ -527,7 +527,7 @@ public class CachedFile implements Closeable {
 
     /**
      * Clears the cached file
-     * @throws IOException
+     * @throws IOException if any I/O error occurs
      * @since 10993
      */
     public void clear() throws IOException {
