@@ -25,7 +25,7 @@ public class NativeFileChooser extends AbstractFileChooser {
     /** The instance of the fileDialog */
     private final FileDialog fileDialog;
     private FileFilter fileFilter;
-    private List<FileFilter> fileFilters = new ArrayList<>();
+    private final List<FileFilter> fileFilters = new ArrayList<>();
     private int selectionMode;
 
     /**

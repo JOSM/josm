@@ -16,7 +16,7 @@ import org.openstreetmap.josm.gui.datatransfer.data.TagTransferData;
  * @since 10637
  */
 public class TagTransferable implements Transferable {
-    private TagTransferData data;
+    private final TagTransferData data;
 
     /**
      * Transfer the tag transfer data.
