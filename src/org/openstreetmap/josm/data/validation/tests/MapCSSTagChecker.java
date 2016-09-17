@@ -300,43 +300,47 @@ public class MapCSSTagChecker extends Test.TagTest {
                         check.setClassExpressions.add(ai.key);
                         continue;
                     }
-                    final String val = ai.val instanceof Expression
-                            ? (String) ((Expression) ai.val).evaluate(new Environment())
-                            : ai.val instanceof String
-                            ? (String) ai.val
-                            : ai.val instanceof Keyword
-                            ? ((Keyword) ai.val).val
-                            : null;
-                    if (ai.key.startsWith("throw")) {
-                        try {
-                            final Severity severity = Severity.valueOf(ai.key.substring("throw".length()).toUpperCase(Locale.ENGLISH));
-                            check.errors.put(ai, severity);
-                        } catch (IllegalArgumentException e) {
-                            Main.warn(e, "Unsupported "+ai.key+" instruction. Allowed instructions are "+POSSIBLE_THROWS+'.');
+                    try {
+                        final String val = ai.val instanceof Expression
+                                ? (String) ((Expression) ai.val).evaluate(new Environment())
+                                : ai.val instanceof String
+                                ? (String) ai.val
+                                : ai.val instanceof Keyword
+                                ? ((Keyword) ai.val).val
+                                : null;
+                        if (ai.key.startsWith("throw")) {
+                            try {
+                                final Severity severity = Severity.valueOf(ai.key.substring("throw".length()).toUpperCase(Locale.ENGLISH));
+                                check.errors.put(ai, severity);
+                            } catch (IllegalArgumentException e) {
+                                Main.warn(e, "Unsupported "+ai.key+" instruction. Allowed instructions are "+POSSIBLE_THROWS+'.');
+                            }
+                        } else if ("fixAdd".equals(ai.key)) {
+                            check.fixCommands.add(FixCommand.fixAdd(ai.val));
+                        } else if ("fixRemove".equals(ai.key)) {
+                            CheckParameterUtil.ensureThat(!(ai.val instanceof String) || !(val != null && val.contains("=")),
+                                    "Unexpected '='. Please only specify the key to remove!");
+                            check.fixCommands.add(FixCommand.fixRemove(ai.val));
+                        } else if ("fixChangeKey".equals(ai.key) && val != null) {
+                            CheckParameterUtil.ensureThat(val.contains("=>"), "Separate old from new key by '=>'!");
+                            final String[] x = val.split("=>", 2);
+                            check.fixCommands.add(FixCommand.fixChangeKey(Tag.removeWhiteSpaces(x[0]), Tag.removeWhiteSpaces(x[1])));
+                        } else if ("fixDeleteObject".equals(ai.key) && val != null) {
+                            CheckParameterUtil.ensureThat("this".equals(val), "fixDeleteObject must be followed by 'this'");
+                            check.deletion = true;
+                        } else if ("suggestAlternative".equals(ai.key) && val != null) {
+                            check.alternatives.add(val);
+                        } else if ("assertMatch".equals(ai.key) && val != null) {
+                            check.assertions.put(val, Boolean.TRUE);
+                        } else if ("assertNoMatch".equals(ai.key) && val != null) {
+                            check.assertions.put(val, Boolean.FALSE);
+                        } else if ("group".equals(ai.key) && val != null) {
+                            check.group = val;
+                        } else {
+                            throw new IllegalDataException("Cannot add instruction " + ai.key + ": " + ai.val + '!');
                         }
-                    } else if ("fixAdd".equals(ai.key)) {
-                        check.fixCommands.add(FixCommand.fixAdd(ai.val));
-                    } else if ("fixRemove".equals(ai.key)) {
-                        CheckParameterUtil.ensureThat(!(ai.val instanceof String) || !(val != null && val.contains("=")),
-                                "Unexpected '='. Please only specify the key to remove!");
-                        check.fixCommands.add(FixCommand.fixRemove(ai.val));
-                    } else if ("fixChangeKey".equals(ai.key) && val != null) {
-                        CheckParameterUtil.ensureThat(val.contains("=>"), "Separate old from new key by '=>'!");
-                        final String[] x = val.split("=>", 2);
-                        check.fixCommands.add(FixCommand.fixChangeKey(Tag.removeWhiteSpaces(x[0]), Tag.removeWhiteSpaces(x[1])));
-                    } else if ("fixDeleteObject".equals(ai.key) && val != null) {
-                        CheckParameterUtil.ensureThat("this".equals(val), "fixDeleteObject must be followed by 'this'");
-                        check.deletion = true;
-                    } else if ("suggestAlternative".equals(ai.key) && val != null) {
-                        check.alternatives.add(val);
-                    } else if ("assertMatch".equals(ai.key) && val != null) {
-                        check.assertions.put(val, Boolean.TRUE);
-                    } else if ("assertNoMatch".equals(ai.key) && val != null) {
-                        check.assertions.put(val, Boolean.FALSE);
-                    } else if ("group".equals(ai.key) && val != null) {
-                        check.group = val;
-                    } else {
-                        throw new IllegalDataException("Cannot add instruction " + ai.key + ": " + ai.val + '!');
+                    } catch (IllegalArgumentException e) {
+                        throw new IllegalDataException(e);
                     }
                 }
             }
@@ -356,12 +360,9 @@ public class MapCSSTagChecker extends Test.TagTest {
 
             final MapCSSStyleSource source = new MapCSSStyleSource("");
             final MapCSSParser preprocessor = new MapCSSParser(css, MapCSSParser.LexicalState.PREPROCESSOR);
-
-            css = new StringReader(preprocessor.pp_root(source));
-            final MapCSSParser parser = new MapCSSParser(css, MapCSSParser.LexicalState.DEFAULT);
+            final StringReader mapcss = new StringReader(preprocessor.pp_root(source));
+            final MapCSSParser parser = new MapCSSParser(mapcss, MapCSSParser.LexicalState.DEFAULT);
             parser.sheet(source);
-            Collection<Throwable> parseErrors = source.getErrors();
-            assert parseErrors.isEmpty();
             // Ignore "meta" rule(s) from external rules of JOSM wiki
             removeMetaRules(source);
             // group rules with common declaration block
@@ -382,10 +383,10 @@ public class MapCSSTagChecker extends Test.TagTest {
                             new GroupedMapCSSRule(map.getValue(), map.getKey())));
                 } catch (IllegalDataException e) {
                     Main.error("Cannot add MapCss rule: "+e.getMessage());
-                    parseErrors.add(e);
+                    source.logError(e);
                 }
             }
-            return new ParseResult(parseChecks, parseErrors);
+            return new ParseResult(parseChecks, source.getErrors());
         }
 
         private static void removeMetaRules(MapCSSStyleSource source) {

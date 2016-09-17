@@ -51,9 +51,13 @@ public class MapCSSTagCheckerTest {
         return test;
     }
 
+    /**
+     * Test {@code natural=marsh}.
+     * @throws ParseException if a parsing error occurs
+     */
     @Test
-    public void testNaturalMarsh() throws Exception {
-        ParseResult result = MapCSSTagChecker.TagCheck.readMapCSS(new StringReader("" +
+    public void testNaturalMarsh() throws ParseException {
+        ParseResult result = MapCSSTagChecker.TagCheck.readMapCSS(new StringReader(
                 "*[natural=marsh] {\n" +
                 "   group: tr(\"deprecated\");\n" +
                 "   throwWarning: tr(\"{0}={1} is deprecated\", \"{0.key}\", tag(\"natural\"));\n" +
@@ -85,8 +89,12 @@ public class MapCSSTagCheckerTest {
                 MapCSSTagChecker.TagCheck.insertArguments(check.rule.selectors.get(0), "The key is {0.key} and the value is {0.value}", null));
     }
 
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/10913">Bug #10913</a>.
+     * @throws ParseException if a parsing error occurs
+     */
     @Test
-    public void testTicket10913() throws Exception {
+    public void testTicket10913() throws ParseException {
         final OsmPrimitive p = OsmUtils.createPrimitive("way highway=tertiary construction=yes");
         final TagCheck check = TagCheck.readMapCSS(new StringReader("way {" +
                 "throwError: \"error\";" +
@@ -100,8 +108,12 @@ public class MapCSSTagCheckerTest {
         assertTrue(it.next() instanceof ChangePropertyCommand);
     }
 
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/9782">Bug #9782</a>.
+     * @throws ParseException if a parsing error occurs
+     */
     @Test
-    public void testTicket9782() throws Exception {
+    public void testTicket9782() throws ParseException {
         final MapCSSTagChecker test = buildTagChecker("*[/.+_name/][!name] {" +
                 "throwWarning: tr(\"has {0} but not {1}\", \"{0.key}\", \"{1.key}\");}");
         final OsmPrimitive p = OsmUtils.createPrimitive("way alt_name=Foo");
@@ -111,8 +123,12 @@ public class MapCSSTagCheckerTest {
         assertEquals("3000_*[.+_name][!name]", errors.iterator().next().getIgnoreSubGroup());
     }
 
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/10859">Bug #10859</a>.
+     * @throws ParseException if a parsing error occurs
+     */
     @Test
-    public void testTicket10859() throws Exception {
+    public void testTicket10859() throws ParseException {
         final MapCSSTagChecker test = buildTagChecker("way[highway=footway][foot?!] {\n" +
                 "  throwWarning: tr(\"{0} used with {1}\", \"{0.value}\", \"{1.tag}\");}");
         final OsmPrimitive p = OsmUtils.createPrimitive("way highway=footway foot=no");
@@ -122,8 +138,20 @@ public class MapCSSTagCheckerTest {
         assertEquals("3000_way[highway=footway][foot]", errors.iterator().next().getIgnoreSubGroup());
     }
 
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/13630">Bug #13630</a>.
+     * @throws ParseException if a parsing error occurs
+     */
     @Test
-    public void testPreprocessing() throws Exception {
+    public void testTicket13630() throws ParseException {
+        ParseResult result = MapCSSTagChecker.TagCheck.readMapCSS(new StringReader(
+                "node[crossing=zebra] {fixRemove: \"crossing=zebra\";}"));
+        assertTrue(result.parseChecks.isEmpty());
+        assertEquals(1, result.parseErrors.size());
+    }
+
+    @Test
+    public void testPreprocessing() throws ParseException {
         final MapCSSTagChecker test = buildTagChecker("" +
                 "@supports (min-josm-version: 1) { *[foo] { throwWarning: \"!\"; } }\n" +
                 "@supports (min-josm-version: 2147483647) { *[bar] { throwWarning: \"!\"; } }\n");
