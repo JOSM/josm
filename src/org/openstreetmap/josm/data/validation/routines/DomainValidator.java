@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016083001, Last Updated Wed Aug 31 07:07:01 2016 UTC
+        // Taken from Version 2016091601, Last Updated Sat Sep 17 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -951,6 +951,7 @@ public final class DomainValidator extends AbstractValidator {
         "mom", // mom Uniregistry, Corp.
         "monash", // monash Monash University
         "money", // money Outer McCook, LLC
+        "monster", // monster Monster Worldwide, Inc.
         "montblanc", // montblanc Richemont DNS Inc.
         "mopar", // mopar FCA US LLC.
         "mormon", // mormon IRI Domain Management, LLC (&quot;Applicant&quot;)
