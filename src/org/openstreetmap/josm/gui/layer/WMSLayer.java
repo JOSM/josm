@@ -76,7 +76,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
         ret.add(new LayerSaveAction(this));
         ret.add(new LayerSaveAsAction(this));
         ret.add(new BookmarkWmsAction());
-        return ret.toArray(new Action[]{});
+        return ret.toArray(new Action[ret.size()]);
     }
 
     @Override

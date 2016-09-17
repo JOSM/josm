@@ -20,8 +20,8 @@ import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
  * @since 10651
  */
 public class TileCoordinateConverter {
-    private MapView mapView;
-    private TileSourceDisplaySettings settings;
+    private final MapView mapView;
+    private final TileSourceDisplaySettings settings;
     private final TileSource tileSource;
 
     /**

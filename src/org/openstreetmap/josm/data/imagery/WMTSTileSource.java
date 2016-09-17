@@ -140,7 +140,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         private TileMatrixSet tileMatrixSet;
         private String baseUrl;
         private String style;
-        private Collection<String> tileMatrixSetLinks = new ArrayList<>();
+        private final Collection<String> tileMatrixSetLinks = new ArrayList<>();
 
         Layer(Layer l) {
             if (l != null) {
@@ -162,7 +162,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
         SelectLayerDialog(Collection<Layer> layers) {
             super(Main.parent, tr("Select WMTS layer"), new String[]{tr("Add layers"), tr("Cancel")});
-            this.layers = layers.toArray(new Layer[]{});
+            this.layers = layers.toArray(new Layer[layers.size()]);
             //getLayersTable(layers, Main.getProjection())
             this.list = new JTable(
                     new AbstractTableModel() {
@@ -224,7 +224,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     private final Map<String, String> headers = new ConcurrentHashMap<>();
-    private Collection<Layer> layers;
+    private final Collection<Layer> layers;
     private Layer currentLayer;
     private TileMatrixSet currentTileMatrixSet;
     private double crsScale;

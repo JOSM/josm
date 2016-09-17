@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JComboBox;
@@ -91,7 +92,8 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
             final WMSLayerTree tree = new WMSLayerTree();
             tree.updateTree(wms);
-            final JComboBox<String> formats = new JComboBox<>(wms.getFormats().toArray(new String[0]));
+            List<String> wmsFormats = wms.getFormats();
+            final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[wmsFormats.size()]));
             formats.setSelectedItem(wms.getPreferredFormats());
             formats.setToolTipText(tr("Select image format for WMS layer"));
 
