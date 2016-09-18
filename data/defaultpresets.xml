@@ -4907,8 +4907,8 @@
             <text key="ref" text="Point Number" />
             <text key="name" text="Point Name" />
             <text key="operator" text="Operator" />
-            <text key="phone" text="Phone Number" />
-            <label text="(Use international code, like +12-345-67890)" />
+            <text key="emergency_telephone_code" text="Emergency Phone Number" />
+            <label text="(Use number as shown on plate.)" />
             <space />
         </item> <!-- Emergency Access Point -->
         <separator/>
