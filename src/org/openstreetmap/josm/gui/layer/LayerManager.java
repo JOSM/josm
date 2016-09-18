@@ -170,7 +170,9 @@ public class LayerManager {
     }
 
     /**
-     * This is the list of layers we manage. The list is unmodifyable It is only changed in the EDT.
+     * This is the list of layers we manage. The list is unmodifyable. That way, read access does not need to be synchronized.
+     *
+     * It is only changed in the EDT.
      * @see LayerManager#updateLayers(Consumer)
      */
     private volatile List<Layer> layers = Collections.emptyList();
