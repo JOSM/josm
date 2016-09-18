@@ -198,7 +198,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @return The corresponding dataset
      * @throws OsmTransferException if any error occurs
      */
-    public abstract DataSet parseOsm(final ProgressMonitor progressMonitor) throws OsmTransferException;
+    public abstract DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException;
 
     /**
      * Download OSM Change files from somewhere

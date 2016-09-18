@@ -116,7 +116,7 @@ public class Test extends AbstractVisitor {
          * Checks the tags of the given primitive.
          * @param p The primitive to test
          */
-        public abstract void check(final OsmPrimitive p);
+        public abstract void check(OsmPrimitive p);
 
         @Override
         public void visit(Node n) {
