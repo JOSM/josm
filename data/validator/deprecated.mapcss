@@ -908,3 +908,32 @@ area[landuse=pond] {
   suggestAlternative: "vending=animal_feed";
   fixAdd: "vending=animal_feed";
 }
+
+/* #13653 */
+node[highway=emergency_access_point][phone][!emergency_telephone_code],
+way[highway=emergency_access_point][phone][!emergency_telephone_code] {
+  throwWarning: tr("{0} is deprecated for {1}", "{1.key}", "{0.tag}");
+  suggestAlternative: "emergency_telephone_code";
+  fixChangeKey: "phone => emergency_telephone_code";
+  assertMatch:   "node highway=emergency_access_point phone=123";
+  assertNoMatch: "node highway=emergency_access_point emergency_telephone_code=456";
+  assertNoMatch: "node highway=emergency_access_point phone=123 emergency_telephone_code=456";
+  assertNoMatch: "node phone=123";
+}
+node[highway=emergency_access_point][phone=*emergency_telephone_code],
+way[highway=emergency_access_point][phone=*emergency_telephone_code] {
+  throwWarning: tr("{0} is deprecated for {1}", "{1.key}", "{0.tag}");
+  suggestAlternative: "emergency_telephone_code";
+  fixRemove: "phone";
+  assertNoMatch: "node highway=emergency_access_point phone=123";
+  assertNoMatch: "node highway=emergency_access_point emergency_telephone_code=123";
+  assertMatch:   "node highway=emergency_access_point phone=123 emergency_telephone_code=123";
+}
+node[highway=emergency_access_point][phone][emergency_telephone_code][phone!=*emergency_telephone_code],
+way[highway=emergency_access_point][phone][emergency_telephone_code][phone!=*emergency_telephone_code] {
+  throwWarning: tr("{0} is deprecated for {1}", "{1.key}", "{0.tag}");
+  suggestAlternative: "emergency_telephone_code";
+  assertNoMatch: "node highway=emergency_access_point phone=123";
+  assertNoMatch: "node highway=emergency_access_point emergency_telephone_code=123";
+  assertNoMatch: "node highway=emergency_access_point phone=123 emergency_telephone_code=123";
+}
