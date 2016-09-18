@@ -765,6 +765,16 @@ public class ImageProvider {
             "^data:([a-zA-Z]+/[a-zA-Z+]+)?(;base64)?,(.+)$");
 
     /**
+     * Clears the internal image cache.
+     * @since 11021
+     */
+    public static void clearCache() {
+        synchronized (cache) {
+            cache.clear();
+        }
+    }
+
+    /**
      * Internal implementation of the image request.
      *
      * @param additionalClassLoaders the list of class loaders to use

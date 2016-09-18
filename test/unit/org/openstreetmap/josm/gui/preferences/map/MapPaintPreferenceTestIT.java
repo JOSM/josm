@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.AssignmentInstruct
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -52,6 +53,7 @@ public class MapPaintPreferenceTestIT {
      */
     @Test
     public void testValidityOfAvailableStyles() throws Exception {
+        ImageProvider.clearCache();
         Collection<ExtendedSourceEntry> sources = new MapPaintPreference.MapPaintSourceEditor()
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());
@@ -96,6 +98,7 @@ public class MapPaintPreferenceTestIT {
                 }
             }
         }
+        ImageProvider.clearCache();
         assertTrue(allErrors.toString()+"\n"+allWarnings.toString(), allErrors.isEmpty() && allWarnings.isEmpty());
     }
 }
