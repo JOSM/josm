@@ -139,7 +139,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @param matchingSelector  matching selector
          * @return fix command
          */
-        Command createCommand(final OsmPrimitive p, final Selector matchingSelector);
+        Command createCommand(OsmPrimitive p, Selector matchingSelector);
 
         static void checkObject(final Object obj) {
             CheckParameterUtil.ensureThat(obj instanceof Expression || obj instanceof String,

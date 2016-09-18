@@ -138,7 +138,7 @@ public abstract class AbstractFileChooser {
      * @param filter the new current file filter to use
      * @see #getFileFilter
      */
-    public abstract void setFileFilter(final FileFilter filter);
+    public abstract void setFileFilter(FileFilter filter);
 
     /**
      * Sets the <code>JFileChooser</code> to allow the user to just
