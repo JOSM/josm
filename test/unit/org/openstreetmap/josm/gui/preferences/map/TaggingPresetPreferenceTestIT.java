@@ -19,6 +19,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -49,6 +50,7 @@ public class TaggingPresetPreferenceTestIT {
      */
     @Test
     public void testValidityOfAvailablePresets() throws Exception {
+        ImageProvider.clearCache();
         Collection<ExtendedSourceEntry> sources = new TaggingPresetPreference.TaggingPresetSourceEditor()
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());
@@ -83,6 +85,7 @@ public class TaggingPresetPreferenceTestIT {
                 System.out.println(" => KO");
             }
         }
+        ImageProvider.clearCache();
         assertTrue(allErrors.toString(), allErrors.isEmpty());
         assertTrue(allMessages.toString(), allMessages.isEmpty());
     }
