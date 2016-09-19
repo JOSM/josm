@@ -471,16 +471,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             canUseBuffer = !paintPreferencesChanged;
             paintPreferencesChanged = false;
         }
-        canUseBuffer = canUseBuffer && nonChangedLayers.size() <= nonChangedLayersCount &&
-        lastViewID == getViewID() && lastClipBounds.contains(g.getClipBounds());
-        if (canUseBuffer) {
-            for (int i = 0; i < nonChangedLayers.size(); i++) {
-                if (visibleLayers.get(i) != nonChangedLayers.get(i)) {
-                    canUseBuffer = false;
-                    break;
-                }
-            }
-        }
+        canUseBuffer = canUseBuffer
+                && nonChangedLayers.size() <= nonChangedLayersCount
+                && lastViewID == getViewID()
+                && lastClipBounds.contains(g.getClipBounds())
+                && nonChangedLayers.equals(visibleLayers.subList(0, nonChangedLayers.size()));
 
         if (null == offscreenBuffer || offscreenBuffer.getWidth() != getWidth() || offscreenBuffer.getHeight() != getHeight()) {
             offscreenBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
@@ -515,9 +510,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
 
         nonChangedLayers.clear();
-        for (int i = 0; i < nonChangedLayersCount; i++) {
-            nonChangedLayers.add(visibleLayers.get(i));
-        }
+        nonChangedLayers.addAll(visibleLayers.subList(0, nonChangedLayersCount));
         lastViewID = getViewID();
         lastClipBounds = g.getClipBounds();
 
