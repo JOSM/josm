@@ -62,7 +62,6 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.Poly
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.draw.MapPath2D;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -1422,10 +1421,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             boolean showOrientation, boolean showHeadArrowOnly,
             boolean showOneway, boolean onewayReversed) {
 
-        MapPath2D path = new MapPath2D();
-        MapPath2D orientationArrows = showOrientation ? new MapPath2D() : null;
-        MapPath2D onewayArrows = showOneway ? new MapPath2D() : null;
-        MapPath2D onewayArrowsCasing = showOneway ? new MapPath2D() : null;
+        MapViewPath path = new MapViewPath(mapState);
+        MapViewPath orientationArrows = showOrientation ? new MapViewPath(mapState) : null;
+        MapViewPath onewayArrows = showOneway ? new MapViewPath(mapState) : null;
+        MapViewPath onewayArrowsCasing = showOneway ? new MapViewPath(mapState) : null;
         Rectangle bounds = g.getClipBounds();
         if (bounds != null) {
             // avoid arrow heads at the border

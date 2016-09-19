@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -57,6 +58,11 @@ public final class MapViewState implements Serializable {
      * @since 10827
      */
     public static final int OUTSIDE_RIGHT = 8;
+
+    /**
+     * Additional pixels outside the view for where to start clipping.
+     */
+    private static final int CLIP_BOUNDS = 50;
 
     private final transient Projecting projecting;
 
@@ -256,6 +262,14 @@ public final class MapViewState implements Serializable {
     public AffineTransform getAffineTransform() {
         return new AffineTransform(1.0 / scale, 0.0, 0.0, -1.0 / scale, -topLeft.east() / scale,
                 topLeft.north() / scale);
+    }
+
+    /**
+     * Gets a rectangle that is several pixel bigger than the view. It is used to define the view clipping.
+     * @return The rectangle.
+     */
+    public MapViewRectangle getViewClipRectangle() {
+        return getForView(-CLIP_BOUNDS, -CLIP_BOUNDS).rectTo(getForView(getViewWidth() + CLIP_BOUNDS, getViewHeight() + CLIP_BOUNDS));
     }
 
     /**
@@ -663,6 +677,39 @@ public final class MapViewState implements Serializable {
          */
         public boolean isInView() {
             return getInView().intersects(getViewArea().getInView());
+        }
+
+        /**
+         * Gets the entry point at which a line between start and end enters the current view.
+         * @param start The start
+         * @param end The end
+         * @return The entry point or <code>null</code> if the line does not intersect this view.
+         */
+        public MapViewPoint getLineEntry(MapViewPoint start, MapViewPoint end) {
+            ProjectionBounds bounds = getProjectionBounds();
+            if (bounds.contains(start.getEastNorth())) {
+                return start;
+            }
+
+            double dx = end.getEastNorth().east() - start.getEastNorth().east();
+            double boundX = dx > 0 ? bounds.minEast : bounds.maxEast;
+            EastNorth borderIntersection = Geometry.getSegmentSegmentIntersection(start.getEastNorth(), end.getEastNorth(),
+                    new EastNorth(boundX, bounds.minNorth),
+                    new EastNorth(boundX, bounds.maxNorth));
+            if (borderIntersection != null) {
+                return getPointFor(borderIntersection);
+            }
+
+            double dy = end.getEastNorth().north() - start.getEastNorth().north();
+            double boundY = dy > 0 ? bounds.minNorth : bounds.maxNorth;
+            borderIntersection = Geometry.getSegmentSegmentIntersection(start.getEastNorth(), end.getEastNorth(),
+                    new EastNorth(bounds.minEast, boundY),
+                    new EastNorth(bounds.maxEast, boundY));
+            if (borderIntersection != null) {
+                return getPointFor(borderIntersection);
+            }
+
+            return null;
         }
     }
 
