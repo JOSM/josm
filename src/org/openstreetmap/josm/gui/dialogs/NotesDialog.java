@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -61,6 +62,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     private final NewAction newAction;
     private final ReopenAction reopenAction;
     private final SortAction sortAction;
+    private final OpenInBrowserAction openInBrowserAction;
     private final UploadNotesAction uploadAction;
 
     private transient NoteData noteData;
@@ -74,6 +76,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         newAction = new NewAction();
         reopenAction = new ReopenAction();
         sortAction = new SortAction();
+        openInBrowserAction = new OpenInBrowserAction();
         uploadAction = new UploadNotesAction();
         buildDialog();
         Main.getLayerManager().addLayerChangeListener(this);
@@ -112,6 +115,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                 new SideButton(closeAction, false),
                 new SideButton(reopenAction, false),
                 new SideButton(sortAction, false),
+                new SideButton(openInBrowserAction, false),
                 new SideButton(uploadAction, false)}));
         updateButtonStates();
     }
@@ -130,6 +134,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             addCommentAction.setEnabled(false);
             reopenAction.setEnabled(true);
         }
+        openInBrowserAction.setEnabled(noteData != null && noteData.getSelectedNote() != null && noteData.getSelectedNote().getId() > 0);
         if (noteData == null || !noteData.isModified()) {
             uploadAction.setEnabled(false);
         } else {
@@ -398,6 +403,22 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             sortDialog.showSortDialog(noteData.getCurrentSortMethod());
             if (sortDialog.getValue() == 1) {
                 noteData.setSortMethod(sortDialog.getSelectedComparator());
+            }
+        }
+    }
+
+    class OpenInBrowserAction extends AbstractAction {
+        OpenInBrowserAction() {
+            putValue(SHORT_DESCRIPTION, tr("Open the note in an external browser"));
+            putValue(SMALL_ICON, ImageProvider.get("help", "internet"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final Note note = displayList.getSelectedValue();
+            if (note.getId() > 0) {
+                final String url = Main.getBaseBrowseUrl() + "/note/" + note.getId();
+                OpenBrowser.displayUrl(url);
             }
         }
     }
