@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
@@ -214,7 +215,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     // Layers that wasn't changed since last paint
     private final transient List<Layer> nonChangedLayers = new ArrayList<>();
     private int lastViewID;
-    private boolean paintPreferencesChanged = true;
+    private AtomicBoolean paintPreferencesChanged = new AtomicBoolean(true);
     private Rectangle lastClipBounds = new Rectangle();
     private transient MapMover mapMover;
 
@@ -465,13 +466,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             }
         }
 
-        boolean canUseBuffer;
-
-        synchronized (this) {
-            canUseBuffer = !paintPreferencesChanged;
-            paintPreferencesChanged = false;
-        }
-        canUseBuffer = canUseBuffer
+        boolean canUseBuffer = !paintPreferencesChanged.getAndSet(false)
                 && nonChangedLayers.size() <= nonChangedLayersCount
                 && lastViewID == getViewID()
                 && lastClipBounds.contains(g.getClipBounds())
@@ -710,9 +705,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
-        synchronized (this) {
-            paintPreferencesChanged = true;
-        }
+        paintPreferencesChanged.set(true);
     }
 
     private final transient SelectionChangedListener repaintSelectionChangedListener = newSelection -> repaint();
