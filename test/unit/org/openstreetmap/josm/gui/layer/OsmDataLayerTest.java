@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
+import org.fest.assertions.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
@@ -252,5 +253,13 @@ public class OsmDataLayerTest {
         assertFalse(layer.checkSaveConditions());
         fillDataSet(ds);
         assertTrue(layer.checkSaveConditions());
+    }
+
+    @Test
+    public void testLayerNameIncreases() throws Exception {
+        final OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), OsmDataLayer.createLayerName(147), null);
+        final OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
+        assertEquals("Data Layer 147", layer1.getName());
+        assertEquals("Data Layer 148", layer2.getName());
     }
 }

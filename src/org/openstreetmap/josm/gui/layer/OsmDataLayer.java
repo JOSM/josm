@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
@@ -97,6 +98,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.OsmImporter;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
@@ -197,7 +199,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     /** the global counter for created data layers */
-    private static int dataLayerCounter;
+    private static final AtomicInteger dataLayerCounter = new AtomicInteger();
 
     /**
      * Replies a new unique name for a data layer
@@ -205,8 +207,11 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * @return a new unique name for a data layer
      */
     public static String createNewName() {
-        dataLayerCounter++;
-        return tr("Data Layer {0}", dataLayerCounter);
+        return createLayerName(dataLayerCounter.incrementAndGet());
+    }
+
+    static String createLayerName(Object arg) {
+        return tr("Data Layer {0}", arg);
     }
 
     public static final class DataCountVisitor extends AbstractVisitor {
@@ -351,6 +356,11 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         data.addDataSetListener(new DataSetListenerAdapter(this));
         data.addDataSetListener(MultipolygonCache.getInstance());
         DataSet.addSelectionListener(this);
+        if (name != null && name.startsWith(createLayerName(""))) {
+            while (AlphanumComparator.getInstance().compare(createLayerName(dataLayerCounter), name) < 0) {
+                dataLayerCounter.incrementAndGet();
+            }
+        }
     }
 
     /**
