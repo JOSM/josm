@@ -13,7 +13,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Calendar;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -86,10 +87,7 @@ public class AutosaveTaskTest {
     public void testGetNewLayerFile() throws IOException {
         Files.createDirectories(task.getAutosaveDir());
         AutosaveLayerInfo info = new AutosaveLayerInfo(new OsmDataLayer(new DataSet(), "layer", null));
-        Calendar cal = Calendar.getInstance();
-        cal.set(2016, 0, 1, 1, 2, 3);
-        cal.set(Calendar.MILLISECOND, 456);
-        Date fixed = cal.getTime();
+        Date fixed = Date.from(ZonedDateTime.of(2016, 1, 1, 1, 2, 3, 456_000_000, ZoneId.systemDefault()).toInstant());
 
         AutosaveTask.PROP_INDEX_LIMIT.put(5);
         for (int i = 0; i <= AutosaveTask.PROP_INDEX_LIMIT.get() + 2; i++) {

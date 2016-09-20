@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
-import java.util.Calendar;
+import java.time.Year;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -224,7 +224,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             if (copyrightYear.getText().isEmpty()) {
                 String sCopyrightYear = data.getString(META_COPYRIGHT_YEAR);
                 if (sCopyrightYear == null) {
-                    sCopyrightYear = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
+                    sCopyrightYear = Year.now().toString();
                 }
                 copyrightYear.setText(sCopyrightYear);
             }

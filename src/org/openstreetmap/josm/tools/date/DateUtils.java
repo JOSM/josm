@@ -4,15 +4,17 @@ package org.openstreetmap.josm.tools.date;
 import java.text.DateFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -40,23 +42,9 @@ public final class DateUtils {
      */
     public static final BooleanProperty PROP_ISO_DATES = new BooleanProperty("iso.dates", false);
 
-    /**
-     * A shared instance used for conversion between individual date fields
-     * and long millis time. It is guarded against conflict by the class lock.
-     * The shared instance is used because the construction, together
-     * with the timezone lookup, is very expensive.
-     */
-    private static final GregorianCalendar calendar = new GregorianCalendar(UTC);
-    /**
-     * A shared instance to convert local times. The time zone should be set before every conversion.
-     */
-    private static final GregorianCalendar calendarLocale = new GregorianCalendar(TimeZone.getDefault());
     private static final DatatypeFactory XML_DATE;
 
     static {
-        calendar.setTimeInMillis(0);
-        calendarLocale.setTimeInMillis(0);
-
         DatatypeFactory fact = null;
         try {
             fact = DatatypeFactory.newInstance();
@@ -96,49 +84,45 @@ public final class DateUtils {
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx:00") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx:00")) {
-            final Calendar c; // consider EXIF date in default timezone
-            if (checkLayout(str, "xxxx:xx:xx xx:xx:xx")) {
-                c = getLocalCalendar();
-            } else {
-                c = calendar;
-            }
-            c.set(
+            final ZonedDateTime local = ZonedDateTime.of(
                 parsePart4(str, 0),
-                parsePart2(str, 5)-1,
+                parsePart2(str, 5),
                 parsePart2(str, 8),
                 parsePart2(str, 11),
                 parsePart2(str, 14),
-                parsePart2(str, 17));
-            c.set(Calendar.MILLISECOND, 0);
-
+                parsePart2(str, 17),
+                0,
+                // consider EXIF date in default timezone
+                checkLayout(str, "xxxx:xx:xx xx:xx:xx") ? ZoneId.systemDefault() : ZoneOffset.UTC
+            );
             if (str.length() == 22 || str.length() == 25) {
-                int plusHr = parsePart2(str, 20);
-                int mul = str.charAt(19) == '+' ? -3600000 : 3600000;
-                return c.getTimeInMillis()+plusHr*mul;
+                final int plusHr = parsePart2(str, 20);
+                final int mul = str.charAt(19) == '+' ? -1 : 1;
+                return local.plusHours(plusHr * mul).toInstant().toEpochMilli();
             }
-
-            return c.getTimeInMillis();
+            return local.toInstant().toEpochMilli();
         } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx") ||
                 checkLayout(str, "xxxx:xx:xx xx:xx:xx.xxx") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx+xx:00") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx-xx:00")) {
-            // consider EXIF date in default timezone
-            final Calendar c = checkLayout(str, "xxxx:xx:xx xx:xx:xx.xxx") ? getLocalCalendar() : calendar;
-            c.set(
+            final ZonedDateTime local = ZonedDateTime.of(
                 parsePart4(str, 0),
-                parsePart2(str, 5)-1,
+                parsePart2(str, 5),
                 parsePart2(str, 8),
                 parsePart2(str, 11),
                 parsePart2(str, 14),
-                parsePart2(str, 17));
-            c.set(Calendar.MILLISECOND, 0);
-            long millis = parsePart3(str, 20);
+                parsePart2(str, 17),
+                parsePart3(str, 20) * 1_000_000,
+                // consider EXIF date in default timezone
+                checkLayout(str, "xxxx:xx:xx xx:xx:xx.xxx") ? ZoneId.systemDefault() : ZoneOffset.UTC
+            );
             if (str.length() == 29) {
-                millis += parsePart2(str, 24) * (str.charAt(23) == '+' ? -3600000 : 3600000);
+                final int plusHr = parsePart2(str, 24);
+                final int mul = str.charAt(23) == '+' ? -1 : 1;
+                return local.plusHours(plusHr * mul).toInstant().toEpochMilli();
             }
-
-            return c.getTimeInMillis() + millis;
+            return local.toInstant().toEpochMilli();
         } else {
             // example date format "18-AUG-08 13:33:03"
             SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
@@ -154,28 +138,14 @@ public final class DateUtils {
         }
     }
 
-    private static Calendar getLocalCalendar() {
-        final Calendar c = calendarLocale;
-        c.setTimeZone(TimeZone.getDefault());
-        return c;
-    }
-
-    private static String toXmlFormat(GregorianCalendar cal) {
-        XMLGregorianCalendar xgc = XML_DATE.newXMLGregorianCalendar(cal);
-        if (cal.get(Calendar.MILLISECOND) == 0) {
-            xgc.setFractionalSecond(null);
-        }
-        return xgc.toXMLFormat();
-    }
-
     /**
      * Formats a date to the XML UTC format regardless of current locale.
      * @param timestamp number of seconds since the epoch
      * @return The formatted date
      */
     public static synchronized String fromTimestamp(int timestamp) {
-        calendar.setTimeInMillis(timestamp * 1000L);
-        return toXmlFormat(calendar);
+        final ZonedDateTime temporal = Instant.ofEpochMilli(timestamp * 1000L).atZone(ZoneOffset.UTC);
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(temporal);
     }
 
     /**
@@ -184,8 +154,8 @@ public final class DateUtils {
      * @return The formatted date
      */
     public static synchronized String fromDate(Date date) {
-        calendar.setTime(date);
-        return toXmlFormat(calendar);
+        final ZonedDateTime temporal = date.toInstant().atZone(ZoneOffset.UTC);
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(temporal);
     }
 
     private static boolean checkLayout(String text, String pattern) {

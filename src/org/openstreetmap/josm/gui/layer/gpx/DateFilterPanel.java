@@ -6,8 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -48,7 +49,7 @@ public class DateFilterPanel extends JPanel {
 
         final Date startTime, endTime;
         Date[] bounds = layer.data.getMinMaxTimeForAllTracks();
-        startTime = (bounds.length == 0) ? new GregorianCalendar(2000, 1, 1).getTime() : bounds[0];
+        startTime = (bounds.length == 0) ? Date.from(ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant()) : bounds[0];
         endTime = (bounds.length == 0) ? new Date() : bounds[1];
 
         dateFrom.setDate(startTime);
