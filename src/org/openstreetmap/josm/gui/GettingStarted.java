@@ -22,8 +22,10 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.datatransfer.OpenTransferHandler;
+import org.openstreetmap.josm.gui.dialogs.MenuItemSearchDialog;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferenceListener;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
@@ -122,8 +124,9 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
         super(new BorderLayout());
         lg = new LinkGeneral("<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
                 + "</h1><h2 align=\"center\">" + tr("Downloading \"Message of the day\"") + "</h2></html>");
-        // clear the build-in command ctrl+shift+O, because it is used as shortcut in JOSM
-        lg.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "none");
+        // clear the build-in command ctrl+shift+O, ctrl+space because it is used as shortcut in JOSM
+        lg.getInputMap(JComponent.WHEN_FOCUSED).put(DownloadPrimitiveAction.SHORTCUT.getKeyStroke(), "none");
+        lg.getInputMap(JComponent.WHEN_FOCUSED).put(MenuItemSearchDialog.Action.SHORTCUT.getKeyStroke(), "none");
         lg.setTransferHandler(null);
 
         JScrollPane scroller = new JScrollPane(lg);

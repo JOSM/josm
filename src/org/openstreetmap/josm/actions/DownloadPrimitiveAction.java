@@ -22,13 +22,15 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class DownloadPrimitiveAction extends JosmAction {
 
+    public static final Shortcut SHORTCUT = Shortcut.registerShortcut("system:download_primitive", tr("File: {0}", tr("Download object...")),
+            KeyEvent.VK_O, Shortcut.CTRL_SHIFT);
+
     /**
      * Constructs a new {@code DownloadPrimitiveAction}.
      */
     public DownloadPrimitiveAction() {
         super(tr("Download object..."), "downloadprimitive", tr("Download OSM object by ID."),
-                Shortcut.registerShortcut("system:download_primitive", tr("File: {0}", tr("Download object...")),
-                        KeyEvent.VK_O, Shortcut.CTRL_SHIFT), true);
+                SHORTCUT, true);
         putValue("help", ht("/Action/DownloadObject"));
     }
 
