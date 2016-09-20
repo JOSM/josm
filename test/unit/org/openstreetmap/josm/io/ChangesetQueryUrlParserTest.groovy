@@ -1,11 +1,12 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.io;
-
-import static org.junit.Assert.*
+package org.openstreetmap.josm.io
 
 import org.junit.Test
 import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException
 import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlParser
+
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 class ChangesetQueryUrlParserTest {
     final shouldFail = new GroovyTestCase().&shouldFail
@@ -126,14 +127,8 @@ class ChangesetQueryUrlParserTest {
         q = parser.parse("time=2009-12-25T10:00:00Z")
         assert q != null
         assert q.@closedAfter != null
-        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT+0"));
-        cal.setTime(q.@closedAfter);
-        assert cal.get(Calendar.YEAR) == 2009
-        assert cal.get(Calendar.MONTH) == 11 // calendar is 0-based
-        assert cal.get(Calendar.DAY_OF_MONTH) == 25
-        assert cal.get(Calendar.HOUR_OF_DAY) == 10
-        assert cal.get(Calendar.MINUTE) == 0
-        assert cal.get(Calendar.SECOND) == 0
+        def cal = q.@closedAfter.toInstant().atOffset(ZoneOffset.UTC)
+        assert cal == OffsetDateTime.of(2009, 12, 25, 10, 0, 0, 0, ZoneOffset.UTC)
 
         // OK
         q = parser.parse("time=2009-12-25T10:00:00Z,2009-11-25T10:00:00Z")

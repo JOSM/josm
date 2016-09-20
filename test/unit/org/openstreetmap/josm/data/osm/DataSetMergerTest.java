@@ -10,10 +10,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.StringWriter;
+import java.time.Instant;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.junit.After;
 import org.junit.Before;
@@ -25,7 +24,6 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Unit tests for class {@link DataSetMerger}.
  */
@@ -297,7 +295,6 @@ public class DataSetMergerTest {
     @Test
     public void testNodeSimpleNoIdSemanticallyEqual() {
 
-        Calendar cal = GregorianCalendar.getInstance();
         User myUser = User.createOsmUser(1111, "my");
 
         User theirUser = User.createOsmUser(222, "their");
@@ -306,16 +303,14 @@ public class DataSetMergerTest {
         n.setCoor(LatLon.ZERO);
         n.put("key1", "value1");
         n.setUser(myUser);
-        n.setTimestamp(cal.getTime());
+        n.setTimestamp(new Date());
 
         my.addPrimitive(n);
 
         Node n1 = new Node();
         n1.setCoor(LatLon.ZERO);
         n1.put("key1", "value1");
-        cal.add(Calendar.HOUR, 1);
-        Date timestamp = cal.getTime();
-        n1.setTimestamp(timestamp);
+        n1.setTimestamp(Date.from(Instant.now().plusSeconds(3600)));
         n1.setUser(theirUser);
         their.addPrimitive(n1);
 

@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import org.junit.Before;
@@ -23,7 +23,6 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * EXIF metadata extraction test
  * @since 6209
@@ -54,12 +53,13 @@ public class ExifReaderTest {
     @Test
     public void testReadTime() throws ParseException {
         Date date = ExifReader.readTime(directionSampleFile);
-        assertEquals(new GregorianCalendar(2010, Calendar.MAY, 15, 17, 12, 05).getTime(), date);
+        assertEquals(ZonedDateTime.of(2010, 5, 15, 17, 12, 5, 0, ZoneId.systemDefault()).toInstant(), date.toInstant());
 
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
+        final TimeZone zone = TimeZone.getTimeZone("Europe/Berlin");
+        TimeZone.setDefault(zone);
         date = ExifReader.readTime(directionSampleFile);
         TimeZone.setDefault(DateUtils.UTC);
-        assertEquals(new GregorianCalendar(2010, Calendar.MAY, 15, 15, 12, 05).getTime(), date);
+        assertEquals(ZonedDateTime.of(2010, 5, 15, 17, 12, 5, 0, zone.toZoneId()).toInstant(), date.toInstant());
     }
 
     /**

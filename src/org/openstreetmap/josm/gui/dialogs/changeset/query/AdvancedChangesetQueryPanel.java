@@ -10,11 +10,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.text.DateFormat;
-import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -841,22 +844,18 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             if (!isValidChangesetQuery())
                 throw new IllegalStateException(tr("Cannot build changeset query with time based restrictions. Input is not valid."));
             if (rbClosedAfter.isSelected()) {
-                GregorianCalendar cal = new GregorianCalendar();
-                Date d1 = valClosedAfterDate1.getDate();
-                Date d2 = valClosedAfterTime1.getDate();
-                cal.setTimeInMillis(d1.getTime() + (d2 == null ? 0 : d2.getTime()));
-                query.closedAfter(cal.getTime());
+                LocalDate d1 = valClosedAfterDate1.getDate();
+                LocalTime d2 = valClosedAfterTime1.getDate();
+                final Date d3 = new Date(d1.atTime(d2).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+                query.closedAfter(d3);
             } else if (rbClosedAfterAndCreatedBefore.isSelected()) {
-                GregorianCalendar cal = new GregorianCalendar();
-                Date d1 = valClosedAfterDate2.getDate();
-                Date d2 = valClosedAfterTime2.getDate();
-                cal.setTimeInMillis(d1.getTime() + (d2 == null ? 0 : d2.getTime()));
-                Date d3 = cal.getTime();
+                LocalDate d1 = valClosedAfterDate2.getDate();
+                LocalTime d2 = valClosedAfterTime2.getDate();
+                Date d3 = new Date(d1.atTime(d2).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 
                 d1 = valCreatedBeforeDate.getDate();
                 d2 = valCreatedBeforeTime.getDate();
-                cal.setTimeInMillis(d1.getTime() + (d2 == null ? 0 : d2.getTime()));
-                Date d4 = cal.getTime();
+                Date d4 = new Date(d1.atTime(d2).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
 
                 query.closedAfterAndCreatedBefore(d3, d4);
             }
@@ -1041,17 +1040,17 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
 
         public String getStandardTooltipText() {
-            Date date = new Date();
+            final ZonedDateTime now = ZonedDateTime.now();
             return tr(
                     "Please enter a date in the usual format for your locale.<br>"
                     + "Example: {0}<br>"
                     + "Example: {1}<br>"
                     + "Example: {2}<br>"
                     + "Example: {3}<br>",
-                    DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault()).format(date),
-                    DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()).format(date),
-                    DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()).format(date),
-                    DateFormat.getDateInstance(DateFormat.FULL, Locale.getDefault()).format(date)
+                    DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).format(now),
+                    DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).format(now),
+                    DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).format(now),
+                    DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(now)
             );
         }
 
@@ -1067,12 +1066,12 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             }
         }
 
-        public Date getDate() {
-            for (int format: new int[] {DateFormat.SHORT, DateFormat.MEDIUM, DateFormat.LONG, DateFormat.FULL}) {
-                DateFormat df = DateFormat.getDateInstance(format);
+        public LocalDate getDate() {
+            for (final FormatStyle format: FormatStyle.values()) {
+                DateTimeFormatter df = DateTimeFormatter.ofLocalizedDate(format);
                 try {
-                    return df.parse(getComponent().getText());
-                } catch (ParseException e) {
+                    return LocalDate.parse(getComponent().getText(), df);
+                } catch (DateTimeParseException e) {
                     // Try next format
                     Main.trace(e);
                 }
@@ -1108,17 +1107,17 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
 
         public String getStandardTooltipText() {
-            Date date = new Date();
+            final ZonedDateTime now = ZonedDateTime.now();
             return tr(
                     "Please enter a valid time in the usual format for your locale.<br>"
                     + "Example: {0}<br>"
                     + "Example: {1}<br>"
                     + "Example: {2}<br>"
                     + "Example: {3}<br>",
-                    DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(date),
-                    DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.getDefault()).format(date),
-                    DateFormat.getTimeInstance(DateFormat.LONG, Locale.getDefault()).format(date),
-                    DateFormat.getTimeInstance(DateFormat.FULL, Locale.getDefault()).format(date)
+                    DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).format(now),
+                    DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).format(now),
+                    DateTimeFormatter.ofLocalizedTime(FormatStyle.LONG).format(now),
+                    DateTimeFormatter.ofLocalizedTime(FormatStyle.FULL).format(now)
             );
         }
 
@@ -1134,18 +1133,20 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             }
         }
 
-        public Date getDate() {
+        public LocalTime getDate() {
             if (getComponent().getText().trim().isEmpty())
-                return null;
+                return LocalTime.MIDNIGHT;
 
-            for (int style : new int[]{DateFormat.SHORT, DateFormat.MEDIUM, DateFormat.LONG, DateFormat.FULL}) {
+            for (final FormatStyle format: FormatStyle.values()) {
+                DateTimeFormatter df = DateTimeFormatter.ofLocalizedTime(format);
                 try {
-                    return DateFormat.getTimeInstance(style, Locale.getDefault()).parse(getComponent().getText());
-                } catch (ParseException e) {
-                    continue;
+                    return LocalTime.parse(getComponent().getText(), df);
+                } catch (DateTimeParseException e) {
+                    // Try next format
+                    Main.trace(e);
                 }
             }
-            return null;
+            return LocalTime.MIDNIGHT;
         }
     }
 }
