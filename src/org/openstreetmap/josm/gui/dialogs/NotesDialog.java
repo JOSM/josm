@@ -410,7 +410,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     class OpenInBrowserAction extends AbstractAction {
         OpenInBrowserAction() {
             putValue(SHORT_DESCRIPTION, tr("Open the note in an external browser"));
-            putValue(SMALL_ICON, ImageProvider.get("help", "internet"));
+            new ImageProvider("help", "internet").getResource().attachImageIcon(this, true);
         }
 
         @Override
