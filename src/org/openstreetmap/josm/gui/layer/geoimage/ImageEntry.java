@@ -4,11 +4,8 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
@@ -523,39 +520,9 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             Main.debug(ex);
         }
 
-        // Time and date. We can have these cases:
-        // 1) GPS_TIME_STAMP not set -> date/time will be null
-        // 2) GPS_DATE_STAMP not set -> use EXIF date or set to default
-        // 3) GPS_TIME_STAMP and GPS_DATE_STAMP are set
-        int[] timeStampComps = dirGps.getIntArray(GpsDirectory.TAG_TIME_STAMP);
-        if (timeStampComps != null) {
-            int gpsHour = timeStampComps[0];
-            int gpsMin = timeStampComps[1];
-            int gpsSec = timeStampComps[2];
-            Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-
-            // We have the time. Next step is to check if the GPS date stamp is set.
-            // dirGps.getString() always succeeds, but the return value might be null.
-            String dateStampStr = dirGps.getString(GpsDirectory.TAG_DATE_STAMP);
-            if (dateStampStr != null && dateStampStr.matches("^\\d+:\\d+:\\d+$")) {
-                String[] dateStampComps = dateStampStr.split(":");
-                cal.set(Calendar.YEAR, Integer.parseInt(dateStampComps[0]));
-                cal.set(Calendar.MONTH, Integer.parseInt(dateStampComps[1]) - 1);
-                cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateStampComps[2]));
-            } else {
-                // No GPS date stamp in EXIF data. Copy it from EXIF time.
-                // Date is not set if EXIF time is not available.
-                if (hasExifTime()) {
-                    // Time not set yet, so we can copy everything, not just date.
-                    cal.setTime(getExifTime());
-                }
-            }
-
-            cal.set(Calendar.HOUR_OF_DAY, gpsHour);
-            cal.set(Calendar.MINUTE, gpsMin);
-            cal.set(Calendar.SECOND, gpsSec);
-
-            setExifGpsTime(cal.getTime());
+        final Date gpsDate = dirGps.getGpsDate();
+        if (gpsDate != null) {
+            setExifGpsTime(gpsDate);
         }
     }
 }
