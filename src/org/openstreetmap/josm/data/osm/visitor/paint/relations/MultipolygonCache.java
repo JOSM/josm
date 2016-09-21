@@ -223,7 +223,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
             map.remove(r);
         }
         // Erase style cache for polygon members
-        for (OsmPrimitive member : r.getMemberPrimitives()) {
+        for (OsmPrimitive member : r.getMemberPrimitivesList()) {
             member.clearCachedStyle();
         }
     }

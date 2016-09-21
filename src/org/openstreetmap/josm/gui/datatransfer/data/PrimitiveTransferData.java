@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.tools.CompositeList;
 
 /**
  * A list of primitives that are transfered. The list allows you to implicitly add primitives.
@@ -39,7 +40,7 @@ public final class PrimitiveTransferData implements Serializable {
             if (primitive instanceof Way) {
                 return ((Way) primitive).getNodes();
             } else if (primitive instanceof Relation) {
-                return ((Relation) primitive).getMemberPrimitives();
+                return ((Relation) primitive).getMemberPrimitivesList();
             } else {
                 return Collections.emptyList();
             }
@@ -101,10 +102,7 @@ public final class PrimitiveTransferData implements Serializable {
      * @return That list.
      */
     public Collection<PrimitiveData> getAll() {
-        ArrayList<PrimitiveData> list = new ArrayList<>();
-        list.addAll(direct);
-        list.addAll(referenced);
-        return list;
+        return new CompositeList<>(direct, referenced);
     }
 
     /**

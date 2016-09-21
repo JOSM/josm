@@ -39,7 +39,7 @@ public class SelectMembersAction extends AbstractRelationAction {
 
         Set<OsmPrimitive> members = new HashSet<>();
         for (Relation r: relations) {
-            members.addAll(r.getMemberPrimitives());
+            members.addAll(r.getMemberPrimitivesList());
         }
         if (add) {
             Main.getLayerManager().getEditLayer().data.addSelected(members);
