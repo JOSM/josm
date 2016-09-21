@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
@@ -71,10 +72,19 @@ public final class Relation extends OsmPrimitive implements IRelation {
         return members.length;
     }
 
+    /**
+     * Returns the relation member at the specified index.
+     * @param index the index of the relation member
+     * @return relation member at the specified index
+     */
     public RelationMember getMember(int index) {
         return members[index];
     }
 
+    /**
+     * Adds the specified relation member at the last position.
+     * @param member the member to add
+     */
     public void addMember(RelationMember member) {
         boolean locked = writeLock();
         try {
@@ -87,6 +97,11 @@ public final class Relation extends OsmPrimitive implements IRelation {
         }
     }
 
+    /**
+     * Adds the specified relation member at the specified index.
+     * @param member the member to add
+     * @param index the index at which the specified element is to be inserted
+     */
     public void addMember(int index, RelationMember member) {
         boolean locked = writeLock();
         try {
@@ -382,22 +397,26 @@ public final class Relation extends OsmPrimitive implements IRelation {
      *
      * @return the set of  {@link OsmPrimitive}s referred to by at least one
      * member of this relation
+     * @see #getMemberPrimitivesList()
      */
     public Set<OsmPrimitive> getMemberPrimitives() {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        RelationMember[] members = this.members;
-        for (RelationMember m: members) {
-            if (m.getMember() != null) {
-                ret.add(m.getMember());
-            }
-        }
-        return ret;
+        return getMembers().stream().map(RelationMember::getMember).collect(Collectors.toSet());
     }
 
+    /**
+     * Returns the {@link OsmPrimitive}s of the specified type referred to by at least one member of this relation.
+     * @param tClass the type of the primitive
+     * @param <T> the type of the primitive
+     * @return the primitives
+     */
     public <T extends OsmPrimitive> Collection<T> getMemberPrimitives(Class<T> tClass) {
-        return Utils.filteredCollection(getMemberPrimitives(), tClass);
+        return Utils.filteredCollection(getMemberPrimitivesList(), tClass);
     }
 
+    /**
+     * Returns an unmodifiable list of the {@link OsmPrimitive}s referred to by at least one member of this relation.
+     * @return an unmodifiable list of the primitives
+     */
     public List<OsmPrimitive> getMemberPrimitivesList() {
         return Utils.transform(getMembers(), RelationMember::getMember);
     }
@@ -548,7 +567,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     @Override
     protected void keysChangedImpl(Map<String, String> originalKeys) {
         super.keysChangedImpl(originalKeys);
-        for (OsmPrimitive member : getMemberPrimitives()) {
+        for (OsmPrimitive member : getMemberPrimitivesList()) {
             member.clearCachedStyle();
         }
     }

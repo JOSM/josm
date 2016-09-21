@@ -87,7 +87,7 @@ public class HighlightHelper {
             Relation r = (Relation) p;
             seenRelations.add(r);
             boolean needRepaint = false;
-            for (OsmPrimitive m : r.getMemberPrimitives()) {
+            for (OsmPrimitive m : r.getMemberPrimitivesList()) {
                 if (!(m instanceof Relation) || !seenRelations.contains(m)) {
                     needRepaint |= setHighlight(m, flag, seenRelations);
                 }

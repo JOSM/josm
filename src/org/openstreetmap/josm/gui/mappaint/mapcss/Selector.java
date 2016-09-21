@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
+import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
 import org.openstreetmap.josm.Main;
@@ -314,10 +315,11 @@ public interface Selector {
                             e.osm.getReferrers(), p -> p.hasTag("type", "multipolygon")), Relation.class);
                     final Relation multipolygon = multipolygons.iterator().next();
                     if (multipolygon == null) throw new NoSuchElementException();
+                    final Set<OsmPrimitive> members = multipolygon.getMemberPrimitives();
                     containsFinder = new ContainsFinder(new Environment(multipolygon)) {
                         @Override
                         public boolean isPrimitiveUsable(OsmPrimitive p) {
-                            return super.isPrimitiveUsable(p) && !multipolygon.getMemberPrimitives().contains(p);
+                            return super.isPrimitiveUsable(p) && !members.contains(p);
                         }
                     };
                 } catch (NoSuchElementException ignore) {

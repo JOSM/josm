@@ -334,7 +334,7 @@ public class CreateMultipolygonAction extends JosmAction {
                 rel.setMember(i, new RelationMember(role, m.getMember()));
             }
         }
-        ways.removeAll(rel.getMemberPrimitives());
+        ways.removeAll(rel.getMemberPrimitivesList());
         for (final Way way : ways) {
             rel.addMember(new RelationMember(role, way));
         }
