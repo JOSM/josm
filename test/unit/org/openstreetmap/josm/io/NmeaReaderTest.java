@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.SAXException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -47,9 +48,10 @@ public class NmeaReaderTest {
         assertEquals(0, in.getParserMalformed());
 
         final List<WayPoint> wayPoints = new ArrayList<>(in.data.tracks.iterator().next().getSegments().iterator().next().getWayPoints());
-        assertEquals("2016-01-25T05:05:09.200Z", wayPoints.get(0).get(GpxConstants.PT_TIME));
-        assertEquals("2016-01-25T05:05:09.400Z", wayPoints.get(1).get(GpxConstants.PT_TIME));
-        assertEquals("2016-01-25T05:05:09.600Z", wayPoints.get(2).get(GpxConstants.PT_TIME));
+        assertEquals("2016-01-25T05:05:09.2Z", wayPoints.get(0).get(GpxConstants.PT_TIME));
+        assertEquals("2016-01-25T05:05:09.4Z", wayPoints.get(1).get(GpxConstants.PT_TIME));
+        assertEquals("2016-01-25T05:05:09.6Z", wayPoints.get(2).get(GpxConstants.PT_TIME));
+        assertEquals(wayPoints.get(0).getTime(), DateUtils.fromString(wayPoints.get(0).get(GpxConstants.PT_TIME).toString()));
 
         final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
         assertEquals("2016-01-25T06:05:09.200+01", iso8601.format(wayPoints.get(0).getTime()));
