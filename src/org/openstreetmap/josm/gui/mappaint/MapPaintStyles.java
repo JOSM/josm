@@ -5,8 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -313,7 +312,7 @@ public final class MapPaintStyles {
                 throw new IllegalDataException("XML style");
             if (Utils.hasExtension(entry.url, "mapcss"))
                 return new MapCSSStyleSource(entry);
-            try (InputStreamReader reader = new InputStreamReader(cf.getInputStream(), StandardCharsets.UTF_8)) {
+            try (Reader reader = cf.getContentReader()) {
                 WHILE: while (true) {
                     int c = reader.read();
                     switch (c) {

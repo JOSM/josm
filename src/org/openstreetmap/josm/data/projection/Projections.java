@@ -3,9 +3,6 @@ package org.openstreetmap.josm.data.projection;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -271,8 +268,7 @@ public final class Projections {
     public static List<ProjectionDefinition> loadProjectionDefinitions(String path) throws IOException {
         try (
             CachedFile cf = new CachedFile(path);
-            InputStream in = cf.getInputStream();
-            BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            BufferedReader r = cf.getContentReader()
         ) {
             return loadProjectionDefinitions(r);
         }

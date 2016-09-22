@@ -8,7 +8,6 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +51,6 @@ import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.widgets.EditableList;
 import org.openstreetmap.josm.io.CachedFile;
-import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
@@ -168,8 +166,7 @@ public class TagChecker extends TagTest {
         for (String source : Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES)) {
             try (
                 CachedFile cf = new CachedFile(source);
-                InputStream s = cf.getInputStream();
-                BufferedReader reader = new BufferedReader(UTFInputStreamReader.create(s));
+                BufferedReader reader = cf.getContentReader()
             ) {
                 String okValue = null;
                 boolean tagcheckerfile = false;
