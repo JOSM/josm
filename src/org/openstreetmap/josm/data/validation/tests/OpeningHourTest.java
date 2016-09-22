@@ -3,9 +3,7 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,7 +51,7 @@ public class OpeningHourTest extends Test.TagTest {
         super.initialize();
         if (ENGINE != null) {
             try (CachedFile cf = new CachedFile("resource://data/validator/opening_hours.js");
-                 Reader reader = new InputStreamReader(cf.getInputStream(), StandardCharsets.UTF_8)) {
+                 Reader reader = cf.getContentReader()) {
                 ENGINE.eval(reader);
                 ENGINE.eval("var opening_hours = require('opening_hours');");
                 // fake country/state to not get errors on holidays

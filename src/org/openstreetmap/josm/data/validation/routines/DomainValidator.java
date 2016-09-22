@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016091601, Last Updated Sat Sep 17 07:07:01 2016 UTC
+        // Taken from Version 2016092200, Last Updated Thu Sep 22 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -641,6 +641,7 @@ public final class DomainValidator extends AbstractValidator {
         "ferrero", // ferrero Ferrero Trading Lux S.A.
         "fiat", // fiat Fiat Chrysler Automobiles N.V.
         "fidelity", // fidelity Fidelity Brokerage Services LLC
+        "fido", // fido Rogers Communications Canada Inc.
         "film", // film Motion Picture Domain Registry Pty Ltd
         "final", // final Núcleo de Informação e Coordenação do Ponto BR - NIC.br
         "finance", // finance Cotton Cypress, LLC
@@ -1128,6 +1129,7 @@ public final class DomainValidator extends AbstractValidator {
         "rocher", // rocher Ferrero Trading Lux S.A.
         "rocks", // rocks United TLD Holdco, LTD.
         "rodeo", // rodeo Top Level Domain Holdings Limited
+        "rogers", // rogers Rogers Communications Canada Inc.
         "room", // room Amazon Registry Services, Inc.
         "rsvp", // rsvp Charleston Road Registry Inc.
         "ruhr", // ruhr regiodot GmbH &amp; Co. KG
