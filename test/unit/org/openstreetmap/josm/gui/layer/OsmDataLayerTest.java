@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
-import org.fest.assertions.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
