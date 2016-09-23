@@ -410,3 +410,10 @@ way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination
 way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:symbol:lanes][tag(lanes)!=eval(count(split("|", tag("destination:symbol:lanes"))))] {
     throwWarning: tr("Different number of lanes in the keys {0} and {1}", "{1.key}", "{2.key}");
 }
+
+/* #13680 */
+area[golf=bunker][natural=beach] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  suggestAlternative: "natural=sand";
+  suggestAlternative: "surface=sand";
+}
