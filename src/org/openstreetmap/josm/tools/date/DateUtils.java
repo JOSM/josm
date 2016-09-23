@@ -97,7 +97,7 @@ public final class DateUtils {
             );
             if (str.length() == 22 || str.length() == 25) {
                 final int plusHr = parsePart2(str, 20);
-                final int mul = str.charAt(19) == '+' ? -1 : 1;
+                final long mul = str.charAt(19) == '+' ? -1 : 1;
                 return local.plusHours(plusHr * mul).toInstant().toEpochMilli();
             }
             return local.toInstant().toEpochMilli();
@@ -119,7 +119,7 @@ public final class DateUtils {
             );
             if (str.length() == 29) {
                 final int plusHr = parsePart2(str, 24);
-                final int mul = str.charAt(23) == '+' ? -1 : 1;
+                final long mul = str.charAt(23) == '+' ? -1 : 1;
                 return local.plusHours(plusHr * mul).toInstant().toEpochMilli();
             }
             return local.toInstant().toEpochMilli();
